@@ -14,7 +14,7 @@
 /*-----------------------------------------------------------------------------
  * File:    df.h
  * Purpose: header file for HDF routines
- * Invokes: dfi.h
+ * Invokes:
  * Contents:
  *  Structure definitions: DFddh, DFdd, DFdesc, DFdle, DF, DFdi, DFdata
  *  Procedure type definitions
@@ -33,6 +33,10 @@
 
 /* include DF (internal) header information */
 #include "hdf.h"
+
+#define DFSETERR(error) (DFerror = (DFerror ? DFerror : error))
+
+#define DFTOFID(df) (int32)(df->list)
 
 /*-------------------------------------------------------------------------*/
 /*                      Type declarations                                   */
@@ -93,12 +97,17 @@ typedef struct DFdata { /* structure for returning status information */
     int32 version;      /* version number of program */
 } DFdata;
 
-/*--------------------------------------------------------------------------*/
-/*                          Procedure types                                 */
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/*--------------------------------------------------------------------------*/
+/*                          Global Variables                                */
+
+HDFLIBAPI int DFerror; /* Error code for DF routines */
+
+/*--------------------------------------------------------------------------*/
+/*                          Procedure types                                 */
 
 /* prototypes for dfstubs.c */
 HDFLIBAPI DF *DFopen(char *name, int acc_mode, int ndds);
@@ -159,17 +168,5 @@ HDFLIBAPI int DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype, i
 #ifdef __cplusplus
 }
 #endif
-
-/*--------------------------------------------------------------------------*/
-/*                          Global Variables                                */
-
-#ifndef DFMASTER
-HDFLIBAPI
-#endif       /*DFMASTER */
-int DFerror; /* Error code for DF routines */
-
-#define DFSETERR(error) (DFerror = (DFerror ? DFerror : error))
-
-#define DFTOFID(df) (int32)(df->list)
 
 #endif /* H4_DF_H */

@@ -14,15 +14,15 @@
 #ifndef MFH4_MFHDF_H
 #define MFH4_MFHDF_H
 
+/* Formerly used to divide up the HDF and netCDF code. The symbol is retained
+ * since it's technically in the public API.
+ */
 #ifndef HDF
 #define HDF 1
 #endif
 
-#include "H4api_adpt.h"
-
-/* change this back if it causes problems on other machines than the Alhpa-QAK */
-/* Reverse back to the previous way. AKC */
 #include "hdf.h"
+
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else
@@ -30,7 +30,6 @@
 #endif
 
 #include "mfhdfi.h"
-#include "mfdatainfo.h"
 
 #define SD_UNLIMITED        NC_UNLIMITED /* use this as marker for unlimited dimension */
 #define SD_NOFILL           NC_NOFILL
@@ -67,9 +66,7 @@ HDFLIBAPI int32 SDselect(int32 fid, int32 idx);
 
 HDFLIBAPI intn SDgetinfo(int32 sdsid, char *name, int32 *rank, int32 *dimsizes, int32 *nt, int32 *nattr);
 
-#ifndef __CSTAR__
 HDFLIBAPI intn SDreaddata(int32 sdsid, int32 *start, int32 *stride, int32 *end, void *data);
-#endif
 
 HDFLIBAPI uint16 SDgerefnumber(int32 sdsid);
 
@@ -97,9 +94,7 @@ HDFLIBAPI intn SDattrinfo(int32 id, int32 idx, char *name, int32 *nt, int32 *cou
 
 HDFLIBAPI intn SDreadattr(int32 id, int32 idx, void *buf);
 
-#ifndef __CSTAR__
 HDFLIBAPI intn SDwritedata(int32 sdsid, int32 *start, int32 *stride, int32 *end, void *data);
-#endif
 
 HDFLIBAPI intn SDsetdatastrs(int32 sdsid, const char *l, const char *u, const char *f, const char *c);
 
@@ -193,7 +188,7 @@ HDFLIBAPI intn SDgetnamelen(int32 sdsid, uint16 *name_len);
       The dataset currently cannot be special already.  i.e. NBIT,
       COMPRESSED, or EXTERNAL. This is an Error.
 
-      The definition of the HDF_CHUNK_DEF union with relvant fields is:
+      The definition of the HDF_CHUNK_DEF union with relevant fields is:
 
       typedef union hdf_chunk_def_u
       {
@@ -418,6 +413,20 @@ RETURNS
 HDFLIBAPI intn SDsetchunkcache(int32 sdsid,    /* IN: sds access id */
                                int32 maxcache, /* IN: max number of chunks to cache */
                                int32 flags /* IN: flags = 0, HDF_CACHEALL */);
+
+/*
+ ** Public functions for getting raw data information - from mfdatainfo.c
+ */
+
+HDFLIBAPI intn SDgetdatainfo(int32 sdsid, int32 *chk_coord, uintn start_block, uintn info_count,
+                             int32 *offsetarray, int32 *lengtharray);
+
+HDFLIBAPI intn SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length);
+
+HDFLIBAPI intn SDgetoldattdatainfo(int32 dimid, int32 sdsid, char *attr_name, int32 *offset, int32 *length);
+
+HDFLIBAPI intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32 *offsetarray,
+                                int32 *lengtharray);
 
 #ifdef __cplusplus
 }

@@ -13,8 +13,6 @@
 
 #include "mfhdf.h"
 
-#ifdef HDF
-
 #include "hdftest.h"
 #include "local_nc.h"
 
@@ -97,7 +95,7 @@ test_file_inuse()
         }
 
         /* Write data to the data set */
-        statusn = SDwritedata(sds_id[i], start, NULL, edges, (VOIDP)array_data);
+        statusn = SDwritedata(sds_id[i], start, NULL, edges, (void *)array_data);
         if (i == 0) {
             CHECK(statusn, FAIL, "SDwritedata");
         } /* 1st SDwritedata must pass */
@@ -289,7 +287,7 @@ test_max_open_files()
         CHECK(status, FAIL, "test_maxopenfiles: SDgetfilename");
 
         /* Verify the file name retrieved against the original */
-        if (HDstrcmp(readfname, filename[index])) {
+        if (strcmp(readfname, filename[index])) {
             fprintf(stderr, "SDgetfilename: incorrect file being opened - expected <%s>, retrieved <%s>\n",
                     filename[index], readfname);
         }
@@ -452,5 +450,3 @@ test_files()
         PASSED();
     return num_errs;
 }
-
-#endif /* HDF */

@@ -35,8 +35,6 @@
  * compatible with the original Berkeley version.
  *
  * NOTE: references to pages here is the same as chunks
- *
- * AUTHOR - George V.- 1996/08/22
  *****************************************************************************/
 
 /*
@@ -47,17 +45,12 @@
  *    -georgev
  */
 
-/* for debugging */
-/*
-#define MCACHE_DEBUG
-*/
 /*
 #define STATISTICS
 */
 
-#define __MCACHEINTERFACE_PRIVATE
-#include "hdf.h"    /* number types ..etc */
-#include "hqueue.h" /* Circular queue functions(Macros) */
+#include "hdfi.h"
+#include "hqueue.h"
 #include "mcache.h"
 
 /* Private routines */
@@ -170,7 +163,7 @@ NOTE:
       The key string byte for sharing buffers is not implemented.
 ******************************************************************************/
 MCACHE *
-mcache_open(VOID *key,       /* IN: byte string used as handle to share buffers */
+mcache_open(void *key,       /* IN: byte string used as handle to share buffers */
             int32 object_id, /* IN: object handle */
             int32 pagesize,  /* IN: chunk size in bytes  */
             int32 maxcache,  /* IN: maximum number of pages to cache at any time */
@@ -193,7 +186,7 @@ mcache_open(VOID *key,       /* IN: byte string used as handle to share buffers 
         maxcache = (int32)DEF_MAXCACHE;
 
     /* Allocate and initialize the MCACHE cookie. */
-    if ((mp = (MCACHE *)HDcalloc(1, sizeof(MCACHE))) == NULL)
+    if ((mp = (MCACHE *)calloc(1, sizeof(MCACHE))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     H4_CIRCLEQ_INIT(&mp->lqh);
@@ -214,7 +207,7 @@ mcache_open(VOID *key,       /* IN: byte string used as handle to share buffers 
     /* Initialize list hash chain */
     for (pageno = 1; pageno <= mp->npages; ++pageno) {
         lhead = &mp->lhqh[HASHKEY(pageno)];
-        if ((lp = (L_ELEM *)HDmalloc(sizeof(L_ELEM))) == NULL)
+        if ((lp = (L_ELEM *)malloc(sizeof(L_ELEM))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         lp->pgno = (int32)pageno; /* set page number */
 
@@ -251,31 +244,22 @@ mcache_open(VOID *key,       /* IN: byte string used as handle to share buffers 
 
 done:
     if (ret_value == RET_ERROR) { /* error cleanup */
-        if (mp != NULL)
-            HDfree(mp);
+        free(mp);
         /* free up list elements */
         for (entry = 0; entry < HASHSIZE; ++entry) {
-            while ((lp = mp->lhqh[entry].cqh_first) != (VOID *)&mp->lhqh[entry]) {
+            while ((lp = mp->lhqh[entry].cqh_first) != (void *)&mp->lhqh[entry]) {
                 H4_CIRCLEQ_REMOVE(&mp->lhqh[entry], mp->lhqh[entry].cqh_first, hl);
-                HDfree(lp);
+                free(lp);
             }
         } /* end for entry */
-#ifdef MCACHE_DEBUG
-        (VOID) fprintf(stderr, "mcache_open: ERROR \n");
-#endif
+
         mp = NULL; /* return value */
-    }              /* end error cleanup */
-#ifdef MCACHE_DEBUG
-    (VOID) fprintf(stderr, "mcache_open: mp->pagesize=%lu\n", mp->pagesize);
-    (VOID) fprintf(stderr, "mcache_open: mp->maxcache=%u\n", mp->maxcache);
-    (VOID) fprintf(stderr, "mcache_open: mp->npages=%u\n", mp->npages);
-    (VOID) fprintf(stderr, "mcache_open: flags=%u\n", flags);
+    }
 #ifdef STATISTICS
-    (VOID) fprintf(stderr, "mcache_open: mp->listalloc=%lu\n", mp->listalloc);
-#endif
+    fprintf(stderr, "mcache_open: mp->listalloc=%lu\n", mp->listalloc);
 #endif
 
-    return (mp);
+    return mp;
 } /* mcache_open () */
 
 /******************************************************************************
@@ -290,13 +274,13 @@ RETURNS
    Nothing
 
 ******************************************************************************/
-VOID
+void
 mcache_filter(MCACHE *mp, /* IN: MCACHE cookie */
-              int32 (*pgin)(VOID * /* cookie */, int32 /* pgno */,
-                            VOID * /* page */), /* IN: page in filter */
-              int32 (*pgout)(VOID * /* cookie */, int32 /* pgno */,
-                             const VOID * /*page */), /* IN: page out filter */
-              VOID *pgcookie /* IN: filter cookie */)
+              int32 (*pgin)(void * /* cookie */, int32 /* pgno */,
+                            void * /* page */), /* IN: page in filter */
+              int32 (*pgout)(void * /* cookie */, int32 /* pgno */,
+                             const void * /*page */), /* IN: page out filter */
+              void *pgcookie /* IN: filter cookie */)
 {
     mp->pgin     = pgin;
     mp->pgout    = pgout;
@@ -314,7 +298,7 @@ DESCRIPTION
 RETURNS
    The specified page if successful and NULL otherwise
 ******************************************************************************/
-VOID *
+void *
 mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
            int32   pgno, /* IN: page number */
            int32   flags /* IN: XXX not used? */)
@@ -324,16 +308,10 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
     BKT          *bp        = NULL; /* bucket element */
     L_ELEM       *lp        = NULL;
     intn          ret_value = RET_SUCCESS;
-#ifdef UNUSED
-    int32 rpagesize; /* pagesize to read */
-#endif               /* UNUSED */
-    intn list_hit;   /* hit flag */
+    intn          list_hit; /* hit flag */
 
     (void)flags;
 
-#ifdef MCACHE_DEBUG
-    (VOID) fprintf(stderr, "mcache_get: entering \n");
-#endif
     /* check inputs */
     if (mp == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -349,12 +327,6 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
 
     /* Check for a page that is cached. */
     if ((bp = mcache_look(mp, pgno)) != NULL) {
-#ifdef MCACHE_DEBUG
-        if (bp->flags & MCACHE_PINNED) {
-            (VOID) fprintf(stderr, "mcache_get: page %d already pinned\n", bp->pgno);
-            abort();
-        }
-#endif
         /*
          * Move the page to the head of the hash chain and the tail
          * of the lru chain.
@@ -367,12 +339,9 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
         /* Return a pinned page. */
         bp->flags |= MCACHE_PINNED;
 
-#ifdef MCACHE_DEBUG
-        (VOID) fprintf(stderr, "mcache_get: getting cached bp->pgno=%d,npages=%d\n", bp->pgno, mp->npages);
-#endif
         /* update this page reference */
         lhead = &mp->lhqh[HASHKEY(bp->pgno)];
-        for (lp = lhead->cqh_first; lp != (VOID *)lhead; lp = lp->hl.cqe_next)
+        for (lp = lhead->cqh_first; lp != (void *)lhead; lp = lp->hl.cqe_next)
             if (lp->pgno == bp->pgno) { /* hit */
 #ifdef STATISTICS
                 ++mp->listhit;
@@ -386,10 +355,6 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
         goto done;
     } /* end if bp */
 
-#ifdef MCACHE_DEBUG
-    (VOID) fprintf(stderr, "mcache_get: NOT cached page\n");
-#endif
-
     /* Page not cached so
      * Get a page from the cache to use or create one. */
     if ((bp = mcache_bkt(mp)) == NULL)
@@ -398,7 +363,7 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
     /* Check to see if this page has ever been referenced */
     list_hit = 0;
     lhead    = &mp->lhqh[HASHKEY(pgno)];
-    for (lp = lhead->cqh_first; lp != (VOID *)lhead; lp = lp->hl.cqe_next)
+    for (lp = lhead->cqh_first; lp != (void *)lhead; lp = lp->hl.cqe_next)
         if (lp->pgno == pgno && lp->eflags != 0) { /* hit */
 #ifdef STATISTICS
             ++mp->listhit;
@@ -412,7 +377,7 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
      *  and insert into hash table */
     if (!list_hit) { /* NO hit, new list element
                       * no need to read this page from disk */
-        if ((lp = (L_ELEM *)HDmalloc(sizeof(L_ELEM))) == NULL)
+        if ((lp = (L_ELEM *)malloc(sizeof(L_ELEM))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         lp->pgno   = pgno;
@@ -422,20 +387,13 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
         lp->elemhit = 1;
 #endif
         H4_CIRCLEQ_INSERT_HEAD(lhead, lp, hl); /* add to list */
-#ifdef MCACHE_DEBUG
-        (VOID) fprintf(stderr, "mcache_get: skipping reading in page=%u\n", pgno);
-#endif
-    }                           /*end if !list_hit */
-    else {                      /* list hit, need to read page */
-        lp->eflags = ELEM_READ; /* Indicate we are reading this page */
+    }                                          /*end if !list_hit */
+    else {                                     /* list hit, need to read page */
+        lp->eflags = ELEM_READ;                /* Indicate we are reading this page */
 
 #ifdef STATISTICS
         ++mp->pageread;
 #endif
-
-#ifdef UNUSED
-        rpagesize = mp->pagesize;
-#endif /* UNUSED */
 
         /* Run through the user's filter.
            we use this fcn to read in the data chunk/page.
@@ -470,17 +428,10 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
 
 done:
     if (ret_value == RET_ERROR) { /* error cleanup */
-#ifdef MCACHE_DEBUG
-        (VOID) fprintf(stderr, "mcache_get: Error exiting \n");
-#endif
-        if (lp != NULL)
-            HDfree(lp);
+        free(lp);
         return NULL;
     }
-#ifdef MCACHE_DEBUG
-    (VOID) fprintf(stderr, "mcache_get: Exiting \n");
-#endif
-    return (bp->page);
+    return bp->page;
 } /* mcache_get() */
 
 /******************************************************************************
@@ -496,7 +447,7 @@ RETURNS
 ******************************************************************************/
 intn
 mcache_put(MCACHE *mp,   /* IN: MCACHE cookie */
-           VOID   *page, /* IN: page to put */
+           void   *page, /* IN: page to put */
            int32   flags /* IN: flags = 0, MCACHE_DIRTY */)
 {
     struct _lhqh *lhead     = NULL; /* head of an entry in list hash chain */
@@ -513,20 +464,14 @@ mcache_put(MCACHE *mp,   /* IN: MCACHE cookie */
 #endif
     /* get pointer to bucket element */
     bp = (BKT *)((char *)page - sizeof(BKT));
-#ifdef MCACHE_DEBUG
-    (VOID) fprintf(stderr, "mcache_put: putting page=%d\n", bp->pgno);
-    if (!(bp->flags & MCACHE_PINNED)) {
-        (VOID) fprintf(stderr, "mcache_put: page %d not pinned\n", bp->pgno);
-        abort();
-    }
-#endif
+
     /* Unpin the page and mark it appropriately */
     bp->flags &= ~MCACHE_PINNED;
     bp->flags |= flags & MCACHE_DIRTY;
 
     if (bp->flags & MCACHE_DIRTY) { /* update this page reference */
         lhead = &mp->lhqh[HASHKEY(bp->pgno)];
-        for (lp = lhead->cqh_first; lp != (VOID *)lhead; lp = lp->hl.cqe_next)
+        for (lp = lhead->cqh_first; lp != (void *)lhead; lp = lp->hl.cqe_next)
             if (lp->pgno == bp->pgno) { /* hit */
 #ifdef STATISTICS
                 ++mp->listhit;
@@ -561,24 +506,21 @@ mcache_close(MCACHE *mp /* IN: MCACHE cookie */)
     intn    ret_value = RET_SUCCESS;
     intn    entry; /* index into hash table */
 
-#ifdef MCACHE_DEBUG
-    (VOID) fprintf(stderr, "mcache_close: entered \n");
-#endif
     /* check inputs */
     if (mp == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Free up any space allocated to the lru pages. */
-    while ((bp = mp->lqh.cqh_first) != (VOID *)&mp->lqh) {
+    while ((bp = mp->lqh.cqh_first) != (void *)&mp->lqh) {
         H4_CIRCLEQ_REMOVE(&mp->lqh, mp->lqh.cqh_first, q);
-        HDfree(bp);
+        free(bp);
     }
 
     /* free up list elements */
     for (entry = 0; entry < HASHSIZE; ++entry) {
-        while ((lp = mp->lhqh[entry].cqh_first) != (VOID *)&mp->lhqh[entry]) {
+        while ((lp = mp->lhqh[entry].cqh_first) != (void *)&mp->lhqh[entry]) {
             H4_CIRCLEQ_REMOVE(&mp->lhqh[entry], mp->lhqh[entry].cqh_first, hl);
-            HDfree(lp);
+            free(lp);
             nelem++;
         }
     } /* end for entry */
@@ -589,11 +531,8 @@ done:
     }
 
     /* Free the MCACHE cookie. */
-    HDfree(mp);
+    free(mp);
 
-#ifdef MCACHE_DEBUG
-    (VOID) fprintf(stderr, "mcache_close: freed %d list elements\n\n", nelem);
-#endif
     return ret_value;
 } /* mcache_close() */
 
@@ -613,15 +552,12 @@ mcache_sync(MCACHE *mp /* IN: MCACHE cookie */)
     BKT *bp        = NULL; /* bucket element */
     intn ret_value = RET_SUCCESS;
 
-#ifdef MCACHE_DEBUG
-    (VOID) fprintf(stderr, "MCACHE_sync: entering \n");
-#endif
     /* check inputs */
     if (mp == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Walk the lru chain, flushing any dirty pages to disk. */
-    for (bp = mp->lqh.cqh_first; bp != (VOID *)&mp->lqh; bp = bp->q.cqe_next) {
+    for (bp = mp->lqh.cqh_first; bp != (void *)&mp->lqh; bp = bp->q.cqe_next) {
         if (bp->flags & MCACHE_DIRTY && mcache_write(mp, bp) == RET_ERROR)
             HE_REPORT_GOTO("unable to flush a dirty page", FAIL);
     } /* end for bp */
@@ -630,10 +566,6 @@ done:
     if (ret_value == RET_ERROR) { /* error cleanup */
         return ret_value;
     }
-
-#ifdef MCACHE_DEBUG
-    (VOID) fprintf(stderr, "mcache_sync: exiting \n");
-#endif
 
     return ret_value;
 } /* mcache_sync() */
@@ -675,7 +607,7 @@ mcache_bkt(MCACHE *mp /* IN: MCACHE cookie */)
      * off any lists.  If we don't find anything we grow the cache anyway.
      * The cache never shrinks.
      */
-    for (bp = mp->lqh.cqh_first; bp != (VOID *)&mp->lqh; bp = bp->q.cqe_next)
+    for (bp = mp->lqh.cqh_first; bp != (void *)&mp->lqh; bp = bp->q.cqe_next)
         if (!(bp->flags & MCACHE_PINNED)) { /* Flush if dirty. */
             if (bp->flags & MCACHE_DIRTY && mcache_write(mp, bp) == RET_ERROR)
                 HE_REPORT_GOTO("unable to flush a dirty page", FAIL);
@@ -686,29 +618,17 @@ mcache_bkt(MCACHE *mp /* IN: MCACHE cookie */)
             head = &mp->hqh[HASHKEY(bp->pgno)];
             H4_CIRCLEQ_REMOVE(head, bp, hq);
             H4_CIRCLEQ_REMOVE(&mp->lqh, bp, q);
-#ifdef MCACHE_DEBUG
-            {
-                VOID *spage;
-                spage = bp->page;
-                memset(bp, 0xff, sizeof(BKT) + mp->pagesize);
-                bp->page = spage;
-            }
-#endif
+
             /* done */
             ret_value = RET_SUCCESS;
             goto done;
         } /* end if bp->flags */
 
     /* create a new page */
-    new : if ((bp = (BKT *)HDmalloc(sizeof(BKT) + (uintn)mp->pagesize)) == NULL)
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+    new : if ((bp = (BKT *)malloc(sizeof(BKT) + (uintn)mp->pagesize)) == NULL) HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
 #ifdef STATISTICS
     ++mp->pagealloc;
-#endif
-
-#if defined(MCACHE_DEBUG) || defined(PURIFY)
-    memset(bp, 0xff, sizeof(BKT) + mp->pagesize);
 #endif
 
     /* set page ptr past bucket element section */
@@ -717,13 +637,11 @@ mcache_bkt(MCACHE *mp /* IN: MCACHE cookie */)
 
 done:
     if (ret_value == RET_ERROR) { /* error cleanup */
-        if (bp != NULL)
-            HDfree(bp);
-
+        free(bp);
         return NULL;
     }
 
-    return (bp); /* return only the pagesize fragment */
+    return bp; /* return only the pagesize fragment */
 } /* mcache_bkt() */
 
 /******************************************************************************
@@ -743,13 +661,7 @@ mcache_write(MCACHE *mp, /* IN: MCACHE cookie */
     struct _lhqh *lhead     = NULL; /* head of an entry in list hash chain */
     L_ELEM       *lp        = NULL;
     intn          ret_value = RET_SUCCESS;
-#ifdef UNUSED
-    int32 wpagesize; /* page size to write */
-#endif               /* UNUSED */
 
-#ifdef MCACHE_DEBUG
-    (VOID) fprintf(stderr, "mcache_write: entering \n");
-#endif
     /* check inputs */
     if (mp == NULL || bp == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -760,7 +672,7 @@ mcache_write(MCACHE *mp, /* IN: MCACHE cookie */
 
     /* update this page reference */
     lhead = &mp->lhqh[HASHKEY(bp->pgno)];
-    for (lp = lhead->cqh_first; lp != (VOID *)lhead; lp = lp->hl.cqe_next)
+    for (lp = lhead->cqh_first; lp != (void *)lhead; lp = lp->hl.cqe_next)
         if (lp->pgno == bp->pgno) { /* hit */
 #ifdef STATISTICS
             ++mp->listhit;
@@ -786,28 +698,14 @@ mcache_write(MCACHE *mp, /* IN: MCACHE cookie */
         goto done;
     }
 
-#ifdef MCACHE_DEBUG
-    (VOID) fprintf(stderr, "mcache_write: npages=%u\n", mp->npages);
-#endif
-
-#ifdef UNUSED
-    wpagesize = mp->pagesize;
-#endif /* UNUSED */
-
     /* mark page as clean */
     bp->flags &= ~MCACHE_DIRTY;
 
 done:
     if (ret_value == RET_ERROR) { /* error cleanup */
-#ifdef MCACHE_DEBUG
-        (VOID) fprintf(stderr, "mcache_write: error exiting\n");
-#endif
         return ret_value;
     }
 
-#ifdef MCACHE_DEBUG
-    (VOID) fprintf(stderr, "mcache_write: exiting\n");
-#endif
     return ret_value;
 } /* mcache_write() */
 
@@ -842,7 +740,7 @@ mcache_look(MCACHE *mp, /* IN: MCACHE cookie */
 
     /* search through hash chain */
     head = &mp->hqh[HASHKEY(pgno)];
-    for (bp = head->cqh_first; bp != (VOID *)head; bp = bp->hq.cqe_next)
+    for (bp = head->cqh_first; bp != (void *)head; bp = bp->hq.cqe_next)
         if (bp->pgno == pgno) { /* hit....found page in cache */
 #ifdef STATISTICS
             ++mp->cachehit;
@@ -859,11 +757,14 @@ mcache_look(MCACHE *mp, /* IN: MCACHE cookie */
     ++mp->cachemiss;
 #endif
 done:
-    return (bp);
+    return bp;
 } /* mcache_look() */
 
 #ifdef STATISTICS
-#ifdef HAVE_GETRUSAGE
+#ifdef H4_HAVE_GETRUSAGE
+
+#include <sys/resource.h>
+
 /******************************************************************************
 NAME
    myrusage - print some process usage statistics
@@ -874,7 +775,7 @@ DESCRIPTION
 RETURNS
    Nothing
 ******************************************************************************/
-VOID
+void
 myrusage()
 {
     struct rusage r;
@@ -883,12 +784,12 @@ myrusage()
     double        timespent();
 
     getrusage(RUSAGE_SELF, &r);
-    fprintf(stderr, "USAGE: shmem=%d,unshdata=%d,unshstack=%d\n", r.ru_ixrss, r.ru_idrss, r.ru_isrss);
-    fprintf(stderr, "       pager=%d,pagef=%d,nswap=%d\n", r.ru_minflt, r.ru_majflt, r.ru_nswap);
-    fprintf(stderr, "       block_in=%d,block_out=%d,nioch=%d\n", r.ru_inblock, r.ru_oublock, r.ru_ioch);
-    fprintf(stderr, "       mesgs=%d,mesgr=%d,nsignals=%d\n", r.ru_msgsnd, r.ru_msgrcv, r.ru_nsignals);
+    fprintf(stderr, "USAGE: shmem=%ld, unshdata=%ld, unshstack=%ld\n", r.ru_ixrss, r.ru_idrss, r.ru_isrss);
+    fprintf(stderr, "       pager=%ld, pagef=%ld, nswap=%ld\n", r.ru_minflt, r.ru_majflt, r.ru_nswap);
+    fprintf(stderr, "       block_in=%ld, block_out=%ld\n", r.ru_inblock, r.ru_oublock);
+    fprintf(stderr, "       mesgs=%ld, mesgr=%ld, nsignals=%ld\n", r.ru_msgsnd, r.ru_msgrcv, r.ru_nsignals);
 }
-#endif /* HAVE_GETRUSAGE */
+#endif /* H4_HAVE_GETRUSAGE */
 
 /******************************************************************************
 NAME
@@ -900,7 +801,7 @@ DESCRIPTION
 RETURNS
    Nothing
 ******************************************************************************/
-VOID
+void
 mcache_stat(MCACHE *mp /* IN: MCACHE cookie */)
 {
     struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
@@ -911,37 +812,37 @@ mcache_stat(MCACHE *mp /* IN: MCACHE cookie */)
     intn          cnt;
     intn          hitcnt;
 
-#ifdef HAVE_GETRUSAGE
+#ifdef H4_HAVE_GETRUSAGE
     myrusage();
 #endif
 
     /* check inputs */
     if (mp != NULL) {
-        (VOID) fprintf(stderr, "%u pages in the object\n", mp->npages);
-        (VOID) fprintf(stderr, "page size %u, caching %u pages of %u page max cache\n", mp->pagesize,
-                       mp->curcache, mp->maxcache);
-        (VOID) fprintf(stderr, "%u page puts, %u page gets, %u page new\n", mp->pageput, mp->pageget,
-                       mp->pagenew);
-        (VOID) fprintf(stderr, "%u page allocs, %u page flushes\n", mp->pagealloc, mp->pageflush);
+        (void)fprintf(stderr, "%u pages in the object\n", mp->npages);
+        (void)fprintf(stderr, "page size %u, caching %u pages of %u page max cache\n", mp->pagesize,
+                      mp->curcache, mp->maxcache);
+        (void)fprintf(stderr, "%u page puts, %u page gets, %u page new\n", mp->pageput, mp->pageget,
+                      mp->pagenew);
+        (void)fprintf(stderr, "%u page allocs, %u page flushes\n", mp->pagealloc, mp->pageflush);
         if (mp->cachehit + mp->cachemiss)
-            (VOID) fprintf(stderr, "%.0f%% cache hit rate (%u hits, %u misses)\n",
-                           ((double)mp->cachehit / (mp->cachehit + mp->cachemiss)) * 100, mp->cachehit,
-                           mp->cachemiss);
-        (VOID) fprintf(stderr, "%u page reads, %u page writes\n", mp->pageread, mp->pagewrite);
-        (VOID) fprintf(stderr, "%u listhits, %u listallocs\n", mp->listhit, mp->listalloc);
-        (VOID) fprintf(stderr, "sizeof(MCACHE)=%d, sizeof(BKT)=%d, sizeof(L_ELEM)=%d\n", sizeof(MCACHE),
-                       sizeof(BKT), sizeof(L_ELEM));
-        (VOID) fprintf(stderr, "memory pool used %u bytes\n",
-                       (int32)(sizeof(MCACHE) + (sizeof(BKT) + mp->pagesize) * mp->curcache +
-                               (sizeof(L_ELEM) * mp->npages)));
+            (void)fprintf(stderr, "%.0f%% cache hit rate (%u hits, %u misses)\n",
+                          ((double)mp->cachehit / (mp->cachehit + mp->cachemiss)) * 100, mp->cachehit,
+                          mp->cachemiss);
+        (void)fprintf(stderr, "%u page reads, %u page writes\n", mp->pageread, mp->pagewrite);
+        (void)fprintf(stderr, "%u listhits, %u listallocs\n", mp->listhit, mp->listalloc);
+        (void)fprintf(stderr, "sizeof(MCACHE)=%zu, sizeof(BKT)=%zu, sizeof(L_ELEM)=%zu\n", sizeof(MCACHE),
+                      sizeof(BKT), sizeof(L_ELEM));
+        (void)fprintf(stderr, "memory pool used %u bytes\n",
+                      (int32)(sizeof(MCACHE) + (sizeof(BKT) + mp->pagesize) * mp->curcache +
+                              (sizeof(L_ELEM) * mp->npages)));
         sep = "";
         cnt = 0;
-        for (bp = mp->lqh.cqh_first; bp != (VOID *)&mp->lqh; bp = bp->q.cqe_next) {
-            (VOID) fprintf(stderr, "%s%u", sep, bp->pgno);
+        for (bp = mp->lqh.cqh_first; bp != (void *)&mp->lqh; bp = bp->q.cqe_next) {
+            (void)fprintf(stderr, "%s%u", sep, bp->pgno);
             if (bp->flags & MCACHE_DIRTY)
-                (VOID) fprintf(stderr, "d");
+                (void)fprintf(stderr, "d");
             if (bp->flags & MCACHE_PINNED)
-                (VOID) fprintf(stderr, "P");
+                (void)fprintf(stderr, "P");
             if (++cnt == 10) {
                 sep = "\n";
                 cnt = 0;
@@ -949,16 +850,16 @@ mcache_stat(MCACHE *mp /* IN: MCACHE cookie */)
             else
                 sep = ", ";
         }
-        (VOID) fprintf(stderr, "\n");
-        (VOID) fprintf(stderr, "Element hits\n");
+        (void)fprintf(stderr, "\n");
+        (void)fprintf(stderr, "Element hits\n");
         sep    = "";
         cnt    = 0;
         hitcnt = 0;
         for (entry = 0; entry < HASHSIZE; ++entry) {
             lhead = &mp->lhqh[entry];
-            for (lp = lhead->cqh_first; lp != (VOID *)lhead; lp = lp->hl.cqe_next) {
+            for (lp = lhead->cqh_first; lp != (void *)lhead; lp = lp->hl.cqe_next) {
                 cnt++;
-                (VOID) fprintf(stderr, "%s%u(%u)", sep, lp->pgno, lp->elemhit);
+                (void)fprintf(stderr, "%s%u(%u)", sep, lp->pgno, lp->elemhit);
                 hitcnt += lp->elemhit;
                 if (cnt >= 8) {
                     sep = "\n";
@@ -968,12 +869,12 @@ mcache_stat(MCACHE *mp /* IN: MCACHE cookie */)
                     sep = ", ";
             }
             if (cnt >= 8) {
-                (VOID) fprintf(stderr, "\n");
+                (void)fprintf(stderr, "\n");
                 cnt = 0;
             }
         }
-        (VOID) fprintf(stderr, "\n");
-        (VOID) fprintf(stderr, "Total num of elemhits=%d\n", hitcnt);
+        (void)fprintf(stderr, "\n");
+        (void)fprintf(stderr, "Total num of elemhits=%d\n", hitcnt);
     } /* end if mp */
 }
 #endif /* STATISTICS */

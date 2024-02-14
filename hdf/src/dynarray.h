@@ -14,32 +14,18 @@
 /*-----------------------------------------------------------------------------
  * File:    dynarray.h
  * Purpose: header file for dynamic array API
- * Dependencies:
- * Invokes:
- * Contents:
- * Structure definitions:
- * Constant definitions:
  *---------------------------------------------------------------------------*/
 
 #ifndef H4_DYNARRAY_H
 #define H4_DYNARRAY_H
 
-#include "hdf.h"
+#include "hdfi.h"
 
 /*
     Define the pointer to the dynarray without giving outside routines access
     to the internal workings of the structure.
 */
 typedef struct dynarray_tag *dynarr_p;
-
-#if defined DYNARRAY_MASTER | defined DYNARRAY_TESTER
-typedef struct dynarray_tag {
-    intn   num_elems; /* Number of elements in the array currently */
-    intn   incr_mult; /* Multiple to increment the array size by */
-    VOIDP *arr;       /* Pointer to the actual array of void *'s */
-} dynarr_t;
-
-#endif /* DYNARRAY_MASTER | DYNARRAY_TESTER */
 
 #ifdef __cplusplus
 extern "C" {
@@ -104,7 +90,7 @@ intn DAsize_array(dynarr_p arr /* IN: Array to get size of */
     Returns object ptr if successful and NULL otherwise
 
 *******************************************************************************/
-VOIDP DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
+void *DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
                  intn     elem     /* IN: Array element to retrieve */
 );
 
@@ -124,7 +110,7 @@ VOIDP DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
 *******************************************************************************/
 intn DAset_elem(dynarr_p arr_ptr, /* IN: Array to access */
                 intn     elem,    /* IN: Array element to set */
-                VOIDP    obj      /* IN: Pointer to the object to store */
+                void    *obj      /* IN: Pointer to the object to store */
 );
 
 /*****************************************************************************
@@ -140,7 +126,7 @@ intn DAset_elem(dynarr_p arr_ptr, /* IN: Array to access */
     Returns object ptr if successful and NULL otherwise
 
 *******************************************************************************/
-VOIDP DAdel_elem(dynarr_p arr_ptr, /* IN: Array to access */
+void *DAdel_elem(dynarr_p arr_ptr, /* IN: Array to access */
                  intn     elem     /* IN: Array element to retrieve */
 );
 

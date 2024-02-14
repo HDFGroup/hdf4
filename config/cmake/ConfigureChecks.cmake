@@ -4,15 +4,6 @@
 set (HDF_PREFIX "H4")
 
 #-----------------------------------------------------------------------------
-# Option to Build HDF4 versions of NetCDF-3 APIS
-#-----------------------------------------------------------------------------
-option (HDF4_ENABLE_NETCDF "Build HDF4 versions of NetCDF-3 APIS" ON)
-if (HDF4_ENABLE_NETCDF)
-  set (${HDF_PREFIX}_HAVE_NETCDF 1)
-  set (${HDF_PREFIX}_BUILD_NETCDF 1)
-endif ()
-
-#-----------------------------------------------------------------------------
 # Include all the necessary files for macros
 #-----------------------------------------------------------------------------
 include (CheckFunctionExists)
@@ -24,6 +15,8 @@ include (CheckTypeSize)
 include (CheckVariableExists)
 include (TestBigEndian)
 include (CheckStructHasMember)
+
+set (HDF_PREFIX "H4")
 
 # Check for Darwin (not just Apple - we also want to catch OpenDarwin)
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -48,7 +41,7 @@ macro (CHECK_LIBRARY_EXISTS_CONCAT LIBRARY SYMBOL VARIABLE)
 endmacro ()
 
 # ----------------------------------------------------------------------
-# WINDOWS Hard code Values
+# WINDOWS hard-coded values
 # ----------------------------------------------------------------------
 set (WINDOWS)
 
@@ -71,7 +64,7 @@ if (WIN32 AND NOT MINGW)
 endif ()
 
 if (WINDOWS)
-  set (HDF4_REQUIRED_LIBRARIES "ws2_32.lib;wsock32.lib")
+  set (CMAKE_REQUIRED_LIBRARIES "ws2_32.lib;wsock32.lib")
   set (${HDF_PREFIX}_HAVE_WIN32_API 1)
   set (${HDF_PREFIX}_HAVE_LIBM 1)
   set (${HDF_PREFIX}_HAVE_STRDUP 1)
@@ -92,7 +85,7 @@ if (WINDOWS)
 endif ()
 
 # ----------------------------------------------------------------------
-# END of WINDOWS Hard code Values
+# END of WINDOWS hard-coded values
 # ----------------------------------------------------------------------
 
 if (NOT WINDOWS)
@@ -166,7 +159,7 @@ CHECK_INCLUDE_FILE_CONCAT ("sys/param.h"     ${HDF_PREFIX}_HAVE_PARAM_H)
 ## Check for non-standard extension quadmath.h
 
 CHECK_INCLUDE_FILES(quadmath.h C_HAVE_QUADMATH)
-if (${C_HAVE_QUADMATH})
+if (C_HAVE_QUADMATH)
   set(${HDF_PREFIX}_HAVE_QUADMATH_H 1)
 else ()
   set(${HDF_PREFIX}_HAVE_QUADMATH_H 0)
@@ -457,19 +450,6 @@ CHECK_FUNCTION_EXISTS (tmpfile           ${HDF_PREFIX}_HAVE_TMPFILE)
 CHECK_FUNCTION_EXISTS (asprintf          ${HDF_PREFIX}_HAVE_ASPRINTF)
 CHECK_FUNCTION_EXISTS (vasprintf         ${HDF_PREFIX}_HAVE_VASPRINTF)
 CHECK_FUNCTION_EXISTS (waitpid           ${HDF_PREFIX}_HAVE_WAITPID)
-
-if (NOT WINDOWS)
-  CHECK_FUNCTION_EXISTS (ntohl             ${HDF_PREFIX}_HAVE_NTOHL)
-  CHECK_FUNCTION_EXISTS (htonl             ${HDF_PREFIX}_HAVE_HTONL)
-  CHECK_FUNCTION_EXISTS (ntohs             ${HDF_PREFIX}_HAVE_NTOHS)
-  CHECK_FUNCTION_EXISTS (htons             ${HDF_PREFIX}_HAVE_HTONS)
-else ()
-  set (CMAKE_REQUIRED_LIBRARIES "ws2_32")
-  check_symbol_exists (ntohl "winsock2.h" ${HDF_PREFIX}_HAVE_NTOHL)
-  check_symbol_exists (htonl "winsock2.h" ${HDF_PREFIX}_HAVE_HTONL)
-  check_symbol_exists (ntohs "winsock2.h" ${HDF_PREFIX}_HAVE_NTOHS)
-  check_symbol_exists (htons "winsock2.h" ${HDF_PREFIX}_HAVE_HTONS)
-endif ()
 
 #-----------------------------------------------------------------------------
 # Check how to print a Long Long integer

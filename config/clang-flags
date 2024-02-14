@@ -21,7 +21,7 @@ if test "X-" = "X-$cc_flags_set"; then
     if test -n "$cc_version"; then
         cc_vendor="clang"
     else
-        cc_version="`$CC $CFLAGS $H5_CFLAGS -v 2>&1 |\
+        cc_version="`$CC $CFLAGS $H4_CFLAGS -v 2>&1 |\
             grep 'Apple LLVM version' | sed 's/.*Apple LLVM version \([-a-z0-9\.]*\).*/\1/'`"
         if test -n "$cc_version"; then
             cc_vendor="Apple LLVM"
@@ -43,11 +43,11 @@ if test "X-clang" = "X-$cc_vendor" -o "X-Apple LLVM" = "X-$cc_vendor"; then
     echo "compiler '$CC' is $cc_vendor-$cc_version"
 
     CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
-    CFLAGS="$CFLAGS -ansi -Wall -pedantic"
+    CFLAGS="$CFLAGS -std=c99 -Wall -pedantic"
 
-    DEBUG_CFLAGS="$CFLAGS -g"
+    DEBUG_CFLAGS="-g"
     DEBUG_CPPFLAGS=
-    PROD_CFLAGS="$CFLAGS -O2"
+    PROD_CFLAGS="-O2"
     PROD_CPPFLAGS=
     PROFILE_CFLAGS="-pg"
     PROFILE_CPPFLAGS=

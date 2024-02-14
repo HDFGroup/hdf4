@@ -34,15 +34,15 @@ EXPORTED ROUTINES
 
 ************************************************************************/
 
-#define VSET_INTERFACE
-#include "hdf.h"
+#include "hdfi.h"
+#include "vgint.h"
 
 #ifndef MIN
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif /* MIN */
 
-PRIVATE uint32 Vtbufsize = 0;
-PRIVATE uint8 *Vtbuf     = NULL;
+static uint32 Vtbufsize = 0;
+static uint8 *Vtbuf     = NULL;
 
 /*******************************************************************************
  NAME
@@ -64,10 +64,10 @@ VSPshutdown(void)
 
     /* free global buffers */
     if (Vtbuf != NULL) {
-        HDfree(Vtbuf);
+        free(Vtbuf);
         Vtbuf     = NULL;
         Vtbufsize = 0;
-    } /* end if */
+    }
 
     /* Clear the local buffers in vio.c */
     ret_value = VSPhshutdown();
@@ -263,9 +263,8 @@ VSread(int32 vkey,  /* IN: vdata key */
 
             /* get a buffer big enough to hold the values */
             Vtbufsize = (size_t)chunk * (size_t)hsize;
-            if (Vtbuf)
-                HDfree(Vtbuf);
-            if ((Vtbuf = (uint8 *)HDmalloc(Vtbufsize)) == NULL)
+            free(Vtbuf);
+            if ((Vtbuf = (uint8 *)malloc(Vtbufsize)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
 
@@ -335,9 +334,8 @@ VSread(int32 vkey,  /* IN: vdata key */
         /* alloc space (Vtbuf) for reading in the raw data from vdata */
         if (Vtbufsize < (size_t)nelt * (size_t)hsize) {
             Vtbufsize = (size_t)nelt * (size_t)hsize;
-            if (Vtbuf)
-                HDfree(Vtbuf);
-            if ((Vtbuf = (uint8 *)HDmalloc(Vtbufsize)) == NULL)
+            free(Vtbuf);
+            if ((Vtbuf = (uint8 *)malloc(Vtbufsize)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
 
@@ -575,9 +573,8 @@ VSwrite(int32       vkey,  /* IN: vdata key */
 
             /* get a buffer big enough to hold the values */
             Vtbufsize = (size_t)chunk * (size_t)hdf_size;
-            if (Vtbuf)
-                HDfree(Vtbuf);
-            if ((Vtbuf = (uint8 *)HDmalloc(Vtbufsize)) == NULL)
+            free(Vtbuf);
+            if ((Vtbuf = (uint8 *)malloc(Vtbufsize)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
 
@@ -609,7 +606,7 @@ VSwrite(int32       vkey,  /* IN: vdata key */
                 order = (intn)w->order[j];
 
                 for (index = 0; index < order; index++) {
-                    DFKconvert((VOIDP)src, dest, type, (uint32)chunk, DFACC_WRITE, (uint32)int_size,
+                    DFKconvert((void *)src, dest, type, (uint32)chunk, DFACC_WRITE, (uint32)int_size,
                                (uint32)hdf_size);
                     dest += isize / order;
                     src += esize / order;
@@ -641,9 +638,8 @@ VSwrite(int32       vkey,  /* IN: vdata key */
         /* alloc space (Vtbuf) for writing out the data */
         if (Vtbufsize < (uint32)total_bytes) {
             Vtbufsize = (uint32)total_bytes;
-            if (Vtbuf)
-                HDfree(Vtbuf);
-            if ((Vtbuf = (uint8 *)HDmalloc(Vtbufsize)) == NULL)
+            free(Vtbuf);
+            if ((Vtbuf = (uint8 *)malloc(Vtbufsize)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
 
@@ -660,7 +656,7 @@ VSwrite(int32       vkey,  /* IN: vdata key */
                 order = (intn)w->order[j];
 
                 for (index = 0; index < order; index++) {
-                    DFKconvert((VOIDP)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)esize,
+                    DFKconvert((void *)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)esize,
                                (uint32)hdf_size);
                     src += esize / order;
                     dest += isize / order;
@@ -683,7 +679,7 @@ VSwrite(int32       vkey,  /* IN: vdata key */
                 order = (intn)w->order[j];
 
                 for (index = 0; index < order; index++) {
-                    DFKconvert((VOIDP)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)esize,
+                    DFKconvert((void *)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)esize,
                                (uint32)isize);
                     dest += isize / order;
                     src += esize / order;
@@ -706,7 +702,7 @@ VSwrite(int32       vkey,  /* IN: vdata key */
                 order = (intn)w->order[j];
 
                 for (index = 0; index < order; index++) {
-                    DFKconvert((VOIDP)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)int_size,
+                    DFKconvert((void *)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)int_size,
                                (uint32)isize);
                     dest += isize / order;
                     src += esize / order;

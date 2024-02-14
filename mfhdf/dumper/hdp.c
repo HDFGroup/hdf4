@@ -11,10 +11,33 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define HDP_MASTER
-#define VSET_INTERFACE
 #include "hdp.h"
-#include "local_nc.h" /* to use some definitions */
+#include "local_nc.h"
+#include "vgint.h"
+
+/********************/
+/* Global Variables */
+/********************/
+
+/* indicates Vsets have been initialized for the current file */
+intn vinit_done = FALSE;
+
+/********************************/
+/* Local variables and typedefs */
+/********************************/
+
+/* hdp commands (stored as (value, name) pairs to keep them in sync) */
+typedef enum { HELP, LIST, DUMPSDS, DUMPRIG, DUMPVG, DUMPVD, DUMPGR, BAD_COMMAND } command_value_t;
+
+typedef struct command_t {
+    const command_value_t value;
+    const char           *name;
+} command_t;
+
+static const command_t commands[] = {{HELP, "help"},       {LIST, "list"},
+                                     {DUMPSDS, "dumpsds"}, {DUMPRIG, "dumprig"},
+                                     {DUMPVG, "dumpvg"},   {DUMPVD, "dumpvd"},
+                                     {DUMPGR, "dumpgr"},   {BAD_COMMAND, "BADNESS - not a valid command"}};
 
 /* Print the usage message about this utility */
 static void
@@ -81,64 +104,62 @@ init_dump_opts(dump_info_t *dump_opts)
     /* GR & SD only, print data of local attributes unless -l is given */
     dump_opts->no_lattr_data = FALSE;
 
-    HDstrcpy(dump_opts->file_name, "\0");
+    strcpy(dump_opts->file_name, "\0");
 } /* end init_dump_opts() */
 
 int
 main(int argc, char *argv[])
 {
-    command_t  cmd;       /* command to perform */
-    intn       curr_arg;  /* current cmd line argument */
-    dump_opt_t glob_opts; /* global options for all commands */
-    intn       j;         /* local counting variables */
+    command_value_t cmd = BAD_COMMAND; /* command to perform */
+    intn            curr_arg;          /* current cmd line argument */
+    dump_opt_t      glob_opts;         /* global options for all commands */
+    intn            j;                 /* local counting variables */
 
-    HDmemset(&glob_opts, 0, sizeof(dump_opt_t));
+    memset(&glob_opts, 0, sizeof(dump_opt_t));
 
     if (argc < 2) {
         usage(argc, argv);
-        exit(1);
-    } /* end if */
+        exit(EXIT_FAILURE);
+    }
 
     curr_arg = 1;
-    /*  printf("Argument 0: %s\n",argv[0]);
-        printf("Argument 1: %s\n",argv[1]);
-        */
     while (curr_arg < argc && (argv[curr_arg][0] == '-')) {
-        /*  while(curr_arg<argc && (argv[curr_arg][0]=='-' || argv[curr_arg][0]=='/')) {  */
         switch (argv[curr_arg][1]) {
             case 'H':
-                /*     case 'h':  */ /*    Print help for a given command */
+                /* case 'h':  */ /*    Print help for a given command */
                 if (curr_arg < argc - 1) {
                     glob_opts.help = TRUE; /* for displaying options. */
                     break;
                 }
             default:
                 usage(argc, argv); /* Display the general usage. */
-                exit(1);
-        } /* end switch */
+                exit(EXIT_FAILURE);
+        }
         curr_arg++;
-    } /* end while */
+    }
 
-    for (j = 0, cmd = HELP; j < (sizeof(commands) / sizeof(const char *)); j++, cmd++) {
-        if (HDstrcmp(argv[curr_arg], commands[j]) == 0)
+    for (j = 0; j < (sizeof(commands) / sizeof(command_t)); j++) {
+        if (strcmp(argv[curr_arg], commands[j].name) == 0) {
+            cmd = commands[j].value;
             break;
-    } /* end for */
+        }
+    }
+    if (cmd == BAD_COMMAND) {
+        printf("Invalid command: %s\n", argv[curr_arg]);
+        exit(EXIT_FAILURE);
+    }
 
-    /* printf("cmd=%d\n",(int)cmd);
-       printf("command=%s\n",argv[curr_arg]);
-       */
     curr_arg++;
 
-    /* must be a legit command */
     switch (cmd) {
         case LIST:
             if (FAIL == do_list(curr_arg, argc, argv, glob_opts.help))
-                exit(1);
+                exit(EXIT_FAILURE);
             break;
 
         case DUMPSDS:
             if (FAIL == do_dumpsds(curr_arg, argc, argv, glob_opts.help))
-                exit(1);
+                exit(EXIT_FAILURE);
             break;
 
         case DUMPRIG:
@@ -148,36 +169,37 @@ main(int argc, char *argv[])
                           fprintf( stderr, ">>> Please make a note that dumprig is no longer available.\n");
                           fprintf( stderr, "    The command dumpgr is and should be used in its place.\n" );
                           if (FAIL == do_dumpgr(curr_arg, argc, argv, glob_opts.help)) */
-                exit(1);
+                exit(EXIT_FAILURE);
             break;
 
         case DUMPVG:
             if (FAIL == do_dumpvg(curr_arg, argc, argv, glob_opts.help))
-                exit(1);
+                exit(EXIT_FAILURE);
             break;
 
         case DUMPVD:
             if (FAIL == do_dumpvd(curr_arg, argc, argv, glob_opts.help))
-                exit(1);
+                exit(EXIT_FAILURE);
             break;
 
         case DUMPGR:
             if (FAIL == do_dumpgr(curr_arg, argc, argv, glob_opts.help))
-                exit(1);
+                exit(EXIT_FAILURE);
             break;
 
         case HELP:
-        case NONE:
             usage(argc, argv);
             break;
 
+        /* Should not get here - invalid commands are handled earlier */
+        case BAD_COMMAND:
         default:
-            printf("Invalid command!, cmd=%d\n", (int)cmd);
-            exit(1);
+            printf("Invalid command!\n");
+            exit(EXIT_FAILURE);
             break;
-    } /* end switch */
+    }
 
-    return (0);
+    return EXIT_SUCCESS;
 }
 
 /* -----------------------------------------------------------------
@@ -233,7 +255,7 @@ VShdfsize(int32 vkey, /* IN vdata key */
 
         for (i = 0; i < ac; i++) { /* check fields in vs */
             for (found = 0, j = 0; j < vs->wlist.n; j++)
-                if (!HDstrcmp(av[i], vs->wlist.name[j])) {
+                if (!strcmp(av[i], vs->wlist.name[j])) {
                     totalsize += vs->wlist.isize[j];
                     found = 1;
                     break;
@@ -319,12 +341,12 @@ VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size)
 
     /* If this vdata is not storing an attribute, it shouldn't have been passed
        to this function */
-    if (HDstrcmp(attr_vs->vsclass, _HDF_ATTRIBUTE) != 0)
+    if (strcmp(attr_vs->vsclass, _HDF_ATTRIBUTE) != 0)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
 
     w = &(attr_vs->wlist);
     /* This vdata should have only 1 field */
-    /* if (w->n != 1 || HDstrcmp(w->name[0], ATTR_FIELD_NAME)) <- commented out
+    /* if (w->n != 1 || strcmp(w->name[0], ATTR_FIELD_NAME)) <- commented out
        Note: ATTR_FIELD_NAME cannot be used here because hdfeos sets fieldname
        to "AttrValues", not ATTR_FIELD_NAME. -BMR, 2014/12/01 */
     if (w->n != 1)
@@ -416,12 +438,12 @@ Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
 
     /* If this vdata is not storing an attribute, it shouldn't have been passed
        to this function */
-    if (HDstrcmp(vs->vsclass, _HDF_ATTRIBUTE) != 0)
+    if (strcmp(vs->vsclass, _HDF_ATTRIBUTE) != 0)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
 
     w = &(vs->wlist);
     /* This vdata should have only 1 field */
-    /* if (w->n != 1 || HDstrcmp(w->name[0], ATTR_FIELD_NAME)) <- commented out
+    /* if (w->n != 1 || strcmp(w->name[0], ATTR_FIELD_NAME)) <- commented out
        Note: ATTR_FIELD_NAME cannot be used here because hdfeos sets fieldname
        to "AttrValues", not ATTR_FIELD_NAME. -BMR, 2014/12/01 */
     if (w->n != 1)

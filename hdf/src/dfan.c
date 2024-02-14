@@ -51,29 +51,30 @@
  *  DFANIgetfann:    - get file annotation
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "dfan.h"
-PRIVATE uint16 Lastref        = 0; /* Last ref read/written */
-PRIVATE uint16 Next_label_ref = 0; /* Next file label ref to read/write */
-PRIVATE uint16 Next_desc_ref  = 0; /* Next file desc ref to read/write */
 
-PRIVATE char *Lastfile = NULL;
+static uint16 Lastref        = 0; /* Last ref read/written */
+static uint16 Next_label_ref = 0; /* Next file label ref to read/write */
+static uint16 Next_desc_ref  = 0; /* Next file desc ref to read/write */
+
+static char *Lastfile = NULL;
 
 /* pointers to directories of object annotations */
-PRIVATE DFANdirhead *DFANdir[2] = {
+static DFANdirhead *DFANdir[2] = {
     NULL, /* object labels       */
     NULL  /* object descriptions */
 };
 
 /* Whether we've installed the library termination function yet for this interface */
-PRIVATE intn library_terminate = FALSE;
+static intn library_terminate = FALSE;
 
 /*
  ** Prototypes for local functions
  */
 
-PRIVATE int32 DFANIopen(const char *filename, intn acc_mode);
-PRIVATE intn  DFANIstart(void);
+static int32 DFANIopen(const char *filename, intn acc_mode);
+static intn  DFANIstart(void);
 
 /*-----------------------------------------------------------------------------
  * HDF object (i.e. tag/ref) label and description input routines
@@ -363,7 +364,7 @@ DFANputlabel(const char *filename, uint16 tag, uint16 ref, char *label)
 {
     intn ret_value;
 
-    ret_value = (DFANIputann(filename, tag, ref, (uint8 *)label, (int32)HDstrlen(label), DFAN_LABEL));
+    ret_value = (DFANIputann(filename, tag, ref, (uint8 *)label, (int32)strlen(label), DFAN_LABEL));
 
     return ret_value;
 }
@@ -426,7 +427,7 @@ DFANaddfid(int32 file_id, char *id)
 {
     intn ret_value;
 
-    ret_value = (DFANIaddfann(file_id, id, (int32)HDstrlen(id), DFAN_LABEL));
+    ret_value = (DFANIaddfann(file_id, id, (int32)strlen(id), DFAN_LABEL));
 
     return ret_value;
 }
@@ -593,21 +594,19 @@ DFANIclear(void)
 
     for (p = DFANdir[0]; p != NULL; p = q) { /* free linked list space */
         q = p->next;
-        if (p->entries != NULL)
-            HDfree((VOIDP)p->entries);
+        free(p->entries);
         p->nentries = 0;
         p->entries  = NULL;
         p->next     = NULL;
-        HDfree((VOIDP)p);
+        free(p);
     }
     for (p = DFANdir[1]; p != NULL; p = q) {
         q = p->next;
-        if (p->entries != NULL)
-            HDfree((VOIDP)p->entries);
+        free(p->entries);
         p->nentries = 0;
         p->entries  = NULL;
         p->next     = NULL;
-        HDfree((VOIDP)p);
+        free(p);
     }
     DFANdir[0] = DFANdir[1] = NULL;
 
@@ -621,7 +620,7 @@ done:
  NAME
        DFANIopen -- open or reopen a file
  USAGE
-       PRIVATE int32 DFANIopen(filename, acc_mode)
+       static int32 DFANIopen(filename, acc_mode)
        char *filename;  IN: name of file to open
        intn acc_mode;     IN: access mode
  RETURNS
@@ -636,7 +635,7 @@ done:
  REVISION LOG
 
  *------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 DFANIopen(const char *filename, intn acc_mode)
 {
     int32        file_id;
@@ -652,35 +651,33 @@ DFANIopen(const char *filename, intn acc_mode)
 
     /* Check if filename buffer has been allocated */
     if (Lastfile == NULL) {
-        Lastfile = (char *)HDmalloc((DF_MAXFNLEN + 1) * sizeof(char));
+        Lastfile = (char *)malloc((DF_MAXFNLEN + 1) * sizeof(char));
         if (Lastfile == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         *Lastfile = '\0'; /* initialize with 0-length string */
     }
 
     /* use reopen if same file as last time - more efficient */
-    if (HDstrncmp(Lastfile, filename, DF_MAXFNLEN) || (acc_mode == DFACC_CREATE)) {
+    if (strncmp(Lastfile, filename, DF_MAXFNLEN) || (acc_mode == DFACC_CREATE)) {
         /* treat create as different file */
         if ((file_id = Hopen(filename, acc_mode, 0)) == FAIL)
             HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
         for (p = DFANdir[0]; p != NULL; p = q) { /* free linked list space */
             q = p->next;
-            if (p->entries != NULL)
-                HDfree((VOIDP)p->entries);
+            free(p->entries);
             p->nentries = 0;
             p->entries  = NULL;
             p->next     = NULL;
-            HDfree((VOIDP)p);
+            free(p);
         }
         for (p = DFANdir[1]; p != NULL; p = q) {
             q = p->next;
-            if (p->entries != NULL)
-                HDfree((VOIDP)p->entries);
+            free(p->entries);
             p->nentries = 0;
             p->entries  = NULL;
             p->next     = NULL;
-            HDfree((VOIDP)p);
+            free(p);
         }
         DFANdir[0] = DFANdir[1] = NULL;
     }
@@ -752,10 +749,10 @@ DFANIlocate(int32 file_id, int type, uint16 tag, uint16 ref)
             HGOTO_ERROR(DFE_INTERNAL, 0);
 
         /* allocate directory space, and space for entries. */
-        DFANdir[type] = (DFANdirhead *)HDmalloc((uint32)sizeof(DFANdirhead));
+        DFANdir[type] = (DFANdirhead *)malloc((uint32)sizeof(DFANdirhead));
         if (DFANdir[type] == NULL)
             HGOTO_ERROR(DFE_NOSPACE, 0);
-        DFANdir[type]->entries = (DFANdirentry *)HDmalloc((size_t)nanns * sizeof(DFANdirentry));
+        DFANdir[type]->entries = (DFANdirentry *)malloc((size_t)nanns * sizeof(DFANdirentry));
         if (DFANdir[type]->entries == NULL)
             HGOTO_ERROR(DFE_NOSPACE, 0);
 
@@ -852,9 +849,9 @@ DFANIaddentry(int type, uint16 annref, uint16 datatag, uint16 dataref)
 
     /* need new list or new node in list */
     /* allocate directory space and space for entries. */
-    if ((q = (DFANdirhead *)HDmalloc((uint32)sizeof(DFANdirhead))) == NULL)
+    if ((q = (DFANdirhead *)malloc((uint32)sizeof(DFANdirhead))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    q->entries = (DFANdirentry *)HDmalloc(DFAN_DEFENTRIES * sizeof(DFANdirentry));
+    q->entries = (DFANdirentry *)malloc(DFAN_DEFENTRIES * sizeof(DFANdirentry));
     if (q->entries == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -1217,9 +1214,9 @@ DFANIlablist(const char *filename, uint16 tag, uint16 reflist[], uint8 *labellis
 
     /* clear labellist.  pad with blanks for Fortran; add null for C  */
     if (isfortran)
-        HDmemset(labellist, ' ', (uint32)maxlen * (uint32)listsize);
+        memset(labellist, ' ', (uint32)maxlen * (uint32)listsize);
     else
-        HDmemset(labellist, '\0', (uint32)maxlen * (uint32)listsize);
+        memset(labellist, '\0', (uint32)maxlen * (uint32)listsize);
 
     /* find all refs for this tag; store them in reflist */
     nrefs = (intn)Hnumber(file_id, tag); /* how many times is tag in file? */
@@ -1542,7 +1539,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 DFANIstart(void)
 {
     intn ret_value = SUCCEED;
@@ -1555,7 +1552,7 @@ DFANIstart(void)
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* end DFANIstart() */
 
 /*--------------------------------------------------------------------------
@@ -1580,9 +1577,7 @@ DFANPshutdown(void)
 {
     DFANIclear(); /* frees the directory lists */
 
-    if (Lastfile != NULL) {
-        HDfree(Lastfile);
-        Lastfile = NULL;
-    } /* end if */
-    return (SUCCEED);
+    free(Lastfile);
+    Lastfile = NULL;
+    return SUCCEED;
 } /* end DFANPshutdown() */

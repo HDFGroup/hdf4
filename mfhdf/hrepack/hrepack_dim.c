@@ -11,6 +11,10 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "hdf.h"
 #include "mfhdf.h"
 #include "hrepack.h"
@@ -203,7 +207,7 @@ gen_dim(char *name, /* name of SDS */
         eltsz,                     /* element size */
         nelms;                     /* number of elements */
     char          sds_name[H4_MAX_NC_NAME];
-    VOIDP         buf = NULL;
+    void         *buf = NULL;
     int           i, j, ret = 1;
     int           info;           /* temporary int compression information */
     comp_coder_t  comp_type;      /* compression type requested  */
@@ -262,7 +266,7 @@ gen_dim(char *name, /* name of SDS */
 
     if (empty_sds == 0) {
         comp_type_in = COMP_CODE_NONE; /* reset variables before retrieving information */
-        HDmemset(&c_info_in, 0, sizeof(comp_info));
+        memset(&c_info_in, 0, sizeof(comp_info));
         if (SDgetcompinfo(sds_id, &comp_type_in, &c_info_in) == FAIL) {
             printf("Could not get compression information for SDS <%s>\n", sds_name);
             SDendaccess(sds_id);
@@ -614,7 +618,7 @@ gen_dim(char *name, /* name of SDS */
          */
 
         /* alloc */
-        if ((buf = (VOIDP)HDmalloc(nelms * eltsz)) == NULL) {
+        if ((buf = (void *)malloc(nelms * eltsz)) == NULL) {
             printf("Failed to allocate %d elements of size %d\n", nelms, eltsz);
             ret = -1;
             goto out;
@@ -655,8 +659,7 @@ out:
             printf("Failed to close SDS <%s>\n", sds_name);
     }
 
-    if (buf)
-        HDfree(buf);
+    free(buf);
 
     return ret;
 }
@@ -693,7 +696,7 @@ match_dim_table_add(match_dim_table_t *mdim_tbl, unsigned *flags, char *dim_name
     if (mdim_tbl->nobjs == mdim_tbl->size) {
         mdim_tbl->size *= 2;
         mdim_tbl->objs =
-            (match_dim_name_t *)HDrealloc(mdim_tbl->objs, mdim_tbl->size * sizeof(match_dim_name_t));
+            (match_dim_name_t *)realloc(mdim_tbl->objs, mdim_tbl->size * sizeof(match_dim_name_t));
 
         for (i = mdim_tbl->nobjs; i < mdim_tbl->size; i++) {
             mdim_tbl->objs[i].ref      = -1;
@@ -703,7 +706,7 @@ match_dim_table_add(match_dim_table_t *mdim_tbl, unsigned *flags, char *dim_name
 
     i                     = mdim_tbl->nobjs++;
     mdim_tbl->objs[i].ref = ref;
-    HDstrcpy(mdim_tbl->objs[i].dim_name, dim_name);
+    strcpy(mdim_tbl->objs[i].dim_name, dim_name);
     mdim_tbl->objs[i].flags[0] = flags[0];
     mdim_tbl->objs[i].flags[1] = flags[1];
 }
@@ -726,11 +729,11 @@ static void
 match_dim_table_init(match_dim_table_t **tbl)
 {
     int                i;
-    match_dim_table_t *mdim_tbl = (match_dim_table_t *)HDmalloc(sizeof(match_dim_table_t));
+    match_dim_table_t *mdim_tbl = (match_dim_table_t *)malloc(sizeof(match_dim_table_t));
 
     mdim_tbl->size  = 20;
     mdim_tbl->nobjs = 0;
-    mdim_tbl->objs  = (match_dim_name_t *)HDmalloc(mdim_tbl->size * sizeof(match_dim_name_t));
+    mdim_tbl->objs  = (match_dim_name_t *)malloc(mdim_tbl->size * sizeof(match_dim_name_t));
 
     for (i = 0; i < mdim_tbl->size; i++) {
         mdim_tbl->objs[i].ref      = -1;
@@ -757,8 +760,8 @@ match_dim_table_init(match_dim_table_t **tbl)
 static void
 match_dim_table_free(match_dim_table_t *mdim_tbl)
 {
-    HDfree(mdim_tbl->objs);
-    HDfree(mdim_tbl);
+    free(mdim_tbl->objs);
+    free(mdim_tbl);
 }
 
 /*-------------------------------------------------------------------------
@@ -782,7 +785,7 @@ dim_table_add(dim_table_t *dim_tbl, int ref, char *name)
 
     if (dim_tbl->nobjs == dim_tbl->size) {
         dim_tbl->size *= 2;
-        dim_tbl->objs = (dim_name_t *)HDrealloc(dim_tbl->objs, dim_tbl->size * sizeof(dim_name_t));
+        dim_tbl->objs = (dim_name_t *)realloc(dim_tbl->objs, dim_tbl->size * sizeof(dim_name_t));
 
         for (i = dim_tbl->nobjs; i < dim_tbl->size; i++) {
             dim_tbl->objs[i].ref = -1;
@@ -791,7 +794,7 @@ dim_table_add(dim_table_t *dim_tbl, int ref, char *name)
 
     i                    = dim_tbl->nobjs++;
     dim_tbl->objs[i].ref = ref;
-    HDstrcpy(dim_tbl->objs[i].dim_name, name);
+    strcpy(dim_tbl->objs[i].dim_name, name);
 }
 
 /*-------------------------------------------------------------------------
@@ -812,11 +815,11 @@ void
 dim_table_init(dim_table_t **tbl)
 {
     int          i;
-    dim_table_t *dim_tbl = (dim_table_t *)HDmalloc(sizeof(dim_table_t));
+    dim_table_t *dim_tbl = (dim_table_t *)malloc(sizeof(dim_table_t));
 
     dim_tbl->size  = 20;
     dim_tbl->nobjs = 0;
-    dim_tbl->objs  = (dim_name_t *)HDmalloc(dim_tbl->size * sizeof(dim_name_t));
+    dim_tbl->objs  = (dim_name_t *)malloc(dim_tbl->size * sizeof(dim_name_t));
 
     for (i = 0; i < dim_tbl->size; i++) {
         dim_tbl->objs[i].ref = -1;
@@ -842,6 +845,6 @@ dim_table_init(dim_table_t **tbl)
 void
 dim_table_free(dim_table_t *dim_tbl)
 {
-    HDfree(dim_tbl->objs);
-    HDfree(dim_tbl);
+    free(dim_tbl->objs);
+    free(dim_tbl);
 }

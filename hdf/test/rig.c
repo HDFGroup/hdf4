@@ -23,7 +23,7 @@
 #define JPEGFILE        "tjpeg.hdf"
 #define NONHDF_JPEGFILE "tnonhdf_jpeg.hdf"
 
-static const uint8 jpeg_8bit_orig[JPEGY][JPEGX] = {
+static uint8 jpeg_8bit_orig[JPEGY][JPEGX] = {
     {200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200,
      200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200,
      200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200},
@@ -92,7 +92,7 @@ static const uint8 jpeg_8bit_orig[JPEGY][JPEGX] = {
      200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200,
      200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}};
 
-static const uint8 jpeg_8bit_j80[JPEGY][JPEGX] = {
+static uint8 jpeg_8bit_j80[JPEGY][JPEGX] = {
     {200, 200, 200, 200, 200, 200, 200, 200, 202, 202, 201, 201, 201, 200, 200, 200,
      201, 201, 200, 200, 200, 201, 202, 202, 202, 202, 201, 200, 200, 200, 200, 201,
      200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200},
@@ -161,7 +161,7 @@ static const uint8 jpeg_8bit_j80[JPEGY][JPEGX] = {
      201, 201, 202, 202, 202, 202, 201, 201, 200, 200, 200, 200, 200, 200, 200, 200,
      200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}};
 
-static const uint8 jpeg_8bit_j30[JPEGY][JPEGX] = {
+static uint8 jpeg_8bit_j30[JPEGY][JPEGX] = {
     {199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199,
      199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199,
      199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199},
@@ -230,7 +230,7 @@ static const uint8 jpeg_8bit_j30[JPEGY][JPEGX] = {
      199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199,
      199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199}};
 
-static const uint8 jpeg_8bit_j75[JPEGY][JPEGX] = {
+static uint8 jpeg_8bit_j75[JPEGY][JPEGX] = {
     {200, 200, 200, 200, 200, 200, 200, 200, 198, 198, 198, 199, 199, 200, 200, 200,
      202, 202, 200, 199, 199, 199, 199, 200, 199, 199, 200, 201, 201, 201, 200, 200,
      200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200},
@@ -299,9 +299,7 @@ static const uint8 jpeg_8bit_j75[JPEGY][JPEGX] = {
      201, 201, 202, 202, 202, 202, 201, 201, 200, 200, 200, 200, 200, 200, 200, 200,
      200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}};
 
-/* const uint8  jpeg_24bit_orig[JPEGY][JPEGX][3] =
- */
-const uint8 jpeg_24bit_orig[JPEGY * JPEGX * 3] = {
+static uint8 jpeg_24bit_orig[JPEGY * JPEGX * 3] = {
     255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,
     255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,
     255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,
@@ -457,15 +455,15 @@ const uint8 jpeg_24bit_orig[JPEGY * JPEGX * 3] = {
 
 void test_GRgetcomptype(void); /* in "tdfr8.c" */
 
-static VOID check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy, uint8 *oldim, uint8 *newim,
+static void check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy, uint8 *oldim, uint8 *newim,
                          uint8 *oldpal, uint8 *newpal);
 
 /* These two functions are in tusejpegfuncs.c.  They use JPEG functions directly
    to compress and decompress the same data as in test_r24_jpeg, to verify that
    the DFR24 API work correctly regardless which JPEG library is used */
-intn comp_using_jpeglib(const char *filename, long *file_offset, int im_height, int im_width, int im_ncomps,
-                        int quality, const uint8 *written_buffer);
-intn decomp_using_jpeglib(const char *filename, long file_offset, int im_height, int im_width, int im_ncomps,
+int  comp_using_jpeglib(const char *filename, long *file_offset, int im_height, int im_width, int im_ncomps,
+                        int quality, uint8 *written_buffer);
+int  decomp_using_jpeglib(const char *filename, long file_offset, int im_height, int im_width, int im_ncomps,
                           uint8 *read_buffer);
 void test_r24_jpeg(void);
 
@@ -487,7 +485,7 @@ test_r24(void)
     uint16 ref0, ref1, ref2;
     uint8 *jpeg_24bit_temp;
 
-    jpeg_24bit_temp = (uint8 *)HDmalloc(JPEGX * JPEGY * 3);
+    jpeg_24bit_temp = (uint8 *)malloc(JPEGX * JPEGY * 3);
     if (!jpeg_24bit_temp) {
         fprintf(stderr, "Out of memory!\n");
         exit(1);
@@ -793,7 +791,7 @@ test_r24(void)
         num_errs++;
     }
 
-    HDfree(jpeg_24bit_temp);
+    free(jpeg_24bit_temp);
 
     /* Test 24-bit images with JPEG compression */
     test_r24_jpeg();
@@ -829,7 +827,10 @@ read_binary_block(const char *filename, /* file to be read */
 
     /* Read in the specified block of data */
     readlen = fread((void *)buffer, 1, nitems, fd);
-    return (readlen);
+
+    fclose(fd);
+
+    return readlen;
 }
 
 /* ------------------------------- test_r24_jpeg ------------------------------- */
@@ -858,7 +859,7 @@ test_r24_jpeg(void)
     int ret;
 
     /* Allocate buffer for DF24getimage to store read data */
-    jpeg_24bit_temp = (uint8 *)HDmalloc(JPEGX * JPEGY * 3);
+    jpeg_24bit_temp = (uint8 *)malloc(JPEGX * JPEGY * 3);
     if (!jpeg_24bit_temp) {
         fprintf(stderr, "Out of memory!\n");
         exit(1);
@@ -924,7 +925,7 @@ test_r24_jpeg(void)
 
     /* Compare data decompressed by HDF against that by JPEG lib, the buffers
        should be identical */
-    if (HDmemcmp(jpeg_24bit_temp, jpeglib_readbuf, JPEGY * JPEGX * NCOMPS)) {
+    if (memcmp(jpeg_24bit_temp, jpeglib_readbuf, JPEGY * JPEGX * NCOMPS)) {
         fprintf(stderr, "24-bit JPEG quality 80 image was incorrect\n");
         print_mismatched(jpeg_24bit_temp, jpeglib_readbuf, JPEGY * JPEGX * NCOMPS);
         num_errs++;
@@ -953,7 +954,7 @@ test_r24_jpeg(void)
 
     /* Compare data decompressed by HDF against that by JPEG lib, the buffers
        should be identical */
-    if (HDmemcmp(jpeg_24bit_temp, jpeglib_readbuf, JPEGY * JPEGX * NCOMPS)) {
+    if (memcmp(jpeg_24bit_temp, jpeglib_readbuf, JPEGY * JPEGX * NCOMPS)) {
         fprintf(stderr, "24-bit JPEG quality 30 image was incorrect\n");
         print_mismatched(jpeg_24bit_temp, jpeglib_readbuf, JPEGY * JPEGX * NCOMPS);
         num_errs++;
@@ -982,13 +983,13 @@ test_r24_jpeg(void)
 
     /* Compare data decompressed by HDF against that by JPEG lib, the buffers
        should be identical */
-    if (HDmemcmp(jpeg_24bit_temp, jpeglib_readbuf, JPEGY * JPEGX * NCOMPS)) {
+    if (memcmp(jpeg_24bit_temp, jpeglib_readbuf, JPEGY * JPEGX * NCOMPS)) {
         fprintf(stderr, "24-bit JPEG quality 75 image was incorrect\n");
         print_mismatched(jpeg_24bit_temp, jpeglib_readbuf, JPEGY * JPEGX * NCOMPS);
         num_errs++;
     }
 
-    HDfree(jpeg_24bit_temp);
+    free(jpeg_24bit_temp);
 
     /********************************************************************
       Verify raw data in HDF and NON-HDF files using offsets and lengths.
@@ -1022,9 +1023,9 @@ test_r24_jpeg(void)
         CHECK_VOID(status, FAIL, "GRgetdatainfo");
 
         /* Allocate buffers for the data from the HDF file and non-HDF file */
-        hdf_buffer = (uint8 *)HDmalloc(length * sizeof(uint8));
+        hdf_buffer = (uint8 *)malloc(length * sizeof(uint8));
         CHECK_ALLOC(hdf_buffer, "hdf_buffer", "test_r24_jpeg");
-        nonhdf_buffer = (uint8 *)HDmalloc(length * sizeof(uint8));
+        nonhdf_buffer = (uint8 *)malloc(length * sizeof(uint8));
         CHECK_ALLOC(nonhdf_buffer, "nonhdf_buffer", "test_r24_jpeg");
 
         /* Read the block of data from the HDF file using offset/length returned by
@@ -1040,14 +1041,14 @@ test_r24_jpeg(void)
 
         /* Compare compressed data from the HDF file against that from the
            non-HDF file.  The two buffers should be identical */
-        if (HDmemcmp(hdf_buffer, nonhdf_buffer, length)) {
+        if (memcmp(hdf_buffer, nonhdf_buffer, length)) {
             /* Display any mismatched values for debugging */
             print_mismatched(hdf_buffer, nonhdf_buffer, length);
             num_errs++;
         }
 
-        HDfree(nonhdf_buffer);
-        HDfree(hdf_buffer);
+        free(nonhdf_buffer);
+        free(hdf_buffer);
 
         /* Move forward to the next set of non-HDF data, equivalent to the next
            image in the HDF file JPEGFILE */
@@ -1065,7 +1066,7 @@ test_r24_jpeg(void)
     CHECK_VOID(status, FAIL, "Hclose");
 }
 
-static VOID
+static void
 check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy, uint8 *oldim, uint8 *newim, uint8 *oldpal,
              uint8 *newpal)
 {
@@ -1131,36 +1132,36 @@ test_r8(void)
     int    ispal;
     uint8 *jpeg_8bit_temp;
 
-    im1 = (uint8 *)HDmalloc(XD1 * YD1 * sizeof(uint8));
-    ii1 = (uint8 *)HDmalloc(XD1 * YD1 * sizeof(uint8));
+    im1 = (uint8 *)malloc(XD1 * YD1 * sizeof(uint8));
+    ii1 = (uint8 *)malloc(XD1 * YD1 * sizeof(uint8));
     if (!im1 || !ii1) {
         fprintf(stderr, "Out of memory!\n");
         exit(1);
     }
 
-    im2 = (uint8 *)HDmalloc(XD2 * YD2 * sizeof(uint8));
-    ii2 = (uint8 *)HDmalloc(XD2 * YD2 * sizeof(uint8));
+    im2 = (uint8 *)malloc(XD2 * YD2 * sizeof(uint8));
+    ii2 = (uint8 *)malloc(XD2 * YD2 * sizeof(uint8));
     if (!im2 || !ii2) {
         fprintf(stderr, "Out of memory!\n");
         exit(1);
     }
 
-    im3 = (uint8 *)HDmalloc(XD3 * YD3 * sizeof(uint8));
-    ii3 = (uint8 *)HDmalloc(XD3 * YD3 * sizeof(uint8));
+    im3 = (uint8 *)malloc(XD3 * YD3 * sizeof(uint8));
+    ii3 = (uint8 *)malloc(XD3 * YD3 * sizeof(uint8));
     if (!im3 || !ii3) {
         fprintf(stderr, "Out of memory!\n");
         exit(1);
     }
 
-    pal1 = (uint8 *)HDmalloc(768 * sizeof(char));
-    pal2 = (uint8 *)HDmalloc(768 * sizeof(char));
-    ipal = (uint8 *)HDmalloc(768 * sizeof(char));
+    pal1 = (uint8 *)malloc(768 * sizeof(char));
+    pal2 = (uint8 *)malloc(768 * sizeof(char));
+    ipal = (uint8 *)malloc(768 * sizeof(char));
     if (!ipal || !pal1 || !pal2) {
         fprintf(stderr, "Out of memory!\n");
         exit(1);
     }
 
-    jpeg_8bit_temp = (uint8 *)HDmalloc(JPEGX * JPEGY);
+    jpeg_8bit_temp = (uint8 *)malloc(JPEGX * JPEGY);
     if (!jpeg_8bit_temp) {
         fprintf(stderr, "Out of memory!\n");
         exit(1);
@@ -1202,16 +1203,6 @@ test_r8(void)
     num_images++;
     ref2 = DFR8lastref();
 
-#ifdef DONT_TEST_IMCOMP /* QAK */
-    ret = DFR8setpalette(pal2);
-    RESULT("DFR8setpalette");
-    MESSAGE(5, printf("Putting image IMCOMP compression\n"););
-    ret = DFR8addimage(TESTFILE_R8, im3, XD3, YD3, DFTAG_IMCOMP);
-    RESULT("DFR8addimage");
-    num_images++;
-    ref3 = DFR8lastref();
-#endif /* DONT_TEST_IMCOMP */ /* QAK */
-
     ret = DFR8nimages(TESTFILE_R8);
     if (ret != num_images) {
         fprintf(stderr, "        >>> WRONG NUMBER OF IMAGES <<<\n");
@@ -1235,15 +1226,6 @@ test_r8(void)
 
     ret = DFR8getdims(TESTFILE_R8, &xd, &yd, &ispal);
     RESULT("DFR8getdims");
-
-#ifdef DONT_TEST_IMCOMP /* QAK */
-    MESSAGE(5, printf("Verifying IMCOMP compressed image\n"););
-
-    ret = DFR8getdims(TESTFILE_R8, &xd, &yd, &ispal);
-    RESULT("DFR8getdims");
-    ret = DFR8getimage(TESTFILE_R8, (uint8 *)ii3, (int32)XD3, (int32)YD3, ipal);
-    RESULT("DFR8getimage");
-#endif /* DONT_TEST_IMCOMP */ /* QAK */
 
     MESSAGE(5, printf("Rechecking RLE image\n"););
 
@@ -1308,7 +1290,7 @@ test_r8(void)
     ret = DFR8getimage(JPEGFILE, (uint8 *)jpeg_8bit_temp, JPEGX, JPEGY, NULL);
     RESULT("DFR8getimage");
 
-    if (HDmemcmp(jpeg_8bit_temp, jpeg_8bit_j80, sizeof(jpeg_8bit_orig))) {
+    if (memcmp(jpeg_8bit_temp, jpeg_8bit_j80, sizeof(jpeg_8bit_orig))) {
         fprintf(stderr, "8-bit JPEG quality 80 image was incorrect\n");
         num_errs++;
     }
@@ -1324,7 +1306,7 @@ test_r8(void)
     ret = DFR8getimage(JPEGFILE, (uint8 *)jpeg_8bit_temp, JPEGX, JPEGY, NULL);
     RESULT("DFR8getimage");
 
-    if (HDmemcmp(jpeg_8bit_temp, jpeg_8bit_j30, sizeof(jpeg_8bit_orig))) {
+    if (memcmp(jpeg_8bit_temp, jpeg_8bit_j30, sizeof(jpeg_8bit_orig))) {
         fprintf(stderr, "8-bit JPEG quality 30 image was incorrect\n");
         num_errs++;
     }
@@ -1340,21 +1322,21 @@ test_r8(void)
     ret = DFR8getimage(JPEGFILE, (uint8 *)jpeg_8bit_temp, JPEGX, JPEGY, NULL);
     RESULT("DFR8getimage");
 
-    if (HDmemcmp(jpeg_8bit_temp, jpeg_8bit_j75, sizeof(jpeg_8bit_orig))) {
+    if (memcmp(jpeg_8bit_temp, jpeg_8bit_j75, sizeof(jpeg_8bit_orig))) {
         fprintf(stderr, "8-bit JPEG quality 75 image was incorrect\n");
         num_errs++;
     }
 
-    HDfree(im1);
-    HDfree(ii1);
-    HDfree(im2);
-    HDfree(ii2);
-    HDfree(im3);
-    HDfree(ii3);
-    HDfree(pal1);
-    HDfree(pal2);
-    HDfree(ipal);
-    HDfree(jpeg_8bit_temp);
+    free(im1);
+    free(ii1);
+    free(im2);
+    free(ii2);
+    free(im3);
+    free(ii3);
+    free(pal1);
+    free(pal2);
+    free(ipal);
+    free(jpeg_8bit_temp);
 
     /* Temporarily call to test GRgetcomptype() for hmap project; these tests
        will need to be reformatted. Mar 13, 2011 -BMR */
@@ -1370,9 +1352,9 @@ test_pal(void)
 
     uint8 *pal1, *pal2, *ipal;
 
-    pal1 = (uint8 *)HDmalloc(768 * sizeof(uint8));
-    pal2 = (uint8 *)HDmalloc(768 * sizeof(uint8));
-    ipal = (uint8 *)HDmalloc(768 * sizeof(uint8));
+    pal1 = (uint8 *)malloc(768 * sizeof(uint8));
+    pal2 = (uint8 *)malloc(768 * sizeof(uint8));
+    ipal = (uint8 *)malloc(768 * sizeof(uint8));
     if (!ipal || !pal1 || !pal2) {
         fprintf(stderr, "Out of memory!\n");
         exit(1);
@@ -1405,7 +1387,7 @@ test_pal(void)
     /* read and check palette 1 */
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
-    if (HDmemcmp(ipal, pal1, 768) != 0)
+    if (memcmp(ipal, pal1, 768) != 0)
         for (i = 0; i < 768; i++)
             if ((uint8)pal1[i] != (uint8)ipal[i])
                 printf("Error at %d, ipal %d pal1 %d\n", (int)i, (int)ipal[i], (int)pal1[i]);
@@ -1418,7 +1400,7 @@ test_pal(void)
     /* read and check palette 2 */
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
-    if (HDmemcmp(ipal, pal2, 768) != 0)
+    if (memcmp(ipal, pal2, 768) != 0)
         for (i = 0; i < 768; i++)
             if ((uint8)ipal[i] != (uint8)pal2[i])
                 printf("Error at %d, ipal %d pal2 %d\n", (int)i, (int)ipal[i], (int)pal2[i]);
@@ -1438,7 +1420,7 @@ test_pal(void)
     RESULT("DFPreadref");
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
-    if (HDmemcmp(ipal, pal2, 768) != 0)
+    if (memcmp(ipal, pal2, 768) != 0)
         for (i = 0; i < 768; i++)
             if (ipal[i] != pal2[i])
                 printf("Error at %d, ipal %d pal2 %d\n", i, ipal[i], pal2[i]);
@@ -1448,7 +1430,7 @@ test_pal(void)
     RESULT("DFPreadref");
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
-    if (HDmemcmp(ipal, pal1, 768) != 0)
+    if (memcmp(ipal, pal1, 768) != 0)
         for (i = 0; i < 768; i++)
             if (ipal[i] != pal1[i])
                 printf("Error at %d, ipal %d pal1 %d\n", i, ipal[i], pal1[i]);
@@ -1467,11 +1449,11 @@ test_pal(void)
 
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
-    if (HDmemcmp(ipal, pal1, 768) != 0)
+    if (memcmp(ipal, pal1, 768) != 0)
         for (i = 0; i < 768; i++)
             if (ipal[i] != pal1[i])
                 printf("(%d) Error at %d, ipal %d pal1 %d\n", __LINE__, i, ipal[i], pal1[i]);
-    HDfree(pal1);
-    HDfree(pal2);
-    HDfree(ipal);
+    free(pal1);
+    free(pal2);
+    free(ipal);
 }

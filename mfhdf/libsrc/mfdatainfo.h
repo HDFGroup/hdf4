@@ -14,23 +14,18 @@
 #ifndef MFH4_MFDATAINFO_H
 #define MFH4_MFDATAINFO_H
 
-#include "H4api_adpt.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* Public functions for getting raw data information */
-
-HDFLIBAPI intn SDgetdatainfo(int32 sdsid, int32 *chk_coord, uintn start_block, uintn info_count,
-                             int32 *offsetarray, int32 *lengtharray);
-
-HDFLIBAPI intn SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length);
-
-HDFLIBAPI intn SDgetoldattdatainfo(int32 dimid, int32 sdsid, char *attr_name, int32 *offset, int32 *length);
-
-HDFLIBAPI intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32 *offsetarray,
-                                int32 *lengtharray);
+/*****************************************************************************
+ *
+ * mfdatainfo.h
+ *
+ * The public APIs in this file were moved into mfhdf.h in version 4.3.0.
+ * Applications don't need to and should no longer include this header file.
+ *
+ ******************************************************************************/
 
 #ifdef __cplusplus
 }

@@ -15,19 +15,16 @@
   Credits:
          Original code is part of the public domain 'Generic List Library'
          by Keith Pomakis(kppomaki@jeeves.uwaterloo.ca)-Spring, 1994
-         It has been modified to adhere to HDF coding standards.
-
-  1996/05/29 - George V.
  ************************************************************************/
 
 #ifndef H4_GLIST_H
 #define H4_GLIST_H
 
-#include "hdf.h" /* needed for data types */
+#include "hdfi.h"
 
 /* Structure for each element in the list */
 typedef struct GLE_struct {
-    VOIDP              pointer;  /* data element itself */
+    void              *pointer;  /* data element itself */
     struct GLE_struct *previous; /* previous element */
     struct GLE_struct *next;     /* next element */
 } Generic_list_element;
@@ -38,7 +35,7 @@ typedef struct GLI_struct {
     Generic_list_element  pre_element;     /* pre element */
     Generic_list_element  post_element;    /* post element */
     Generic_list_element  deleted_element; /* deleted element */
-    intn (*lt)(VOIDP a, VOIDP b);          /* sort fcn */
+    intn (*lt)(void *a, void *b);          /* sort fcn */
     uint32 num_of_elements;                /* number of elements */
 } Generic_list_info;
 
@@ -90,7 +87,7 @@ intn HDGLinitialize_list(Generic_list *list /* IN: list */);
      SUCCEED/FAIL
 *******************************************************************************/
 intn HDGLinitialize_sorted_list(Generic_list *list /*IN: list */,
-                                intn (*lt)(VOIDP a, VOIDP b) /*IN:sort fcn */);
+                                intn (*lt)(void *a, void *b) /*IN:sort fcn */);
 
 /******************************************************************************
  NAME
@@ -119,7 +116,7 @@ void HDGLdestroy_list(Generic_list *list /*IN: list */);
     SUCCEED/FAIL
 *******************************************************************************/
 intn HDGLadd_to_beginning(Generic_list list, /*IN: list */
-                          VOIDP        pointer /*IN: data element */);
+                          void        *pointer /*IN: data element */);
 
 /******************************************************************************
  NAME
@@ -131,7 +128,7 @@ intn HDGLadd_to_beginning(Generic_list list, /*IN: list */
     SUCCEED/FAIL
 *******************************************************************************/
 intn HDGLadd_to_end(Generic_list list, /*IN: list */
-                    VOIDP        pointer /*IN: data element */);
+                    void        *pointer /*IN: data element */);
 
 /******************************************************************************
  NAME
@@ -143,7 +140,7 @@ intn HDGLadd_to_end(Generic_list list, /*IN: list */
      SUCCEED/FAIL
 *******************************************************************************/
 intn HDGLadd_to_list(Generic_list list, /*IN: list */
-                     VOIDP        pointer /*IN: data element */);
+                     void        *pointer /*IN: data element */);
 
 /******************************************************************************
  NAME
@@ -154,7 +151,7 @@ intn HDGLadd_to_list(Generic_list list, /*IN: list */
  RETURNS
     First Element if successful and NULL otherwise.
 *******************************************************************************/
-VOIDP HDGLremove_from_beginning(Generic_list list /*IN: list */);
+void *HDGLremove_from_beginning(Generic_list list /*IN: list */);
 
 /******************************************************************************
  NAME
@@ -165,7 +162,7 @@ VOIDP HDGLremove_from_beginning(Generic_list list /*IN: list */);
  RETURNS
     Last element if successful and NULL otherwise
 *******************************************************************************/
-VOIDP HDGLremove_from_end(Generic_list list /*IN: list */);
+void *HDGLremove_from_end(Generic_list list /*IN: list */);
 
 /******************************************************************************
  NAME
@@ -179,8 +176,8 @@ VOIDP HDGLremove_from_end(Generic_list list /*IN: list */);
  RETURNS
     Element removed if successful and NULL otherwise
 *******************************************************************************/
-VOIDP HDGLremove_from_list(Generic_list list, /*IN: list */
-                           VOIDP        pointer /*IN: data element */);
+void *HDGLremove_from_list(Generic_list list, /*IN: list */
+                           void        *pointer /*IN: data element */);
 
 /******************************************************************************
  NAME
@@ -193,7 +190,7 @@ VOIDP HDGLremove_from_list(Generic_list list, /*IN: list */
  RETURNS
     Current element if successful and NULL otherwise.
 *******************************************************************************/
-VOIDP HDGLremove_current(Generic_list list /*IN: list */);
+void *HDGLremove_current(Generic_list list /*IN: list */);
 
 /******************************************************************************
  NAME
@@ -217,7 +214,7 @@ void HDGLremove_all(Generic_list list /*IN: list */);
  RETURNS
     First element in list if non-empty, otherwise NULL.
 *******************************************************************************/
-VOIDP HDGLpeek_at_beginning(Generic_list list /*IN: list */);
+void *HDGLpeek_at_beginning(Generic_list list /*IN: list */);
 
 /******************************************************************************
  NAME
@@ -228,7 +225,7 @@ VOIDP HDGLpeek_at_beginning(Generic_list list /*IN: list */);
  RETURNS
     Last element in list if non-empty, otherwise NULL.
 *******************************************************************************/
-VOIDP HDGLpeek_at_end(Generic_list list /*IN: list */);
+void *HDGLpeek_at_end(Generic_list list /*IN: list */);
 
 /******************************************************************************
  NAME
@@ -239,7 +236,7 @@ VOIDP HDGLpeek_at_end(Generic_list list /*IN: list */);
  RETURNS
     First element in list if non-empty, otherwise NULL.
 *******************************************************************************/
-VOIDP HDGLfirst_in_list(Generic_list list /*IN: list */);
+void *HDGLfirst_in_list(Generic_list list /*IN: list */);
 
 /******************************************************************************
  NAME
@@ -253,7 +250,7 @@ VOIDP HDGLfirst_in_list(Generic_list list /*IN: list */);
  RETURNS
     Current element in list if non-empty, otherwise NULL.
 *******************************************************************************/
-VOIDP HDGLcurrent_in_list(Generic_list list /*IN: list */);
+void *HDGLcurrent_in_list(Generic_list list /*IN: list */);
 
 /******************************************************************************
  NAME
@@ -264,7 +261,7 @@ VOIDP HDGLcurrent_in_list(Generic_list list /*IN: list */);
  RETURNS
     Last element in list if non-empty, otherwise NULL.
 *******************************************************************************/
-VOIDP HDGLlast_in_list(Generic_list list /*IN: list */);
+void *HDGLlast_in_list(Generic_list list /*IN: list */);
 
 /******************************************************************************
  NAME
@@ -276,7 +273,7 @@ VOIDP HDGLlast_in_list(Generic_list list /*IN: list */);
  RETURNS
     Next element in list if non-empty, otherwise NULL.
 *******************************************************************************/
-VOIDP HDGLnext_in_list(Generic_list list /*IN: list */);
+void *HDGLnext_in_list(Generic_list list /*IN: list */);
 
 /******************************************************************************
  NAME
@@ -288,7 +285,7 @@ VOIDP HDGLnext_in_list(Generic_list list /*IN: list */);
  RETURNS
     Previous element in list if non-empty, otherwise NULL.
 *******************************************************************************/
-VOIDP HDGLprevious_in_list(Generic_list list /*IN: list */);
+void *HDGLprevious_in_list(Generic_list list /*IN: list */);
 
 /******************************************************************************
  NAME
@@ -345,7 +342,7 @@ intn HDGLis_empty(Generic_list list /*IN: list */);
     of the list, and FALSE (0) otherwise.
 *******************************************************************************/
 intn HDGLis_in_list(Generic_list list, /*IN: list */
-                    VOIDP        pointer /*IN: data element */);
+                    void        *pointer /*IN: data element */);
 
 /******************************************************************************
  NAME
@@ -369,8 +366,8 @@ Generic_list HDGLcopy_list(Generic_list list /*IN: list */);
     Nothing
 *******************************************************************************/
 void HDGLperform_on_list(Generic_list list,                     /*IN: list */
-                         void (*fn)(VOIDP pointer, VOIDP args), /* IN: iterator fcn */
-                         VOIDP args /*IN: args to iterator fcn */);
+                         void (*fn)(void *pointer, void *args), /* IN: iterator fcn */
+                         void *args /*IN: args to iterator fcn */);
 
 /******************************************************************************
  NAME
@@ -384,9 +381,9 @@ void HDGLperform_on_list(Generic_list list,                     /*IN: list */
  RETURNS
      Element if successful and NULL otherwise.
 *******************************************************************************/
-VOIDP HDGLfirst_that(Generic_list list,                     /*IN: list */
-                     intn (*fn)(VOIDP pointer, VOIDP args), /* IN: iterator fcn */
-                     VOIDP args /*IN: args to iterator fcn */);
+void *HDGLfirst_that(Generic_list list,                     /*IN: list */
+                     intn (*fn)(void *pointer, void *args), /* IN: iterator fcn */
+                     void *args /*IN: args to iterator fcn */);
 
 /******************************************************************************
  NAME
@@ -401,9 +398,9 @@ VOIDP HDGLfirst_that(Generic_list list,                     /*IN: list */
  RETURNS
      Element if successful and NULL otherwise.
 *******************************************************************************/
-VOIDP HDGLnext_that(Generic_list list,                     /*IN: list */
-                    intn (*fn)(VOIDP pointer, VOIDP args), /* IN: iterator fcn */
-                    VOIDP args /*IN: args to iterator fcn */);
+void *HDGLnext_that(Generic_list list,                     /*IN: list */
+                    intn (*fn)(void *pointer, void *args), /* IN: iterator fcn */
+                    void *args /*IN: args to iterator fcn */);
 
 /******************************************************************************
  NAME
@@ -418,9 +415,9 @@ VOIDP HDGLnext_that(Generic_list list,                     /*IN: list */
  RETURNS
      Element if successful and NULL otherwise.
 *******************************************************************************/
-VOIDP HDGLprevious_that(Generic_list list,                     /*IN: list */
-                        intn (*fn)(VOIDP pointer, VOIDP args), /* IN: iterator fcn */
-                        VOIDP args /*IN: args to iterator fcn */);
+void *HDGLprevious_that(Generic_list list,                     /*IN: list */
+                        intn (*fn)(void *pointer, void *args), /* IN: iterator fcn */
+                        void *args /*IN: args to iterator fcn */);
 
 /******************************************************************************
  NAME
@@ -434,9 +431,9 @@ VOIDP HDGLprevious_that(Generic_list list,                     /*IN: list */
  RETURNS
      Element if successful and NULL otherwise.
 *******************************************************************************/
-VOIDP HDGLlast_that(Generic_list list,                     /*IN: list */
-                    intn (*fn)(VOIDP pointer, VOIDP args), /* IN: iterator fcn */
-                    VOIDP args /*IN: args to iterator fcn */);
+void *HDGLlast_that(Generic_list list,                     /*IN: list */
+                    intn (*fn)(void *pointer, void *args), /* IN: iterator fcn */
+                    void *args /*IN: args to iterator fcn */);
 
 /******************************************************************************
  NAME
@@ -451,8 +448,8 @@ VOIDP HDGLlast_that(Generic_list list,                     /*IN: list */
     New list if successful and empty if not.
 *******************************************************************************/
 Generic_list HDGLall_such_that(Generic_list list,                     /*IN: list */
-                               intn (*fn)(VOIDP pointer, VOIDP args), /* IN: iterator fcn */
-                               VOIDP args /*IN: args to iterator fcn */);
+                               intn (*fn)(void *pointer, void *args), /* IN: iterator fcn */
+                               void *args /*IN: args to iterator fcn */);
 
 /******************************************************************************
  NAME
@@ -468,8 +465,8 @@ Generic_list HDGLall_such_that(Generic_list list,                     /*IN: list
      Nothing
 *******************************************************************************/
 void HDGLremove_all_such_that(Generic_list list,                     /*IN: list */
-                              intn (*fn)(VOIDP pointer, VOIDP args), /* IN: iterator fcn */
-                              VOIDP args /*IN: args to iterator fcn */);
+                              intn (*fn)(void *pointer, void *args), /* IN: iterator fcn */
+                              void *args /*IN: args to iterator fcn */);
 
 /****************************************************************************/
 /*

@@ -32,9 +32,10 @@
  *		named variables.)
  ****************************************************************************/
 
-#include "mfhdf.h"
+#include <stdlib.h>
+#include <string.h>
 
-#ifdef HDF
+#include "mfhdf.h"
 
 #include "hdftest.h"
 
@@ -88,7 +89,8 @@ test_dim1_SDS1(void)
     float32        sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
     float32        out_data[5];
     int32          dimsize[1];
-    int32          sds_id, file_id, dim_id, index;
+    int32          sds_id, file_id, dim_id;
+    int32          index = FAIL;
     int32          start = 0, stride = 1;
     int32          num_type, count;
     int32          n_datasets, n_file_attrs, n_vars = 0;
@@ -134,7 +136,7 @@ test_dim1_SDS1(void)
     VERIFY(n_datasets, 2, "SDfileinfo");
 
     /* Write data to the SDS */
-    status = SDwritedata(sds_id, &start, &stride, dimsize, (VOIDP)sds1_data);
+    status = SDwritedata(sds_id, &start, &stride, dimsize, (void *)sds1_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Close dataset and file. */
@@ -159,7 +161,7 @@ test_dim1_SDS1(void)
     }
     else {
         /* Get the list of all variables of named VAR1_NAME */
-        var_list = (hdf_varlist_t *)HDmalloc(n_vars * sizeof(hdf_varlist_t));
+        var_list = (hdf_varlist_t *)malloc(n_vars * sizeof(hdf_varlist_t));
         status   = SDnametoindices(file_id, VAR1_NAME, var_list);
 
         /* In this case, the first variable is a dataset */
@@ -170,7 +172,7 @@ test_dim1_SDS1(void)
             }
         }
     }
-    HDfree(var_list);
+    free(var_list);
 
     sds_id = SDselect(file_id, index);
     CHECK(sds_id, FAIL, "SDselect");
@@ -183,13 +185,13 @@ test_dim1_SDS1(void)
     status = SDattrinfo(sds_id, 0, attr_name, &num_type, &count);
     CHECK(status, FAIL, "SDattrinfo");
     VERIFY(count, ATTR2_LEN, "SDattrinfo");
-    VERIFY(HDstrncmp(attr_name, ATTR2_NAME, 14), 0, "SDattrinfo");
+    VERIFY(strncmp(attr_name, ATTR2_NAME, 14), 0, "SDattrinfo");
 
     /* Read and verify the values of the SDS' first attribute. */
     status = SDreadattr(sds_id, 0, attr_values);
     CHECK(status, FAIL, "SDreadattr");
 
-    if (HDstrncmp(attr_values, ATTR2_VAL, ATTR2_LEN) != 0) {
+    if (strncmp(attr_values, ATTR2_VAL, ATTR2_LEN) != 0) {
         fprintf(stderr, "Unmatched attribute values for SDS %s: is <%s>, should be <%s>\n", VAR1_NAME,
                 attr_values, ATTR2_VAL);
         num_errs++;
@@ -203,13 +205,13 @@ test_dim1_SDS1(void)
     status = SDattrinfo(dim_id, 0, attr_name, &num_type, &count);
     CHECK(status, FAIL, "SDattrinfo");
     VERIFY(count, 19, "SDattrinfo");
-    VERIFY(HDstrncmp(attr_name, ATTR1_NAME, 21), 0, "SDattrinfo");
+    VERIFY(strncmp(attr_name, ATTR1_NAME, 21), 0, "SDattrinfo");
 
     /* Read and verify the values of the dimension's first attribute. */
     status = SDreadattr(dim_id, 0, attr_values);
     CHECK(status, FAIL, "SDreadattr");
 
-    if (HDstrncmp(attr_values, ATTR1_VAL, ATTR1_LEN) != 0) {
+    if (strncmp(attr_values, ATTR1_VAL, ATTR1_LEN) != 0) {
         fprintf(stderr, "Unmatched attribute values for dimension %s: is <%s>, should be <%s>\n", VAR1_NAME,
                 attr_values, ATTR1_VAL);
         num_errs++;
@@ -228,8 +230,8 @@ test_dim1_SDS1(void)
 
     for (idx1 = 0; idx1 < dimsize[0]; idx1++)
         if (out_data[idx1] != sds1_data[idx1]) {
-            fprintf(stderr, "Read value (%f) differs from written (%f) at [%d]\n", out_data[idx1],
-                    sds1_data[idx1], idx1);
+            fprintf(stderr, "Read value (%f) differs from written (%f) at [%d]\n", (double)out_data[idx1],
+                    (double)sds1_data[idx1], idx1);
             num_errs++;
         }
 
@@ -398,7 +400,7 @@ test_dim1_SDS2(void)
         for (idx2 = 0; idx2 < dimsize2[1]; idx2++) {
             if (out_data2[idx1][idx2] != sds2_data[idx1][idx2]) {
                 fprintf(stderr, "Read value (%f) differs from written (%f) at [%d][%d]\n",
-                        out_data2[idx1][idx2], sds2_data[idx1][idx2], idx1, idx2);
+                        (double)out_data2[idx1][idx2], (double)sds2_data[idx1][idx2], idx1, idx2);
                 num_errs++;
             }
         }
@@ -578,13 +580,13 @@ test_named_vars(void)
     CHECK(status, FAIL, "SDgetnumvars_byname");
     VERIFY(n_vars, 3, "SDgetnumvars_byname");
 
-    allvars = (hdf_varlist_t *)HDmalloc(n_vars * sizeof(hdf_varlist_t));
+    allvars = (hdf_varlist_t *)malloc(n_vars * sizeof(hdf_varlist_t));
     status  = SDnametoindices(file_id, COMMON_NAME, allvars);
     CHECK(status, FAIL, "SDnametoindices");
     VERIFY(allvars[0].var_type, IS_SDSVAR, "SDnametoindices");
     VERIFY(allvars[1].var_type, IS_SDSVAR, "SDnametoindices");
     VERIFY(allvars[2].var_type, IS_CRDVAR, "SDnametoindices");
-    HDfree(allvars);
+    free(allvars);
 
     /* Compare file contents with predefined text to verify */
     for (idx = 0; idx < n_datasets; idx++) {
@@ -635,5 +637,3 @@ test_coordvar()
 
     return num_errs;
 }
-
-#endif /* HDF */

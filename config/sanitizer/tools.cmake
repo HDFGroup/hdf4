@@ -14,70 +14,49 @@
 # the License.
 
 option(IWYU "Turns on include-what-you-use processing if it is found." OFF)
-option(CPPCHECK "Turns on cppcheck processing if it is found." OFF)
+if(IWYU)
+  find_program(IWYU_EXE NAMES "include-what-you-use")
+  mark_as_advanced(FORCE IWYU_EXE)
+  if(IWYU_EXE)
+    message(STATUS "include-what-you-use found: ${IWYU_EXE}")
+  else()
+    message(SEND_ERROR "Cannot enable include-what-you-use, as executable not found!")
+    set(CMAKE_C_INCLUDE_WHAT_YOU_USE "" CACHE STRING "" FORCE) # delete it
+  endif()
+else()
+  #message(STATUS "include-what-you-use NOT ENABLED via 'IWYU' variable!")
+  set(CMAKE_C_INCLUDE_WHAT_YOU_USE "" CACHE STRING "" FORCE) # delete it
+endif()
 
 # Adds include_what_you_use to the compilation, with the given arguments being
 # used as the options set.
 macro(include_what_you_use)
   if(IWYU AND IWYU_EXE)
-    set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE ${IWYU_EXE} ${ARGN})
+    set(CMAKE_C_INCLUDE_WHAT_YOU_USE ${IWYU_EXE} ${ARGN})
   endif()
 endmacro()
+
+option(CPPCHECK "Turns on cppcheck processing if it is found." OFF)
+if(CPPCHECK)
+  if(CPPCHECK_EXE)
+    message(STATUS "cppcheck found: ${CPPCHECK_EXE}")
+    set(CMAKE_C_CPPCHECK
+        "${CPPCHECK_EXE};--enable=warning,performance,portability,missingInclude;--template=\"[{severity}][{id}] {message} {callstack} \(On {file}:{line}\)\";--suppress=missingIncludeSystem;--quiet;--verbose;--force"
+    )
+  else()
+    message(SEND_ERROR "Cannot enable cppcheck, as executable not found!")
+    set(CMAKE_C_CPPCHECK "" CACHE STRING "" FORCE) # delete it
+  endif()
+else()
+  #  message(SEND_ERROR "cppcheck NOT ENABLED via 'CPPCHECK' variable!")
+  set(CMAKE_C_CPPCHECK "" CACHE STRING "" FORCE) # delete it
+endif()
 
 # Adds cppcheck to the compilation, with the given arguments being used as the
 # options set.
 macro(cppcheck)
   if(CPPCHECK AND CPPCHECK_EXE)
-    set(CMAKE_CXX_CPPCHECK ${CPPCHECK_EXE} ${ARGN})
+    set(CMAKE_C_CPPCHECK ${CPPCHECK_EXE} ${ARGN})
   endif()
 endmacro()
 
-find_program(IWYU_EXE NAMES "include-what-you-use")
-mark_as_advanced(FORCE IWYU_EXE)
-if(IWYU_EXE)
-  message(STATUS "include-what-you-use found: ${IWYU_EXE}")
-  if(NOT IWYU)
-    message(STATUS "include-what-you-use NOT ENABLED via 'IWYU' variable!")
-    set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE
-        ""
-        CACHE STRING "" FORCE) # delete it
-  endif()
-elseif(IWYU)
-  message(
-    SEND_ERROR "Cannot enable include-what-you-use, as executable not found!")
-  set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE
-      ""
-      CACHE STRING "" FORCE) # delete it
-else()
-  message(STATUS "include-what-you-use not found!")
-  set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE
-      ""
-      CACHE STRING "" FORCE) # delete it
-endif()
-
-find_program(CPPCHECK_EXE NAMES "cppcheck")
-mark_as_advanced(FORCE CPPCHECK_EXE)
-if(CPPCHECK_EXE)
-  message(STATUS "cppcheck found: ${CPPCHECK_EXE}")
-  if(CPPCHECK)
-    set(CMAKE_CXX_CPPCHECK
-        "${CPPCHECK_EXE};--enable=warning,performance,portability,missingInclude;--template=\"[{severity}][{id}] {message} {callstack} \(On {file}:{line}\)\";--suppress=missingIncludeSystem;--quiet;--verbose;--force"
-    )
-  endif()
-  if(NOT CPPCHECK)
-    message(STATUS "cppcheck NOT ENABLED via 'CPPCHECK' variable!")
-    set(CMAKE_CXX_CPPCHECK
-        ""
-        CACHE STRING "" FORCE) # delete it
-  endif()
-elseif(CPPCHECK)
-  message(SEND_ERROR "Cannot enable cppcheck, as executable not found!")
-  set(CMAKE_CXX_CPPCHECK
-      ""
-      CACHE STRING "" FORCE) # delete it
-else()
-  message(STATUS "cppcheck not found!")
-  set(CMAKE_CXX_CPPCHECK
-      ""
-      CACHE STRING "" FORCE) # delete it
-endif()

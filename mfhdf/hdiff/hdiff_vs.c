@@ -44,11 +44,20 @@ diff_vs(int32 file1_id, int32 file2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
         vdata2_size, interlace2_mode;
     char   vdata1_name[VSNAMELENMAX];
     char   vdata1_class[VSNAMELENMAX];
-    char   fieldname1_list[VSFIELDMAX * FIELDNAMELENMAX];
+    char  *fieldname1_list = NULL;
     char   vdata2_name[VSNAMELENMAX];
     char   vdata2_class[VSNAMELENMAX];
-    char   fieldname2_list[VSFIELDMAX * FIELDNAMELENMAX];
-    uint32 nfound = 0;
+    char  *fieldname2_list = NULL;
+    uint32 nfound          = 0;
+
+    if (NULL == (fieldname1_list = (char *)calloc(VSFIELDMAX * FIELDNAMELENMAX, sizeof(char)))) {
+        printf("Error: Could not allocate memory\n");
+        goto out;
+    }
+    if (NULL == (fieldname2_list = (char *)calloc(VSFIELDMAX * FIELDNAMELENMAX, sizeof(char)))) {
+        printf("Error: Could not allocate memory\n");
+        goto out;
+    }
 
     /*-------------------------------------------------------------------------
      * object 1
@@ -161,9 +170,14 @@ do_nothing:
         }
     }
 
+    free(fieldname1_list);
+    free(fieldname2_list);
+
     return nfound;
 
 out:
+    free(fieldname1_list);
+    free(fieldname2_list);
 
     opt->err_stat = 1;
     return 0;
@@ -184,17 +198,28 @@ vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, diff_opt_t *opt)
     uint32          err_cnt;
     int32           nv1, interlace1, vsize1;
     int32           vsotag1;
-    char            fields1[VSFIELDMAX * FIELDNAMELENMAX];
     char            vsclass1[VSNAMELENMAX], vsname1[VSNAMELENMAX];
     int32           nv2, interlace2, vsize2;
     int32           vsotag2;
-    char            fields2[VSFIELDMAX * FIELDNAMELENMAX];
     char            vsclass2[VSNAMELENMAX], vsname2[VSNAMELENMAX];
-    uint8          *buf1, *buf2, *b1, *b2;
+    uint8          *b1, *b2;
     int32           off1[60], off2[60];
     DYN_VWRITELIST *w1, *w2;
     uint32          nfound      = 0;
     uint32          max_err_cnt = opt->max_err_cnt;
+
+    uint8 *buf1    = NULL;
+    uint8 *buf2    = NULL;
+    char  *fields1 = NULL;
+    char  *fields2 = NULL;
+
+    fields1 = (char *)calloc((VSFIELDMAX * FIELDNAMELENMAX), sizeof(char));
+    fields2 = (char *)calloc((VSFIELDMAX * FIELDNAMELENMAX), sizeof(char));
+    if (fields1 == NULL || fields2 == NULL) {
+        printf("Out of memory!");
+        opt->err_stat = 1;
+        goto out;
+    }
 
     VSinquire(vs1, &nv1, &interlace1, fields1, &vsize1, vsname1);
     VSinquire(vs2, &nv2, &interlace2, fields2, &vsize2, vsname2);
@@ -213,17 +238,17 @@ vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, diff_opt_t *opt)
                fields1, vsize1, vsclass1);
         printf("< <%d> nrec=%d interlace=%d fld=[%s] vsize=%d class={%s})\n", vsotag2, nv2, interlace2,
                fields2, vsize2, vsclass2);
-        return 0;
+        goto out;
     }
 
     /* compare the data */
 
-    buf1 = (uint8 *)HDmalloc((unsigned)(nv1 * vsize1));
-    buf2 = (uint8 *)HDmalloc((unsigned)(nv2 * vsize2));
-    if (!buf1 || !buf2) {
+    buf1 = (uint8 *)malloc((unsigned)(nv1 * vsize1));
+    buf2 = (uint8 *)malloc((unsigned)(nv2 * vsize2));
+    if (buf1 == NULL || buf2 == NULL) {
         printf("Out of memory!");
         opt->err_stat = 1;
-        return 0;
+        goto out;
     }
 
     VSsetfields(vs1, fields1);
@@ -249,7 +274,7 @@ vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, diff_opt_t *opt)
 
     if (vsize1 == vsize2) {
         for (i = 0; i < nv1; i++) {
-            if (HDmemcmp(b1, b2, (size_t)vsize1) == 0) {
+            if (memcmp(b1, b2, (size_t)vsize1) == 0) {
                 b1 += vsize1;
                 b2 += vsize2;
                 continue;
@@ -327,10 +352,12 @@ vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, diff_opt_t *opt)
         }
     }
 
-    if (buf1)
-        HDfree((char *)buf1);
-    if (buf2)
-        HDfree((char *)buf2);
+out:
+    free(buf1);
+    free(buf2);
+
+    free(fields1);
+    free(fields2);
 
     return nfound;
 }
@@ -363,27 +390,27 @@ fmt_print(uint8 *x, int32 type)
 
         case DFNT_UINT16:
         case DFNT_INT16:
-            HDmemcpy(&s, x, sizeof(int16));
+            memcpy(&s, x, sizeof(int16));
             printf("%d", s);
             break;
 
         case DFNT_UINT32:
-            HDmemcpy(&l, x, sizeof(int32));
+            memcpy(&l, x, sizeof(int32));
             printf("%u", l);
             break;
 
         case DFNT_INT32:
-            HDmemcpy(&l, x, sizeof(int32));
+            memcpy(&l, x, sizeof(int32));
             printf("%d", l);
             break;
 
         case DFNT_FLOAT32:
-            HDmemcpy(&f, x, sizeof(float32));
-            printf("%f", f);
+            memcpy(&f, x, sizeof(float32));
+            printf("%f", (double)f);
             break;
 
         case DFNT_FLOAT64:
-            HDmemcpy(&d, x, sizeof(float64));
+            memcpy(&d, x, sizeof(float64));
             printf("%f", d);
             break;
 

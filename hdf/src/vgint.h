@@ -28,8 +28,7 @@
 #ifndef H4_VGINT_H
 #define H4_VGINT_H
 
-#include "H4api_adpt.h"
-
+#include "hdfi.h"
 #include "hfile.h"
 
 /* Include file for Threaded, Balanced Binary Tree implementation */
@@ -172,7 +171,7 @@ struct vdata_desc {
 /* .................................................................. */
 /* Private data structures. Unlikely to be of interest to applications */
 /*
- * These are just typedefs. Actual vfile_ts are declared PRIVATE and
+ * These are just typedefs. Actual vfile_ts are declared static and
  * are not accessible by applications. However, you may change VFILEMAX
  * to allow however many files to be opened.
  *

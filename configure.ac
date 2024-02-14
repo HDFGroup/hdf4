@@ -13,9 +13,10 @@
 ## help@hdfgroup.org.
 ##
 
-## ======================================================================
+## ----------------------------------------------------------------------
 ## Initialize configure.
-## ======================================================================
+##
+
 ## AC_INIT takes the name of the package, the version number, and an
 ## email address to report bugs. AC_CONFIG_SRCDIR takes a unique file
 ## as its argument.
@@ -23,10 +24,12 @@
 ## NOTE: Do not forget to change the version number here when we do a
 ## release!!!
 ##
-AC_INIT([HDF],[4.2.15-post0],[help@hdfgroup.org])
+AC_INIT([HDF], [4.2.17-1], [help@hdfgroup.org])
+
 AC_CONFIG_SRCDIR([hdf/src/atom.c])
-AC_CONFIG_AUX_DIR([bin])
 AC_CONFIG_HEADERS([hdf/src/h4config.h])
+
+AC_CONFIG_AUX_DIR([bin])
 AC_CONFIG_MACRO_DIR([m4])
 
 ## AM_INIT_AUTOMAKE takes a list of options that should be applied to
@@ -39,7 +42,7 @@ AM_INIT_AUTOMAKE([foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])]) # use silent rules where available - automake 1.11
 
 ## AM_MAINTAINER_MODE determines the behavior of "rebuild rules" that contain
-## dependencies for Makefile.in files, configure, src/H5config.h, etc. If
+## dependencies for Makefile.in files, configure, config.h, etc. If
 ## AM_MAINTAINER_MODE is enabled, these files will be rebuilt if out of date.
 ## When disabled, the autotools build files can get out of sync and the build
 ## system will not complain or try to regenerate downstream files.
@@ -104,16 +107,41 @@ AC_CONFIG_COMMANDS([h4config], [
   rm -f libhdf4.settings.TMP
 ])
 
-## ======================================================================
-## Information on the package
-## ======================================================================
+## It's possible to configure for a host other than the one on which
+## configure is currently running by using the --host=foo flag.
+## For machines on which HDF4 is often configured, it can be convenient
+## to specify the name of the machine rather than its canonical type.
+##
+## There are currently no hosts, but if there were they would be
+## listed by hostname and the alias would point to a file in
+## the config directory:
+##
+##case $host_alias in
+##  <some host>)
+##    host_alias=<config file in config directory>
+##    ;;
+##esac
 
+AC_CANONICAL_HOST
+AC_SUBST([JNIFLAGS])
+AC_SUBST([AR_FLAGS])
+
+##
+##  FUTURE H4_XXFLAGS GO HERE
+##
+
+## ----------------------------------------------------------------------
 ## Dump all shell variables values.
+##
 AC_MSG_CHECKING([shell variables initial values])
 set >&AS_MESSAGE_LOG_FD
 AC_MSG_RESULT([done])
 
-AC_CANONICAL_HOST
+## ----------------------------------------------------------------------
+## Save system information for the library settings file.
+##
+AC_SUBST([UNAME_INFO])
+UNAME_INFO=`uname -a`
 
 ## ----------------------------------------------------------------------
 ## Some platforms have broken basename, and/or xargs programs. Check
@@ -136,6 +164,20 @@ if test $XARGS_TEST != "xargs_works"; then
   AC_MSG_ERROR([xargs program doesn't work])
 else
   AC_MSG_RESULT([yes])
+fi
+
+## ----------------------------------------------------------------------
+## Check that the cache file was build on the same host as what we're
+## running on now.
+##
+AC_CACHE_CHECK([for cached host], [hdf4_cv_host], [hdf4_cv_host="none"]);
+if test $hdf4_cv_host = "none"; then
+  hdf4_cv_host=$host
+elif test $hdf4_cv_host != $host; then
+  AC_MSG_ERROR([
+     The config.cache file was generated on $hdf4_cv_host but
+     this is $host.  Please remove that file and try again.
+     config.cache file is invalid])
 fi
 
 ## Source any special files that we need. These files normally aren't
@@ -192,23 +234,35 @@ if test "X$host_config" != "Xnone"; then
 fi
 
 ## ======================================================================
-## Checks for NetCDF-2.3.2 support
+## Checks for netCDF-2.3.2 support
 ## ======================================================================
 
-# We disable Fortran netCDF APIs and their testing when --disable-netcdf is used.
-# Let's define a proper variable to be used in mfhdf/testfortran.sh.in to run
-# the netCDF Fortran APIs test program "ftest".
-AC_SUBST(TEST_FORTRAN_NETCDF) TEST_FORTRAN_NETCDF="yes"
+# NOTE!     We disable Fortran netCDF APIs and their testing when
+#           --disable-netcdf is used to avoid conflicts
+
+
+# Define a proper variable to be used in mfhdf/testfortran.sh.in to run
+# the netCDF Fortran APIs test program "ftest"
+AC_SUBST(TEST_FORTRAN_NETCDF)
+TEST_FORTRAN_NETCDF="yes"
 
 AC_ARG_ENABLE([netcdf],
               [AS_HELP_STRING([--enable-netcdf],
-                              [Build HDF4 versions of NetCDF APIs (version 2.3.2) [default=yes]])],,
+                              [HDF4 builds replacement netCDF 2.3.2 API calls that are exported (e.g., ncopen()).
+                               Enabling this option uses the original netCDF names when building these functions.
+                               Disable prefixes them with 'sd_' to avoid name clashes.
+                               This does NOT affect building the HDF4-built netCDF tools ncdump and ncgen,
+                               nor does it disable any HDF4 functionality - this option only affects
+                               API call names.
+                               Disabling this option disables building the netCDF Fortran wrappers (they
+                               will not be built with either the original or sd_ prefixed names).
+                               [default=yes (HDF4-built netCDF API calls will be exported undecorated)]])],,
               [enableval="yes"])
 
 case "$enableval" in
   yes)
     BUILD_NETCDF="yes"
-    AC_DEFINE([HAVE_NETCDF], [1], [Define if we support HDF NetCDF APIs version 2.3.2])
+    AC_DEFINE([HAVE_NETCDF], [1], [Define if we export HDF4-built unmangled netCDF 2.3.2 API calls])
     ;;
   no)
     BUILD_NETCDF="no"
@@ -218,11 +272,28 @@ esac
 AM_CONDITIONAL([HDF_BUILD_NETCDF], [test "X$BUILD_NETCDF" = "Xyes"])
 AC_SUBST([BUILD_NETCDF])
 
+# It is also possible to disable building the netCDF tools ncdump and ncgen.
+# Some users may want to do this since our tools will conflict with netCDF's
+# if they are installed. This will also disable building nctest.
+AC_ARG_ENABLE([netcdf-tools],
+              [AS_HELP_STRING([--enable-netcdf-tools],
+                              [Build HDF4 versions of NetCDF tools (ncgen, ncdump) [default=yes]])],,
+              [enableval="yes"])
+
+case "$enableval" in
+  yes)
+    BUILD_NETCDF_TOOLS="yes"
+    ;;
+  no)
+    BUILD_NETCDF_TOOLS="no"
+    ;;
+esac
+AM_CONDITIONAL([HDF_BUILD_NETCDF_TOOLS], [test "X$BUILD_NETCDF_TOOLS" = "Xyes"])
+AC_SUBST([BUILD_NETCDF_TOOLS])
+
 ## ======================================================================
 ## Checks for programs
 ## ======================================================================
-
-AC_PROG_MAKE_SET
 
 AC_PROG_CC
 AC_PROG_CPP
@@ -260,7 +331,6 @@ AC_SUBST([BUILD_FORTRAN])
 ## ----------------------------------------------------------------------
 ## Check if they would like the Java native interface (JNI) compiled
 ##
-AC_SUBST([JNIFLAGS])
 AC_SUBST([H4_JAVACFLAGS])
 AC_SUBST([H4_JAVAFLAGS])
 
@@ -330,37 +400,154 @@ if test "X${enable_shared}" = "Xyes"; then
     fi
 fi
 
-AC_PROG_INSTALL
 AC_PROG_LN_S
 
-AC_CHECK_PROGS([AR], [ar xar], [:], [$PATH])
 
-AC_CHECK_PROGS([YACC], ['bison -y' byacc yacc], [none], [])
-
-if test "$YACC" = "none"; then
-  AC_MSG_ERROR([cannot find yacc utility])
+## ----------------------------------------------------------------------
+## Check which archiving tool to use. This needs to be done before
+## the LT_INIT macro.
+##
+if test -z "$AR"; then
+  AC_CHECK_PROGS([AR], [ar xar], [:], [$PATH])
 fi
+AC_SUBST([AR])
 
-AC_CHECK_PROGS([LEX], [flex lex], [none], [])
+# Set the default ar flags to cr
+# The Automake default is to use cru and the 'u' causes ar
+# to emit warnings on some platforms.
+AR_FLAGS=cr
 
-if test "$LEX" = "none"; then
-  AC_MSG_ERROR([cannot find lex utility])
-fi
+## Export the AR macro so that it will be placed in the libtool file
+## correctly.
+export AR
+
+AC_PROG_MAKE_SET
+AC_PROG_INSTALL
 
 AC_CHECK_PROG([DIFF],     [diff],     [diff -w])
 AC_CHECK_PROG([MAKEINFO], [makeinfo], [makeinfo])
 AC_CHECK_PROG([NEQN],     [neqn],     [neqn])
 AC_CHECK_PROG([TBL],      [tbl],      [tbl])
 
-AC_SUBST([AR])
 AC_SUBST([DIFF])
 AC_SUBST([STATIC_SHARED])
 AC_SUBST([SHARED_EXTENSION])
 AC_SUBST([enable_shared])
 AC_SUBST([enable_static])
-AC_SUBST([UNAME_INFO]) UNAME_INFO=`uname -a`
 AC_SUBST([STATIC_EXEC]) STATIC_EXEC=no
 AC_SUBST([LT_STATIC_EXEC])
+
+## ----------------------------------------------------------------------
+## Check if they would like to enable building doxygen files
+##
+
+## This needs to be exposed for the library info file.
+AC_SUBST([HDF4_DOXYGEN])
+
+## Default is to not build DOXYGEN
+HDF4_DOXYGEN=no
+
+AC_MSG_CHECKING([if building doxygen is enabled])
+
+AC_ARG_ENABLE([doxygen],
+              [AS_HELP_STRING([--enable-doxygen],
+                              [Compile the HDF4 doxygen files [default=no]])],
+              [HDF4_DOXYGEN=$enableval])
+
+AC_MSG_RESULT([$HDF4_DOXYGEN])
+
+## Check if they would like to enable doxygen warnings as errors
+##
+
+## This needs to be exposed for the library info file.
+AC_SUBST([HDF4_DOXY_WARNINGS])
+
+## Default is to consider doxygen warnings as errors
+DOXY_ERR=yes
+
+AC_MSG_CHECKING([if doxygen warnings as errors is enabled])
+
+AC_ARG_ENABLE([doxygen-errors],
+              [AS_HELP_STRING([--enable-doxygen-errors],
+                              [Error on HDF4 doxygen warnings [default=yes]])],
+              [DOXY_ERR=$enableval])
+
+if test "X$DOXY_ERR" = "Xyes"; then
+    HDF4_DOXY_WARNINGS="FAIL_ON_WARNINGS"
+else
+    HDF4_DOXY_WARNINGS="NO"
+
+fi
+AC_MSG_RESULT([$HDF4_DOXY_WARNINGS])
+
+if test "X$HDF4_DOXYGEN" = "Xyes"; then
+  DX_DOXYGEN_FEATURE(ON)
+  DX_DOT_FEATURE(OFF)
+  DX_HTML_FEATURE(ON)
+  DX_CHM_FEATURE(OFF)
+  DX_CHI_FEATURE(OFF)
+  DX_MAN_FEATURE(ON)
+  DX_RTF_FEATURE(OFF)
+  DX_XML_FEATURE(OFF)
+  DX_PDF_FEATURE(OFF)
+  DX_PS_FEATURE(OFF)
+
+  AC_SUBST([DOXYGEN_PACKAGE])
+  AC_SUBST([DOXYGEN_VERSION_STRING])
+  AC_SUBST([DOXYGEN_DIR])
+  AC_SUBST([DOXYGEN_INCLUDE_ALIASES])
+  AC_SUBST([DOXYGEN_PROJECT_LOGO])
+  AC_SUBST([DOXYGEN_PROJECT_BRIEF])
+  AC_SUBST([DOXYGEN_INPUT_DIRECTORY])
+  AC_SUBST([DOXYGEN_OPTIMIZE_OUTPUT_FOR_C])
+  AC_SUBST([DOXYGEN_MACRO_EXPANSION])
+  AC_SUBST([DOXYGEN_OUTPUT_DIRECTORY])
+  AC_SUBST([DOXYGEN_EXAMPLES_DIRECTORY])
+  AC_SUBST([DOXYGEN_LAYOUT_FILE])
+  AC_SUBST([DOXYGEN_HTML_HEADER])
+  AC_SUBST([DOXYGEN_HTML_FOOTER])
+  AC_SUBST([DOXYGEN_HTML_EXTRA_STYLESHEET])
+  AC_SUBST([DOXYGEN_HTML_EXTRA_FILES])
+  AC_SUBST([DOXYGEN_TAG_FILE])
+  AC_SUBST([DOXYGEN_SERVER_BASED_SEARCH])
+  AC_SUBST([DOXYGEN_EXTERNAL_SEARCH])
+  AC_SUBST([DOXYGEN_SEARCHENGINE_URL])
+  AC_SUBST([DOXYGEN_STRIP_FROM_PATH])
+  AC_SUBST([DOXYGEN_STRIP_FROM_INC_PATH])
+  AC_SUBST([DOXYGEN_PREDEFINED])
+
+# SRCDIR Environment variables used inside doxygen macro for the source location:
+  DOXYGEN_PACKAGE=${PACKAGE_NAME}
+  DOXYGEN_VERSION_STRING=${PACKAGE_VERSION}
+  DOXYGEN_DIR='$(SRCDIR)/doxygen'
+  DOXYGEN_INCLUDE_ALIASES_PATH='$(SRCDIR)/doxygen'
+  DOXYGEN_INCLUDE_ALIASES='$(SRCDIR)/doxygen/aliases'
+  DOXYGEN_VERBATIM_VARS='DOXYGEN_INCLUDE_ALIASES'
+  DOXYGEN_PROJECT_LOGO='$(SRCDIR)/doxygen/img/HDFG-logo.png'
+  DOXYGEN_PROJECT_BRIEF='API Reference'
+  DOXYGEN_INPUT_DIRECTORY='$(SRCDIR) $(SRCDIR)/doxygen/dox'
+  DOXYGEN_OPTIMIZE_OUTPUT_FOR_C=YES
+  DOXYGEN_MACRO_EXPANSION=YES
+  DOXYGEN_OUTPUT_DIRECTORY=hdf4lib_docs
+  DOXYGEN_EXAMPLES_DIRECTORY='$(SRCDIR)'
+  DOXYGEN_LAYOUT_FILE='$(SRCDIR)/doxygen/hdf4doxy_layout.xml'
+  DOXYGEN_HTML_HEADER='$(SRCDIR)/doxygen/hdf4_header.html'
+  DOXYGEN_HTML_FOOTER='$(SRCDIR)/doxygen/hdf4_footer.html'
+  DOXYGEN_HTML_EXTRA_STYLESHEET='$(SRCDIR)/doxygen/hdf4doxy.css'
+  DOXYGEN_HTML_EXTRA_FILES='$(SRCDIR)/doxygen/hdf4_navtree_hacks.js'
+  DOXYGEN_TAG_FILE=hdf4.tag
+  DOXYGEN_SERVER_BASED_SEARCH=NO
+  DOXYGEN_EXTERNAL_SEARCH=NO
+  DOXYGEN_SEARCHENGINE_URL=
+  DOXYGEN_STRIP_FROM_PATH='$(SRCDIR)'
+  DOXYGEN_STRIP_FROM_INC_PATH='$(SRCDIR)'
+  DOXYGEN_PREDEFINED='H4_DOXYGEN'
+  DOXYGEN_WARN_AS_ERROR=${HDF4_DOXY_WARNINGS}
+
+  DX_INIT_DOXYGEN([HDF4], [./doxygen/Doxyfile], [hdf4lib_docs])
+fi
+AM_CONDITIONAL([BUILD_DOXYGEN_CONDITIONAL], [test "X$HDF4_DOXYGEN" = "Xyes"])
+
 
 ## ======================================================================
 ## Libtool initialization
@@ -693,108 +880,15 @@ AC_SUBST([SZIP_HAS_ENCODER])
 
 AM_CONDITIONAL([BUILD_SHARED_SZIP_CONDITIONAL], [test "X$USE_COMP_SZIP" = "Xyes" && test "X$LL_PATH" != "X"])
 
-## ----------------------------------------------------------------------
-## Is XDR support present? The TRY_LINK info was gotten from the
-## mfhdf/libsrc/local_nc.c file.
-AC_MSG_CHECKING([for xdr library support])
-
-AC_ARG_ENABLE([hdf4-xdr],
-              [AS_HELP_STRING([--enable-hdf4-xdr],
-                              [Build xdr library from code in HDF4 source.
-                               Not supported for 64 bit mode. [default="no"]])],
-              [enableval="yes"],[enableval="no"])
-
-case "$enableval" in
-  yes)
-    BUILD_XDR="yes"
-    AC_MSG_RESULT([using HDF4 XDR]);
-    ;;
-  no)
-    BUILD_XDR="no"
-    ;;
-esac
-
-
-## Check headers and add libraries for XDR if the HDF4 XDR library is not used.
-if test "X$BUILD_XDR" != "Xyes"; then
-    ## For Solaris systems, add the -nsl for XDR support
-    ##
-    ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
-  ## ======================================================================
-  ## Checks for header files
-  ## ======================================================================
-  HAVE_RPC="yes"
-  HAVE_OLDRPC="yes"
-  HAVE_TIRPC="yes"
-  ## save current settings
-  SYSCPPFLAGS="$CPPFLAGS"
-  case "$host" in
-    *-solaris*)
-      LIBS="$LIBS -lnsl"
-      ;;
-    *-pc-cygwin* | *-linux*)
-      CFLAGS="$SYSCFLAGS"
-      CPPFLAGS="$SYSCPPFLAGS"
-      AC_CHECK_HEADER([rpc/rpc.h],[:], [unset HAVE_OLDRPC])
-      AC_CHECK_HEADER([tirpc/netconfig.h],[:], [unset HAVE_TIRPC])
-      if test -z "$HAVE_OLDRPC" ; then
-        LIBS="$LIBS -ltirpc"
-        CFLAGS="$SYSCFLAGS -I/usr/include/tirpc"
-        CPPFLAGS="$SYSCPPFLAGS -I/usr/include/tirpc"
-        if test -z "$HAVE_TIRPC" ; then
-          CFLAGS="$SYSCFLAGS"
-          CPPFLAGS="$SYSCPPFLAGS"
-          AC_MSG_ERROR([couldn't find rpc headers])
-        fi
-      else
-          HAVE_TIRPC=""
-      fi
-      ;;
-    *) ;;
-  esac
-
-  ## ----------------------------------------------------------------------
-  ## We're trying to link against the rpc library when building on Cygwin,
-  ## but we need to make sure that it is present on the system. Do that here,
-  ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
-  case "$host" in
-    *-pc-cygwin* | *-linux*)
-      if test -n "$HAVE_TIRPC"; then
-        AC_CHECK_LIB([tirpc], [xdr_opaque],[:], [unset HAVE_RPC])
-        if test -z "$HAVE_RPC"; then
-          AC_MSG_ERROR([couldn't find rpc library])
-        fi
-      fi
-      ;;
-  esac
-
-  AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-  #include <rpc/types.h>
-  #include <rpc/xdr.h>]], [[xdr_int]])],[AC_MSG_RESULT([yes]); BUILD_XDR="no"],[AC_MSG_RESULT([no]); BUILD_XDR="yes"])
-fi
-
-if test "X$BUILD_XDR" != "Xno"; then
-  AC_DEFINE([NO_SYS_XDR_INC], [1], [Not using system xdr])
-fi
-
-AM_CONDITIONAL([HDF_BUILD_XDR], [test "X$BUILD_XDR" = "Xyes"])
-
 ## ======================================================================
-## Checks for types
+## Set POSIX level
 ## ======================================================================
 
-## ======================================================================
-## Checks for endianness functions
-## The htons and ntohs functions are available on most systems.
-## These functions convert betweennetwork endiannessand hostendianness.
-## Network endianness is big-endian; because the standard TCP/IP network
-## protocols use big-endian ordering. These functions come in two sizes:
-## htonl and ntohl operate on 4-byte quantities, and
-## htons and ntohs operate on 2-byte quantities.
-## The hton functions convert host endianness to network endianness.
-## The ntoh functions convert network endianness to host endianness
-## ======================================================================
-AC_CHECK_FUNCS([htonl htons ntohl ntohs])
+## This is needed so strdup, etc. are exposed properly
+##
+## POSIX feature information can be found in the gcc manual at:
+## http://www.gnu.org/s/libc/manual/html_node/Feature-Test-Macros.html
+CPPFLAGS="-D_POSIX_C_SOURCE=200809L $CPPFLAGS"
 
 ## ======================================================================
 ## Checks for headers
@@ -806,6 +900,24 @@ AC_CHECK_HEADERS([sys/types.h])
 
 AC_CHECK_HEADERS([io.h])
 AC_CHECK_HEADERS([arpa/inet.h netinet/in.h])
+
+## Special MinGW checks
+case "`uname`" in
+    MINGW*)
+      # Check for Winsock library
+      AC_CHECK_LIB([ws2_32], [htonl])
+      ;;
+esac
+
+## ----------------------------------------------------------------------
+## XDR grew up in a world where long integers were 32 bits in size. Now
+## that many platforms have 64-bit longs, we need some hacks to paper
+## over the differences in sizes, particularly on big-endian machines.
+##
+
+AC_CHECK_SIZEOF([long])
+
+## ----------------------------------------------------------------------
 
 AC_PROG_CC_C_O
 
@@ -833,8 +945,7 @@ AC_SUBST([CONFIG_MODE])
 
 AC_C_BIGENDIAN
 
-## Are we building this in debug or production mode? (Remove the -g flag
-## in production mode.)
+## Are we building this in debug or production mode?
 AC_MSG_CHECKING([for build mode])
 AC_ARG_ENABLE([production],
               [AS_HELP_STRING([--enable-production],
@@ -844,37 +955,16 @@ case "X-$enable_production" in
   X-|X-yes)
     AC_MSG_RESULT([production])
     CONFIG_MODE=production
-    ## Remove the "-g" flag from compile line if it's in there.
-    CFLAGS_temp=""
-    if test -n "$CFLAGS"; then
-      for d in $CFLAGS ; do
-        if test "X$d" != "X-g"; then
-          CFLAGS_temp="$CFLAGS_temp $d"
-        fi
-      done
-      CFLAGS=$CFLAGS_temp
-    fi
-
-    FFLAGS_temp=""
-    if test -n "$FFLAGS"; then
-      for d in $FFLAGS ; do
-        if test "X$d" != "X-g"; then
-          FFLAGS_temp="$FFLAGS_temp $d"
-        fi
-      done
-      FFLAGS=$FFLAGS_temp
-    fi
-
     CFLAGS="$CFLAGS $PROD_CFLAGS"
     FFLAGS="$FFLAGS $PROD_FFLAGS"
-    CPPFLAGS="$CPPFLAGS $PROD_CPPFLAGS"
+    CPPFLAGS="$CPPFLAGS -DNDEBUG $PROD_CPPFLAGS"
     ;;
   X-no)
     AC_MSG_RESULT([development])
     CONFIG_MODE=development
     CFLAGS="$CFLAGS $DEBUG_CFLAGS"
     FFLAGS="$FFLAGS $DEBUG_FFLAGS"
-    CPPFLAGS="$CPPFLAGS $DEBUG_CPPFLAGS"
+    CPPFLAGS="$CPPFLAGS -UNDEBUG $DEBUG_CPPFLAGS"
     ;;
   *)
     AC_MSG_RESULT([user-defined])
@@ -889,7 +979,7 @@ esac
 AC_MSG_CHECKING([for math library support])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <math.h>]], [[sinh(37.927)]])],[AC_MSG_RESULT([yes])],[AC_MSG_RESULT([no]); LIBS="$LIBS -lm"])
 
-AC_CHECK_FUNCS([fork system vfork wait])
+AC_CHECK_FUNCS([fork getrusage system wait])
 
 
 ## ======================================================================
@@ -902,7 +992,7 @@ AC_CHECK_FUNCS([fork system vfork wait])
 ## These header files should probably be generated by autoconf instead
 ## of being copied depending upon the host.
 case "$host" in
-  *-linux*)             BAR="linux"       ;;
+  *-linux*|*-k*bsd*-gnu|*-gnu*)BAR="linux"       ;;
   *-freebsd*)           BAR="fbsd"        ;;
   *-ibm-aix*)           BAR="aix"         ;;
   sparc64-*-solaris2*)  BAR="solaris64"   ;;
@@ -1111,11 +1201,10 @@ case "X-$DEPREC_SYMBOLS" in
 esac
 
 AC_CONFIG_FILES([Makefile
+                 doxygen/Doxyfile
                  libhdf4.settings
                  hdf/Makefile
-                 hdf/examples/Makefile
                  hdf/fortran/Makefile
-                 hdf/fortran/examples/Makefile
                  hdf/src/Makefile
                  hdf/test/Makefile
                  hdf/util/Makefile
@@ -1123,7 +1212,6 @@ AC_CONFIG_FILES([Makefile
                  hdf/util/h4fc
                  hdf/util/h4redeploy
                  hdf/util/testutil.sh
-                 man/Makefile
                  mfhdf/fortran/ftest.f
                  mfhdf/fortran/jackets.c
                  mfhdf/fortran/netcdf.inc
@@ -1131,10 +1219,7 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/Makefile
                  mfhdf/dumper/Makefile
                  mfhdf/dumper/testhdp.sh
-                 mfhdf/examples/Makefile
-                 mfhdf/examples/testexamples.sh
                  mfhdf/fortran/Makefile
-                 mfhdf/fortran/examples/Makefile
                  mfhdf/fortran/testfortran.sh
                  mfhdf/hdfimport/Makefile
                  mfhdf/hdfimport/testutil.sh
@@ -1151,17 +1236,14 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/nctest/Makefile
                  mfhdf/test/Makefile
                  mfhdf/test/testmfhdf.sh
-                 mfhdf/xdr/Makefile
                  java/Makefile
                  java/src/Makefile
                  java/src/jni/Makefile
                  java/test/Makefile
-                 java/test/junit.sh
-                 java/examples/Makefile])
+                 java/test/junit.sh])
 
 AC_CONFIG_COMMANDS([.classes], [], [$MKDIR_P java/src/.classes;
-                $MKDIR_P java/test/.classes;
-                $MKDIR_P java/examples/.classes])
+                $MKDIR_P java/test/.classes])
 
 AC_OUTPUT
 

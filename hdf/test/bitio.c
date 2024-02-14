@@ -12,23 +12,8 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
-   FILE
    bitio.c
    Test HDF bit-level I/O routines
-
-   REMARKS
-
-   DESIGN
-
-   BUGS/LIMITATIONS
-
-   EXPORTED ROUTINES
-
-   AUTHOR
-   Quincey Koziol
-
-   MODIFICATION HISTORY
-   10/19/93 - Started coding.
  */
 
 #include "tproto.h"
@@ -36,11 +21,6 @@
 
 #define TESTFILE_NAME "tbitio.hdf"
 #define DATAFILE_NAME "test_files/bitio.dat"
-
-/* Last ditch attempt to define this value... */
-#ifndef UINT_MAX
-#define UINT_MAX (unsigned)(-1)
-#endif
 
 #ifndef RAND_MAX
 #define RAND_MAX (UINT_MAX)
@@ -64,9 +44,12 @@
 #define BITIO_TAG_3 3500
 #define BITIO_REF_3 3500
 
-static uint8 outbuf[BUFSIZE], inbuf[DATASIZE];
+static uint8 *outbuf = NULL;
+static uint8 *inbuf  = NULL;
 
-static uint32 outbuf2[BUFSIZE], inbuf2[BUFSIZE], totbits[BUFSIZE];
+static uint32 *outbuf2 = NULL;
+static uint32 *inbuf2  = NULL;
+static uint32 *totbits = NULL;
 
 static uint32 maskbuf[] = {0x00000000,   0x00000001,   0x00000003,  0x00000007, 0x0000000f, 0x0000001f,
                            0x0000003f,   0x0000007f,   0x000000ff,  0x000001ff, 0x000003ff, 0x000007ff,
@@ -120,7 +103,7 @@ test_bitio_write(void)
         ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
         VERIFY_VOID((uint8)ret, outbuf[i], "Hbitread");
     } /* end for */
-    if (HDmemcmp(outbuf2, inbuf2, sizeof(int32) * BUFSIZE)) {
+    if (memcmp(outbuf2, inbuf2, sizeof(int32) * BUFSIZE)) {
         printf("Error in writing/reading bit I/O data\n");
         HEprint(stdout, 0);
         num_errs++;
@@ -208,19 +191,19 @@ test_bitio_read(void)
     ret = Hendbitaccess(bitid1, 0);
     RESULT("Hbitendaccess");
 
-    test_ptr = (uint8 *)HDmalloc((size_t)((DATASIZE / 4) * DFKNTsize(DFNT_UINT32)));
-    CHECK_VOID(test_ptr, NULL, "HDmalloc");
+    test_ptr = (uint8 *)malloc((size_t)((DATASIZE / 4) * DFKNTsize(DFNT_UINT32)));
+    CHECK_VOID(test_ptr, NULL, "malloc");
 
     ret = DFKconvert(inbuf2, test_ptr, DFNT_UINT32, (DATASIZE / 4), DFACC_WRITE, 0, 0);
     RESULT("DFKconvert");
 
     /* check the data */
-    if (HDmemcmp(inbuf, test_ptr, DATASIZE) != 0) {
+    if (memcmp(inbuf, test_ptr, DATASIZE) != 0) {
         printf("Error in reading bit I/O data\n");
         HEprint(stdout, 0);
         num_errs++;
     } /* end if */
-    HDfree(test_ptr);
+    free(test_ptr);
 
     ret = Hclose(fid);
     RESULT("Hclose");
@@ -402,7 +385,25 @@ test_bitio_seek(void)
 void
 test_bitio(void)
 {
+    outbuf  = (uint8 *)calloc(BUFSIZE, sizeof(uint8));
+    inbuf   = (uint8 *)calloc(DATASIZE, sizeof(uint8));
+    outbuf2 = (uint32 *)calloc(BUFSIZE, sizeof(uint32));
+    inbuf2  = (uint32 *)calloc(BUFSIZE, sizeof(uint32));
+    totbits = (uint32 *)calloc(BUFSIZE, sizeof(uint32));
+
+    CHECK_ALLOC(outbuf, "outbuf", "test_bitio");
+    CHECK_ALLOC(inbuf, "inbuf", "test_bitio");
+    CHECK_ALLOC(outbuf2, "outbuf2", "test_bitio");
+    CHECK_ALLOC(inbuf2, "inbuf2", "test_bitio");
+    CHECK_ALLOC(totbits, "totbits", "test_bitio");
+
     test_bitio_read();
     test_bitio_write();
     test_bitio_seek();
+
+    free(outbuf);
+    free(inbuf);
+    free(outbuf2);
+    free(inbuf2);
+    free(totbits);
 }

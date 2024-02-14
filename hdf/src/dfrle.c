@@ -21,7 +21,7 @@
  * Remarks: DFCIrle() and DFCIunrle() compress and decompress RLE encoded info
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 
 /*-----------------------------------------------------------------------------
  * Name:    DFCIrle
@@ -89,7 +89,7 @@ DFCIrle(const void *buf, void *bufto, int32 len)
     else
         clead--; /* don't need count position */
 
-    return ((int32)((uint8 *)clead - (uint8 *)bufto)); /* how many encoded */
+    return (int32)((uint8 *)clead - (uint8 *)bufto); /* how many encoded */
 }
 
 /*-----------------------------------------------------------------------------
@@ -148,5 +148,5 @@ DFCIunrle(uint8 *buf, uint8 *bufto, int32 outlen, int resetsave)
             p++; /* skip that character */
         }
     }
-    return ((int32)(p - buf));
+    return (int32)(p - buf);
 }

@@ -20,7 +20,7 @@
  *  hclose_:   call Hclose to close HDF file
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "hproto_fortran.h"
 
 /*-----------------------------------------------------------------------------
@@ -36,7 +36,7 @@
  * Method:  Convert filename to C string, call Hopen
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nhiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
 {
     char *fn;
@@ -44,10 +44,10 @@ nhiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
 
     fn = HDf2cstring(name, (intn)*namelen);
     if (!fn)
-        return (FAIL);
+        return FAIL;
     ret = (intf)Hopen(fn, (intn)*acc_mode, (int16)*defdds);
-    HDfree(fn);
-    return (ret);
+    free(fn);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -59,10 +59,10 @@ nhiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
  * Invokes: Hclose
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nhclose(intf *file_id)
 {
-    return (Hclose(*file_id));
+    return Hclose(*file_id);
 }
 
 /*-----------------------------------------------------------------------------
@@ -74,10 +74,10 @@ nhclose(intf *file_id)
  * Invokes: Hnumber
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nhnumber(intf *file_id, intf *tag)
 {
-    return (Hnumber((int32)*file_id, (uint16)*tag));
+    return Hnumber((int32)*file_id, (uint16)*tag);
 }
 
 /*-----------------------------------------------------------------------------
@@ -90,7 +90,7 @@ nhnumber(intf *file_id, intf *tag)
  * Method:  Convert dir to C string, call HXsetdir
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nhxisdir(_fcd dir, intf *dirlen)
 {
     char *fn;
@@ -98,10 +98,10 @@ nhxisdir(_fcd dir, intf *dirlen)
 
     fn = HDf2cstring(dir, (intn)*dirlen);
     if (!fn)
-        return (FAIL);
+        return FAIL;
     ret = (intf)HXsetdir(fn);
-    HDfree(fn);
-    return (ret);
+    free(fn);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -114,7 +114,7 @@ nhxisdir(_fcd dir, intf *dirlen)
  * Method:  Convert dir to C string, call HXsetcdir
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nhxiscdir(_fcd dir, intf *dirlen)
 {
     char *fn;
@@ -122,10 +122,10 @@ nhxiscdir(_fcd dir, intf *dirlen)
 
     fn = HDf2cstring(dir, (intn)*dirlen);
     if (!fn)
-        return (FAIL);
+        return FAIL;
     ret = (intf)HXsetcreatedir(fn);
-    HDfree(fn);
-    return (ret);
+    free(fn);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -137,10 +137,10 @@ nhxiscdir(_fcd dir, intf *dirlen)
  * Invokes: HDdont_atexit
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nhddontatexit(void)
 {
-    return ((intf)(HDdont_atexit()));
+    return (intf)(HDdont_atexit());
 }
 /*-----------------------------------------------------------------------------
  * Name: hglibverc
@@ -152,7 +152,7 @@ nhddontatexit(void)
  *          string  - version number text string
  * Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nhglibverc(intf *major_v, intf *minor_v, intf *release, _fcd string, intf *len)
 {
     char  *cstring;
@@ -163,19 +163,18 @@ nhglibverc(intf *major_v, intf *minor_v, intf *release, _fcd string, intf *len)
 
     cstring = NULL;
     if (*len)
-        cstring = (char *)HDmalloc((uint32)*len + 1);
+        cstring = (char *)malloc((uint32)*len + 1);
     status = Hgetlibversion(&cmajor_v, &cminor_v, &crelease, cstring);
 
     HDpackFstring(cstring, _fcdtocp(string), *len);
 
-    if (cstring)
-        HDfree((VOIDP)cstring);
+    free(cstring);
 
     *major_v = (intf)cmajor_v;
     *minor_v = (intf)cminor_v;
     *release = (intf)crelease;
 
-    return ((intf)status);
+    return (intf)status;
 }
 /*-----------------------------------------------------------------------------
  * Name: hgfilverc
@@ -187,7 +186,7 @@ nhglibverc(intf *major_v, intf *minor_v, intf *release, _fcd string, intf *len)
  *          string  - version number text string
  * Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nhgfilverc(intf *file_id, intf *major_v, intf *minor_v, intf *release, _fcd string, intf *len)
 {
     char  *cstring;
@@ -198,19 +197,18 @@ nhgfilverc(intf *file_id, intf *major_v, intf *minor_v, intf *release, _fcd stri
 
     cstring = NULL;
     if (*len)
-        cstring = (char *)HDmalloc((uint32)*len + 1);
+        cstring = (char *)malloc((uint32)*len + 1);
     status = Hgetfileversion((int32)*file_id, &cmajor_v, &cminor_v, &crelease, cstring);
 
     HDpackFstring(cstring, _fcdtocp(string), *len);
 
-    if (cstring)
-        HDfree((VOIDP)cstring);
+    free(cstring);
 
     *major_v = (intf)cmajor_v;
     *minor_v = (intf)cminor_v;
     *release = (intf)crelease;
 
-    return ((intf)status);
+    return (intf)status;
 }
 /*-----------------------------------------------------------------------------
  * Name:    hiishdf
@@ -222,7 +220,7 @@ nhgfilverc(intf *file_id, intf *major_v, intf *minor_v, intf *release, _fcd stri
  * Method:  Convert filename to C string, call Hishdf
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nhiishdf(_fcd name, intf *namelen)
 {
     char *fn;
@@ -230,10 +228,10 @@ nhiishdf(_fcd name, intf *namelen)
 
     fn = HDf2cstring(name, (intn)*namelen);
     if (!fn)
-        return (FAIL);
+        return FAIL;
     ret = (intf)Hishdf(fn);
-    HDfree(fn);
-    return (ret);
+    free(fn);
+    return ret;
 }
 /*-----------------------------------------------------------------------------
  * Name:    hconfinfc
@@ -246,7 +244,7 @@ nhiishdf(_fcd name, intf *namelen)
  * Returns: SUCCEED (0)  on success, FALSE (-1) on failure
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nhconfinfc(intf *coder_type, intf *info)
 {
     comp_coder_t coder_type_c;
@@ -256,7 +254,7 @@ nhconfinfc(intf *coder_type, intf *info)
     coder_type_c = (comp_coder_t)*coder_type;
     status       = HCget_config_info(coder_type_c, &info_c);
     if (status == FAIL)
-        return (FAIL);
+        return FAIL;
     *info = (intf)info_c;
-    return (status);
+    return status;
 }

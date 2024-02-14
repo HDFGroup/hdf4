@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "mfhdf.h"
 
 #define FILE1_NAME "hdifftst1.hdf"
@@ -112,9 +114,9 @@ main(void)
 
     /* Set a global attribute */
     n_values = sizeof(bufga1);
-    if (SDsetattr(sd1_id, FILE_ATTR_NAME, DFNT_CHAR8, n_values, (VOIDP)bufga1) == FAIL)
+    if (SDsetattr(sd1_id, FILE_ATTR_NAME, DFNT_CHAR8, n_values, (void *)bufga1) == FAIL)
         goto error;
-    if (SDsetattr(sd2_id, FILE_ATTR_NAME, DFNT_CHAR8, n_values, (VOIDP)bufga2) == FAIL)
+    if (SDsetattr(sd2_id, FILE_ATTR_NAME, DFNT_CHAR8, n_values, (void *)bufga2) == FAIL)
         goto error;
 
     /* Create the data sets */
@@ -125,15 +127,15 @@ main(void)
 
     /* Assign attribute */
     n_values = 2;
-    if (SDsetattr(sds1_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values, (VOIDP)bufa1) == FAIL)
+    if (SDsetattr(sds1_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values, (void *)bufa1) == FAIL)
         goto error;
-    if (SDsetattr(sds2_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values, (VOIDP)bufa2) == FAIL)
+    if (SDsetattr(sds2_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values, (void *)bufa2) == FAIL)
         goto error;
 
     /* Write the stored data to the data set */
-    if (SDwritedata(sds1_id, start, NULL, edges, (VOIDP)buf1a) == FAIL)
+    if (SDwritedata(sds1_id, start, NULL, edges, (void *)buf1a) == FAIL)
         goto error;
-    if (SDwritedata(sds2_id, start, NULL, edges, (VOIDP)buf1b) == FAIL)
+    if (SDwritedata(sds2_id, start, NULL, edges, (void *)buf1b) == FAIL)
         goto error;
 
     /* Terminate access to the data set */
@@ -147,9 +149,9 @@ main(void)
         goto error;
     if ((sds2_id = SDcreate(sd2_id, "dset2", DFNT_INT32, RANK, dim_sizes)) == FAIL)
         goto error;
-    if (SDwritedata(sds1_id, start, NULL, edges, (VOIDP)buf1a) == FAIL)
+    if (SDwritedata(sds1_id, start, NULL, edges, (void *)buf1a) == FAIL)
         goto error;
-    if (SDwritedata(sds2_id, start, NULL, edges, (VOIDP)buf1b) == FAIL)
+    if (SDwritedata(sds2_id, start, NULL, edges, (void *)buf1b) == FAIL)
         goto error;
     if (SDendaccess(sds1_id) == FAIL)
         goto error;
@@ -161,9 +163,9 @@ main(void)
         goto error;
     if ((sds2_id = SDcreate(sd2_id, "dset3", DFNT_INT32, RANK, dim_sizes)) == FAIL)
         goto error;
-    if (SDwritedata(sds1_id, start, NULL, edges, (VOIDP)buf2a) == FAIL)
+    if (SDwritedata(sds1_id, start, NULL, edges, (void *)buf2a) == FAIL)
         goto error;
-    if (SDwritedata(sds2_id, start, NULL, edges, (VOIDP)buf2b) == FAIL)
+    if (SDwritedata(sds2_id, start, NULL, edges, (void *)buf2b) == FAIL)
         goto error;
     if (SDendaccess(sds1_id) == FAIL)
         goto error;
@@ -370,9 +372,9 @@ do_big_file(void)
     edges[0] = DIM0; /* 10 */
     edges[1] = DIM1; /* 5 */
 
-    if (SDwritedata(sds1_id, start, NULL, edges, (VOIDP)array_data) == FAIL)
+    if (SDwritedata(sds1_id, start, NULL, edges, (void *)array_data) == FAIL)
         goto error;
-    if (SDwritedata(sds2_id, start, NULL, edges, (VOIDP)array_data) == FAIL)
+    if (SDwritedata(sds2_id, start, NULL, edges, (void *)array_data) == FAIL)
         goto error;
 
     /* terminate access to the datasets and SD interface */
@@ -420,9 +422,9 @@ do_big_file(void)
                 append_data2[i] = 100;
 
             /* append data to file */
-            if (SDwritedata(sds1_id, start, NULL, edges, (VOIDP)append_data1) == FAIL)
+            if (SDwritedata(sds1_id, start, NULL, edges, (void *)append_data1) == FAIL)
                 goto error;
-            if (SDwritedata(sds2_id, start, NULL, edges, (VOIDP)append_data2) == FAIL)
+            if (SDwritedata(sds2_id, start, NULL, edges, (void *)append_data2) == FAIL)
                 goto error;
         }
     }
@@ -487,7 +489,7 @@ do_lone(char *file_name, int do_diffs)
     edges[0] = 5;
 
     /* write the stored data to the data set */
-    if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)data) == FAIL) {
+    if (SDwritedata(sds_id, start, NULL, edges, (void *)data) == FAIL) {
         printf("Failed to set write for SDS <%s>\n", sds_name);
         goto fail;
     }
@@ -500,7 +502,7 @@ do_lone(char *file_name, int do_diffs)
         goto fail;
     }
 
-    if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)data) == FAIL) {
+    if (SDwritedata(sds_id, start, NULL, edges, (void *)data) == FAIL) {
         printf("Failed to set write for SDS <%s>\n", sds_name);
         goto fail;
     }

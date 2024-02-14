@@ -13,7 +13,7 @@
 #define HAVE_BOOLEAN
 #endif
 
-#include "jpeglib.h"
+#include <jpeglib.h>
 
 #define ABS(x) ((int)(x) < 0 ? (-x) : x)
 
@@ -26,21 +26,19 @@
         to the specified file.
    Return value:
         The number of errors occurred in this routine.
-   Apr 11, 2011 -BMR
 *************************************************************************/
-intn
-comp_using_jpeglib(const char *filename,        /* file to write compressed data in */
-                   long       *file_offset,     /* end offset of previous data and indicating where
-                                                   to start writing data in this round */
-                   int          im_height,      /* image's height */
-                   int          im_width,       /* image's width */
-                   int          im_ncomps,      /* image's number of components */
-                   int          quality,        /* JPEG quality value */
-                   const uint8 *written_buffer) /* data to be compressed */
+int
+comp_using_jpeglib(const char *filename,    /* file to write compressed data in */
+                   long       *file_offset, /* end offset of previous data and indicating where
+                                               to start writing data in this round */
+                   int    im_height,        /* image's height */
+                   int    im_width,         /* image's width */
+                   int    im_ncomps,        /* image's number of components */
+                   int    quality,          /* JPEG quality value */
+                   uint8 *written_buffer)   /* data to be compressed */
 {
-    FILE    *outfile;        /* target file */
-    JSAMPROW row_pointer[1]; /* pointer to JSAMPLE row[s] */
-    int      row_stride;     /* physical row width in image buffer */
+    FILE *outfile;    /* target file */
+    int   row_stride; /* physical row width in image buffer */
 
     /* JPEG object for JPEG compression parameters and pointers to working space
        (which is allocated as needed by the JPEG library). */
@@ -115,8 +113,8 @@ comp_using_jpeglib(const char *filename,        /* file to write compressed data
          * Here the array is only one element long, but you could pass
          * more than one scanline at a time if that's more convenient.
          */
-        row_pointer[0] = &written_buffer[cinfo.next_scanline * row_stride];
-        (void)jpeg_write_scanlines(&cinfo, row_pointer, 1);
+        JSAMPROW row_pointer = &written_buffer[cinfo.next_scanline * row_stride];
+        (void)jpeg_write_scanlines(&cinfo, &row_pointer, 1);
     }
 
     /* Finish compression */
@@ -144,9 +142,8 @@ comp_using_jpeglib(const char *filename,        /* file to write compressed data
         uncompressed data in the provided buffer.
    Return value:
         The number of errors occurred in this routine.
-   Apr 11, 2011 -BMR
 ****************************************************************************/
-intn
+int
 decomp_using_jpeglib(const char *filename,    /* file to read compressed data from */
                      long        file_offset, /* offset in the file to start reading */
                      int         im_height,   /* image's height */
@@ -178,7 +175,7 @@ decomp_using_jpeglib(const char *filename,    /* file to read compressed data fr
 
     /* Allocate local buffer to hold read values until all reading is done
        before copying into caller's buffer */
-    local_buf = HDmalloc(im_height * im_width * im_ncomps * sizeof(uint8));
+    local_buf = malloc(im_height * im_width * im_ncomps * sizeof(uint8));
     CHECK_ALLOC(local_buf, "local_buf", "decomp_using_jpeglib");
 
     /* Set up the JPEG error routines */
@@ -223,7 +220,7 @@ decomp_using_jpeglib(const char *filename,    /* file to read compressed data fr
 
     /* Copying values from local buffer to caller's buffer after success */
     memcpy(read_buffer, local_buf, im_height * im_width * im_ncomps);
-    HDfree(local_buf);
+    free(local_buf);
 
     /* Finish decompression */
     (void)jpeg_finish_decompress(&cinfo);

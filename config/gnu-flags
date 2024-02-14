@@ -4,6 +4,20 @@
 # after configure starts and defines, among other things, flags for
 # the various compilation modes.
 
+#
+# Prepend `$srcdir/config/gnu-warnings/` to the filename suffix(es) given as
+# subroutine argument(s), remove comments starting with # and ending
+# at EOL, replace spans of whitespace (including newlines) with spaces,
+# and re-emit the file(s) thus filtered on the standard output stream.
+#
+load_gnu_arguments()
+{
+    set -- $(for arg; do
+        sed 's,#.*$,,' $srcdir/config/gnu-warnings/${arg}
+    done)
+    IFS=' ' echo "$*"
+}
+
 # Get the compiler version in a way that works for gcc
 # unless a compiler version is already known
 #
@@ -98,18 +112,64 @@ fi
 
 if test "X-gcc" = "X-$cc_vendor"; then
 
-    CFLAGS="$CFLAGS -Wall -Wcast-qual -Wconversion -Wextra -Wfloat-equal -Wformat=2 -Winit-self -Winvalid-pch -Wmissing-include-dirs -Wshadow -Wundef -Wwrite-strings -pedantic -Wno-c++-compat"
+    CFLAGS="$CFLAGS -std=c99"
     if test $cc_vers_major -ge 10; then
         CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
     else
         CFLAGS="$CFLAGS"
     fi
-    DEBUG_CFLAGS="$CFLAGS -g -fverbose-asm"
+    DEBUG_CFLAGS="-g -fverbose-asm"
     DEBUG_CPPFLAGS=
-    PROD_CFLAGS="$CFLAGS -O3 -fomit-frame-pointer"
+    PROD_CFLAGS="-O3 -fomit-frame-pointer"
     PROD_CPPFLAGS=
     PROFILE_CFLAGS="-pg"
     PROFILE_CPPFLAGS=
+
+    #############################
+    # Version-specific warnings #
+    #############################
+
+    # gcc >= 4.8
+    if test $cc_vers_major -ge 5 -o $cc_vers_major -eq 4 -a $cc_vers_minor -ge 8; then
+        CFLAGS="$CFLAGS $(load_gnu_arguments 4.8)"
+        CFLAGS="$CFLAGS $(load_gnu_arguments no-developer-4.8)"
+    fi
+
+    # gcc >= 4.9
+    if test $cc_vers_major -ge 5 -o $cc_vers_major -eq 4 -a $cc_vers_minor -ge 9; then
+        CFLAGS="$CFLAGS $(load_gnu_arguments 4.9)"
+    fi
+
+    # gcc >= 5
+    if test $cc_vers_major -ge 5; then
+        CFLAGS="$CFLAGS $(load_gnu_arguments 5)"
+    fi
+
+    # gcc >= 6
+    if test $cc_vers_major -ge 6; then
+        CFLAGS="$CFLAGS $(load_gnu_arguments 6)"
+    fi
+
+    # gcc >= 7
+    if test $cc_vers_major -ge 7; then
+        CFLAGS="$CFLAGS $(load_gnu_arguments 7)"
+    fi
+
+    # gcc 8
+    if test $cc_vers_major -ge 8; then
+        CFLAGS="$CFLAGS $(load_gnu_arguments 8)"
+        CFLAGS="$CFLAGS $(load_gnu_arguments no-developer-8)"
+    fi
+
+    # gcc 9
+    if test $cc_vers_major -ge 9; then
+        CFLAGS="$CFLAGS $(load_gnu_arguments 9)"
+    fi
+
+    # gcc >= 9.3
+    if test $cc_vers_major -ge 10 -o $cc_vers_major -eq 9 -a $cc_vers_minor -ge 3; then
+        CFLAGS="$CFLAGS $(load_gnu_arguments 9.3)"
+    fi
 
     #################
     # Flags are set #

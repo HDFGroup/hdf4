@@ -14,6 +14,8 @@
 #ifndef HDFTEST_H
 #define HDFTEST_H
 
+#include <stdio.h>
+
 /*
  * The name of the test is printed by saying TESTING("something") which will
  * result in the string `Testing something' being flushed to standard output.
@@ -81,7 +83,7 @@
    error message */
 #define VERIFY_CHAR(item, value, test_name)                                                                  \
     {                                                                                                        \
-        if (HDstrcmp(item, value) != 0) {                                                                    \
+        if (strcmp(item, value) != 0) {                                                                      \
             fprintf(stderr, "*** UNEXPECTED VALUE from %s is <%s> at line %4d in %s\n", test_name, item,     \
                     (int)__LINE__, __FILE__);                                                                \
             num_errs++;                                                                                      \
@@ -99,22 +101,22 @@
 
 /*************************** Utility Functions ***************************/
 
+/* Generates the correct name of the source path */
+intn make_sourcepath(char *src_path, unsigned int size);
+
 /* Generates the correct name for the test file */
 intn make_datafilename(const char *basename, char *testfile, unsigned int size);
 
 /* Calls SDcreate, SDwritedata, and SDendaccess */
 int32 make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, int32 unlim_dim,
-               VOIDP written_data);
+               void *written_data);
 
 /* Calls SDcreate, SDsetcompress, SDwritedata, and SDendaccess */
-int32 make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, VOIDP written_data);
+int32 make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, void *written_data);
 
 /* Calls SDcreate, SDsetexternalfile, SDwritedata, and SDendaccess */
 int32 make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes,
-                     VOIDP written_data, int32 offset, char *ext_file_name);
-
-/* Calls SDnametoindex and SDselect */
-int32 get_SDSbyName(int32 sd_id, char *sds_name);
+                     void *written_data, int32 offset, char *ext_file_name);
 
 /* Calls get_SDSbyName, SDwritedata, and SDendaccess */
 int32 append_Data2SDS(int32 sd_id, char *sds_name, int32 *start, int32 *edges, void *ap_data);
@@ -126,6 +128,6 @@ void verify_datasize(int32 sds_id, int32 data_size, char *sds_name);
 int verify_info_data(int32 sds_id, int32 expected_dimsize, int16 *result);
 
 /* Find and open an SDS by name */
-int32 get_SDSbyName(int32 sd_id, char *sds_name);
+int32 get_SDSbyName(int32 sd_id, const char *sds_name);
 
 #endif /* HDFTEST_H */

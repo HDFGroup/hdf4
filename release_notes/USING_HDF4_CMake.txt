@@ -38,7 +38,7 @@ I. Preconditions
 ========================================================================
 
    1. We suggest you obtain the latest CMake for your platform from the Kitware
-      web site. The HDF 4.2.x product requires a minimum CMake version
+      web site. The HDF 4.3.x product requires a minimum CMake version
       of 3.12. If you are using VS2019, the minimum version is 3.15. If you are
       using VS2022, the minimum version is 3.21.
 
@@ -51,17 +51,17 @@ I. Preconditions
       or environment variable, set(ENV{HDF4_ROOT} "<install_path>")
       to the installed location of HDF4.
          On Windows:
-            HDF4_ROOT=C:/Program Files/HDF_Group/HDF/4.2.x/
+            HDF4_ROOT=C:/Program Files/HDF_Group/HDF/4.3.x/
          On unix:
-            HDF4_ROOT=<install root folder>/HDF_Group/HDF/4.2.x/
+            HDF4_ROOT=<install root folder>/HDF_Group/HDF/4.3.x/
 
       If you are using shared libraries, you may need to add to the path
       environment variable. Set the path environment variable to the
       installed location of the library files for HDF4.
          On Windows (*.dll):
-            PATH=%PATH%;C:/Program Files/HDF_Group/HDF/4.2.x/bin
+            PATH=%PATH%;C:/Program Files/HDF_Group/HDF/4.3.x/bin
          On unix (*.so):
-            LD_LIBRARY_PATH=$LD_LIBRARY_PATH:<install root folder>/HDF_Group/HDF/4.2.x/lib
+            LD_LIBRARY_PATH=$LD_LIBRARY_PATH:<install root folder>/HDF_Group/HDF/4.3.x/lib
 
       (Note there are no quote characters used on Windows and all platforms
       use forward slashes)

@@ -133,19 +133,19 @@ allocate_buffers(void)
     intn i;
 
     for (i = 0; i < NUM_OUTBUFS; i++) {
-        outbuf_int8[i]   = (int8 *)HDmalloc(BUFSIZE * sizeof(int8));
-        outbuf_uint8[i]  = (uint8 *)HDmalloc(BUFSIZE * sizeof(uint8));
-        outbuf_int16[i]  = (int16 *)HDmalloc(BUFSIZE * sizeof(int16));
-        outbuf_uint16[i] = (uint16 *)HDmalloc(BUFSIZE * sizeof(uint16));
-        outbuf_int32[i]  = (int32 *)HDmalloc(BUFSIZE * sizeof(int32));
-        outbuf_uint32[i] = (uint32 *)HDmalloc(BUFSIZE * sizeof(uint32));
+        outbuf_int8[i]   = (int8 *)malloc(BUFSIZE * sizeof(int8));
+        outbuf_uint8[i]  = (uint8 *)malloc(BUFSIZE * sizeof(uint8));
+        outbuf_int16[i]  = (int16 *)malloc(BUFSIZE * sizeof(int16));
+        outbuf_uint16[i] = (uint16 *)malloc(BUFSIZE * sizeof(uint16));
+        outbuf_int32[i]  = (int32 *)malloc(BUFSIZE * sizeof(int32));
+        outbuf_uint32[i] = (uint32 *)malloc(BUFSIZE * sizeof(uint32));
     } /* end for */
-    inbuf_int8   = (int8 *)HDcalloc(BUFSIZE, sizeof(int8));
-    inbuf_uint8  = (uint8 *)HDcalloc(BUFSIZE, sizeof(uint8));
-    inbuf_int16  = (int16 *)HDcalloc(BUFSIZE, sizeof(int16));
-    inbuf_uint16 = (uint16 *)HDcalloc(BUFSIZE, sizeof(uint16));
-    inbuf_int32  = (int32 *)HDcalloc(BUFSIZE, sizeof(int32));
-    inbuf_uint32 = (uint32 *)HDcalloc(BUFSIZE, sizeof(uint32));
+    inbuf_int8   = (int8 *)calloc(BUFSIZE, sizeof(int8));
+    inbuf_uint8  = (uint8 *)calloc(BUFSIZE, sizeof(uint8));
+    inbuf_int16  = (int16 *)calloc(BUFSIZE, sizeof(int16));
+    inbuf_uint16 = (uint16 *)calloc(BUFSIZE, sizeof(uint16));
+    inbuf_int32  = (int32 *)calloc(BUFSIZE, sizeof(int32));
+    inbuf_uint32 = (uint32 *)calloc(BUFSIZE, sizeof(uint32));
 } /* allocate_buffers() */
 
 static void
@@ -156,12 +156,12 @@ init_buffers(void)
     for (i = 0; i < NUM_OUTBUFS; i++) {
         switch (i) {
             case 0: /* all zero filled */
-                HDmemset(outbuf_int8[i], 0, BUFSIZE * sizeof(int8));
-                HDmemset(outbuf_uint8[i], 0, BUFSIZE * sizeof(uint8));
-                HDmemset(outbuf_int16[i], 0, BUFSIZE * sizeof(int16));
-                HDmemset(outbuf_uint16[i], 0, BUFSIZE * sizeof(uint16));
-                HDmemset(outbuf_int32[i], 0, BUFSIZE * sizeof(int32));
-                HDmemset(outbuf_uint32[i], 0, BUFSIZE * sizeof(uint32));
+                memset(outbuf_int8[i], 0, BUFSIZE * sizeof(int8));
+                memset(outbuf_uint8[i], 0, BUFSIZE * sizeof(uint8));
+                memset(outbuf_int16[i], 0, BUFSIZE * sizeof(int16));
+                memset(outbuf_uint16[i], 0, BUFSIZE * sizeof(uint16));
+                memset(outbuf_int32[i], 0, BUFSIZE * sizeof(int32));
+                memset(outbuf_uint32[i], 0, BUFSIZE * sizeof(uint32));
                 break;
 
             case 1: /* fibonacci sequence */
@@ -227,19 +227,19 @@ free_buffers(void)
     intn i;
 
     for (i = 0; i < NUM_OUTBUFS; i++) {
-        HDfree(outbuf_int8[i]);
-        HDfree(outbuf_uint8[i]);
-        HDfree(outbuf_int16[i]);
-        HDfree(outbuf_uint16[i]);
-        HDfree(outbuf_int32[i]);
-        HDfree(outbuf_uint32[i]);
-    } /* end for */
-    HDfree(inbuf_int8);
-    HDfree(inbuf_uint8);
-    HDfree(inbuf_int16);
-    HDfree(inbuf_uint16);
-    HDfree(inbuf_int32);
-    HDfree(inbuf_uint32);
+        free(outbuf_int8[i]);
+        free(outbuf_uint8[i]);
+        free(outbuf_int16[i]);
+        free(outbuf_uint16[i]);
+        free(outbuf_int32[i]);
+        free(outbuf_uint32[i]);
+    }
+    free(inbuf_int8);
+    free(inbuf_uint8);
+    free(inbuf_int16);
+    free(inbuf_uint16);
+    free(inbuf_int32);
+    free(inbuf_uint32);
 } /* free_buffers() */
 
 static uint16
@@ -250,41 +250,41 @@ write_data(int32 fid, comp_model_t m_type, model_info *m_info, comp_coder_t c_ty
     uint16 ret_ref;
     int32  err_ret;
     int32  write_size;
-    VOIDP  data_ptr;
+    void  *data_ptr;
 
     MESSAGE(8, {
         char *s = HDgetNTdesc(ntype);
         printf("Writing data for test %d, ntype=%s, model_type=%d, coder_type=%d\n", (int)test_num,
                (s == NULL ? "Unknown" : s), (int)m_type, (int)c_type);
-        HDfree(s);
+        free(s);
     })
     ret_ref = Hnewref(fid);
     aid     = HCcreate(fid, COMP_TAG, ret_ref, m_type, m_info, c_type, c_info);
     CHECK(aid, FAIL, "HCcreate");
     if (aid == FAIL)
-        return (0);
+        return 0;
 
     switch (ntype) {
         case DFNT_INT8:
-            data_ptr = (VOIDP)outbuf_int8[test_num];
+            data_ptr = (void *)outbuf_int8[test_num];
             break;
         case DFNT_UINT8:
-            data_ptr = (VOIDP)outbuf_uint8[test_num];
+            data_ptr = (void *)outbuf_uint8[test_num];
             break;
         case DFNT_INT16:
-            data_ptr = (VOIDP)outbuf_int16[test_num];
+            data_ptr = (void *)outbuf_int16[test_num];
             break;
         case DFNT_UINT16:
-            data_ptr = (VOIDP)outbuf_uint16[test_num];
+            data_ptr = (void *)outbuf_uint16[test_num];
             break;
         case DFNT_INT32:
-            data_ptr = (VOIDP)outbuf_int32[test_num];
+            data_ptr = (void *)outbuf_int32[test_num];
             break;
         case DFNT_UINT32:
-            data_ptr = (VOIDP)outbuf_uint32[test_num];
+            data_ptr = (void *)outbuf_uint32[test_num];
             break;
         default:
-            return (0);
+            return 0;
     } /* end switch */
 
     write_size = BUFSIZE * DFKNTsize(ntype);
@@ -298,7 +298,7 @@ write_data(int32 fid, comp_model_t m_type, model_info *m_info, comp_coder_t c_ty
     err_ret = Hendaccess(aid);
     CHECK(err_ret, FAIL, "Hendaccess");
 
-    return (ret_ref);
+    return ret_ref;
 } /* end write_data() */
 
 static void
@@ -307,15 +307,15 @@ read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype)
     int32           aid;
     int32           err_ret;
     int32           read_size;
-    VOIDP           out_ptr;
-    VOIDP           in_ptr;
+    void           *out_ptr;
+    void           *in_ptr;
     sp_info_block_t info_block;
     intn            i;
 
     MESSAGE(8, {
         char *s = HDgetNTdesc(ntype);
         printf("Reading data for test %d, ntype=%s\n", (int)test_num, (s == NULL ? "Unknown" : s));
-        HDfree(s);
+        free(s);
     })
 
     aid = Hstartread(fid, COMP_TAG, ref_num);
@@ -325,28 +325,28 @@ read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype)
 
     switch (ntype) {
         case DFNT_INT8:
-            out_ptr = (VOIDP)outbuf_int8[test_num];
-            in_ptr  = (VOIDP)inbuf_int8;
+            out_ptr = (void *)outbuf_int8[test_num];
+            in_ptr  = (void *)inbuf_int8;
             break;
         case DFNT_UINT8:
-            out_ptr = (VOIDP)outbuf_uint8[test_num];
-            in_ptr  = (VOIDP)inbuf_uint8;
+            out_ptr = (void *)outbuf_uint8[test_num];
+            in_ptr  = (void *)inbuf_uint8;
             break;
         case DFNT_INT16:
-            out_ptr = (VOIDP)outbuf_int16[test_num];
-            in_ptr  = (VOIDP)inbuf_int16;
+            out_ptr = (void *)outbuf_int16[test_num];
+            in_ptr  = (void *)inbuf_int16;
             break;
         case DFNT_UINT16:
-            out_ptr = (VOIDP)outbuf_uint16[test_num];
-            in_ptr  = (VOIDP)inbuf_uint16;
+            out_ptr = (void *)outbuf_uint16[test_num];
+            in_ptr  = (void *)inbuf_uint16;
             break;
         case DFNT_INT32:
-            out_ptr = (VOIDP)outbuf_int32[test_num];
-            in_ptr  = (VOIDP)inbuf_int32;
+            out_ptr = (void *)outbuf_int32[test_num];
+            in_ptr  = (void *)inbuf_int32;
             break;
         case DFNT_UINT32:
-            out_ptr = (VOIDP)outbuf_uint32[test_num];
-            in_ptr  = (VOIDP)inbuf_uint32;
+            out_ptr = (void *)outbuf_uint32[test_num];
+            in_ptr  = (void *)inbuf_uint32;
             break;
         default:
             return;
@@ -360,7 +360,7 @@ read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype)
         num_errs++;
     } /* end if */
 
-    if (HDmemcmp(in_ptr, out_ptr, read_size) != 0) {
+    if (memcmp(in_ptr, out_ptr, read_size) != 0) {
         char *s = HDgetNTdesc(ntype);
 
         HDget_special_info(aid, &info_block);
@@ -368,14 +368,12 @@ read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype)
                 "ERROR: Data from test: %d, number type: %s, model type: %d, coder type: %d differs\n",
                 test_num, s, (int)info_block.model_type, (int)info_block.comp_type);
         MESSAGE(
-            8,
-            for (i = 0; i < read_size * DFKNTsize(ntype); i++) {
+            8, for (i = 0; i < read_size * DFKNTsize(ntype); i++) {
                 if (((char *)in_ptr)[i] != ((char *)out_ptr)[i])
                     printf("byte %i differs, written:%d, read in:%d\n", i, ((char *)out_ptr)[i],
                            ((char *)in_ptr)[i]);
-            } /* end for */
-        )
-        HDfree(s);
+            })
+        free(s);
         num_errs++;
     } /* end if */
 

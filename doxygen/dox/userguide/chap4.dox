@@ -1,0 +1,53 @@
+/** @page CH4_UG Vdatas (VS API)
+
+Navigate back: \ref index "Contents" / \ref UG
+<hr>
+
+\section sec_vsapi Vdatas (VS API)
+
+\subsection subsec_vsapi_overview
+\subsection subsec_vsapi_data_model
+\subsubsection subsubsec_vsapi_data_model_fields
+\subsection subsec_vsapi_interface
+\subsubsection subsubsec_vsapi_interface_head
+\subsubsection subsubsec_vsapi_interface_lib
+\subsubsection subsubsec_vsapi_interface_ids
+\subsubsection subsubsec_vsapi_interface_model
+\subsubsection subsubsec_vsapi_interface_start
+\subsubsection subsubsec_vsapi_interface_term
+\subsection subsec_vsapi_create
+\subsection subsec_vsapi_write
+\subsubsection subsubsec_vsapi_write_create
+\subsubsection subsubsec_vsapi_write_data
+\subsection subsec_vsapi_read
+\subsubsection subsubsec_vsapi_read_init
+\subsubsection subsubsec_vsapi_read_data
+\subsection subsec_vsapi_search
+\subsubsection subsubsec_vsapi_search_find
+\subsubsection subsubsec_vsapi_search_getid
+\subsubsection subsubsec_vsapi_search_num
+\subsubsection subsubsec_vsapi_search_exist
+\subsubsection subsubsec_vsapi_search_get
+\subsubsection subsubsec_vsapi_search_internal
+\subsubsection subsubsec_vsapi_search_file
+\subsection subsec_vsapi_attr
+\subsubsection subsubsec_vsapi_attr_query
+\subsubsection subsubsec_vsapi_attr_set
+\subsubsection subsubsec_vsapi_attr_get
+\subsubsection subsubsec_vsapi_attr_total_num
+\subsubsection subsubsec_vsapi_attr_num
+\subsubsection subsubsec_vsapi_attr_find
+\subsubsection subsubsec_vsapi_attr_info
+\subsubsection subsubsec_vsapi_attr_isattr
+\subsection subsec_vsapi_info
+\subsubsection subsubsec_vsapi_info_inquire
+\subsubsection subsubsec_vsapi_info_getblock
+\subsubsection subsubsec_vsapi_info_query
+\subsubsection subsubsec_vsapi_info_other
+\subsubsection subsubsec_vsapi_info_field
+
+
+<hr>
+Navigate back: \ref index "Contents" / \ref UG
+
+*/

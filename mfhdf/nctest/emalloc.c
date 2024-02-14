@@ -5,55 +5,42 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "error.h"
 #include "emalloc.h"
-#ifdef HDF
-#include "hdf.h"
-#endif
 
-/* check return from malloc */
+/* Check return from malloc */
 void *
-emalloc(int size)
+emalloc(size_t size)
 {
-    void *p;
+    void *p = NULL;
 
-    if (size < 0) {
-        error("negative arg to emalloc: %d", size);
-        return 0;
-    }
     if (size == 0)
-        return 0;
-#ifdef HDF
-    p = (void *)HDmalloc((uint32)size);
-#else
-    p = (void *)malloc((unsigned)size);
-#endif
-    if (p == 0) {
+        return NULL;
+
+    p = (void *)malloc(size);
+    if (p == NULL) {
         error("out of memory\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
+
     return p;
 }
 
-/* check return from realloc */
+/* Check return from realloc
+ *
+ * NOTE: realloc(NULL, 0) behavior is implementation-defined
+ */
 void *
-erealloc(void *ptr, int size)
+erealloc(void *ptr, size_t size)
 {
-    void *p;
+    void *p = NULL;
 
-    if (size < 0) {
-        error("negative arg to realloc");
-        return 0;
-    }
-#ifdef HDF
-    p = (void *)HDrealloc((VOIDP)ptr, (uint32)size);
-#else
-    p = (void *)realloc((char *)ptr, (unsigned)size);
-#endif
-
-    if (p == 0) {
+    p = (void *)realloc(ptr, size);
+    if (p == NULL) {
         error("out of memory");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
+
     return p;
 }

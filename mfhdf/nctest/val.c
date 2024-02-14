@@ -5,7 +5,8 @@
 
 #include <stdio.h>
 
-#include "h4config.h"
+#include "hdf.h"
+
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else
@@ -231,7 +232,7 @@ val_out(nc_type type, long len, void *vals)
         case NC_FLOAT:
             gp.fp = (float *)vals;
             for (iel = 0; iel < len; iel++)
-                (void)fprintf(stderr, "%g%s", *gp.fp++, iel < len - 1 ? ", " : "");
+                (void)fprintf(stderr, "%g%s", (double)*gp.fp++, iel < len - 1 ? ", " : "");
             break;
         case NC_DOUBLE:
             gp.dp = (double *)vals;

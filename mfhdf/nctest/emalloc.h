@@ -10,9 +10,9 @@
 extern "C" {
 #endif
 
-extern void *emalloc(int size);
+extern void *emalloc(size_t size);
 
-extern void *erealloc(void *ptr, int size);
+extern void *erealloc(void *ptr, size_t size);
 
 #ifdef __cplusplus
 }

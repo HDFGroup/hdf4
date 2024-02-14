@@ -46,7 +46,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "hconv.h"
 
 /*****************************************************************************/
@@ -58,7 +58,7 @@
 /* -->Byte swapping for 2 byte data items                   */
 /************************************************************/
 int
-DFKsb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
+DFKsb2b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
     int    fast_processing = 0; /* Default is not fast processing */
     int    in_place        = 0; /* Inplace must be detected */
@@ -130,7 +130,7 @@ DFKsb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 /* -->Byte swapping for 4 byte data items                   */
 /************************************************************/
 int
-DFKsb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
+DFKsb4b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
     int    fast_processing = 0; /* Default is not fast processing */
     int    in_place        = 0; /* Inplace must be detected */
@@ -138,10 +138,6 @@ DFKsb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
     uint8  buf[4]; /* Inplace processing buffer */
     uint8 *source = (uint8 *)s;
     uint8 *dest   = (uint8 *)d;
-#ifdef TEST3_sb4b
-    uint32 *lp_dest;
-    uint32 *lp_src;
-#endif
 
     HEclear();
 
@@ -160,29 +156,6 @@ DFKsb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 
     if (fast_processing) {
         if (!in_place) {
-#ifndef DUFF_sb4b
-#ifdef TEST1_sb4b
-            source += 3;
-#endif
-#ifdef TEST3_sb4b
-            lp_dest = (uint32 *)dest;
-            lp_src  = (uint32 *)source;
-#endif
-            for (i = 0; i < num_elm; i++) {
-#if defined TEST3_sb4b
-                *lp_dest++ = ((lp_src[0] & 0x000000ff) << 24) | ((lp_src[0] & 0x0000ff00) << 8) |
-                             ((lp_src[0] & 0x00ff0000) >> 8) | ((lp_src[0] & 0xff000000) >> 24);
-                lp_src++;
-#else
-                dest[0] = source[3];
-                dest[1] = source[2];
-                dest[2] = source[1];
-                dest[3] = source[0];
-                dest += 4;
-                source += 4;
-#endif
-            }
-#else  /* DUFF_sb4b */
             uint32 n = (num_elm + 7) / 8;
 
             switch (num_elm % 8) {
@@ -245,7 +218,6 @@ DFKsb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
                             source += 4;
                     } while (--n > 0);
             }
-#endif /* DUFF_sb4b */
             return 0;
         }
         else {
@@ -296,7 +268,7 @@ DFKsb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 /* -->Byte swapping for 8 byte data items                   */
 /************************************************************/
 int
-DFKsb8b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
+DFKsb8b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
     int    fast_processing = 0; /* Default is not fast processing */
     int    in_place        = 0; /* Inplace must be detected */

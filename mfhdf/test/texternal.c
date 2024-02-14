@@ -11,9 +11,19 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdlib.h>
+#include <string.h>
+
+/* Need to pick up H4_HAVE_SYS_STAT_H from mfhdf.h */
+#include "hdfi.h"
 #include "mfhdf.h"
 
-#ifdef HDF
+#ifdef H4_HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+#ifdef H4_HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
 
 #include "hdftest.h"
 
@@ -108,7 +118,7 @@ test_setexternal()
     edges[0]            = dimsizes[0];
     edges[1]            = dimsizes[1];
 
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)idata);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)idata);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Promote the data set to an external data set by storing its data in
@@ -124,7 +134,7 @@ test_setexternal()
     start[0] = start[1] = 0;
     edges[0]            = 3;
     edges[1]            = dimsizes[1];
-    status              = SDwritedata(sds_id, start, NULL, edges, (VOIDP)idata);
+    status              = SDwritedata(sds_id, start, NULL, edges, (void *)idata);
     CHECK(status, FAIL, "SDwritedata");
 
     /* End access to the data set */
@@ -176,7 +186,7 @@ test_setexternal()
         start[0] = start[1] = 0;
         edges[0]            = 3;
         edges[1]            = 3;
-        status              = SDreaddata(sds_id, start, NULL, edges, (VOIDP)odata);
+        status              = SDreaddata(sds_id, start, NULL, edges, (void *)odata);
         CHECK(status, FAIL, "SDreaddata");
 
         /* Verify data read back in */
@@ -220,7 +230,7 @@ test_setexternal()
     start[0] = start[1] = 0;
     edges[0]            = dimsizes[0];
     edges[1]            = dimsizes[1];
-    status              = SDwritedata(sds_id, start, NULL, edges, (VOIDP)idata);
+    status              = SDwritedata(sds_id, start, NULL, edges, (void *)idata);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Close data sets */
@@ -287,7 +297,7 @@ test_getexternal()
     /* Write data to all of data set NOEXTSDS in main file */
     start[0] = start[1] = 0;
     edges[0] = edges[1] = DIM1;
-    status              = SDwritedata(noextsds, start, NULL, edges, (VOIDP)idata);
+    status              = SDwritedata(noextsds, start, NULL, edges, (void *)idata);
     CHECK(status, FAIL, NOEXTSDS);
     CHECK(status, FAIL, "SDwritedata");
 
@@ -308,23 +318,23 @@ test_getexternal()
     deprecated as of 4.2.7 because it missed the length argument */
     { /* deprecated */
         name_len = SDgetexternalfile(sds_id, 0, NULL, NULL);
-        VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalfile");
+        VERIFY(name_len, (intn)strlen(EXTFILE), "SDgetexternalfile");
 
-        extfile_name = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+        extfile_name = (char *)malloc(sizeof(char *) * (name_len + 1));
         CHECK_ALLOC(extfile_name, "extfile_name", "SDgetexternalfile");
-        HDmemset(extfile_name, '\0', name_len + 1);
+        memset(extfile_name, '\0', name_len + 1);
 
         /* Call SDgetexternalfile again and get the external file info */
         name_len = SDgetexternalfile(sds_id, name_len + 1, extfile_name, &offset);
-        VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalfile");
+        VERIFY(name_len, (intn)strlen(EXTFILE), "SDgetexternalfile");
         VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalfile");
-        HDfree(extfile_name);
+        free(extfile_name);
     }
 
     /* Call SDgetexternalinfo the first time passing in 0 for external
     file name length to get the actual length */
     name_len = SDgetexternalinfo(sds_id, 0, NULL, NULL, NULL);
-    VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalinfo");
+    VERIFY(name_len, (intn)strlen(EXTFILE), "SDgetexternalinfo");
 
     /* Test passing in NULL pointer for external file name buffer, should
     fail gracefully */
@@ -337,33 +347,33 @@ test_getexternal()
     }
 
     /* Prepare buffer for external file name */
-    extfile_name = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    extfile_name = (char *)malloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_getexternal");
-    HDmemset(extfile_name, '\0', name_len + 1);
+    memset(extfile_name, '\0', name_len + 1);
 
     /* Call SDgetexternalinfo again and get the external file info */
     name_len = SDgetexternalinfo(sds_id, name_len + 1, extfile_name, &offset, &length);
-    VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalinfo");
+    VERIFY(name_len, (intn)strlen(EXTFILE), "SDgetexternalinfo");
     VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalinfo");
 
     /* Test passing in smaller buffer for external file name than actual;
     name should be truncated */
     {
-        char *short_name = (char *)HDmalloc(sizeof(char *) * (name_len));
+        char *short_name = (char *)malloc(sizeof(char *) * (name_len));
         CHECK_ALLOC(short_name, "short_name", "test_getexternal");
-        HDmemset(short_name, '\0', name_len);
-        HDstrncpy(short_name, EXTFILE, name_len - 2);
-        HDmemset(extfile_name, '\0', name_len);
+        memset(short_name, '\0', name_len);
+        strncpy(short_name, EXTFILE, name_len - 2);
+        memset(extfile_name, '\0', name_len);
 
         /* Call SDgetexternalinfo again with smaller buffer size and verify
            that SDgetexternalinfo reads the name truncated to the given
            buffer size*/
         name_len = SDgetexternalinfo(sds_id, name_len - 2, extfile_name, &offset, &length);
-        VERIFY(name_len, (intn)HDstrlen(extfile_name), "SDgetexternalinfo");
+        VERIFY(name_len, (intn)strlen(extfile_name), "SDgetexternalinfo");
         VERIFY_CHAR(short_name, extfile_name, "SDgetexternalinfo");
-        HDfree(short_name);
+        free(short_name);
     }
-    HDfree(extfile_name);
+    free(extfile_name);
 
     /* Close the data set */
     status = SDendaccess(sds_id);
@@ -380,7 +390,7 @@ test_getexternal()
     /* Call SDgetexternalinfo the first time passing in 0 for external
     file name length to get the actual length */
     name_len = SDgetexternalinfo(sds_id, 0, NULL, NULL, NULL);
-    VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalinfo");
+    VERIFY(name_len, (intn)strlen(EXTFILE), "SDgetexternalinfo");
 
     /* Test passing in NULL pointer for external file name buffer, should
     fail gracefully */
@@ -391,15 +401,15 @@ test_getexternal()
         VERIFY(ret_code, FAIL, "SDgetexternalinfo");
     }
 
-    extfile_name = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    extfile_name = (char *)malloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_getexternal");
-    HDmemset(extfile_name, '\0', name_len + 1);
+    memset(extfile_name, '\0', name_len + 1);
 
     /* Call SDgetexternalinfo again and get the external file info */
     name_len = SDgetexternalinfo(sds_id, name_len + 1, extfile_name, &offset, &length);
-    VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalinfo");
+    VERIFY(name_len, (intn)strlen(EXTFILE), "SDgetexternalinfo");
     VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalinfo");
-    HDfree(extfile_name);
+    free(extfile_name);
 
     /*
      * Test getting external info on a non-external data set; should return
@@ -461,7 +471,7 @@ test_mult_setexternal()
 
     /* Create data set SDS1 and write data to the external file; the returned
        value is the size of the data had been written for this sds */
-    make_Ext3D_SDS(sd_id, SDS1, DFNT_INT32, 3, dim_sizes, (VOIDP)written_data, OFFSET, EXTFILE2);
+    make_Ext3D_SDS(sd_id, SDS1, DFNT_INT32, 3, dim_sizes, (void *)written_data, OFFSET, EXTFILE2);
 
     /* Close the file to flush */
     status = SDend(sd_id);
@@ -494,13 +504,13 @@ test_mult_setexternal()
         fprintf(stderr, "SDsetexternalfile should return length greater than 0\n");
 
     /* Prepare buffer for external file name */
-    extfile_name = HDmalloc(sizeof(char *) * (name_len + 1));
+    extfile_name = malloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_getexternal");
-    HDmemset(extfile_name, '\0', name_len + 1);
+    memset(extfile_name, '\0', name_len + 1);
 
     /* Call SDgetexternalinfo again and get the external file info */
     name_len = SDgetexternalinfo(sds1_id, name_len + 1, extfile_name, NULL, NULL);
-    VERIFY(name_len, (intn)HDstrlen(EXTFILE2), "SDgetexternalinfo");
+    VERIFY(name_len, (intn)strlen(EXTFILE2), "SDgetexternalinfo");
     VERIFY_CHAR(EXTFILE2, extfile_name, "SDgetexternalinfo");
 
     /* Close the data set and the file */
@@ -516,7 +526,7 @@ test_mult_setexternal()
     /* Read data of the data set and verify against the original */
     verify_data(sd_id, 0);
 
-    HDfree(extfile_name);
+    free(extfile_name);
 
     /* Close the file */
     status = SDend(sd_id);
@@ -570,8 +580,8 @@ test_special_combos()
 
     /* Create and write two unlimited-dimension data sets, SDS2 and SDS3,
        in the main file.  Z_LENGTH is passed for unlimited dimension. */
-    sds2_size = make_SDS(sd_id, SDS2, DFNT_INT32, 3, dim_sizes, Z_LENGTH, (VOIDP)written_data);
-    sds3_size = make_SDS(sd_id, SDS3, DFNT_INT32, 3, dim_sizes, Z_LENGTH, (VOIDP)written_data);
+    sds2_size = make_SDS(sd_id, SDS2, DFNT_INT32, 3, dim_sizes, Z_LENGTH, (void *)written_data);
+    sds3_size = make_SDS(sd_id, SDS3, DFNT_INT32, 3, dim_sizes, Z_LENGTH, (void *)written_data);
 
     /* Close the file to flush */
     status = SDend(sd_id);
@@ -596,7 +606,7 @@ test_special_combos()
 
     /* Append data to the unlimited-dimension data set SDS2.  This should */
     /* produce a linked-block element, because SDS3 had been written */
-    sds2_size = append_Data2SDS(sd_id, SDS2, ap_start, ap_edges, (VOIDP)ap_data);
+    sds2_size = append_Data2SDS(sd_id, SDS2, ap_start, ap_edges, (void *)ap_data);
     CHECK(status, FAIL, "append_Data2SDS");
 
     /* Select the named data set, id is checked by callee */
@@ -630,7 +640,7 @@ test_special_combos()
     /* Attempt to move a compressed data set to an external file; should fail */
 
     /* Create and write to a compressed data set */
-    sds4_size = make_SDS(sd_id, SDS4, DFNT_INT32, 3, dim_sizes, Z_LENGTH, (VOIDP)written_data);
+    sds4_size = make_SDS(sd_id, SDS4, DFNT_INT32, 3, dim_sizes, Z_LENGTH, (void *)written_data);
 
     /* Select the named data set, id is checked by callee */
     sds4_id = get_SDSbyName(sd_id, SDS4);
@@ -676,10 +686,287 @@ test_special_combos()
     return num_errs;
 } /* test_special_combos() */
 
+/********************************************************************
+   Name: test_change_extdir() - tests re-setting external directory
+                with valid and invalid values.
+   Description:
+    The main contents include:
+    - Create an HDF file and a dataset in it
+    - Set create external directory to the source test directory
+    - Promote the dataset to an external element
+    - Try setting the external directory to various values and verify
+      the behavior of SDreaddata each time
+    - Remove the data file and the external file
+
+   Return value:
+    The number of errors occurred in this routine.
+
+*********************************************************************/
+#define MAIN_FILE "tmainfile.hdf" /* file where the SDS is created */
+#define EXT_FILE  "textfile.txt"  /* file where the external data is stored */
+#define SDS_NAME  "ExternalDS"    /* dataset will have data in an external file */
+#define RANK      1
+#define TMP_DIR   "EXT_tempdir/" /* temporary dir to create the external file in */
+
+static int
+test_change_extdir(void)
+{
+    int32  sd_id;
+    int32  sds_id;
+    float  sds_data[] = {0.1f, 2.3f, 4.5f, 6.7f, 8.9f};
+    float  sds1_out[5];
+    int32  start = 0, stride = 1, edge;
+    int32  dimsize[RANK];
+    char   dir_name[MAX_PATH_LEN]; /* directory from srcdir */
+    size_t dir_name_len;
+    char  *another_path      = NULL; /* another path to test reading external file */
+    char  *temp_dir          = NULL; /* temp dir to create the external file in */
+    char  *created_file_path = NULL; /* path to the created external file */
+    int32  sds_index;
+    int    command_ret = 0; /* retvalue from system commands */
+    intn   status      = 0;
+    intn   num_errs    = 0; /* number of errors in compression test so far */
+
+    status = make_sourcepath(dir_name, MAX_PATH_LEN);
+    CHECK(status, FAIL, "make_datafilename");
+
+    /* When srcdir is not available, make up a directory to create the external
+       file to cause subsequent reads to look outside of the current directory */
+    if (!strcmp(dir_name, "./")) {
+
+        /* Facilitate the removal of the temporary directory later */
+        temp_dir = (char *)calloc(strlen(TMP_DIR) + 1, sizeof(char));
+        CHECK_ALLOC(temp_dir, "temp_dir", "test_change_extdir");
+        strcpy(temp_dir, TMP_DIR);
+
+#if defined H4_HAVE_WIN32_API
+        command_ret = mkdir(temp_dir);
+#else
+        command_ret = mkdir(temp_dir, 0755);
+#endif
+        CHECK(command_ret, (-1), "mkdir temp_dir");
+        strcat(dir_name, temp_dir);
+    }
+
+    /* Create the main file */
+    sd_id = SDstart(MAIN_FILE, DFACC_CREATE);
+    CHECK(sd_id, FAIL, "SDstart");
+
+    /* Set the directory to put the external file in */
+    status = HXsetcreatedir(dir_name);
+    CHECK(status, FAIL, "HXsetcreatedir");
+
+    /* Create a one-dim dataset named SDS_NAME */
+    dimsize[0] = 5;
+    edge       = dimsize[0];
+    sds_id     = SDcreate(sd_id, SDS_NAME, DFNT_FLOAT32, RANK, dimsize);
+    CHECK(sds_id, FAIL, "SDcreate");
+
+    /* Promote the data set to an external data set by storing its data in
+       the external file EXT_FILE */
+    status = SDsetexternalfile(sds_id, EXT_FILE, 0);
+    CHECK(status, FAIL, "SDsetexternalfile");
+
+    /* Write to the dataset, the data will be stored in the external file EXT_FILE */
+    status = SDwritedata(sds_id, &start, &stride, &edge, sds_data);
+    CHECK(status, FAIL, "SDwritedata");
+
+    status = SDendaccess(sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+    status = SDend(sd_id);
+    CHECK(status, FAIL, "SDend");
+
+    /* Open the file to read */
+    sd_id = SDstart(MAIN_FILE, DFACC_READ);
+    CHECK(sd_id, FAIL, "SDstart");
+
+    /* Determine the index of the dataset */
+    sds_index = SDnametoindex(sd_id, SDS_NAME);
+    CHECK(sds_index, FAIL, "SDnametoindex");
+
+    /* Dataset identifier */
+    sds_id = SDselect(sd_id, sds_index);
+    CHECK(sds_id, FAIL, "SDselect");
+
+    /* Unset the target directory and read the variable */
+    status = HXsetdir(NULL);
+    CHECK(status, FAIL, "HXsetdir NULL");
+    status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
+    VERIFY(status, FAIL, "SDreaddata");
+
+    /* Set the target directory to the location of the external file and read the dataset */
+    status = HXsetdir(dir_name);
+    CHECK(status, FAIL, "HXsetdir dir_name");
+    status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
+    VERIFY(status, SUCCEED, "SDreaddata");
+
+    /* Unset the target directory again and read the variable */
+    status = HXsetdir(".");
+    CHECK(status, FAIL, "HXsetdir .");
+    status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
+    VERIFY(status, FAIL, "SDreaddata");
+
+    dir_name_len = strlen(dir_name);
+    another_path = (char *)malloc(sizeof(char) * dir_name_len + 20);
+    strcpy(another_path, dir_name);
+    strcat(another_path, "non-existing-dir");
+    status = HXsetdir(another_path);
+    CHECK(status, FAIL, "HXsetdir another_path");
+    status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
+    VERIFY(status, FAIL, "SDreaddata");
+    free(another_path);
+
+    status = HXsetdir(dir_name);
+    CHECK(status, FAIL, "HXsetdir dir_name");
+    status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
+    VERIFY(status, SUCCEED, "SDreaddata");
+
+    status = HXsetdir(NULL);
+    CHECK(status, FAIL, "HXsetdir NULL");
+    status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
+    VERIFY(status, FAIL, "SDreaddata");
+
+    /* Terminates access to the SD interface and closes the file */
+    status = SDendaccess(sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+    status = SDend(sd_id);
+    CHECK(status, FAIL, "SDend");
+
+    /* Remove external data file */
+    created_file_path = (char *)malloc(strlen(dir_name) + strlen(EXT_FILE) + 1);
+    CHECK_ALLOC(created_file_path, "created_file_path", "test_change_extdir");
+    strcpy(created_file_path, dir_name);
+    strcat(created_file_path, EXT_FILE);
+    command_ret = remove(created_file_path);
+    CHECK(command_ret, FAIL, "remove created_file_path");
+    free(created_file_path);
+
+    /* Remove hdf file */
+    command_ret = remove(MAIN_FILE);
+    CHECK(command_ret, FAIL, "remove MAIN_FILE");
+
+    /* Remove temporary directory used in case no src_dir */
+    if (temp_dir) {
+        command_ret = rmdir(temp_dir);
+        CHECK(command_ret, (-1), "remove temp_dir");
+        free(temp_dir);
+    }
+
+    /* Return the number of errors that's been kept track of so far */
+    return num_errs;
+} /* test_change_extdir */
+
+/********************************************************************
+   Name: test_HDFFR_1609() - tests writing after creating external file
+                             and without specifying external dir
+   Description:
+    The main contents include:
+    - HXsetdir to a location other than the directory where the external file
+      is going to be created
+    - Create a new hdf file and a new dataset
+    - Set create external directory to the source test directory
+    - Create the external file by calling SDsetexternalfile
+    - Write to the dataset with external data, should succeed (this failed before the fix)
+    - Remove the data file and the external file
+
+   Return value:
+    The number of errors occurred in this routine.
+
+*********************************************************************/
+static int
+test_HDFFR_1609(void)
+{
+    int32 sd_id;
+    int32 sds_id;
+    float sds_data[] = {0.1f, 2.3f, 4.5f, 6.7f, 8.9f};
+    int32 start = 0, stride = 1, edge;
+    int32 dimsize[RANK];
+    char  dir_name[MAX_PATH_LEN];   /* directory from srcdir */
+    char *temp_dir          = NULL; /* temp dir to create the external file in */
+    char *created_file_path = NULL; /* path to the created external file */
+    int   command_ret       = 0;    /* retvalue from system commands */
+    intn  status            = 0;
+    intn  num_errs          = 0; /* number of errors in compression test so far */
+
+    status = make_sourcepath(dir_name, MAX_PATH_LEN);
+    CHECK(status, FAIL, "make_datafilename");
+
+    /* When srcdir is not available, make up a directory to create the external
+       file to cause subsequent reads to look outside of the current directory */
+    if (!strcmp(dir_name, "./")) {
+
+        /* Facilitate the removal of the temporary directory later */
+        temp_dir = (char *)calloc(strlen(TMP_DIR) + 1, sizeof(char));
+        CHECK_ALLOC(temp_dir, "temp_dir", "test_HDFFR_1609");
+        strcpy(temp_dir, TMP_DIR);
+
+#if defined H4_HAVE_WIN32_API
+        command_ret = mkdir(temp_dir);
+#else
+        command_ret = mkdir(temp_dir, 0755);
+#endif
+        CHECK(command_ret, (-1), "mkdir temp_dir");
+        strcat(dir_name, temp_dir);
+    }
+
+    /* Unset the target directory and read the variable */
+    status = HXsetdir(NULL);
+    CHECK(status, FAIL, "HXsetdir");
+
+    /* Create the main file */
+    sd_id = SDstart(MAIN_FILE, DFACC_CREATE);
+    CHECK(sd_id, FAIL, "SDstart");
+
+    /* Set the directory to put the external file in */
+    status = HXsetcreatedir(dir_name);
+    CHECK(status, FAIL, "HXsetcreatedir");
+
+    /* Create a one-dim dataset named SDS_NAME */
+    dimsize[0] = 5;
+    edge       = dimsize[0];
+    sds_id     = SDcreate(sd_id, SDS_NAME, DFNT_FLOAT32, RANK, dimsize);
+    CHECK(sds_id, FAIL, "SDcreate");
+
+    /* Promote the data set to an external data set by storing its data in
+       the external file EXT_FILE */
+    status = SDsetexternalfile(sds_id, EXT_FILE, 0);
+    CHECK(status, FAIL, "SDsetexternalfile");
+
+    /* Write to the dataset, the data will be stored in the external file EXT_FILE */
+    status = SDwritedata(sds_id, &start, &stride, &edge, sds_data);
+    CHECK(status, FAIL, "SDwritedata");
+
+    status = SDendaccess(sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+    status = SDend(sd_id);
+    CHECK(status, FAIL, "SDend");
+
+    /* Remove external data file */
+    created_file_path = (char *)malloc(strlen(dir_name) + strlen(EXT_FILE) + 1);
+    CHECK_ALLOC(created_file_path, "created_file_path", "test_HDFFR_1609");
+    strcpy(created_file_path, dir_name);
+    strcat(created_file_path, EXT_FILE);
+    command_ret = remove(created_file_path);
+    CHECK(command_ret, FAIL, "remove created_file_path");
+    free(created_file_path);
+
+    /* Remove hdf file */
+    command_ret = remove(MAIN_FILE);
+    CHECK(command_ret, FAIL, "remove MAIN_FILE");
+
+    /* Remove temporary directory used in case no src_dir */
+    if (temp_dir) {
+        command_ret = rmdir(temp_dir);
+        CHECK(command_ret, (-1), "remove temp_dir");
+        free(temp_dir);
+    }
+
+    /* Return the number of errors that's been kept track of so far */
+    return num_errs;
+} /* test_HDFFR_1609 */
+
 /* Test driver for testing external file functions */
-/* extern int test_external()
- */
-int
+extern int
 test_external()
 {
     int  ii, jj, kk;
@@ -706,8 +993,18 @@ test_external()
     /* Test multiple specialness */
     num_errs = num_errs + test_special_combos();
 
-    if (num_errs == 0)
+    /* Test reading external elements with multiple HXsetdir calls */
+    num_errs = num_errs + test_change_extdir();
+
+    /* Test HDFFR_1609 fix */
+    num_errs = num_errs + test_HDFFR_1609();
+
+    if (num_errs == 0) {
         PASSED();
+    }
+    else {
+        H4_FAILED();
+    }
     return num_errs;
 }
 
@@ -750,18 +1047,18 @@ verify_data(int32 sd_id, int32 sds_ind)
 
     /* The data set SDS2 has appended data so the written data is different
     from the rest of the data sets in the file */
-    if (!HDstrncmp(name, SDS2, HDstrlen(SDS2))) {
+    if (!strncmp(name, SDS2, strlen(SDS2))) {
         /* Number of elements in first written data + appended data */
         num_elems = Z_LENGTH * Y_LENGTH * X_LENGTH + 1 * Y_LENGTH * X_LENGTH;
 
         /* Copy buffer of first written data to data_wappended */
-        HDmemcpy(data_wappended, written_data, (Z_LENGTH * Y_LENGTH * X_LENGTH) * sizeof(int));
+        memcpy(data_wappended, written_data, (Z_LENGTH * Y_LENGTH * X_LENGTH) * sizeof(int));
 
         /* Forward to the end of first written data */
         ptr = &data_wappended[Z_LENGTH][0][0];
 
         /* Copy appended data to data_wappended */
-        HDmemcpy(ptr, ap_data, (1 * Y_LENGTH * X_LENGTH) * sizeof(int));
+        memcpy(ptr, ap_data, (1 * Y_LENGTH * X_LENGTH) * sizeof(int));
 
         /* Back to the beginning of data_wappended */
         ptr = &data_wappended[0][0][0];
@@ -786,11 +1083,11 @@ verify_data(int32 sd_id, int32 sds_ind)
     }
 
     /* Allocate buffer for reading, after establishing the data size */
-    outdata = (int32 *)HDmalloc(data_size);
+    outdata = (int32 *)malloc(data_size);
     CHECK_ALLOC(outdata, "outdata", "verify_data");
 
     /* Read the entire sds and verify that the data is as the original buffer */
-    status = SDreaddata(sds_id, start, NULL, edges, (VOIDP)outdata);
+    status = SDreaddata(sds_id, start, NULL, edges, (void *)outdata);
     CHECK(status, FAIL, "SDreaddata");
 
     /* Verify that data is correct comparing against the written data */
@@ -807,11 +1104,10 @@ verify_data(int32 sd_id, int32 sds_ind)
     }
 
     /* Release resource */
-    HDfree(outdata);
+    free(outdata);
 
     /* Terminate access to the data set, SD interface, and file. */
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
 } /* verify_data */
-#endif /* HDF */

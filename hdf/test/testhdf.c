@@ -50,21 +50,24 @@ struct TestStruct {
     char Description[64];
     int  SkipFlag;
     char Name[16];
-    VOID (*Call)(void);
-} Test[MAXNUMOFTESTS];
+    void (*Call)(void);
+};
 
-static void InitTest(const char *TheName, VOID (*TheCall)(void), const char *TheDescr);
+struct TestStruct *Test = NULL;
+
+static void InitTest(const char *TheName, void (*TheCall)(void), const char *TheDescr);
 static void usage(void);
 
 static void
-InitTest(const char *TheName, VOID (*TheCall)(void), const char *TheDescr)
+InitTest(const char *TheName, void (*TheCall)(void), const char *TheDescr)
 {
     if (Index >= MAXNUMOFTESTS) {
         printf("Uh-oh, too many tests added, increase MAXNUMOFTEST!\n");
         exit(0);
-    } /* end if */
-    HDstrcpy(Test[Index].Description, TheDescr);
-    HDstrcpy(Test[Index].Name, TheName);
+    }
+
+    strcpy(Test[Index].Description, TheDescr);
+    strcpy(Test[Index].Name, TheName);
     Test[Index].Call      = TheCall;
     Test[Index].NumErrors = -1;
     Test[Index].SkipFlag  = 0;
@@ -116,6 +119,11 @@ main(int argc, char *argv[])
     /* Un-buffer stdout */
     setbuf(stdout, NULL);
 
+    if (NULL == (Test = (struct TestStruct *)calloc(MAXNUMOFTESTS, sizeof(struct TestStruct)))) {
+        printf("Could not allocate memory for tests!\n");
+        exit(0);
+    }
+
     /* Tests are generally arranged from least to most complexity... */
 #if !defined _WIN32
     InitTest("bitvect", test_bitvect, "Bit-Vector routines");
@@ -128,9 +136,6 @@ main(int argc, char *argv[])
     InitTest("extelt", test_hextelt, "EXTERNAL ELEMENTS");
     InitTest("comp", test_comp, "COMPRESSED ELEMENTS");
     InitTest("chunks", test_chunks, "Chunks");
-#ifdef LATER
-    InitTest("vblocks", test_hvblocks, "Variable Length Linked Blocks");
-#endif
     InitTest("bitio", test_bitio, "BIT I/O");
     InitTest("8bit", test_r8, "8BIT RASTER IMAGE INTERFACE");
     InitTest("pal", test_pal, "PALETTE INTERFACE");
@@ -163,7 +168,7 @@ main(int argc, char *argv[])
            (unsigned)lrelease, lstring);
     for (CLLoop = 1; CLLoop < argc; CLLoop++) {
         if ((argc > CLLoop + 1) &&
-            ((HDstrcmp(argv[CLLoop], "-verbose") == 0) || (HDstrcmp(argv[CLLoop], "-v") == 0))) {
+            ((strcmp(argv[CLLoop], "-verbose") == 0) || (strcmp(argv[CLLoop], "-v") == 0))) {
             if (argv[CLLoop + 1][0] == 'l')
                 Verbosity = 4;
             else if (argv[CLLoop + 1][0] == 'm')
@@ -173,62 +178,59 @@ main(int argc, char *argv[])
             else
                 Verbosity = atoi(argv[CLLoop + 1]);
         } /* end if */
-        if ((argc > CLLoop) &&
-            ((HDstrcmp(argv[CLLoop], "-summary") == 0) || (HDstrcmp(argv[CLLoop], "-s") == 0)))
+        if ((argc > CLLoop) && ((strcmp(argv[CLLoop], "-summary") == 0) || (strcmp(argv[CLLoop], "-s") == 0)))
             Summary = 1;
 
-        if ((argc > CLLoop) &&
-            ((HDstrcmp(argv[CLLoop], "-help") == 0) || (HDstrcmp(argv[CLLoop], "-h") == 0))) {
+        if ((argc > CLLoop) && ((strcmp(argv[CLLoop], "-help") == 0) || (strcmp(argv[CLLoop], "-h") == 0))) {
             usage();
             exit(0);
         }
 
         if ((argc > CLLoop) &&
-            ((HDstrcmp(argv[CLLoop], "-cleanoff") == 0) || (HDstrcmp(argv[CLLoop], "-c") == 0)))
+            ((strcmp(argv[CLLoop], "-cleanoff") == 0) || (strcmp(argv[CLLoop], "-c") == 0)))
             CleanUp = 0;
 
-        if ((argc > CLLoop) &&
-            ((HDstrcmp(argv[CLLoop], "-nocache") == 0) || (HDstrcmp(argv[CLLoop], "-n") == 0)))
+        if ((argc > CLLoop) && ((strcmp(argv[CLLoop], "-nocache") == 0) || (strcmp(argv[CLLoop], "-n") == 0)))
             Cache = 0;
 
         if ((argc > CLLoop + 1) &&
-            ((HDstrcmp(argv[CLLoop], "-exclude") == 0) || (HDstrcmp(argv[CLLoop], "-x") == 0))) {
+            ((strcmp(argv[CLLoop], "-exclude") == 0) || (strcmp(argv[CLLoop], "-x") == 0))) {
             Loop = CLLoop + 1;
             while ((Loop < argc) && (argv[Loop][0] != '-')) {
                 for (Loop1 = 0; Loop1 < Index; Loop1++)
-                    if (HDstrcmp(argv[Loop], Test[Loop1].Name) == 0)
+                    if (strcmp(argv[Loop], Test[Loop1].Name) == 0)
                         Test[Loop1].SkipFlag = 1;
                 Loop++;
             } /* end while */
         }     /* end if */
         if ((argc > CLLoop + 1) &&
-            ((HDstrcmp(argv[CLLoop], "-begin") == 0) || (HDstrcmp(argv[CLLoop], "-b") == 0))) {
+            ((strcmp(argv[CLLoop], "-begin") == 0) || (strcmp(argv[CLLoop], "-b") == 0))) {
             Loop = CLLoop + 1;
             while ((Loop < argc) && (argv[Loop][0] != '-')) {
                 for (Loop1 = 0; Loop1 < Index; Loop1++) {
-                    if (HDstrcmp(argv[Loop], Test[Loop1].Name) != 0)
+                    if (strcmp(argv[Loop], Test[Loop1].Name) != 0)
                         Test[Loop1].SkipFlag = 1;
-                    if (HDstrcmp(argv[Loop], Test[Loop1].Name) == 0)
+                    if (strcmp(argv[Loop], Test[Loop1].Name) == 0)
                         Loop1 = Index;
                 } /* end for */
                 Loop++;
             } /* end while */
         }     /* end if */
         if ((argc > CLLoop + 1) &&
-            ((HDstrcmp(argv[CLLoop], "-only") == 0) || (HDstrcmp(argv[CLLoop], "-o") == 0))) {
+            ((strcmp(argv[CLLoop], "-only") == 0) || (strcmp(argv[CLLoop], "-o") == 0))) {
             for (Loop = 0; Loop < Index; Loop++)
                 Test[Loop].SkipFlag = 1;
             Loop = CLLoop + 1;
             while ((Loop < argc) && (argv[Loop][0] != '-')) {
                 for (Loop1 = 0; Loop1 < Index; Loop1++)
-                    if (HDstrcmp(argv[Loop], Test[Loop1].Name) == 0)
+                    if (strcmp(argv[Loop], Test[Loop1].Name) == 0)
                         Test[Loop1].SkipFlag = 0;
                 Loop++;
             } /* end while */
         }     /* end if */
     }         /* end for */
 
-    if (Cache) /* turn on caching, unless we were instucted not to */
+    if (Cache) /* turn on caching, unless we were instructed not to */
         Hcache(CACHE_ALL_FILES, TRUE);
 
     for (Loop = 0; Loop < Index; Loop++) {
@@ -268,10 +270,14 @@ main(int argc, char *argv[])
 
     if (CleanUp) {
         MESSAGE(2, printf("\nCleaning Up...\n\n"););
-#ifndef H5_HAVE_WIN32_API
-        system("rm -f *.hdf *.tmp");
+#ifndef H4_HAVE_WIN32_API
+        if (system("rm -f *.hdf *.tmp") != 0) {
+            MESSAGE(2, printf("\n!!! Unable to clean files !!!\n\n"););
+        }
 #endif
     }
-    exit(num_errs);
+
+    free(Test);
+
     return num_errs;
 } /* end main() */

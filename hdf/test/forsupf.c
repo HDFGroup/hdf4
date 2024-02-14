@@ -11,6 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdlib.h>
+
 #include "hdf.h"
 #include "fortest.h"
 
@@ -23,7 +25,7 @@
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ngetverb(void)
 {
     char *verb_str;
@@ -31,8 +33,8 @@ ngetverb(void)
     verb_str         = getenv(FOR_VERB);
 
     if (verb_str != NULL)
-        verb_level = (intn)HDstrtol(verb_str, NULL, 0); /* convert whole string using base 10 */
-    return ((intf)verb_level);
+        verb_level = (intn)strtol(verb_str, NULL, 0); /* convert whole string using base 10 */
+    return (intf)verb_level;
 } /* end getverb() */
 
 /*-----------------------------------------------------------------------------
@@ -45,7 +47,7 @@ ngetverb(void)
  * Invokes: system
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nhisystem(_fcd cmd, intf *cmdlen)
 {
     char *fn;
@@ -53,10 +55,10 @@ nhisystem(_fcd cmd, intf *cmdlen)
 
     fn = HDf2cstring(cmd, (intn)*cmdlen);
     if (!fn)
-        return (FAIL);
+        return FAIL;
     ret = (intf)system(fn);
-    HDfree(fn);
-    return (ret);
+    free(fn);
+    return ret;
 } /* end nhisystem() */
 
 /*-----------------------------------------------------------------------------
@@ -71,7 +73,7 @@ nhisystem(_fcd cmd, intf *cmdlen)
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nfixnamec(_fcd name, intf *name_len, _fcd name_out, intf *name_len_out)
 {
     char *c_name;
@@ -82,7 +84,7 @@ nfixnamec(_fcd name, intf *name_len, _fcd name_out, intf *name_len_out)
 
     c_name = HDf2cstring(name, (intn)*name_len);
     if (!c_name)
-        return (FAIL);
+        return FAIL;
 
     /* Here comes Bill's code */
     /* Generate the correct name for the test file, by prepending the source path */
@@ -95,6 +97,6 @@ nfixnamec(_fcd name, intf *name_len, _fcd name_out, intf *name_len_out)
     HDpackFstring(testfile, _fcdtocp(name_out), *name_len_out);
 
     ret = 0;
-    HDfree(c_name);
-    return (ret);
+    free(c_name);
+    return ret;
 } /* end nfixname() */

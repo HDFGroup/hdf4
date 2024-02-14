@@ -11,6 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdlib.h>
+
 #include "hdf.h"
 #include "mfhdf.h"
 
@@ -166,20 +168,18 @@ copy_an_data(int32 infile_id, int32 outfile_id, int32 ref_in, int32 tag_in, int3
         if (is_label)
             ann_length++;
 
-        if ((buf = (char *)HDmalloc((ann_length) * sizeof(int8))) == NULL) {
+        if ((buf = (char *)malloc((ann_length) * sizeof(int8))) == NULL) {
             printf("Failed to get memory for AN %d of <%s>\n", i, path);
             continue;
         }
         if (ANreadann(ann_id, buf, ann_length) == FAIL) {
             printf("Failed to read AN %d of <%s>\n", i, path);
-            if (buf)
-                HDfree(buf);
+            free(buf);
             continue;
         }
         if (ANendaccess(ann_id) == FAIL) {
             printf("Failed to end AN %d of <%s>\n", i, path);
-            if (buf)
-                HDfree(buf);
+            free(buf);
             continue;
         }
         /*-------------------------------------------------------------------------
@@ -197,12 +197,10 @@ copy_an_data(int32 infile_id, int32 outfile_id, int32 ref_in, int32 tag_in, int3
         }
         if (ANendaccess(ann_out) == FAIL) {
             printf("Failed to end AN %d of <%s>\n", i, path);
-            if (buf)
-                HDfree(buf);
+            free(buf);
             continue;
         }
-        if (buf)
-            HDfree(buf);
+        free(buf);
     }
 
     /* Terminate access to the AN interface */

@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "h4config.h"
+#include "hdf.h"
+
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else
@@ -16,13 +17,9 @@
 #include "testcdf.h" /* defines in-memory test cdf structure */
 #include "add.h"     /* functions to update in-memory netcdf */
 #include "error.h"
-#include "alloc.h"
 #include "emalloc.h"
 #include "tests.h"
 #include "val.h"
-#ifdef HDF
-#include "hdf.h"
-#endif
 
 #define LEN_OF(array) ((sizeof array) / (sizeof array[0]))
 
@@ -103,7 +100,7 @@ test_ncattput(char *path)
             ncclose(cdfid);
             return;
         }
-        add_att(&test, NC_GLOBAL, &atts[ia]); /* keep in-memory netcdf updated */
+        add_att(test_g, NC_GLOBAL, &atts[ia]); /* keep in-memory netcdf updated */
     }
     /* make sure count of global attributes has been updated */
     if (ncinquire(cdfid, &ndims, &nvars, &ngatts, &xdimid) == -1) {
@@ -138,7 +135,7 @@ test_ncattput(char *path)
             error("%s: ncattget got bad values after put of NC_GLOBAL attrs", pname);
             nerrs++;
         }
-        Free((char *)tmp.val);
+        free(tmp.val);
     }
     /* add a variable, then variable attributes of every type */
     ww.dims = (int *)emalloc(sizeof(int) * ww.ndims);
@@ -149,14 +146,14 @@ test_ncattput(char *path)
         ncclose(cdfid);
         return;
     }
-    add_var(&test, &ww); /* keep in-memory netcdf in sync */
+    add_var(test_g, &ww); /* keep in-memory netcdf in sync */
     for (ia = 0; ia < na; ia++) {
         if (ncattput(cdfid, ww_id, atts[ia].name, atts[ia].type, atts[ia].len, atts[ia].val) == -1) {
             error("%s: ncattput of variable attribute failed", pname);
             ncclose(cdfid);
             return;
         }
-        add_att(&test, ww_id, &atts[ia]); /* keep in-memory netcdf updated */
+        add_att(test_g, ww_id, &atts[ia]); /* keep in-memory netcdf updated */
     }
     /* check with ncattinq and ncattget that variable attributes put OK */
     for (ia = 0; ia < na; ia++) {
@@ -181,7 +178,7 @@ test_ncattput(char *path)
             error("%s: ncattget got bad values after put of variable attrs", pname);
             nerrs++;
         }
-        Free((char *)tmp.val);
+        free(tmp.val);
     }
     /*
      * check that changing type of existing attribute, increasing
@@ -200,7 +197,7 @@ test_ncattput(char *path)
         tmp.type = atts[ia].type;
         tmp.len  = atts[ia].len;
         tmp.val  = atts[ia].val;
-        add_att(&test, ww_id, &tmp); /* keep in-memory netcdf updated */
+        add_att(test_g, ww_id, &tmp); /* keep in-memory netcdf updated */
     }
     /* check with ncattinq and ncattget that variable attributes put OK */
     for (ia = 1; ia < na; ia++) {
@@ -225,7 +222,7 @@ test_ncattput(char *path)
             error("%s: ncattget got bad values after put of larger attrs", pname);
             nerrs++;
         }
-        Free((char *)tmp.val);
+        free(tmp.val);
     }
     /* try with bad datatype, should fail */
     if (ncattput(cdfid, ww_id, "bogus_att1", BAD_TYPE, atts[0].len, atts[0].val) != -1) {
@@ -274,7 +271,7 @@ test_ncattput(char *path)
         tmp.type = atts[ia].type;
         tmp.len  = atts[ia].len;
         tmp.val  = atts[ia].val;
-        add_att(&test, ww_id, &tmp); /* keep in-memory netcdf updated */
+        add_att(test_g, ww_id, &tmp); /* keep in-memory netcdf updated */
     }
     /* check with ncattinq and ncattget that variable attributes put OK */
     for (ia = 0; ia < na - 1; ia++) {
@@ -299,10 +296,10 @@ test_ncattput(char *path)
             error("%s: ncattget got bad values in data mode", pname);
             nerrs++;
         }
-        Free((char *)tmp.val);
+        free(tmp.val);
     }
     /* try with bad variable handle, should fail */
-    if (ncattput(cdfid, test.nvars, atts[0].name, atts[0].type, atts[0].len, atts[0].val) != -1) {
+    if (ncattput(cdfid, test_g->nvars, atts[0].name, atts[0].type, atts[0].len, atts[0].val) != -1) {
         error("%s: ncattput should fail with bad variable handle", pname);
         ncclose(cdfid);
         return;
@@ -317,7 +314,7 @@ test_ncattput(char *path)
         ncclose(cdfid);
         return;
     }
-    Free(tmp.name);
+    free(tmp.name);
     if (nerrs > 0)
         (void)fprintf(stderr, "FAILED! ***\n");
     else
@@ -352,18 +349,18 @@ test_ncattinq(char *path)
         return;
     }
     /* in data mode, check all attributes against test netcdf */
-    for (ia = 0; ia < test.natts; ia++) {
-        if (ncattinq(cdfid, test.atts[ia].var, test.atts[ia].name, &type, &len) == -1) {
+    for (ia = 0; ia < test_g->natts; ia++) {
+        if (ncattinq(cdfid, test_g->atts[ia].var, test_g->atts[ia].name, &type, &len) == -1) {
             error("%s: ncattinq failed", pname);
             ncclose(cdfid);
             return;
         }
-        if (type != test.atts[ia].type) {
+        if (type != test_g->atts[ia].type) {
             error("%s: ncattinq returned wrong type", pname);
             ncclose(cdfid);
             return;
         }
-        if (len != test.atts[ia].len) {
+        if (len != test_g->atts[ia].len) {
             error("%s: ncattinq returned wrong len", pname);
             ncclose(cdfid);
             return;
@@ -379,13 +376,13 @@ test_ncattinq(char *path)
     /* in define mode, add a variable */
     vv.dims = (int *)emalloc(sizeof(int) * vv.ndims);
     for (id = 0; id < vv.ndims; id++)
-        vv.dims[id] = id; /* assumes vv.ndims <= test.ndims */
+        vv.dims[id] = id; /* assumes vv.ndims <= test_g->ndims */
     if ((vv_id = ncvardef(cdfid, vv.name, vv.type, vv.ndims, vv.dims)) == -1) {
         error("%s: ncvardef failed", pname);
         ncclose(cdfid);
         return;
     }
-    add_var(&test, &vv); /* keep in-memory netcdf in sync */
+    add_var(test_g, &vv); /* keep in-memory netcdf in sync */
 
     /* try with nonexisting attribute, should fail */
     if (ncattinq(cdfid, vv_id, "nonesuch", &type, &len) != -1) {
@@ -394,24 +391,24 @@ test_ncattinq(char *path)
         return;
     }
     /* try with bad variable handle, should fail */
-    if (ncattinq(cdfid, test.nvars, test.atts[0].name, &type, &len) != -1) {
+    if (ncattinq(cdfid, test_g->nvars, test_g->atts[0].name, &type, &len) != -1) {
         error("%s: ncattinq should fail with bad variable id", pname);
         ncclose(cdfid);
         return;
     }
     /* in define mode check all attributes against test netcdf */
-    for (ia = 0; ia < test.natts; ia++) {
-        if (ncattinq(cdfid, test.atts[ia].var, test.atts[ia].name, &type, &len) == -1) {
+    for (ia = 0; ia < test_g->natts; ia++) {
+        if (ncattinq(cdfid, test_g->atts[ia].var, test_g->atts[ia].name, &type, &len) == -1) {
             error("%s: ncattinq in define mode failed", pname);
             ncclose(cdfid);
             return;
         }
-        if (type != test.atts[ia].type) {
+        if (type != test_g->atts[ia].type) {
             error("%s: ncattinq in define mode returned wrong type", pname);
             ncclose(cdfid);
             return;
         }
-        if (len != test.atts[ia].len) {
+        if (len != test_g->atts[ia].len) {
             error("%s: ncattinq in define mode returned wrong len", pname);
             ncclose(cdfid);
             return;
@@ -426,7 +423,7 @@ test_ncattinq(char *path)
         error("%s: ncclose failed", pname);
         return;
     }
-    if (ncattinq(cdfid, NC_GLOBAL, test.atts[0].name, &type, &len) != -1) {
+    if (ncattinq(cdfid, NC_GLOBAL, test_g->atts[0].name, &type, &len) != -1) {
         error("%s: ncattinq should fail with bad cdfid", pname);
         nerrs++;
     }
@@ -483,7 +480,7 @@ test_ncattget(char *path)
         ncclose(cdfid);
         return;
     }
-    add_var(&test, &uu); /* keep in-memory netcdf in sync */
+    add_var(test_g, &uu); /* keep in-memory netcdf in sync */
 
     /* add an attribute */
     if (ncattput(cdfid, uu_id, vmax.name, vmax.type, vmax.len, vmax.val) == -1) {
@@ -491,44 +488,44 @@ test_ncattget(char *path)
         ncclose(cdfid);
         return;
     }
-    add_att(&test, uu_id, &vmax); /* keep in-memory netcdf updated */
+    add_att(test_g, uu_id, &vmax); /* keep in-memory netcdf updated */
 
     /* in define mode, check all attributes values against test netcdf */
-    for (ia = 0; ia < test.natts; ia++) {
-        if (ncattinq(cdfid, test.atts[ia].var, test.atts[ia].name, &tmp.type, &tmp.len) == -1) {
+    for (ia = 0; ia < test_g->natts; ia++) {
+        if (ncattinq(cdfid, test_g->atts[ia].var, test_g->atts[ia].name, &tmp.type, &tmp.len) == -1) {
             error("%s: ncattinq in define mode failed", pname);
             ncclose(cdfid);
             return;
         }
-        if (tmp.type != test.atts[ia].type) {
+        if (tmp.type != test_g->atts[ia].type) {
             error("%s: ncattinq in define mode returned wrong type", pname);
             ncclose(cdfid);
             return;
         }
-        if (tmp.len != test.atts[ia].len) {
+        if (tmp.len != test_g->atts[ia].len) {
             error("%s: ncattinq in define mode returned wrong len", pname);
             ncclose(cdfid);
             return;
         }
         /* allocate space to hold the attribute value to be retrieved */
         tmp.val = emalloc(tmp.len * nctypelen(tmp.type));
-        if (ncattget(cdfid, test.atts[ia].var, test.atts[ia].name, tmp.val) == -1) {
+        if (ncattget(cdfid, test_g->atts[ia].var, test_g->atts[ia].name, tmp.val) == -1) {
             error("%s: ncattget of variable attribute failed in define mode", pname);
             ncclose(cdfid);
             return;
         }
-        if (val_cmp(tmp.type, tmp.len, tmp.val, test.atts[ia].val) != 0) {
+        if (val_cmp(tmp.type, tmp.len, tmp.val, test_g->atts[ia].val) != 0) {
             error("%s: ncattget got bad values in define mode", pname);
             error("   cdfid=%d, varname=%s, attname=%s, type=%d, len=%d", cdfid,
-                  test.vars[test.atts[ia].var].name, test.atts[ia].name, test.atts[ia].type,
-                  test.atts[ia].len);
+                  test_g->vars[test_g->atts[ia].var].name, test_g->atts[ia].name, test_g->atts[ia].type,
+                  test_g->atts[ia].len);
             (void)fprintf(stderr, "should have got:");
-            val_out(test.atts[ia].type, test.atts[ia].len, test.atts[ia].val);
+            val_out(test_g->atts[ia].type, test_g->atts[ia].len, test_g->atts[ia].val);
             (void)fprintf(stderr, "    instead got:");
             val_out(tmp.type, tmp.len, tmp.val);
             nerrs++;
         }
-        Free((char *)tmp.val);
+        free(tmp.val);
     }
     if (ncendef(cdfid) == -1) {
         error("%s: ncendef failed", pname);
@@ -537,44 +534,44 @@ test_ncattget(char *path)
     }
 
     /* in data mode, check all attributes values against test netcdf */
-    for (ia = 0; ia < test.natts; ia++) {
-        if (ncattinq(cdfid, test.atts[ia].var, test.atts[ia].name, &tmp.type, &tmp.len) == -1) {
+    for (ia = 0; ia < test_g->natts; ia++) {
+        if (ncattinq(cdfid, test_g->atts[ia].var, test_g->atts[ia].name, &tmp.type, &tmp.len) == -1) {
             error("%s: ncattinq failed", pname);
             ncclose(cdfid);
             return;
         }
-        if (tmp.type != test.atts[ia].type) {
+        if (tmp.type != test_g->atts[ia].type) {
             error("%s: ncattinq returned wrong type", pname);
             ncclose(cdfid);
             return;
         }
-        if (tmp.len != test.atts[ia].len) {
+        if (tmp.len != test_g->atts[ia].len) {
             error("%s: ncattinq returned wrong len", pname);
             ncclose(cdfid);
             return;
         }
         /* allocate space to hold the attribute value to be retrieved */
         tmp.val = emalloc(tmp.len * nctypelen(tmp.type));
-        if (ncattget(cdfid, test.atts[ia].var, test.atts[ia].name, tmp.val) == -1) {
+        if (ncattget(cdfid, test_g->atts[ia].var, test_g->atts[ia].name, tmp.val) == -1) {
             error("%s: ncattget of variable attribute failed in data mode", pname);
             ncclose(cdfid);
             return;
         }
-        if (val_cmp(tmp.type, tmp.len, tmp.val, test.atts[ia].val) != 0) {
+        if (val_cmp(tmp.type, tmp.len, tmp.val, test_g->atts[ia].val) != 0) {
             error("%s: ncattget got bad values in data mode", pname);
             error("   cdfid=%d, varname=%s, attname=%s, type=%d, len=%d", cdfid,
-                  test.vars[test.atts[ia].var].name, test.atts[ia].name, test.atts[ia].type,
-                  test.atts[ia].len);
+                  test_g->vars[test_g->atts[ia].var].name, test_g->atts[ia].name, test_g->atts[ia].type,
+                  test_g->atts[ia].len);
             (void)fprintf(stderr, "should have got:");
-            val_out(test.atts[ia].type, test.atts[ia].len, test.atts[ia].val);
+            val_out(test_g->atts[ia].type, test_g->atts[ia].len, test_g->atts[ia].val);
             (void)fprintf(stderr, "    instead got:");
             val_out(tmp.type, tmp.len, tmp.val);
             nerrs++;
         }
-        Free((char *)tmp.val);
+        free(tmp.val);
     }
     /* try with bad variable handle, should fail */
-    if (ncattget(cdfid, test.nvars, vmax.name, vmax.val) != -1) {
+    if (ncattget(cdfid, test_g->nvars, vmax.name, vmax.val) != -1) {
         error("%s: ncattget should fail with bad variable handle", pname);
         ncclose(cdfid);
         return;
@@ -654,7 +651,7 @@ test_ncattcopy(char *path1, char *path2)
         ncclose(cdfid);
         return;
     }
-    add_att(&test, NC_GLOBAL, &att); /* keep in-memory netcdf consistent */
+    add_att(test_g, NC_GLOBAL, &att); /* keep in-memory netcdf consistent */
     tt.dims = (int *)emalloc(sizeof(int) * tt.ndims);
     for (id = 0; id < tt.ndims; id++)
         tt.dims[0] = id;
@@ -663,13 +660,13 @@ test_ncattcopy(char *path1, char *path2)
         ncclose(cdfid);
         return;
     }
-    add_var(&test, &tt); /* keep in-memory netcdf consistent */
+    add_var(test_g, &tt); /* keep in-memory netcdf consistent */
     if (ncattput(cdfid, tt_id, att.name, att.type, att.len, att.val) == -1) {
         error("%s: ncattput failed", pname);
         ncclose(cdfid);
         return;
     }
-    add_att(&test, tt_id, &att); /* keep in-memory netcdf consistent */
+    add_att(test_g, tt_id, &att); /* keep in-memory netcdf consistent */
 
     tu.dims = (int *)emalloc(sizeof(int) * tu.ndims);
     for (id = 0; id < tu.ndims; id++)
@@ -679,13 +676,13 @@ test_ncattcopy(char *path1, char *path2)
         ncclose(cdfid);
         return;
     }
-    add_var(&test, &tu); /* keep in-memory netcdf consistent */
+    add_var(test_g, &tu); /* keep in-memory netcdf consistent */
     if (ncattput(cdfid, tu_id, att.name, att.type, att.len, att.val) == -1) {
         error("%s: ncattput failed", pname);
         ncclose(cdfid);
         return;
     }
-    add_att(&test, tu_id, &att); /* keep in-memory netcdf consistent */
+    add_att(test_g, tu_id, &att); /* keep in-memory netcdf consistent */
     if (ncendef(cdfid) == -1) {
         error("%s: ncendef failed", pname);
         ncclose(cdfid);
@@ -699,7 +696,7 @@ test_ncattcopy(char *path1, char *path2)
     }
     /* create dimensions and variable in second netcdf */
     for (id = 0; id < tu.ndims; id++) { /* copy dimensions from source */
-        if ((tu.dims[id] = ncdimdef(cdfid2, test.dims[id].name, test.dims[id].size)) == -1) {
+        if ((tu.dims[id] = ncdimdef(cdfid2, test_g->dims[id].name, test_g->dims[id].size)) == -1) {
             error("%s: ncdimdef failed", pname);
             ncclose(cdfid);
             ncclose(cdfid2);
@@ -744,7 +741,7 @@ test_ncattcopy(char *path1, char *path2)
         error("%s: ncattget got bad values after put of NC_GLOBAL attrs", pname);
         nerrs++;
     }
-    Free((char *)tmp.val);
+    free(tmp.val);
     /* try copying variable attribute from source to target */
     if (ncattcopy(cdfid, tt_id, att.name, cdfid2, tu2_id) == -1) {
         error("%s: ncattcopy failed", pname);
@@ -777,7 +774,7 @@ test_ncattcopy(char *path1, char *path2)
         error("%s: ncattget got bad values after copy of variable attrs", pname);
         nerrs++;
     }
-    Free((char *)tmp.val);
+    free(tmp.val);
 
     /*
      * check that old attribute put works with target in data mode,
@@ -796,7 +793,7 @@ test_ncattcopy(char *path1, char *path2)
         ncclose(cdfid2);
         return;
     }
-    add_att(&test, NC_GLOBAL, &att2); /* keep in-memory netcdf consistent */
+    add_att(test_g, NC_GLOBAL, &att2); /* keep in-memory netcdf consistent */
     /* copy shorter attribute on existing attribute */
     if (ncattcopy(cdfid, NC_GLOBAL, att2.name, cdfid2, tu2_id) == -1) {
         error("%s: ncattcopy of shorter attribute on old attribute failed", pname);
@@ -829,7 +826,7 @@ test_ncattcopy(char *path1, char *path2)
         error("%s: ncattget got bad values after copy of variable attrs", pname);
         nerrs++;
     }
-    Free((char *)tmp.val);
+    free(tmp.val);
 
     /* try copying with same source and target netcdf, different variables */
     /* copy shorter attribute on existing attribute */
@@ -839,7 +836,7 @@ test_ncattcopy(char *path1, char *path2)
         ncclose(cdfid2);
         return;
     }
-    add_att(&test, tu_id, &att2); /* keep in-memory netcdf consistent */
+    add_att(test_g, tu_id, &att2); /* keep in-memory netcdf consistent */
     /* check that copy worked with ncattinq and ncattget */
     if (ncattinq(cdfid, tu_id, att2.name, &tmp.type, &tmp.len) == -1) {
         error("%s: ncattinq of variable attribute failed", pname);
@@ -865,7 +862,7 @@ test_ncattcopy(char *path1, char *path2)
         error("%s: ncattget got bad values after copy of variable attrs", pname);
         nerrs++;
     }
-    Free((char *)tmp.val);
+    free(tmp.val);
 
     /* try with same cdfid for source and target, same variable */
     if (ncattcopy(cdfid, tu_id, att.name, cdfid, tu_id) == -1) {
@@ -882,7 +879,7 @@ test_ncattcopy(char *path1, char *path2)
         return;
     }
     /* try with bad source or target variable handle, check error */
-    if (ncattcopy(cdfid, test.nvars, att.name, cdfid, tu_id) != -1) {
+    if (ncattcopy(cdfid, test_g->nvars, att.name, cdfid, tu_id) != -1) {
         error("%s: ncattcopy should fail with bad source variable id", pname);
         ncclose(cdfid);
         ncclose(cdfid2);
@@ -957,47 +954,47 @@ test_ncattname(char *path)
     /* for each NC_GLOBAL attribute, get name and compare with expected name */
     att.name = (char *)emalloc(H4_MAX_NC_NAME);
     ib       = 0;
-    for (ia = 0; ia < test.ngatts; ia++) {
+    for (ia = 0; ia < test_g->ngatts; ia++) {
         if (ncattname(cdfid, NC_GLOBAL, ia, att.name) == -1) {
             error("%s: ncattname failed on global attribute", pname);
             ncclose(cdfid);
             return;
         }
         /* find number of next global attribute */
-        while (ib < test.natts && test.atts[ib].var != NC_GLOBAL)
+        while (ib < test_g->natts && test_g->atts[ib].var != NC_GLOBAL)
             ib++;
-        if (ib >= test.natts) {
+        if (ib >= test_g->natts) {
             error("%s: test problem, expected global attribute not found", pname);
             ncclose(cdfid);
             return;
         }
-        if (strcmp(att.name, test.atts[ib].name) != 0) {
+        if (strcmp(att.name, test_g->atts[ib].name) != 0) {
             error("%s: NC_GLOBAL attribute name `%s' instead of expected `%s'", pname, att.name,
-                  test.atts[ib].name);
+                  test_g->atts[ib].name);
             nerrs++;
         }
         ib++;
     }
     /* for each variable attribute, get name and compare with expected name */
-    for (iv = 0; iv < test.nvars; iv++) {
+    for (iv = 0; iv < test_g->nvars; iv++) {
         ib = 0;
-        for (ia = 0; ia < test.vars[iv].natts; ia++) {
+        for (ia = 0; ia < test_g->vars[iv].natts; ia++) {
             if (ncattname(cdfid, iv, ia, att.name) == -1) {
                 error("%s: ncattname failed on variable attribute", pname);
                 ncclose(cdfid);
                 return;
             }
             /* find number of next attribute */
-            while (ib < test.natts && test.atts[ib].var != iv)
+            while (ib < test_g->natts && test_g->atts[ib].var != iv)
                 ib++;
-            if (ib >= test.natts) {
+            if (ib >= test_g->natts) {
                 error("%s: problem  in test, expected attribute not found", pname);
                 ncclose(cdfid);
                 return;
             }
-            if (strcmp(att.name, test.atts[ib].name) != 0) {
-                error("%s: variable '%s' name `%s' instead of expected `%s'", pname, test.vars[iv].name,
-                      att.name, test.atts[ib].name);
+            if (strcmp(att.name, test_g->atts[ib].name) != 0) {
+                error("%s: variable '%s' name `%s' instead of expected `%s'", pname, test_g->vars[iv].name,
+                      att.name, test_g->atts[ib].name);
                 nerrs++;
             }
             ib++;
@@ -1010,10 +1007,10 @@ test_ncattname(char *path)
         ncclose(cdfid);
         return;
     }
-    add_att(&test, NC_GLOBAL, &att); /* keep in-memory netcdf consistent */
+    add_att(test_g, NC_GLOBAL, &att); /* keep in-memory netcdf consistent */
     /* test that ncattname works immediately after ncattput */
     tmp.name = (char *)emalloc(H4_MAX_NC_NAME);
-    if (ncattname(cdfid, NC_GLOBAL, test.ngatts - 1, tmp.name) == -1) {
+    if (ncattname(cdfid, NC_GLOBAL, test_g->ngatts - 1, tmp.name) == -1) {
         error("%s: ncattname failed on variable attribute", pname);
         ncclose(cdfid);
         return;
@@ -1030,54 +1027,54 @@ test_ncattname(char *path)
     /* in data mode */
     /* for each NC_GLOBAL attribute, get name and compare with expected name */
     ib = 0;
-    for (ia = 0; ia < test.ngatts; ia++) {
+    for (ia = 0; ia < test_g->ngatts; ia++) {
         if (ncattname(cdfid, NC_GLOBAL, ia, att.name) == -1) {
             error("%s: ncattname failed on global attribute", pname);
             ncclose(cdfid);
             return;
         }
         /* find number of next global attribute */
-        while (ib < test.natts && test.atts[ib].var != NC_GLOBAL)
+        while (ib < test_g->natts && test_g->atts[ib].var != NC_GLOBAL)
             ib++;
-        if (ib >= test.natts) {
+        if (ib >= test_g->natts) {
             error("%s: test problem, expected global attribute not found", pname);
             ncclose(cdfid);
             return;
         }
-        if (strcmp(att.name, test.atts[ib].name) != 0) {
+        if (strcmp(att.name, test_g->atts[ib].name) != 0) {
             error("%s: NC_GLOBAL attribute name `%s' instead of expected `%s'", pname, att.name,
-                  test.atts[ib].name);
+                  test_g->atts[ib].name);
             nerrs++;
         }
         ib++;
     }
     /* for each variable attribute, get name and compare with expected name */
-    for (iv = 0; iv < test.nvars; iv++) {
+    for (iv = 0; iv < test_g->nvars; iv++) {
         ib = 0;
-        for (ia = 0; ia < test.vars[iv].natts; ia++) {
+        for (ia = 0; ia < test_g->vars[iv].natts; ia++) {
             if (ncattname(cdfid, iv, ia, att.name) == -1) {
                 error("%s: ncattname failed on variable attribute", pname);
                 ncclose(cdfid);
                 return;
             }
             /* find number of next attribute */
-            while (ib < test.natts && test.atts[ib].var != iv)
+            while (ib < test_g->natts && test_g->atts[ib].var != iv)
                 ib++;
-            if (ib >= test.natts) {
+            if (ib >= test_g->natts) {
                 error("%s: problem  in test, expected attribute not found", pname);
                 ncclose(cdfid);
                 return;
             }
-            if (strcmp(att.name, test.atts[ib].name) != 0) {
-                error("%s: variable '%s' name `%s' instead of expected `%s'", pname, test.vars[iv].name,
-                      att.name, test.atts[ib].name);
+            if (strcmp(att.name, test_g->atts[ib].name) != 0) {
+                error("%s: variable '%s' name `%s' instead of expected `%s'", pname, test_g->vars[iv].name,
+                      att.name, test_g->atts[ib].name);
                 nerrs++;
             }
             ib++;
         }
     }
     /* try with bad variable handle, check error */
-    if (ncattname(cdfid, test.nvars, 0, att.name) != -1) {
+    if (ncattname(cdfid, test_g->nvars, 0, att.name) != -1) {
         error("%s: ncattname should fail with bad variable handle", pname);
         ncclose(cdfid);
         return;
@@ -1088,7 +1085,7 @@ test_ncattname(char *path)
         ncclose(cdfid);
         return;
     }
-    if (ncattname(cdfid, NC_GLOBAL, test.ngatts, att.name) != -1) {
+    if (ncattname(cdfid, NC_GLOBAL, test_g->ngatts, att.name) != -1) {
         error("%s: ncattname should fail with too-high number", pname);
         ncclose(cdfid);
         return;
@@ -1103,8 +1100,8 @@ test_ncattname(char *path)
         error("%s: ncattname shoul fail with bad cdfid", pname);
         nerrs++;
     }
-    Free(tmp.name);
-    Free(att.name);
+    free(tmp.name);
+    free(att.name);
     if (nerrs > 0)
         (void)fprintf(stderr, "FAILED! ***\n");
     else
@@ -1155,14 +1152,14 @@ test_ncattrename(char *path)
         ncclose(cdfid);
         return;
     }
-    add_att(&test, NC_GLOBAL, &atty); /* keep in-memory netcdf in sync */
-    ynum = test.natts - 1;            /* number of attribute just put */
+    add_att(test_g, NC_GLOBAL, &atty); /* keep in-memory netcdf in sync */
+    ynum = test_g->natts - 1;          /* number of attribute just put */
     if (ncattput(cdfid, NC_GLOBAL, attz.name, attz.type, attz.len, attz.val) == -1) {
         error("%s: ncattput failed", pname);
         ncclose(cdfid);
         return;
     }
-    add_att(&test, NC_GLOBAL, &attz); /* keep in-memory netcdf in sync */
+    add_att(test_g, NC_GLOBAL, &attz); /* keep in-memory netcdf in sync */
 
     /* rename first attribute to shorter name */
     if (ncattrename(cdfid, NC_GLOBAL, atty.name, newname) == -1) {
@@ -1170,7 +1167,7 @@ test_ncattrename(char *path)
         ncclose(cdfid);
         return;
     }
-    (void)strcpy(test.atts[ynum].name, newname); /* keep test consistent */
+    (void)strcpy(test_g->atts[ynum].name, newname); /* keep test consistent */
     /* check new name with ncattinq */
     if (ncattinq(cdfid, NC_GLOBAL, newname, &tmp.type, &tmp.len) == -1) {
         error("%s: ncattinq of renamed attribute failed", pname);
@@ -1211,7 +1208,7 @@ test_ncattrename(char *path)
         return;
     }
     /* try with bad variable handle, check for failure */
-    if (ncattrename(cdfid, test.nvars, newname, atty.name) != -1) {
+    if (ncattrename(cdfid, test_g->nvars, newname, atty.name) != -1) {
         error("%s: ncattrename should have failed on bad variable id", pname);
         ncclose(cdfid);
         return;
@@ -1247,7 +1244,7 @@ test_ncattrename(char *path)
         error("%s: ncattget got bad values after data mode rename", pname);
         nerrs++;
     }
-    Free((char *)tmp.val);
+    free(tmp.val);
     if (ncclose(cdfid) == -1) {
         error("%s: ncclose failed", pname);
         return;
@@ -1312,7 +1309,7 @@ test_ncattdel(char *path)
         ncclose(cdfid);
         return;
     }
-    add_att(&test, NC_GLOBAL, &yaa); /* keep in-memory netcdf in sync */
+    add_att(test_g, NC_GLOBAL, &yaa); /* keep in-memory netcdf in sync */
     yav.dims = (int *)emalloc(sizeof(int) * yav.ndims);
     for (id = 0; id < yav.ndims; id++)
         yav.dims[id] = id;
@@ -1321,13 +1318,13 @@ test_ncattdel(char *path)
         ncclose(cdfid);
         return;
     }
-    add_var(&test, &yav); /* keep in-memory netcdf consistent */
+    add_var(test_g, &yav); /* keep in-memory netcdf consistent */
     if (ncattput(cdfid, yav_id, yaa.name, yaa.type, yaa.len, yaa.val) == -1) {
         error("%s: ncattput failed", pname);
         ncclose(cdfid);
         return;
     }
-    add_att(&test, yav_id, &yaa); /* keep in-memory netcdf consistent */
+    add_att(test_g, yav_id, &yaa); /* keep in-memory netcdf consistent */
 
     /* get number of global attributes, number of attributes for variable */
     if (ncinquire(cdfid, &ndims, &nvars, &ngatts1, &xdimid) == -1) {
@@ -1349,7 +1346,7 @@ test_ncattdel(char *path)
         ncclose(cdfid);
         return;
     }
-    del_att(&test, NC_GLOBAL, &yaa); /* keep in-memory netcdf consistent */
+    del_att(test_g, NC_GLOBAL, &yaa); /* keep in-memory netcdf consistent */
     if (ncinquire(cdfid, &ndims, &nvars, &ngatts2, &xdimid) == -1) {
         error("%s: ncinquire failed", pname);
         ncclose(cdfid);
@@ -1372,7 +1369,7 @@ test_ncattdel(char *path)
         ncclose(cdfid);
         return;
     }
-    del_att(&test, yav_id, &yaa); /* keep in-memory netcdf consistent */
+    del_att(test_g, yav_id, &yaa); /* keep in-memory netcdf consistent */
     if (ncvarinq(cdfid, yav_id, vtmp.name, &vtmp.type, &vtmp.ndims, vtmp.dims, &vtmp.natts) == -1) {
         error("%s: ncvarinq failed", pname);
         ncclose(cdfid);
@@ -1394,13 +1391,13 @@ test_ncattdel(char *path)
         ncclose(cdfid);
         return;
     }
-    add_att(&test, NC_GLOBAL, &yaa); /* keep in-memory netcdf in sync */
+    add_att(test_g, NC_GLOBAL, &yaa); /* keep in-memory netcdf in sync */
     if (ncattput(cdfid, yav_id, yaa.name, yaa.type, yaa.len, yaa.val) == -1) {
         error("%s: ncattput failed", pname);
         ncclose(cdfid);
         return;
     }
-    add_att(&test, yav_id, &yaa); /* keep in-memory netcdf consistent */
+    add_att(test_g, yav_id, &yaa); /* keep in-memory netcdf consistent */
     /* try on nonexistent attribute, should fail */
     if (ncattdel(cdfid, yav_id, "nonesuch") != -1) {
         error("%s: ncattdel should fail on bogus attribute", pname);
@@ -1408,7 +1405,7 @@ test_ncattdel(char *path)
         return;
     }
     /* try on bad variable id, should fail */
-    if (ncattdel(cdfid, test.nvars, yaa.name) != -1) {
+    if (ncattdel(cdfid, test_g->nvars, yaa.name) != -1) {
         error("%s: ncattdel should fail on bad variable id", pname);
         ncclose(cdfid);
         return;
@@ -1433,9 +1430,9 @@ test_ncattdel(char *path)
         error("%s: ncattdel should fail on bad netcdf id", pname);
         nerrs++;
     }
-    Free((char *)vtmp.dims);
-    Free(vtmp.name);
-    Free((char *)yav.dims);
+    free(vtmp.dims);
+    free(vtmp.name);
+    free(yav.dims);
     if (nerrs > 0)
         (void)fprintf(stderr, "FAILED! ***\n");
     else

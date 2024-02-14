@@ -55,15 +55,16 @@ list_usage(intn argc, char *argv[])
 static void
 init_list_opts(list_info_t *list_opts)
 {
-    list_opts->order     = OTAG;   /* default ordering is by tag */
-    list_opts->verbosity = VSHORT; /* default verbosity is a short list */
-    list_opts->limit     = LNONE;  /* default is all the tag/refs */
-    list_opts->class     = FALSE;  /* don't dump class information */
-    list_opts->name      = FALSE;  /* don't dump name information */
-    list_opts->desc      = FALSE;  /* don't dump annotation information */
-    list_opts->spec      = FALSE;  /* don't dump special element information */
-    list_opts->group     = FALSE;  /* don't dump group information */
-    list_opts->limit_tag = 0;      /* initialize... */
+    list_opts->order      = OTAG;   /* default ordering is by tag */
+    list_opts->verbosity  = VSHORT; /* default verbosity is a short list */
+    list_opts->limit      = LNONE;  /* default is all the tag/refs */
+    list_opts->class      = FALSE;  /* don't dump class information */
+    list_opts->name       = FALSE;  /* don't dump name information */
+    list_opts->desc       = FALSE;  /* don't dump annotation information */
+    list_opts->spec       = FALSE;  /* don't dump special element information */
+    list_opts->group      = FALSE;  /* don't dump group information */
+    list_opts->limit_name = NULL;   /* initialize... */
+    list_opts->limit_tag  = 0;      /* initialize... */
 } /* end init_list_opts() */
 
 static intn
@@ -117,10 +118,7 @@ parse_list_opts(list_info_t *list_opts, intn curr_arg, intn argc, char *argv[])
                     list_opts->verbosity = VDEBUG; /* verbosity is debug */
                     break;
 
-                case 'g': /* print only groups */
-#ifdef LATER
-                    list_opts->limit = LGROUP; /* limit to group output */
-#endif
+                case 'g':                    /* print only groups */
                     list_opts->group = TRUE; /* dump group info */
                     if (list_opts->verbosity == VSHORT)
                         list_opts->verbosity = VLONG; /* verbosity is long */
@@ -136,7 +134,7 @@ parse_list_opts(list_info_t *list_opts, intn curr_arg, intn argc, char *argv[])
                     }                                     /* end if */
                     else {                                /* must be a tag name */
                         list_opts->limit      = LTAGNAME; /* limit to tag name output */
-                        list_opts->limit_name = HDstrdup(argv[curr_arg]);
+                        list_opts->limit_name = strdup(argv[curr_arg]);
                         list_opts->limit_tag  = tagname_to_num(list_opts->limit_name);
                         if (list_opts->limit_tag == DFTAG_NULL) {
                             printf("ERROR: invalid tag name: %s\n", list_opts->limit_name);
@@ -235,7 +233,7 @@ print_annots_by_object(const char *fname, int32 an_id, ann_type annot_type, uint
     if (ann_num > 0) { /* print data annotation */
 
         /* allocate space for all label/description id's for data object */
-        ann_list = HDmalloc(ann_num * sizeof(int32));
+        ann_list = malloc(ann_num * sizeof(int32));
         CHECK_ALLOC(ann_list, "ann_list", func_name);
 
         /* retrieve all the data objects label/description handles and
@@ -253,7 +251,7 @@ print_annots_by_object(const char *fname, int32 an_id, ann_type annot_type, uint
                              annot_type_text, error_item);
 
             /* allocate space for the data annotation */
-            buf = HDcalloc((ann_length + 1) * sizeof(char), 1);
+            buf = calloc((ann_length + 1) * sizeof(char), 1);
             CHECK_ALLOC(buf, "buf", func_name);
 
             buf[ann_length] = '\0';
@@ -276,12 +274,12 @@ print_annots_by_object(const char *fname, int32 an_id, ann_type annot_type, uint
 
             /* reset id and free space for data label/description */
             ann_id = FAIL;
-            HDfree(buf);
+            free(buf);
             buf = NULL;
         } /* end for every data label/description */
 
         /* cleanup */
-        HDfree(ann_list);
+        free(ann_list);
         ann_list = NULL;
     } /* end if num_ann > 0 */
 
@@ -289,8 +287,7 @@ done:
     if (ret_value == FAIL) { /* Failure cleanup */
         if (ann_id != FAIL)
             ANendaccess(ann_id);
-        if (buf != NULL)
-            HDfree(buf);
+        free(buf);
     }
 
     return ret_value;
@@ -365,7 +362,7 @@ print_annots_in_file(int32 an_id, const char *fname, int32 n_annotations, ann_ty
                          fname);
 
         /* allocate space for an annotation */
-        annotation = (char *)HDcalloc(len + 1, 1);
+        annotation = (char *)calloc(len + 1, 1);
         CHECK_ALLOC(annotation, "annotation", func_name);
 
         /* read in annotation and print it */
@@ -382,7 +379,7 @@ print_annots_in_file(int32 an_id, const char *fname, int32 n_annotations, ann_ty
 
         /* reset id and free space for annotation */
         ann_id = FAIL;
-        HDfree(annotation);
+        free(annotation);
         annotation = NULL;
     } /* end for every annotation in file */
 
@@ -390,8 +387,7 @@ done:
     if (ret_value == FAIL) { /* Failure cleanup */
         if (ann_id != FAIL)
             ANendaccess(ann_id);
-        if (annotation != NULL)
-            HDfree(annotation);
+        free(annotation);
     }
 
     return ret_value;
@@ -462,7 +458,7 @@ print_all_data_descs(const char *fname, int32 an_id)
         }
 
         /* allocate room for a data desc */
-        desc = (char *)HDcalloc(len + 1, 1);
+        desc = (char *)calloc(len + 1, 1);
         CHECK_ALLOC(desc, "desc", "print_all_data_descs");
 
         /* read in data desc and print it */
@@ -483,15 +479,14 @@ print_all_data_descs(const char *fname, int32 an_id)
 
         /* reset id and free space for desc */
         ann_id = FAIL;
-        HDfree(desc);
+        free(desc);
         desc = NULL;
     } /* end for every data desc */
 
 done:
     if (ann_id != FAIL)
         ANendaccess(ann_id);
-    if (desc != NULL)
-        HDfree(desc);
+    free(desc);
 
     return ret_value;
 } /* print_all_data_descs() */
@@ -535,7 +530,7 @@ print_all_file_labels(const char *fname, int32 an_id)
         }
 
         /* allocate room for the file label */
-        label = (char *)HDcalloc(len + 1, 1);
+        label = (char *)calloc(len + 1, 1);
         CHECK_ALLOC(label, "label", "print_all_data_labels");
 
         /* read in file label and print it */
@@ -556,15 +551,14 @@ print_all_file_labels(const char *fname, int32 an_id)
 
         /* reset id and free space for label */
         ann_id = FAIL;
-        HDfree(label);
+        free(label);
         label = NULL;
     } /* end for every file label */
 
 done:
     if (ann_id != FAIL)
         ANendaccess(ann_id);
-    if (label != NULL)
-        HDfree(label);
+    free(label);
 
     return ret_value;
 } /* end print_all_file_labels() */
@@ -586,7 +580,7 @@ print_all_file_descs(const char *fname, list_info_t *list_opts, /* for print_SDa
     int32 sd_fid = FAIL;
     int32 ndsets, nattrs;
     char *attr_nt_desc = NULL;
-    VOIDP attr_buf     = NULL;
+    void *attr_buf     = NULL;
     intn  ret_value    = SUCCEED;
 
     (void)list_opts;
@@ -617,7 +611,7 @@ print_all_file_descs(const char *fname, list_info_t *list_opts, /* for print_SDa
         }
 
         /* allocate room for the file desc */
-        desc = (char *)HDcalloc(len + 1, 1);
+        desc = (char *)calloc(len + 1, 1);
         CHECK_ALLOC(desc, "desc", "print_all_file_descs");
 
         /* read in file desc and print it */
@@ -638,7 +632,7 @@ print_all_file_descs(const char *fname, list_info_t *list_opts, /* for print_SDa
 
         /* reset id and free space for label */
         ann_id = FAIL;
-        HDfree(desc);
+        free(desc);
         desc = NULL;
     } /* end for every file desc */
 
@@ -667,12 +661,9 @@ done:
     if (ret_value == FAIL) { /* Failure cleanup */
         if (ann_id != FAIL)
             ANendaccess(ann_id);
-        if (desc != NULL)
-            HDfree(desc);
-        if (attr_nt_desc != NULL)
-            HDfree(attr_nt_desc);
-        if (attr_buf != NULL)
-            HDfree((VOIDP)attr_buf);
+        free(desc);
+        free(attr_nt_desc);
+        free(attr_buf);
     }
 
     return ret_value;
@@ -722,7 +713,7 @@ print_file_descs(const char *f_name, int32 an_id)
         }
 
         /* allocate room for the file desc */
-        desc = (char *)HDcalloc(len + 1, 1);
+        desc = (char *)calloc(len + 1, 1);
         CHECK_ALLOC(desc, "desc", "print_file_descs");
 
         /* read in file desc and print it */
@@ -743,7 +734,7 @@ print_file_descs(const char *f_name, int32 an_id)
 
         /* reset id and free space for label */
         ann_id = FAIL;
-        HDfree(desc);
+        free(desc);
         desc = NULL;
     } /* end for every file desc */
 
@@ -751,8 +742,7 @@ done:
     if (ret_value == FAIL) { /* Failure cleanup */
         if (ann_id != FAIL)
             ANendaccess(ann_id);
-        if (desc != NULL)
-            HDfree(desc);
+        free(desc);
     }
 
     return ret_value;
@@ -775,18 +765,18 @@ print_list_obj(const char *fname, list_info_t *l_opts, objinfo_t *o_info, intn o
 
         case VLONG: /* long output */
             printf("%*d%*s%*d%*d%*ld\n", NUM_FIELD_WIDTH, o_num, TAGNAME_FIELD_WIDTH,
-                   ((s = HDgettagsname(o_info->tag)) == NULL ? HDstrdup("Unknown") : s), TAG_FIELD_WIDTH,
+                   ((s = HDgettagsname(o_info->tag)) == NULL ? strdup("Unknown") : s), TAG_FIELD_WIDTH,
                    o_info->tag, REF_FIELD_WIDTH, o_info->ref, INDEX_FIELD_WIDTH, (long)o_info->index);
-            HDfree(s); /* free tagname string */
+            free(s); /* free tagname string */
             s = NULL;
             break;
 
         case VDEBUG: /* debugging output */
             printf("%*d%*s%*d%*d%*ld%*ld%*ld\n", NUM_FIELD_WIDTH, o_num, TAGNAME_FIELD_WIDTH,
-                   ((s = HDgettagsname(o_info->tag)) == NULL ? HDstrdup("Unknown") : s), TAG_FIELD_WIDTH,
+                   ((s = HDgettagsname(o_info->tag)) == NULL ? strdup("Unknown") : s), TAG_FIELD_WIDTH,
                    o_info->tag, REF_FIELD_WIDTH, o_info->ref, INDEX_FIELD_WIDTH, (long)o_info->index,
                    OFFSET_FIELD_WIDTH, (long)o_info->offset, LENGTH_FIELD_WIDTH, (long)o_info->length);
-            HDfree(s); /* free tagname string */
+            free(s); /* free tagname string */
             s = NULL;
             break;
     } /* end switch */
@@ -853,9 +843,9 @@ print_list_obj(const char *fname, list_info_t *l_opts, objinfo_t *o_info, intn o
             g_obj = get_next_group(o_info->group_info, 0);
             while (g_obj != NULL) {
                 printf("\t\t%-30s: (tag=%6d) ref=%d\n",
-                       ((s = HDgettagsname(g_obj->tag)) == NULL ? HDstrdup("Unknown") : s), g_obj->tag,
+                       ((s = HDgettagsname(g_obj->tag)) == NULL ? strdup("Unknown") : s), g_obj->tag,
                        g_obj->ref);
-                HDfree(s); /* free tagname string */
+                free(s); /* free tagname string */
                 s     = NULL;
                 g_obj = get_next_group(o_info->group_info, 1);
             } /* end while */
@@ -864,10 +854,8 @@ print_list_obj(const char *fname, list_info_t *l_opts, objinfo_t *o_info, intn o
 
 done:
     if (ret_value == FAIL) { /* Failure cleanup */
-        if (s != NULL)
-            HDfree(s);
-        if (buf != NULL)
-            HDfree(buf);
+        free(s);
+        free(buf);
     }
 
     return ret_value;
@@ -904,24 +892,26 @@ do_list(intn curr_arg, intn argc, char *argv[], intn help)
     int32       an_id     = FAIL; /* annotation interface handle */
     intn        ret_value = SUCCEED;
 
+    /* Do this early, to avoid uninitialized warnings in cleanup code */
+    init_list_opts(&list_opts);
+
     if (help == TRUE) {
         list_usage(argc, argv);
         goto done;
-    } /* end if */
+    }
 
-    /* incomplete command */
+    /* Incomplete command */
     if (curr_arg >= argc) {
         list_usage(argc, argv);
-        ret_value = FAIL; /* so caller can be traced in debugging */
+        ret_value = FAIL; /* So caller can be traced in debugging */
         goto done;
     }
 
-    init_list_opts(&list_opts);
     if ((status = parse_list_opts(&list_opts, curr_arg, argc, argv)) == FAIL) {
         list_usage(argc, argv);
         ret_value = FAIL;
         goto done;
-    } /* end if */
+    }
 
     curr_arg += status;
     if (curr_arg >= argc || (f_list = make_file_list(curr_arg, argc, argv)) == NULL) {
@@ -929,14 +919,14 @@ do_list(intn curr_arg, intn argc, char *argv[], intn help)
         list_usage(argc, argv);
         ret_value = FAIL;
         goto done;
-    } /* end if */
+    }
 
-    /* process each file */
+    /* Process each file */
     f_name = get_next_file(f_list, 0);
     while (f_name != NULL) {
         int label_flag, desc_flag;
-        vinit_done = FALSE; /* reset global Vset variable */
-        obj_num    = 0;     /* number of the object we are displaying */
+        vinit_done = FALSE; /* Reset global Vset variable */
+        obj_num    = 0;     /* Number of the object we are displaying */
         fid        = FAIL;
         an_id      = FAIL;
 
@@ -988,15 +978,15 @@ do_list(intn curr_arg, intn argc, char *argv[], intn help)
                             if (o_info->tag != last_tag) {
                                 s = HDgettagsname(o_info->tag);
                                 if (s == NULL)
-                                    s = HDstrdup("Unknown");
+                                    s = strdup("Unknown");
 
                                 printf("%s%-*s: (tag %d)\n", (last_tag == 0 ? "" : "\n"), TAGNAME_FIELD_WIDTH,
                                        s, o_info->tag);
                                 last_tag = o_info->tag;
                                 printf("\tRef nos: ");
-                                HDfree(s); /* free tagname string */
-                                s = NULL;  /* reset */
-                            }              /* end if */
+                                free(s);  /* free tagname string */
+                                s = NULL; /* reset */
+                            }             /* end if */
                             printf("%d ", o_info->ref);
                         } /* end if */
 
@@ -1069,11 +1059,11 @@ done:
             ANend(an_id);
             an_id = FAIL;
         }
-        if (s != NULL)
-            HDfree(s);
+        free(s);
         if (o_list != NULL)
             free_obj_list(o_list);
     }
+    free(list_opts.limit_name);
     if (f_list != NULL)
         free_file_list(f_list);
 

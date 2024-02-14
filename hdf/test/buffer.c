@@ -55,14 +55,7 @@
 #define EXTFILE_NAME  "tbuffer.dat"
 
 /* Size of data elements to create */
-#ifdef __CRAY_XT3__
-/* Use a smaller test size as small unbuffered IO is expensive in XT3. */
-/* This runs much faster in Lustre file system like /scratchN. elemsize 1000 */
-/* takes 3 minutes to run in /scratch3. 2006/6/20, -AKC- */
-#define ELEMSIZE 1000
-#else
 #define ELEMSIZE 16384
-#endif
 
 /* define aliases for random number generation */
 #define RAND    rand
@@ -279,13 +272,13 @@ read_test(int32 aid)
         }
 
         /* Clear input buffer */
-        HDmemset(in_buf, 0, elemsize);
+        memset(in_buf, 0, elemsize);
 
         /* Increment the total I/O time */
         acc_time += (end_time.tv_sec - start_time.tv_sec) * FACTOR + (end_time.tv_usec - start_time.tv_usec);
     } /* end for */
 
-    return (acc_time);
+    return acc_time;
 } /* end read_test() */
 
 static long
@@ -402,13 +395,13 @@ write_test(int32 aid, intn num_timings)
         }
 
         /* Clear input buffer */
-        HDmemset(in_buf, 0, elemsize);
+        memset(in_buf, 0, elemsize);
 
         /* Increment the total I/O time */
         acc_time += (end_time.tv_sec - start_time.tv_sec) * FACTOR + (end_time.tv_usec - start_time.tv_usec);
     } /* end for */
 
-    return (acc_time);
+    return acc_time;
 } /* end read_test() */
 
 int
@@ -443,8 +436,8 @@ main(int argc, char *argv[])
         exit(1);
     }
 
-    out_buf = HDmalloc((size_t)elemsize * sizeof(uint8));
-    in_buf  = HDmalloc((size_t)elemsize * sizeof(uint8));
+    out_buf = malloc((size_t)elemsize * sizeof(uint8));
+    in_buf  = malloc((size_t)elemsize * sizeof(uint8));
 
     Verbosity = 4; /* Default Verbosity is Low */
 
@@ -455,7 +448,7 @@ main(int argc, char *argv[])
 
     MESSAGE(6, printf("Starting buffered element test (elemsize=%d)\n", elemsize);)
 
-    if (Cache) /* turn on caching, unless we were instucted not to */
+    if (Cache) /* turn on caching, unless we were instructed not to */
         Hcache(CACHE_ALL_FILES, TRUE);
 
     /* fill the buffer with interesting data to compress */
@@ -526,10 +519,10 @@ main(int argc, char *argv[])
         CHECK(ret, FAIL, "Hendaccess");
 
         MESSAGE(3, {
-            printf("Unbuffered read time=%f seconds\n", ((float)read_time[test_num][0] / FACTOR));
-            printf("Unbuffered write time=%f seconds\n", ((float)write_time[test_num][0] / FACTOR));
-            printf("Buffered read time=%f seconds\n", ((float)read_time[test_num][1] / FACTOR));
-            printf("Buffered write time=%f seconds\n", ((float)write_time[test_num][1] / FACTOR));
+            printf("Unbuffered read time=%f seconds\n", ((double)read_time[test_num][0] / FACTOR));
+            printf("Unbuffered write time=%f seconds\n", ((double)write_time[test_num][0] / FACTOR));
+            printf("Buffered read time=%f seconds\n", ((double)read_time[test_num][1] / FACTOR));
+            printf("Buffered write time=%f seconds\n", ((double)write_time[test_num][1] / FACTOR));
         })
 
     } /* end for */
@@ -544,8 +537,8 @@ main(int argc, char *argv[])
         remove(hfilename);
     }
 
-    HDfree(out_buf);
-    HDfree(in_buf);
+    free(out_buf);
+    free(in_buf);
 
     MESSAGE(6, printf("Finished buffered element test\n");)
     return num_errs;

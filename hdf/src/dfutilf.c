@@ -19,8 +19,9 @@
  *  dfindnr_:       For a given tag, find the next ref after the given ref
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "hproto_fortran.h"
+
 /*-----------------------------------------------------------------------------
  * Name:    dfindnr
  * Purpose: For this tag, find the ref after lref
@@ -33,10 +34,10 @@
  * Invokes: DFfindnextref
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndfindnr(intf *dfile, intf *tag, intf *lref)
 {
-    return ((intf)DFfindnextref(*dfile, (uint16)*tag, (uint16)*lref));
+    return (intf)DFfindnextref(*dfile, (uint16)*tag, (uint16)*lref);
 }
 
 /*
@@ -55,8 +56,8 @@ ndfindnr(intf *dfile, intf *tag, intf *lref)
  * Invokes: DFfindnextref
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndffindnextref(intf *dfile, intf *tag, intf *lref)
 {
-    return ((intf)DFfindnextref(*dfile, (uint16)*tag, (uint16)*lref));
+    return (intf)DFfindnextref(*dfile, (uint16)*tag, (uint16)*lref);
 }

@@ -20,6 +20,9 @@
 /* Sept. 23, 1991                                               */
 
 /*   USAGE: ristosds infile{ infile} -o outfile                 */
+
+#include <stdlib.h>
+
 #include "hdf.h"
 
 #define r_imgae 2;
@@ -28,7 +31,7 @@
 
 int  main(int, char *a[]);
 int  cntimage(char *filename, int32 *p_w, int32 *p_h, int *n_images);
-VOID finishing(void);
+void finishing(void);
 
 int
 main(int argc, char *argv[])
@@ -86,12 +89,12 @@ main(int argc, char *argv[])
 
     /* read in images from all input files.     */
 
-    outdata0 = outdata = (uint8 *)HDmalloc((size_t)(nimg * w * h) * (sizeof(uint8)));
+    outdata0 = outdata = (uint8 *)malloc((size_t)(nimg * w * h) * (sizeof(uint8)));
     if (outdata0 == NULL) {
         printf("Not enough space. \n\n\n");
         finishing();
     }
-    indata0 = indata = (uint8 *)HDmalloc((size_t)(nimg * w * h) * sizeof(uint8));
+    indata0 = indata = (uint8 *)malloc((size_t)(nimg * w * h) * sizeof(uint8));
     if (indata0 == NULL) {
         printf("Not enough space. \n\n\n");
         finishing();
@@ -132,15 +135,15 @@ main(int argc, char *argv[])
     dimsizes[2] = w;
     if (DFSDsetNT(DFNT_UINT8) == FAIL)
         finishing();
-    ret = DFSDadddata(outfile, 3, dimsizes, (VOIDP)outdata0);
-    HDfree(outdata0);
-    HDfree(indata0);
+    ret = DFSDadddata(outfile, 3, dimsizes, (void *)outdata0);
+    free(outdata0);
+    free(indata0);
     if (ret != 0)
         finishing();
     return (0);
 }
 
-VOID
+void
 finishing(void)
 {
     printf("end of ristosds.\n");

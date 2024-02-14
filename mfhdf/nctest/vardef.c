@@ -7,7 +7,8 @@
 #include <string.h>
 #include <math.h>
 
-#include "h4config.h"
+#include "hdf.h"
+
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else
@@ -18,17 +19,11 @@
 #include "add.h"     /* functions to update in-memory netcdf */
 #include "error.h"
 #include "tests.h"
-#include "alloc.h"
 #include "emalloc.h"
-#ifdef HDF
-#include "hdf.h"
-#endif
 
 #define LEN_OF(array) ((sizeof array) / (sizeof array[0]))
-#ifdef HDF
-#define EPS64 ((float64)1.0E-14)
-#define EPS32 ((float32)1.0E-7)
-#endif
+#define EPS64         ((float64)1.0E-14)
+#define EPS32         ((float32)1.0E-7)
 
 /*
  * Test ncvardef
@@ -90,7 +85,7 @@ test_ncvardef(char *path)
             ncclose(cdfid);
             return;
         }
-        add_dim(&test, &di[id]); /* keep in-memory netcdf in sync */
+        add_dim(test_g, &di[id]); /* keep in-memory netcdf in sync */
     }
 
     tmp.dims = (int *)emalloc(sizeof(int) * H4_MAX_VAR_DIMS);
@@ -104,21 +99,21 @@ test_ncvardef(char *path)
             va[iv].dims[id] = di_id[id];
         if ((va_id[iv] = ncvardef(cdfid, va[iv].name, va[iv].type, va[iv].ndims, va[iv].dims)) == -1) {
             error("%s: ncvardef failed", pname);
-            errvar(&test, &va[iv]); /* prints details about variable */
+            errvar(test_g, &va[iv]); /* prints details about variable */
             ncclose(cdfid);
             return;
         }
-        add_var(&test, &va[iv]); /* keep in-memory netcdf in sync */
+        add_var(test_g, &va[iv]); /* keep in-memory netcdf in sync */
         /* check that var id returned is one more than previous var id */
-        if (va_id[iv] != test.nvars - 1) {
-            error("%s: ncvardef returned %d for var id, expected %d", pname, va_id[iv], test.nvars - 1);
+        if (va_id[iv] != test_g->nvars - 1) {
+            error("%s: ncvardef returned %d for var id, expected %d", pname, va_id[iv], test_g->nvars - 1);
             ncclose(cdfid);
             return;
         }
         /* use ncvarinq to get values just set and compare values */
         if (ncvarinq(cdfid, va_id[iv], tmp.name, &tmp.type, &tmp.ndims, tmp.dims, &tmp.natts) == -1) {
             error("%s: ncvarinq failed", pname);
-            errvar(&test, &va[iv]); /* prints details about variable */
+            errvar(test_g, &va[iv]); /* prints details about variable */
             ncclose(cdfid);
             return;
         }
@@ -126,15 +121,15 @@ test_ncvardef(char *path)
             tmp.natts != va[iv].natts) {
             error("%s: ncvardef and ncvarinq don't agree for %s", pname, va[iv].name);
             nerrs++;
-            errvar(&test, &va[iv]);
-            errvar(&test, &tmp);
+            errvar(test_g, &va[iv]);
+            errvar(test_g, &tmp);
         }
         for (id = 0; id < va[iv].ndims; id++) {
             if (tmp.dims[id] != va[iv].dims[id]) {
                 error("%s: ncvardef and ncvarinq don't agree on shape of %s", pname, va[iv].name);
                 nerrs++;
-                errvar(&test, &va[iv]);
-                errvar(&test, &tmp);
+                errvar(test_g, &va[iv]);
+                errvar(test_g, &tmp);
             }
         }
     }
@@ -240,12 +235,7 @@ test_ncvardef(char *path)
             case NC_FLOAT: {
                 float val, fillval = FILL_FLOAT;
                 if (ncvarget1(cdfid, va_id[iv], where, (void *)&val) != -1) {
-#ifdef HDF
-                    if (fabs((double)(val - fillval)) > fabs((double)(fillval * EPS32)))
-#else /*!HDF */
-                    if (val != fillval)
-#endif
-                    {
+                    if (fabs((double)(val - fillval)) > fabs((double)(fillval * EPS32))) {
                         error("%s: unwritten float not FILL_FLOAT", pname);
                         nerrs++;
                     }
@@ -258,12 +248,7 @@ test_ncvardef(char *path)
             case NC_DOUBLE: {
                 double val, fillval = FILL_DOUBLE;
                 if (ncvarget1(cdfid, va_id[iv], where, (void *)&val) != -1) {
-#ifdef HDF
-                    if (fabs((double)(val - fillval)) > fabs((double)(fillval * EPS64)))
-#else  /* !HDF */
-                    if (val != fillval)
-#endif /* !HDF */
-                    {
+                    if (fabs((double)(val - fillval)) > fabs((double)(fillval * EPS64))) {
                         error("%s: unwritten double not FILL_DOUBLE", pname);
                         nerrs++;
                     }
@@ -282,11 +267,10 @@ test_ncvardef(char *path)
         error("%s: ncclose failed", pname);
         return;
     }
-    Free((char *)tmp.dims);
-    Free(tmp.name);
+    free(tmp.dims);
+    free(tmp.name);
     for (iv = 0; iv < nv; iv++)
-        if (va[iv].dims)
-            Free((char *)va[iv].dims);
+        free(va[iv].dims);
     if (nerrs > 0)
         (void)fprintf(stderr, "FAILED! ***\n");
     else

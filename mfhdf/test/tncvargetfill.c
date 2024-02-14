@@ -29,6 +29,9 @@
  *
  ****************************************************************************/
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "mfhdf.h"
 #include "hdftest.h"
 
@@ -60,6 +63,92 @@
 #define SDS2_NAME  "Variable 2"
 #define D1_NUMRECS 8
 #define D2_NUMRECS 2
+
+/*
+ * Helper function: Read and verify data of the variables with nc API
+ */
+static int
+read_verify_nc_api_1dim(void)
+{
+    long  start[1];                                             /* where to start reading */
+    long  edges[1];                                             /* length of data to be read */
+    int   ncid;                                                 /* file id */
+    int   var1id, var2id;                                       /* variable ids */
+    long  dimsize = 0;                                          /* dimension size buffer */
+    short outdata[DIM0];                                        /* data read back */
+    int   rh_ndims;                                             /* number of dims */
+    int   rh_dims[H4_MAX_VAR_DIMS];                             /* variable shape */
+    char  varname[H4_MAX_NC_NAME];                              /* variable name */
+    int16 ncresult1[] = {300, 301, 302, 303, -1, -1, 306, 307}; /* same as sd result */
+    int16 ncresult2[] = {102, 104, -2, -2, -2, -2, -2, -2};
+    int   status      = 0; /* returned by called functions */
+    int   num_errs    = 0; /* number of errors so far */
+
+    /* Open the file for reading and writing with nc API */
+    ncid = ncopen(FILENAME1, NC_RDWR);
+    CHECK(ncid, -1, "ncopen");
+
+    /* Verify variable info and data of first variable */
+
+    /* Get access to the first variable, named SDS1_NAME */
+    var1id = ncvarid(ncid, SDS1_NAME);
+    CHECK(var1id, -1, "ncvarid");
+
+    /* Get and verify variable info and size of the unlim dimension again */
+    status = ncvarinq(ncid, var1id, varname, NULL, &rh_ndims, rh_dims, NULL);
+    CHECK(status, -1, "ncvarinq");
+    status = ncdiminq(ncid, rh_dims[0], NULL, &dimsize);
+    CHECK(status, -1, "ncdiminq");
+    VERIFY(dimsize, D1_NUMRECS, "ncdiminq");
+
+    /* Read the entire variable */
+    start[0] = 0;
+    edges[0] = dimsize;
+    memset(outdata, 0, edges[0]);
+    status = ncvarget(ncid, var1id, start, edges, outdata);
+    CHECK(status, -1, "ncvarget");
+
+    /* Verify data, should be as ncresult1: 300 301 301 302 -1 -1 306 307 */
+    for (int i = 0; i < dimsize; i++) {
+        if (outdata[i] != ncresult1[i])
+            fprintf(stderr, "test_1dim_multivars: Read data %d doesn't match input %d at index %d\n",
+                    outdata[i], ncresult1[i], i);
+    }
+
+    /* Verify variable info and data of second variable */
+
+    /* Get access to the second variable, named SDS2_NAME */
+    var2id = ncvarid(ncid, SDS2_NAME);
+    CHECK(var2id, -1, "ncvarid");
+
+    /* Get and verify variable info and size of the unlim dimension again */
+    status = ncvarinq(ncid, var2id, varname, NULL, &rh_ndims, rh_dims, NULL);
+    CHECK(status, -1, "ncvarinq");
+    status = ncdiminq(ncid, rh_dims[0], NULL, &dimsize);
+    CHECK(status, -1, "ncdiminq");
+    VERIFY(dimsize, D1_NUMRECS, "ncdiminq"); /* Note: only 2 written, but
+            netCDF uses the max number of records in the file for all unlim
+            dims in the file */
+
+    start[0] = 0;
+    edges[0] = dimsize;
+    memset(outdata, 0, edges[0]);
+    status = ncvarget(ncid, var2id, start, edges, outdata);
+    CHECK(status, -1, "ncvarget");
+
+    /* verify data, should be as in ncresult2: "102 104 -2 -2 -2 -2" */
+    for (int i = 0; i < dimsize; i++) {
+        if (outdata[i] != ncresult2[i])
+            fprintf(stderr, "test_1dim_multivars: Read data %d doesn't match input %d at index %d\n",
+                    outdata[i], ncresult2[i], i);
+    }
+
+    status = ncclose(ncid);
+    CHECK(status, -1, "ncclose");
+
+    return num_errs;
+} /* end read data */
+
 static int
 test_1dim_multivars()
 {
@@ -95,9 +184,9 @@ test_1dim_multivars()
     CHECK(dset2, FAIL, "SDcreate");
 
     /* Data sets will be filled with fill-values when data is missing */
-    status = SDsetfillvalue(dset1, (VOIDP)&fillval1);
+    status = SDsetfillvalue(dset1, (void *)&fillval1);
     CHECK(status, FAIL, "SDsetfillvalue");
-    status = SDsetfillvalue(dset2, (VOIDP)&fillval2);
+    status = SDsetfillvalue(dset2, (void *)&fillval2);
     CHECK(status, FAIL, "SDsetfillvalue");
 
     { /* Add data */
@@ -108,20 +197,20 @@ test_1dim_multivars()
         /* Write 4 elements to first data set starting at index 0 */
         start[0] = 0;
         edges[0] = 4;
-        status   = SDwritedata(dset1, start, NULL, edges, (VOIDP)data);
+        status   = SDwritedata(dset1, start, NULL, edges, (void *)data);
         CHECK(status, FAIL, "SDwritedata");
 
         /* Write 2 elements to second data set starting at index 0 */
         start[0] = 0;
         edges[0] = 2;
-        status   = SDwritedata(dset2, start, NULL, edges, (VOIDP)data2);
+        status   = SDwritedata(dset2, start, NULL, edges, (void *)data2);
         CHECK(status, FAIL, "SDwritedata");
 
         /* Add 2 more elements to first dataset starting at index 6, i.e.,
            skipping 2 elements, which will be filled with fill-values. */
         start[0] = 6;
         edges[0] = 2;
-        status   = SDwritedata(dset1, start, NULL, edges, (VOIDP)appdata);
+        status   = SDwritedata(dset1, start, NULL, edges, (void *)appdata);
         CHECK(status, FAIL, "SDwritedata");
     }
 
@@ -141,82 +230,11 @@ test_1dim_multivars()
     status = SDend(fid);
     CHECK(status, FAIL, "SDend");
 
-    /*****************************************************
-     * Read and verify data of the variables with nc API *
-     *****************************************************/
-    {
-        long  start[1];                 /* where to start reading */
-        long  edges[1];                 /* length of data to be read */
-        int   ncid;                     /* file id */
-        int   var1id, var2id;           /* variable ids */
-        long  dimsize = 0;              /* dimension size buffer */
-        short outdata[DIM0];            /* data read back */
-        int   rh_ndims;                 /* number of dims */
-        int   rh_dims[H4_MAX_VAR_DIMS]; /* variable shape */
-        char  varname[H4_MAX_NC_NAME];  /* variable name */
-        int   ii;
+    /* Read and verify the data through the netCDF API */
+    status = read_verify_nc_api_1dim();
+    CHECK(status, -1, "read_verify_nc_api_1dim");
 
-        /* Open the file for reading and writing with nc API */
-        ncid = ncopen(FILENAME1, NC_RDWR);
-        CHECK(ncid, -1, "ncopen");
-
-        /* Verify variable info and data of first variable */
-
-        /* Get access to the first variable, named SDS1_NAME */
-        var1id = ncvarid(ncid, SDS1_NAME);
-        CHECK(var1id, -1, "ncvarid");
-
-        /* Get and verify variable info and size of the unlim dimension again */
-        status = ncvarinq(ncid, var1id, varname, NULL, &rh_ndims, rh_dims, NULL);
-        CHECK(status, -1, "ncvarinq");
-        status = ncdiminq(ncid, rh_dims[0], NULL, &dimsize);
-        CHECK(status, -1, "ncdiminq");
-        VERIFY(dimsize, D1_NUMRECS, "ncdiminq");
-
-        /* Read the entire variable */
-        start[0] = 0;
-        edges[0] = dimsize;
-        HDmemset(outdata, 0, edges[0]);
-        status = ncvarget(ncid, var1id, start, edges, outdata);
-        CHECK(status, -1, "ncvarget");
-
-        /* Verify data, should be as ncresult1: 300 301 301 302 -1 -1 306 307 */
-        for (ii = 0; ii < dimsize; ii++) {
-            if (outdata[ii] != ncresult1[ii])
-                fprintf(stderr, "test_1dim_multivars: Read data %d doesn't match input %d at index %d\n",
-                        outdata[ii], ncresult1[ii], ii);
-        }
-
-        /* Verify variable info and data of second variable */
-
-        /* Get access to the second variable, named SDS2_NAME */
-        var2id = ncvarid(ncid, SDS2_NAME);
-        CHECK(var2id, -1, "ncvarid");
-
-        /* Get and verify variable info and size of the unlim dimension again */
-        status = ncvarinq(ncid, var2id, varname, NULL, &rh_ndims, rh_dims, NULL);
-        CHECK(status, -1, "ncvarinq");
-        status = ncdiminq(ncid, rh_dims[0], NULL, &dimsize);
-        CHECK(status, -1, "ncdiminq");
-        VERIFY(dimsize, D1_NUMRECS, "ncdiminq"); /* Note: only 2 written, but
-                netCDF uses the max number of records in the file for all unlim
-                dims in the file */
-
-        start[0] = 0;
-        edges[0] = dimsize;
-        HDmemset(outdata, 0, edges[0]);
-        status = ncvarget(ncid, var2id, start, edges, outdata);
-        CHECK(status, -1, "ncvarget");
-
-        /* verify data, should be as in ncresult2: "102 104 -2 -2 -2 -2" */
-        for (ii = 0; ii < dimsize; ii++) {
-            if (outdata[ii] != ncresult2[ii])
-                fprintf(stderr, "test_1dim_multivars: Read data %d doesn't match input %d at index %d\n",
-                        outdata[ii], ncresult2[ii], ii);
-        }
-    } /* end read data */
-
-    return 0;
+    return num_errs;
 } /* test_1dim_multivars */
 
 /********************************************************************
@@ -258,6 +276,146 @@ test_1dim_multivars()
 #define VAR1D       "Variable 1D"
 #define VAREMPTY    "Variable EMPTY"
 #define VARDOZEN    "Variable Dozen Records"
+
+/*
+ * Helper function: Read and verify data of the variables with nc API
+ */
+static int
+read_verify_nc_api_multidims(void)
+{
+    long  start[3];
+    long  edges[3];
+    int   ncid;                        /* file id */
+    int   var1id, var2id, var3id;      /* variable ids */
+    long  dims[3];                     /* dimension size buffer */
+    int   rh_ndims;                    /* number of dims */
+    int   rh_dims[H4_MAX_VAR_DIMS];    /* variable shape */
+    char  varname[H4_MAX_NC_NAME];     /* variable name */
+    int16 outdata1D[DIM0];             /* 1-D data read back */
+    int16 outdata3D[DIM0][DIM1][DIM2]; /* 3-D data read back */
+    int   status   = 0;                /* returned by called functions */
+    int   num_errs = 0;                /* number of errors so far */
+
+    /* After the fourth data set (VARDOZEN) was added, the maximum number
+       of records became 12.  Thus, the results must be changed to reflect
+       the behavior in nc API. */
+    /* clang-format off */
+    int16 result3D[DIM0][DIM1][DIM2] =
+    {
+        {{300,  -3}, { -3,  -3}, { -3,  -3}},
+        {{301,  -3}, { -3,  -3}, { -3,  -3}},
+        {{302,  -3}, { -3,  -3}, { -3,  -3}},
+        {{303,  -3}, { -3,  -3}, { -3,  -3}},
+        {{ -3,  -3}, { -3,  -3}, { -3,  -3}},
+        {{ -3,  -3}, { -3,  -3}, { -3,  -3}},
+        {{ -3,  -3}, { -3,  -3}, { -3,  -3}},
+        {{800, 801}, {802, 803}, {804, 805}},
+        {{ -3,  -3}, { -3,  -3}, { -3,  -3}},
+        {{ -3,  -3}, { -3,  -3}, { -3,  -3}},
+        {{ -3,  -3}, { -3,  -3}, { -3,  -3}},
+        {{ -3,  -3}, { -3,  -3}, { -3,  -3}}
+    };
+    /* clang-format on */
+    int16 ncresult1D[]      = {-1, -1, 300, 301, 302, 303, -1, -1, -1, -1, -1, -1};
+    int16 ncresult1Ddozen[] = {-10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10};
+
+    /* Open the file with nc API */
+    ncid = ncopen(FILENAME2, NC_RDWR);
+    CHECK(ncid, -1, "ncopen");
+
+    /* Verify variable info and data of first data set */
+
+    /* Get access to the variable VAR3D */
+    var1id = ncvarid(ncid, VAR3D);
+    CHECK(var1id, -1, "ncvarid");
+
+    /* Get variable info */
+    status = ncvarinq(ncid, var1id, varname, NULL, &rh_ndims, rh_dims, NULL);
+    CHECK(status, -1, "ncvarinq");
+    VERIFY(rh_ndims, RANK3, "ncvarinq");
+    for (int i = 0; i < rh_ndims; i++) {
+        status = ncdiminq(ncid, rh_dims[i], NULL, &dims[i]);
+        CHECK(status, -1, "ncdiminq");
+
+        /* Initialize parameters for reading data */
+        edges[i] = dims[i];
+        start[i] = 0;
+    }
+    /* Verify that the current unlimited dimension is MAX_NUMRECS */
+    VERIFY(dims[0], MAX_NUMRECS, "ncdiminq");
+
+    /* Get data */
+    memset(outdata3D, 0, edges[0] * edges[1] * edges[2] * sizeof(int16));
+    status = ncvarget(ncid, var1id, start, edges, outdata3D);
+    CHECK(status, -1, "ncvarget");
+
+    /* Verify against the result buffer within the size of the read data */
+    status = memcmp(outdata3D, result3D, edges[0] * edges[1] * edges[2] * sizeof(int16));
+    VERIFY(status, 0, "memcmp");
+
+    /* Verify variable info and data of second data set */
+
+    /* Get access to the second variable VAR1D */
+    var2id = ncvarid(ncid, VAR1D);
+    CHECK(var2id, -1, "ncvarid");
+
+    /* Get and verify variable info */
+    status = ncvarinq(ncid, var2id, varname, NULL, &rh_ndims, rh_dims, NULL);
+    CHECK(status, -1, "ncvarinq");
+
+    status = ncdiminq(ncid, rh_dims[0], NULL, &dims[0]);
+    CHECK(status, -1, "ncdiminq");
+    VERIFY(dims[0], MAX_NUMRECS, "ncdiminq"); /* Note: only written up
+            to 6th element, but netCDF uses the max number of records in
+            the file, which is currently 12, due to data set VARDOZEN */
+
+    /* Get data */
+    edges[0] = dims[0];
+    memset(outdata1D, 0, edges[0] * sizeof(int16));
+    status = ncvarget(ncid, var2id, start, edges, outdata1D);
+    CHECK(status, -1, "ncvarget");
+
+    /* Verify data, should be "-1,-1,300,301,302,303,-1,-1,-1,-1,-1,-1".
+       The first two -1s are due to the skipped elements by SDwritedata.
+       The last six -1s are added by nc API to match the max numrecs in
+       the file. */
+    for (int i = 0; i < dims[0]; i++) {
+        if (outdata1D[i] != ncresult1D[i])
+            fprintf(stderr, "test_1dims: at line %d- Read data %d doesn't match input %d at index %d\n",
+                    __LINE__, outdata1D[i], ncresult1D[i], i);
+    }
+
+    /* Get access to the second variable */
+    var3id = ncvarid(ncid, VAREMPTY);
+    CHECK(var3id, -1, "ncvarid");
+
+    /* Get and verify variable info */
+    status = ncvarinq(ncid, var3id, varname, NULL, &rh_ndims, rh_dims, NULL);
+    CHECK(status, -1, "ncvarinq");
+
+    status = ncdiminq(ncid, rh_dims[0], NULL, &dims[0]);
+    CHECK(status, -1, "ncdiminq");
+    VERIFY(dims[0], MAX_NUMRECS, "ncdiminq"); /* Note: no data
+      written, but netCDF uses the max number of records in the file
+      for all unlim dims in the file */
+
+    /* Get data */
+    start[0] = 0;
+    edges[0] = dims[0];
+    memset(outdata1D, 0, edges[0] * sizeof(int16));
+    status = ncvarget(ncid, var3id, start, edges, outdata1D);
+    CHECK(status, -1, "ncvarget");
+
+    /* Verify against the result buffer within the size of the read data */
+    status = memcmp(outdata1D, ncresult1Ddozen, edges[0] * sizeof(int16));
+    VERIFY(status, 0, "memcmp");
+
+    status = ncclose(ncid);
+    CHECK(status, -1, "ncclose");
+
+    return num_errs;
+} /* end read data with nc API */
+
 static int
 test_multidims()
 {
@@ -274,16 +432,24 @@ test_multidims()
     int16  fillval1 = -3;               /* fill value for the 3-D variable */
     int16  fillval2 = -1;               /* fill value for the 1-D variable */
     int16  fillval3 = -10;              /* fill value for the 1-D variable */
-    intn   status   = 0;                /* returned by called functions */
-    intn   num_errs = 0;                /* number of errors so far */
+    int    status   = 0;                /* returned by called functions */
+    int    num_errs = 0;                /* number of errors so far */
 
     /* result data to compare against read data */
-    int16 result3D[DIM00][DIM1][DIM2] = {{{300, -3}, {-3, -3}, {-3, -3}},     {{301, -3}, {-3, -3}, {-3, -3}},
-                                         {{302, -3}, {-3, -3}, {-3, -3}},     {{303, -3}, {-3, -3}, {-3, -3}},
-                                         {{-3, -3}, {-3, -3}, {-3, -3}},      {{-3, -3}, {-3, -3}, {-3, -3}},
-                                         {{-3, -3}, {-3, -3}, {-3, -3}},      {{-3, -3}, {-3, -3}, {-3, -3}},
-                                         {{800, 801}, {802, 803}, {804, 805}}};
-    int16 sdresult1D[]                = {-1, -1, 300, 301, 302, 303};
+    /* clang-format off */
+    int16 result3D[DIM00][DIM1][DIM2] =
+    {
+        {{300,  -3}, { -3,  -3}, { -3,  -3}},
+        {{301,  -3}, { -3,  -3}, { -3,  -3}},
+        {{302,  -3}, { -3,  -3}, { -3,  -3}},
+        {{303,  -3}, { -3,  -3}, { -3,  -3}},
+        {{ -3,  -3}, { -3,  -3}, { -3,  -3}},
+        {{ -3,  -3}, { -3,  -3}, { -3,  -3}},
+        {{ -3,  -3}, { -3,  -3}, { -3,  -3}},
+        {{800, 801}, {802, 803}, {804, 805}}
+    };
+    /* clang-format on */
+    int16 sdresult1D[] = {-1, -1, 300, 301, 302, 303};
 
     /* Create a new file */
     fid = SDstart(FILENAME2, DFACC_CREATE);
@@ -304,11 +470,11 @@ test_multidims()
     CHECK(dset3, FAIL, "SDcreate");
 
     /* Datasets will be filled with fill values when data is missing */
-    status = SDsetfillvalue(dset1, (VOIDP)&fillval1);
+    status = SDsetfillvalue(dset1, (void *)&fillval1);
     CHECK(status, FAIL, "SDsetfillvalue");
-    status = SDsetfillvalue(dset2, (VOIDP)&fillval2);
+    status = SDsetfillvalue(dset2, (void *)&fillval2);
     CHECK(status, FAIL, "SDsetfillvalue");
-    status = SDsetfillvalue(dset3, (VOIDP)&fillval3);
+    status = SDsetfillvalue(dset3, (void *)&fillval3);
     CHECK(status, FAIL, "SDsetfillvalue");
 
     { /* Add data to first data set */
@@ -319,7 +485,7 @@ test_multidims()
         edges[0]                       = 4; /* 4x1x1 slab */
         edges[1]                       = 1;
         edges[2]                       = 1;
-        status                         = SDwritedata(dset1, start, NULL, edges, (VOIDP)data);
+        status                         = SDwritedata(dset1, start, NULL, edges, (void *)data);
         CHECK(status, FAIL, "SDwritedata");
     }
 
@@ -333,20 +499,24 @@ test_multidims()
     edges[0]                       = dimsizes3D[0];
     edges[1]                       = dimsizes3D[1];
     edges[2]                       = dimsizes3D[2];
-    outdata3                       = (int16 *)HDmalloc(edges[0] * edges[1] * edges[2] * sizeof(int16));
-    status                         = SDreaddata(dset1, start, NULL, edges, (VOIDP)outdata3);
+    outdata3                       = (int16 *)calloc(edges[0] * edges[1] * edges[2], sizeof(int16));
+    CHECK_ALLOC(outdata3, "outdata3", "test_multidims");
+
+    status = SDreaddata(dset1, start, NULL, edges, (void *)outdata3);
     CHECK(status, FAIL, "SDreaddata");
 
-    status = HDmemcmp(outdata3, result3D, edges[0] * edges[1] * edges[2] * sizeof(int16));
-    VERIFY(status, 0, "HDmemcmp");
+    /* Verify against the result buffer within the size of the read data */
+    status = memcmp(outdata3, result3D, edges[0] * edges[1] * edges[2] * sizeof(int16));
+    VERIFY(status, 0, "memcmp");
 
+    free(outdata3);
     { /* Add data to second data set, i.e. 1-D var */
         int16 data[] = {300, 301, 302, 303};
 
         /* Write 4 elements starting at index 2 */
         start[0] = 2; /* skip first two elements */
         edges[0] = 4; /* write 4 elements */
-        status   = SDwritedata(dset2, start, NULL, edges, (VOIDP)data);
+        status   = SDwritedata(dset2, start, NULL, edges, (void *)data);
         CHECK(status, FAIL, "SDwritedata");
     }
 
@@ -361,7 +531,7 @@ test_multidims()
     status = SDend(fid);
     CHECK(status, FAIL, "SDend");
 
-    /* Reopen file and data set VAR3D */
+    /* Reopen file and first data set, VAR3D */
     fid = SDstart(FILENAME2, DFACC_RDWR);
     CHECK(fid, FAIL, "SDstart");
     dset_index = SDnametoindex(fid, VAR3D);
@@ -369,7 +539,8 @@ test_multidims()
     dset1 = SDselect(fid, dset_index);
     CHECK(dset1, FAIL, "SDselect");
 
-    { /* Append data to the dataset pass the end */
+    /* Append data to the dataset past the end */
+    {
         int16 data[] = {800, 801, 802, 803, 804, 805};
 
         start[0] = 7;
@@ -379,7 +550,7 @@ test_multidims()
         edges[2]            = DIM2;
 
         /* Write 1 slab starting at index 7 */
-        status = SDwritedata(dset1, start, NULL, edges, (VOIDP)data);
+        status = SDwritedata(dset1, start, NULL, edges, (void *)data);
         CHECK(status, FAIL, "SDwritedata");
     }
 
@@ -395,11 +566,12 @@ test_multidims()
     edges[0]                       = dimsizes3D[0];
     edges[1]                       = dimsizes3D[1];
     edges[2]                       = dimsizes3D[2];
-    status                         = SDreaddata(dset1, start, NULL, edges, (VOIDP)outdata3D);
+    status                         = SDreaddata(dset1, start, NULL, edges, (void *)outdata3D);
     CHECK(status, FAIL, "SDreaddata");
 
-    status = HDmemcmp(outdata3D, result3D, edges[0] * edges[1] * edges[2] * sizeof(int16));
-    VERIFY(status, 0, "HDmemcmp");
+    /* Verify against the result buffer within the size of the read data */
+    status = memcmp(outdata3D, result3D, edges[0] * edges[1] * edges[2] * sizeof(int16));
+    VERIFY(status, 0, "memcmp");
 
     /* Data should be
             300  -3     301  -3     302  -3     303  -3 ...
@@ -422,11 +594,12 @@ test_multidims()
     /* Read and verify data of the dataset.  Data should be: -1 -1 300 301 302 303 */
     start[0] = 0;
     edges[0] = dimsize1D[0];
-    status   = SDreaddata(dset2, start, NULL, edges, (VOIDP)outdata1D);
+    status   = SDreaddata(dset2, start, NULL, edges, (void *)outdata1D);
     CHECK(status, FAIL, "SDreaddata");
 
-    status = HDmemcmp(outdata1D, sdresult1D, edges[0] * sizeof(int16));
-    VERIFY(status, 0, "HDmemcmp");
+    /* Verify against the result buffer within the size of the read data */
+    status = memcmp(outdata1D, sdresult1D, edges[0] * sizeof(int16));
+    VERIFY(status, 0, "memcmp");
 
     /* Close the datasets */
     status = SDendaccess(dset1);
@@ -439,7 +612,7 @@ test_multidims()
        number of records in the file. */
     dimsize1D[0] = SD_UNLIMITED;
     dset1        = SDcreate(fid, VARDOZEN, DFNT_INT16, RANK1, dimsize1D);
-    CHECK(dset3, FAIL, "SDcreate");
+    CHECK(dset1, FAIL, "SDcreate");
 
     { /* Write data to the fourth dataset, exceeding the current number of
          records in the file */
@@ -448,9 +621,10 @@ test_multidims()
         /* Write 12 elements starting at index 0 */
         start[0] = 0;
         edges[0] = 12;
-        status   = SDwritedata(dset1, start, NULL, edges, (VOIDP)data);
+        status   = SDwritedata(dset1, start, NULL, edges, (void *)data);
         CHECK(status, FAIL, "SDwritedata");
     }
+    /* This number of elements will cause the nc number of records to be 12. */
 
     /* Close the datasets */
     status = SDendaccess(dset1);
@@ -460,125 +634,11 @@ test_multidims()
     status = SDend(fid);
     CHECK(status, FAIL, "SDend");
 
-    /*****************************************************
-     * Read and verify data of the variables with nc API *
-     *****************************************************/
-    {
-        long start[3];
-        long edges[3];
-        int  ncid;                     /* file id */
-        int  var1id, var2id, var3id;   /* variable ids */
-        long dims[3];                  /* dimension size buffer */
-        int  rh_ndims;                 /* number of dims */
-        int  rh_dims[H4_MAX_VAR_DIMS]; /* variable shape */
-        char varname[H4_MAX_NC_NAME];  /* variable name */
-        int  ii;
+    /* Read and verify the data through the netCDF API */
+    status = read_verify_nc_api_multidims();
+    CHECK(status, -1, "read_verify_nc_api_multidims");
 
-        /* After the fourth data set (VARDOZEN) was added, the maximum number
-           of records became 12.  Thus, the results must be changed to reflect
-           the behavior in nc API. */
-        int16 result3D[DIM0][DIM1][DIM2] = {
-            {{300, -3}, {-3, -3}, {-3, -3}},      {{301, -3}, {-3, -3}, {-3, -3}},
-            {{302, -3}, {-3, -3}, {-3, -3}},      {{303, -3}, {-3, -3}, {-3, -3}},
-            {{-3, -3}, {-3, -3}, {-3, -3}},       {{-3, -3}, {-3, -3}, {-3, -3}},
-            {{-3, -3}, {-3, -3}, {-3, -3}},       {{-3, -3}, {-3, -3}, {-3, -3}},
-            {{800, 801}, {802, 803}, {804, 805}}, {{-3, -3}, {-3, -3}, {-3, -3}},
-            {{-3, -3}, {-3, -3}, {-3, -3}},       {{-3, -3}, {-3, -3}, {-3, -3}},
-            {{-3, -3}, {-3, -3}, {-3, -3}}};
-        int16 ncresult1D[]      = {-1, -1, 300, 301, 302, 303, -1, -1, -1, -1, -1, -1};
-        int16 ncresult1Ddozen[] = {-10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10};
-
-        /* Open the file with nc API */
-        ncid = ncopen(FILENAME2, NC_RDWR);
-        CHECK(ncid, -1, "ncopen");
-
-        /* Verify variable info and data of first data set */
-
-        /* Get access to the variable VAR3D */
-        var1id = ncvarid(ncid, VAR3D);
-        CHECK(var1id, -1, "ncvarid");
-
-        /* Get variable info */
-        status = ncvarinq(ncid, var1id, varname, NULL, &rh_ndims, rh_dims, NULL);
-        CHECK(status, -1, "ncvarinq");
-        VERIFY(rh_ndims, RANK3, "ncvarinq");
-        for (ii = 0; ii < rh_ndims; ii++) {
-            status = ncdiminq(ncid, rh_dims[ii], NULL, &dims[ii]);
-            CHECK(status, -1, "ncdiminq");
-
-            /* Initialize parameters for reading data */
-            edges[ii] = dims[ii];
-            start[ii] = 0;
-        }
-
-        /* Get data */
-        HDmemset(outdata3D, 0, edges[0] * edges[1] * edges[2] * sizeof(int16));
-        status = ncvarget(ncid, var1id, start, edges, outdata3D);
-        CHECK(status, -1, "ncvarget");
-
-        /* Verify data */
-        status = HDmemcmp(outdata3D, result3D, edges[0] * edges[1] * edges[2] * sizeof(int16));
-        VERIFY(status, 0, "HDmemcmp");
-
-        /* Verify variable info and data of second data set */
-
-        /* Get access to the second variable VAR1D */
-        var2id = ncvarid(ncid, VAR1D);
-        CHECK(var2id, -1, "ncvarid");
-
-        /* Get and verify variable info */
-        status = ncvarinq(ncid, var2id, varname, NULL, &rh_ndims, rh_dims, NULL);
-        CHECK(status, -1, "ncvarinq");
-
-        status = ncdiminq(ncid, rh_dims[0], NULL, &dims[0]);
-        CHECK(status, -1, "ncdiminq");
-        VERIFY(dims[0], MAX_NUMRECS, "ncdiminq"); /* Note: only written up
-                to 6th element, but netCDF uses the max number of records in
-                the file, which is currently 12, due to data set VARDOZEN */
-
-        /* Get data */
-        edges[0] = dims[0];
-        HDmemset(outdata1D, 0, edges[0] * sizeof(int16));
-        status = ncvarget(ncid, var2id, start, edges, outdata1D);
-        CHECK(status, -1, "ncvarget");
-
-        /* Verify data, should be "-1,-1,300,301,302,303,-1,-1,-1,-1,-1,-1".
-           The first two -1s are due to the skipped elements by SDwritedata.
-           The last six -1s are added by nc API to match the max numrecs in
-           the file. */
-        for (ii = 0; ii < dims[0]; ii++) {
-            if (outdata1D[ii] != ncresult1D[ii])
-                fprintf(stderr, "test_1dims: at line %d- Read data %d doesn't match input %d at index %d\n",
-                        __LINE__, outdata1D[ii], ncresult1D[ii], ii);
-        }
-
-        /* Get access to the second variable */
-        var3id = ncvarid(ncid, VAREMPTY);
-        CHECK(var3id, -1, "ncvarid");
-
-        /* Get and verify variable info */
-        status = ncvarinq(ncid, var3id, varname, NULL, &rh_ndims, rh_dims, NULL);
-        CHECK(status, -1, "ncvarinq");
-
-        status = ncdiminq(ncid, rh_dims[0], NULL, &dims[0]);
-        CHECK(status, -1, "ncdiminq");
-        VERIFY(dims[0], MAX_NUMRECS, "ncdiminq"); /* Note: no data
-          written, but netCDF uses the max number of records in the file
-          for all unlim dims in the file */
-
-        /* Get data */
-        start[0] = 0;
-        edges[0] = dims[0];
-        HDmemset(outdata1D, 0, edges[0] * sizeof(int16));
-        status = ncvarget(ncid, var3id, start, edges, outdata1D);
-        CHECK(status, -1, "ncvarget");
-
-        /* Verify data */
-        status = HDmemcmp(outdata1D, ncresult1Ddozen, edges[0] * sizeof(int16));
-        VERIFY(status, 0, "HDmemcmp");
-    } /* end read data with nc API */
-
-    return 0;
+    return num_errs;
 }
 
 /***************************************************************************
@@ -603,11 +663,10 @@ test_readings(long max_numrecs)
     int   var1id, var2id; /* variable ids */
     long  start[3];
     long  edges[3];
-    long  dims[3];                  /* dimension size buffer */
-    int   rh_ndims;                 /* number of dims */
-    int   rh_dims[H4_MAX_VAR_DIMS]; /* variable shape */
-    char  varname[H4_MAX_NC_NAME];  /* variable name */
-    int   ii;
+    long  dims[3];                     /* dimension size buffer */
+    int   rh_ndims;                    /* number of dims */
+    int   rh_dims[H4_MAX_VAR_DIMS];    /* variable shape */
+    char  varname[H4_MAX_NC_NAME];     /* variable name */
     int16 outdata3D[DIM0][DIM1][DIM2]; /* 3-D data read back */
     int16 outdata1D[DIM0];             /* 1-D data read back */
     int32 dimsizes3D[3];               /* dimension size buffer for first SDS */
@@ -617,7 +676,7 @@ test_readings(long max_numrecs)
     /* result data to compare against read data */
 
     /* data resulted from reading at start=[4,0,0] for edges=[6,1,1] */
-    int16 result3D_start400_edge611[DIM0][DIM1][DIM2] = {{-3, -3}, {-3, 800}, {-3, -3}};
+    int16 result3D_start400_edge611[6] = {-3, -3, -3, 800, -3, -3};
 
     /* data resulted from reading at start=[4] for edges=[6] */
     int16 result1D_start4_edge6[] = {302, 303, -1, -1, -1, -1};
@@ -641,14 +700,15 @@ test_readings(long max_numrecs)
     status = ncvarinq(ncid, var1id, varname, NULL, &rh_ndims, rh_dims, NULL);
     CHECK(status, -1, "ncvarinq");
     VERIFY(rh_ndims, RANK3, "ncvarinq");
-    for (ii = 0; ii < rh_ndims; ii++) {
-        status = ncdiminq(ncid, rh_dims[ii], NULL, &dims[ii]);
+
+    for (int i = 0; i < rh_ndims; i++) {
+        status = ncdiminq(ncid, rh_dims[i], NULL, &dims[i]);
         CHECK(status, -1, "ncdiminq");
-        VERIFY(dims[ii], dimsizes3D[ii], "ncdiminq");
+        VERIFY(dims[i], dimsizes3D[i], "ncdiminq");
 
         /* Initialize parameters for reading data */
-        edges[ii] = dims[ii];
-        start[ii] = 0;
+        edges[i] = dims[i];
+        start[i] = 0;
     }
 
     /* Data written by SD API:
@@ -659,34 +719,35 @@ test_readings(long max_numrecs)
                  -3,-3,-3,-3,-3,-3,
                  -3,-3,-3,-3,-3,-3,
                  -3,-3,-3,-3,-3,-3,
-                 800,801,802,803,804,805} */
+                 800,801,802,803,804,805
+                 } */
 
-    /* Read data pass the written data, but before max numrecs in the file */
+    /* Read data past the written data, but before max numrecs in the file */
     start[0] = 4;
     start[1] = start[2] = 0;
     edges[0]            = 6;
     edges[1]            = 1;
     edges[2]            = 1;
-    HDmemset(outdata3D, 0, edges[0] * edges[1] * edges[2] * sizeof(int16));
+    memset(outdata3D, 0, edges[0] * edges[1] * edges[2] * sizeof(int16));
     status = ncvarget(ncid, var1id, start, edges, outdata3D);
     CHECK(status, -1, "ncvarget");
 
-    /* Verify data, should be "-3,-3,-3,800,-3,-3".  The first
+    /* Verify data, should be "-3,-3,-3, 800,-3,-3".  The first
            four values are the actual values from the variable.  The last
            two -3s are added by nc API to fill up to the provided buffer.
            Note that the first three -3s were filled at the writing time due
            to skipping during writing */
 
-    /* Verify data */
-    status = HDmemcmp(outdata3D, result3D_start400_edge611, edges[0] * edges[1] * edges[2] * sizeof(int16));
-    VERIFY(status, 0, "HDmemcmp");
+    /* Verify against the result buffer within the size of the read data */
+    status = memcmp(outdata3D, result3D_start400_edge611, edges[0] * edges[1] * edges[2] * sizeof(int16));
+    VERIFY(status, 0, "memcmp");
 
-    /* Read data pass the max numrecs in the file, ncvarget should fail */
+    /* Read data past the max numrecs in the file, ncvarget should fail */
     start[0] = 4;
     start[1] = start[2] = 0;
     edges[0]            = 10;
     edges[1] = edges[2] = 1;
-    HDmemset(outdata3D, 0, edges[0] * edges[1] * edges[2] * sizeof(int16));
+    memset(outdata3D, 0, edges[0] * edges[1] * edges[2] * sizeof(int16));
     status = ncvarget(ncid, var1id, start, edges, outdata3D);
     VERIFY(status, -1, "ncvarget");
 
@@ -709,10 +770,10 @@ test_readings(long max_numrecs)
 
     /* Data written by SD API: {-1,-1,300,301,302,303} */
 
-    /* Read data pass the written data, but before max numrecs in the file */
+    /* Read data past the written data, but before max numrecs in the file */
     start[0] = 4;
     edges[0] = 6;
-    HDmemset(outdata1D, 0, edges[0] * sizeof(int16));
+    memset(outdata1D, 0, edges[0] * sizeof(int16));
     status = ncvarget(ncid, var2id, start, edges, outdata1D);
     CHECK(status, -1, "ncvarget");
 
@@ -720,14 +781,17 @@ test_readings(long max_numrecs)
            two values are the actual values from the variable.  The last
            four -1s are added by nc API to fill up to the provided buffer. */
 
-    /* Read data pass the max numrecs in the file, ncvarget should fail */
+    /* Read data past the max numrecs in the file, ncvarget should fail */
     start[0] = 4;
     edges[0] = 10;
-    HDmemset(outdata1D, 0, edges[0] * sizeof(int16));
+    memset(outdata1D, 0, edges[0] * sizeof(int16));
     status = ncvarget(ncid, var2id, start, edges, outdata1D);
     VERIFY(status, -1, "ncvarget");
 
-    return 0;
+    status = ncclose(ncid);
+    CHECK(status, -1, "ncclose");
+
+    return num_errs;
 }
 
 /* Test driver for testing ncvarget in filling fill-values where appropriate */

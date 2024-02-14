@@ -143,7 +143,7 @@ parse_dumpsds_opts(dump_info_t *dumpsds_opts, intn *curr_arg, intn argc, char *a
                 dumpsds_opts->dump_to_file = TRUE;
 
                 /* Get file name */
-                HDstrcpy(dumpsds_opts->file_name, argv[++(*curr_arg)]);
+                strcpy(dumpsds_opts->file_name, argv[++(*curr_arg)]);
 
                 (*curr_arg)++;
                 break;
@@ -180,7 +180,7 @@ sdsdumpfull(int32 sds_id, dump_info_t *dumpsds_opts, int32 rank, int32 dimsizes[
     /* "rank" is the number of dimensions and
        "dimsizes[i]" is size of dimension "i". */
     int32         j, i;
-    VOIDP         buf = NULL; /* holds one row of data */
+    void         *buf = NULL; /* holds one row of data */
     int32         numtype;
     int32         eltsz;
     int32         read_nelts; /* number of elements in one row */
@@ -208,16 +208,16 @@ sdsdumpfull(int32 sds_id, dump_info_t *dumpsds_opts, int32 rank, int32 dimsizes[
     CHECK_POS(eltsz, "eltsz", "sdsdumpfull");
     CHECK_POS(rank, "rank", "sdsdumpfull");
 
-    buf = (VOIDP)HDmalloc(read_nelts * eltsz);
+    buf = (void *)malloc(read_nelts * eltsz);
     CHECK_ALLOC(buf, "buf", "sdsdumpfull");
 
-    left = (int32 *)HDmalloc(rank * sizeof(int32));
+    left = (int32 *)malloc(rank * sizeof(int32));
     CHECK_ALLOC(left, "left", "sdsdumpfull");
 
-    start = (int32 *)HDmalloc(rank * sizeof(int32));
+    start = (int32 *)malloc(rank * sizeof(int32));
     CHECK_ALLOC(start, "start", "sdsdumpfull");
 
-    edge = (int32 *)HDmalloc(rank * sizeof(int32));
+    edge = (int32 *)malloc(rank * sizeof(int32));
     CHECK_ALLOC(edge, "edge", "sdsdumpfull");
 
     /* BMR - how come this doesn't have stride as for GR? */
@@ -254,7 +254,7 @@ sdsdumpfull(int32 sds_id, dump_info_t *dumpsds_opts, int32 rank, int32 dimsizes[
             intn extfile_namelen = SDgetexternalfile(sds_id, 0, NULL, NULL);
             if (extfile_namelen > 0) {
                 char *extfile_name = NULL;
-                extfile_name       = (char *)HDmalloc(sizeof(char *) * (extfile_namelen + 1));
+                extfile_name       = (char *)malloc(sizeof(char *) * (extfile_namelen + 1));
                 CHECK_ALLOC(extfile_name, "extfile_name", "sdsdumpfull");
 
                 /* Get the external file information, we don't need offset here */
@@ -288,7 +288,7 @@ sdsdumpfull(int32 sds_id, dump_info_t *dumpsds_opts, int32 rank, int32 dimsizes[
                 intn extfile_namelen = SDgetexternalfile(sds_id, 0, NULL, NULL);
                 if (extfile_namelen > 0) {
                     char *extfile_name = NULL;
-                    extfile_name       = (char *)HDmalloc(sizeof(char *) * (extfile_namelen + 1));
+                    extfile_name       = (char *)malloc(sizeof(char *) * (extfile_namelen + 1));
                     CHECK_ALLOC(extfile_name, "extfile_name", "sdsdumpfull");
 
                     /* Get the external file information, we don't need offset here */
@@ -457,7 +457,7 @@ print_SDattrs(int32 sd_id, FILE *fp, int32 n_file_attrs, dump_info_t *dumpsds_op
 {
     int32 attr_index, attr_count, attr_nt, attr_buf_size;
     char  attr_name[MAXNAMELEN], *attr_nt_desc = NULL;
-    VOIDP attr_buf = NULL;
+    void *attr_buf = NULL;
     intn  printed  = FALSE; /* whether file attr title has been printed */
     intn  status   = FAIL,  /* status from a called routine */
         ret_value  = SUCCEED;
@@ -484,7 +484,7 @@ print_SDattrs(int32 sd_id, FILE *fp, int32 n_file_attrs, dump_info_t *dumpsds_op
         /* display the attribute's information */
         fprintf(fp, "\t Attr%i: Name = %s\n", (int)attr_index, attr_name);
         fprintf(fp, "\t\t Type = %s \n\t\t Count= %i\n", attr_nt_desc, (int)attr_count);
-        resetBuff((VOIDP)&attr_nt_desc);
+        resetBuff((void *)&attr_nt_desc);
 
         /* display the attribute's values unless user chose to suppress them or
           there are no values stored */
@@ -501,7 +501,7 @@ print_SDattrs(int32 sd_id, FILE *fp, int32 n_file_attrs, dump_info_t *dumpsds_op
             CHECK_POS(attr_buf_size, "attr_buf_size", "print_SDattrs");
 
             /* allocate space for the attribute's values */
-            attr_buf = (VOIDP)HDmalloc(attr_buf_size);
+            attr_buf = (void *)malloc(attr_buf_size);
 
             /* if allocation fails, handle the failure */
             CHECK_ALLOC(attr_buf, "attr_buf", "print_SDattrs");
@@ -543,7 +543,7 @@ print_SDSattrs(int32 sds_id, int32 nattrs, FILE *fp, dump_info_t *dumpsds_opts)
 {
     int32 attr_index, attr_count, attr_nt, attr_buf_size;
     char  attr_name[MAXNAMELEN], *attr_nt_desc = NULL;
-    VOIDP attr_buf = NULL;
+    void *attr_buf = NULL;
     intn  status   = FAIL,    /* status returned from a called routine */
         ret_value  = SUCCEED; /* returned value of print_SDSattrs */
 
@@ -571,7 +571,7 @@ print_SDSattrs(int32 sds_id, int32 nattrs, FILE *fp, dump_info_t *dumpsds_opts)
         fprintf(fp, "\t\t Type = %s \n\t\t Count= %d\n", attr_nt_desc, (int)attr_count);
 
         /* free buffer and reset it to NULL */
-        resetBuff((VOIDP)&attr_nt_desc);
+        resetBuff((void *)&attr_nt_desc);
 
         /* display the attribute's values unless user chose to suppress them
            or there are no values stored */
@@ -581,13 +581,13 @@ print_SDSattrs(int32 sds_id, int32 nattrs, FILE *fp, dump_info_t *dumpsds_opts)
             resetBuff(&attr_buf);
 
             /* allocate space for attribute's values */
-            attr_buf = (VOIDP)HDmalloc(attr_buf_size);
+            attr_buf = (void *)malloc(attr_buf_size);
             CHECK_ALLOC(attr_buf, "attr_buf", "print_SDSattrs");
 
             /* read the values of the attribute into buffer attr_buf */
             status = SDreadattr(sds_id, attr_index, attr_buf);
             if (status == FAIL) {
-                HDfree(attr_buf);
+                free(attr_buf);
                 ERROR_CONT_2("in %s: SDreadattr failed for %d'th attribute", "print_SDSattrs",
                              (int)attr_index);
             }
@@ -600,7 +600,7 @@ print_SDSattrs(int32 sds_id, int32 nattrs, FILE *fp, dump_info_t *dumpsds_opts)
             if (dumpsds_opts->clean_output && attr_nt == DFNT_CHAR) {
                 status = dumpclean(attr_nt, dumpsds_opts, attr_count, attr_buf, fp);
                 if (status == FAIL) {
-                    HDfree(attr_buf);
+                    free(attr_buf);
                     ERROR_CONT_2("in %s: dumpclean failed for %d'th attribute", "print_SDSattrs",
                                  (int)attr_index);
                 }
@@ -610,7 +610,7 @@ print_SDSattrs(int32 sds_id, int32 nattrs, FILE *fp, dump_info_t *dumpsds_opts)
                 status =
                     dumpfull(attr_nt, dumpsds_opts, attr_count, attr_buf, fp, ATTR_INDENT, ATTR_CONT_INDENT);
                 if (status == FAIL) {
-                    HDfree(attr_buf);
+                    free(attr_buf);
                     ERROR_CONT_2("in %s: dumpfull failed for %d'th attribute", "print_SDSattrs",
                                  (int)attr_index);
                 }
@@ -640,7 +640,7 @@ intn
 option_mask_string(int32 options_mask, char *opt_mask_strg)
 {
     intn ret_value = SUCCEED;
-    char numval[10];
+    char numval[16];
 
     strcpy(opt_mask_strg, ""); /* init string to empty string */
 
@@ -707,8 +707,6 @@ option_mask_string(int32 options_mask, char *opt_mask_strg)
 
     return (ret_value);
 } /* option_mask_string */
-  /* #endif
-   */
 
 /*
  * Prints compression method and compression information of a data set.
@@ -722,7 +720,7 @@ print_comp_info(FILE *fp, int32 sds_id, comp_coder_t *comp_type)
     intn      status = FAIL;                /* returned status from a called function */
 
     /* get compression info */
-    HDmemset(&c_info, 0, sizeof(c_info));
+    memset(&c_info, 0, sizeof(c_info));
     status = SDgetcompinfo(sds_id, comp_type, &c_info);
 
     /* if getting comp info succeeds, proceed to print out appropriate
@@ -755,8 +753,20 @@ print_comp_info(FILE *fp, int32 sds_id, comp_coder_t *comp_type)
                 break;
         } /* switch */
     }
-    else
-        fprintf(fp, "\t Compression method = <Unable to get compression method>\n");
+    else {
+        /* It's likely that SDgetcompinfo failed because SZIP library is not avail */
+        /* Only get compression type and if it's SZIP, display appropriate info */
+        status = SDgetcomptype(sds_id, comp_type);
+        if (status != FAIL && *comp_type == COMP_CODE_SZIP) {
+            fprintf(fp, "\t Compression method = %s\n", comp_method_txt(*comp_type));
+            fprintf(fp, "\t\t Compression information is unavailable (no SZIP library)\n");
+        }
+        /* Failed to get compression type, do not proceed */
+        else {
+            fprintf(fp, "\t Compression method = <Unable to get compression method>\n");
+            return (status);
+        }
+    }
 
     /* print compression ratio */
     if (*comp_type != COMP_CODE_NONE) {
@@ -806,9 +816,9 @@ printSDS_ASCII(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* index
         ret_value = SUCCEED; /* returned value of printSDS_ASCII */
 
     /* Reset variables. */
-    HDmemset(dimsizes, 0, sizeof(int32) * MAXRANK);
-    HDmemset(dimNT, 0, sizeof(int32) * MAXRANK);
-    HDmemset(dimnattr, 0, sizeof(int32) * MAXRANK);
+    memset(dimsizes, 0, sizeof(int32) * MAXRANK);
+    memset(dimNT, 0, sizeof(int32) * MAXRANK);
+    memset(dimnattr, 0, sizeof(int32) * MAXRANK);
 
     /* get access to the current dataset */
     sds_id = SDselect(sd_id, sds_index);
@@ -821,7 +831,7 @@ printSDS_ASCII(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* index
     }
 
     /* allocate space for sds name */
-    sdsname = (char *)HDmalloc(name_len + 1);
+    sdsname = (char *)malloc(name_len + 1);
     CHECK_ALLOC(sdsname, "sdsname", "printSDS_ASCII");
 
     /* get dataset's information */
@@ -872,7 +882,7 @@ printSDS_ASCII(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* index
                 fprintf(fp, "%d\n\t Type= %s\n", (int)sds_index, nt_desc);
             }
 
-            resetBuff((VOIDP)&nt_desc); /* done with nt_desc */
+            resetBuff((void *)&nt_desc); /* done with nt_desc */
 
             /* If the current file is not a netCDF, print the SDS' ref#
                and compression information */
@@ -925,7 +935,7 @@ printSDS_ASCII(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* index
 
                     fprintf(fp, "\t\t Scale Type = %s\n", attr_nt_desc);
                     fprintf(fp, "\t\t Number of attributes = %d\n", (int)dimnattr[j]);
-                    resetBuff((VOIDP)&attr_nt_desc);
+                    resetBuff((void *)&attr_nt_desc);
                 }
             } /* end each for dimension */
 
@@ -985,10 +995,10 @@ printSDS_BINARY(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* inde
     intn         status = FAIL, ret_value = SUCCEED;
 
     /* temp. names for file type and curr input file name for ease of use */
-    HDstrcpy(curr_file_name, dumpsds_opts->ifile_name);
+    strcpy(curr_file_name, dumpsds_opts->ifile_name);
 
     /* Reset variable */
-    HDmemset(dimsizes, 0, sizeof(int32) * MAXRANK);
+    memset(dimsizes, 0, sizeof(int32) * MAXRANK);
 
     sds_id = SDselect(sd_id, sds_index);
     if (sds_id == FAIL)
@@ -1045,9 +1055,9 @@ dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[])
        of indices of the SDSs in the file that are requested, then read and
        display information and data of each SDS in the specified manner */
     while (curr_arg < argc) {
-        HDstrcpy(file_name, argv[curr_arg]);           /* get current file name */
-        HDstrcpy(dumpsds_opts->ifile_name, file_name); /* record file name */
-        curr_arg++;                                    /* move argument pointer forward */
+        strcpy(file_name, argv[curr_arg]);           /* get current file name */
+        strcpy(dumpsds_opts->ifile_name, file_name); /* record file name */
+        curr_arg++;                                  /* move argument pointer forward */
 
         /* HDF4 doesn't process netCDF 64-bit files */
         if (HDisnetcdf64(file_name)) {

@@ -15,16 +15,14 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
- *
- *
  * This file initializes all global variables.  It's a separate file in order
  * to allow the creation of SunOS sharable-libraries.
  */
-#include "h4config.h"
+
+#include "local_nc.h"
 
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
-#include "local_nc.h"
 #else
 #include "hdf4_netcdf.h"
 #endif

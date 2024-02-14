@@ -24,6 +24,8 @@
 #ifndef H4_HCOMP_H
 #define H4_HCOMP_H
 
+#include "hdf.h"
+
 /* For determining which type of modeling is being done */
 typedef enum {
     COMP_MODEL_STDIO = 0 /* for Standard C I/O model */
@@ -53,27 +55,6 @@ typedef enum {
 /* Compression encoder/decoder configuration */
 #define COMP_DECODER_ENABLED 1
 #define COMP_ENCODER_ENABLED 2
-
-#ifndef COMPRESS_MASTER
-extern uint16 compress_map[];
-#else
-uint16 compress_map[COMP_MAX_COMP + 1] = {
-    /* Mapping from compression types to tags */
-    0,           /* No corresponding tag for un-compressed data */
-    0,           /* (1) */
-    DFTAG_JPEG5, /* COMP_JPEG -> DFTAG_JPEG5 (for JPEG compression) */
-    0,           /* (3) */
-    0,           /* (4) */
-    0,           /* (5) */
-    0,           /* (6) */
-    0,           /* (7) */
-    0,           /* (8) */
-    0,           /* (9) */
-    0,           /* (10) */
-    DFTAG_RLE,   /* COMP_RLE -> DFTAG_RLE (for Run-length compression) */
-    DFTAG_IMC    /* COMP_IMCOMP -> DFTAG_IMC (for IMCOMP compression) */
-};
-#endif
 
 typedef union tag_model_info { /* Union to contain modeling information */
     struct {
@@ -119,5 +100,15 @@ typedef union tag_comp_info { /* Union to contain compression information */
     } szip;                        /* for szip encoding */
 
 } comp_info;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+HDFLIBAPI uint16 compress_map[];
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* H4_HCOMP_H */

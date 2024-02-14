@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "h4config.h"
+#include "hdf.h"
+
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else
@@ -17,11 +18,7 @@
 #include "add.h"     /* functions to update in-memory netcdf */
 #include "error.h"
 #include "tests.h"
-#include "alloc.h"
 #include "emalloc.h"
-#ifdef HDF
-#include "hdf.h"
-#endif
 
 /*
  * Test ncdimdef
@@ -75,10 +72,10 @@ test_ncdimdef(char *path)
         ncclose(cdfid);
         return;
     }
-    add_dim(&test, &mm); /* keep in-memory netcdf in sync */
+    add_dim(test_g, &mm); /* keep in-memory netcdf in sync */
     /* check that dim id returned is one more than previous dim id */
-    if (dimid != test.ndims - 1) {
-        error("%s: ncdimdef returned %d for dim id, expected %d", pname, dimid, test.ndims - 1);
+    if (dimid != test_g->ndims - 1) {
+        error("%s: ncdimdef returned %d for dim id, expected %d", pname, dimid, test_g->ndims - 1);
         ncclose(cdfid);
         return;
     }
@@ -107,7 +104,7 @@ test_ncdimdef(char *path)
             ncclose(cdfid);
             return;
         }
-        add_dim(&test, &rec);
+        add_dim(test_g, &rec);
     }
     /* try adding another unlimited dimension, which should fail */
     if (ncdimdef(cdfid, "rec2", rec.size) != -1) {
@@ -170,7 +167,7 @@ test_ncdimid(char *path)
         ncclose(cdfid);
         return;
     }
-    add_dim(&test, &nn); /* keep in-memory netcdf in sync */
+    add_dim(test_g, &nn); /* keep in-memory netcdf in sync */
     /* check id returned for name matches id returned from definition */
     if (ncdimid(cdfid, nn.name) != nn_dim) {
         error("%s: ncdimid returned wrong value in define mode", pname);
@@ -195,7 +192,7 @@ test_ncdimid(char *path)
         return;
     }
     /* try with unlimited dimension, assumed to be "rec" from earlier calls */
-    if (ncdimid(cdfid, "rec") != test.xdimid) {
+    if (ncdimid(cdfid, "rec") != test_g->xdimid) {
         error("%s: ncdimid returned bad value for record dimension", pname);
         ncclose(cdfid);
         return;
@@ -240,21 +237,21 @@ test_ncdiminq(char *path)
     }
     /* opened, in data mode */
     dim.name = (char *)emalloc(H4_MAX_NC_NAME);
-    for (dimid = 0; dimid < test.ndims; dimid++) { /* loop on all dim ids */
+    for (dimid = 0; dimid < test_g->ndims; dimid++) { /* loop on all dim ids */
         if (ncdiminq(cdfid, dimid, dim.name, &dim.size) == -1) {
             error("%s: ncdiminq in data mode failed on dim id %d", pname, dimid);
             ncclose(cdfid);
             return;
         }
         /* compare returned with expected values */
-        if (strcmp(dim.name, test.dims[dimid].name) != 0) {
+        if (strcmp(dim.name, test_g->dims[dimid].name) != 0) {
             error("%s: ncdiminq (data mode), name %s, expected %s for id = %d", pname, dim.name,
-                  test.dims[dimid].name, dimid);
+                  test_g->dims[dimid].name, dimid);
             nerrs++;
         }
-        if (dim.size != test.dims[dimid].size) {
+        if (dim.size != test_g->dims[dimid].size) {
             error("%s: ncdiminq (data mode), size %d, expected %d for id = %d", pname, dim.size,
-                  test.dims[dimid].size, dimid);
+                  test_g->dims[dimid].size, dimid);
             nerrs++;
         }
     }
@@ -264,27 +261,27 @@ test_ncdiminq(char *path)
         return;
     }
     /* in define mode, compare returned with expected values again */
-    for (dimid = 0; dimid < test.ndims; dimid++) { /* loop on all dim ids */
+    for (dimid = 0; dimid < test_g->ndims; dimid++) { /* loop on all dim ids */
         if (ncdiminq(cdfid, dimid, dim.name, &dim.size) == -1) {
             error("%s: ncdiminq in define mode failed on dim id %d", pname, dimid);
             ncclose(cdfid);
             return;
         }
         /* compare returned with expected values */
-        if (strcmp(dim.name, test.dims[dimid].name) != 0) {
+        if (strcmp(dim.name, test_g->dims[dimid].name) != 0) {
             error("%s: ncdiminq (define), name %s, expected %s for id = %d", pname, dim.name,
-                  test.dims[dimid].name, dimid);
+                  test_g->dims[dimid].name, dimid);
             nerrs++;
         }
-        if (dim.size != test.dims[dimid].size) {
+        if (dim.size != test_g->dims[dimid].size) {
             error("%s: ncdiminq (define), size %d, expected %d for id = %d", pname, dim.size,
-                  test.dims[dimid].size, dimid);
+                  test_g->dims[dimid].size, dimid);
             nerrs++;
         }
     }
     /* try with bad dimension handles, check for failure */
     if (ncdiminq(cdfid, -1, dim.name, &dim.size) != -1 ||
-        ncdiminq(cdfid, test.ndims, dim.name, &dim.size) != -1) {
+        ncdiminq(cdfid, test_g->ndims, dim.name, &dim.size) != -1) {
         error("%s: ncdiminq should have failed on bad dimension ids", pname, dimid);
         ncclose(cdfid);
         return;
@@ -299,13 +296,13 @@ test_ncdiminq(char *path)
         return;
     }
     /* should fail, since bad handle */
-    if (test.ndims >= 1) { /* if any dimensions have been defined */
+    if (test_g->ndims >= 1) { /* if any dimensions have been defined */
         if (ncdiminq(cdfid, 0, dim.name, &dim.size) != -1) {
             error("%s: ncdiminq failed to report bad netcdf handle ", pname);
             nerrs++;
         }
     }
-    Free(dim.name);
+    free(dim.name);
     if (nerrs > 0)
         (void)fprintf(stderr, "FAILED! ***\n");
     else
@@ -353,13 +350,13 @@ test_ncdimrename(char *path)
         ncclose(cdfid);
         return;
     }
-    add_dim(&test, &pp); /* keep in-memory netcdf in sync */
+    add_dim(test_g, &pp); /* keep in-memory netcdf in sync */
     if (ncdimdef(cdfid, qq.name, qq.size) == -1) {
         error("%s: ncdimdef failed", pname);
         ncclose(cdfid);
         return;
     }
-    add_dim(&test, &qq); /* keep in-memory netcdf in sync */
+    add_dim(test_g, &qq); /* keep in-memory netcdf in sync */
     /* rename first dimension */
     if (ncdimrename(cdfid, pp_dim, newname) == -1) {
         error("%s: ncdimrename failed", pname);
@@ -383,8 +380,8 @@ test_ncdimrename(char *path)
         ncclose(cdfid);
         return;
     }
-    test.dims[pp_dim].name = (char *)erealloc((void *)test.dims[pp_dim].name, strlen(newname) + 1);
-    (void)strcpy(test.dims[pp_dim].name, newname); /* keep test consistent */
+    test_g->dims[pp_dim].name = (char *)erealloc((void *)test_g->dims[pp_dim].name, strlen(newname) + 1);
+    (void)strcpy(test_g->dims[pp_dim].name, newname); /* keep test consistent */
     /* try to rename second dimension same as first, should fail */
     if (ncdimrename(cdfid, pp_dim, qq.name) != -1) {
         error("%s: ncdimrename should have failed with used name", pname);
@@ -392,7 +389,7 @@ test_ncdimrename(char *path)
         return;
     }
     /* try with bad dimension handles, check for failure */
-    if (ncdimrename(cdfid, -1, dim.name) != -1 || ncdimrename(cdfid, test.ndims, dim.name) != -1) {
+    if (ncdimrename(cdfid, -1, dim.name) != -1 || ncdimrename(cdfid, test_g->ndims, dim.name) != -1) {
         error("%s: ncdimrename should have failed on bad dimension ids", pname);
         ncclose(cdfid);
         return;
@@ -408,8 +405,8 @@ test_ncdimrename(char *path)
         ncclose(cdfid);
         return;
     }
-    test.dims[pp_dim].name = (char *)erealloc((void *)test.dims[pp_dim].name, strlen(pp.name) + 1);
-    (void)strcpy(test.dims[pp_dim].name, pp.name); /* keep test consistent */
+    test_g->dims[pp_dim].name = (char *)erealloc((void *)test_g->dims[pp_dim].name, strlen(pp.name) + 1);
+    (void)strcpy(test_g->dims[pp_dim].name, pp.name); /* keep test consistent */
     if (ncclose(cdfid) == -1) {
         error("%s: ncclose failed", pname);
         return;
@@ -419,7 +416,7 @@ test_ncdimrename(char *path)
         error("%s: ncdimrename failed to report bad netcdf handle ", pname);
         nerrs++;
     }
-    Free(dim.name);
+    free(dim.name);
     if (nerrs > 0)
         (void)fprintf(stderr, "FAILED! ***\n");
     else

@@ -14,8 +14,55 @@
 #ifndef H4_HDF_H
 #define H4_HDF_H
 
-#include "hdfi.h"
+/* NOTE: This header is not protected by include guards, so don't include
+ *       it outside of hdf.h
+ */
+#include "h4config.h"
+
+#include <inttypes.h>
+
+/* Library limits */
 #include "hlimits.h"
+
+/*-------------------------------------------------------------------------
+ * Pre-C99 platform-independent type scheme
+ *
+ * These types were added long before C99 was widely supported (or even
+ * existed). They were formerly mapped to native C types on a machine-specific
+ * basis, but they are now mapped to their equivalent C99 types.
+ *-------------------------------------------------------------------------*/
+
+/* Floating-point types */
+typedef float  float32;
+typedef double float64;
+
+/* Characters */
+typedef char          char8;
+typedef unsigned char uchar8;
+typedef char         *_fcd;
+#define _fcdtocp(desc) (desc)
+
+/* Fixed-width integer types */
+typedef int8_t   int8;
+typedef uint8_t  uint8;
+typedef int16_t  int16;
+typedef uint16_t uint16;
+typedef int32_t  int32;
+typedef uint32_t uint32;
+
+/* Native integer types */
+typedef int          intn;
+typedef unsigned int uintn;
+
+/* These are no longer used in the library, but other software uses them */
+#ifndef VOID
+/* winnt.h defines VOID to `void` via a macro */
+typedef void VOID;
+#endif
+typedef void *VOIDP;
+
+/* size of INTEGERs in Fortran compiler */
+typedef int intf;
 
 /* Internal DF structure */
 typedef struct {
@@ -97,19 +144,8 @@ typedef enum {
 #endif
 
 /* macros */
-#define STREQ(s, t)     (HDstrcmp((s), (t)) == 0)
-#define NSTREQ(s, t, n) (HDstrncmp((s), (t), (n)) == 0)
-
-/*
- * Macros used for variable and function scoping in code.....
- */
-#ifndef EXPORT
-#define EXPORT
-#endif
-
-#ifndef PRIVATE
-#define PRIVATE static
-#endif
+#define STREQ(s, t)     (strcmp((s), (t)) == 0)
+#define NSTREQ(s, t, n) (strncmp((s), (t), (n)) == 0)
 
 /* Include the Number-type definitions */
 #include "hntdefs.h"
@@ -137,16 +173,20 @@ typedef intn (*hdf_termfunc_t)(void); /* termination function typedef */
 
 /* .................................................................. */
 
+/* API adapter header (defines HDFPUBLIC, etc.) */
+#include "H4api_adpt.h"
+
 /* Publicly accessible functions declarations.  This includes all the
-   functions that are used by application programs.  */
+ * functions that are used by application programs.
+ */
 
 #include "hbitio.h"
 #include "hcomp.h"
 #include "herr.h"
 #include "hproto.h"
-#include "hdatainfo.h" /* Add the data info header */
-#include "vg.h"        /* Add the Vgroup/Vdata header so the users don't have to */
-#include "mfgr.h"      /* Add the GR header so the users don't have to */
+#include "hdatainfo.h" /* data info header */
+#include "vg.h"        /* Vgroup/Vdata header */
+#include "mfgr.h"      /* GR header */
 
 /* these may eventually evolve into real-life functions but not yet */
 #define HDFopen(f, a, d) Hopen((f), (a), (d))
@@ -159,5 +199,38 @@ typedef intn (*hdf_termfunc_t)(void); /* termination function typedef */
 
 /* This is also defined in fmpio.h */
 #define MP_PAGEALL 0x01 /* page the whole file i.e. no limit on 'maxcache'*/
+
+/**************************************************************************
+ *  Memory and string functions
+ **************************************************************************/
+
+/* DO NOT USE THESE MACROS */
+
+/* These will be removed from a future version of the library and are
+ * only kept here to avoid breakage in programs that unwisely used
+ * them.
+ */
+
+#define HDmalloc(s)     malloc(s)
+#define HDcalloc(a, b)  calloc(a, b)
+#define HDfree(p)       free(p)
+#define HDrealloc(p, s) realloc(p, s)
+
+/* Macro to free space and clear pointer to NULL */
+#define HDfreenclear(p)                                                                                      \
+    {                                                                                                        \
+        free(p);                                                                                             \
+        (p) = NULL;                                                                                          \
+    }
+
+#define HDstrcat(s1, s2)     (strcat((s1), (s2)))
+#define HDstrcmp(s, t)       (strcmp((s), (t)))
+#define HDstrcpy(s, d)       (strcpy((s), (d)))
+#define HDstrlen(s)          (strlen((const char *)(s)))
+#define HDstrncmp(s1, s2, n) (strncmp((s1), (s2), (n)))
+#define HDstrncpy(s1, s2, n) (strncpy((s1), (s2), (n)))
+#define HDstrchr(s, c)       (strchr((s), (c)))
+#define HDstrrchr(s, c)      (strrchr((s), (c)))
+#define HDstrtol(s, e, b)    (strtol((s), (e), (b)))
 
 #endif /* H4_HDF_H */

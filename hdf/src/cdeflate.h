@@ -15,25 +15,33 @@
  * File:    cdeflate.h
  * Purpose: Header file for gzip 'deflate' encoding information.
  * Dependencies: should only be included from hcompi.h
- * Invokes: none
- * Contents: Structures & definitions for gzip 'deflate' encoding.
- * Structure definitions:
- * Constant definitions:
  *---------------------------------------------------------------------------*/
 
 #ifndef H4_CDEFLATE_H
 #define H4_CDEFLATE_H
 
-#include "H4api_adpt.h"
+#include "hdfi.h"
 
 /* Get the gzip 'deflate' header */
 #define intf zintf
 #include "zlib.h"
 #undef zintf
 
+/* gzip [en|de]coding information */
+typedef struct {
+    intn     deflate_level;   /* how hard to try to compress this data */
+    int32    offset;          /* offset in the de-compressed array */
+    intn     acc_init;        /* is access mode initialized? */
+    int16    acc_mode;        /* access mode desired */
+    void    *io_buf;          /* buffer for I/O with the file */
+    z_stream deflate_context; /* pointer to the deflation context for each byte in the element */
+} comp_coder_deflate_info_t;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+HDFLIBAPI funclist_t cdeflate_funcs; /* functions to perform gzip encoding */
 
 /*
  ** from cdeflate.c
@@ -57,35 +65,6 @@ HDFLIBAPI intn HCPcdeflate_endaccess(accrec_t *access_rec);
 
 #ifdef __cplusplus
 }
-#endif
-
-/* Define the [default] size of the buffer to interact with the file. */
-#define DEFLATE_BUF_SIZE     4096
-#define DEFLATE_TMP_BUF_SIZE 16384
-
-/* gzip [en|de]coding information */
-typedef struct {
-    intn     deflate_level;   /* how hard to try to compress this data */
-    int32    offset;          /* offset in the de-compressed array */
-    intn     acc_init;        /* is access mode initialized? */
-    int16    acc_mode;        /* access mode desired */
-    void    *io_buf;          /* buffer for I/O with the file */
-    z_stream deflate_context; /* pointer to the deflation context for each byte in the element */
-} comp_coder_deflate_info_t;
-
-#ifndef CDEFLATE_MASTER
-extern funclist_t cdeflate_funcs; /* functions to perform gzip encoding */
-#else
-funclist_t cdeflate_funcs = {/* functions to perform gzip encoding */
-                             HCPcdeflate_stread,
-                             HCPcdeflate_stwrite,
-                             HCPcdeflate_seek,
-                             HCPcdeflate_inquire,
-                             HCPcdeflate_read,
-                             HCPcdeflate_write,
-                             HCPcdeflate_endaccess,
-                             NULL,
-                             NULL};
 #endif
 
 #endif /* H4_CDEFLATE_H */

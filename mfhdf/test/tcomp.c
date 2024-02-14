@@ -20,9 +20,9 @@
  *
  ****************************************************************************/
 
-#include "mfhdf.h"
+#include <string.h>
 
-#ifdef HDF
+#include "mfhdf.h"
 
 #include "hdftest.h"
 
@@ -93,14 +93,14 @@ test_various_comps()
     CHECK(sds_id, FAIL, "SDcreate");
 
     /* Set data set SDS1_NAME to use GZIP compression. */
-    HDmemset(&c_info, 0, sizeof(c_info));
+    memset(&c_info, 0, sizeof(c_info));
     comp_type            = COMP_CODE_DEFLATE;
     c_info.deflate.level = 6;
     status               = SDsetcompress(sds_id, comp_type, &c_info);
     CHECK(status, FAIL, "SDsetcompress");
 
     /* Write the stored data to the 1st data set. */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the 1st data set. */
@@ -112,14 +112,14 @@ test_various_comps()
     CHECK(sds_id, FAIL, "SDcreate");
 
     /* Set data set SDS2_NAME to use Skipping Huffman compression. */
-    HDmemset(&c_info, 0, sizeof(c_info));
+    memset(&c_info, 0, sizeof(c_info));
     comp_type               = COMP_CODE_SKPHUFF;
     c_info.skphuff.skp_size = 4;
     status                  = SDsetcompress(sds_id, comp_type, &c_info);
     CHECK(status, FAIL, "SDsetcompress");
 
     /* Write the stored data to the 2nd data set. */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the 2nd data set. */
@@ -149,7 +149,7 @@ test_various_comps()
     CHECK(status, FAIL, "SDsetcompress");
 
     /* Write the stored data to the 3rd data set. */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the 3rd data set. */
@@ -228,7 +228,7 @@ test_compressed_data()
     /* Write data to the dataset */
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDwritedata(newsds, start, NULL, end, (VOIDP)idata);
+    status          = SDwritedata(newsds, start, NULL, end, (void *)idata);
     CHECK(status, FAIL, "SDwritedata");
 
     /* End access to the dataset */
@@ -256,7 +256,7 @@ test_compressed_data()
      */
 #ifndef H4_NO_DEPRECATED_SYMBOLS   /* Jan 9, 2013 */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_SKPHUFF, "SDgetcompress");
@@ -264,7 +264,7 @@ test_compressed_data()
 #endif /* H4_NO_DEPRECATED_SYMBOLS */
 
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_SKPHUFF, "SDgetcompinfo");
@@ -279,7 +279,7 @@ test_compressed_data()
     /* Read and verify the compressed data */
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (VOIDP)rdata);
+    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -312,7 +312,7 @@ test_compressed_data()
 
     /* Set fill value */
     fillval = 43;
-    status  = SDsetfillvalue(newsds, (VOIDP)&fillval);
+    status  = SDsetfillvalue(newsds, (void *)&fillval);
     CHECK(status, FAIL, "SDsetfillvalue");
 
     /* Set the dataset to be compressed with skipping huffman */
@@ -334,7 +334,7 @@ test_compressed_data()
     start[1] = 0;
     end[0]   = 3;
     end[1]   = 5;
-    status   = SDwritedata(newsds, start, NULL, end, (VOIDP)&idata[5]);
+    status   = SDwritedata(newsds, start, NULL, end, (void *)&idata[5]);
     CHECK(status, FAIL, "SDwritedata");
 
     /* End access to the datase */
@@ -363,7 +363,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (VOIDP)rdata);
+    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -395,7 +395,7 @@ test_compressed_data()
     }
 
     fillval = 56;
-    status  = SDsetfillvalue(newsds, (VOIDP)&fillval);
+    status  = SDsetfillvalue(newsds, (void *)&fillval);
     CHECK(status, FAIL, "SDsetfillvalue");
 
     cinfo.skphuff.skp_size = 4;
@@ -423,7 +423,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (VOIDP)rdata);
+    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -456,7 +456,7 @@ test_compressed_data()
     }
 
     fillval = 67;
-    status  = SDsetfillvalue(newsds, (VOIDP)&fillval);
+    status  = SDsetfillvalue(newsds, (void *)&fillval);
     CHECK(status, FAIL, "SDsetfillvalue");
 
     cinfo.skphuff.skp_size = 4;
@@ -484,7 +484,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (VOIDP)rdata);
+    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -525,7 +525,7 @@ test_compressed_data()
     start[1] = 0;
     end[0]   = 2;
     end[1]   = 5;
-    status   = SDwritedata(newsds, start, NULL, end, (VOIDP)&idata[10]);
+    status   = SDwritedata(newsds, start, NULL, end, (void *)&idata[10]);
     CHECK(status, FAIL, "SDwritedata");
 
     status = SDendaccess(newsds);
@@ -546,7 +546,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (VOIDP)rdata);
+    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -585,7 +585,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDwritedata(newsds, start, NULL, end, (VOIDP)idata);
+    status          = SDwritedata(newsds, start, NULL, end, (void *)idata);
     CHECK(status, FAIL, "SDwritedata");
 
     status = SDendaccess(newsds);
@@ -612,14 +612,14 @@ test_compressed_data()
      */
 #ifndef H4_NO_DEPRECATED_SYMBOLS   /* Jan 9, 2013 */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_RLE, "SDgetcompress");
 #endif /* H4_NO_DEPRECATED_SYMBOLS */
 
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_RLE, "SDgetcompinfo");
@@ -632,7 +632,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (VOIDP)rdata);
+    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -671,7 +671,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDwritedata(newsds, start, NULL, end, (VOIDP)idata);
+    status          = SDwritedata(newsds, start, NULL, end, (void *)idata);
     CHECK(status, FAIL, "SDwritedata");
 
     status = SDendaccess(newsds);
@@ -698,14 +698,14 @@ test_compressed_data()
      */
 #ifndef H4_NO_DEPRECATED_SYMBOLS   /* Jan 9, 2013 */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_NONE, "SDgetcompress");
 #endif /* H4_NO_DEPRECATED_SYMBOLS */
 
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_NONE, "SDgetcompinfo");
@@ -718,7 +718,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (VOIDP)rdata);
+    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -758,7 +758,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDwritedata(newsds, start, NULL, end, (VOIDP)idata);
+    status          = SDwritedata(newsds, start, NULL, end, (void *)idata);
     CHECK(status, FAIL, "SDwritedata");
 
     status = SDendaccess(newsds);
@@ -785,7 +785,7 @@ test_compressed_data()
      */
 #ifndef H4_NO_DEPRECATED_SYMBOLS   /* Jan 9, 2013 */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_DEFLATE, "SDgetcompress");
@@ -793,7 +793,7 @@ test_compressed_data()
 #endif /* H4_NO_DEPRECATED_SYMBOLS */
 
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_DEFLATE, "SDgetcompinfo");
@@ -807,7 +807,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (VOIDP)rdata);
+    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -847,5 +847,3 @@ test_compression()
 
     return num_errs;
 }
-
-#endif /* HDF */

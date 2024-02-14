@@ -8,10 +8,10 @@ fort_INCLUDES=-I$(top_srcdir)/hdf/src     \
          -I$(top_srcdir)/hdf/test         \
          -I$(top_srcdir)/mfhdf/libsrc     \
          -I$(top_builddir)/mfhdf/libsrc
-DEFINES=-DNDEBUG -DHDF
-AM_CPPFLAGS=$(fort_INCLUDES) $(XDRINC) $(DEFINES)
+DEFINES=-DHDF
+AM_CPPFLAGS=$(fort_INCLUDES) $(DEFINES)
 
-DIST_SUBDIRS = examples
+DIST_SUBDIRS =
 
 #############################################################################
 ##                   Testing -- Here there be dragons.                     ##
@@ -31,22 +31,22 @@ check_SCRIPTS = testfortran.sh
 if HDF_BUILD_NETCDF
 ftest_SOURCES = ftest.f
 ftest_LDADD = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
-              $(LIBMFHDF) $(LIBHDF) $(XDRLIB) @LIBS@
+              $(LIBMFHDF) $(LIBHDF) @LIBS@
 ftest_DEPENDENCIES = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
-                     $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
+                     $(LIBMFHDF) $(LIBHDF)
 endif
 
 hdftest_SOURCES = hdftest.f
-hdftest_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB) @LIBS@
-hdftest_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
+hdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
+hdftest_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF)
 
 hdftest1_SOURCES = hdftest1.f
-hdftest1_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB) @LIBS@
-hdftest1_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
+hdftest1_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
+hdftest1_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF)
 
 tszip_SOURCES = tszip.f
-tszip_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB) @LIBS@
-tszip_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
+tszip_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
+tszip_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF)
 
 testdir:
 	-mkdir testdir
@@ -55,23 +55,11 @@ SUFFIXES = .inc .f90
 .inc.f90:
 	sed -e 's/^[cC]/!/' -e 's/^     [^ ]/     \&/' < $< > $*.f90
 
-# Recurse into examples directory for examples tests.
-installcheck-local:
-	@(cd examples && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1;
-
-# 'make install-all' also installs examples
+# 'make install-all'
 install-all:
 	@$(MAKE) $(AM_MAKEFLAGS) install
-	@$(MAKE) $(AM_MAKEFLAGS) install-examples
 uninstall-all:
 	@$(MAKE) $(AM_MAKEFLAGS) uninstall
-	@$(MAKE) $(AM_MAKEFLAGS) uninstall-examples
-	
-# Install examples recursively
-install-examples uninstall-examples:
-	@@SETX@; for d in examples; do \
-	    (cd $$d && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1; \
-	done
 
 #############################################################################
 ##                          And the cleanup                                ##

@@ -11,6 +11,9 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "hdf.h"
 #include "mfhdf.h"
 #include "hrepack.h"
@@ -322,9 +325,8 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
     int32  vgroup_id_out = 0;    /* vgroup identifier */
     int32  tag_vg;
     int32  ref_vg;
-    char  *vg_name;
-    char  *vg_class;
-    uint16 name_len;
+    char  *vg_name  = NULL;
+    char  *vg_class = NULL;
     int32  i;
 
     /*-------------------------------------------------------------------------
@@ -355,7 +357,7 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
          * use the nlones returned to allocate sufficient space for the
          * buffer ref_array to hold the reference numbers of all lone vgroups,
          */
-        ref_array = (int32 *)HDmalloc(sizeof(int32) * nlones);
+        ref_array = (int32 *)malloc(sizeof(int32) * nlones);
 
         /*
          * and call Vlone again to retrieve the reference numbers into
@@ -386,7 +388,9 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
                 printf("Error: Could not get name length for group with ref <%d>\n", ref);
                 goto out;
             }
-            vg_name = (char *)HDmalloc(sizeof(char) * (name_len + 1));
+
+            free(vg_name);
+            vg_name = (char *)malloc(sizeof(char) * (name_len + 1));
 
             if (Vgetname(vg_id, vg_name) == FAIL) {
                 printf("Could not get name for group\n");
@@ -399,7 +403,8 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
                 goto out;
             }
 
-            vg_class = (char *)HDmalloc(sizeof(char) * (name_len + 1));
+            free(vg_class);
+            vg_class = (char *)malloc(sizeof(char) * (name_len + 1));
 
             if (Vgetclass(vg_id, vg_class) == FAIL) {
                 printf("Could not get class for group\n");
@@ -414,7 +419,7 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
                 }
                 continue;
             }
-            if (HDstrcmp(vg_name, GR_NAME) == 0) {
+            if (strcmp(vg_name, GR_NAME) == 0) {
                 if (Vdetach(vg_id) == FAIL) {
                     printf("Could not detach group\n");
                     goto out;
@@ -466,8 +471,8 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
             /* insert objects for this group */
             ntagrefs = Vntagrefs(vg_id);
             if (ntagrefs > 0) {
-                tags = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
-                refs = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
+                tags = (int32 *)malloc(sizeof(int32) * ntagrefs);
+                refs = (int32 *)malloc(sizeof(int32) * ntagrefs);
                 if (Vgettagrefs(vg_id, tags, refs, ntagrefs) < 0)
                     goto out;
 
@@ -476,9 +481,9 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
                     goto out;
                 }
 
-                HDfree(tags);
+                free(tags);
                 tags = NULL;
-                HDfree(refs);
+                free(refs);
                 refs = NULL;
             }
 
@@ -493,13 +498,14 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
                 }
             }
 
-            HDfree(vg_name);
-
+            free(vg_class);
+            vg_class = NULL;
+            free(vg_name);
+            vg_name = NULL;
         } /* for nlones */
 
         /* free the space allocated */
-        if (ref_array != NULL)
-            HDfree(ref_array);
+        free(ref_array);
 
     } /* if  nlones */
 
@@ -509,31 +515,32 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
      */
 
     if (Vend(infile_id) == FAIL) {
-        printf("Error: Could not end group interface in <%s>\n", vg_name);
+        printf("Error: Could not end infile group interface\n");
         return FAIL;
     }
     if (options->trip == 1) {
         if (Vend(outfile_id) == FAIL) {
-            printf("Error: Could not end group interface in <%s>\n", vg_name);
+            printf("Error: Could not end outfile group interface\n");
             return FAIL;
         }
     }
 
+    free(vg_class);
+    free(vg_name);
+
     return SUCCEED;
 
 out:
-
     Vend(infile_id);
     if (options->trip == 1)
         Vend(outfile_id);
 
     /* free the space allocated */
-    if (ref_array != NULL)
-        HDfree(ref_array);
-    if (tags != NULL)
-        HDfree(tags);
-    if (refs != NULL)
-        HDfree(refs);
+    free(vg_class);
+    free(vg_name);
+    free(ref_array);
+    free(tags);
+    free(refs);
 
     return FAIL;
 }
@@ -565,9 +572,9 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
     int32 *tags          = NULL; /* buffer to hold the tag numbers of vgroups   */
     int32 *refs          = NULL; /* buffer to hold the ref numbers of vgroups   */
     int32  vgroup_id_out = -1;   /* vgroup identifier for the created group in output */
-    char  *vg_name;
-    char  *vg_class;
-    char  *path = NULL;
+    char  *vg_name       = NULL;
+    char  *vg_class      = NULL;
+    char  *path          = NULL;
     uint16 name_len;
     int    visited;
     int32  tag;
@@ -599,7 +606,8 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                     printf("Error: Could not get name length for group with ref <%d>\n", ref);
                     goto out;
                 }
-                vg_name = (char *)HDmalloc(sizeof(char) * (name_len + 1));
+                free(vg_name);
+                vg_name = (char *)malloc(sizeof(char) * (name_len + 1));
                 if (Vgetname(vg_id, vg_name) == FAIL) {
                     printf("Could not get name for group\n");
                     goto out;
@@ -611,7 +619,8 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                     goto out;
                 }
 
-                vg_class = (char *)HDmalloc(sizeof(char) * (name_len + 1));
+                free(vg_class);
+                vg_class = (char *)malloc(sizeof(char) * (name_len + 1));
                 if (Vgetclass(vg_id, vg_class) == FAIL) {
                     printf("Could not get class for group\n");
                     goto out;
@@ -625,7 +634,7 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                     }
                     continue;
                 }
-                if (HDstrcmp(vg_name, GR_NAME) == 0) {
+                if (strcmp(vg_name, GR_NAME) == 0) {
                     if (Vdetach(vg_id) == FAIL) {
                         printf("Could not detach group\n");
                         goto out;
@@ -637,13 +646,8 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                  * create the group in output or create the link
                  *-------------------------------------------------------------------------
                  */
-
                 if (options->trip == 1) {
-
-                    if (visited < 0)
-
-                    {
-
+                    if (visited < 0) {
                         /*
                          * create the group in the output file.  the vgroup reference number
                          * is set to -1 for creating and the access mode is "w" for writing
@@ -664,9 +668,7 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                             goto out;
                     }
 
-                    else
-
-                    {
+                    else {
                         /* open previously visited group */
                         vgroup_id_out = Vattach(outfile_id, ref, "r");
                     }
@@ -703,8 +705,8 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                     /* insert objects for this group */
                     ntagrefs = Vntagrefs(vg_id);
                     if (ntagrefs > 0) {
-                        tags = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
-                        refs = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
+                        tags = (int32 *)malloc(sizeof(int32) * ntagrefs);
+                        refs = (int32 *)malloc(sizeof(int32) * ntagrefs);
                         if (Vgettagrefs(vg_id, tags, refs, ntagrefs) < 0)
                             goto out;
                         /* recurse */
@@ -712,14 +714,14 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                                           path, tags, refs, ntagrefs, list_tbl, td1, td2, options) < 0) {
                             goto out;
                         }
-                        HDfree(tags);
+                        free(tags);
                         tags = NULL;
-                        HDfree(refs);
+                        free(refs);
                         refs = NULL;
                     } /* ntagrefs > 0 */
 
-                    if (path)
-                        HDfree(path);
+                    free(path);
+                    path = NULL;
 
                 } /* check if already visited */
 
@@ -746,8 +748,9 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
             case DFTAG_NDG: /* Numeric Data Group */
                 /* copy dataset */
                 if (copy_sds(sd_id, sd_out, tag, ref, vgroup_id_out_par, path_name, options, list_tbl, td1,
-                             td2, infile_id, outfile_id) < 0)
-                    return FAIL;
+                             td2, infile_id, outfile_id) < 0) {
+                    goto out;
+                }
 
                 break;
 
@@ -764,8 +767,9 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
             case DFTAG_II8: /* IMCOMP compressed 8-bit image */
                 /* copy GR  */
                 if (copy_gr(infile_id, outfile_id, gr_id, gr_out, tag, ref, vgroup_id_out_par, path_name,
-                            options, list_tbl) < 0)
-                    return FAIL;
+                            options, list_tbl) < 0) {
+                    goto out;
+                }
                 break;
 
                 /*-------------------------------------------------------------------------
@@ -775,21 +779,25 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
 
             case DFTAG_VH: /* Vdata Header */
                 if (copy_vs(infile_id, outfile_id, tag, ref, vgroup_id_out_par, path_name, options, list_tbl,
-                            0) < 0)
-                    return FAIL;
+                            0) < 0) {
+                    goto out;
+                }
                 break;
         } /* switch */
-
+        free(vg_name);
+        vg_name = NULL;
     } /* i */
+    free(vg_class);
+    free(vg_name);
 
     return SUCCEED;
 
 out:
-
-    if (tags != NULL)
-        HDfree(tags);
-    if (refs != NULL)
-        HDfree(refs);
+    free(vg_class);
+    free(vg_name);
+    free(tags);
+    free(refs);
+    free(path);
 
     return FAIL;
 }
@@ -975,7 +983,7 @@ list_vs(int32 infile_id, int32 outfile_id, list_table_t *list_tbl, options_t *op
          * use the nlones returned to allocate sufficient space for the
          * buffer ref_array to hold the reference numbers of all lone vgroups,
          */
-        ref_array = (int32 *)HDmalloc(sizeof(int32) * nlones);
+        ref_array = (int32 *)malloc(sizeof(int32) * nlones);
 
         /*
          * and call VSlone again to retrieve the reference numbers into
@@ -1007,10 +1015,8 @@ list_vs(int32 infile_id, int32 outfile_id, list_table_t *list_tbl, options_t *op
         } /* for */
 
         /* free the space allocated */
-        if (ref_array) {
-            HDfree(ref_array);
-            ref_array = NULL;
-        }
+        free(ref_array);
+        ref_array = NULL;
     } /* if */
 
     /*-------------------------------------------------------------------------
@@ -1037,8 +1043,7 @@ out:
         Vend(outfile_id);
 
     /* free the space allocated */
-    if (ref_array != NULL)
-        HDfree(ref_array);
+    free(ref_array);
 
     return FAIL;
 }
@@ -1151,7 +1156,7 @@ list_an(int32 infile_id, int32 outfile_id, options_t *options)
         ann_length = ANannlen(ann_id);
 
         /* Allocate space for the buffer to hold the data label text */
-        ann_buf = HDmalloc((ann_length + 1) * sizeof(char));
+        ann_buf = malloc((ann_length + 1) * sizeof(char));
 
         /*
          * Read and display the file label.  Note that the size of the buffer,
@@ -1182,8 +1187,7 @@ list_an(int32 infile_id, int32 outfile_id, options_t *options)
         }
 
         /* Free the space allocated for the annotation buffer */
-        if (ann_buf)
-            HDfree(ann_buf);
+        free(ann_buf);
     }
 
     /*-------------------------------------------------------------------------
@@ -1199,7 +1203,7 @@ list_an(int32 infile_id, int32 outfile_id, options_t *options)
         ann_length = ANannlen(ann_id);
 
         /* Allocate space for the buffer to hold the data label text */
-        ann_buf = HDmalloc((ann_length + 1) * sizeof(char));
+        ann_buf = malloc((ann_length + 1) * sizeof(char));
 
         if (ANreadann(ann_id, ann_buf, ann_length + 1) == FAIL) {
             printf("Could not read AN\n");
@@ -1222,10 +1226,8 @@ list_an(int32 infile_id, int32 outfile_id, options_t *options)
         }
 
         /* Free the space allocated for the annotation buffer */
-        if (ann_buf) {
-            HDfree(ann_buf);
-            ann_buf = NULL;
-        }
+        free(ann_buf);
+        ann_buf = NULL;
     }
 
     /* Terminate access to the AN interface */
@@ -1240,8 +1242,7 @@ out:
     if (ANend(an_id) == FAIL || ANend(an_out) == FAIL) {
         printf("Could not end AN\n");
     }
-    if (ann_buf != NULL)
-        HDfree(ann_buf);
+    free(ann_buf);
 
     return FAIL;
 }
@@ -1275,7 +1276,7 @@ list_pal(const char *infname, const char *outfname, list_table_t *list_tbl, opti
     }
 
     for (j = 0; j < nPals; j++) {
-        if (DFPgetpal(infname, (VOIDP)palette_data) == FAIL) {
+        if (DFPgetpal(infname, (void *)palette_data) == FAIL) {
             printf("Failed to read palette <%d> in <%s>\n", j, infname);
             return FAIL;
         }

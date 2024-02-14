@@ -17,21 +17,16 @@
 #include "hdf.h"
 #include "hfile.h"
 
-/* Global Variables (ick) */
-#ifndef HDP_MASTER
-extern
-#endif /* !HDP_MASTER */
-    intn vinit_done
-#ifdef HDP_MASTER
-    = FALSE /* indicates Vsets have been init'ed for the current file */
-#endif      /* HDP_MASTER */
-    ;
+/* Global Variables */
+extern intn vinit_done;
 
 /* Global Definitions */
 #define MAXCHOICES 50
+
 #ifndef MAXNAMELEN
 #define MAXNAMELEN 100
-#endif /* !MAXNAMELEN */
+#endif
+
 #define MAXCLASSLEN 100
 #define MAXPERLINE  65 /* max # of chars per line in the output */
 #define MAXRANK     100
@@ -47,13 +42,11 @@ extern
     16 /* # of spaces in front of dataset data                                                               \
                on a continuous line */
 
-/* Free a char pointer if it's not NULL, then set it to NULL */
+/* Free a pointer, then set it to NULL */
 #define SAFE_FREE(ptr)                                                                                       \
     {                                                                                                        \
-        if (ptr != NULL) {                                                                                   \
-            HDfree((VOIDP)ptr);                                                                              \
-            ptr = NULL;                                                                                      \
-        }                                                                                                    \
+        free(ptr);                                                                                           \
+        ptr = NULL;                                                                                          \
     }
 
 /* ERROR_GOTO_n macros are used to facilitate error printing.  Each
@@ -285,18 +278,6 @@ extern
         }                                                                                                    \
     }
 
-/* Add enum and string for new commands to both of the variables below. */
-/* Preserve the correct/corresponding ordering */
-typedef enum { HELP, LIST, DUMPSDS, DUMPRIG, DUMPVG, DUMPVD, DUMPGR, NONE } command_t;
-#ifndef HDP_MASTER
-extern
-#endif /* !HDP_MASTER */
-    const char *commands[]
-#ifdef HDP_MASTER
-    = {"help", "list", "dumpsds", "dumprig", "dumpvg", "dumpvd", "dumpgr"}
-#endif /* HDP_MASTER */
-;
-
 /* Global options structure */
 typedef struct {
     intn help; /* Print help on this command */
@@ -512,23 +493,23 @@ intn do_dumpgr(intn curr_arg, intn argc, char *argv[], intn help);
 intn parse_dumpgr_opts(dump_info_t *dumpgr_opts, intn *curr_arg, intn argc, char *argv[]);
 
 /* hdp_dump.c */
-extern intn  fmtchar(VOIDP x, file_format_t ft, FILE *ofp);
-extern intn  fmtuchar8(VOIDP x, file_format_t ft, FILE *ofp);
+extern intn  fmtchar(void *x, file_format_t ft, FILE *ofp);
+extern intn  fmtuchar8(void *x, file_format_t ft, FILE *ofp);
 extern intn  fmtbyte(unsigned char *x, file_format_t ft, FILE *ofp);
-extern intn  fmtint(VOIDP x, file_format_t ft, FILE *ofp);
-extern intn  fmtshort(VOIDP x, file_format_t ft, FILE *ofp);
-extern intn  fmtint8(VOIDP x, file_format_t ft, FILE *ofp);
-extern intn  fmtuint8(VOIDP x, file_format_t ft, FILE *ofp);
-extern intn  fmtint16(VOIDP x, file_format_t ft, FILE *ofp);
-extern intn  fmtuint16(VOIDP x, file_format_t ft, FILE *ofp);
-extern intn  fmtint32(VOIDP x, file_format_t ft, FILE *ofp);
-extern intn  fmtuint32(VOIDP x, file_format_t ft, FILE *ofp);
-extern intn  fmtfloat32(VOIDP x, file_format_t ft, FILE *ofp);
-extern intn  fmtfloat64(VOIDP x, file_format_t ft, FILE *ofp);
-extern intn  dumpfull(int32 nt, dump_info_t *dump_opts, int32 cnt, VOIDP databuf, FILE *ofp, intn indent,
+extern intn  fmtint(void *x, file_format_t ft, FILE *ofp);
+extern intn  fmtshort(void *x, file_format_t ft, FILE *ofp);
+extern intn  fmtint8(void *x, file_format_t ft, FILE *ofp);
+extern intn  fmtuint8(void *x, file_format_t ft, FILE *ofp);
+extern intn  fmtint16(void *x, file_format_t ft, FILE *ofp);
+extern intn  fmtuint16(void *x, file_format_t ft, FILE *ofp);
+extern intn  fmtint32(void *x, file_format_t ft, FILE *ofp);
+extern intn  fmtuint32(void *x, file_format_t ft, FILE *ofp);
+extern intn  fmtfloat32(void *x, file_format_t ft, FILE *ofp);
+extern intn  fmtfloat64(void *x, file_format_t ft, FILE *ofp);
+extern intn  dumpfull(int32 nt, dump_info_t *dump_opts, int32 cnt, void *databuf, FILE *ofp, intn indent,
                       intn cont_indent);
-extern intn  dumpclean(int32 nt, dump_info_t *dump_opts, int32 cnt, VOIDP databuf, FILE *ofp);
-extern int32 dumpGR_SDattr(int32 nt, dump_info_t *dump_opts, int32 cnt, VOIDP databuf, FILE *ofp);
+extern intn  dumpclean(int32 nt, dump_info_t *dump_opts, int32 cnt, void *databuf, FILE *ofp);
+extern int32 dumpGR_SDattr(int32 nt, dump_info_t *dump_opts, int32 cnt, void *databuf, FILE *ofp);
 
 /* show.c */
 extern int32 dumpvd(int32 vd, file_format_t ft, int data_only, FILE *fp, char separator[2],
@@ -570,7 +551,7 @@ extern objlist_t *make_obj_list(int32 fid, uint32 options);
 extern objinfo_t *get_next_obj(objlist_t *o_list, intn advance);
 extern objinfo_t *goto_nth_obj(objlist_t *o_list, intn n);
 extern void       reset_obj_list(objlist_t *o_list);
-extern void       resetBuff(VOIDP *buf);
+extern void       resetBuff(void **buf);
 extern void       free_obj_list(objlist_t *o_list);
 extern void       sort_obj_list(objlist_t *o_list, sort_t sort_type);
 extern intn       print_SDattrs(int32 sd_id, FILE *fp, int32 n_file_attrs, dump_info_t *dumpsds_opts);

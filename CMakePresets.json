@@ -1,0 +1,281 @@
+{
+  "version": 6,
+  "include": [
+    "config/cmake-presets/hidden-presets.json"
+  ],
+  "configurePresets": [
+    {
+      "name": "ci-base-tgz",
+      "hidden": true,
+      "inherits": "ci-base",
+      "cacheVariables": {
+        "HDF4_ALLOW_EXTERNAL_SUPPORT": {"type": "STRING", "value": "TGZ"},
+        "TGZPATH": {"type": "PATH", "value": "${sourceParentDir}/temp"}
+      }
+    },
+    {
+      "name": "ci-CompressionVars",
+      "hidden": true,
+      "cacheVariables": {
+        "JPEG_PACKAGE_NAME": {"type": "STRING", "value": "jpeg"},
+        "JPEG_TGZ_ORIGPATH": {"type": "STRING", "value": "https://www.ijg.org/filesz"},
+        "JPEG_TGZ_NAME": {"type": "STRING", "value": "jpegsrc.v9e.tar.gz"},
+        "ZLIB_PACKAGE_NAME": {"type": "STRING", "value": "zlib"},
+        "ZLIB_TGZ_ORIGPATH": {"type": "STRING", "value": "https://github.com/madler/zlib/releases/download/v1.3"},
+        "ZLIB_TGZ_NAME": {"type": "STRING", "value": "zlib-1.3.tar.gz"},
+        "LIBAEC_PACKAGE_NAME": {"type": "STRING", "value": "libaec"},
+        "LIBAEC_TGZ_ORIGPATH": {"type": "STRING", "value": "https://github.com/MathisRosenhauer/libaec/releases/download/v1.0.6"},
+        "LIBAEC_TGZ_NAME": {"type": "STRING", "value": "libaec-1.0.6.tar.gz"}
+      }
+    },
+    {
+      "name": "ci-StdCompression",
+      "hidden": true,
+      "inherits": ["ci-base-tgz", "ci-CompressionVars"],
+      "cacheVariables": {
+        "HDF4_PACKAGE_EXTLIBS": "ON",
+        "HDF4_ENABLE_JPEG_LIB_SUPPORT": "ON",
+        "HDF4_ENABLE_Z_LIB_SUPPORT": "ON",
+        "HDF4_ENABLE_SZIP_SUPPORT": "ON",
+        "HDF4_ENABLE_SZIP_ENCODING": "ON",
+        "JPEG_USE_LOCALCONTENT": "OFF",
+        "ZLIB_USE_LOCALCONTENT": "OFF",
+        "LIBAEC_USE_LOCALCONTENT": "OFF"
+      }
+    },
+    {
+      "name": "ci-StdExamples",
+      "hidden": true,
+      "inherits": ["ci-base", "ci-base-tgz"],
+      "cacheVariables": {
+        "HDF4_PACK_EXAMPLES": "ON",
+        "EXAMPLES_DOWNLOAD": "ON"
+      }
+    },
+    {
+      "name": "ci-StdShar",
+      "hidden": true,
+      "inherits": ["ci-StdCompression", "ci-StdExamples"],
+      "cacheVariables": {
+        "HDF_PACKAGE_NAMESPACE": {"type": "STRING", "value": "hdf4::"},
+        "HDF4_BUILD_GENERATORS": "ON",
+        "HDF4_ENABLE_ALL_WARNINGS": "ON",
+        "HDF4_MINGW_STATIC_GCC_LIBS": "ON"
+      }
+    },
+    {
+      "name": "ci-StdShar-MSVC",
+      "description": "MSVC Standard Config for x64 (Release)",
+      "inherits": [
+        "ci-x64-Release-MSVC",
+        "ci-Java",
+        "ci-StdShar"
+      ]
+    },
+    {
+      "name": "ci-StdShar-Clang",
+      "description": "Clang Standard Config for x64 (Release)",
+      "inherits": [
+        "ci-x64-Release-Clang",
+        "ci-Java",
+        "ci-StdShar"
+      ]
+    },
+    {
+      "name": "ci-StdShar-GNUC",
+      "description": "GNUC Standard Config for x64 (Release)",
+      "inherits": [
+        "ci-x64-Release-GNUC",
+        "ci-Java",
+        "ci-StdShar"
+      ]
+    },
+    {
+      "name": "ci-StdShar-Intel",
+      "description": "Intel Standard Config for x64 (Release)",
+      "inherits": [
+        "ci-x64-Release-Intel",
+        "ci-Java",
+        "ci-StdShar"
+      ]
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "ci-StdShar-MSVC",
+      "description": "MSVC Standard Build for x64 (Release)",
+      "configurePreset": "ci-StdShar-MSVC",
+      "inherits": [
+        "ci-x64-Release-MSVC"
+      ]
+    },
+    {
+      "name": "ci-StdShar-Clang",
+      "description": "Clang Standard Build for x64 (Release)",
+      "configurePreset": "ci-StdShar-Clang",
+      "inherits": [
+        "ci-x64-Release-Clang"
+      ]
+    },
+    {
+      "name": "ci-StdShar-GNUC",
+      "description": "GNUC Standard Build for x64 (Release)",
+      "configurePreset": "ci-StdShar-GNUC",
+      "verbose": true,
+      "inherits": [
+        "ci-x64-Release-GNUC"
+      ]
+    },
+    {
+      "name": "ci-StdShar-Intel",
+      "description": "Intel Standard Build for x64 (Release)",
+      "configurePreset": "ci-StdShar-Intel",
+      "verbose": true,
+      "inherits": [
+        "ci-x64-Release-Intel"
+      ]
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "ci-StdShar-MSVC",
+      "configurePreset": "ci-StdShar-MSVC",
+      "inherits": [
+        "ci-x64-Release-MSVC"
+      ]
+    },
+    {
+      "name": "ci-StdShar-Clang",
+      "configurePreset": "ci-StdShar-Clang",
+      "inherits": [
+        "ci-x64-Release-Clang"
+      ]
+    },
+    {
+      "name": "ci-StdShar-OSX-Clang",
+      "configurePreset": "ci-StdShar-Clang",
+      "inherits": [
+        "ci-x64-Release-Clang"
+      ],
+      "execution": {
+        "noTestsAction": "error",
+        "timeout": 180,
+        "jobs": 2
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      }
+    },
+    {
+      "name": "ci-StdShar-GNUC",
+      "configurePreset": "ci-StdShar-GNUC",
+      "inherits": [
+        "ci-x64-Release-GNUC"
+      ]
+    },
+    {
+      "name": "ci-StdShar-win-Intel",
+      "configurePreset": "ci-StdShar-Intel",
+      "inherits": [
+        "ci-x64-Release-Intel"
+      ],
+      "filter": {
+        "exclude": {
+          "name": "HDP-dumpv|h4ex_GR_create|h4ex_GR_write|h4ex_VG_add"
+        }
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "ci-StdShar-Intel",
+      "configurePreset": "ci-StdShar-Intel",
+      "inherits": [
+        "ci-x64-Release-Intel"
+      ]
+    }
+  ],
+  "packagePresets": [
+    {
+      "name": "ci-StdShar-MSVC",
+      "configurePreset": "ci-StdShar-MSVC",
+      "inherits": "ci-x64-Release-MSVC"
+    },
+    {
+      "name": "ci-StdShar-Clang",
+      "configurePreset": "ci-StdShar-Clang",
+      "inherits": "ci-x64-Release-Clang"
+    },
+    {
+      "name": "ci-StdShar-GNUC",
+      "configurePreset": "ci-StdShar-GNUC",
+      "inherits": "ci-x64-Release-GNUC"
+    },
+    {
+      "name": "ci-StdShar-Intel",
+      "configurePreset": "ci-StdShar-Intel",
+      "inherits": "ci-x64-Release-Intel"
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "ci-StdShar-MSVC",
+      "steps": [
+        {"type": "configure", "name": "ci-StdShar-MSVC"},
+        {"type": "build", "name": "ci-StdShar-MSVC"},
+        {"type": "test", "name": "ci-StdShar-MSVC"},
+        {"type": "package", "name": "ci-StdShar-MSVC"}
+      ]
+    },
+    {
+      "name": "ci-StdShar-Clang",
+      "steps": [
+        {"type": "configure", "name": "ci-StdShar-Clang"},
+        {"type": "build", "name": "ci-StdShar-Clang"},
+        {"type": "test", "name": "ci-StdShar-Clang"},
+        {"type": "package", "name": "ci-StdShar-Clang"}
+      ]
+    },
+    {
+      "name": "ci-StdShar-OSX-Clang",
+      "steps": [
+        {"type": "configure", "name": "ci-StdShar-Clang"},
+        {"type": "build", "name": "ci-StdShar-Clang"},
+        {"type": "test", "name": "ci-StdShar-OSX-Clang"},
+        {"type": "package", "name": "ci-StdShar-Clang"}
+      ]
+    },
+    {
+      "name": "ci-StdShar-GNUC",
+      "steps": [
+        {"type": "configure", "name": "ci-StdShar-GNUC"},
+        {"type": "build", "name": "ci-StdShar-GNUC"},
+        {"type": "test", "name": "ci-StdShar-GNUC"},
+        {"type": "package", "name": "ci-StdShar-GNUC"}
+      ]
+    },
+    {
+      "name": "ci-StdShar-Intel",
+      "steps": [
+        {"type": "configure", "name": "ci-StdShar-Intel"},
+        {"type": "build", "name": "ci-StdShar-Intel"},
+        {"type": "test", "name": "ci-StdShar-Intel"},
+        {"type": "package", "name": "ci-StdShar-Intel"}
+      ]
+    },
+    {
+      "name": "ci-StdShar-win-Intel",
+      "steps": [
+        {"type": "configure", "name": "ci-StdShar-Intel"},
+        {"type": "build", "name": "ci-StdShar-Intel"},
+        {"type": "test", "name": "ci-StdShar-win-Intel"},
+        {"type": "package", "name": "ci-StdShar-Intel"}
+      ]
+    }
+  ]
+}

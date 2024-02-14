@@ -118,7 +118,7 @@ LOCAL ROUTINES
    HLInewlink  -- write out some data to a linked block
 */
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "hfile.h"
 
 /* block_t - record of a linked block. contains the tag and ref of the
@@ -148,11 +148,11 @@ typedef struct linkinfo_t {
 } linkinfo_t;
 
 /* private functions */
-PRIVATE int32 HLIstaccess(accrec_t *access_rec, int16 acc_mode);
+static int32 HLIstaccess(accrec_t *access_rec, int16 acc_mode);
 
-PRIVATE link_t *HLInewlink(int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_block_ref);
+static link_t *HLInewlink(int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_block_ref);
 
-PRIVATE link_t *HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks);
+static link_t *HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks);
 
 /* the accessing function table for linked blocks */
 funclist_t linked_funcs = {
@@ -272,7 +272,7 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length, int32 number
     link_ref = Htagnewref(file_id, DFTAG_LINKED);
 
     /* allocate and fill special info struct */
-    if ((info = (linkinfo_t *)HDmalloc((uint32)sizeof(linkinfo_t))) == NULL)
+    if ((info = (linkinfo_t *)malloc((uint32)sizeof(linkinfo_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     info->attached      = 1;
@@ -331,8 +331,7 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length, int32 number
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
-        if (info != NULL)
-            HDfree(info);
+        free(info);
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
     }
@@ -464,7 +463,7 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
     link_ref = Htagnewref(file_id, DFTAG_LINKED);
 
     /* allocates special info struct for linked blocks */
-    access_rec->special_info = HDmalloc((uint32)sizeof(linkinfo_t));
+    access_rec->special_info = malloc((uint32)sizeof(linkinfo_t));
     if (!access_rec->special_info)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -518,10 +517,10 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
-        if (access_rec->special_info != NULL)
-            HDfree(access_rec->special_info);
-        if (access_rec != NULL)
+        if (access_rec != NULL) {
+            free(access_rec->special_info);
             HIrelease_accrec_node(access_rec);
+        }
     }
 
     return ret_value;
@@ -594,7 +593,7 @@ DESCRIPTION
    pull in the information ourselves
 
 ----------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HLIstaccess(accrec_t *access_rec, int16 acc_mode)
 {
     filerec_t  *file_rec;           /* file record */
@@ -629,12 +628,11 @@ HLIstaccess(accrec_t *access_rec, int16 acc_mode)
             if (t_info->link != NULL) {
                 for (t_link = t_info->link; t_link; t_link = next) {
                     next = t_link->next;
-                    if (t_link->block_list != NULL)
-                        HDfree(t_link->block_list);
-                    HDfree(t_link);
+                    free(t_link->block_list);
+                    free(t_link);
                 }
-            } /* end if */
-            HDfree(t_info);
+            }
+            free(t_info);
             access_rec->special_info = NULL;
         }
     }
@@ -664,7 +662,7 @@ HLIstaccess(accrec_t *access_rec, int16 acc_mode)
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
     /* allocate space for special information */
-    access_rec->special_info = HDmalloc((uint32)sizeof(linkinfo_t));
+    access_rec->special_info = malloc((uint32)sizeof(linkinfo_t));
     info                     = (linkinfo_t *)access_rec->special_info;
     if (!info)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -691,7 +689,7 @@ HLIstaccess(accrec_t *access_rec, int16 acc_mode)
     if (info->link->block_list[0].ref) {
         info->first_length = Hlength(access_rec->file_id, DFTAG_LINKED, info->link->block_list[0].ref);
         if (info->first_length == FAIL) {
-            HDfree(info->link);
+            free(info->link);
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
         }
     }
@@ -708,9 +706,8 @@ HLIstaccess(accrec_t *access_rec, int16 acc_mode)
 
             for (l = info->link; l; l = next) {
                 next = l->next;
-                if (l->block_list)
-                    HDfree(l->block_list);
-                HDfree(l);
+                free(l->block_list);
+                free(l);
             }
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
         }
@@ -725,10 +722,8 @@ HLIstaccess(accrec_t *access_rec, int16 acc_mode)
     ret_value = HAregister_atom(AIDGROUP, access_rec);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-        if (access_rec->special_info != NULL)
-            HDfree(access_rec->special_info);
-    }
+    if (ret_value == FAIL)
+        free(access_rec->special_info);
 
     return ret_value;
 } /* HLIstaccess */
@@ -767,13 +762,13 @@ HLgetdatainfo(int32 file_id, uint8 *buf, /* IN: special header info */
               int32 *lengtharray)        /* OUT: array to hold lengths */
 {
     link_t *link_info = NULL; /* link information, to get block ref#s*/
-    intn    num_data_blocks;  /* number of blocks that actually have data */
+    uintn   num_data_blocks;  /* number of blocks that actually have data */
     uint16  link_ref;         /* ref# pointing to a block table */
     uint8  *p = NULL;         /* pointer to special info buffer */
     int32   num_blocks,       /* number of blocks in each table */
         block_length,         /* length of each block */
         total_length,         /* total data length of the element */
-        accum_length;         /* accummulative length of actual data in blocks */
+        accum_length;         /* accumulative length of actual data in blocks */
     int  ii;
     intn ret_value = SUCCEED;
 
@@ -866,9 +861,8 @@ HLgetdatainfo(int32 file_id, uint8 *buf, /* IN: special header info */
         /* Free allocated memory before getting the next block table if
            there is one */
         if (link_info != NULL) {
-            if (link_info->block_list != NULL)
-                HDfree(link_info->block_list);
-            HDfree(link_info);
+            free(link_info->block_list);
+            free(link_info);
             link_info = NULL;
         }
         /* Get next block table */
@@ -878,14 +872,15 @@ HLgetdatainfo(int32 file_id, uint8 *buf, /* IN: special header info */
          are not full yet */
 
     /* Return the number of blocks with actual data */
-    ret_value = num_data_blocks;
+    if (num_data_blocks > INT_MAX)
+        HGOTO_DONE(FAIL);
+    ret_value = (intn)num_data_blocks;
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (link_info != NULL)
-            if (link_info->block_list != NULL)
-                HDfree(link_info->block_list);
-        HDfree(link_info);
+            free(link_info->block_list);
+        free(link_info);
     }
 
     return ret_value;
@@ -957,7 +952,7 @@ DESCRIPTION
    It seems that num_blocks is redundant.
 
 ---------------------------------------------------------------------------*/
-PRIVATE link_t *
+static link_t *
 HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
 {
     int32   access_id; /* access record id */
@@ -967,19 +962,19 @@ HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
     link_t *ret_value = NULL; /* FAIL */
 
     /* allocate necessary memory for in-memory block table */
-    new_link = (link_t *)HDmalloc((uint32)sizeof(link_t));
+    new_link = (link_t *)malloc((uint32)sizeof(link_t));
 
     if (new_link == NULL)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
-    new_link->block_list = (block_t *)HDmalloc((uint32)number_blocks * sizeof(block_t));
+    new_link->block_list = (block_t *)malloc((uint32)number_blocks * sizeof(block_t));
     if (new_link->block_list == NULL)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
     new_link->next = (link_t *)NULL;
 
     /* create temp buffer to read block table in */
-    buffer = (uint8 *)HDmalloc((uint32)(2 + 2 * number_blocks));
+    buffer = (uint8 *)malloc((uint32)(2 + 2 * number_blocks));
     if (buffer == NULL)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
@@ -1006,14 +1001,11 @@ HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
 
 done:
     if (ret_value == NULL) { /* Error condition cleanup */
-        if (new_link->block_list != NULL)
-            HDfree(new_link->block_list);
-        if (new_link != NULL)
-            HDfree(new_link);
+        free(new_link->block_list);
+        free(new_link);
     }
 
-    if (buffer != NULL)
-        HDfree(buffer);
+    free(buffer);
 
     return ret_value;
 } /* HLIgetlink */
@@ -1151,7 +1143,7 @@ HLPread(accrec_t *access_rec, int32 length, void *datap)
             Hendaccess(access_id);
         }
         else { /*if block is missing, fill this part of buffer with zero's */
-            HDmemset(data, 0, (size_t)remaining);
+            memset(data, 0, (size_t)remaining);
             bytes_read += nbytes;
         }
 
@@ -1423,7 +1415,7 @@ DESCRIPTION
    ptr to the new link/block table.
 
 ---------------------------------------------------------------------------*/
-PRIVATE link_t *
+static link_t *
 HLInewlink(int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_block_ref)
 {
     int32   link_id;          /* access record id of new link */
@@ -1433,12 +1425,12 @@ HLInewlink(int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_blo
 
     /* set up new link record in memory */
     /* new link record */
-    t_link = (link_t *)HDmalloc((uint32)sizeof(link_t));
+    t_link = (link_t *)malloc((uint32)sizeof(link_t));
 
     if (!t_link)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
-    t_link->block_list = (block_t *)HDmalloc((uint32)number_blocks * sizeof(block_t));
+    t_link->block_list = (block_t *)malloc((uint32)number_blocks * sizeof(block_t));
     if (!t_link->block_list)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
@@ -1454,7 +1446,7 @@ HLInewlink(int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_blo
         int32  i; /* temp int index */
         uint8 *p; /* temp buffer ptr */
 
-        p = buf = (uint8 *)HDmalloc((uint32)(2 + 2 * number_blocks));
+        p = buf = (uint8 *)malloc((uint32)(2 + 2 * number_blocks));
         if (!buf)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
 
@@ -1482,14 +1474,10 @@ HLInewlink(int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_blo
 
 done:
     if (ret_value == NULL) { /* Error condition cleanup */
-        if (t_link->block_list != NULL)
-            HDfree(t_link->block_list);
-        if (t_link != NULL)
-            HDfree(t_link);
+        free(t_link->block_list);
+        free(t_link);
     }
-
-    if (buf != NULL)
-        HDfree(buf);
+    free(buf);
 
     return ret_value;
 } /* HLInewlink */
@@ -1642,11 +1630,11 @@ HLPcloseAID(accrec_t *access_rec)
         /* free the linked list of links/block tables */
         for (t_link = info->link; t_link; t_link = next) {
             next = t_link->next;
-            HDfree(t_link->block_list);
-            HDfree(t_link);
+            free(t_link->block_list);
+            free(t_link);
         }
 
-        HDfree(info);
+        free(info);
         access_rec->special_info = NULL;
     }
 

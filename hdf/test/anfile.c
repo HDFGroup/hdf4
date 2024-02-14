@@ -32,12 +32,12 @@ test_anfile(void)
 
     /* set up file labels and descriptions */
 
-    HDstrcpy(lab1, "File label #1: aaa");
-    HDstrcpy(lab2, "File label #2: bbbbbb");
-    HDstrcpy(desc1, "File Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 13\n");
-    HDstrcat(desc1, "              14 15 16 17 18 19 20 **END FILE DESCR**\n");
-    HDstrcpy(desc2, "File Descr #2: A B C D E F G H I J K L\n");
-    HDstrcat(desc2, "              M N O **END FILE DESCR**\n");
+    strcpy(lab1, "File label #1: aaa");
+    strcpy(lab2, "File label #2: bbbbbb");
+    strcpy(desc1, "File Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 13\n");
+    strcat(desc1, "              14 15 16 17 18 19 20 **END FILE DESCR**\n");
+    strcpy(desc2, "File Descr #2: A B C D E F G H I J K L\n");
+    strcat(desc2, "              M N O **END FILE DESCR**\n");
 
     /********  Write file labels and descriptions *********/
 
@@ -53,10 +53,10 @@ test_anfile(void)
     RESULT("DFANaddfid");
 
     MESSAGE(5, puts("Writing file descriptions."););
-    ret = DFANaddfds(file_id, desc1, (int32)HDstrlen(desc1));
+    ret = DFANaddfds(file_id, desc1, (int32)strlen(desc1));
     RESULT("DFANaddfds");
 
-    ret = DFANaddfds(file_id, desc2, (int32)HDstrlen(desc2));
+    ret = DFANaddfds(file_id, desc2, (int32)strlen(desc2));
     RESULT("DFANaddfds");
 
     if (FAIL == Hclose(file_id))
@@ -115,10 +115,10 @@ checkannlen(int32 ret, const char *oldstr, const char *type, int32 testflag)
 {
     (void)testflag;
 
-    if ((ret >= 0) && (ret != (int32)HDstrlen(oldstr))) {
+    if ((ret >= 0) && (ret != (int32)strlen(oldstr))) {
         printf("Length of %s is INCORRECT\n", type);
         printf("It is:  %d\n", (int)ret);
-        printf("It should be: %d\n", (int)HDstrlen(oldstr));
+        printf("It should be: %d\n", (int)strlen(oldstr));
         return FAIL;
     }
     return SUCCEED;
@@ -129,11 +129,11 @@ checkann(const char *oldstr, const char *newstr, int32 ret, const char *type, in
 {
     (void)testflag;
 
-    if ((ret >= 0) && (0 != HDstrcmp(oldstr, newstr))) {
+    if ((ret >= 0) && (0 != strcmp(oldstr, newstr))) {
         printf("%s is INCORRECT.\n", type);
         printf("It is:  %s\n", newstr);
         printf("It should be: %s\n", oldstr);
-        return (FAIL);
+        return FAIL;
     }
-    return (SUCCEED);
+    return SUCCEED;
 }

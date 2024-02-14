@@ -18,16 +18,12 @@
  * Invokes: none
  * Contents: Structures & definitions for szip encoding.  This header
  *              should only be included in hcomp.c and cszip.c.
- * Structure definitions:
- * Constant definitions:
  *---------------------------------------------------------------------------*/
 
 #ifndef H4_CSZIP_H
 #define H4_CSZIP_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "hdfi.h"
 
 /* Special parameters for szip compression */
 /* [These are aliases for the similar definitions in ricehdf.h header file] */
@@ -38,6 +34,29 @@ extern "C" {
 #define H4_SZ_MSB_OPTION_MASK       16
 #define H4_SZ_NN_OPTION_MASK        32
 #define H4_SZ_RAW_OPTION_MASK       128
+
+#define SZ_H4_REV_2 0x10000 /* special bit to signal revised format */
+
+/* SZIP [en|de]coding information */
+typedef struct {
+    int32  offset; /* offset in the file */
+    uint8 *buffer; /* buffer for storing SZIP bytes */
+    int32  buffer_pos;
+    int32  buffer_size;
+    int32  bits_per_pixel;
+    int32  options_mask;
+    int32  pixels;
+    int32  pixels_per_block;
+    int32  pixels_per_scanline;
+    enum { SZIP_INIT, SZIP_RUN, SZIP_TERM } szip_state; /* state of the buffer storage */
+    enum { SZIP_CLEAN, SZIP_DIRTY } szip_dirty;
+} comp_coder_szip_info_t;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+HDFLIBAPI funclist_t cszip_funcs; /* functions to perform szip encoding */
 
 /*
  ** from cszip.c
@@ -67,38 +86,6 @@ HDFLIBAPI intn HCPcszip_endaccess(accrec_t *access_rec);
 
 #ifdef __cplusplus
 }
-#endif
-
-/* SZIP [en|de]coding information */
-typedef struct {
-    int32  offset; /* offset in the file */
-    uint8 *buffer; /* buffer for storing SZIP bytes */
-    int32  buffer_pos;
-    int32  buffer_size;
-    int32  bits_per_pixel;
-    int32  options_mask;
-    int32  pixels;
-    int32  pixels_per_block;
-    int32  pixels_per_scanline;
-    enum { SZIP_INIT, SZIP_RUN, SZIP_TERM } szip_state; /* state of the buffer storage */
-    enum { SZIP_CLEAN, SZIP_DIRTY } szip_dirty;
-} comp_coder_szip_info_t;
-
-#define SZ_H4_REV_2 0x10000 /* special bit to signal revised format */
-
-#ifndef CSZIP_MASTER
-HDFLIBAPI funclist_t cszip_funcs; /* functions to perform szip encoding */
-#else
-funclist_t cszip_funcs = {/* functions to perform szip encoding */
-                          HCPcszip_stread,
-                          HCPcszip_stwrite,
-                          HCPcszip_seek,
-                          HCPcszip_inquire,
-                          HCPcszip_read,
-                          HCPcszip_write,
-                          HCPcszip_endaccess,
-                          NULL,
-                          NULL};
 #endif
 
 #endif /* H4_CSZIP_H */

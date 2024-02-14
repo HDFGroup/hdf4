@@ -13,10 +13,10 @@
 
 /* he.h -- header file for HDFedit */
 #include "hdf.h"
+
 #include <ctype.h>
 #include <stdio.h>
-/* #include <sys/wait.h> */
-
+#include <stdlib.h>
 #include <string.h>
 
 /*
@@ -156,14 +156,14 @@ typedef struct he_group {
     tag_ref_ptr ddList;
 } HE_GROUP;
 
-extern int      he_status;
-extern int      he_numDesc;
-extern int      he_currDesc;
-extern int      he_numGrp;
-extern int      he_remote;
-extern char    *he_file;
-extern DFdesc   he_desc[];
-extern HE_GROUP he_grp[];
+extern int       he_status;
+extern int       he_numDesc;
+extern int       he_currDesc;
+extern int       he_numGrp;
+extern int       he_remote;
+extern char     *he_file;
+extern DFdesc   *he_desc;
+extern HE_GROUP *he_grp;
 
 /*
  *  ----------------- Convenient Macros ---------------------
@@ -171,7 +171,7 @@ extern HE_GROUP he_grp[];
 
 #define unkOpt(st)   fprintf(stderr, "Unknown option: %s.\n", st)
 #define unkArg(st)   fprintf(stderr, "Unknown argument: %s.\n", st)
-#define ambigOpt(st) fprintf(stderr, "Ambigupus option: %s.\n", st)
+#define ambigOpt(st) fprintf(stderr, "Ambiguous option: %s.\n", st)
 #define irrOpt(st)   fprintf(stderr, "Irrelevant option: %s.\n", st)
 #define noFile()     fprintf(stderr, "No file is opened.\n")
 

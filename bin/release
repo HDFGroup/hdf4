@@ -20,11 +20,14 @@
 USAGE()
 {
 cat << EOF
-Usage: $0 -d <dir> [-h] [--private] <methods> ...
+Usage: $0 -d <dir> [-h] [--private] [--revision [--branch BRANCHNAME]] <methods> ...
    -d DIR       The name of the directory where the release(s) should be
                 placed.
+   --branch BRANCHNAME  This is to get the correct version of the branch name from the
+                        repository.  BRANCHNAME for v4.2.16 should be hdf4_2_16.
    -h           print the help page.
    --private    Make a private release with today's date in version information.
+   --revision   Make a private release with the code revision number in version information.
 
 This must be run at the top level of the source directory.
 The other command-line options are the names of the programs to use
@@ -303,7 +306,7 @@ tar2cmaketgz()
 
 # This command must be run at the top level of the hdf4 source directory.
 # Verify this requirement.
-if [ ! \( -f configure -a -f bin/release \) ]; then
+if [ ! \( -f configure.ac -a -f bin/release \) ]; then
     echo "$0 must be run at the top level of the hdf4 source directory"
     exit 1
 fi
@@ -318,6 +321,7 @@ check=yes
 release_date=`date +%F`
 today=`date +%Y%m%d`
 pmode='no'
+revmode='no'
 tmpdir="../#release_tmp.$$"    # tmp work directory
 MAINT_MODE_ENABLED=""
 
@@ -333,9 +337,9 @@ fi
 RESTORE_VERSION()
 {
     if [ X-${VERS_OLD} != X- ]; then
-    echo restoring version information back to $VERS_OLD
-    bin/h4vers -s $VERS_OLD
-    VERS_OLD=
+        echo restoring version information back to $VERS_OLD
+        bin/h4vers -s $VERS_OLD
+        VERS_OLD=
     fi
 }
 
@@ -355,6 +359,13 @@ while [ -n "$1" ]; do
             ;;
         --private)
             pmode=yes
+            ;;
+        --revision)
+            revmode=yes
+            ;;
+        --branch)
+            BRANCHNAME=$1
+            shift
             ;;
         -*)
             echo "Unknown switch: $arg" 1>&2
@@ -390,12 +401,31 @@ if [ X$pmode = Xyes ]; then
     # (h4vers does not correctly handle just m.n.r-$today.)
     VERS=`echo $VERS | sed -e s/-.*//`-of$today
     echo Private release of $VERS
-else
     bin/h4vers -s $VERS
 fi
 
-# Store hdf4-$VERS ("hdf-4.2.15", e.g.) to a variable to avoid typos
-HDF4_VERS=hdf-$VERS
+if [ X$revmode = Xyes ]; then
+    VERS_OLD=$VERS
+    echo "Save old version $VERS_OLD for restoration later."
+    if [ "${BRANCHNAME}" = "" ]; then
+        BRANCHNAME=`git symbolic-ref -q --short HEAD`
+    fi
+    revision=`git rev-parse --short HEAD`
+    # Set version information to m.n.r-r$revision.
+    # (h4vers does not correctly handle just m.n.r-$today.)
+    VERS=`echo $VERS | sed -e s/-.*//`-$revision
+    echo Private release of $VERS
+    HDF4_VERS=hdf4-$BRANCHNAME-$revision
+    echo file base of $HDF4_VERS
+    bin/h4vers -s $VERS
+    # use a generic directory name for revision releases
+    HDF4_IN_VERS=hdfsrc
+else
+    # Store hdf4-$VERS ("hdf-4.2.15", e.g.) to a variable to avoid typos
+    HDF4_VERS=hdf-$VERS
+    # directory name matches tar file name for non-revision releases
+    HDF4_IN_VERS=$HDF4_VERS
+fi
 
 test "$verbose" && echo "Releasing $HDF4_VERS to $DEST" 1>&2
 if [ ! -d $DEST ]; then
@@ -405,7 +435,7 @@ fi
 
 # Create a symlink to the source so files in the tarball have the prefix
 # we want (gnu's --transform isn't portable)
-ln -s `pwd` $tmpdir/$HDF4_VERS || exit 1
+ln -s `pwd` $tmpdir/$HDF4_IN_VERS || exit 1
 
 # Save a backup copy of Makefile if exists.
 test -f Makefile && mv Makefile $tmpdir/Makefile.x
@@ -423,7 +453,7 @@ done
 
 # Create the tar file
 test "$verbose" && echo "   Running tar..." 1>&2
-(cd "$tmpdir" && exec tar -ch --exclude-vcs -f "$HDF4_VERS.tar" "./$HDF4_VERS" || exit 1 )
+(cd "$tmpdir" && exec tar -ch --exclude-vcs -f "$HDF4_VERS.tar" "./$HDF4_IN_VERS" || exit 1 )
 
 # Compress
 SHA256=$HDF4_VERS.sha256
@@ -441,7 +471,7 @@ for comp in $methods; do
             ;;
         cmake-tgz)
             test "$verbose" && echo "   Creating CMake tar.gz file..." 1>&2
-            tar2cmaketgz $HDF4_VERS $tmpdir/$HDF4_VERS.tar $DEST/CMake-$HDF4_VERS.tar.gz 1>&2
+            tar2cmaketgz $HDF4_IN_VERS $tmpdir/$HDF4_VERS.tar $DEST/CMake-$HDF4_VERS.tar.gz 1>&2
             (cd $DEST; sha256sum CMake-$HDF4_VERS.tar.gz >> $SHA256)
             ;;
         bzip2)
@@ -451,12 +481,12 @@ for comp in $methods; do
             ;;
         zip)
             test "$verbose" && echo "   Creating zip ball..." 1>&2
-            tar2zip $HDF4_VERS $tmpdir/$HDF4_VERS.tar $DEST/$HDF4_VERS.zip 1>&2
+            tar2zip $HDF4_IN_VERS $tmpdir/$HDF4_VERS.tar $DEST/$HDF4_VERS.zip 1>&2
             (cd $DEST; sha256sum $HDF4_VERS.zip >> $SHA256)
             ;;
         cmake-zip)
             test "$verbose" && echo "   Creating CMake-zip ball..." 1>&2
-            tar2cmakezip $HDF4_VERS $tmpdir/$HDF4_VERS.tar $DEST/CMake-$HDF4_VERS.zip 1>&2
+            tar2cmakezip $HDF4_IN_VERS $tmpdir/$HDF4_VERS.tar $DEST/CMake-$HDF4_VERS.zip 1>&2
             (cd $DEST; sha256sum CMake-$HDF4_VERS.zip >> $SHA256)
             ;;
         *)
@@ -480,7 +510,8 @@ rm -f Makefile
 test -f $tmpdir/Makefile.x && mv $tmpdir/Makefile.x Makefile
 
 # Restore OLD version information, then no need for trap.
-if [ X$pmode = Xyes ]; then
+if [ X$pmode = Xyes ] || [ X$revmode = Xyes ]; then
+    echo "Restore the original version $VERS_OLD"
     RESTORE_VERSION
     trap 0
 fi

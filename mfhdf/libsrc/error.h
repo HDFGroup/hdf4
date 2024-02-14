@@ -17,14 +17,9 @@
 #ifndef MFH4_ERROR_H
 #define MFH4_ERROR_H
 
-#include "H4api_adpt.h"
+#include "hdf.h"
 
-#ifndef NO_STDARG
 HDFLIBAPI void nc_serror(const char *fmt, ...);
 HDFLIBAPI void NCadvise(int err, const char *fmt, ...);
-#else
-HDFLIBAPI void nc_serror();
-HDFLIBAPI void NCadvise();
-#endif /* NO_STDARG */
 
 #endif /* MFH4_ERROR_H */

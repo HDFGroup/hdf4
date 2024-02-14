@@ -26,8 +26,9 @@
  *
  *
  ******************************************************************************/
-#define VSET_INTERFACE
+
 #include "hdf.h"
+#include "vgint.h"
 
 static int condensed;
 
@@ -35,10 +36,6 @@ static int32 vsdumpfull(int32 vs);
 
 static int32 fmtbyte(char *x);
 static int32 fmtchar(char *x);
-
-#ifdef UNUSED
-static int32 fmtint(char *x);
-#endif /* UNUSED */
 
 static int32 fmtfloat(char *x);
 
@@ -118,28 +115,28 @@ main(int ac, char **av)
         }
         /* get the length of the vgname to allocate enough space */
         Vgetnamelen(vg, &name_len);
-        vgname = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+        vgname = (char *)malloc(sizeof(char *) * (name_len + 1));
         if (vgname == NULL) {
             printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", name_len + 1);
             return (0);
         }
         Vinquire(vg, &n, vgname);
-        if (HDstrlen(vgname) == 0)
-            HDstrcat(vgname, "NoName");
+        if (strlen(vgname) == 0)
+            strcat(vgname, "NoName");
 
         vgotag = VQuerytag(vg);
         vgoref = VQueryref(vg);
 
         /* get the length of the vgname to allocate enough space */
         Vgetclassnamelen(vg, &name_len);
-        vgclass = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+        vgclass = (char *)malloc(sizeof(char *) * (name_len + 1));
         if (vgclass == NULL) {
             printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", name_len + 1);
             return (0);
         }
         Vgetclass(vg, vgclass);
-        if (HDstrlen(vgclass) == 0)
-            HDstrcat(vgclass, "NoClass");
+        if (strlen(vgclass) == 0)
+            strcat(vgclass, "NoClass");
 
         printf("\nvg:%d <%d/%d> (%s {%s}) has %d entries:\n", (int)nvg, (int)vgotag, (int)vgoref, vgname,
                vgclass, (int)n);
@@ -159,8 +156,8 @@ main(int ac, char **av)
                 VSinquire(vs, &nv, &interlace, fields, &vsize, vsname);
                 vsotag = VSQuerytag(vs);
                 vsoref = VSQueryref(vs);
-                if (HDstrlen(vsname) == 0)
-                    HDstrcat(vsname, "NoName");
+                if (strlen(vsname) == 0)
+                    strcat(vsname, "NoName");
                 VSgetclass(vs, vsclass);
                 printf("  vs:%d <%d/%d> nv=%d i=%d fld [%s] vsize=%d (%s {%s})\n", (int)t, (int)vsotag,
                        (int)vsoref, (int)nv, (int)interlace, fields, (int)vsize, vsname, vsclass);
@@ -186,25 +183,25 @@ main(int ac, char **av)
 
                 /* get length of the vgclass to allocate enough space */
                 Vgetclassnamelen(vgt, &name_len);
-                vgclass = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+                vgclass = (char *)malloc(sizeof(char *) * (name_len + 1));
                 if (vgclass == NULL) {
                     printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", name_len + 1);
                     return (0);
                 }
                 Vgetclass(vg, vgclass);
-                if (HDstrlen(vgclass) == 0)
-                    HDstrcat(vgclass, "NoClass");
+                if (strlen(vgclass) == 0)
+                    strcat(vgclass, "NoClass");
 
                 /* get length of the vgname to allocate enough space */
                 Vgetnamelen(vgt, &name_len);
-                vgname = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+                vgname = (char *)malloc(sizeof(char *) * (name_len + 1));
                 if (vgname == NULL) {
                     printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", name_len + 1);
                     return (0);
                 }
                 Vinquire(vgt, &ne, vgname);
-                if (HDstrlen(vgname) == 0)
-                    HDstrcat(vgname, "NoName");
+                if (strlen(vgname) == 0)
+                    strcat(vgname, "NoName");
                 vgotag = VQuerytag(vgt);
                 vgoref = VQueryref(vgt);
                 Vgetclass(vgt, vgclass);
@@ -219,8 +216,8 @@ main(int ac, char **av)
                     printf("  --:%d <%d/%d> %s\n", (int)t, (int)vstag, (int)vsid, "Unknown Tag");
                 else {
                     printf("  --:%d <%d/%d> %s\n", (int)t, (int)vstag, (int)vsid, name);
-                    HDfree(name);
-                } /* end else */
+                    free(name);
+                }
             }
         } /* while */
 
@@ -237,7 +234,7 @@ main(int ac, char **av)
     if (nlone > 0) {
 
         printf("Lone vdatas:\n");
-        if (NULL == (lonevs = (int32 *)HDmalloc(sizeof(int) * (size_t)nlone))) {
+        if (NULL == (lonevs = (int32 *)malloc(sizeof(int) * (size_t)nlone))) {
             printf("%s: File has %d lone vdatas but ", av[0], (int)nlone);
             printf("cannot alloc lonevs space. Quit.\n");
             exit(0);
@@ -251,8 +248,8 @@ main(int ac, char **av)
                 continue;
             }
             VSinquire(vs, &nv, &interlace, fields, &vsize, vsname);
-            if (HDstrlen(vsname) == 0)
-                HDstrcat(vsname, "NoName");
+            if (strlen(vsname) == 0)
+                strcat(vsname, "NoName");
             vsotag = VSQuerytag(vs);
             vsoref = VSQueryref(vs);
             VSgetclass(vs, vsclass);
@@ -266,7 +263,7 @@ main(int ac, char **av)
             dumpattr(vs, full, 1);
             VSdetach(vs);
         }
-        HDfree(lonevs);
+        free(lonevs);
     }
 
     Vend(f);
@@ -295,23 +292,12 @@ fmtchar(char *x)
     return (1);
 }
 
-#ifdef UNUSED
-static int32
-fmtint(char *x)
-{
-    int i = 0;
-    HDmemcpy(&i, x, sizeof(int32));
-    cn += printf("%d", i);
-    return (1);
-}
-#endif /* UNUSED */
-
 static int32
 fmtfloat(char *x)
 {
     float f = (float)0.0;
-    HDmemcpy(&f, x, sizeof(float32));
-    cn += printf("%f", f);
+    memcpy(&f, x, sizeof(float32));
+    cn += printf("%f", (double)f);
     return (1);
 }
 
@@ -319,7 +305,7 @@ static int32
 fmtulong(char *x)
 {
     unsigned l = 0;
-    HDmemcpy(&l, x, sizeof(int32));
+    memcpy(&l, x, sizeof(int32));
     cn += printf("%u", l);
     return (1);
 }
@@ -328,7 +314,7 @@ static int32
 fmtlong(char *x)
 {
     long l = 0;
-    HDmemcpy(&l, x, sizeof(int32));
+    memcpy(&l, x, sizeof(int32));
     cn += printf("%ld", l);
     return (1);
 }
@@ -337,7 +323,7 @@ static int32
 fmtshort(char *x)
 {
     short s = 0;
-    HDmemcpy(&s, x, sizeof(int16));
+    memcpy(&s, x, sizeof(int16));
     cn += printf("%d", s);
     return (1);
 }
@@ -346,7 +332,7 @@ static int32
 fmtdouble(char *x)
 {
     double d = 0.0;
-    HDmemcpy(&d, x, sizeof(float64));
+    memcpy(&d, x, sizeof(float64));
     cn += printf("%f", d);
     return (1);
 }
@@ -386,7 +372,7 @@ vsdumpfull(int32 vs)
     }
 
     done = 0;
-    bb   = (uint8 *)HDmalloc(bufsize);
+    bb   = (uint8 *)malloc(bufsize);
     if (bb == NULL) {
         printf("vsdumpfull malloc error\n");
         return (0);
@@ -489,7 +475,7 @@ vsdumpfull(int32 vs)
 
     /* ============================================ */
 
-    HDfree(bb);
+    free(bb);
     printf("\n");
 
     return (1);
@@ -499,7 +485,7 @@ vsdumpfull(int32 vs)
 static intn
 dumpattr(int32 vid, intn full, intn isvs)
 {
-    intn          i, j, k, cn = 0;
+    int           i, j, k, _cn = 0;
     VDATA        *vs;
     vsinstance_t *vs_inst;
     VGROUP       *vg;
@@ -568,7 +554,7 @@ dumpattr(int32 vid, intn full, intn isvs)
                 printf("     %d: name=%s type=%d count=%d size=%d\n", i, name, (int)i_type, (int)i_count,
                        (int)i_size);
                 if (i_size > BUFFER) {
-                    if (NULL == (buf = HDmalloc(i_size))) {
+                    if (NULL == (buf = malloc(i_size))) {
                         printf(">>>dumpattr:can't allocate buf.\n");
                         continue;
                     }
@@ -617,23 +603,22 @@ dumpattr(int32 vid, intn full, intn isvs)
                 off = DFKNTsize(i_type | DFNT_NATIVE);
                 ptr = (alloc_flag) ? buf : attrbuf;
                 putchar('\t');
-                cn = 0;
+                _cn = 0;
                 for (k = 0; k < i_count; k++) {
                     fmtfn((char *)ptr);
                     ptr += off;
                     putchar(' ');
-                    cn++;
-                    if (cn > 55) {
+                    _cn++;
+                    if (_cn > 55) {
                         putchar('\n');
                         putchar('\t');
-                        cn = 0;
+                        _cn = 0;
                     }
                 }
-                if (cn)
+                if (_cn)
                     putchar('\n');
                 if (alloc_flag) {
-                    if (buf != NULL)
-                        HDfree(buf);
+                    free(buf);
                     alloc_flag = 0;
                 }
             } /*  attr */
@@ -678,7 +663,7 @@ dumpattr(int32 vid, intn full, intn isvs)
             printf("   %d: name=%s type=%d count=%d size=%d\n", i, name, (int)i_type, (int)i_count,
                    (int)i_size);
             if (i_size > BUFFER) {
-                if (NULL == (buf = HDmalloc(i_size))) {
+                if (NULL == (buf = malloc(i_size))) {
                     printf(">>>dumpattr:can't allocate buf.\n");
                     continue;
                 }
@@ -727,23 +712,22 @@ dumpattr(int32 vid, intn full, intn isvs)
             off = DFKNTsize(i_type | DFNT_NATIVE);
             ptr = (alloc_flag) ? buf : attrbuf;
             putchar('\t');
-            cn = 0;
+            _cn = 0;
             for (k = 0; k < i_count; k++) {
                 fmtfn((char *)ptr);
                 ptr += off;
                 putchar(' ');
-                cn++;
-                if (cn > 55) {
+                _cn++;
+                if (_cn > 55) {
                     putchar('\n');
                     putchar('\t');
-                    cn = 0;
+                    _cn = 0;
                 }
             }
-            if (cn)
+            if (_cn)
                 putchar('\n');
             if (alloc_flag) {
-                if (buf != NULL)
-                    HDfree(buf);
+                free(buf);
                 alloc_flag = 0;
             }
         } /*  attr */

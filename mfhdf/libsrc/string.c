@@ -14,10 +14,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <string.h>
 #include "local_nc.h"
 
-#ifdef HDF
 static uint32
 compute_hash(unsigned count, const char *str)
 {
@@ -29,7 +27,7 @@ compute_hash(unsigned count, const char *str)
         return ret;
 
     while (count > sizeof(uint32)) {
-        HDmemcpy(&temp, str, sizeof(uint32));
+        memcpy(&temp, str, sizeof(uint32));
         ret += temp;
         str += sizeof(uint32);
         count -= sizeof(uint32);
@@ -37,12 +35,11 @@ compute_hash(unsigned count, const char *str)
 
     if (count > 0) {
         temp = 0;
-        HDmemcpy(&temp, str, count);
+        memcpy(&temp, str, count);
         ret += temp;
     } /* end if */
     return (ret);
 } /* end compute_hash() */
-#endif /* HDF */
 
 NC_string *
 NC_new_string(unsigned count, const char *str)
@@ -61,9 +58,7 @@ NC_new_string(unsigned count, const char *str)
         goto alloc_err;
     ret->count = count;
     ret->len   = count;
-#ifdef HDF
-    ret->hash = compute_hash(count, str);
-#endif              /* HDF */
+    ret->hash  = compute_hash(count, str);
     if (count != 0) /* allocate */
     {
         memlen      = count + 1;
@@ -71,11 +66,7 @@ NC_new_string(unsigned count, const char *str)
         if (ret->values == NULL)
             goto alloc_err;
         if (str != NULL) {
-#ifdef HDF
             memcpy(ret->values, str, (size_t)count);
-#else
-            (void)strncpy(ret->values, str, count);
-#endif
             ret->values[count] = 0;
         }
     }
@@ -120,10 +111,8 @@ NC_re_string(NC_string *old, unsigned count, const char *str)
     (void)memset(old->values + count, 0, (int)old->count - (int)count + 1);
 
     /* make sure len is always == to the string length */
-    old->len = count;
-#ifdef HDF
+    old->len  = count;
     old->hash = compute_hash(count, str);
-#endif /* HDF */
 
     return (old);
 }
@@ -131,8 +120,8 @@ NC_re_string(NC_string *old, unsigned count, const char *str)
 bool_t
 xdr_NC_string(XDR *xdrs, NC_string **spp)
 {
-    u_long count = 0;
-    int    status;
+    unsigned count = 0;
+    int      status;
 
     switch (xdrs->x_op) {
         case XDR_FREE:
@@ -140,7 +129,7 @@ xdr_NC_string(XDR *xdrs, NC_string **spp)
             return (TRUE);
         case XDR_DECODE:
             /* need the length to pass to new */
-            if (!xdr_u_long(xdrs, &count)) {
+            if (!h4_xdr_u_int(xdrs, &count)) {
                 return (FALSE);
             }
             if (count == 0) {
@@ -152,7 +141,7 @@ xdr_NC_string(XDR *xdrs, NC_string **spp)
                 return (FALSE);
             (*spp)->values[count] = 0;
             /* then deal with the characters */
-            status = xdr_opaque(xdrs, (*spp)->values, (*spp)->count);
+            status = h4_xdr_opaque(xdrs, (*spp)->values, (*spp)->count);
 
             /* might be padded */
             (*spp)->len = strlen((*spp)->values);
@@ -161,14 +150,14 @@ xdr_NC_string(XDR *xdrs, NC_string **spp)
             /* first deal with the length */
             if (*spp == NULL) {
                 count = 0;
-                return (xdr_u_long(xdrs, &count));
+                return (h4_xdr_u_int(xdrs, &count));
             } /* else */
             count = (*spp)->count;
-            if (!xdr_u_long(xdrs, &count)) {
+            if (!h4_xdr_u_int(xdrs, &count)) {
                 return (FALSE);
             }
             /* then deal with the characters */
-            return (xdr_opaque(xdrs, (*spp)->values, (*spp)->count));
+            return (h4_xdr_opaque(xdrs, (*spp)->values, (*spp)->count));
     }
     return (FALSE);
 }

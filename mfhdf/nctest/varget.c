@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "h4config.h"
+#include "hdf.h"
+
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else
@@ -16,11 +17,7 @@
 #include "testcdf.h" /* defines in-memory test cdf structure */
 #include "error.h"
 #include "tests.h"
-#include "alloc.h"
 #include "emalloc.h"
-#ifdef HDF
-#include "hdf.h"
-#endif
 
 /*
  * Test ncvarget
@@ -59,20 +56,20 @@ test_ncvarget(char *path)
 
     /* find a variable with at least one dimension */
     iv = 0;
-    while (test.vars[iv].ndims <= 0 && iv < test.nvars)
+    while (test_g->vars[iv].ndims <= 0 && iv < test_g->nvars)
         iv++;
-    if (iv < test.nvars) { /* iv is varid of variable with dimensions */
+    if (iv < test_g->nvars) { /* iv is varid of variable with dimensions */
         int tmp;
         /* set coords */
         int id; /* dimension id */
-        for (id = 0; id < test.vars[iv].ndims; id++) {
+        for (id = 0; id < test_g->vars[iv].ndims; id++) {
             hc.cor[id] = 0;
             hc.edg[id] = 1;
         }
         /* get space for vals */
-        hc.vals = emalloc(nctypelen(test.vars[iv].type) + 8);
+        hc.vals = emalloc(nctypelen(test_g->vars[iv].type) + 8);
 
-        id         = test.vars[iv].ndims - 1;
+        id         = test_g->vars[iv].ndims - 1;
         tmp        = hc.cor[id];
         hc.cor[id] = -1; /* try negative coordinate, should fail */
         if (ncvarget(cdfid, iv, hc.cor, hc.edg, hc.vals) != -1) {
@@ -91,11 +88,11 @@ test_ncvarget(char *path)
         hc.edg[id] = tmp;
 
         {
-            long mqv = test.vars[iv].ndims - 1;
-            int  dim = test.vars[iv].dims[mqv];
+            long mqv = test_g->vars[iv].ndims - 1;
+            int  dim = test_g->vars[iv].dims[mqv];
 
             tmp         = hc.cor[mqv];
-            hc.cor[mqv] = test.dims[dim].size; /* try big coordinate, should fail */
+            hc.cor[mqv] = test_g->dims[dim].size; /* try big coordinate, should fail */
             if (ncvarget(cdfid, iv, hc.cor, hc.edg, hc.vals) != -1) {
                 error("%s: ncvarget should fail for too-high coordinate", pname);
                 ncclose(cdfid);
@@ -103,7 +100,7 @@ test_ncvarget(char *path)
             }
             hc.cor[mqv] = tmp;
             tmp         = hc.edg[mqv];
-            hc.edg[mqv] = test.dims[dim].size + 1; /* try big edge, should fail */
+            hc.edg[mqv] = test_g->dims[dim].size + 1; /* try big edge, should fail */
             if (ncvarget(cdfid, iv, hc.cor, hc.edg, hc.vals) != -1) {
                 error("%s: ncvarget should fail for too-high edge", pname);
                 ncclose(cdfid);
@@ -144,7 +141,7 @@ test_ncvarget(char *path)
         error("%s: ncvarget failed to report bad netcdf handle", pname);
         nerrs++;
     }
-    Free((char *)hc.vals);
+    free(hc.vals);
     if (nerrs > 0)
         (void)fprintf(stderr, "FAILED! ***\n");
     else

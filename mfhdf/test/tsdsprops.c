@@ -28,9 +28,10 @@
  *		(bugzilla 150)
  ****************************************************************************/
 
-#include "mfhdf.h"
+#include <stdlib.h>
+#include <string.h>
 
-#ifdef HDF
+#include "mfhdf.h"
 
 #include "hdftest.h"
 
@@ -106,7 +107,7 @@ test_SDSnames()
     VERIFY(name_len, NAME_LEN1, "SDgetnamelen");
 
     /* Allocate buffer to get its name */
-    ds_name = (char *)HDmalloc(name_len + 1);
+    ds_name = (char *)malloc(name_len + 1);
     CHECK_ALLOC(ds_name, "ds_name", "test_SDSnames");
 
     /* Get information of the first dataset, and verify its name */
@@ -119,7 +120,7 @@ test_SDSnames()
     CHECK(status, FAIL, "SDendaccess");
 
     /* Release allocated memory */
-    HDfree(ds_name);
+    free(ds_name);
 
     /* Get access to the second dataset */
     dset2 = SDselect(fid, 1);
@@ -132,7 +133,7 @@ test_SDSnames()
     VERIFY(name_len, NAME_LEN2, "SDgetnamelen");
 
     /* Allocate buffer to get its name */
-    ds_name = (char *)HDmalloc(name_len + 1);
+    ds_name = (char *)malloc(name_len + 1);
     CHECK_ALLOC(ds_name, "ds_name", "test_SDSnames");
 
     /* Get information of the second dataset, and verify its name */
@@ -145,7 +146,7 @@ test_SDSnames()
     CHECK(status, FAIL, "SDendaccess");
 
     /* Release allocated memory */
-    HDfree(ds_name);
+    free(ds_name);
 
     /* Close the file */
     status = SDend(fid);
@@ -214,9 +215,9 @@ test_unlim_dim()
     start[0] = 0;
     edges[0] = DIM0;
 
-    status = SDwritedata(dset1, start, NULL, edges, (VOIDP)array_data);
+    status = SDwritedata(dset1, start, NULL, edges, (void *)array_data);
     CHECK(status, FAIL, "SDwritedata");
-    status = SDwritedata(dset2, start, NULL, edges, (VOIDP)array_data);
+    status = SDwritedata(dset2, start, NULL, edges, (void *)array_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Store array values to be appended */
@@ -228,9 +229,9 @@ test_unlim_dim()
     edges[0] = DIM0; /* append the same number of elements as the write */
 
     /* Append data to file */
-    status = SDwritedata(dset1, start, NULL, edges, (VOIDP)append_data);
+    status = SDwritedata(dset1, start, NULL, edges, (void *)append_data);
     CHECK(status, FAIL, "SDwritedata");
-    status = SDwritedata(dset2, start, NULL, edges, (VOIDP)append_data);
+    status = SDwritedata(dset2, start, NULL, edges, (void *)append_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Close the datasets */
@@ -263,7 +264,7 @@ test_unlim_dim()
     edges[0] = DIM0 + DIM0;
 
     /* Read and check first dataset */
-    status = SDreaddata(dset1, start, NULL, edges, (VOIDP)outdata);
+    status = SDreaddata(dset1, start, NULL, edges, (void *)outdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (idx = 0; idx < DIM0; idx++) {
@@ -274,7 +275,7 @@ test_unlim_dim()
     }
 
     /* Read and check second dataset */
-    status = SDreaddata(dset2, start, NULL, edges, (VOIDP)outdata1);
+    status = SDreaddata(dset2, start, NULL, edges, (void *)outdata1);
     CHECK(status, FAIL, "SDreaddata");
 
     for (idx = 0; idx < DIM0; idx++) {
@@ -367,7 +368,7 @@ test_unlim_inloop()
             sds_id[i] = SDselect(fid, i);
             CHECK(sds_id[i], FAIL, "SDselect");
 
-            status = SDwritedata(sds_id[i], start, NULL, edges, (VOIDP)array_data);
+            status = SDwritedata(sds_id[i], start, NULL, edges, (void *)array_data);
             CHECK(status, FAIL, "SDwritedata");
 
             status = SDendaccess(sds_id[i]);
@@ -399,7 +400,7 @@ test_unlim_inloop()
         edges[0] = SIZE * n_writes;
 
         /* Read and check first dataset */
-        status = SDreaddata(sds_id[i], start, NULL, edges, (VOIDP)outdata);
+        status = SDreaddata(sds_id[i], start, NULL, edges, (void *)outdata);
         CHECK(status, FAIL, "SDreaddata");
 
         /* Verify the read data */
@@ -485,9 +486,9 @@ test_valid_args()
     edges[0] = X_LENGTH;
     edges[1] = Y_LENGTH;
 
-    status = SDwritedata(dset1, start, NULL, edges, (VOIDP)array_data);
+    status = SDwritedata(dset1, start, NULL, edges, (void *)array_data);
     CHECK(status, FAIL, "SDwritedata");
-    status = SDwritedata(dset2, start, NULL, edges, (VOIDP)array_data);
+    status = SDwritedata(dset2, start, NULL, edges, (void *)array_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Close the datasets */
@@ -521,13 +522,13 @@ test_valid_args()
 
     /* Attempt to read first dataset, it should fail with invalid an
         argument error */
-    status = SDreaddata(dset1, start, strides, edges, (VOIDP)outdata);
+    status = SDreaddata(dset1, start, strides, edges, (void *)outdata);
     VERIFY(status, FAIL, "SDreaddata");
     VERIFY(HEvalue(1), DFE_ARGS, "SDreaddata");
 
     /* Show that the error was also caught for the dataset with unlimited
         dimension */
-    status = SDreaddata(dset2, start, strides, edges, (VOIDP)outdata);
+    status = SDreaddata(dset2, start, strides, edges, (void *)outdata);
     VERIFY(status, FAIL, "SDreaddata");
     VERIFY(HEvalue(1), DFE_ARGS, "SDreaddata");
 
@@ -694,13 +695,13 @@ test_valid_args2()
     d2stride[1]             = D2_Y; /* should be D2_Y - 1 */
     d2count[0]              = D2_X;
     d2count[1]              = 2;
-    status                  = SDreaddata(sds_id, d2start, d2stride, d2count, (VOIDP)outdata2);
+    status                  = SDreaddata(sds_id, d2start, d2stride, d2count, (void *)outdata2);
     VERIFY(status, FAIL, "SDreaddata");
 
     /* Read second dataset with too many values requested */
     d2stride[1] = D2_Y - 1;
     d2count[1]  = 3; /* should be 2 */
-    status      = SDreaddata(sds_id, d2start, d2stride, d2count, (VOIDP)outdata2);
+    status      = SDreaddata(sds_id, d2start, d2stride, d2count, (void *)outdata2);
     VERIFY(status, FAIL, "SDreaddata");
 
     /* Terminate access to the second dataset */
@@ -717,7 +718,7 @@ test_valid_args2()
     d3count[0]              = 4; /* should be 3 max or smaller stride */
     d3count[1]              = 2;
     d3count[2]              = 2;
-    status                  = SDreaddata(sds_id, d3start, d3stride, d3count, (VOIDP)outdata3);
+    status                  = SDreaddata(sds_id, d3start, d3stride, d3count, (void *)outdata3);
     VERIFY(status, FAIL, "SDreaddata");
 
     /* Read again with "correct" arguments */
@@ -729,7 +730,7 @@ test_valid_args2()
     d3count[0]              = 3;
     d3count[1]              = 2;
     d3count[2]              = 2;
-    status                  = SDreaddata(sds_id, d3start, d3stride, d3count, (VOIDP)outdata3);
+    status                  = SDreaddata(sds_id, d3start, d3stride, d3count, (void *)outdata3);
     CHECK(status, FAIL, "SDreaddata");
 
     /* Terminate access to the third dataset */
@@ -763,5 +764,3 @@ test_SDSprops()
         PASSED();
     return num_errs;
 }
-
-#endif /* HDF */

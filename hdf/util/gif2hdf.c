@@ -11,9 +11,12 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <hdf.h>
-#include "gif.h"
 #include <string.h>
+#include <stdlib.h>
+
+#include "hdf.h"
+#include "gif.h"
+
 int
 main(int argv, char *argc[])
 {
@@ -44,8 +47,8 @@ main(int argv, char *argc[])
         return (-1);
     }
 
-    HDstrncpy(GIFFileName, argc[1], VSNAMELENMAX - 1);
-    HDstrncpy(HDFFileName, argc[2], VSNAMELENMAX - 1);
+    strncpy(GIFFileName, argc[1], VSNAMELENMAX - 1);
+    strncpy(HDFFileName, argc[2], VSNAMELENMAX - 1);
     GIFFileName[VSNAMELENMAX - 1] = '\0';
     HDFFileName[VSNAMELENMAX - 1] = '\0';
 
@@ -85,55 +88,62 @@ main(int argv, char *argc[])
     fclose(fpGif);
 
     /* Call WriteHDF from here. Go ahead and change WriteHDF to write
-    ** whatever format you want
-    */
+     ** whatever format you want
+     */
     if (WriteHDF(GifMemoryStruct, argc[2], argc[1]))
         printf("HDF Write Error\n\n");
 
     /* Free all buffers */
     if (GifMemoryStruct.GifImageDesc != NULL) {
-        int32 ImageCount = (int32)(GifMemoryStruct.GifHeader)->ImageCount;
-        for (i = 0; i < ImageCount; i++) {
+        int32 imageCount = (int32)(GifMemoryStruct.GifHeader)->ImageCount;
+        for (i = 0; i < imageCount; i++) {
             if (GifMemoryStruct.GifImageDesc[i] != NULL) {
-                if (GifMemoryStruct.GifImageDesc[i]->Image != NULL)
-                    HDfree(GifMemoryStruct.GifImageDesc[i]->Image);
-                HDfree(GifMemoryStruct.GifImageDesc[i]);
+                free(GifMemoryStruct.GifImageDesc[i]->Image);
+                free(GifMemoryStruct.GifImageDesc[i]);
             }
 
-            if (GifMemoryStruct.GifGraphicControlExtension[i] != NULL)
-                HDfree(GifMemoryStruct.GifGraphicControlExtension[i]);
+            free(GifMemoryStruct.GifGraphicControlExtension[i]);
         }
-        HDfree(GifMemoryStruct.GifImageDesc);
-        HDfree(GifMemoryStruct.GifGraphicControlExtension);
+        free(GifMemoryStruct.GifImageDesc);
+        free(GifMemoryStruct.GifGraphicControlExtension);
     }
 
     if (GifMemoryStruct.GifApplicationExtension != NULL) {
-        int32 ExtCount = (int32)(GifMemoryStruct.GifHeader)->ApplicationCount;
-        for (i = 0; i < ExtCount; i++) {
+        int32 appExtCount = (int32)(GifMemoryStruct.GifHeader)->ApplicationCount;
+        for (i = 0; i < appExtCount; i++) {
             if (GifMemoryStruct.GifApplicationExtension[i] != NULL) {
-                if (GifMemoryStruct.GifApplicationExtension[i]->ApplicationData != NULL)
-                    HDfree(GifMemoryStruct.GifApplicationExtension[i]->ApplicationData);
-                HDfree(GifMemoryStruct.GifApplicationExtension[i]);
+                free(GifMemoryStruct.GifApplicationExtension[i]->ApplicationData);
+                free(GifMemoryStruct.GifApplicationExtension[i]);
             }
         }
-        HDfree(GifMemoryStruct.GifApplicationExtension);
+        free(GifMemoryStruct.GifApplicationExtension);
     }
 
     if (GifMemoryStruct.GifPlainTextExtension != NULL) {
-        int32 TextCount = (int32)(GifMemoryStruct.GifHeader)->PlainTextCount;
-        for (i = 0; i < TextCount; i++) {
+        int32 plainTextCount = (int32)(GifMemoryStruct.GifHeader)->PlainTextCount;
+        for (i = 0; i < plainTextCount; i++) {
             if (GifMemoryStruct.GifPlainTextExtension[i] != NULL) {
-                if (GifMemoryStruct.GifPlainTextExtension[i]->PlainTextData != NULL)
-                    HDfree(GifMemoryStruct.GifPlainTextExtension[i]->PlainTextData);
-                HDfree(GifMemoryStruct.GifPlainTextExtension[i]);
+                free(GifMemoryStruct.GifPlainTextExtension[i]->PlainTextData);
+                free(GifMemoryStruct.GifPlainTextExtension[i]);
             }
         }
-        HDfree(GifMemoryStruct.GifPlainTextExtension);
+        free(GifMemoryStruct.GifPlainTextExtension);
     }
 
-    HDfree(StartPos);
+    if (GifMemoryStruct.GifCommentExtension != NULL) {
+        int32 commentCount = (int32)(GifMemoryStruct.GifHeader)->CommentCount;
+        for (i = 0; i < commentCount; i++) {
+            if (GifMemoryStruct.GifCommentExtension[i] != NULL) {
+                free(GifMemoryStruct.GifCommentExtension[i]->CommentData);
+                free(GifMemoryStruct.GifCommentExtension[i]);
+            }
+        }
+        free(GifMemoryStruct.GifCommentExtension);
+    }
 
-    HDfree(GifMemoryStruct.GifHeader);
+    free(StartPos);
+
+    free(GifMemoryStruct.GifHeader);
 
     return (0);
 }

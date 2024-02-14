@@ -20,9 +20,10 @@
  *
  *********************************************************************/
 
+#include <string.h>
+
 #include "mfhdf.h"
 
-#ifdef HDF
 #include "hdftest.h"
 
 /********************************************************************
@@ -129,7 +130,7 @@ test_basic_dim()
         start[i] = 0;
         edges[i] = dims[i];
     }
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array1_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)array1_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the array. */
@@ -215,7 +216,7 @@ test_basic_dim()
 
     status = SDdiminfo(dim0_id, dim_name, &size, &dim_data_type, &dim_num_attrs);
     CHECK(status, FAIL, "SDdiminfo");
-    VERIFY(HDstrcmp(dim_name, "fakeDim2"), 0, "SDdiminfo");
+    VERIFY(strcmp(dim_name, "fakeDim2"), 0, "SDdiminfo");
 
     /* Set the first dimension name to DIM2_NAME */
     status = SDsetdimname(dim0_id, DIM2_NAME);
@@ -331,7 +332,7 @@ test_dim_scales()
         start[i] = 0;
         edges[i] = dims[i];
     }
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array1_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)array1_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the array. */
@@ -420,7 +421,7 @@ test_dim_scales()
     }
 
     /* Write the data stored in the array 'array2_data' to the dataset */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array2_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)array2_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Get info of the dataset and verify its type */
@@ -469,7 +470,7 @@ test_dim_scales()
     VERIFY(dim_data_type, DFNT_CHAR, "SDdiminfo");
 
     /* Read dimension scale values and verify them */
-    status = SDgetdimscale(dim0_id, (VOIDP)scale2_out);
+    status = SDgetdimscale(dim0_id, (void *)scale2_out);
     CHECK(status, FAIL, "SDgetdimscale");
     for (i = 0; i < LENGTH2; i++)
         VERIFY(scale2_out[i], scale2[i], "SDgetdimscale");
@@ -588,7 +589,7 @@ test_dim_strs()
         edges[i] = dims[i];
     }
 
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array1_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)array1_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the array. */
@@ -638,9 +639,9 @@ test_dim_strs()
 
     /* Get and verify that predefined attributes label, unit, and format
        are not assigned to this dimension */
-    HDmemset(label, 0, DIMSTRS_LEN);
-    HDmemset(unit, 0, DIMSTRS_LEN);
-    HDmemset(format, 0, DIMSTRS_LEN);
+    memset(label, 0, DIMSTRS_LEN);
+    memset(unit, 0, DIMSTRS_LEN);
+    memset(format, 0, DIMSTRS_LEN);
     status = SDgetdimstrs(dim1_id, label, unit, format, DIMSTRS_LEN);
     CHECK(status, FAIL, "SDgetdimstrs");
     VERIFY(label[0], '\0', "SDgetdimstrs");
@@ -692,7 +693,7 @@ test_dim_strs()
     }
 
     /* Write the data stored in the array 'array2_data' to the dataset */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array2_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)array2_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Get the first dimension id */
@@ -734,9 +735,9 @@ test_dim_strs()
 
     /* Get and verify that predefined attributes label, unit, and format
        are not assigned to this dimension */
-    HDmemset(label, 0, DIMSTRS_LEN);
-    HDmemset(unit, 0, DIMSTRS_LEN);
-    HDmemset(format, 0, DIMSTRS_LEN);
+    memset(label, 0, DIMSTRS_LEN);
+    memset(unit, 0, DIMSTRS_LEN);
+    memset(format, 0, DIMSTRS_LEN);
     status = SDgetdimstrs(dim0_id, label, unit, format, DIMSTRS_LEN);
     CHECK(status, FAIL, "SDgetdimstrs");
     VERIFY(label[0], '\0', "SDgetdimstrs");
@@ -774,5 +775,3 @@ test_dimensions()
         PASSED();
     return num_errs;
 }
-
-#endif /* HDF */

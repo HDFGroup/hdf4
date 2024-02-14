@@ -11,11 +11,51 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "mfhdf.h"
 
-#ifdef HDF
-
 #include "hdftest.h"
+
+/********************************************************************
+   Name: make_sourcepath() - Generates the source path
+   Description:
+        Generate the path of srcdir if it exists, otherwise, assume
+        it is the current directory.
+   Return value:
+        Returns SUCCEED if the source path is generated successfully,
+        or FAIL, otherwise.
+*********************************************************************/
+intn
+make_sourcepath(char *src_path, unsigned int size)
+{
+    char *srcdir  = getenv("srcdir");
+    char *tempdir = NULL;
+
+    tempdir = (char *)malloc(size * sizeof(char));
+    CHECK_ALLOC(tempdir, "tempdir", "make_datafilename");
+    memset(tempdir, 0, size);
+
+    /* Generate the source path */
+    if (srcdir && ((strlen(srcdir)) + 1) < size) {
+        strcpy(tempdir, srcdir);
+        strcat(tempdir, "/");
+        strcat(tempdir, "\0");
+    }
+
+    /* No srcdir option */
+    if (srcdir == NULL)
+        strcpy(tempdir, "./");
+
+    /* Verify that source path is not NULL */
+    if (tempdir == NULL || tempdir[0] == '\0')
+        return FAIL;
+
+    strcpy(src_path, tempdir);
+    free(tempdir);
+    return SUCCEED;
+}
 
 /********************************************************************
    Name: make_datafilename() - Generates the correct name for the test file.
@@ -32,38 +72,23 @@ make_datafilename(const char *basename, char *testfile, unsigned int size)
     char *srcdir   = getenv("srcdir");
     char *tempfile = NULL;
 
-    tempfile = (char *)HDmalloc(sizeof(char *) * (size + 1));
+    /* Leave room for the file name and null char */
+    unsigned int max_dir_len = size - strlen(basename) - 1;
+
+    tempfile = (char *)malloc(size * sizeof(char));
     CHECK_ALLOC(tempfile, "tempfile", "make_datafilename");
-    HDmemset(tempfile, '\0', size + 1);
 
-    /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < size)) {
-        strcpy(tempfile, srcdir);
-        strcat(tempfile, "/");
+    if (make_sourcepath(tempfile, max_dir_len) == FAIL) {
+        free(tempfile);
+        return FAIL;
     }
-
-    /* Windows doesn't set srcdir, and generates files in a different relative
-       path, so we need to special case here.  It is best to look for the
-       testfile in the same path, and the Windows test script will make sure
-       to put it there first.  - SJW 2007/09/19 (from tnetcdf.c) */
-#if !defined _WIN32
-    /* This is to get to the file when the library was built without srcdir
-       option and the test is ran by ./hdftest in the test src directory
-       instead of by make check.  - BMR 2007/08/09 */
-    if (srcdir == NULL)
-        strcpy(tempfile, "./");
-#endif /* _WIN32 */
 
     /* Name of data file */
     strcat(tempfile, basename);
 
-    /* Verify that file name is not NULL */
-    if (tempfile == NULL || tempfile[0] == '\0')
-        return FAIL;
-
     /* File name is generated, return it */
-    HDstrcpy(testfile, tempfile);
-    HDfree(tempfile);
+    strcpy(testfile, tempfile);
+    free(tempfile);
     return SUCCEED;
 }
 
@@ -79,7 +104,7 @@ make_datafilename(const char *basename, char *testfile, unsigned int size)
 *********************************************************************/
 int32
 make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, int32 unlim_dim,
-         VOIDP written_data)
+         void *written_data)
 {
     int32  sds_id;
     int32 *start, *edges;
@@ -87,9 +112,9 @@ make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, 
     intn   status, ii;
     intn   num_errs = 0; /* number of errors in compression test so far */
 
-    start = (int32 *)HDmalloc(sizeof(int32) * rank);
+    start = (int32 *)malloc(sizeof(int32) * rank);
     CHECK_ALLOC(start, "start", "make_SDS");
-    edges = (int32 *)HDmalloc(sizeof(int32) * rank);
+    edges = (int32 *)malloc(sizeof(int32) * rank);
     CHECK_ALLOC(edges, "edges", "make_SDS");
 
     /* Create the array with the name defined in SDS_NAME */
@@ -123,8 +148,8 @@ make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, 
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    HDfree(edges);
-    HDfree(start);
+    free(edges);
+    free(start);
 
     return (sds_size);
 
@@ -141,7 +166,7 @@ make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, 
 
 *********************************************************************/
 int32
-make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, VOIDP written_data)
+make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, void *written_data)
 {
     int32        sds_id;
     int32       *start, *edges;
@@ -151,9 +176,9 @@ make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_siz
     intn         status   = 0, ii;
     intn         num_errs = 0; /* number of errors in compression test so far */
 
-    start = (int32 *)HDmalloc(sizeof(int32) * rank);
+    start = (int32 *)malloc(sizeof(int32) * rank);
     CHECK_ALLOC(start, "start", "make_CompSDS");
-    edges = (int32 *)HDmalloc(sizeof(int32) * rank);
+    edges = (int32 *)malloc(sizeof(int32) * rank);
     CHECK_ALLOC(edges, "edges", "make_CompSDS");
 
     /* Define dimensions of the array to be created */
@@ -194,8 +219,8 @@ make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_siz
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    HDfree(edges);
-    HDfree(start);
+    free(edges);
+    free(start);
 
     return (sds_size);
 } /* make_CompSDS */
@@ -213,7 +238,7 @@ make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_siz
 
 *********************************************************************/
 int32
-make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, VOIDP written_data,
+make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, void *written_data,
                int32 offset, char *ext_file_name)
 {
     int32  sds_id;
@@ -222,9 +247,9 @@ make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_s
     intn   status   = 0, ii;
     intn   num_errs = 0; /* number of errors in compression test so far */
 
-    start = (int32 *)HDmalloc(sizeof(int32) * rank);
+    start = (int32 *)malloc(sizeof(int32) * rank);
     CHECK_ALLOC(start, "start", "make_Ext3D_SDS");
-    edges = (int32 *)HDmalloc(sizeof(int32) * rank);
+    edges = (int32 *)malloc(sizeof(int32) * rank);
     CHECK_ALLOC(edges, "edges", "make_Ext3D_SDS");
 
     /* Set the parameters start and edges to write */
@@ -255,8 +280,8 @@ make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_s
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    HDfree(edges);
-    HDfree(start);
+    free(edges);
+    free(start);
 
     return sds_size;
 } /* make_Ext3D_SDS */
@@ -270,7 +295,7 @@ make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_s
 
 *********************************************************************/
 int32
-get_SDSbyName(int32 sd_id, char *sds_name)
+get_SDSbyName(int32 sd_id, const char *sds_name)
 {
     int32 sds_id, sds_index;
     intn  num_errs = 0; /* number of errors in compression test so far */
@@ -319,7 +344,7 @@ append_Data2SDS(int32 sd_id, char *sds_name, int32 *start, int32 *edges, void *a
     CHECK(status, FAIL, "SDgetdatasize");
 
     /* Append data to it */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)ap_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)ap_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Calculate data set's size to verify later */
@@ -358,5 +383,3 @@ verify_datasize(int32 sds_id, int32 data_size, char *sds_name)
     VERIFY(data_size, uncomp_size, msg);
 
 } /* verify_datasize */
-
-#endif /* HDF */

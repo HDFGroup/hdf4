@@ -103,12 +103,12 @@ public class TestH4 {
     }
 
     /**
-     * Test method for {@link hdf.hdflib.HDFLibrary#Hgetlibversion(int[], Strin[])}.
+     * Test method for {@link hdf.hdflib.HDFLibrary#Hgetlibversion(int[], String[])}.
      */
     @Test
     public void testHgetlibversion()
     {
-        int LIB_VERSION[] = {4, 2, 15};
+        int LIB_VERSION[] = {4, 3, 0};
         int libversion[]  = {0, 0, 0};
         String version[]  = {""};
 
@@ -125,7 +125,7 @@ public class TestH4 {
         for (int i = 0; i < 3; i++)
             assertEquals(LIB_VERSION[i], libversion[i]);
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 2; i++)
             assertFalse(libversion[i] == 0);
     }
 

@@ -1,0 +1,73 @@
+name: hdf4 dev cmake CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+# A workflow run is made up of one or more jobs that can run sequentially or
+# in parallel. We just have one job, but the matrix items defined below will
+# run in parallel.
+jobs:
+    call-workflow-nonetcdf-cmake:
+        name: "CMake Release NetCDF Off Workflows"
+        uses: ./.github/workflows/main-cmake.yml
+        with:
+            netcdf: "false"
+            shared: "true"
+            build_mode: "Release"
+
+    call-release-netcdf-cmake-mingw:
+        name: "CMake Release NetCDF MinGW Workflows"
+        uses: ./.github/workflows/main-cmake-mingw.yml
+        with:
+            netcdf: "true"
+            shared: "true"
+            build_mode: "Release"
+
+    call-debug-netcdf-cmake:
+        name: "CMake Debug NetCDF Workflows"
+        uses: ./.github/workflows/main-cmake.yml
+        with:
+            netcdf: "true"
+            shared: "true"
+            build_mode: "Debug"
+
+    call-release-netcdf-cmake:
+        name: "CMake Release NetCDF Workflows"
+        uses: ./.github/workflows/main-cmake.yml
+        with:
+            netcdf: "true"
+            shared: "true"
+            build_mode: "Release"
+
+    call-release-bintest:
+        name: "CMake Test Release Binaries"
+        needs: call-release-netcdf-cmake
+        uses: ./.github/workflows/cmake-bintest.yml
+        with:
+            build_mode: "Release"
+
+    call-debug-static-cmake:
+        name: "CMake Debug Static Workflows"
+        uses: ./.github/workflows/main-cmake.yml
+        with:
+            netcdf: "false"
+            shared: "false"
+            build_mode: "Debug"
+
+    call-release-static-cmake:
+        name: "CMake Release Static Workflows"
+        uses: ./.github/workflows/main-cmake.yml
+        with:
+            netcdf: "false"
+            shared: "false"
+            build_mode: "Release"
+
+    call-release-cmake-intel:
+        name: "CMake Intel Workflows"
+        uses: ./.github/workflows/intel-cmake.yml
+        with:
+            build_mode: "Release"

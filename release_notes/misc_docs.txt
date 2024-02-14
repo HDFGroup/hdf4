@@ -1357,11 +1357,11 @@ Macintosh version of the HDF library to:
  ==================================================================== 
 
  These routines are for accessing file labels, file descriptions, data
-labels and data descriptions(i.e. all are annotations). General access
+labels and data descriptions (i.e. all are annotations). General access
 requires the routines Hopen() and ANstart() to be called first and the 
 last call to be ANend() and Hclose() which ends annotation handling on the file
-and closes the file. Basic annotation manipulation involes dealing
-with  handles(ann_id's) foreach annotation and annotation interface 
+and closes the file. Basic annotation manipulation involves dealing
+with handles(ann_id's) for each annotation and annotation interface 
 handle(an_id). 
 
 
@@ -1435,11 +1435,11 @@ NOTE: You could also call ANcreatef() like this
  ANselect    - returns an annotation id(ann_id) from index for 
                a particular annotation TYPE. This id is then used for
                calls like ANwriteann(), ANreadann(), ANannlen(),..etc
- ANnumann:   - return number of annotations that match TYPE/tag/ref
- ANannlist:  - return list of id's(ann_id's) that match TYPE/tag/ref
- ANannlen:   - get length of annotation given id(ann_id)
- ANreadann:  - read annotation given id(ann_id)
- ANwriteann: - write annotation given id(ann_id)
+ ANnumann    - return number of annotations that match TYPE/tag/ref
+ ANannlist   - return list of id's(ann_id's) that match TYPE/tag/ref
+ ANannlen    - get length of annotation given id(ann_id)
+ ANreadann   - read annotation given id(ann_id)
+ ANwriteann  - write annotation given id(ann_id)
  ANendaccess - end access to annotation using id(ann_id)
 
 
@@ -1499,12 +1499,12 @@ Fortran: afend(an_id)
 
 /* ------------------------------ ANcreate ---------------------------- 
  NAME
-	ANcreate - create a new data annotation and return an id
+	ANcreate - create a new data annotation for the specified item
  USAGE
 	int32 ANcreate(an_id, tag, ref, type )
         int32 an_id;    IN: annotation interface ID
-        uint16 tag;     IN: tag of item to be assigned annotation
-        uint16 ref;     IN: reference number of itme to be assigned ann
+        uint16 tag;     IN: tag of the item
+        uint16 ref;     IN: reference number of the item
         ann_type  type: IN: AN_DATA_LABEL for data labels, 
                             AN_DATA_DESC for data descriptions,
  RETURNS
@@ -1603,7 +1603,7 @@ Fortran: afannlist(an_id,type, tag, ref, alist[])
 
 /*--------------------------------------------------------------------------
  NAME
-       ANannlen -- get length of annotation givne annotation id
+       ANannlen -- get length of annotation given annotation id
  USAGE
        int32 ANannlen(ann_id)
        int32 ann_id;   IN: annotation id
@@ -2641,86 +2641,6 @@ VSdelete             vsfdlte                  deletes a vdata
 Vdelete              vdelete                  deletes a vgroup
 
 
-
-============================================================================
-================================page_buf.txt================================
-
-****************************** Beta Version *********************************
-File Caching(Beta release)
-=================================
-    This version of the distribution has preliminary support for file caching.
-
-*NOTE*: This version is NOT officially supported on all platforms
-        and has not been extensively tested. As such it is provided as is.
-        It will be supported officially in a later release.
-
-    The file caching allows the file to be mapped to user memory on 
-    a per page basis i.e a memory pool of the file. With regards to the 
-    file system, page sizes can be allocated based on the file system page-size 
-    or if the user wants in some multiple of the file system page-size. This 
-    allows for fewer pages to be managed along with accommodating the users file
-    usage pattern.
-
-    The current version supports setting the page-size and number of pages
-    in the memory pool through user C-routines(Fortran will be added in the
-    next release). The default is 8192 bytes for page-size and 1 for number 
-    of pages in the pool.
-
-    Two user C-routines are provided: one to set the values for page-size and
-    number of pages to cache, and the other to inquire the current values being 
-    used for the pagesize and number of pages cached.
-
-    Routines:(The names may change in the future...)
-    -------------------------------------------------
-    Hmpset(int pagesize, int maxcache, int flags)
-    --------------------------------------------
-    o  Set the pagesize and maximum number of pages to cache on the next
-       open/create of a file. A pagesize that is a power of 2 is recommended.
-       'pagesize' must be greater than MIN_PAGESIZE(512) bytes and 
-       'maxcache' must be greater than or equal to 1. Valid values
-       for both arguments are required when using this call.
-
-       The values set here only affect the next open/creation of a file and
-       do not change a particular file's paging behaviour after it has been
-       opened or created. This maybe changed in a later release.
-
-       Use flags argument of 'MP_PAGEALL' if the whole file is to be cached
-       in memory otherwise pass in zero. In this case the value for 'maxcache'
-       is ignored. You must pass in a valid value for 'pagesize' when
-       using the flag 'MP_PAGEALL'. 
- 
-    Hmpget(int *pagesize, int *maxcache, int flags)
-    ----------------------------------------------
-    o   This gets the last pagesize and maximum number of pages cached for
-        the last open/create of a file. The 'flags' variable is not used.
-    
-    In this version a new file memory pool is created for every file that is
-    created/opened and can not be shared. Future versions will allow sharing 
-    of the file memory pool with other threads/processes.
-
-    To enable the creation of a library using page caching the following 
-    section in the makefile fragment($(toplevel)/config/mh-<os>) must be 
-    uncommented and set.
-
-    # ------------ Macros for Shared Memory File Buffer Pool(fmpool) ------
-    # Uncomment the following lines to enable shared memory file buffer pool
-    # version of the HDF core library libdf.a. Please read the
-    # documentation before enabling this feature.
-    #FMPOOL_FLAGS  = -DHAVE_FMPOOL
-
-    After setting these values you must re-run  the toplevel 'configure' script.
-    Make sure that your start from a clean re-build(i.e. 'make clean') after
-    re-running the toplevel 'configure' script and then run 'make'.
-    Details on running configure can be found in the section
-    'General Configuration/Installation - Unix' in the installation file 
-    '$(toplevel)/INSTALL'.
-
-    The file caching version of libdf.a is automatically tested
-    when the regular HDF and netCDF tests are run. The page caching
-    version has been tested only on a few UNIX platforms and is NOT
-    available for the Macintosh ,IBM-PC(Windows NT/95) or VMS.
-
-****************************** Beta Version *********************************
 ============================================================================
 ================================sd_chunk_examples.txt=======================
 

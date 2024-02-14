@@ -13,72 +13,17 @@
 
 /*------------------------------------------------------------------------------
  * File:    mfan.h
- * Author:  GeorgeV
  * Purpose: header file for the Multi-file Annotation Interface
- * Invokes:
- * Contents:
- *          Structure definitions: ANnode, ANentry
- *          Constant definitions:  AN_DATA_LABEL, AN_DATA_DESC
- *          (-moved to hdf.h)      AN_FILE_LABEL, AN_FILE_DESC
- *
  *----------------------------------------------------------------------------*/
 
 #ifndef H4_MFAN_H
 #define H4_MFAN_H
 
-#include "H4api_adpt.h"
+#include "hdfi.h"
 
-#include "hdf.h"
-
-#if defined MFAN_MASTER | defined MFAN_TESTER
-/* WE ARE IN MAIN ANNOTATION SOURCE FILE "mfan.c" */
-
-/* PRIVATE variables and definitions */
-
-/* This structure is used to find which file the annotation belongs to
- * and use the subsequent file specific annotation 'key' to find the
- * annotation. The annotation atom group(ANIDGROUP) keeps track of
- * all annotations across the file. */
-typedef struct ANnode {
-    int32 file_id; /* which file this annotation belongs to */
-    int32 ann_key; /* type/ref: used to find annotation in corresponding
-                      TBBT in filerec_t->tree[]. */
-    intn new_ann;  /* flag */
-} ANnode;
-
-/*
- * This structure is an entry in the label/desc tree
- * for a label/desc in the file, it gives the ref of the label/desc,
- * and the tag/ref of the data item to which the label/desc relates
- * The filerec_t->an_tree[] TBBT members will contain these entries.
- **/
-typedef struct ANentry {
-    int32  ann_id; /* annotation id */
-    uint16 annref; /* ref of annotation */
-    uint16 elmtag; /* tag of data */
-    uint16 elmref; /* ref of data */
-} ANentry;
-
-/* This is the size of the hash tables used for annotation IDs */
-#define ANATOM_HASH_SIZE 64
-
-/* Used to create unique 32bit keys from annotation type and reference number
- *  This key is used to add nodes to a corresponding TBBT in
- *  filrerec_t->an_tree[].
- *  ----------------------------
- *  | type(16bits) | ref(16bits) |
- *  -----------------------------*/
-#define AN_CREATE_KEY(t, r) ((((int32)t & 0xffff) << 16) | r)
-
-/* Obtain Reference number from key */
-#define AN_KEY2REF(k) ((uint16)((int32)k & 0xffff))
-
-/* Obtain Annotation type from key */
-#define AN_KEY2TYPE(k) ((int32)((int32)k >> 16))
-
-#else /* !defined MFAN_MASTER && !defined MFAN_TESTER */
-/* WE are NOT in main ANNOTATION source file
- * Nothing EXPORTED except Public fcns */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /******************************************************************************
  NAME
@@ -125,7 +70,7 @@ HDFLIBAPI int32 ANend(int32 an_id /* IN: Annotation ID of file to close */);
 
 /******************************************************************************
  NAME
-   ANcreate - create a new element annotation and return a handle(id)
+   ANcreate - create a new annotation for the specified item
 
  DESCRIPTION
    Creates a data annotation, returns an 'an_id' to work with the new
@@ -137,8 +82,8 @@ HDFLIBAPI int32 ANend(int32 an_id /* IN: Annotation ID of file to close */);
         An ID to an annotation which can either be a label or description.
 *******************************************************************************/
 HDFLIBAPI int32 ANcreate(int32    an_id,    /* IN: annotation interface ID */
-                         uint16   elem_tag, /* IN: tag of item to be assigned annotation */
-                         uint16   elem_ref, /* IN: reference number of itme to be assigned ann*/
+                         uint16   elem_tag, /* IN: tag of the item */
+                         uint16   elem_ref, /* IN: ref of the item */
                          ann_type type /* IN: annotation type */);
 
 /******************************************************************************
@@ -169,7 +114,7 @@ HDFLIBAPI int32 ANcreatef(int32    an_id, /* IN: annotation interface ID */
     An ID to an annotation type which can either be a label or description
 *******************************************************************************/
 HDFLIBAPI int32 ANselect(int32    an_id, /* IN: annotation interface ID */
-                         int32    index, /* IN: index of annottion to get ID for */
+                         int32    index, /* IN: index of annotation to get ID for */
                          ann_type type /* IN: annotation type */);
 
 /******************************************************************************
@@ -211,7 +156,7 @@ HDFLIBAPI intn ANannlist(int32    an_id,    /* IN: annotation interface id */
 
 /******************************************************************************
  NAME
-   ANannlen - get length of annotation givne annotation id
+   ANannlen - get length of annotation given annotation id
 
  DESCRIPTION
    Uses the annotation id to find ann_key & file_id
@@ -275,7 +220,7 @@ HDFLIBAPI intn ANendaccess(int32 ann_id /* IN: annotation id */);
    annotation. The position index is zero based
 
  RETURNS
-   A tag/ref pairt to an annotation type which can either be a
+   A tag/ref pair to an annotation type which can either be a
    label or description.
 
 *******************************************************************************/
@@ -322,7 +267,7 @@ HDFLIBAPI int32 ANtagref2id(int32  an_id,   /* IN  Annotation interface id */
    Translate annotation type to corresponding TAG.
 
  RETURNS
-   Returns TAG corresponding to annotatin type.
+   Returns TAG corresponding to annotation type.
 *******************************************************************************/
 HDFLIBAPI uint16 ANatype2tag(ann_type atype /* IN: Annotation type */);
 
@@ -334,10 +279,12 @@ HDFLIBAPI uint16 ANatype2tag(ann_type atype /* IN: Annotation type */);
    Translate annotation TAG to corresponding atype
 
  RETURNS
-   Returns type corresponding to annotatin TAG.
+   Returns type corresponding to annotation TAG.
 *******************************************************************************/
 HDFLIBAPI ann_type ANtag2atype(uint16 atag /* IN: annotation tag */);
 
-#endif /* !defined MFAN_MASTER && !MFAN_TESTER */
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* H4_MFAN_H */

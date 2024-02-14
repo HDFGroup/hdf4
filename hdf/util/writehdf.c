@@ -11,7 +11,7 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <hdf.h>
+#include "hdf.h"
 #include "gif.h"
 #include <string.h>
 #include <stdlib.h>
@@ -88,7 +88,7 @@ char    *GIFFileName;
     /* Put the global palette in as an attribute to the vgroup */
     if (gifHead.PackedField & 0x80) {
         status = Vsetattr(vgroup_id, "Global Palette", DFNT_UINT8, 3 * gifHead.TableSize,
-                          (VOIDP)gifHead.HDFPalette);
+                          (void *)gifHead.HDFPalette);
         if (status) {
             printf("Could not add global palette.\n");
             printf("%s\n", HEstring(HEvalue(1)));
@@ -98,32 +98,27 @@ char    *GIFFileName;
         sprintf(CommentName, "Comment Extension Data %d", (int)i);
         status = Vsetattr(vgroup_id, CommentName, DFNT_CHAR8,
                           (int32)(GifMemoryStruct.GifCommentExtension[i])->DataSize,
-                          (VOIDP)(GifMemoryStruct.GifCommentExtension[i])->CommentData);
-        HDfree(GifMemoryStruct.GifCommentExtension[i]);
-        GifMemoryStruct.GifCommentExtension[i] = NULL;
+                          (void *)(GifMemoryStruct.GifCommentExtension[i])->CommentData);
     }
-    gifHead.CommentCount = 0;
-    HDfree(GifMemoryStruct.GifCommentExtension);
-    GifMemoryStruct.GifCommentExtension = NULL;
 
     for (i = 0; i < ApplicationCount; i++) {
         sprintf(ApplicationName, "Application Extension Data %d", (int)i);
         status = Vsetattr(vgroup_id, ApplicationName, DFNT_CHAR8,
                           (int32)(GifMemoryStruct.GifApplicationExtension[i])->DataSize,
-                          (VOIDP)(GifMemoryStruct.GifApplicationExtension[i])->ApplicationData);
+                          (void *)(GifMemoryStruct.GifApplicationExtension[i])->ApplicationData);
         sprintf(ApplicationName, "Application Extension Dump %d", (int)i);
         status = Vsetattr(vgroup_id, ApplicationName, DFNT_CHAR8, (int32)11,
-                          (VOIDP)(GifMemoryStruct.GifApplicationExtension[i])->AEDump);
+                          (void *)(GifMemoryStruct.GifApplicationExtension[i])->AEDump);
     }
 
     for (i = 0; i < PlainTextCount; i++) {
         sprintf(PlainTextName, "PlainText Extension Data %d", (int)i);
         status = Vsetattr(vgroup_id, PlainTextName, DFNT_CHAR8,
                           (int32)(GifMemoryStruct.GifPlainTextExtension[i])->DataSize,
-                          (VOIDP)(GifMemoryStruct.GifPlainTextExtension[i])->PlainTextData);
+                          (void *)(GifMemoryStruct.GifPlainTextExtension[i])->PlainTextData);
         sprintf(PlainTextName, "PlainText Extension Dump %d", (int)i);
         status = Vsetattr(vgroup_id, PlainTextName, DFNT_CHAR8, (int32)15,
-                          (VOIDP)(GifMemoryStruct.GifPlainTextExtension[i])->PTEDump);
+                          (void *)(GifMemoryStruct.GifPlainTextExtension[i])->PTEDump);
     }
 
     gr_id = GRstart(file_id);
@@ -151,7 +146,7 @@ char    *GIFFileName;
         }
 
         /* Write the GR Image */
-        if ((status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)gifImageDesc.Image)) == -1) {
+        if ((status = GRwriteimage(ri_id, start, NULL, edges, (void *)gifImageDesc.Image)) == -1) {
             printf("Error occurred while trying to write GR image\n");
             printf("%s\n", HEstring(HEvalue(1)));
             exit(-1);
@@ -161,7 +156,7 @@ char    *GIFFileName;
         pal_id = GRgetlutid(ri_id, 0);
 
         if ((status = GRwritelut(pal_id, 3, DFNT_UINT8, interlace_mode, 256,
-                                 (VOIDP)gifImageDesc.HDFPalette)) == -1) {
+                                 (void *)gifImageDesc.HDFPalette)) == -1) {
             printf("Could not write palette\n");
             printf("%s\n", HEstring(HEvalue(1)));
             exit(-1);

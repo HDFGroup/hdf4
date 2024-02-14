@@ -1,14 +1,18 @@
-/****************************************************************************
- * NCSA HDF                                                                 *
- * Software Development Group                                               *
- * National Center for Supercomputing Applications                          *
- * University of Illinois at Urbana-Champaign                               *
- * 605 E. Springfield, Champaign IL 61820                                   *
- *                                                                          *
- * For conditions of distribution and use, see the accompanying             *
- * hdf/COPYING file.                                                        *
- *                                                                          *
- ****************************************************************************/
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Copyright by The HDF Group.                                               *
+ * Copyright by the Board of Trustees of the University of Illinois.         *
+ * All rights reserved.                                                      *
+ *                                                                           *
+ * This file is part of HDF.  The full HDF copyright notice, including       *
+ * terms governing use, modification, and redistribution, is contained in    *
+ * the COPYING file, which can be found at the root of the source code       *
+ * distribution tree, or in https://support.hdfgroup.org/ftp/HDF/releases/.  *
+ * If you do not have access to either file, you may request a copy from     *
+ * help@hdfgroup.org.                                                        *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#include <stdlib.h>
+#include <string.h>
 
 #include "hdf.h"
 #include "mfhdf.h"
@@ -53,7 +57,7 @@ sds_get_compck(char *fname, char *sds_name)
 {
     HDF_CHUNK_DEF chunk_def;                                           /* chunk definition read */
     comp_coder_t  comp_type;                                           /* to retrieve compression type into */
-    comp_info     comp_info;                                           /* compression structure */
+    comp_info     cinfo;                                               /* compression structure */
     int32         chunk_flags;                                         /* chunking flag */
     int32         sd_id, sds_id, sds_index, dimsizes[H4_MAX_VAR_DIMS], /* dimensional size of SDS */
         nattrs,                                                        /* number of SDS attributes */
@@ -107,8 +111,8 @@ sds_get_compck(char *fname, char *sds_name)
      */
 
     comp_type = COMP_CODE_NONE; /* reset variables before retrieving info */
-    HDmemset(&comp_info, 0, sizeof(comp_info));
-    SDgetcompinfo(sds_id, &comp_type, &comp_info);
+    memset(&cinfo, 0, sizeof(comp_info));
+    SDgetcompinfo(sds_id, &comp_type, &cinfo);
 
     printf("compression type:  %s \n", get_scomp(comp_type));
     if (COMP_CODE_NONE != comp_type) {
@@ -118,16 +122,16 @@ sds_get_compck(char *fname, char *sds_name)
             case COMP_CODE_RLE:
                 break;
             case COMP_CODE_SKPHUFF:
-                printf("skipping factor:  %d \n", comp_info.skphuff.skp_size);
+                printf("skipping factor:  %d \n", cinfo.skphuff.skp_size);
                 break;
             case COMP_CODE_DEFLATE:
-                printf("level:  %d \n", comp_info.deflate.level);
+                printf("level:  %d \n", cinfo.deflate.level);
                 break;
             case COMP_CODE_JPEG:
-                printf("quality factor:  %d \n", comp_info.jpeg.quality);
+                printf("quality factor:  %d \n", cinfo.jpeg.quality);
                 break;
             case COMP_CODE_SZIP:
-                printf("pixels per block:  %d \n", comp_info.szip.pixels_per_block);
+                printf("pixels per block:  %d \n", cinfo.szip.pixels_per_block);
                 break;
         };
     }
@@ -247,13 +251,13 @@ get_scomp(comp_coder_t code)
 static const char *
 get_schunk(int32 flags)
 {
-    if (flags == (HDF_CHUNK | HDF_COMP))
-        return "HDF_CHUNK | HDF_COMP";
-    else if (flags == (HDF_CHUNK))
+    if ((flags & HDF_CHUNK) && (flags & HDF_COMP))
+        return "HDF_CHUNK & HDF_COMP";
+    else if (flags == HDF_CHUNK)
         return "HDF_CHUNK";
-    else if (flags == (HDF_COMP))
+    else if (flags == HDF_COMP)
         return "HDF_COMP";
-    else if (flags == (HDF_NONE))
+    else if (flags == HDF_NONE)
         return "HDF_NONE";
     else
         return "Invalid chunk flags";

@@ -11,9 +11,10 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <string.h>
+#include <ctype.h>
 #include <stdio.h>
-#include <ctype.h> /*isdigit*/
+#include <stdlib.h>
+#include <string.h>
 
 #include "hrepack.h"
 #include "hrepack_parse.h"
@@ -71,7 +72,7 @@ parse_comp(const char *str, int *n_objs, comp_info_t *comp)
      */
 
     n++;
-    obj_list = HDmalloc(n * sizeof(obj_list_t));
+    obj_list = malloc(n * sizeof(obj_list_t));
     *n_objs  = n;
 
     /* get object list */
@@ -83,8 +84,8 @@ parse_comp(const char *str, int *n_objs, comp_info_t *comp)
                 obj[k] = '\0';
             else
                 obj[k + 1] = '\0';
-            HDstrcpy(obj_list[n].obj, obj);
-            HDmemset(obj, 0, sizeof(obj));
+            strcpy(obj_list[n].obj, obj);
+            memset(obj, 0, sizeof(obj));
             n++;
             k = -1;
         }
@@ -115,7 +116,7 @@ parse_comp(const char *str, int *n_objs, comp_info_t *comp)
                  SZIP=8,NN
                  */
 
-                if (HDstrcmp(scomp, "SZIP") == 0) {
+                if (strcmp(scomp, "SZIP") == 0) {
                     l = -1; /* mask index check */
                     for (m = 0, u = i + 1; u < len; u++, m++) {
                         if (str[u] == ',') {
@@ -137,9 +138,9 @@ parse_comp(const char *str, int *n_objs, comp_info_t *comp)
                                 smask[l] = '\0';
                                 i        = len - 1; /* end */
                                 (*n_objs)--;        /* we counted an extra ',' */
-                                if (HDstrcmp(smask, "NN") == 0)
+                                if (strcmp(smask, "NN") == 0)
                                     comp->szip_mode = NN_MODE;
-                                else if (HDstrcmp(smask, "EC") == 0)
+                                else if (strcmp(smask, "EC") == 0)
                                     comp->szip_mode = EC_MODE;
                                 else {
                                     printf("Input Error: szip mask must be 'NN' or 'EC' \n");
@@ -177,37 +178,37 @@ parse_comp(const char *str, int *n_objs, comp_info_t *comp)
                 no_param     = 1;
             }
 
-            if (HDstrcmp(scomp, "NONE") == 0)
+            if (strcmp(scomp, "NONE") == 0)
                 comp->type = COMP_CODE_NONE;
-            else if (HDstrcmp(scomp, "RLE") == 0) {
+            else if (strcmp(scomp, "RLE") == 0) {
                 comp->type = COMP_CODE_RLE;
                 if (m > 0) { /*RLE does not have parameter */
                     printf("Input Error: Extra compression parameter in RLE <%s>\n", str);
                     goto out;
                 }
             }
-            else if (HDstrcmp(scomp, "HUFF") == 0) {
+            else if (strcmp(scomp, "HUFF") == 0) {
                 comp->type = COMP_CODE_SKPHUFF;
                 if (no_param) { /*no more parameters, HUFF must have parameter */
                     printf("Input Error: Missing compression parameter in <%s>\n", str);
                     goto out;
                 }
             }
-            else if (HDstrcmp(scomp, "GZIP") == 0) {
+            else if (strcmp(scomp, "GZIP") == 0) {
                 comp->type = COMP_CODE_DEFLATE;
                 if (no_param) { /*no more parameters, GZIP must have parameter */
                     printf("Input Error: Missing compression parameter in <%s>\n", str);
                     goto out;
                 }
             }
-            else if (HDstrcmp(scomp, "JPEG") == 0) {
+            else if (strcmp(scomp, "JPEG") == 0) {
                 comp->type = COMP_CODE_JPEG;
                 if (no_param) { /*no more parameters, JPEG must have parameter */
                     printf("Input Error: Missing compression parameter in <%s>\n", str);
                     goto out;
                 }
             }
-            else if (HDstrcmp(scomp, "SZIP") == 0) {
+            else if (strcmp(scomp, "SZIP") == 0) {
 #ifdef H4_HAVE_LIBSZ
                 if (SZ_encoder_enabled()) {
                     comp->type = COMP_CODE_SZIP;
@@ -283,8 +284,7 @@ parse_comp(const char *str, int *n_objs, comp_info_t *comp)
 
 out:
 
-    if (obj_list)
-        HDfree(obj_list);
+    free(obj_list);
 
     return NULL;
 }
@@ -336,7 +336,7 @@ parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank)
      */
 
     n++;
-    obj_list = HDmalloc(n * sizeof(obj_list_t));
+    obj_list = malloc(n * sizeof(obj_list_t));
     *n_objs  = n;
 
     /* get object list */
@@ -348,8 +348,8 @@ parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank)
                 obj[k] = '\0';
             else
                 obj[k + 1] = '\0';
-            HDstrcpy(obj_list[n].obj, obj);
-            HDmemset(obj, 0, sizeof(obj));
+            strcpy(obj_list[n].obj, obj);
+            memset(obj, 0, sizeof(obj));
             n++;
             k = -1;
         }
@@ -387,7 +387,7 @@ parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank)
             else if (i == len - 1) { /*no more parameters */
                 sdim[k] = '\0';
                 k       = 0;
-                if (HDstrcmp(sdim, "NONE") == 0) {
+                if (strcmp(sdim, "NONE") == 0) {
                     *chunk_rank = -2;
                 }
                 else {
@@ -406,8 +406,7 @@ parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank)
 
 out:
 
-    if (obj_list)
-        HDfree(obj_list);
+    free(obj_list);
 
     return NULL;
 }

@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.12)
-project (HDF4_MFHDF_DUMPER)
+project (HDF4_MFHDF_DUMPER C)
 
 set (hdp_SRCS
     ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/hdp.c
@@ -16,7 +16,7 @@ set (hdp_SRCS
 
 if (NOT ONLY_SHARED_LIBS)
   add_executable (hdp ${hdp_SRCS})
-  target_include_directories(hdp PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>")
+  target_include_directories(hdp PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_COMP_INCLUDE_DIRECTORIES};${HDF4_BINARY_DIR}")
   TARGET_C_PROPERTIES (hdp STATIC)
   target_link_libraries (hdp PRIVATE ${HDF4_MF_LIB_TARGET})
   set_target_properties (hdp PROPERTIES COMPILE_DEFINITIONS "HDF")
@@ -26,7 +26,7 @@ endif ()
 
 if (BUILD_SHARED_LIBS)
   add_executable (hdp-shared ${hdp_SRCS})
-  target_include_directories(hdp-shared PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>")
+  target_include_directories(hdp-shared PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_COMP_INCLUDE_DIRECTORIES};${HDF4_BINARY_DIR}")
   TARGET_C_PROPERTIES (hdp-shared SHARED)
   target_link_libraries (hdp-shared PRIVATE ${HDF4_MF_LIBSH_TARGET})
   set_target_properties (hdp-shared PROPERTIES COMPILE_DEFINITIONS "HDF")

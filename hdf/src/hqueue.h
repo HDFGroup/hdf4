@@ -35,9 +35,6 @@
  * This is a modffied version of the original Berkeley code for
  * manipulating a memory pool. This version however is not
  * compatible with the original Berkeley version.
- *
- * Author: George V.- 9/3/96
- *
  *****************************************************************************/
 
 #ifndef H4_HQUEUE_H

@@ -15,45 +15,16 @@
  * File:    cnbit.h
  * Purpose: Header file for N-bit encoding information.
  * Dependencies: should only be included from hcompi.h
- * Invokes: none
- * Contents: Structures & definitions for N-bit encoding.
- * Structure definitions:
- * Constant definitions:
  *---------------------------------------------------------------------------*/
 
 #ifndef H4_CNBIT_H
 #define H4_CNBIT_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/*
- ** from cnbit.c
- */
-
-HDFLIBAPI int32 HCPcnbit_stread(accrec_t *rec);
-
-HDFLIBAPI int32 HCPcnbit_stwrite(accrec_t *rec);
-
-HDFLIBAPI int32 HCPcnbit_seek(accrec_t *access_rec, int32 offset, int origin);
-
-HDFLIBAPI int32 HCPcnbit_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
-                                 int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
-                                 int16 *pspecial);
-
-HDFLIBAPI int32 HCPcnbit_read(accrec_t *access_rec, int32 length, void *data);
-
-HDFLIBAPI int32 HCPcnbit_write(accrec_t *access_rec, int32 length, const void *data);
-
-HDFLIBAPI intn HCPcnbit_endaccess(accrec_t *access_rec);
-
-#ifdef __cplusplus
-}
-#endif
+#include "hdfi.h"
 
 /* size of the N-bit buffer */
 #define NBIT_BUF_SIZE (MAX_NT_SIZE * 64)
+
 /* size of the N-bit mask buffer (same as buffer size for now) */
 #define NBIT_MASK_SIZE (MAX_NT_SIZE)
 
@@ -79,19 +50,34 @@ typedef struct {
     intn             nt_pos;                    /* current byte to read or write */
 } comp_coder_nbit_info_t;
 
-#ifndef CNBIT_MASTER
-extern funclist_t cnbit_funcs; /* functions to perform N-bit encoding */
-#else
-funclist_t cnbit_funcs = {/* functions to perform N-bit encoding */
-                          HCPcnbit_stread,
-                          HCPcnbit_stwrite,
-                          HCPcnbit_seek,
-                          HCPcnbit_inquire,
-                          HCPcnbit_read,
-                          HCPcnbit_write,
-                          HCPcnbit_endaccess,
-                          NULL,
-                          NULL};
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+HDFLIBAPI funclist_t cnbit_funcs; /* functions to perform N-bit encoding */
+
+/*
+ ** from cnbit.c
+ */
+
+HDFLIBAPI int32 HCPcnbit_stread(accrec_t *rec);
+
+HDFLIBAPI int32 HCPcnbit_stwrite(accrec_t *rec);
+
+HDFLIBAPI int32 HCPcnbit_seek(accrec_t *access_rec, int32 offset, int origin);
+
+HDFLIBAPI int32 HCPcnbit_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
+                                 int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
+                                 int16 *pspecial);
+
+HDFLIBAPI int32 HCPcnbit_read(accrec_t *access_rec, int32 length, void *data);
+
+HDFLIBAPI int32 HCPcnbit_write(accrec_t *access_rec, int32 length, const void *data);
+
+HDFLIBAPI intn HCPcnbit_endaccess(accrec_t *access_rec);
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* H4_CNBIT_H */

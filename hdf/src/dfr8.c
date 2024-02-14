@@ -40,29 +40,29 @@
  *          The palette is arranged as RGBRGB...
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "dfrig.h"
 
 /* Private Variables */
-PRIVATE uint8 *paletteBuf = NULL;
-PRIVATE uint16 Refset     = 0;  /* Ref of image to get next */
-PRIVATE uint16 Lastref    = 0;  /* Last ref read/written */
-PRIVATE uint16 Writeref   = 0;  /* ref of next image to put in this file */
-PRIVATE intn   foundRig   = -1; /* -1: don't know if HDF file has RIGs
+static uint8 *paletteBuf = NULL;
+static uint16 Refset     = 0;  /* Ref of image to get next */
+static uint16 Lastref    = 0;  /* Last ref read/written */
+static uint16 Writeref   = 0;  /* ref of next image to put in this file */
+static intn   foundRig   = -1; /* -1: don't know if HDF file has RIGs
                                    0: No RIGs, try for RI8s etc.
                                    1: RIGs used, ignore RI8s etc. */
-PRIVATE intn Newdata    = 0;    /* does Readrig contain fresh data? */
-PRIVATE intn Newpalette = -1;   /* -1 = no palette is associated
+static intn Newdata    = 0;    /* does Readrig contain fresh data? */
+static intn Newpalette = -1;   /* -1 = no palette is associated
                                    0 = palette already written out
                                    1 = new palette, not yet written out */
 
-PRIVATE intn CompressSet = FALSE;        /* Whether the compression parameters have
+static intn CompressSet = FALSE;        /* Whether the compression parameters have
                                             been set for the next image */
-PRIVATE int32 CompType = COMP_NONE;      /* What compression to use for the next
+static int32 CompType = COMP_NONE;      /* What compression to use for the next
                                             image */
-PRIVATE comp_info CompInfo;              /* Params for compression to perform */
-PRIVATE char      Lastfile[DF_MAXFNLEN]; /* last file opened */
-PRIVATE DFRrig    Readrig = {
+static comp_info CompInfo;              /* Params for compression to perform */
+static char      Lastfile[DF_MAXFNLEN]; /* last file opened */
+static DFRrig    Readrig = {
     /* information about RIG being read */
     NULL,
     0,
@@ -80,7 +80,7 @@ PRIVATE DFRrig    Readrig = {
     {0, 0},
     {0, 0, 0, 0, {0, 0}, {0, 0}},
 };
-PRIVATE DFRrig Writerig = {
+static DFRrig Writerig = {
     /* information about RIG being written */
     NULL,
     0,
@@ -98,7 +98,7 @@ PRIVATE DFRrig Writerig = {
     {0, 0},
     {0, 0, 0, 0, {0, 0}, {0, 0}},
 };
-PRIVATE DFRrig Zrig = {
+static DFRrig Zrig = {
     /* empty RIG for initialization */
     NULL,
     0,
@@ -118,21 +118,21 @@ PRIVATE DFRrig Zrig = {
 };
 
 /* Whether we've installed the library termination function yet for this interface */
-PRIVATE intn library_terminate = FALSE;
+static intn library_terminate = FALSE;
 
 /* private functions */
-PRIVATE intn DFR8Iputimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress,
-                           intn append);
+static intn DFR8Iputimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress,
+                          intn append);
 
-PRIVATE int32 DFR8Iopen(const char *filename, intn acc_mode);
+static int32 DFR8Iopen(const char *filename, intn acc_mode);
 
-PRIVATE intn DFR8Iriginfo(int32 file_id);
+static intn DFR8Iriginfo(int32 file_id);
 
-PRIVATE intn DFR8getrig(int32 file_id, uint16 ref, DFRrig *rig);
+static intn DFR8getrig(int32 file_id, uint16 ref, DFRrig *rig);
 
-PRIVATE intn DFR8putrig(int32 file_id, uint16 ref, DFRrig *rig, intn wdim);
+static intn DFR8putrig(int32 file_id, uint16 ref, DFRrig *rig, intn wdim);
 
-PRIVATE intn DFR8Istart(void);
+static intn DFR8Istart(void);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -376,7 +376,7 @@ DFR8setpalette(uint8 *pal)
 
     /* Check if paletteBuf buffer has been allocated */
     if (paletteBuf == NULL) {
-        paletteBuf = (uint8 *)HDmalloc(768 * sizeof(uint8));
+        paletteBuf = (uint8 *)malloc(768 * sizeof(uint8));
         if (paletteBuf == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
     } /* end if */
@@ -389,7 +389,7 @@ DFR8setpalette(uint8 *pal)
         Writerig.desclut.ncomponents = 0;
     }      /* end if */
     else { /* store palette */
-        HDmemcpy(paletteBuf, pal, 768);
+        memcpy(paletteBuf, pal, 768);
         Newpalette = 1;
     } /* end else */
 
@@ -424,7 +424,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 DFR8Iputimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress, intn append)
 {
     intn   acc_mode; /* create if op 0, write if op 1 */
@@ -447,7 +447,7 @@ DFR8Iputimage(const char *filename, const void *image, int32 xdim, int32 ydim, u
 
     /* Check if Palette buffer has been allocated */
     if (paletteBuf == NULL) {
-        paletteBuf = (uint8 *)HDmalloc(768 * sizeof(uint8));
+        paletteBuf = (uint8 *)malloc(768 * sizeof(uint8));
         if (paletteBuf == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
     } /* end if */
@@ -662,7 +662,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 DFR8getrig(int32 file_id, uint16 ref, DFRrig *rig)
 {
     uint16 elt_tag;
@@ -768,7 +768,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 DFR8putrig(int32 file_id, uint16 ref, DFRrig *rig, intn wdim)
 {
     static uint16 prevdimref = 0; /*ref of previous dimension record, to reuse */
@@ -922,7 +922,7 @@ DFR8nimages(const char *filename)
     }
 
     /* Get space to store the image offsets */
-    if ((img_off = (int32 *)HDmalloc(nimages * sizeof(int32))) == NULL)
+    if ((img_off = (int32 *)malloc(nimages * sizeof(int32))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* go through the RIGs looking for 8-bit images */
@@ -998,7 +998,7 @@ DFR8nimages(const char *filename)
         }                          /* end for */
     }                              /* end for */
 
-    HDfree(img_off); /* free offsets */
+    free(img_off); /* free offsets */
     if (Hclose(file_id) == FAIL)
         HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
 
@@ -1212,14 +1212,14 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 DFR8Iopen(const char *filename, intn acc_mode)
 {
     int32 file_id;
     int32 ret_value = SUCCEED;
 
     /* use reopen if same file as last time - more efficient */
-    if (HDstrncmp(Lastfile, filename, DF_MAXFNLEN) || (acc_mode == DFACC_CREATE)) {
+    if (strncmp(Lastfile, filename, DF_MAXFNLEN) || (acc_mode == DFACC_CREATE)) {
         /* treat create as different file */
         if ((file_id = Hopen(filename, acc_mode, 0)) == FAIL)
             HGOTO_ERROR(DFE_BADOPEN, FAIL);
@@ -1237,7 +1237,7 @@ DFR8Iopen(const char *filename, intn acc_mode)
     } /* end else */
 
     /* remember filename, so reopen may be used next time if same file */
-    HDstrncpy(Lastfile, filename, DF_MAXFNLEN);
+    strncpy(Lastfile, filename, DF_MAXFNLEN);
 
     ret_value = file_id;
 
@@ -1264,7 +1264,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 DFR8Iriginfo(int32 file_id)
 {
     uint16 riref = 0, ciref = 0;
@@ -1417,7 +1417,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 DFR8Istart(void)
 {
     intn ret_value = SUCCEED;
@@ -1430,7 +1430,7 @@ DFR8Istart(void)
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* end DFR8Istart() */
 
 /*--------------------------------------------------------------------------
@@ -1453,9 +1453,8 @@ done:
 intn
 DFR8Pshutdown(void)
 {
-    if (paletteBuf != NULL) {
-        HDfree(paletteBuf);
-        paletteBuf = NULL;
-    } /* end if */
-    return (SUCCEED);
+    free(paletteBuf);
+    paletteBuf = NULL;
+
+    return SUCCEED;
 } /* end DFR8Pshutdown() */

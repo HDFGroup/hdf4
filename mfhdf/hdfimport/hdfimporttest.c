@@ -12,6 +12,9 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "hdf.h"
 
 /*
@@ -35,7 +38,7 @@
  *      data element value = row value + column value [+ plane value, if rank=3]
  */
 int
-main(int argc, char *argv[])
+main(void)
 {
     int   nrow = 3, ncol = 4, npln = 5, ione = 1;
     int   i, j, k;
@@ -77,9 +80,6 @@ main(int argc, char *argv[])
     const char *in32 = "IN32";
     const char *in16 = "IN16";
     const char *in8  = "IN08";
-
-    (void)argv;
-    (void)argc;
 
     /*
      * initialize the row, column, and plane vectors
@@ -173,16 +173,16 @@ main(int argc, char *argv[])
     sp = fopen("ctxtr2", "w");
     (void)fprintf(sp, "%s\n", text);
     (void)fprintf(sp, "%10d%10d%10d\n", ione, nrow, ncol);
-    (void)fprintf(sp, "%14.6E%14.6E\n", ezero, ezero);
+    (void)fprintf(sp, "%14.6E%14.6E\n", (double)ezero, (double)ezero);
     for (i = 0; i < nrow; i++)
-        (void)fprintf(sp, "%14.6E", row4[i]);
+        (void)fprintf(sp, "%14.6E", (double)row4[i]);
     (void)fprintf(sp, "\n");
     for (j = 0; j < ncol; j++)
-        (void)fprintf(sp, "%14.6E", col4[j]);
+        (void)fprintf(sp, "%14.6E", (double)col4[j]);
     (void)fprintf(sp, "\n");
     for (i = 0; i < nrow; i++) {
         for (j = 0; j < ncol; j++)
-            (void)fprintf(sp, "%14.6E", b32r2[i][j]);
+            (void)fprintf(sp, "%14.6E", (double)b32r2[i][j]);
         (void)fprintf(sp, "\n");
     }
     (void)fclose(sp);
@@ -241,20 +241,20 @@ main(int argc, char *argv[])
     sp = fopen("ctxtr3", "w");
     (void)fprintf(sp, "%s\n", text);
     (void)fprintf(sp, "%10d%10d%10d\n", npln, nrow, ncol);
-    (void)fprintf(sp, "%14.6E%14.6E\n", ezero, ezero);
+    (void)fprintf(sp, "%14.6E%14.6E\n", (double)ezero, (double)ezero);
     for (k = 0; k < npln; k++)
-        (void)fprintf(sp, "%14.6E", pln4[k]);
+        (void)fprintf(sp, "%14.6E", (double)pln4[k]);
     (void)fprintf(sp, "\n");
     for (i = 0; i < nrow; i++)
-        (void)fprintf(sp, "%14.6E", row4[i]);
+        (void)fprintf(sp, "%14.6E", (double)row4[i]);
     (void)fprintf(sp, "\n");
     for (j = 0; j < ncol; j++)
-        (void)fprintf(sp, "%14.6E", col4[j]);
+        (void)fprintf(sp, "%14.6E", (double)col4[j]);
     (void)fprintf(sp, "\n");
     for (k = 0; k < npln; k++)
         for (i = 0; i < nrow; i++) {
             for (j = 0; j < ncol; j++)
-                (void)fprintf(sp, "%14.6E", b32r3[k][i][j]);
+                (void)fprintf(sp, "%14.6E", (double)b32r3[k][i][j]);
             (void)fprintf(sp, "\n");
         }
     (void)fclose(sp);
@@ -441,5 +441,6 @@ main(int argc, char *argv[])
             for (j = 0; j < ncol; j++)
                 (void)fwrite((char *)&b64r3[k][i][j], sizeof(float64), 1, sp);
     (void)fclose(sp);
-    return (0);
+
+    return EXIT_SUCCESS;
 }

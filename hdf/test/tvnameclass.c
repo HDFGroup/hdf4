@@ -102,29 +102,27 @@ test_vglongnames(void)
     status = Vgetnamelen(vg1, &name_len);
     CHECK_VOID(status, FAIL, "Vgetnamelen");
 
-    vgname = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    vgname = (char *)malloc(sizeof(char) * (name_len + 1));
     CHECK_ALLOC(vgname, "vgname", "test_vglongnames");
 
     status = Vgetname(vg1, vgname);
     CHECK_VOID(status, FAIL, "VSgetname");
     VERIFY_CHAR_VOID(vgname, VG_LONGNAME, "Vgetname");
 
-    if (vgname != NULL)
-        HDfree(vgname);
+    free(vgname);
 
     /* get the vgroup's class */
     status = Vgetclassnamelen(vg1, &name_len);
     CHECK_VOID(status, FAIL, "Vgetnamelen");
 
-    vgclass = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    vgclass = (char *)malloc(sizeof(char) * (name_len + 1));
     CHECK_ALLOC(vgclass, "vgclass", "test_vglongnames");
 
     status = Vgetclass(vg1, vgclass);
     CHECK_VOID(status, FAIL, "VSgetclass");
     VERIFY_CHAR_VOID(vgclass, VG_LONGCLASS, "Vgetclass");
 
-    if (vgclass != NULL)
-        HDfree(vgclass);
+    free(vgclass);
 
     status = Vdetach(vg1);
     CHECK_VOID(status, FAIL, "Vdetach");
@@ -140,37 +138,35 @@ test_vglongnames(void)
     status = Vgetnamelen(vg1, &name_len);
     CHECK_VOID(status, FAIL, "Vgetnamelen");
 
-    vgname = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    vgname = (char *)malloc(sizeof(char) * (name_len + 1));
     CHECK_ALLOC(vgname, "vgname", "test_vglongnames");
 
     status = Vgetname(vg1, vgname);
     CHECK_VOID(status, FAIL, "VSgetname");
 
-    if (HDstrcmp(vgname, VGROUP1)) {
+    if (strcmp(vgname, VGROUP1)) {
         num_errs++;
         printf(">>> Got bogus Vgroup name : %s\n", vgname);
     }
 
-    if (vgname != NULL)
-        HDfree(vgname);
+    free(vgname);
 
     /* get the vgroup's class */
     status = Vgetclassnamelen(vg1, &name_len);
     CHECK_VOID(status, FAIL, "Vgetnamelen");
 
-    vgclass = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    vgclass = (char *)malloc(sizeof(char) * (name_len + 1));
     CHECK_ALLOC(vgclass, "vgclass", "test_vglongnames");
 
     status = Vgetclass(vg1, vgclass);
     CHECK_VOID(status, FAIL, "VSgetclass");
 
-    if (HDstrcmp(vgclass, VG_LONGCLASS)) {
+    if (strcmp(vgclass, VG_LONGCLASS)) {
         num_errs++;
         printf(">>> Got bogus Vgroup class : %s\n", vgclass);
     }
 
-    if (vgclass != NULL)
-        HDfree(vgclass);
+    free(vgclass);
 
     status = Vdetach(vg1);
     CHECK_VOID(status, FAIL, "Vdetach");
@@ -253,7 +249,7 @@ test_undefined(void)
        This shows that bug HDFFR-1288 is fixed. */
     status = Vgetclass(vg1, vgclass);
     CHECK_VOID(status, FAIL, "Vgetclass");
-    VERIFY_VOID(HDstrlen(vgclass), 0, "VSgetclass");
+    VERIFY_VOID(strlen(vgclass), 0, "VSgetclass");
 
     /* The length of the class name should be 0 */
     status = Vgetclassnamelen(vg1, &name_len);
@@ -274,7 +270,7 @@ test_undefined(void)
        Similar to class name in bug HDFFR-1288. */
     status = Vgetname(vg1, vgname);
     CHECK_VOID(status, FAIL, "Vgetname");
-    VERIFY_VOID(HDstrlen(vgname), 0, "VSgetname");
+    VERIFY_VOID(strlen(vgname), 0, "VSgetname");
 
     /* The length of the name should be 0 */
     status = Vgetnamelen(vg1, &name_len);

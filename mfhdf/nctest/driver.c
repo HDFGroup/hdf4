@@ -3,13 +3,16 @@
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
  *********************************************************************/
 
-#include "h4config.h"
+#include "hdf.h"
+
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else
 #include "hdf4_netcdf.h"
 #endif
 
+#include "emalloc.h"
+#include "testcdf.h"
 #include "tests.h"
 
 /* #define MDEBUG 1 */
@@ -23,34 +26,26 @@
  */
 
 #include <stdio.h>
-#if defined TEST_PC || defined TEST_WIN
-FILE                          *dbg_file;
-#endif
 
 #include <stdlib.h>
 #include <string.h> /* to remove warnings, HDFFR-1434 */
 
+/* In-memory netcdf structure, kept in sync with disk netcdf */
+struct netcdf *test_g = NULL;
+
 int
-main(int argc, char *argv[])
+main(void)
 {
     static char testfile[]            = "test.nc";
     static char unlim_testfile_name[] = "test_unlim.nc";
-
-    (void)argc;
-    (void)argv;
-
-#if defined TEST_PC || defined TEST_WIN
-    dbg_file = fopen("test.dbg", "w+");
-#endif
-
-#ifdef MDEBUG
-    malloc_debug(2);
-#endif /* MDEBUG */
 
     ncopts &= ~NC_FATAL;   /* make errors nonfatal */
     ncopts &= ~NC_VERBOSE; /* turn off error messages */
     ncopts |= NC_VERBOSE;  /* turn  error messages on--AKC */
     ncopts &= ~NC_VERBOSE; /* turn off error messages */
+
+    test_g = (struct netcdf *)emalloc(sizeof(struct netcdf));
+    memset(test_g, 0, sizeof(struct netcdf));
 
     test_nccreate(testfile);
 
@@ -120,9 +115,7 @@ main(int argc, char *argv[])
 
     test_nctypelen();
 
-#if defined TEST_PC || defined TEST_WIN
-    fclose(dbg_file);
-#endif
-#define EXIT_SUCCESS 0
+    free(test_g);
+
     return EXIT_SUCCESS;
 }

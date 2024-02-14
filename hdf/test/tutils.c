@@ -26,9 +26,9 @@ fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor)
         len--;
     } /* end while */
     if (len == 0)
-        return (0);
+        return 0;
     else {
-        return ((intn)(*t1 - *t2));
+        return (intn)(*t1 - *t2);
     }
 } /* end fuzzy_memcmp() */
 
@@ -56,8 +56,7 @@ make_datafilename(char *basename, char *testfile, unsigned int size)
     char *srcdir   = getenv("srcdir");
     char *tempfile = NULL;
 
-    tempfile = (char *)HDmalloc(sizeof(char *) * (size + 1));
-    HDmemset(tempfile, '\0', size + 1);
+    tempfile = (char *)calloc(sizeof(char *), (size + 1));
 
     /* Generate the correct name for the test file, by prepending the source path */
     if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < size)) {
@@ -85,7 +84,7 @@ make_datafilename(char *basename, char *testfile, unsigned int size)
         return FAIL;
 
     /* File name is generated, return it */
-    HDstrcpy(testfile, tempfile);
-    HDfree(tempfile);
+    strcpy(testfile, tempfile);
+    free(tempfile);
     return SUCCEED;
 }

@@ -3,15 +3,11 @@
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
  *********************************************************************/
 
+#include <stdarg.h>
 #include <stdio.h>
 
-#ifndef NO_STDARG
-#include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
+#include "hdf.h"
 
-#include "h4config.h"
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else

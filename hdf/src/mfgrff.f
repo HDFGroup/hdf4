@@ -18,7 +18,6 @@ C Purpose:  Fortran stubs for Fortran GR routines
 C Invokes:  mfgrf.c
 C Contents:
 C   dsgdims:        get dimensions of next SDG
-C Remarks: none
 C------------------------------------------------------------------------------
 
 

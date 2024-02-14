@@ -11,6 +11,9 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "hdiff.h"
 #include "hdiff_list.h"
 #include "hdiff_mattbl.h"
@@ -55,8 +58,8 @@ diff_gr(int32 gr1_id, int32 gr2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
     char   gr1_name[H4_MAX_NC_NAME];
     char   gr2_name[H4_MAX_NC_NAME];
     int    dim_diff = 0; /* dimensions are different */
-    VOIDP  buf1     = NULL;
-    VOIDP  buf2     = NULL;
+    void  *buf1     = NULL;
+    void  *buf2     = NULL;
     uint32 max_err_cnt;
     int    i, cmp;
     uint32 nfound  = 0;
@@ -183,7 +186,7 @@ diff_gr(int32 gr1_id, int32 gr2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
          */
 
         /* alloc */
-        if ((buf1 = (VOIDP)HDmalloc(data_size)) == NULL) {
+        if ((buf1 = (void *)malloc(data_size)) == NULL) {
             printf("Failed to allocate %u elements of size %d\n", nelms, eltsz);
             goto out;
         }
@@ -206,7 +209,7 @@ diff_gr(int32 gr1_id, int32 gr2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
          */
 
         /* alloc */
-        if ((buf2 = (VOIDP)HDmalloc(data_size)) == NULL) {
+        if ((buf2 = (void *)malloc(data_size)) == NULL) {
             printf("Failed to allocate %u elements of size %d\n", nelms, eltsz);
             goto out;
         }
@@ -228,7 +231,7 @@ diff_gr(int32 gr1_id, int32 gr2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
          *-------------------------------------------------------------------------
          */
 
-        cmp = HDmemcmp(buf1, buf2, data_size);
+        cmp = memcmp(buf1, buf2, data_size);
         if (cmp != 0) {
             /* if the given max_err_cnt is set (i.e. not its default MAX_DIFF),
                use it, otherwise, use the total number of elements in the dataset */
@@ -246,10 +249,8 @@ diff_gr(int32 gr1_id, int32 gr2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
 
     GRendaccess(ri1_id);
     GRendaccess(ri2_id);
-    if (buf1)
-        HDfree(buf1);
-    if (buf2)
-        HDfree(buf2);
+    free(buf1);
+    free(buf2);
 
     return nfound;
 
@@ -261,10 +262,8 @@ out:
         GRendaccess(ri1_id);
     if (ri2_id != -1)
         GRendaccess(ri2_id);
-    if (buf1)
-        HDfree(buf1);
-    if (buf2)
-        HDfree(buf2);
+    free(buf1);
+    free(buf2);
 
     return 0;
 }

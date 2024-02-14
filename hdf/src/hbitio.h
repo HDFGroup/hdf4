@@ -21,6 +21,8 @@
 #ifndef H4_HBITIO_H
 #define H4_HBITIO_H
 
+#include "hdf.h"
+
 /* Define the number of elements in the buffered array */
 #define BITBUF_SIZE 4096
 /* Macro to define the number of bits cached in the 'bits' variable */
@@ -47,29 +49,19 @@ typedef struct bitrec_t {
     uint8 *bytea;    /* byte buffer */
 } bitrec_t;
 
-#ifndef BITMASTER
-extern
-#endif
-    const uint8 maskc[9]
-#ifdef BITMASTER
-    = {0, 1, 3, 7, 15, 31, 63, 127, 255}
-#endif
-;
-
-#ifndef BITMASTER
-extern
-#endif
-    const uint32 maskl[33]
-#ifdef BITMASTER
-    = {0x00000000, 0x00000001, 0x00000003, 0x00000007, 0x0000000f,  0x0000001f, 0x0000003f,
-       0x0000007f, 0x000000ff, 0x000001ff, 0x000003ff, 0x000007ff,  0x00000fff, 0x00001fff,
-       0x00003fff, 0x00007fff, 0x0000ffff, 0x0001ffff, 0x0003ffff,  0x0007ffff, 0x000fffff,
-       0x001fffff, 0x003fffff, 0x007fffff, 0x00ffffff, 0x01ffffff,  0x03ffffff, 0x07ffffff,
-       0x0fffffff, 0x1fffffff, 0x3fffffff, 0x7fffffff, 0xffffffffUL}
-#endif
-;
-
 /* Function-like Macros */
 #define Hputbit(bitid, bit) ((Hbitwrite(bitid, 1, (uint32)bit) == FAIL) ? FAIL : SUCCEED)
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+HDFLIBAPI const uint8 maskc[9];
+
+HDFLIBAPI const uint32 maskl[33];
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* H4_HBITIO_H */

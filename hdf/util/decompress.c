@@ -28,17 +28,10 @@ char         *cmd;
 
 FILE *fp;
 
-static int BitOffset = 0, /* Bit Offset of next code */
-    XC = 0, YC = 0,       /* Output X and Y coords of current pixel */
-    Pass     = 0,         /* Used by output routine if WORDerlaced pic */
-    OutCount = 0,         /* Decompressor output 'stack count' */
-#ifdef UNUSED
-    RWidth, RHeight,          /* screen dimensions */
-    LeftOfs, TopOfs,          /* image offset */
-    BitsPerPixel,             /* Bits per pixel, read from GIF header */
-    ColorMapSize,             /* number of colors */
-    Background,               /* background color */
-#endif                        /* UNUSED */
+static int BitOffset = 0,     /* Bit Offset of next code */
+    XC = 0, YC = 0,           /* Output X and Y coords of current pixel */
+    Pass     = 0,             /* Used by output routine if WORDerlaced pic */
+    OutCount = 0,             /* Decompressor output 'stack count' */
     IWidth, IHeight,          /* image dimensions */
     BytesPerScanline,         /* Bytes per scanline in output raster */
     CodeSize,                 /* Code size, read from GIF header */

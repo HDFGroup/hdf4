@@ -35,14 +35,11 @@
 /* Define to 1 if you have the `fork' function. */
 #cmakedefine H4_HAVE_FORK @H4_HAVE_FORK@
 
+/* Define to 1 if you have the `getrusage' function. */
+#cmakedefine H4_HAVE_GETRUSAGE @H4_HAVE_GETRUSAGE@
+
 /* Define to 1 if you have the <winsock2.h> header file. */
 #cmakedefine H4_HAVE_WINSOCK2_H @H4_HAVE_WINSOCK2_H@
-
-/* Define to 1 if you have the `htonl' function. */
-#cmakedefine H4_HAVE_HTONL @H4_HAVE_HTONL@
-
-/* Define to 1 if you have the `htons' function. */
-#cmakedefine H4_HAVE_HTONS @H4_HAVE_HTONS@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #cmakedefine H4_HAVE_INTTYPES_H @H4_HAVE_INTTYPES_H@
@@ -65,7 +62,7 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #cmakedefine H4_HAVE_MEMORY_H @H4_HAVE_MEMORY_H@
 
-/* Define if we support HDF NetCDF APIs version 2.3.2 */
+/* Define if we export HDF4-built unmangled netCDF 2.3.2 API calls */
 #cmakedefine H4_HAVE_NETCDF @H4_HAVE_NETCDF@
 
 /* Define to 1 if you have the <netdb.h> header file. */
@@ -74,17 +71,8 @@
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #cmakedefine H4_HAVE_NETINET_IN_H @H4_HAVE_NETINET_IN_H@
 
-/* Define to 1 if you have the `ntohl' function. */
-#cmakedefine H4_HAVE_NTOHL @H4_HAVE_NTOHL@
-
-/* Define to 1 if you have the `ntohs' function. */
-#cmakedefine H4_HAVE_NTOHS @H4_HAVE_NTOHS@
-
 /* Define to 1 if you have the <resolv.h> header file. */
 #cmakedefine H4_HAVE_RESOLV_H @H4_HAVE_RESOLV_H@
-
-/* Define to 1 if you have the system XDR library. */
-#cmakedefine H4_HAVE_RPC @H4_HAVE_RPC@
 
 /* Define to 1 if you have the <stddef.h> header file. */
 #cmakedefine H4_HAVE_STDDEF_H @H4_HAVE_STDDEF_H@
@@ -131,9 +119,6 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #cmakedefine H4_HAVE_UNISTD_H @H4_HAVE_UNISTD_H@
 
-/* Define to 1 if you have the `vfork' function. */
-#cmakedefine H4_HAVE_VFORK @H4_HAVE_VFORK@
-
 /* Define to 1 if you have the `wait' function. */
 #cmakedefine H4_HAVE_WAIT @H4_HAVE_WAIT@
 
@@ -159,9 +144,6 @@
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 #cmakedefine H4_NO_MINUS_C_MINUS_O @H4_NO_MINUS_C_MINUS_O@
 
-/* Not using system xdr */
-#cmakedefine H4_NO_SYS_XDR_INC @H4_NO_SYS_XDR_INC@
-
 /* Name of package */
 #define H4_PACKAGE "@HDF4_PACKAGE@"
 
@@ -182,6 +164,9 @@
 
 /* Define to the version of this package. */
 #define H4_PACKAGE_VERSION "@HDF4_PACKAGE_VERSION_STRING@"
+
+/* The size of `long', as computed by sizeof. */
+#define H4_SIZEOF_LONG @H4_SIZEOF_LONG@
 
 /* Define to 1 if all of the C90 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for

@@ -17,47 +17,18 @@
 #ifndef MFH4_LOCAL_NC_H
 #define MFH4_LOCAL_NC_H
 
-#include "H4api_adpt.h"
+#include "hdfi.h"
 
 /*
  *    netcdf library 'private' data structures, objects and interfaces
  */
 
-#include <stddef.h> /* size_t */
-#include <stdio.h>  /* FILENAME_MAX */
-
 #ifndef FILENAME_MAX
 #define FILENAME_MAX 255
 #endif
 
-/* Do we have system XDR files */
-#ifndef H4_NO_SYS_XDR_INC
-
-#ifdef __CYGWIN__
-#ifndef __u_char_defined
-typedef unsigned char u_char;
-#define __u_char_defined
-#endif
-#ifndef __u_short_defined
-typedef unsigned short u_short;
-#define __u_short_defined
-#endif
-#ifndef __u_int_defined
-typedef unsigned int u_int;
-#define __u_int_defined
-#endif
-#ifndef __u_long_defined
-typedef unsigned long u_long;
-#define __u_long_defined
-#endif
-#endif /* __CYGWIN__ */
-
-#include <rpc/types.h>
-#include <rpc/xdr.h>
-#else /* H4_NO_SYS_XDR_INC */
-#include "types.h"
-#include "xdr.h"
-#endif /* H4_NO_SYS_XDR_INC */
+/* HDF4's stripped-down XDR implementation */
+#include "h4_xdr.h"
 
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h" /* needed for defs of nc_type, ncvoid, ... */
@@ -78,11 +49,9 @@ typedef unsigned long u_long;
 #define Void char
 
 /*
-** Include HDF stuff
-*/
-#ifdef HDF
+ * Include HDF stuff
+ */
 
-#include "hdf.h"
 #include "vg.h"
 #include "hfile.h"
 #include "mfhdfi.h"
@@ -99,14 +68,11 @@ typedef unsigned long u_long;
 #define MAX_BLOCK_SIZE   65536 /* maximum size of block in linked blocks */
 #define BLOCK_COUNT      128   /* size of linked block pointer objects  */
 
-#endif /* HDF */
-
 /* from cdflib.h CDF 2.3 */
 #ifndef MAX_VXR_ENTRIES
 #define MAX_VXR_ENTRIES 10
 #endif /* MAX_VXR_ENTRIES */
 
-#ifdef HDF
 /* VIX record for CDF variable data storage */
 typedef struct vix_t_def {
     int32             nEntries;                  /* number of entries in this vix */
@@ -116,7 +82,6 @@ typedef struct vix_t_def {
     int32             offset[MAX_VXR_ENTRIES];   /* file offset of records */
     struct vix_t_def *next;                      /* next one in line */
 } vix_t;
-#endif /* HDF */
 
 /* like, a discriminated union in the sense of xdr */
 typedef struct {
@@ -136,17 +101,13 @@ typedef struct {
   count != len when a string is resized to something smaller
 
 */
-#ifdef HDF
-#define NC_compare_string(s1, s2) ((s1)->hash != (s2)->hash ? 1 : HDstrcmp((s1)->values, (s2)->values))
-#endif /* HDF */
+#define NC_compare_string(s1, s2) ((s1)->hash != (s2)->hash ? 1 : strcmp((s1)->values, (s2)->values))
 
 typedef struct {
     unsigned count;
     unsigned len;
-#ifdef HDF
-    uint32 hash; /* [non-perfect] hash value for faster comparisons */
-#endif           /* HDF */
-    char *values;
+    uint32   hash; /* [non-perfect] hash value for faster comparisons */
+    char    *values;
 } NC_string;
 
 /* Counted array of ints for assoc list */
@@ -158,22 +119,18 @@ typedef struct {
 /* NC dimension structure */
 typedef struct {
     NC_string *name;
-    long       size;
-#ifdef HDF
-    int32 dim00_compat; /* compatible with Dim0.0 */
-    int32 vgid;         /* id of the Vgroup representing this dimension */
-    int32 count;        /* Number of pointers to this dimension */
-#endif
+    int32      size;
+    int32      dim00_compat; /* compatible with Dim0.0 */
+    int32      vgid;         /* id of the Vgroup representing this dimension */
+    int32      count;        /* Number of pointers to this dimension */
 } NC_dim;
 
 /* NC attribute */
 typedef struct {
     NC_string *name;
     NC_array  *data;
-#ifdef HDF
-    int32 HDFtype; /* it should be in NC_array *data. However, */
-                   /* NC.dims and NC.vars are NC_array too. */
-#endif
+    int32      HDFtype; /* it should be in NC_array *data. However, */
+                        /* NC.dims and NC.vars are NC_array too. */
 } NC_attr;
 
 typedef struct {
@@ -184,33 +141,30 @@ typedef struct {
     unsigned long recsize;   /* length of 'record' */
     int           redefid;
     /* below gets xdr'd */
-    unsigned long numrecs; /* number of 'records' allocated */
-    NC_array     *dims;
-    NC_array     *attrs;
-    NC_array     *vars;
-#ifdef HDF
+    unsigned   numrecs; /* number of 'records' allocated */
+    NC_array  *dims;
+    NC_array  *attrs;
+    NC_array  *vars;
     int32      hdf_file;
     int        file_type;
     int32      vgid;
     int        hdf_mode; /* mode we are attached for */
     hdf_file_t cdf_fp;   /* file pointer used for CDF files */
-#endif
 } NC;
 
 /* NC variable: description and data */
 typedef struct {
-    NC_string     *name;   /* name->values shows data set's name */
-    NC_iarray     *assoc;  /* user definition */
-    unsigned long *shape;  /* compiled info (Each holds a dimension size. -BMR) */
-    unsigned long *dsizes; /* compiled info (Each element holds the amount of space
-        needed to hold values in that dimension, e.g., first dimension
-        size is 10, value type is int32=4, then dsizes[0]=4*10=40. -BMR) */
-    NC_array     *attrs;   /* list of attribute structures */
-    nc_type       type;    /* the discriminant */
-    unsigned long len;     /* the total length originally allocated */
-    size_t        szof;    /* sizeof each value */
-    long          begin;   /* seek index, often an off_t */
-#ifdef HDF
+    NC_string     *name;    /* name->values shows data set's name */
+    NC_iarray     *assoc;   /* user definition */
+    unsigned long *shape;   /* compiled info (Each holds a dimension size. -BMR) */
+    unsigned long *dsizes;  /* compiled info (Each element holds the amount of space
+         needed to hold values in that dimension, e.g., first dimension
+         size is 10, value type is int32=4, then dsizes[0]=4*10=40. -BMR) */
+    NC_array     *attrs;    /* list of attribute structures */
+    nc_type       type;     /* the discriminant */
+    unsigned long len;      /* the total length originally allocated */
+    size_t        szof;     /* sizeof each value */
+    long          begin;    /* seek index, often an off_t */
     NC           *cdf;      /* handle of the file where this var belongs to  */
     int32         vgid;     /* id of the variable's Vgroup */
     uint16        data_ref; /* ref of the variable's data storage (if exists), default 0 */
@@ -240,7 +194,6 @@ typedef struct {
     int32 *rag_list;   /* size of ragged array lines */
     int32  rag_fill;   /* last line in rag_list to be set */
     vix_t *vixHead;    /* list of VXR records for CDF data storage */
-#endif
 } NC_var;
 
 #define IS_RECVAR(vp) ((vp)->shape != NULL ? (*(vp)->shape == NC_UNLIMITED) : 0)
@@ -274,8 +227,9 @@ extern "C" {
 #endif
 
 /* If using the real netCDF library and API (when --disable-netcdf configure flag is used)
-   need to mangle the HDF versions of netCDF API function names
-   to not conflict w/ oriinal netCDF ones */
+ * need to mangle the HDF versions of netCDF API function names
+ * to not conflict w/ oriinal netCDF ones
+ */
 #ifndef H4_HAVE_NETCDF
 #define nc_serror         HNAME(nc_serror)
 #define NCadvise          HNAME(NCadvise)
@@ -332,10 +286,8 @@ extern "C" {
 #define NC_dcpy           HNAME(NC_dcpy)
 #define NCxdrfile_sync    HNAME(NCxdrfile_sync)
 #define NCxdrfile_create  HNAME(NCxdrfile_create)
-#ifdef HDF
-#define NCgenio      HNAME(NCgenio)      /* from putgetg.c */
-#define NC_var_shape HNAME(NC_var_shape) /* from var.c */
-#endif
+#define NCgenio           HNAME(NCgenio)      /* from putgetg.c */
+#define NC_var_shape      HNAME(NC_var_shape) /* from var.c */
 #endif /* !H4_HAVE_NETCDF ie. NOT USING HDF version of netCDF ncxxx API */
 
 #define nncpopt H4_F77_FUNC(ncpopt, NCPOPT)
@@ -470,7 +422,7 @@ HDFLIBAPI bool_t NCcktype(nc_type datatype);
 HDFLIBAPI bool_t NC_indefine(int cdfid, bool_t iserr);
 HDFLIBAPI bool_t xdr_cdf(XDR *xdrs, NC **handlep);
 HDFLIBAPI bool_t xdr_numrecs(XDR *xdrs, NC *handle);
-HDFLIBAPI bool_t xdr_shorts(XDR *xdrs, short *sp, u_int cnt);
+HDFLIBAPI bool_t xdr_shorts(XDR *xdrs, short *sp, unsigned cnt);
 HDFLIBAPI bool_t xdr_NC_array(XDR *xdrs, NC_array **app);
 HDFLIBAPI bool_t xdr_NC_attr(XDR *xdrs, NC_attr **app);
 HDFLIBAPI bool_t xdr_NC_dim(XDR *xdrs, NC_dim **dpp);
@@ -501,10 +453,6 @@ HDFLIBAPI bool_t     NC_dcpy(XDR *target, XDR *source, long nbytes);
 HDFLIBAPI int        NCxdrfile_sync(XDR *xdrs);
 
 HDFLIBAPI int NCxdrfile_create(XDR *xdrs, const char *path, int ncmode);
-
-#ifdef HDF
-/* this routine is found in 'xdrposix.c' */
-HDFLIBAPI void hdf_xdrfile_create(XDR *xdrs, int ncop);
 
 HDFLIBAPI intn hdf_fill_array(Void *storage, int32 len, Void *value, int32 type);
 
@@ -581,8 +529,6 @@ HDFLIBAPI intn HDiscdf(const char *filename);
 HDFLIBAPI intn HDisnetcdf(const char *filename);
 
 HDFLIBAPI intn HDisnetcdf64(const char *filename);
-
-#endif /* HDF */
 
 #ifdef __cplusplus
 }

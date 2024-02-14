@@ -41,11 +41,11 @@
 #define SEED(s)       (srand(s))
 #define RandInt(a, b) ((rand() % (((b) - (a)) + 1)) + (a))
 
-PRIVATE VOID swap_arr(int32 *arr, intn a, intn b);
+static void swap_arr(int32 *arr, intn a, intn b);
 
-intn tcompare(VOIDP k1, VOIDP k2, intn cmparg);
+intn tcompare(void *k1, void *k2, intn cmparg);
 
-PRIVATE VOID
+static void
 swap_arr(int32 *arr, intn a, intn b)
 {
     int32 t;
@@ -58,10 +58,10 @@ swap_arr(int32 *arr, intn a, intn b)
 } /* end swap_arr() */
 
 intn
-tcompare(VOIDP k1, VOIDP k2, intn cmparg)
+tcompare(void *k1, void *k2, intn cmparg)
 {
     (void)cmparg;
-    return ((intn)((*(int32 *)k1) - (*(int32 *)k2)));
+    return (intn)((*(int32 *)k1) - (*(int32 *)k2));
 }
 
 void
@@ -73,7 +73,7 @@ test_tbbt(void)
     int32      rem_arr[MAX_TEST_SIZE];
     intn       t;
     TBBT_TREE *tree;
-    VOIDP     *r;
+    void     **r;
 
     t = (intn)time(NULL);
     SEED((uintn)t);
@@ -107,7 +107,7 @@ test_tbbt(void)
             tree = tbbtdmake(tcompare, sizeof(int32), 0);
             for (i = 0; i < test_size; i++) {
                 MESSAGE(9, printf("inserting %d\n", (int)ins_arr[i]););
-                tbbtdins(tree, (VOIDP)&ins_arr[i], NULL);
+                tbbtdins(tree, (void *)&ins_arr[i], NULL);
                 MESSAGE(9, tbbtdump(tree, -1););
             }
             MESSAGE(9, tbbtdump(tree, -1););
@@ -115,7 +115,7 @@ test_tbbt(void)
                 int32 key;
 
                 key = rem_arr[i];
-                r   = (VOIDP *)tbbtdfind(tree, (VOIDP)&key, NULL);
+                r   = (void **)tbbtdfind(tree, (void *)&key, NULL);
                 MESSAGE(9, printf("removing %d\n", (int)key););
                 tbbtrem((TBBT_NODE **)tree, (TBBT_NODE *)r, NULL);
                 MESSAGE(9, tbbtdump(tree, -1););

@@ -33,7 +33,7 @@ test_hblocks(void)
     intn   errors = 0;
 
     for (i = 0; i < BUFSIZE; i++)
-        outbuf[i] = (char)(i % 256);
+        outbuf[i] = (uint8)(i % 256);
 
     MESSAGE(5, printf("Creating a file %s\n", TESTFILE_NAME););
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
@@ -44,17 +44,17 @@ test_hblocks(void)
 
     MESSAGE(5, printf("Write an element and then promote to Linked Blocks\n"););
     ret = Hputelement(fid, (uint16)1000, (uint16)1, (const uint8 *)"element 1000 1 wrong ",
-                      (int32)HDstrlen("element 1000 1 wrong ") + 1);
+                      (int32)strlen("element 1000 1 wrong ") + 1);
     CHECK_VOID(ret, FAIL, "Hputelement");
 
     aid1 = HLcreate(fid, 1000, 1, 10, 10);
     CHECK_VOID(aid1, FAIL, "HLcreate");
 
-    ret = Hseek(aid1, (int32)HDstrlen("element 1000 1 "), DF_START);
+    ret = Hseek(aid1, (int32)strlen("element 1000 1 "), DF_START);
     CHECK_VOID(ret, FAIL, "Hseek");
 
-    ret = Hwrite(aid1, (int32)HDstrlen("correct") + 1, "correct");
-    if (ret != (int32)HDstrlen("correct") + 1) {
+    ret = Hwrite(aid1, (int32)strlen("correct") + 1, "correct");
+    if (ret != (int32)strlen("correct") + 1) {
         fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int)ret);
         errors++;
     }
@@ -81,8 +81,8 @@ test_hblocks(void)
     aid1 = HLcreate(fid, 1000, 2, 128, 16);
     CHECK_VOID(aid1, FAIL, "HLcreate");
 
-    ret = Hwrite(aid1, (int32)HDstrlen("element 1000 2") + 1, "element 1000 2");
-    if (ret != (int32)HDstrlen("element 1000 2") + 1) {
+    ret = Hwrite(aid1, (int32)strlen("element 1000 2") + 1, "element 1000 2");
+    if (ret != (int32)strlen("element 1000 2") + 1) {
         fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int)ret);
         errors++;
     }
@@ -145,7 +145,7 @@ test_hblocks(void)
         errors++;
     }
 
-    if (HDstrcmp((const char *)inbuf, (const char *)"element 1000 1 correct")) {
+    if (strcmp((const char *)inbuf, (const char *)"element 1000 1 correct")) {
         fprintf(stderr, "ERROR: Hread returned the wrong data\n");
         fprintf(stderr, "\t       Is: %s\n", (char *)inbuf);
         fprintf(stderr, "\tShould be: element 1000 1 correct\n");
@@ -262,7 +262,7 @@ test_hblocks(void)
     ret = Hclose(fid);
     CHECK_VOID(ret, FAIL, "Hclose");
 
-    if (HDmemcmp(inbuf, outbuf, 512)) {
+    if (memcmp(inbuf, outbuf, 512)) {
         fprintf(stderr, "Error when reading data from HLconvert buffer\n");
         errors++;
     }

@@ -1,0 +1,76 @@
+/** @page CH3_UG Scientific Data Sets (SD API)
+
+Navigate back: \ref index "Contents" / \ref UG
+<hr>
+
+\section sec_sdapi Scientific Data Sets (SD API)
+ 
+\subsection subsec_sdapi_overview
+\subsection subsec_sdapi_data_model
+\subsubsection subsubsec_sdapi_data_model_req
+\subsubsection subsubsec_sdapi_data_model_opt
+\subsubsection subsubsec_sdapi_data_model_annot
+\subsection subsec_sdapi_interface
+\subsubsection subsubsec_sdapi_interface_head
+\subsubsection subsubsec_sdapi_interface_lib
+\subsubsection subsubsec_sdapi_interface_tags
+\subsection subsec_sdapi_model
+\subsubsection subsubsec_sdapi_model_start
+\subsubsection subsubsec_sdapi_model_term
+\subsection subsec_sdapi_write
+\subsubsection subsubsec_sdapi_write_data
+\subsubsection subsubsec_sdapi_write_comp
+\subsubsection subsubsec_sdapi_write_ext
+\subsection subsec_sdapi_read
+\subsection subsec_sdapi_info
+\subsubsection subsubsec_sdapi_info_file
+\subsubsection subsubsec_sdapi_info_get
+\subsubsection subsubsec_sdapi_info_comp
+\subsubsection subsubsec_sdapi_info_locate
+\subsubsection subsubsec_sdapi_info_multi
+\subsubsection subsubsec_sdapi_info_num
+\subsubsection subsubsec_sdapi_info_index
+\subsubsection subsubsec_sdapi_info_ref
+\subsubsection subsubsec_sdapi_info_type
+\subsubsection subsubsec_sdapi_info_empty
+\subsubsection subsubsec_sdapi_info_array
+\subsection subsec_sdapi_dims
+\subsubsection subsubsec_sdapi_dims_set
+\subsubsection subsubsec_sdapi_dims_name
+\subsubsection subsubsec_sdapi_dims_dims
+\subsubsection subsubsec_sdapi_dims_dimscale
+\subsubsection subsubsec_sdapi_dims_data
+\subsection subsec_sdapi_ud
+\subsubsection subsubsec_sdapi_ud_set
+\subsubsection subsubsec_sdapi_ud_info
+\subsubsection subsubsec_sdapi_ud_read
+\subsection subsec_sdapi_predef
+\subsubsection subsubsec_sdapi_predef_get
+\subsubsection subsubsec_sdapi_predef_string
+\subsubsection subsubsec_sdapi_predef_dims
+\subsubsection subsubsec_sdapi_predef_range
+\subsubsection subsubsec_sdapi_predef_fill
+\subsubsection subsubsec_sdapi_predef_cal
+\subsection subsec_sdapi_ops
+\subsubsection subsubsec_sdapi_ops_file
+\subsubsection subsubsec_sdapi_ops_object
+\subsubsection subsubsec_sdapi_ops_max
+\subsubsection subsubsec_sdapi_ops_limits
+\subsubsection subsubsec_sdapi_ops_open
+\subsubsection subsubsec_sdapi_ops_array
+\subsection subsec_sdapi_chunk
+\subsubsection subsubsec_sdapi_chunk_set
+\subsubsection subsubsec_sdapi_chunk_cache
+\subsubsection subsubsec_sdapi_chunk_write
+\subsubsection subsubsec_sdapi_chunk_read
+\subsubsection subsubsec_sdapi_chunk_info
+\subsection subsec_sdapi_ghost
+\subsection subsec_sdapi_cdf
+\subsubsection subsubsec_sdapi_cdf_interface
+\subsubsection subsubsec_sdapi_cdf_nc
+
+
+<hr>
+Navigate back: \ref index "Contents" / \ref UG
+
+*/

@@ -25,7 +25,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include <jni.h>
-#include "hdf.h"
+#include "hdfi.h"
 #include "h4jni.h"
 #include "hdfvsqImp.h"
 
@@ -65,7 +65,7 @@ Java_hdf_hdflib_HDFLibrary_VSQueryfields(JNIEnv *env, jclass clss, jlong vdata_i
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(4096)) == NULL)
+    if ((data = (char *)malloc(4096)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "VSQueryfields: failed to allocate data buffer");
 
     if (fields == NULL)
@@ -88,8 +88,7 @@ Java_hdf_hdflib_HDFLibrary_VSQueryfields(JNIEnv *env, jclass clss, jlong vdata_i
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
 
     return JNI_TRUE;
 }
@@ -130,7 +129,7 @@ Java_hdf_hdflib_HDFLibrary_VSQueryname(JNIEnv *env, jclass clss, jlong vdata_id,
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(VSNAMELENMAX + 1)) == NULL)
+    if ((data = (char *)malloc(VSNAMELENMAX + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "VSQueryname: failed to allocate data buffer");
 
     if (vdata_name == NULL)
@@ -153,8 +152,7 @@ Java_hdf_hdflib_HDFLibrary_VSQueryname(JNIEnv *env, jclass clss, jlong vdata_id,
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
 
     return JNI_TRUE;
 }

@@ -18,9 +18,9 @@
  *    test_rank0 - test routine, called in hdftest.c
  ****************************************************************************/
 
-#include "mfhdf.h"
+#include <string.h>
 
-#ifdef HDF
+#include "mfhdf.h"
 
 #include "hdftest.h"
 
@@ -73,7 +73,7 @@ test_rank0()
     CHECK(sds2_id, FAIL, "test_rank0: SDcreate");
 
     /* Attempt to set chunk but should fail */
-    HDmemset(&c_def, 0, sizeof(HDF_CHUNK_DEF));
+    memset(&c_def, 0, sizeof(HDF_CHUNK_DEF));
     comp_flag = HDF_CHUNK;
     status    = SDsetchunk(sds2_id, c_def, comp_flag);
     VERIFY(status, FAIL, "test_rank0: SDsetchunk");
@@ -104,7 +104,7 @@ test_rank0()
     edges[1] = X_LENGTH;
 
     /* Write the stored data to the dataset */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)buf);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)buf);
     VERIFY(status, FAIL, "test_rank0:SDwritedata");
 
     /* Close the SDS */
@@ -124,7 +124,7 @@ test_rank0()
     start[1] = 0;
     edges[0] = Y_LENGTH;
     edges[1] = X_LENGTH;
-    status   = SDreaddata(sds_id, start, NULL, edges, (VOIDP)buf);
+    status   = SDreaddata(sds_id, start, NULL, edges, (void *)buf);
     CHECK(status, FAIL, "test_rank0: SDreaddata");
 
     /* Close the SDS */
@@ -158,5 +158,3 @@ test_rank0()
         PASSED();
     return num_errs;
 }
-
-#endif /* HDF */

@@ -42,18 +42,13 @@ EXPORTED ROUTINES
     HULnext_node    - Get the next object in a linked-list
     HULremove_node  - Removes an object from a linked-list
     HULshutdown     - Close down the HUL interface
-
-AUTHOR
-   Quincey Koziol
-
-MODIFICATION HISTORY
-   2/5/96  - Starting writing specs & coding prototype
-   2/12/96  - Finished writing specs & coding prototype, start testing
 */
 
-#define LIST_MASTER
-#include "hdf.h"
+#include "hdfi.h"
 #include "linklist.h"
+
+/* Pointer to the list node free list */
+static node_info_t *node_free_list = NULL;
 
 /* Private function prototypes */
 static node_info_t *HULIget_list_node(void);
@@ -80,7 +75,7 @@ HULcreate_list(HULfind_func_t find_func /* IN: object comparison function */
     HEclear();
 
     /* Allocate the head information */
-    if ((ret_value = (list_head_t *)HDcalloc(1, sizeof(list_head_t))) == NULL)
+    if ((ret_value = (list_head_t *)calloc(1, sizeof(list_head_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
     /* Set the counter */
@@ -132,7 +127,7 @@ HULdestroy_list(list_head_t *lst /* IN: list to destroy */
     } /* end while */
 
     /* Chuck the list-head */
-    HDfree(lst);
+    free(lst);
 
 done:
     return ret_value;
@@ -153,7 +148,7 @@ done:
 *******************************************************************************/
 intn
 HULadd_node(list_head_t *lst, /* IN: list to modify */
-            VOIDP        obj  /* IN: object to add to the list */
+            void        *obj  /* IN: object to add to the list */
 )
 {
     node_info_t *new_node;            /* new node to insert into the list */
@@ -214,14 +209,14 @@ done:
     Returns a pointer to the object found in the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP
+void *
 HULsearch_node(list_head_t     *lst,       /* IN: list to search */
                HULsearch_func_t srch_func, /* IN: function to use to find node */
-               VOIDP            key        /* IN: key of object to search for */
+               void            *key        /* IN: key of object to search for */
 )
 {
     node_info_t *curr_node;        /* current node we are on */
-    VOIDP        ret_value = NULL; /* default return value */
+    void        *ret_value = NULL; /* default return value */
 
     HEclear();
     if (lst == NULL || srch_func == NULL || key == NULL)
@@ -249,11 +244,11 @@ done:
     Returns a pointer to the first object found in the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP
+void *
 HULfirst_node(list_head_t *lst /* IN: list to search */
 )
 {
-    VOIDP ret_value = NULL; /* default return value */
+    void *ret_value = NULL; /* default return value */
 
     HEclear();
     if (lst == NULL)
@@ -279,11 +274,11 @@ done:
     Returns a pointer to the next object found in the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP
+void *
 HULnext_node(list_head_t *lst /* IN: list to search */
 )
 {
-    VOIDP ret_value = NULL; /* default return value */
+    void *ret_value = NULL; /* default return value */
 
     HEclear();
     if (lst == NULL)
@@ -311,15 +306,15 @@ done:
     Returns a pointer to the object deleted from the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP
+void *
 HULremove_node(list_head_t     *lst,       /* IN: list to modify */
                HULsearch_func_t srch_func, /* IN: function to use to find node to remove */
-               VOIDP            key        /* IN: object to add to the list */
+               void            *key        /* IN: object to add to the list */
 )
 {
     node_info_t *curr_node, /* current node we are on */
         *prev_node;         /* previous node we looked at */
-    VOIDP ret_value = NULL; /* default return value */
+    void *ret_value = NULL; /* default return value */
 
     HEclear();
     if (lst == NULL || srch_func == NULL || key == NULL)
@@ -366,7 +361,7 @@ HULIget_list_node(void)
         node_free_list = node_free_list->next;
     } /* end if */
     else {
-        if ((ret_value = (node_info_t *)HDmalloc(sizeof(node_info_t))) == NULL)
+        if ((ret_value = (node_info_t *)malloc(sizeof(node_info_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end else */
 
@@ -420,8 +415,8 @@ HULshutdown(void)
         while (node_free_list != NULL) {
             curr           = node_free_list;
             node_free_list = node_free_list->next;
-            HDfree(curr);
-        } /* end while */
-    }     /* end if */
-    return (SUCCEED);
+            free(curr);
+        }
+    }
+    return SUCCEED;
 } /* end HULshutdown() */

@@ -1,0 +1,34 @@
+/** @page CH11_UG Single-file Annotations (DFAN API)
+
+Navigate back: \ref index "Contents" / \ref UG
+<hr>
+
+\section sec_dfanapi Single-file Annotations (DFAN API)
+
+\subsection subsec_dfanapi_overview
+\subsection subsec_dfanapi_interface
+\subsubsection subsubsec_dfanapi_interface_lib
+\subsubsection subsubsec_dfanapi_interface_tags
+\subsection subsec_dfanapi_model
+\subsection subsec_dfanapi_write
+\subsubsection subsubsec_dfanapi_write_label
+\subsubsection subsubsec_dfanapi_write_descr
+\subsubsection subsubsec_dfanapi_write_obj_label
+\subsubsection subsubsec_dfanapi_write_obj_descr
+\subsection subsec_dfanapi_read
+\subsubsection subsubsec_dfanapi_read_label
+\subsubsection subsubsec_dfanapi_read_descr
+\subsubsection subsubsec_dfanapi_read_obj_label
+\subsubsection subsubsec_dfanapi_read_obj_descr
+\subsection subsec_dfanapi_maint
+\subsubsection subsubsec_dfanapi_maint_clear
+\subsection subsec_dfanapi_ref_num
+\subsubsection subsubsec_dfanapi_ref_num_last
+\subsubsection subsubsec_dfanapi_ref_num_query
+\subsubsection subsubsec_dfanapi_ref_num_locate
+
+
+<hr>
+Navigate back: \ref index "Contents" / \ref UG
+
+*/

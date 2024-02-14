@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.12)
-project (HDF4_MFHDF_TEST)
+project (HDF4_MFHDF_TEST C)
 
 set (hdftest_SRCS
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/hdftest.c
@@ -25,7 +25,7 @@ set (hdftest_SRCS
 
 #-- Adding test for hdftest
 add_executable (hdftest ${hdftest_SRCS})
-target_include_directories(hdftest PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR}")
+target_include_directories(hdftest PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_COMP_INCLUDE_DIRECTORIES};${HDF4_BINARY_DIR}")
 if (NOT BUILD_SHARED_LIBS)
   TARGET_C_PROPERTIES (hdftest STATIC)
   target_link_libraries (hdftest PRIVATE ${HDF4_MF_LIB_TARGET})
@@ -37,7 +37,7 @@ set_target_properties (hdftest PROPERTIES FOLDER test COMPILE_DEFINITIONS "HDF")
 
 #-- Adding test for cdftest
 add_executable (cdftest ${HDF4_MFHDF_TEST_SOURCE_DIR}/cdftest.c)
-target_include_directories(cdftest PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR}")
+target_include_directories(cdftest PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_BINARY_DIR}")
 if (NOT BUILD_SHARED_LIBS)
   TARGET_C_PROPERTIES (cdftest STATIC)
   target_link_libraries (cdftest PRIVATE ${HDF4_MF_LIB_TARGET})
@@ -56,7 +56,7 @@ set (hdfnctest_SRCS
 )
 
 add_executable (hdfnctest ${hdfnctest_SRCS})
-target_include_directories(hdfnctest PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR}")
+target_include_directories(hdfnctest PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_BINARY_DIR}")
 if (NOT BUILD_SHARED_LIBS)
   TARGET_C_PROPERTIES (hdfnctest STATIC)
   target_link_libraries (hdfnctest PRIVATE ${HDF4_MF_LIB_TARGET})

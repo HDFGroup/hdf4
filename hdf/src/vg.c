@@ -61,8 +61,8 @@ PRIVATE functions manipulate vsdir and are used only within this file.
 PRIVATE data structures in here pertain to vdata in vsdir only.
  */
 
-#define VSET_INTERFACE
-#include "hdf.h"
+#include "hdfi.h"
+#include "vgint.h"
 
 /* These are used to determine whether a vdata had been created by the
    library internally, that is, not created by user's application */
@@ -72,7 +72,7 @@ const char *HDF_INTERNAL_VDS[] = {DIM_VALS,    DIM_VALS01,      _HDF_ATTRIBUTE, 
 
 /* Private functions */
 #ifdef VDATA_FIELDS_ALL_UPPER
-PRIVATE int32 matchnocase(char *strx, char *stry);
+static int32 matchnocase(char *strx, char *stry);
 #endif /* VDATA_FIELDS_ALL_UPPER */
 
 #ifdef VDATA_FIELDS_ALL_UPPER
@@ -87,25 +87,25 @@ RETURNS
    if strings match return TRUE,
    else FALSE
 --------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 matchnocase(char *strx, /* IN: first string to be compared */
             char *stry /* IN: second string to be compared */)
 {
     int32 i;
     int32 nx, ny; /* length of strings */
 
-    nx = HDstrlen(strx);
-    ny = HDstrlen(stry);
+    nx = strlen(strx);
+    ny = strlen(stry);
 
     if (nx != ny)
-        return (FALSE); /* different lengths */
+        return FALSE; /* different lengths */
 
     for (i = 0; i < nx; i++, strx++, stry++) {
         if (toupper(*strx) != toupper(*stry))
-            return (FALSE); /* not identical */
+            return FALSE; /* not identical */
     }
 
-    return (TRUE);
+    return TRUE;
 } /* matchnocase */
 #endif /* VDATA_FIELDS_ALL_UPPER */
 
@@ -285,9 +285,9 @@ VSgetfields(int32 vkey, /* IN: vdata key */
     fields[0] = '\0';
     /* No special handling for 0-field vdatas, this algorithm should work fine. */
     for (i = 0; i < vs->wlist.n; i++) { /* build the comma-separated string */
-        HDstrcat(fields, vs->wlist.name[i]);
+        strcat(fields, vs->wlist.name[i]);
         if (i < vs->wlist.n - 1)
-            HDstrcat(fields, ",");
+            strcat(fields, ",");
     }
 
     /* return number of fields */
@@ -358,7 +358,7 @@ VSfexist(int32 vkey, /* IN: vdata key */
                 break;
             }
 #else
-            if (HDstrcmp(s, w->name[j]) == 0) {
+            if (strcmp(s, w->name[j]) == 0) {
                 found = 1;
                 break;
             }
@@ -431,7 +431,7 @@ VSsizeof(int32 vkey, /* IN vdata key */
 
         for (i = 0; i < ac; i++) { /* check fields in vs */
             for (found = 0, j = 0; j < vs->wlist.n; j++)
-                if (!HDstrcmp(av[i], vs->wlist.name[j])) {
+                if (!strcmp(av[i], vs->wlist.name[j])) {
                     totalsize += vs->wlist.esize[j];
                     found = 1;
                     break;
@@ -459,7 +459,7 @@ DESCRIPTION
 RETURNS
    No return codes.
 -------------------------------------------------------------------*/
-VOID
+void
 VSdump(int32 vkey /* IN: vdata key */)
 {
     (void)vkey;
@@ -506,16 +506,15 @@ VSsetname(int32       vkey, /* IN: Vdata key */
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     /* get current length of vdata name */
-    if (vs->vsname != NULL)
-        curr_len = HDstrlen(vs->vsname);
+    curr_len = strnlen(vs->vsname, VSNAMELENMAX + 1);
 
     /* check length of new name against MAX length */
-    if ((slen = HDstrlen(vsname)) > VSNAMELENMAX) { /* truncate name */
-        HDstrncpy(vs->vsname, vsname, VSNAMELENMAX);
+    if ((slen = strlen(vsname)) > VSNAMELENMAX) { /* truncate name */
+        strncpy(vs->vsname, vsname, VSNAMELENMAX);
         vs->vsname[VSNAMELENMAX] = '\0';
     }
     else /* copy whole name */
-        HDstrcpy(vs->vsname, vsname);
+        strcpy(vs->vsname, vsname);
 
     vs->marked = TRUE; /* mark vdata as being modified */
 
@@ -567,15 +566,15 @@ VSsetclass(int32       vkey, /* IN: vdata key */
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     /* get current length of vdata class name */
-    curr_len = (intn)HDstrlen(vs->vsclass);
+    curr_len = (intn)strlen(vs->vsclass);
 
     /* check length of new class name against MAX length */
-    if ((slen = (intn)HDstrlen(vsclass)) > VSNAMELENMAX) {
-        HDstrncpy(vs->vsclass, vsclass, VSNAMELENMAX);
+    if ((slen = (intn)strlen(vsclass)) > VSNAMELENMAX) {
+        strncpy(vs->vsclass, vsclass, VSNAMELENMAX);
         vs->vsclass[VSNAMELENMAX] = '\0';
     }
     else
-        HDstrcpy(vs->vsclass, vsclass);
+        strcpy(vs->vsclass, vsclass);
 
     vs->marked = TRUE; /* mark vdata as being modified */
 
@@ -623,7 +622,7 @@ VSgetname(int32 vkey, /* IN: vdata key */
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     /* copy vdata name over */
-    HDstrcpy(vsname, vs->vsname);
+    strcpy(vsname, vs->vsname);
 
 done:
     return ret_value;
@@ -666,7 +665,7 @@ VSgetclass(int32 vkey, /* IN: vdata key */
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     /* copy class name over */
-    HDstrcpy(vsclass, vs->vsclass);
+    strcpy(vsclass, vs->vsclass);
 
 done:
     return ret_value;
@@ -754,7 +753,7 @@ VSlone(HFILEID f,       /* IN: file id */
     int32  ret_value = SUCCEED;
 
     /* -- allocate local space for vdata refs, init to zeros -- */
-    if (NULL == (lonevdata = (uint8 *)HDcalloc(MAX_REF, sizeof(uint8))))
+    if (NULL == (lonevdata = (uint8 *)calloc(MAX_REF, sizeof(uint8))))
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* -- look for all vdatas in the file, and flag (1) each -- */
@@ -786,7 +785,7 @@ VSlone(HFILEID f,       /* IN: file id */
     }
 
     /* free up locally allocated space */
-    HDfree((VOIDP)lonevdata);
+    free(lonevdata);
 
     ret_value = nlone; /* return the TOTAL # of lone vdatas */
 
@@ -821,7 +820,7 @@ Vlone(HFILEID f,       /* IN: file id */
     int32  ret_value = SUCCEED;
 
     /* -- allocate space for vgroup refs, init to zeroes -- */
-    if (NULL == (lonevg = (uint8 *)HDcalloc(MAX_REF, sizeof(uint8))))
+    if (NULL == (lonevg = (uint8 *)calloc(MAX_REF, sizeof(uint8))))
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* -- look for all vgroups in the file, and flag (1) each -- */
@@ -854,7 +853,7 @@ Vlone(HFILEID f,       /* IN: file id */
     }
 
     /* free up locally allocated space */
-    HDfree((VOIDP)lonevg);
+    free(lonevg);
 
     ret_value = nlone; /* return the TOTAL # of lone vgroups */
 
@@ -900,7 +899,7 @@ Vfind(HFILEID     f, /* IN: file id */
 
         /* compare vgroup name to 'vgname' if it had been set */
         if (vg->vgname != NULL)
-            if (!HDstrcmp(vgname, vg->vgname))
+            if (!strcmp(vgname, vg->vgname))
                 HGOTO_DONE((int32)(vg->oref)); /* found the vgroup */
     }
 
@@ -945,7 +944,7 @@ VSfind(HFILEID     f, /* IN: file id */
             HGOTO_DONE(0);
 
         /* compare vdata name to 'vsname' if it had been set */
-        if (!HDstrcmp(vsname, vs->vsname))
+        if (!strcmp(vsname, vs->vsname))
             HGOTO_DONE((int32)(vs->oref)); /* found the vdata */
     }
 
@@ -993,7 +992,7 @@ Vfindclass(HFILEID     f, /* IN: file id */
 
         /* compare vgroup class to 'vgclass' if it had been set */
         if (vg->vgclass != NULL)
-            if (!HDstrcmp(vgclass, vg->vgclass))
+            if (!strcmp(vgclass, vg->vgclass))
                 HGOTO_DONE((int32)(vg->oref)); /* found the vgroup */
     }
 
@@ -1038,7 +1037,7 @@ VSfindclass(HFILEID     f, /* IN: file id */
             HGOTO_DONE(0);
 
         /* compare vdata class to 'vsclass' if it had been set */
-        if (!HDstrcmp(vsclass, vs->vsclass))
+        if (!strcmp(vsclass, vs->vsclass))
             HGOTO_DONE((int32)(vs->oref)); /* found the vdata */
     }
 
@@ -1214,7 +1213,7 @@ VSisinternal(const char *classname)
     /* Check if this class name is one of the internal class name and return
         TRUE, otherwise, return FALSE */
     for (i = 0; i < HDF_NUM_INTERNAL_VDS; i++) {
-        if (HDstrncmp(HDF_INTERNAL_VDS[i], classname, HDstrlen(HDF_INTERNAL_VDS[i])) == 0) {
+        if (strncmp(HDF_INTERNAL_VDS[i], classname, strlen(HDF_INTERNAL_VDS[i])) == 0) {
             ret_value = TRUE;
             break;
         }
@@ -1294,7 +1293,7 @@ RETURNS
    return TRUE, else FALSE.
    BMR - 2010/11/30
 *******************************************************************************/
-PRIVATE intn
+static intn
 vscheckclass(int32 id, /* IN: vgroup id or file id */
 	    uint16 vs_ref, /* IN: reference number of vdata being checked */
 	    const char *vsclass  /* IN: class name to be queried or NULL for
@@ -1315,7 +1314,7 @@ vscheckclass(int32 id, /* IN: vgroup id or file id */
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     /* Make sure this vdata has a class name before checking */
-    if (vs->vsclass != NULL && HDstrlen(vs->vsclass) != 0) {
+    if (strnlen(vs->vsclass, VSNAMELENMAX + 1) != 0) {
         /* If user-created vdatas are being checked for, then set flag
            if this vdata is not internally created by the library */
         if (vsclass == NULL) {
@@ -1325,7 +1324,7 @@ vscheckclass(int32 id, /* IN: vgroup id or file id */
         /* If a specific class is searched, set flag if this
            vdata has that same class */
         else {
-            size_t len = HDstrlen(_HDF_CHK_TBL_CLASS);
+            size_t len = strlen(_HDF_CHK_TBL_CLASS);
 
             /* Explanation of the comparison below:
                Because a class name that starts with _HDF_CHK_TBL_CLASS
@@ -1339,10 +1338,10 @@ vscheckclass(int32 id, /* IN: vgroup id or file id */
                will need to be modified properly */
 
             /* vsclass != _HDF_CHK_TBL_CLASS..., compare entire string*/
-            if (HDstrncmp(vsclass, _HDF_CHK_TBL_CLASS, len))
-                ret_value = HDstrcmp(vsclass, vs->vsclass) ? FALSE : TRUE;
+            if (strncmp(vsclass, _HDF_CHK_TBL_CLASS, len))
+                ret_value = strcmp(vsclass, vs->vsclass) ? FALSE : TRUE;
             else
-                ret_value = HDstrncmp(vsclass, vs->vsclass, len) ? FALSE : TRUE;
+                ret_value = strncmp(vsclass, vs->vsclass, len) ? FALSE : TRUE;
         }
     }
     /* This vd doesn't have a class name, so it must be a user-created vd */
@@ -1591,7 +1590,7 @@ done:
 /*
  * Vsetzap: Useless now. Maintained for back compatibility.
  */
-VOID
+void
 Vsetzap(void)
 {
 }

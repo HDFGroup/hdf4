@@ -8,7 +8,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "h4config.h"
+#include "hdf.h"
+
 #ifdef H4_HAVE_NETCDF
 #include <netcdf.h>
 #else
@@ -23,11 +24,11 @@
  * Function from ncdump.c. "Fixes" variable names to remove spaces and other
  * "illegal" characters.
  */
-extern char *fixstr(char *str, bool fix_str);
+extern char *sanitize_string(char *str, bool fix_str);
 
 static void annotate(struct ncvar *vp, struct fspec *fsp, long cor[], long iel);
 
-#define STREQ(a, b) (*(a) == *(b) && strcmp((a), (b)) == 0)
+#define VD_STREQ(a, b) (*(a) == *(b) && strcmp((a), (b)) == 0)
 
 /*
  * Print a row of variable values.  Makes sure output lines aren't too long
@@ -83,7 +84,7 @@ pr_vals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *va
             break;
         case NC_CHAR:
             gp.cp = (char *)vals;
-            if (fmt == 0 || STREQ(fmt, "%s") || STREQ(fmt, "")) { /* as string */
+            if (fmt == 0 || VD_STREQ(fmt, "%s") || VD_STREQ(fmt, "")) { /* as string */
                 Printf("\"");
                 /* adjust len so trailing nulls don't get printed */
                 sp = gp.cp + len;
@@ -163,7 +164,7 @@ pr_vals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *va
                 if (*gp.fp >= fill_float)
                     (void)sprintf(sout, "FloatInf, ");
                 else {
-                    (void)sprintf(sout, fmt, *gp.fp);
+                    (void)sprintf(sout, fmt, (double)*gp.fp);
                     (void)strcat(sout, ", ");
                 }
                 lput(sout);
@@ -172,7 +173,7 @@ pr_vals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *va
             if (*gp.fp >= fill_float)
                 (void)sprintf(sout, "FloatInf");
             else
-                (void)sprintf(sout, fmt, *gp.fp);
+                (void)sprintf(sout, fmt, (double)*gp.fp);
             lput(sout);
             gp.fp++;
             break;
@@ -322,7 +323,7 @@ pr_cvals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *v
             break;
         case NC_CHAR:
             gp.cp = (char *)vals;
-            if (fmt == 0 || STREQ(fmt, "%s") || STREQ(fmt, "")) { /* as string */
+            if (fmt == 0 || VD_STREQ(fmt, "%s") || VD_STREQ(fmt, "")) { /* as string */
                 Printf("\"");
                 /* adjust len so trailing nulls don't get printed */
                 sp = gp.cp + len;
@@ -406,7 +407,7 @@ pr_cvals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *v
                 if (*gp.fp >= fill_float)
                     Printf("FloatInf");
                 else
-                    Printf(fmt, *gp.fp);
+                    Printf(fmt, (double)*gp.fp);
                 Printf(",");
                 annotate(vp, fsp, cor, iel);
                 gp.fp++;
@@ -414,7 +415,7 @@ pr_cvals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *v
             if (*gp.fp >= fill_float)
                 Printf("FloatInf");
             else
-                Printf(fmt, *gp.fp);
+                Printf(fmt, (double)*gp.fp);
             lastdelim(more, lastrow);
             annotate(vp, fsp, cor, iel);
             gp.fp++;
@@ -505,7 +506,7 @@ vardata(struct ncvar *vp, long vdims[], int ncid, int varid, struct fspec *fsp)
         nels *= vdims[id]; /* total number of values for variable */
     }
 
-    fixed_var = fixstr(vp->name, fsp->fix_str);
+    fixed_var = sanitize_string(vp->name, fsp->fix_str);
 
     if (vrank <= 1) {
         Printf("\n %s = ", fixed_var);

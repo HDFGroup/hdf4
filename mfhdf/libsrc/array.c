@@ -14,24 +14,7 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <string.h>
 #include "local_nc.h"
-
-#ifdef NO_MEM_FUNCTS
-/*
- * internal replacement for memset
- */
-char *
-NCmemset(char *s, int c, int n)
-{
-    char *cp;
-
-    for (cp = s; cp < &s[n]; *cp++ = c)
-        /* nada */;
-
-    return s;
-}
-#endif
 
 /*
  * for a netcdf type
@@ -131,7 +114,7 @@ nctypelen(nc_type type)
     }
 }
 
-/* See netcdf.h for explanation of these initialzations */
+/* See netcdf.h for explanation of these initializations */
 /* assert( !(USE_F_UNION && USE_F_LONG_PUN) ) ; */
 /* assert( !(USE_D_UNION && USE_D_LONG_PUN) ) ; */
 
@@ -229,22 +212,13 @@ NC_new_array(nc_type type, unsigned count, const void *values)
     if (ret == NULL)
         goto alloc_err;
 
-    ret->type = type;
-    ret->szof = NC_typelen(type);
-#ifdef SDDEBUG
-    fprintf(stderr, "NC_new_array(): type=%u, NC_typelen(type)=%u\n", (unsigned)type, (unsigned)ret->szof);
-#endif
+    ret->type  = type;
+    ret->szof  = NC_typelen(type);
     ret->count = count;
     memlen     = count * ret->szof;
     ret->len   = count * NC_xtypelen(type);
-#ifdef SDDEBUG
-    fprintf(stderr, "NC_new_array(): count=%u, memlen=%u\n", count, memlen);
-#endif
     if (count != 0) {
         ret->values = malloc(memlen);
-#ifdef SDDEBUG
-        fprintf(stderr, "NC_new_array(): ret->values=%p, values=%p\n", ret->values, values);
-#endif
         if (ret->values == NULL)
             goto alloc_err;
         if (values == NULL) {
@@ -259,9 +233,6 @@ NC_new_array(nc_type type, unsigned count, const void *values)
         ret->values = NULL;
     }
 
-#ifdef SDDEBUG
-    fprintf(stderr, "NC_new_array(): ret=%p\n", ret);
-#endif
     return (ret);
 alloc_err:
     nc_serror("NC_new_array");
@@ -500,13 +471,13 @@ xdr_NC_array(XDR *xdrs, NC_array **app)
             break;
     }
 
-    if (!xdr_int(xdrs, &type)) {
-        NCadvise(NC_EXDR, "xdr_NC_array:xdr_int (enum)");
+    if (!h4_xdr_int(xdrs, &type)) {
+        NCadvise(NC_EXDR, "xdr_NC_array:h4_xdr_int (enum)");
         return (FALSE);
     }
 
-    if (!xdr_u_int(xdrs, &temp_count)) {
-        NCadvise(NC_EXDR, "xdr_NC_array:xdr_u_long");
+    if (!h4_xdr_u_int(xdrs, &temp_count)) {
+        NCadvise(NC_EXDR, "xdr_NC_array:h4_xdr_u_int");
         return (FALSE);
     }
     *countp = temp_count;
@@ -529,19 +500,19 @@ xdr_NC_array(XDR *xdrs, NC_array **app)
         case NC_UNSPECIFIED:
         case NC_BYTE:
         case NC_CHAR:
-            xdr_NC_fnct = xdr_opaque;
+            xdr_NC_fnct = h4_xdr_opaque;
             goto func;
         case NC_SHORT:
             xdr_NC_fnct = xdr_shorts;
             goto func;
         case NC_LONG:
-            xdr_NC_fnct = xdr_int;
+            xdr_NC_fnct = h4_xdr_int;
             goto loop;
         case NC_FLOAT:
-            xdr_NC_fnct = xdr_float;
+            xdr_NC_fnct = h4_xdr_float;
             goto loop;
         case NC_DOUBLE:
-            xdr_NC_fnct = xdr_double;
+            xdr_NC_fnct = h4_xdr_double;
             goto loop;
             /* private types */
         case NC_STRING:

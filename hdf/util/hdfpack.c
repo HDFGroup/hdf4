@@ -50,14 +50,14 @@ typedef struct mydd_t {
 /* Static function prototypes */
 int promptblocks(mydd_t *dd);
 
-VOID copy_blocks(mydd_t *dd, int32 infile, int32 outfile);
+void copy_blocks(mydd_t *dd, int32 infile, int32 outfile);
 
-VOID merge_blocks(mydd_t *dd, int32 infile, int32 outfile);
+void merge_blocks(mydd_t *dd, int32 infile, int32 outfile);
 
 int         main(int, char *a[]);
-static VOID usage(char *);
-static VOID hdferror(void);
-static VOID error(const char *);
+static void usage(char *);
+static void hdferror(void);
+static void error(const char *);
 int         desc_comp(const void *d1, const void *d2);
 
 unsigned char *data;
@@ -85,10 +85,10 @@ main(int argc, char *argv[])
      **   Get invocation name of program
      */
     tmp = (char *)NULL;
-    HDstrcpy(invoke, strtok(argv[0], "/]\\\0"));
+    strcpy(invoke, strtok(argv[0], "/]\\\0"));
     for (;;) {
         if (tmp != NULL)
-            HDstrcpy(invoke, tmp);
+            strcpy(invoke, tmp);
         if ((tmp = strtok((char *)NULL, "/]\\\0")) == NULL)
             break;
     }
@@ -145,7 +145,7 @@ main(int argc, char *argv[])
         }
         else {
             if (fnum < 2) {
-                HDstrcpy(fname[fnum], argv[i]);
+                strcpy(fname[fnum], argv[i]);
                 fnum++;
             }
         }
@@ -155,7 +155,7 @@ main(int argc, char *argv[])
     /*
      **   Enough [unique] file arguments?
      */
-    if ((fnum != 2) || (HDstrcmp(fname[0], fname[1]) == 0)) {
+    if ((fnum != 2) || (strcmp(fname[0], fname[1]) == 0)) {
         error("need 2 unique file names");
     }
 
@@ -190,7 +190,7 @@ main(int argc, char *argv[])
     if (num_desc == FAIL)
         hdferror();
 
-    dlist = (mydd_t *)HDmalloc(num_desc * sizeof(*dlist));
+    dlist = (mydd_t *)malloc(num_desc * sizeof(*dlist));
     if (dlist == NULL)
         error("\tWow!  That file must be HUGE!\n\tThere isn't enough memory to hold the DD's.\n");
 
@@ -199,7 +199,7 @@ main(int argc, char *argv[])
      */
     data_size = 1048576; /* 1 MB */
     data      = NULL;
-    while ((data = (unsigned char *)HDmalloc(data_size)) == NULL)
+    while ((data = (unsigned char *)malloc(data_size)) == NULL)
         data_size /= 2; /* okay then, cut request by half */
 
     /*
@@ -271,20 +271,20 @@ main(int argc, char *argv[])
                     case SPECIAL_EXT:
                         if (external) {
                             sp_info_block_t info;
-                            int32           aid1, new_aid;
+                            int32           _aid, new_aid;
                             char           *name;
 
                             /* get file name and offset */
-                            aid1 = Hstartread(infile, dlist[i].tag, dlist[i].ref);
-                            if (aid1 == FAIL)
+                            _aid = Hstartread(infile, dlist[i].tag, dlist[i].ref);
+                            if (_aid == FAIL)
                                 continue;
 
-                            ret = HDget_special_info(aid1, &info);
+                            ret = HDget_special_info(_aid, &info);
                             if ((ret == FAIL) || (info.key != SPECIAL_EXT))
                                 continue;
 
                             /* see if should be renamed */
-                            if (from_file && !HDstrcmp(info.path, from_file))
+                            if (from_file && !strcmp(info.path, from_file))
                                 name = to_file;
                             else
                                 name = info.path;
@@ -294,7 +294,7 @@ main(int argc, char *argv[])
                                                info.offset, dlist[i].length);
 
                             /* close the elements */
-                            Hendaccess(aid1);
+                            Hendaccess(_aid);
                             Hendaccess(new_aid);
                         }
                         else {
@@ -305,23 +305,23 @@ main(int argc, char *argv[])
                     case SPECIAL_COMP: /* This code assumes that you'd like to leave the compressed data that
                                           way and not expand it */
                     {
-                        int32  aid, len;
-                        VOIDP *buf;
+                        int32  _aid, len;
+                        void **buf;
 
                         /* Read in old compressed data description */
-                        if ((aid = Hstartaccess(infile, dlist[i].tag, dlist[i].ref, DFACC_READ)) == FAIL)
+                        if ((_aid = Hstartaccess(infile, dlist[i].tag, dlist[i].ref, DFACC_READ)) == FAIL)
                             continue;
                         HQuerylength(aid, &len);
-                        buf = HDmalloc(len);
-                        Hread(aid, len, buf);
-                        Hendaccess(aid);
+                        buf = malloc(len);
+                        Hread(_aid, len, buf);
+                        Hendaccess(_aid);
 
                         /* Write compressed data description into new file */
-                        if ((aid = Hstartaccess(outfile, dlist[i].tag, dlist[i].ref, DFACC_WRITE)) == FAIL)
+                        if ((_aid = Hstartaccess(outfile, dlist[i].tag, dlist[i].ref, DFACC_WRITE)) == FAIL)
                             continue;
-                        Hwrite(aid, len, buf);
-                        Hendaccess(aid);
-                        HDfree(buf);
+                        Hwrite(_aid, len, buf);
+                        Hendaccess(_aid);
+                        free(buf);
                     } break;
                     default:
                         merge_blocks(&dlist[i], infile, outfile);
@@ -345,14 +345,8 @@ main(int argc, char *argv[])
         oldoff = dlist[i].offset;
     }
 
-    /*
-     **   Rename any matching external elements
-     */
-    if (from_file && to_file) {
-    }
-
-    HDfree(data);
-    HDfree(dlist);
+    free(data);
+    free(dlist);
 
     /*
      **   done; close files
@@ -385,7 +379,7 @@ promptblocks(mydd_t *dd)
  ** NAME
  **      copy_blocks -- move a linked-block element; preserve blocking
  */
-VOID
+void
 copy_blocks(mydd_t *dd, int32 infile, int32 outfile)
 {
     int32           inaid, ret, rdret, outaid;
@@ -450,13 +444,14 @@ copy_blocks(mydd_t *dd, int32 infile, int32 outfile)
         }
     }
     Hendaccess(outaid);
+    Hendaccess(inaid);
 }
 
 /*
  ** NAME
  **      merge_blocks
  */
-VOID
+void
 merge_blocks(mydd_t *dd, int32 infile, int32 outfile)
 {
     int32 inaid, outaid, ret, len;
@@ -512,7 +507,7 @@ merge_blocks(mydd_t *dd, int32 infile, int32 outfile)
  ** COMMENTS, BUGS, ASSUMPTIONS
  ** EXAMPLES
  */
-static VOID
+static void
 usage(char *name)
 {
     fprintf(stderr, "Usage:  %s [-i | -b] [-d#] [-t#] [-x] [-r <from> <to>] <infile> <outfile>\n", name);
@@ -539,7 +534,7 @@ usage(char *name)
  **   This routine terminates the program with code 1.
  ** EXAMPLES
  */
-static VOID
+static void
 hdferror(void)
 {
     HEprint(stderr, 0);
@@ -561,7 +556,7 @@ hdferror(void)
  **   This routine terminates the program with code 1.
  ** EXAMPLES
  */
-static VOID
+static void
 error(const char *string)
 {
     fprintf(stderr, "%s: %s\n", invoke, string);

@@ -20,7 +20,7 @@
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "hproto_fortran.h"
 
 /*-----------------------------------------------------------------------------
@@ -35,7 +35,7 @@
  *          Instead it prints automatically to stdout.
  *---------------------------------------------------------------------------*/
 
-FRETVAL(VOID)
+void
 nheprnt(intf *print_levels)
 {
     HEprint(stderr, *print_levels);
@@ -52,7 +52,7 @@ nheprnt(intf *print_levels)
  *          Instead it prints automatically to stdout.
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nheprntc(_fcd filename, intf *print_levels, intf *namelen)
 {
     FILE *err_file;
@@ -63,17 +63,17 @@ nheprntc(_fcd filename, intf *print_levels, intf *namelen)
     c_len = *namelen;
     if (c_len == 0) {
         HEprint(stderr, *print_levels);
-        return (ret);
+        return ret;
     }
     c_name = HDf2cstring(filename, c_len);
     if (!c_name)
-        return (FAIL);
+        return FAIL;
     err_file = fopen(c_name, "a");
     if (!err_file)
-        return (FAIL);
+        return FAIL;
     HEprint(err_file, *print_levels);
     fclose(err_file);
-    return (ret);
+    return ret;
 }
 /*-----------------------------------------------------------------------------
  * Name: hestringc
@@ -82,7 +82,7 @@ nheprntc(_fcd filename, intf *print_levels, intf *namelen)
  * Outputs: error_message - error message assocoated with the error code
  * Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nhestringc(intf *error_code, _fcd error_message, intf *len)
 {
     char *cstring = NULL;

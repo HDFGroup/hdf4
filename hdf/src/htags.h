@@ -18,6 +18,8 @@
 #ifndef H4_HTAGS_H
 #define H4_HTAGS_H
 
+#include "hdf.h"
+
 /* wild-card tags and refs. Should only be used in interface calls
    and never stored in the file i.e. in DD's. */
 #define DFREF_WILDCARD 0

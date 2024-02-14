@@ -132,7 +132,7 @@ gen_load_c(void *rec_start)
     float  *floatvalp  = NULL;
     double *doublevalp = NULL;
     char    stmnt[C_MAX_STMNT];
-    int     stmnt_len;
+    size_t  stmnt_len;
     char    s2[H4_MAX_NC_NAME + 2];
 
     /* initialize coords to upper left corner (rec_num,0,0,...) */
@@ -210,7 +210,7 @@ gen_load_c(void *rec_start)
                             sprintf(s2, "%d, ", (int)*longvalp++);
                             break;
                         case NC_FLOAT:
-                            sprintf(s2, "%.8g, ", *floatvalp++);
+                            sprintf(s2, "%.8g, ", (double)(*floatvalp++));
                             break;
                         case NC_DOUBLE:
                             sprintf(s2, "%#.16g", *doublevalp++);
@@ -241,7 +241,7 @@ gen_load_c(void *rec_start)
                             sprintf(s2, "%d", (int)*longvalp);
                             break;
                         case NC_FLOAT:
-                            sprintf(s2, "%.8g", *floatvalp);
+                            sprintf(s2, "%.8g", (double)(*floatvalp));
                             break;
                         case NC_DOUBLE:
                             sprintf(s2, "%#.16g", *doublevalp++);
@@ -296,7 +296,7 @@ gen_load_c(void *rec_start)
                 break;
             case NC_FLOAT:
                 floatvalp = (float *)rec_start;
-                sprintf(s2, "%.8g", *floatvalp);
+                sprintf(s2, "%.8g", (double)(*floatvalp));
                 strcat(stmnt, s2);
                 break;
             case NC_DOUBLE:
@@ -328,9 +328,10 @@ gen_load_c(void *rec_start)
 /* t     - string to be appended to source */
 /* slenp - pointer to length of source string */
 static void
-fstrcat(char *s, char *t, long *slenp)
+fstrcat(char *s, const char *t, size_t *slenp)
 {
     *slenp += strlen(t);
+
     if (*slenp >= FORT_MAX_STMNT) {
         derror("FORTRAN statement too long: %s", s);
         fline(s);
@@ -353,7 +354,7 @@ gen_load_fortran(void *rec_start) /* make Fortran to put record */
     float  *floatvalp;
     double *doublevalp;
     char    stmnt[FORT_MAX_STMNT];
-    long    stmnt_len;
+    size_t  stmnt_len;
     char    s2[H4_MAX_NC_NAME + 2];
 
     /* initialize coords to upper left corner (1,1,...,rec_num) */
@@ -430,10 +431,10 @@ gen_load_fortran(void *rec_start) /* make Fortran to put record */
             case NC_FLOAT:
                 floatvalp = (float *)rec_start;
                 for (ival = 0; ival < var_len - 1; ival++) {
-                    sprintf(s2, "%.8g, ", *floatvalp++);
+                    sprintf(s2, "%.8g, ", (double)(*floatvalp++));
                     fstrcat(stmnt, s2, &stmnt_len);
                 }
-                sprintf(s2, "%.8g", *floatvalp);
+                sprintf(s2, "%.8g", (double)(*floatvalp));
                 fstrcat(stmnt, s2, &stmnt_len);
                 break;
             case NC_DOUBLE:
@@ -458,7 +459,7 @@ gen_load_fortran(void *rec_start) /* make Fortran to put record */
                 vars[varnum].name);
     }
     else { /* for strings, call ncvptc() */
-        int dimprod = 1;
+        long dimprod = 1;
 
         val_string = fstrstr((char *)rec_start, var_len);
         sprintf(stmnt, "%s = %s", vars[varnum].name, val_string);
@@ -471,7 +472,7 @@ gen_load_fortran(void *rec_start) /* make Fortran to put record */
         if (vars[varnum].dims[0] != rec_dim)
             dimprod *= dims[vars[varnum].dims[0]].size;
 
-        sprintf(stmnt, "call ncvptc(ncid, %sid, corner, edges, %s, %d, iret)", vars[varnum].name,
+        sprintf(stmnt, "call ncvptc(ncid, %sid, corner, edges, %s, %ld, iret)", vars[varnum].name,
                 vars[varnum].name, dimprod);
     }
     fline(stmnt);

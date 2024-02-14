@@ -14,7 +14,7 @@
 /*
  *  SZIP support eliminated for HDF4.2R1
  */
-#include <hdf.h>
+#include "hdf.h"
 #include "tutils.h"
 
 #ifdef H4_HAVE_LIBSZ
@@ -63,10 +63,10 @@ test_szip_RI8bit()
         interlace_mode, /* interlace mode of the image */
         data_type,      /* data type of the image data */
         index;
-    int32     start[2], edges[2];
-    uint32    comp_config;
-    comp_info cinfo; /* Compression parameters - union */
-
+    int32        start[2], edges[2];
+    uint32       comp_config;
+    comp_info    cinfo;     /* Compression parameters - union */
+    comp_info    cinfo_out; /* Compression parameters read - union */
     comp_coder_t comp_type;
 
     int8 out_data[LENGTH][WIDTH][N_COMPS];
@@ -191,7 +191,7 @@ test_szip_RI8bit()
         return;
     }
 
-    status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)in_data);
+    status = GRwriteimage(ri_id, start, NULL, edges, (void *)in_data);
     CHECK_VOID(status, FAIL, "GRwriteimage");
 
     /* Terminate access to the raster image */
@@ -226,24 +226,26 @@ test_szip_RI8bit()
 
     /* Get and verify the image's compression information */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo_out, 0, sizeof(cinfo_out));
 
-    status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
+    status = GRgetcompinfo(ri_id, &comp_type, &cinfo_out);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.options_mask, cinfo_out.szip.options_mask, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.pixels_per_block, cinfo_out.szip.pixels_per_block, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
-    HDmemset(&out_data, 0, sizeof(out_data));
+    memset(&out_data, 0, sizeof(out_data));
 
     /* Read the whole image */
     start[0] = start[1] = 0;
     edges[0]            = WIDTH;
     edges[1]            = LENGTH;
-    status              = GRreadimage(ri_id, start, NULL, edges, (VOIDP)out_data);
+    status              = GRreadimage(ri_id, start, NULL, edges, (void *)out_data);
     CHECK_VOID(status, FAIL, "GRreadimage");
 
     /* Compare read data against input data */
-    if (0 != HDmemcmp(out_data, in_data, sizeof(in_data)))
+    if (0 != memcmp(out_data, in_data, sizeof(in_data)))
         printf("Error in reading the whole image \n");
 
     /* Terminate access to the raster image */
@@ -275,8 +277,9 @@ test_szip_RI16bit()
         data_type,      /* data type of the image data */
         index;
     int32        start[2], edges[2];
-    comp_info    cinfo; /* Compression parameters - union */
     uint32       comp_config;
+    comp_info    cinfo;     /* Compression parameters - union */
+    comp_info    cinfo_out; /* Compression parameters read - union */
     comp_coder_t comp_type;
 
     int16 out_data[LENGTH][WIDTH][N_COMPS];
@@ -401,8 +404,8 @@ test_szip_RI16bit()
         return;
     }
 
-    status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)in_data);
-    CHECK_VOID(status, FAIL, "SDwritedata");
+    status = GRwriteimage(ri_id, start, NULL, edges, (void *)in_data);
+    CHECK_VOID(status, FAIL, "GRwriteimage");
 
     /* Terminate access to the raster image */
     status = GRendaccess(ri_id);
@@ -436,24 +439,26 @@ test_szip_RI16bit()
 
     /* Get and verify the image's compression information */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo_out, 0, sizeof(cinfo_out));
 
-    status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
+    status = GRgetcompinfo(ri_id, &comp_type, &cinfo_out);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.options_mask, cinfo_out.szip.options_mask, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.pixels_per_block, cinfo_out.szip.pixels_per_block, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
-    HDmemset(&out_data, 0, sizeof(out_data));
+    memset(&out_data, 0, sizeof(out_data));
 
     /* Read the whole image */
     start[0] = start[1] = 0;
     edges[0]            = WIDTH;
     edges[1]            = LENGTH;
-    status              = GRreadimage(ri_id, start, NULL, edges, (VOIDP)out_data);
+    status              = GRreadimage(ri_id, start, NULL, edges, (void *)out_data);
     CHECK_VOID(status, FAIL, "GRreadimage");
 
     /* Compare read data against input data */
-    if (0 != HDmemcmp(out_data, in_data, sizeof(in_data)))
+    if (0 != memcmp(out_data, in_data, sizeof(in_data)))
         printf("Error in reading the whole image \n");
 
     /* Terminate access to the raster image */
@@ -485,8 +490,9 @@ test_szip_RI32bit()
         data_type,      /* data type of the image data */
         index;
     int32        start[2], edges[2];
-    comp_info    cinfo; /* Compression parameters - union */
     uint32       comp_config;
+    comp_info    cinfo;     /* Compression parameters - union */
+    comp_info    cinfo_out; /* Compression parameters read - union */
     comp_coder_t comp_type;
 
     int32 out_data[LENGTH][WIDTH][N_COMPS];
@@ -611,7 +617,7 @@ test_szip_RI32bit()
         return;
     }
 
-    status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)in_data);
+    status = GRwriteimage(ri_id, start, NULL, edges, (void *)in_data);
     CHECK_VOID(status, FAIL, "GRwriteimage");
 
     /* Terminate access to the raster image */
@@ -646,24 +652,26 @@ test_szip_RI32bit()
 
     /* Get and verify the image's compression information */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo_out, 0, sizeof(cinfo_out));
 
-    status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
+    status = GRgetcompinfo(ri_id, &comp_type, &cinfo_out);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.options_mask, cinfo_out.szip.options_mask, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.pixels_per_block, cinfo_out.szip.pixels_per_block, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
-    HDmemset(&out_data, 0, sizeof(out_data));
+    memset(&out_data, 0, sizeof(out_data));
 
     /* Read the whole image */
     start[0] = start[1] = 0;
     edges[0]            = WIDTH;
     edges[1]            = LENGTH;
-    status              = GRreadimage(ri_id, start, NULL, edges, (VOIDP)out_data);
+    status              = GRreadimage(ri_id, start, NULL, edges, (void *)out_data);
     CHECK_VOID(status, FAIL, "GRreadimage");
 
     /* Compare read data against input data */
-    if (0 != HDmemcmp(out_data, in_data, sizeof(in_data)))
+    if (0 != memcmp(out_data, in_data, sizeof(in_data)))
         printf("Error in reading the whole image \n");
 
     /* Terminate access to the raster image */
@@ -694,10 +702,10 @@ test_szip_RIfl32bit()
         interlace_mode, /* interlace mode of the image */
         data_type,      /* data type of the image data */
         index;
-    int32     start[2], edges[2];
-    comp_info cinfo; /* Compression parameters - union */
-    uint32    comp_config;
-
+    int32        start[2], edges[2];
+    uint32       comp_config;
+    comp_info    cinfo;     /* Compression parameters - union */
+    comp_info    cinfo_out; /* Compression parameters read - union */
     comp_coder_t comp_type;
 
     float32 out_data[LENGTH][WIDTH][N_COMPS];
@@ -823,7 +831,7 @@ test_szip_RIfl32bit()
         return;
     }
 
-    status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)in_data);
+    status = GRwriteimage(ri_id, start, NULL, edges, (void *)in_data);
     CHECK_VOID(status, FAIL, "GRwriteimage");
 
     /* Terminate access to the raster image */
@@ -858,24 +866,26 @@ test_szip_RIfl32bit()
 
     /* Get and verify the image's compression information */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo_out, 0, sizeof(cinfo_out));
 
-    status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
+    status = GRgetcompinfo(ri_id, &comp_type, &cinfo_out);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.options_mask, cinfo_out.szip.options_mask, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.pixels_per_block, cinfo_out.szip.pixels_per_block, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
-    HDmemset(&out_data, 0, sizeof(out_data));
+    memset(&out_data, 0, sizeof(out_data));
 
     /* Read the whole image */
     start[0] = start[1] = 0;
     edges[0]            = WIDTH;
     edges[1]            = LENGTH;
-    status              = GRreadimage(ri_id, start, NULL, edges, (VOIDP)out_data);
+    status              = GRreadimage(ri_id, start, NULL, edges, (void *)out_data);
     CHECK_VOID(status, FAIL, "GRreadimage");
 
     /* Compare read data against input data */
-    if (0 != HDmemcmp(out_data, in_data, sizeof(in_data)))
+    if (0 != memcmp(out_data, in_data, sizeof(in_data)))
         printf("Error in reading the whole image \n");
 
     /* Terminate access to the raster image */
@@ -907,8 +917,9 @@ test_szip_RIfl64bit()
         data_type,      /* data type of the image data */
         index;
     int32        start[2], edges[2];
-    comp_info    cinfo; /* Compression parameters - union */
     uint32       comp_config;
+    comp_info    cinfo;     /* Compression parameters - union */
+    comp_info    cinfo_out; /* Compression parameters read - union */
     comp_coder_t comp_type;
 
     float64 out_data[LENGTH][WIDTH][N_COMPS];
@@ -1035,7 +1046,7 @@ test_szip_RIfl64bit()
         return;
     }
 
-    status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)in_data);
+    status = GRwriteimage(ri_id, start, NULL, edges, (void *)in_data);
     CHECK_VOID(status, FAIL, "GRwriteimage");
 
     /* Terminate access to the raster image */
@@ -1070,24 +1081,26 @@ test_szip_RIfl64bit()
 
     /* Get and verify the image's compression information */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo_out, 0, sizeof(cinfo_out));
 
-    status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
+    status = GRgetcompinfo(ri_id, &comp_type, &cinfo_out);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.options_mask, cinfo_out.szip.options_mask, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.pixels_per_block, cinfo_out.szip.pixels_per_block, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
-    HDmemset(&out_data, 0, sizeof(out_data));
+    memset(&out_data, 0, sizeof(out_data));
 
     /* Read the whole image */
     start[0] = start[1] = 0;
     edges[0]            = WIDTH;
     edges[1]            = LENGTH;
-    status              = GRreadimage(ri_id, start, NULL, edges, (VOIDP)out_data);
+    status              = GRreadimage(ri_id, start, NULL, edges, (void *)out_data);
     CHECK_VOID(status, FAIL, "GRreadimage");
 
     /* Compare read data against input data */
-    if (0 != HDmemcmp(out_data, in_data, sizeof(in_data)))
+    if (0 != memcmp(out_data, in_data, sizeof(in_data)))
         printf("Error in reading the whole image \n");
 
     /* Terminate access to the raster image */
@@ -1127,7 +1140,7 @@ test_szip_chunk()
         comp_flag,      /* compression flag */
         index;
     int32         start[2], stride[2], edge[2];
-    comp_info     cinfo_out; /* Compression parameters - union */
+    comp_info     cinfo_out; /* Compression parameters read - union */
     uint32        comp_config;
     comp_coder_t  comp_type;
     int8          data_out[N_COMPS * LENGTH_CH * WIDTH_CH];
@@ -1213,19 +1226,19 @@ test_szip_chunk()
 
     /* Write first data chunk ( 0, 0 ). */
     origin[0] = origin[1] = 0;
-    status                = GRwritechunk(ri_id, origin, (VOIDP)chunk00);
+    status                = GRwritechunk(ri_id, origin, (void *)chunk00);
     CHECK_VOID(status, FAIL, "GRwritechunk");
 
     /* Write second data chunk ( 0, 1 ). */
     origin[0] = 0;
     origin[1] = 1;
-    status    = GRwritechunk(ri_id, origin, (VOIDP)chunk01);
+    status    = GRwritechunk(ri_id, origin, (void *)chunk01);
     CHECK_VOID(status, FAIL, "GRwritechunk");
 
     /* Write third data chunk ( 1, 4 ). */
     origin[0] = 1;
     origin[1] = 4;
-    status    = GRwritechunk(ri_id, origin, (VOIDP)chunk14);
+    status    = GRwritechunk(ri_id, origin, (void *)chunk14);
     CHECK_VOID(status, FAIL, "GRwritechunk");
 
     /* Terminate accesses and close the HDF file. */
@@ -1258,18 +1271,20 @@ test_szip_chunk()
 
     /* Get and verify the image's compression information. */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo_out, 0, sizeof(cinfo_out));
+    memset(&cinfo_out, 0, sizeof(cinfo_out));
 
     status = GRgetcompinfo(ri_id, &comp_type, &cinfo_out);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
+    VERIFY_VOID(chunk_def.comp.cinfo.szip.options_mask, cinfo_out.szip.options_mask, "GRgetcompinfo");
+    VERIFY_VOID(chunk_def.comp.cinfo.szip.pixels_per_block, cinfo_out.szip.pixels_per_block, "GRgetcompinfo");
 
     /* Read first chunk back and compare with input chunk. */
     origin[0] = 0;
     origin[1] = 0;
-    status    = GRreadchunk(ri_id, origin, (VOIDP)chunk_buf);
+    status    = GRreadchunk(ri_id, origin, (void *)chunk_buf);
     CHECK_VOID(status, FAIL, "GRreadchunk");
-    if (0 != HDmemcmp(chunk_buf, chunk00, sizeof(chunk00))) {
+    if (0 != memcmp(chunk_buf, chunk00, sizeof(chunk00))) {
         printf("Error in reading chunk 00\n");
         num_errs++;
     }
@@ -1277,9 +1292,9 @@ test_szip_chunk()
     /* Read second chunk back and compare with input chunk. */
     origin[0] = 0;
     origin[1] = 1;
-    status    = GRreadchunk(ri_id, origin, (VOIDP)chunk_buf);
+    status    = GRreadchunk(ri_id, origin, (void *)chunk_buf);
     CHECK_VOID(status, FAIL, "GRreadchunk");
-    if (0 != HDmemcmp(chunk_buf, chunk01, sizeof(chunk01))) {
+    if (0 != memcmp(chunk_buf, chunk01, sizeof(chunk01))) {
         printf("Error in reading chunk 01\n");
         num_errs++;
     }
@@ -1287,9 +1302,9 @@ test_szip_chunk()
     /* Read third chunk back and compare with input chunk. */
     origin[0] = 1;
     origin[1] = 4;
-    status    = GRreadchunk(ri_id, origin, (VOIDP)chunk_buf);
+    status    = GRreadchunk(ri_id, origin, (void *)chunk_buf);
     CHECK_VOID(status, FAIL, "GRreadchunk");
-    if (0 != HDmemcmp(chunk_buf, chunk14, sizeof(chunk14))) {
+    if (0 != memcmp(chunk_buf, chunk14, sizeof(chunk14))) {
         printf("Error in reading chunk 14\n");
         num_errs++;
     }
@@ -1299,9 +1314,9 @@ test_szip_chunk()
     stride[0] = stride[1] = 1;
     edge[0]               = LENGTH_CH;
     edge[1]               = WIDTH_CH;
-    status                = GRreadimage(ri_id, start, stride, edge, (VOIDP)data_out);
+    status                = GRreadimage(ri_id, start, stride, edge, (void *)data_out);
     CHECK_VOID(status, FAIL, "GRreadimage");
-    if (0 != HDmemcmp(data_out, data, sizeof(data))) {
+    if (0 != memcmp(data_out, data, sizeof(data))) {
         printf("Error in reading the whole image \n");
         num_errs++;
     }

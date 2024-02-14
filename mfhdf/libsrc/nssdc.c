@@ -12,7 +12,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "local_nc.h"
-#ifdef HDF
 #include "hfile.h"
 
 /* constants/macros pulled out of the CDF library source */
@@ -155,10 +154,6 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
     /* interesting stuff in AEDR record */
     int32 count;
 
-#if DEBUG
-    fprintf(stderr, "nssdc_read_cdf i've been called\n");
-#endif
-
     handle      = (*handlep);
     fp          = handle->cdf_fp;
     current_var = 0;
@@ -190,18 +185,12 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
      * Only handle single file implementations for now
      */
     if (!bitset(flags, CDF_FORMAT_BIT)) {
-#ifdef DEBUG
-        fprintf(stderr, "We are only able to handle single-file CDFs.  Sorry.\n");
-#endif
         return (FALSE);
     }
 
     /* Check the encoding */
     if ((encoding != NETWORK_ENCODING) && (encoding != SUN_ENCODING) && (encoding != SGi_ENCODING) &&
         (encoding != IBMRS_ENCODING) && (encoding != HP_ENCODING)) {
-#ifdef DEBUG
-        fprintf(stderr, "We are only able to handle IEEE encoded files.  Sorry.\n");
-#endif
         return (FALSE);
     }
 
@@ -240,12 +229,6 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
     if (HI_READ(fp, buffer, numDims * sizeof(int32)) == FAIL)
         HRETURN_ERROR(DFE_READERROR, FALSE);
 
-#ifdef DEBUG
-    fprintf(stderr, "File version %d.%d\n", (int)vers, (int)release);
-    fprintf(stderr, " rVars %d, Attrs %d, zVars %d\n", (int)numRVars, (int)numAttrs, (int)numZVars);
-    fprintf(stderr, " Dims %d, maxRec %d\n", (int)numDims, (int)maxRec);
-#endif
-
     /*
      * For each rVariable dimension size create a new dimension object
      */
@@ -256,20 +239,12 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
         INT32DECODE(b, dim_sz[i]);
         sprintf(tmpname, "CDFdim%d_%d", i, (int)dim_sz[i]);
         dim_rec[current_dim++] = NC_new_dim(tmpname, dim_sz[i]);
-
-#ifdef DEBUG
-        fprintf(stderr, "Created dimension %s\n", tmpname);
-#endif
     }
 
     /*
      * Loop over Rvariables and read them in
      */
     while (varNext != 0) {
-
-#ifdef DEBUG
-        fprintf(stderr, "Variable %d seeking to %d\n", (int)current_var, (int)varNext);
-#endif
 
         if (HI_SEEK(fp, varNext) == FAIL)
             HRETURN_ERROR(DFE_SEEKERROR, FALSE);
@@ -302,7 +277,7 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
         INT32DECODE(b, dummy);   /* rfuD */
         INT32DECODE(b, dummy);   /* nextEndRecs */
 
-        HDmemcpy(name, b, CDF_VAR_NAME_LEN);
+        memcpy(name, b, CDF_VAR_NAME_LEN);
         name[CDF_VAR_NAME_LEN] = '\0';
         b += CDF_VAR_NAME_LEN;
 
@@ -310,11 +285,6 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
         while ((name[j] != ' ') && (name[j] != '\0'))
             j++;
         name[j] = '\0';
-
-#ifdef DEBUG
-        fprintf(stderr, "\tName %s nt %d vMaxRec %d\n", name, (int)nt, (int)vMaxRec);
-        fprintf(stderr, "\tNext var at %d\n", (int)varNext);
-#endif
 
         /*
          *  Figure out which dimensions are meaningful
@@ -352,10 +322,6 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
         var = vars[current_var] = NC_new_var((char *)name, nctype, (int)rank, dims);
         if (var == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FALSE);
-
-#ifdef DEBUG
-        fprintf(stderr, "Was able to call NC_new_var()\n");
-#endif
 
         /* if it is unsigned at least set the HDFtype to reflect it */
         switch (nt) {
@@ -400,9 +366,6 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
 
             vix->next = NULL;
 
-#ifdef DEBUG
-            fprintf(stderr, "Reading a VXR record at %d\n", (int)vxrNext);
-#endif
             /*
              * Read the next record out of the file
              */
@@ -431,13 +394,6 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
                 INT32DECODE(b, vix->lastRec[i]);
             for (i = 0; i < vix->nEntries; i++)
                 INT32DECODE(b, vix->offset[i]);
-
-#ifdef DEBUG
-            for (i = 0; i < vix->nEntries; i++)
-                fprintf(stderr, "\t%d %d %d\n", (int)vix->firstRec[i], (int)vix->lastRec[i],
-                        (int)vix->offset[i]);
-            fprintf(stderr, "Next record at %d\n", (int)vxrNext);
-#endif
         }
 
         current_var++;
@@ -447,10 +403,6 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
      * Loop over Zvariables and read them in
      */
     while (zVarNext != 0) {
-
-#ifdef DEBUG
-        fprintf(stderr, "zVariable %d seeking to %d\n", i, (int)zVarNext);
-#endif
 
         if (HI_SEEK(fp, zVarNext) == FAIL)
             HRETURN_ERROR(DFE_SEEKERROR, FALSE);
@@ -483,7 +435,7 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
         INT32DECODE(b, dummy);    /* rfuD */
         INT32DECODE(b, dummy);    /* nextEndRecs */
 
-        HDmemcpy(name, b, CDF_VAR_NAME_LEN);
+        memcpy(name, b, CDF_VAR_NAME_LEN);
         name[CDF_VAR_NAME_LEN] = '\0';
         b += CDF_VAR_NAME_LEN;
 
@@ -493,10 +445,6 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
         name[j] = '\0';
 
         /* MORE STUFF */
-#ifdef DEBUG
-        fprintf(stderr, "\tName %s nt %d vMaxRec %d\n", name, (int)nt, (int)vMaxRec);
-#endif
-
         /*
          * Get the number of dimensions defined with this dataset
          * This is not necessarily the rank since we may not vary in
@@ -523,10 +471,6 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
                 dims[rank++]         = current_dim++;
             }
         }
-
-#ifdef DEBUG
-        fprintf(stderr, "\trank %d numDims %d\n", (int)rank, (int)numDims);
-#endif
 
         /* map the CDF type into a netCDF type */
         nctype = cdf_unmap_type(nt);
@@ -572,9 +516,6 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
 
             vix->next = NULL;
 
-#ifdef DEBUG
-            fprintf(stderr, "Reading a VXR record at %d\n", (int)vxrNext);
-#endif
             /*
              * Read the next record out of the file
              */
@@ -603,13 +544,6 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
                 INT32DECODE(b, vix->lastRec[i]);
             for (i = 0; i < vix->nEntries; i++)
                 INT32DECODE(b, vix->offset[i]);
-
-#ifdef DEBUG
-            for (i = 0; i < vix->nEntries; i++)
-                fprintf(stderr, "\t%d %d %d\n", (int)vix->firstRec[i], (int)vix->lastRec[i],
-                        (int)vix->offset[i]);
-            fprintf(stderr, "Next record at %d\n", (int)vxrNext);
-#endif
         }
 
         current_var++;
@@ -620,10 +554,6 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
      * Loop over Attributes and read them in
      */
     for (i = 0; i < numAttrs; i++) {
-
-#ifdef DEBUG
-        fprintf(stderr, "Attribute %d seeking to %d\n", i, (int)adrNext);
-#endif
 
         if (HI_SEEK(fp, adrNext) == FAIL)
             HRETURN_ERROR(DFE_SEEKERROR, FALSE);
@@ -652,15 +582,8 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
         INT32DECODE(b, dummy);    /* MaxZ */
         INT32DECODE(b, dummy);    /* rfuE */
 
-        HDmemcpy(name, b, CDF_ATTR_NAME_LEN);
+        memcpy(name, b, CDF_ATTR_NAME_LEN);
         name[CDF_ATTR_NAME_LEN] = '\0';
-
-#ifdef DEBUG
-        fprintf(stderr, "\tname %s (%s) data at %d\n", name, (scope == 1 ? "global" : "local"),
-                (int)aedrNext);
-        fprintf(stderr, "\taedrNext %d    aedzNext %d\n", (int)aedrNext, (int)aedzNext);
-
-#endif
 
         /*
          * Read in the AEDR records now and add them to the appropriate object
@@ -705,7 +628,7 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
             tBuf  = malloc((uint32)bsize);
 
             /* convert attribute values and create attr object */
-            DFKconvert((VOIDP)b, (VOIDP)tBuf, hdftype, count, DFACC_READ, 0, 0);
+            DFKconvert((void *)b, (void *)tBuf, hdftype, count, DFACC_READ, 0, 0);
             attr[0] = NC_new_attr(name, nctype, count, tBuf);
             free(tBuf);
 
@@ -721,10 +644,6 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
             else {
                 /* local --- find the appropriate variable */
                 ap = &(vars[num]->attrs);
-#ifdef DEBUG
-                fprintf(stderr, "\tAdding %s (%s) to var %d \n", name, (scope == 1 ? "global" : "local"),
-                        (int)num);
-#endif
             }
 
             /* add the attribute to the list */
@@ -751,10 +670,6 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
             NC_attr   *attr[1];
             char      *tBuf;
             int32      bsize;
-
-#ifdef DEBUG
-            fprintf(stderr, "\tReading aedz from %d\n", (int)aedzNext);
-#endif
 
             if (HI_SEEK(fp, aedzNext) == FAIL)
                 HRETURN_ERROR(DFE_SEEKERROR, FALSE);
@@ -790,7 +705,7 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
             tBuf  = malloc((uint32)bsize);
 
             /* convert attribute values and create attr object */
-            DFKconvert((VOIDP)b, (VOIDP)tBuf, hdftype, count, DFACC_READ, 0, 0);
+            DFKconvert((void *)b, (void *)tBuf, hdftype, count, DFACC_READ, 0, 0);
             attr[0] = NC_new_attr(name, nctype, count, tBuf);
             free(tBuf);
 
@@ -806,10 +721,6 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
             else {
                 /* local --- find the appropriate variable */
                 ap = &(vars[num]->attrs);
-#ifdef DEBUG
-                fprintf(stderr, "\tAdding %s (%s) to Zvar %d \n", name, (scope == 1 ? "global" : "local"),
-                        (int)num);
-#endif
             }
 
             /* add the attribute to the list */
@@ -857,16 +768,6 @@ nssdc_write_cdf(XDR *xdrs, NC **handlep)
     (void)xdrs;
     (void)handlep;
 
-#if DEBUG
-    fprintf(stderr, "nssdc_write_cdf i've been called\n");
-#endif
-
-#ifdef DEBUG
-    fprintf(stderr, "We are sorry, we currently do not support writing to\n");
-    fprintf(stderr, "CDF files.  If you would like to see this capabilities\n");
-    fprintf(stderr, "please contact the HDF group at NCSA.\n");
-#endif
-
     return (FALSE);
 
 } /* nssdc_write_cdf */
@@ -881,10 +782,6 @@ nssdc_xdr_cdf(XDR *xdrs, NC **handlep)
 {
 
     int status;
-
-#if DEBUG
-    fprintf(stderr, "nssdc_xdr_cdf i've been called op = %d \n", xdrs->x_op);
-#endif
 
     switch (xdrs->x_op) {
         case XDR_ENCODE:
@@ -904,5 +801,3 @@ nssdc_xdr_cdf(XDR *xdrs, NC **handlep)
     return (status);
 
 } /* nssdc_xdr_cdf */
-
-#endif /* HDF */

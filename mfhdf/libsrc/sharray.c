@@ -24,14 +24,11 @@
  * internal function, bulk xdr of an even number of shorts, less than NC_NSHRTS_PER
  */
 static bool_t
-NCxdr_shortsb(XDR *xdrs, short *sp, u_int nshorts)
+NCxdr_shortsb(XDR *xdrs, short *sp, unsigned nshorts)
 {
     unsigned char  buf[NC_SHRT_BUFSIZ];
     unsigned char *cp;
     unsigned int   nbytes = nshorts * 2;
-
-    /* assert(nshorts <= NC_NSHRTS_PER) ; */
-    /* assert(nshorts > 0) ; */
 
     if (xdrs->x_op == XDR_ENCODE) {
         for (cp = buf; cp < &buf[nbytes]; sp++, cp += 2) {
@@ -40,7 +37,7 @@ NCxdr_shortsb(XDR *xdrs, short *sp, u_int nshorts)
         }
     }
 
-    if (!xdr_opaque(xdrs, (char *)buf, nbytes))
+    if (!h4_xdr_opaque(xdrs, (char *)buf, nbytes))
         return FALSE;
 
     if (xdrs->x_op == XDR_DECODE) {
@@ -60,7 +57,7 @@ NCxdr_shortsb(XDR *xdrs, short *sp, u_int nshorts)
  * Translate an array of cnt short integers at sp.
  */
 bool_t
-xdr_shorts(XDR *xdrs, short *sp, u_int cnt)
+xdr_shorts(XDR *xdrs, short *sp, unsigned cnt)
 {
     int odd; /* 1 if cnt is odd, 0 otherwise */
 

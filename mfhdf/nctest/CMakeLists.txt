@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.12)
-project (HDF4_MFHDF_NCTEST)
+project (HDF4_MFHDF_NCTEST C)
 
 set (nctest_SRCS
     ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/add.c
@@ -25,7 +25,7 @@ set (nctest_SRCS
 )
 
 add_executable (nctest ${nctest_SRCS})
-target_include_directories(nctest PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>")
+target_include_directories(nctest PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_BINARY_DIR}")
 if (NOT BUILD_SHARED_LIBS)
   TARGET_C_PROPERTIES (nctest STATIC)
   target_link_libraries (nctest PRIVATE ${HDF4_MF_LIB_TARGET})

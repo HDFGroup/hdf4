@@ -1364,7 +1364,7 @@ C
          name(3) = 'Nbcomp_data'
          comp_type_out(3) = 2
 C
-C  Addaptive Huffman compression
+C  Adaptive Huffman compression
 C
          file(4) = 'chunk_sk.hdf'
          name(4) = 'Hucomp_data'
@@ -1925,7 +1925,7 @@ C
          name(3) = 'Nbcomp_data'
          comp_type_out(3) = 2
 C
-C  Addaptive Huffman compression
+C  Adaptive Huffman compression
 C
          file(4) = 'cchunk_sk.hdf'
          name(4) = 'Hucomp_data'
@@ -2400,7 +2400,7 @@ C
          file(2) = 'comp_rl.hdf'
          name(2) = 'Rlcomp_data'
 C
-C  Addaptive Huffman compression
+C  Adaptive Huffman compression
 C
          file(3) = 'comp_sk.hdf'
          name(3) = 'Hucomp_data'

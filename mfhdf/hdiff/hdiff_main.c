@@ -17,7 +17,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-#include "getopt.h"
+#include "h4getopt.h"
 #include "hdf.h"
 #include "hfile.h"
 #include "mfhdf.h"
@@ -95,13 +95,13 @@ main(int argc, char *argv[])
     uint32 nfound;
     int    ret;
 
-    opterr   = 1;
+    h4opterr = 1;
     progname = argv[0];
 
     if (argc < 2)
         usage();
 
-    while ((c = getopt(argc, argv, "VbgsdSDe:t:v:u:p:")) != EOF) {
+    while ((c = h4getopt(argc, argv, "VbgsdSDe:t:v:u:p:")) != EOF) {
         switch (c) {
             case 'V': /* display version of the library */
                 printf("%s, %s\n\n", argv[0], LIBVER_STRING);
@@ -134,29 +134,29 @@ main(int argc, char *argv[])
                 opt.vd = 1;
                 break;
             case 'e': /* max no. of difference to be printed */
-                opt.max_err_cnt = atoi(optarg);
+                opt.max_err_cnt = atoi(h4optarg);
                 break;
             case 't': /* range of difference to be printed */
-                opt.err_limit = (float32)atof(optarg);
+                opt.err_limit = (float32)atof(h4optarg);
                 break;
             case 'v': /* variable names */
                 /* make list of names of variables specified */
-                make_vars(optarg, &opt, 1);
+                make_vars(h4optarg, &opt, 1);
                 break;
             case 'u': /* variable names */
                 /* make list of names of variables specified */
-                make_vars(optarg, &opt, 2);
+                make_vars(h4optarg, &opt, 2);
                 break;
             case 'S':
                 opt.statistics = 1;
                 break;
             case 'p':
-                opt.err_rel = (float32)atof(optarg);
+                opt.err_rel = (float32)atof(h4optarg);
                 break;
         }
     }
 
-    argv = argv + optind;
+    argv = argv + h4optind;
 
     nfound = hdiff(argv[0], argv[1], &opt);
 

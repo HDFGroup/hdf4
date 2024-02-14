@@ -36,8 +36,6 @@
  * compatible with the original Berkeley version.
  *
  * This version uses HDF number types.
- *
- * AUTHOR - George V.- 1996/08/22
  *****************************************************************************/
 
 /*
@@ -51,10 +49,8 @@
 #ifndef H4_MCACHE_H
 #define H4_MCACHE_H
 
-/* Required include */
+#include "hdfi.h"
 #include "hqueue.h" /* Circular queue functions(Macros) */
-
-#include "H4api_adpt.h"
 
 /* Set return/succeed values */
 #ifdef SUCCEED
@@ -88,7 +84,7 @@
 typedef struct _bkt {
     H4_CIRCLEQ_ENTRY(_bkt) hq; /* hash queue */
     H4_CIRCLEQ_ENTRY(_bkt) q;  /* lru queue */
-    VOID *page;                /* page */
+    void *page;                /* page */
     int32 pgno;                /* page number */
 #define MCACHE_DIRTY  0x01     /* page needs to be written */
 #define MCACHE_PINNED 0x02     /* page is pinned into memory */
@@ -124,9 +120,9 @@ typedef struct MCACHE {
     int32 object_id;                                            /* access ID of object this cache is for */
     int32 object_size;                                          /* size of object to cache
                                                                    must be multiple of pagesize for now */
-    int32 (*pgin)(VOID *cookie, int32 pgno, VOID *page);        /* page in conversion routine */
-    int32 (*pgout)(VOID *cookie, int32 pgno, const VOID *page); /* page out conversion routine*/
-    VOID *pgcookie;                                             /* cookie for page in/out routines */
+    int32 (*pgin)(void *cookie, int32 pgno, void *page);        /* page in conversion routine */
+    int32 (*pgout)(void *cookie, int32 pgno, const void *page); /* page out conversion routine*/
+    void *pgcookie;                                             /* cookie for page in/out routines */
 #ifdef STATISTICS
     int32 listhit;   /* # of list hits */
     int32 listalloc; /* # of list elems allocated */
@@ -146,29 +142,29 @@ typedef struct MCACHE {
 extern "C" {
 #endif
 
-HDFLIBAPI MCACHE *mcache_open(VOID *key,       /* IN:byte string used as handle to share buffers */
+HDFLIBAPI MCACHE *mcache_open(void *key,       /* IN:byte string used as handle to share buffers */
                               int32 object_id, /* IN: object handle */
                               int32 pagesize,  /* IN: chunk size in bytes */
                               int32 maxcache,  /* IN: maximum number of pages to cache at any time */
                               int32 npages,    /* IN: number of chunks currently in object */
                               int32 flags /* IN: 0= object exists, 1= does not exist */);
 
-HDFLIBAPI VOID mcache_filter(MCACHE *mp,                                          /* IN: MCACHE cookie */
-                             int32 (*pgin)(VOID *cookie, int32 pgno, VOID *page), /* IN: page in filter */
-                             int32 (*pgout)(VOID *cookie, int32 pgno,
-                                            const VOID *page), /* IN: page out filter */
-                             VOID *pgcookie /* IN: filter cookie */);
+HDFLIBAPI void mcache_filter(MCACHE *mp,                                          /* IN: MCACHE cookie */
+                             int32 (*pgin)(void *cookie, int32 pgno, void *page), /* IN: page in filter */
+                             int32 (*pgout)(void *cookie, int32 pgno,
+                                            const void *page), /* IN: page out filter */
+                             void *pgcookie /* IN: filter cookie */);
 
-HDFLIBAPI VOID *mcache_new(MCACHE *mp,       /* IN: MCACHE cookie */
+HDFLIBAPI void *mcache_new(MCACHE *mp,       /* IN: MCACHE cookie */
                            int32  *pgnoaddr, /* IN/OUT: address of newly create page */
                            int32   flags /* IN:MCACHE_EXTEND or 0 */);
 
-HDFLIBAPI VOID *mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
+HDFLIBAPI void *mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
                            int32   pgno, /* IN: page number */
                            int32   flags /* IN: XXX not used? */);
 
 HDFLIBAPI intn mcache_put(MCACHE *mp,   /* IN: MCACHE cookie */
-                          VOID   *page, /* IN: page to put */
+                          void   *page, /* IN: page to put */
                           int32   flags /* IN: flags = 0, MCACHE_DIRTY */);
 
 HDFLIBAPI intn mcache_sync(MCACHE *mp /* IN: MCACHE cookie */);
@@ -185,7 +181,7 @@ HDFLIBAPI int32 mcache_set_maxcache(MCACHE *mp, /* IN: MCACHE cookie */
 HDFLIBAPI int32 mcache_get_npages(MCACHE *mp /* IN: MCACHE cookie */);
 
 #ifdef STATISTICS
-HDFLIBAPI VOID mcache_stat(MCACHE *mp /* IN: MCACHE cookie */);
+HDFLIBAPI void mcache_stat(MCACHE *mp /* IN: MCACHE cookie */);
 #endif /* STATISTICS */
 
 #ifdef __cplusplus

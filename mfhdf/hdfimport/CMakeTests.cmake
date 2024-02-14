@@ -56,6 +56,7 @@ set (hdfimporttest_SRCS
 )
 
 add_executable (hdfimporttest ${hdfimporttest_SRCS})
+target_include_directories(hdfimporttest PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_BINARY_DIR}")
 if (NOT ONLY_SHARED_LIBS)
   TARGET_C_PROPERTIES (hdfimporttest STATIC)
   target_link_libraries (hdfimporttest PRIVATE ${HDF4_MF_LIB_TARGET})
@@ -70,6 +71,7 @@ set (gen_sds_floats_SRCS
 )
 
 add_executable (gen_sds_floats ${gen_sds_floats_SRCS})
+target_include_directories(gen_sds_floats PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_BINARY_DIR}")
 if (NOT ONLY_SHARED_LIBS)
   TARGET_C_PROPERTIES (gen_sds_floats STATIC)
   target_link_libraries (gen_sds_floats PRIVATE ${HDF4_MF_LIB_TARGET})

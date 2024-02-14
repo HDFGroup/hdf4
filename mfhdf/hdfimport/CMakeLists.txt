@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.12)
-project (HDF4_MFHDF_HDFIMPORT)
+project (HDF4_MFHDF_HDFIMPORT C)
 
 if (WIN32)
   set (CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:LIBCMT")
@@ -11,7 +11,7 @@ set (hdfimport_SRCS
 
 if (NOT ONLY_SHARED_LIBS)
   add_executable (hdfimport ${hdfimport_SRCS})
-  target_include_directories(hdfimport PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>")
+  target_include_directories(hdfimport PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_BINARY_DIR}")
   TARGET_C_PROPERTIES (hdfimport STATIC)
   target_link_libraries (hdfimport PRIVATE ${HDF4_MF_LIB_TARGET})
   set_target_properties (hdfimport PROPERTIES COMPILE_DEFINITIONS "HDF")
@@ -22,7 +22,7 @@ endif ()
 
 if (BUILD_SHARED_LIBS)
   add_executable (hdfimport-shared ${hdfimport_SRCS})
-  target_include_directories(hdfimport-shared PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>")
+  target_include_directories(hdfimport-shared PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_BINARY_DIR}")
   TARGET_C_PROPERTIES (hdfimport-shared SHARED)
   target_link_libraries (hdfimport-shared PRIVATE ${HDF4_MF_LIBSH_TARGET})
   set_target_properties (hdfimport-shared PROPERTIES COMPILE_DEFINITIONS "HDF")

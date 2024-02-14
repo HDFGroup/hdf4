@@ -13,8 +13,8 @@
 
 /* Modified from vshow.c by Eric Tsui, 12/25/1994. */
 
-#define VSET_INTERFACE
 #include "hdp.h"
+#include "vgint.h"
 
 #define BUFFER 1000000
 
@@ -29,7 +29,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
     uint8          *bb = NULL;
     uint8          *b  = NULL;
     DYN_VWRITELIST *w  = NULL;
-    intn (*vfmtfn[VSFIELDMAX])(VOIDP, file_format_t ff, FILE *);
+    intn (*vfmtfn[VSFIELDMAX])(void *, file_format_t ff, FILE *);
     int32 off[VSFIELDMAX];
     int32 order[VSFIELDMAX];
     int32 nattrs[VSFIELDMAX];
@@ -73,7 +73,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
 
     done = 0;
     /* Allocate space for the buffer and terminate hdp if allocation fails. */
-    bb = (uint8 *)HDmalloc(bufsize);
+    bb = (uint8 *)malloc(bufsize);
     CHECK_ALLOC(bb, "bb", "dumpvd");
 
     if (FAIL == VSsetfields(vd, fields)) {
@@ -232,7 +232,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
                 intn extfile_namelen = VSgetexternalfile(vd, 0, NULL, NULL);
                 if (extfile_namelen > 0) {
                     char *extfile_name = NULL;
-                    extfile_name       = (char *)HDmalloc(sizeof(char *) * (extfile_namelen + 1));
+                    extfile_name       = (char *)malloc(sizeof(char *) * (extfile_namelen + 1));
                     CHECK_ALLOC(extfile_name, "extfile_name", "dumpvd");
 
                     /* Get the external file info, we don't need offset here */
@@ -240,7 +240,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
                     ERROR_GOTO_3("in %s: VSread failed for vd(%d) with external file %s.  Please verify the "
                                  "file exists in the same directory.",
                                  "dumpvd", (int)vd, extfile_name);
-                    HDfree(extfile_name);
+                    free(extfile_name);
                 }
                 else
                     ERROR_GOTO_2("in %s: VSread failed for vd(%d)", "dumpvd", (int)vd);
@@ -328,7 +328,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
 
         /* ============================================ */
 
-        HDfree((VOIDP)bb);
+        free(bb);
         bb = NULL;
 
         fprintf(fp, "\n\n");
@@ -358,7 +358,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
                 intn extfile_namelen = VSgetexternalfile(vd, 0, NULL, NULL);
                 if (extfile_namelen > 0) {
                     char *extfile_name = NULL;
-                    extfile_name       = (char *)HDmalloc(sizeof(char *) * (extfile_namelen + 1));
+                    extfile_name       = (char *)malloc(sizeof(char *) * (extfile_namelen + 1));
                     CHECK_ALLOC(extfile_name, "extfile_name", "dumpvd");
 
                     /* Get the external file info, we don't need offset here */
@@ -366,7 +366,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
                     ERROR_GOTO_3("in %s: VSread failed for vd(%d) with external file %s.  Please verify the "
                                  "file exists in the same directory",
                                  "dumpvd", (int)vd, extfile_name);
-                    HDfree(extfile_name);
+                    free(extfile_name);
                 }
                 else
                     ERROR_GOTO_2("in %s: VSread failed for vd(%d)", "dumpvd", (int)vd);
@@ -417,14 +417,13 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
 
         /* ============================================ */
 
-        HDfree((VOIDP)bb);
+        free(bb);
         bb = NULL;
     } /* binary file */
 
 done:
     if (ret_value == FAIL) { /* Failure cleanup */
-        if (bb != NULL)
-            HDfree((VOIDP)bb);
+        free(bb);
     }
 
     return ret_value;
@@ -446,7 +445,7 @@ dumpattr(int32 vid, int32 findex, intn isvs, file_format_t ff, FILE *fp)
     int32  off;
     uint8 *buf = NULL;
     uint8 *ptr = NULL;
-    intn (*vfmtfn)(VOIDP, file_format_t ff, FILE *);
+    intn (*vfmtfn)(void *, file_format_t ff, FILE *);
     intn  status;
     intn  ret_value = SUCCEED;
     char  name[FIELDNAMELENMAX + 1];
@@ -500,7 +499,7 @@ dumpattr(int32 vid, int32 findex, intn isvs, file_format_t ff, FILE *fp)
 
         /* we have two buffer sizes? */
         if (e_size > BUFFER) {
-            if (NULL == (buf = HDmalloc(e_size))) {
+            if (NULL == (buf = malloc(e_size))) {
                 fprintf(stderr, ">>>dumpattr:can't allocate buf for %d'th attribute.\n", i);
                 ret_value = FAIL;
                 goto done; /* do we want exit here? */
@@ -510,10 +509,10 @@ dumpattr(int32 vid, int32 findex, intn isvs, file_format_t ff, FILE *fp)
 
             /* get attribute itself */
             if (isvs)
-                status = VSgetattr(vid, findex, i, (VOIDP)buf);
+                status = VSgetattr(vid, findex, i, (void *)buf);
             else
                 /* Changed to use updated func of Vgetattr - BMR, 1/7/2013 */
-                status = Vgetattr2(vid, i, (VOIDP)buf);
+                status = Vgetattr2(vid, i, (void *)buf);
 
             if (status == FAIL) {
                 fprintf(stderr, ">>>dympattr: failed in getting %d'th attr .\n", i);
@@ -524,10 +523,10 @@ dumpattr(int32 vid, int32 findex, intn isvs, file_format_t ff, FILE *fp)
         else {
             /* get attribute itself */
             if (isvs)
-                status = VSgetattr(vid, findex, i, (VOIDP)attrbuf);
+                status = VSgetattr(vid, findex, i, (void *)attrbuf);
             else
                 /* Changed to use updated func of Vgetattr - BMR, 1/7/2013 */
-                status = Vgetattr2(vid, i, (VOIDP)attrbuf);
+                status = Vgetattr2(vid, i, (void *)attrbuf);
 
             if (status == FAIL) {
                 fprintf(stderr, ">>>dympattr: failed in getting %d'th attr.\n", i);
@@ -597,8 +596,7 @@ dumpattr(int32 vid, int32 findex, intn isvs, file_format_t ff, FILE *fp)
 
         /* free allocated space if any */
         if (alloc_flag) {
-            if (buf != NULL)
-                HDfree(buf);
+            free(buf);
             alloc_flag = 0;
             buf        = NULL;
         }
@@ -606,8 +604,7 @@ dumpattr(int32 vid, int32 findex, intn isvs, file_format_t ff, FILE *fp)
 
 done:
     if (ret_value == FAIL) { /* Failure cleanup */
-        if (buf != NULL)
-            HDfree(buf);
+        free(buf);
     }
 
     return ret_value;

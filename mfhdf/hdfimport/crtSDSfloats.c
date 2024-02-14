@@ -82,8 +82,8 @@ main()
     sds2_id = SDcreate(sd3_id, SDS2_NAME, DFNT_FLOAT32, RANK3, dim3_sizes);
 
     /* Write data to the SDSs */
-    status = SDwritedata(sds1_id, start2, NULL, dim2_sizes, (VOIDP)in2_data);
-    status = SDwritedata(sds2_id, start3, NULL, dim3_sizes, (VOIDP)in3_data);
+    status = SDwritedata(sds1_id, start2, NULL, dim2_sizes, (void *)in2_data);
+    status = SDwritedata(sds2_id, start3, NULL, dim3_sizes, (void *)in3_data);
 
     /*
      * Terminate access to the data sets.

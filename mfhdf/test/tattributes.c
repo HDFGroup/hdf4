@@ -21,9 +21,9 @@
  *
  ****************************************************************************/
 
-#include "mfhdf.h"
+#include <string.h>
 
-#ifdef HDF
+#include "mfhdf.h"
 
 #include "hdftest.h"
 
@@ -187,7 +187,7 @@ test_count(void)
     CHECK(status, FAIL, "SDsetattr");
 
     /* Write data to the SDS */
-    status = SDwritedata(sds_id, &start, &stride, dimsize, (VOIDP)sds1_data);
+    status = SDwritedata(sds_id, &start, &stride, dimsize, (void *)sds1_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Close dataset and file. */
@@ -215,13 +215,13 @@ test_count(void)
     status = SDattrinfo(sds_id, 0, attr_name, &ntype, &count);
     CHECK(status, FAIL, "SDattrinfo");
     VERIFY(count, ATTR2_LEN, "SDattrinfo");
-    VERIFY(HDstrncmp(attr_name, ATTR2_NAME, 14), 0, "SDattrinfo");
+    VERIFY(strncmp(attr_name, ATTR2_NAME, 14), 0, "SDattrinfo");
 
     /* Read and verify the values of the SDS' first attribute. */
     status = SDreadattr(sds_id, 0, attr_values);
     CHECK(status, FAIL, "SDreadattr");
 
-    if (HDstrncmp(attr_values, ATTR2_VAL, ATTR2_LEN) != 0) {
+    if (strncmp(attr_values, ATTR2_VAL, ATTR2_LEN) != 0) {
         fprintf(stderr, "Unmatched attribute values for SDS %s: is <%s>, should be <%s>\n", VAR1_NAME,
                 attr_values, ATTR2_VAL);
         num_errs++;
@@ -239,13 +239,13 @@ test_count(void)
     status = SDattrinfo(dim_id, 0, attr_name, &ntype, &count);
     CHECK(status, FAIL, "SDattrinfo");
     VERIFY(count, ATTR1_LEN, "SDattrinfo");
-    VERIFY(HDstrncmp(attr_name, ATTR1_NAME, ATTR1_LEN), 0, "SDattrinfo");
+    VERIFY(strncmp(attr_name, ATTR1_NAME, ATTR1_LEN), 0, "SDattrinfo");
 
     /* Read and verify the values of the dimension's first attribute. */
     status = SDreadattr(dim_id, 0, attr_values);
     CHECK(status, FAIL, "SDreadattr");
 
-    if (HDstrncmp(attr_values, ATTR1_VAL, ATTR1_LEN) != 0) {
+    if (strncmp(attr_values, ATTR1_VAL, ATTR1_LEN) != 0) {
         fprintf(stderr, "Unmatched attribute values for dimension %s: is <%s>, should be <%s>\n", VAR1_NAME,
                 attr_values, ATTR1_VAL);
         num_errs++;
@@ -279,5 +279,3 @@ test_attributes()
 
     return num_errs;
 }
-
-#endif /* HDF */

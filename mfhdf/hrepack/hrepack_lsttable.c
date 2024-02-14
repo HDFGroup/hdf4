@@ -11,9 +11,10 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
+#include <string.h>
 
 #include "hrepack_lsttable.h"
 
@@ -66,7 +67,7 @@ list_table_add(list_table_t *list_tbl, int tag, int ref, char *path)
 
     if (list_tbl->nobjs == list_tbl->size) {
         list_tbl->size *= 2;
-        list_tbl->objs = (obj_info_t *)HDrealloc(list_tbl->objs, list_tbl->size * sizeof(obj_info_t));
+        list_tbl->objs = (obj_info_t *)realloc(list_tbl->objs, list_tbl->size * sizeof(obj_info_t));
 
         for (i = list_tbl->nobjs; i < list_tbl->size; i++) {
             list_tbl->objs[i].tag  = -1;
@@ -80,8 +81,8 @@ list_table_add(list_table_t *list_tbl, int tag, int ref, char *path)
     list_tbl->objs[i].ref = ref;
 
     /* copy the path over */
-    path_len               = HDstrlen(path);
-    list_tbl->objs[i].path = (char *)HDmalloc(path_len + 1);
+    path_len               = strlen(path);
+    list_tbl->objs[i].path = (char *)malloc(path_len + 1);
     HIstrncpy(list_tbl->objs[i].path, path, path_len + 1);
 }
 
@@ -103,11 +104,11 @@ void
 list_table_init(list_table_t **tbl)
 {
     int           i;
-    list_table_t *list_tbl = (list_table_t *)HDmalloc(sizeof(list_table_t));
+    list_table_t *list_tbl = (list_table_t *)malloc(sizeof(list_table_t));
 
     list_tbl->size  = 20;
     list_tbl->nobjs = 0;
-    list_tbl->objs  = (obj_info_t *)HDmalloc(list_tbl->size * sizeof(obj_info_t));
+    list_tbl->objs  = (obj_info_t *)malloc(list_tbl->size * sizeof(obj_info_t));
 
     for (i = 0; i < list_tbl->size; i++) {
         list_tbl->objs[i].tag = -1;
@@ -138,10 +139,10 @@ list_table_free(list_table_t *list_tbl)
 
     for (i = 0; i < list_tbl->nobjs; i++) {
         assert(list_tbl->objs[i].path);
-        HDfree(list_tbl->objs[i].path);
+        free(list_tbl->objs[i].path);
     }
-    HDfree(list_tbl->objs);
-    HDfree(list_tbl);
+    free(list_tbl->objs);
+    free(list_tbl);
 }
 
 /*-------------------------------------------------------------------------
@@ -165,7 +166,7 @@ list_table_check(list_table_t *list_tbl, char *obj_name)
     int32 tag;
 
     for (i = 0; i < list_tbl->nobjs; i++) {
-        if (HDstrcmp(list_tbl->objs[i].path, obj_name) == 0) {
+        if (strcmp(list_tbl->objs[i].path, obj_name) == 0) {
             /* found the name; check if it is an SDS or Image */
             tag = list_tbl->objs[i].tag;
             if (tag == DFTAG_SD || tag == DFTAG_SDG || tag == DFTAG_NDG || tag == DFTAG_RI ||

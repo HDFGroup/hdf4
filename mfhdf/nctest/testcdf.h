@@ -14,16 +14,9 @@
  */
 
 #include <stdlib.h>
-#ifdef HDF
 #include "mfhdf.h"
-#endif
 #define ___      0              /* marker for structure place-holder */
 #define BAD_TYPE NC_UNSPECIFIED /* must be distinct from valid types */
-
-#ifdef DELETE_CHUNK
-void *emalloc();
-void *erealloc();
-#endif
 
 struct cdfdim { /* dimension */
     char *name;
@@ -61,9 +54,7 @@ struct netcdf {
     struct cdfatt atts[MAX_TEST_ATTS]; /* attributes */
 };
 
-extern struct netcdf test; /*
-                            * in-memory netcdf structure, kept in sync
-                            * with disk netcdf
-                            */
+/* In-memory netcdf structure, kept in sync with disk netcdf */
+extern struct netcdf *test_g;
 
 #endif /* NCTEST_TESTCDF_H */

@@ -168,43 +168,17 @@
  *      or native 16-bit integer values for IN16 input format or native 8-bit
  *      integer values for IN08 input format.
  *
- * Source Availability:
- *      This program is in the public domain, and was developed and made
- *      available by the National Center for Supercomputing Applications,
- *      University of Illinois, Urbana-Champaign (ftp.ncsa.uiuc.edu).
- *
- * History:
- *      Beta version:                                           17-May-89
- *              (by Mike Folk mfolk@ncsa.uiuc.edu)
- *      Revision to put in the mean option:                     15-Sep-89
- *              (by Glen Mortensen gam@inel.gov)
- *      Officially released:                                    01-Dec-89
- *              (by NCSA ftp.ncsa.uiuc.edu)
- *      Revision to fix some bugs:                              16-Mar-90
- *              (by Mike Folk mfolk@ncsa.uiuc.edu)
- *      Revision to support 3D and native fp input:             15-May-90
- *              (by Bob Weaver baw@inel.gov)
- *      Revision to fix bug in interp() :                       17-Oct-90
- *              (by Fred Walsteijn nwalstyn@fys.ruu.n)
- *      Revision to fix bug in interp() :                       23-Nov-90
- *              Now it clips values outside of max and min.
- *              (by Fred Walsteijn nwalstyn@fys.ruu.n)
- *      Revision to start to use HDF 3.2 (and 3.3) library:     22-Jun-93
- *              Still lots to do to support other number types.
- *              (by Chris Houck chouck@ncsa.uiuc.edu)
- *      Revision to incorporate 32-bit integer, 16-bit integer, 08-Jan-02
- *              8-bit integer data types and converting 64-bit
- *              input data to 64-bit output data.
- *              (by Pankaj Kamat pkamat@uiuc.edu)
  */
+
+#include <ctype.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "hdf.h"
 #include "hfile.h"
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include <ctype.h>
-#include <mfhdf.h>
+#include "mfhdf.h"
 
 #ifdef H4_HAVE_SYS_STAT_H
 #include <sys/stat.h>
@@ -313,7 +287,7 @@ struct Input {
     struct int16set in16s;
     struct int8set  in8s;
     struct fp64set  fp64s;
-    VOIDP           data; /* input data */
+    void           *data; /* input data */
     int             outtype;
 };
 
@@ -346,7 +320,7 @@ struct Raster {
 #define OPT_r    2  /* convert to image */
 #define OPT_e    3  /* expand image via pixel replication */
 #define OPT_i    4  /* make interpolated image */
-#define NUMBR    5  /* resolution of enlarged image */
+#define OPT_num  5  /* resolution of enlarged image */
 #define OPT_p    6  /* palette filename */
 #define OPT_f    7  /* convert to float (default) */
 #define OPT_h    8  /* request for explanation */
@@ -363,7 +337,7 @@ struct Raster {
 static int state_table[19][12] = {
 
     /* token ordering:
-       FILENAME     OPT_o   OPT_r   OPT_e   OPT_i   NUMBR   OPT_p   OPT_f
+       FILENAME     OPT_o   OPT_r   OPT_e   OPT_i   OPT_num   OPT_p   OPT_f
        OPT_h        OPT_m   OPT_z */
 
     /* state 0: start */
@@ -472,22 +446,26 @@ void       fpdeallocate(struct Input *in, struct Raster *im, struct Options *opt
 int
 main(int argc, char *argv[])
 {
-    struct Options opt;
-    int            i, k;
-    int            outfile_named = FALSE;
-    int            token;
-    int            state       = 0;
-    int            flag        = 0;
-    char           types[5][6] = {"FP32", "FP64", "INT32", "INT16", "INT8"};
+    struct Options *opt = NULL;
+    int             i, k;
+    int             outfile_named = FALSE;
+    int             token;
+    int             state       = 0;
+    int             flag        = 0;
+    char            types[5][6] = {"FP32", "FP64", "INT32", "INT16", "INT8"};
 
     const char *err1 = "Invalid number of arguments:  %d.\n";
     const char *err2 = "Error in state table.\n";
     const char *err3 = "No output file given.\n";
     const char *err4 = "Program aborted.\n";
-    /* const char *err5 = "Cannot allooacte memory.\n"; */
-    /*
-     * set 'stdout' and 'stderr' to line-buffering mode
-     */
+    const char *err5 = "Cannot allooacte memory.\n";
+
+    if (NULL == (opt = (struct Options *)calloc(1, sizeof(struct Options)))) {
+        fprintf(stderr, "%s", err5);
+        goto err;
+    }
+
+    /* set 'stdout' and 'stderr' to line-buffering mode */
     (void)HDsetvbuf(stderr, (char *)NULL, _IOLBF, 0);
     (void)HDsetvbuf(stdout, (char *)NULL, _IOLBF, 0);
 
@@ -495,22 +473,22 @@ main(int argc, char *argv[])
      * validate the number of command line arguments
      */
     if (argc < 2) {
-        (void)fprintf(stderr, err1, argc);
+        fprintf(stderr, err1, argc);
         usage(argv[0]);
         goto err;
     }
 
-    opt.to_image = FALSE; /* default: no image */
-    opt.to_float = FALSE; /* default: make float if no image */
-                          /* Set FALSE here.  Will be set TRUE */
-                          /* after confirming image option is not set.  */
-    opt.ctm    = EXPAND;  /* default: pixel replication */
-    opt.hres   = 0;       /* default: no expansion values */
-    opt.vres   = 0;
-    opt.dres   = 0;
-    opt.pal    = FALSE; /* default: no palette */
-    opt.mean   = FALSE; /* default: no mean given */
-    opt.fcount = 0;     /* to count number of input files */
+    opt->to_image = FALSE; /* default: no image */
+    opt->to_float = FALSE; /* default: make float if no image */
+                           /* Set FALSE here.  Will be set TRUE */
+                           /* after confirming image option is not set.  */
+    opt->ctm    = EXPAND;  /* default: pixel replication */
+    opt->hres   = 0;       /* default: no expansion values */
+    opt->vres   = 0;
+    opt->dres   = 0;
+    opt->pal    = FALSE; /* default: no palette */
+    opt->mean   = FALSE; /* default: no mean given */
+    opt->fcount = 0;     /* to count number of input files */
 
     /*
      * parse the command line
@@ -530,52 +508,52 @@ main(int argc, char *argv[])
 
         switch (state) {
             case 1: /* counting input files */
-                (void)HDstrcpy(opt.infiles[opt.fcount].filename, argv[i]);
-                opt.infiles[opt.fcount].outtype = NO_NE;
-                opt.fcount++;
+                (void)strcpy(opt->infiles[opt->fcount].filename, argv[i]);
+                opt->infiles[opt->fcount].outtype = NO_NE;
+                opt->fcount++;
                 break;
             case 2: /* -o found; look for outfile */
                 break;
             case 3: /* get outfile name */
-                (void)HDstrcpy(opt.outfile, argv[i]);
+                (void)strcpy(opt->outfile, argv[i]);
                 outfile_named = TRUE;
                 break;
             case 4: /* -r found */
-                opt.to_image = TRUE;
+                opt->to_image = TRUE;
                 break;
             case 5: /* -e found */
-                opt.ctm = EXPAND;
+                opt->ctm = EXPAND;
                 break;
             case 6: /* horizontal resolution */
-                opt.hres = atoi(argv[i]);
+                opt->hres = atoi(argv[i]);
                 break;
             case 7: /* vertical resolution */
-                opt.vres = atoi(argv[i]);
+                opt->vres = atoi(argv[i]);
                 break;
             case 8: /* depth resolution */
-                opt.dres = atoi(argv[i]);
+                opt->dres = atoi(argv[i]);
                 break;
             case 9: /* -i found */
-                opt.ctm = INTERP;
+                opt->ctm = INTERP;
                 break;
             case 10: /* -p found */
-                opt.pal = TRUE;
+                opt->pal = TRUE;
                 break;
             case 11: /* get pal filename */
-                (void)HDstrcpy(opt.palfile, argv[i]);
+                (void)strcpy(opt->palfile, argv[i]);
                 break;
             case 12: /* -f found (after a -r) */
             case 13: /* -f found (no -r yet) */
-                opt.to_float = TRUE;
+                opt->to_float = TRUE;
                 break;
             case 14: /* -h found; help, then exit */
                 help(argv[0]);
                 exit(0);
             case 15: /* -m found */
-                opt.mean = TRUE;
+                opt->mean = TRUE;
                 break;
             case 16: /* mean value */
-                opt.meanval = (float32)atof(argv[i]);
+                opt->meanval = (float32)atof(argv[i]);
                 break;
             case 17: /* -t found */
                 i++;
@@ -584,18 +562,18 @@ main(int argc, char *argv[])
                     if (!strcmp(argv[i], types[k]))
                         flag = 1;
                 if (flag)
-                    opt.infiles[opt.fcount - 1].outtype = k - 1;
+                    opt->infiles[opt->fcount - 1].outtype = k - 1;
                 else {
                     usage(argv[0]);
                     goto err;
                 }
                 break;
             case 18: /* -n found */
-                opt.infiles[opt.fcount - 1].outtype = FP_64;
+                opt->infiles[opt->fcount - 1].outtype = FP_64;
                 break;
             case ERR: /* command syntax error */
             default:
-                (void)fprintf(stderr, "%s", err2);
+                fprintf(stderr, "%s", err2);
                 usage(argv[0]);
                 goto err;
         }
@@ -605,25 +583,28 @@ main(int argc, char *argv[])
      * make sure an output file was specified
      */
     if (!outfile_named) {
-        (void)fprintf(stderr, "%s", err3);
+        fprintf(stderr, "%s", err3);
         usage(argv[0]);
         goto err;
     }
 
-    if (!opt.to_image)
-        opt.to_float = TRUE;
+    if (!opt->to_image)
+        opt->to_float = TRUE;
 
     /*
      * process the input files
      */
-    if (process(&opt))
+    if (process(opt))
         goto err;
 
-    return (0);
+    free(opt);
+
+    return EXIT_SUCCESS;
 
 err:
-    (void)fprintf(stderr, "%s", err4);
-    return (1);
+    free(opt);
+    fprintf(stderr, "%s", err4);
+    return EXIT_FAILURE;
 }
 
 /*
@@ -683,7 +664,7 @@ gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_ma
 
         status = SDreaddata(sds_id, start, NULL, hdfdims, in->data);
         if (status == FAIL) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
     }
@@ -693,7 +674,7 @@ gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_ma
                 for (j = 0; j < in->dims[1]; j++) {
                     for (i = 0; i < in->dims[0]; i++, fp32++) {
                         if (gfloat(infile, strm, fp32, in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
@@ -715,7 +696,7 @@ gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_ma
                 for (j = 0; j < in->dims[1]; j++) {
                     for (i = 0; i < in->dims[0]; i++, in32++) {
                         if (gint32(infile, strm, in32, in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
@@ -737,7 +718,7 @@ gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_ma
                 for (j = 0; j < in->dims[1]; j++) {
                     for (i = 0; i < in->dims[0]; i++, in16++) {
                         if (gint16(infile, strm, in16, in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
@@ -760,7 +741,7 @@ gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_ma
                 for (j = 0; j < in->dims[1]; j++) {
                     for (i = 0; i < in->dims[0]; i++, in8++) {
                         if (gint8(infile, strm, in8, in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
@@ -783,7 +764,7 @@ gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_ma
                 for (j = 0; j < in->dims[1]; j++) {
                     for (i = 0; i < in->dims[0]; i++, fp64++) {
                         if (gfloat64(infile, strm, fp64, in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
@@ -806,16 +787,16 @@ gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_ma
     }
 
 #ifdef DEBUG
-    (void)printf("\tdata:");
+    printf("\tdata:");
     for (k = 0, fp32 = in->data; k < in->dims[2]; k++) {
-        (void)printf("\n");
+        printf("\n");
         for (j = 0; j < in->dims[1]; j++) {
-            (void)printf("\n\t");
+            printf("\n\t");
             for (i = 0; i < in->dims[0]; i++, fp32++)
-                (void)printf("%E ", *fp32);
+                printf("%E ", *fp32);
         }
     }
-    (void)printf("\n\n\n");
+    printf("\n\n\n");
 #endif /* DEBUG */
 
     return (0);
@@ -839,8 +820,8 @@ err:
 static int
 gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
 {
-    int32 hdfdims[3]; /* order: ZYX or YX */
-    char  infile[NAME_LEN];
+    int32 hdfdims[3];                      /* order: ZYX or YX */
+    char *infile   = infile_info.filename; /* shortcut for input filename */
     char *sds_name = NULL;
     int32 rank, nattrs, dtype; /* rank, num of attrs, data type */
 
@@ -857,8 +838,7 @@ gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
      */
     if (in->is_hdf == TRUE) {
         int32  sds_id, sd_index;
-        int32  sd_id    = infile_info.handle;   /* shortcut for handle from SDstart */
-        char  *infile   = infile_info.filename; /* shortcut for input filename */
+        int32  sd_id    = infile_info.handle; /* shortcut for handle from SDstart */
         uint16 name_len = 0;
         intn   status   = FAIL;
 
@@ -866,7 +846,7 @@ gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
         sd_index = 0;
         sds_id   = SDselect(sd_id, sd_index);
         if (sds_id == FAIL) {
-            (void)fprintf(stderr, "%s", err7);
+            fprintf(stderr, "%s", err7);
             goto err;
         }
 
@@ -874,26 +854,26 @@ gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
         the name's buffer */
         status = SDgetnamelen(sds_id, &name_len);
         if (status == FAIL) {
-            (void)fprintf(stderr, err5, sd_index);
+            fprintf(stderr, err5, sd_index);
             goto err;
         }
-        sds_name = (char *)HDmalloc(name_len + 1);
+        sds_name = (char *)malloc(name_len + 1);
         if (sds_name == NULL) {
-            (void)fprintf(stderr, "%s", err6);
+            fprintf(stderr, "%s", err6);
             goto err;
         }
 
         /* obtain the SDS' information */
         status = SDgetinfo(sds_id, sds_name, &rank, hdfdims, &dtype, &nattrs);
         if (status == FAIL) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
         in->rank = (int)rank;
 
         /* don't know how to deal with other numbers yet */
         if (dtype != DFNT_FLOAT32) {
-            (void)fprintf(stderr, err4, infile);
+            fprintf(stderr, err4, infile);
             goto err;
         }
 
@@ -912,7 +892,7 @@ gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
             in->dims[2] = hdfdims[0];
         }
         else {
-            (void)fprintf(stderr, err2, in->rank, infile);
+            fprintf(stderr, err2, in->rank, infile);
             goto err;
         }
 
@@ -923,7 +903,7 @@ gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
     }
     else {
         if (gint(infile, strm, &in->dims[2], in)) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
         if (in->dims[2] > 1)
@@ -931,11 +911,11 @@ gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
         else
             in->rank = 2;
         if (gint(infile, strm, &in->dims[1], in)) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
         if (gint(infile, strm, &in->dims[0], in)) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
     }
@@ -944,24 +924,22 @@ gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
      * validate dimension sizes
      */
     if ((in->dims[0] < 2) || (in->dims[1] < 2)) {
-        (void)fprintf(stderr, err3, infile);
+        fprintf(stderr, err3, infile);
         goto err;
     }
 
 #ifdef DEBUG
-    (void)printf("\nInput Information ...\n\n");
-    (void)printf("\trank:\n\n\t%d\n\n", in->rank);
-    (void)printf("\tdimensions (nplanes,nrows,ncols):\n\n");
-    (void)printf("\t%d %d %d\n\n", in->dims[2], in->dims[1], in->dims[0]);
+    printf("\nInput Information ...\n\n");
+    printf("\trank:\n\n\t%d\n\n", in->rank);
+    printf("\tdimensions (nplanes,nrows,ncols):\n\n");
+    printf("\t%d %d %d\n\n", in->dims[2], in->dims[1], in->dims[0]);
 #endif /* DEBUG */
 
-    if (sds_name != NULL)
-        HDfree(sds_name);
+    free(sds_name);
     return (0);
 
 err:
-    if (sds_name != NULL)
-        HDfree(sds_name);
+    free(sds_name);
     return (1);
 }
 
@@ -983,19 +961,19 @@ gfloat(char *infile, FILE *strm, float32 *fp32, struct Input *in)
 
     if (in->is_text == TRUE) {
         if (fscanf(strm, "%e", fp32) != 1) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
     }
     else if (in->is_fp32 == TRUE) {
         if (fread((char *)fp32, sizeof(float32), 1, strm) != 1) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
     }
     else {
         if (fread((char *)&fp64, sizeof(float64), 1, strm) != 1) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
         *fp32 = (float32)fp64;
@@ -1024,13 +1002,13 @@ gfloat64(char *infile, FILE *strm, float64 *fp64, struct Input *in)
 
     if (in->is_text == TRUE) {
         if (fscanf(strm, "%le", fp64) != 1) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
     }
     else {
         if (fread((char *)fp64, sizeof(float64), 1, strm) != 1) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
     }
@@ -1058,7 +1036,7 @@ gint(char *infile, FILE *strm, int32 *ival, struct Input *in)
      */
     if (in->is_text == TRUE) {
         if (fscanf(strm, "%d", ival) != 1) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
 
@@ -1068,7 +1046,7 @@ gint(char *infile, FILE *strm, int32 *ival, struct Input *in)
     }
     else {
         if (fread((char *)ival, sizeof(int), 1, strm) != 1) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
     }
@@ -1097,7 +1075,7 @@ gint32(char *infile, FILE *strm, int32 *ival, struct Input *in)
      */
     if (in->is_text == TRUE) {
         if (fscanf(strm, "%d", ival) != 1) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
 
@@ -1107,7 +1085,7 @@ gint32(char *infile, FILE *strm, int32 *ival, struct Input *in)
     }
     else {
         if (fread((char *)ival, sizeof(int32), 1, strm) != 1) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
     }
@@ -1134,14 +1112,14 @@ gint16(char *infile, FILE *strm, int16 *ival, struct Input *in)
 
     if (in->is_text == TRUE) {
         if (fscanf(strm, "%hd", ival) != 1) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
     }
 
     else {
         if (fread((char *)ival, sizeof(int16), 1, strm) != 1) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
     }
@@ -1169,14 +1147,14 @@ gint8(char *infile, FILE *strm, int8 *ival, struct Input *in)
 
     if (in->is_text == TRUE) {
         if (fscanf(strm, "%hd", &temp) != 1) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
         *ival = (int8)temp;
     }
     else {
         if (fread((char *)ival, sizeof(int8), 1, strm) != 1) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
     }
@@ -1227,11 +1205,11 @@ gmaxmin(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_
         char *infile = infile_info.filename;
         if (in->outtype == FP_32) {
             if (gfloat(infile, strm, &in->max, in)) {
-                (void)fprintf(stderr, err1, infile);
+                fprintf(stderr, err1, infile);
                 goto err;
             }
             if (gfloat(infile, strm, &in->min, in)) {
-                (void)fprintf(stderr, err1, infile);
+                fprintf(stderr, err1, infile);
                 goto err;
             }
             if (in->max > in->min)
@@ -1239,11 +1217,11 @@ gmaxmin(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_
         }
         if (in->outtype == FP_64) {
             if (gfloat64(infile, strm, &in->fp64s.max, in)) {
-                (void)fprintf(stderr, err1, infile);
+                fprintf(stderr, err1, infile);
                 goto err;
             }
             if (gfloat64(infile, strm, &in->fp64s.min, in)) {
-                (void)fprintf(stderr, err1, infile);
+                fprintf(stderr, err1, infile);
                 goto err;
             }
             if (in->fp64s.max > in->fp64s.min)
@@ -1251,11 +1229,11 @@ gmaxmin(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_
         }
         if (in->outtype == INT_32) {
             if (gint32(infile, strm, &in->in32s.max, in)) {
-                (void)fprintf(stderr, err1, infile);
+                fprintf(stderr, err1, infile);
                 goto err;
             }
             if (gint32(infile, strm, &in->in32s.min, in)) {
-                (void)fprintf(stderr, err1, infile);
+                fprintf(stderr, err1, infile);
                 goto err;
             }
             if (in->in32s.max > in->in32s.min)
@@ -1264,11 +1242,11 @@ gmaxmin(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_
 
         if (in->outtype == INT_16) {
             if (gint16(infile, strm, &in->in16s.max, in)) {
-                (void)fprintf(stderr, err1, infile);
+                fprintf(stderr, err1, infile);
                 goto err;
             }
             if (gint16(infile, strm, &in->in16s.min, in)) {
-                (void)fprintf(stderr, err1, infile);
+                fprintf(stderr, err1, infile);
                 goto err;
             }
             if (in->in16s.max > in->in16s.min)
@@ -1277,11 +1255,11 @@ gmaxmin(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_
 
         if (in->outtype == INT_8) {
             if (gint8(infile, strm, &in->in8s.max, in)) {
-                (void)fprintf(stderr, err1, infile);
+                fprintf(stderr, err1, infile);
                 goto err;
             }
             if (gint8(infile, strm, &in->in8s.min, in)) {
-                (void)fprintf(stderr, err1, infile);
+                fprintf(stderr, err1, infile);
                 goto err;
             }
             if (in->in8s.max > in->in8s.min)
@@ -1290,8 +1268,8 @@ gmaxmin(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_
     }
 
 #ifdef DEBUG
-    (void)printf("\tinput maximum/minimum values:\n\n");
-    (void)printf("\t%E %E\n\n", in->max, in->min);
+    printf("\tinput maximum/minimum values:\n\n");
+    printf("\t%E %E\n\n", in->max, in->min);
 #endif /* DEBUG */
 
     return (0);
@@ -1390,14 +1368,14 @@ gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_s
                 if (in->rank == 2) {
                     for (i = 0; i < hdfdims[0]; i++) {
                         if (gfloat(infile, strm, &in->vscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
                     in->vscale[i] = in->vscale[i - 1];
                     for (i = 0; i < hdfdims[1]; i++) {
                         if (gfloat(infile, strm, &in->hscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
@@ -1407,21 +1385,21 @@ gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_s
                 else {
                     for (i = 0; i < hdfdims[0]; i++) {
                         if (gfloat(infile, strm, &in->dscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
                     in->dscale[i] = in->dscale[i - 1];
                     for (i = 0; i < hdfdims[1]; i++) {
                         if (gfloat(infile, strm, &in->vscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
                     in->vscale[i] = in->vscale[i - 1];
                     for (i = 0; i < hdfdims[2]; i++) {
                         if (gfloat(infile, strm, &in->hscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
@@ -1433,14 +1411,14 @@ gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_s
                 if (in->rank == 2) {
                     for (i = 0; i < hdfdims[0]; i++) {
                         if (gfloat64(infile, strm, &in->fp64s.vscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
                     in->fp64s.vscale[i] = in->fp64s.vscale[i - 1];
                     for (i = 0; i < hdfdims[1]; i++) {
                         if (gfloat64(infile, strm, &in->fp64s.hscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
@@ -1449,7 +1427,7 @@ gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_s
                 else {
                     for (i = 0; i < hdfdims[0]; i++) {
                         if (gfloat64(infile, strm, &in->fp64s.dscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
@@ -1457,7 +1435,7 @@ gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_s
 
                     for (i = 0; i < hdfdims[1]; i++) {
                         if (gfloat64(infile, strm, &in->fp64s.vscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
@@ -1465,7 +1443,7 @@ gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_s
 
                     for (i = 0; i < hdfdims[2]; i++) {
                         if (gfloat64(infile, strm, &in->fp64s.hscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
@@ -1477,14 +1455,14 @@ gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_s
                 if (in->rank == 2) {
                     for (i = 0; i < hdfdims[0]; i++) {
                         if (gint32(infile, strm, &in->in32s.vscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
                     in->in32s.vscale[i] = in->in32s.vscale[i - 1];
                     for (i = 0; i < hdfdims[1]; i++) {
                         if (gint32(infile, strm, &in->in32s.hscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
@@ -1494,21 +1472,21 @@ gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_s
                 else {
                     for (i = 0; i < hdfdims[0]; i++) {
                         if (gint32(infile, strm, &in->in32s.dscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
                     in->in32s.dscale[i] = in->in32s.dscale[i - 1];
                     for (i = 0; i < hdfdims[1]; i++) {
                         if (gint32(infile, strm, &in->in32s.vscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
                     in->in32s.vscale[i] = in->in32s.vscale[i - 1];
                     for (i = 0; i < hdfdims[2]; i++) {
                         if (gint32(infile, strm, &in->in32s.hscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
@@ -1520,14 +1498,14 @@ gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_s
                 if (in->rank == 2) {
                     for (i = 0; i < hdfdims[0]; i++) {
                         if (gint16(infile, strm, &in->in16s.vscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
                     in->in16s.vscale[i] = in->in16s.vscale[i - 1];
                     for (i = 0; i < hdfdims[1]; i++) {
                         if (gint16(infile, strm, &in->in16s.hscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
@@ -1537,21 +1515,21 @@ gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_s
                 else {
                     for (i = 0; i < hdfdims[0]; i++) {
                         if (gint16(infile, strm, &in->in16s.dscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
                     in->in16s.dscale[i] = in->in16s.dscale[i - 1];
                     for (i = 0; i < hdfdims[1]; i++) {
                         if (gint16(infile, strm, &in->in16s.vscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
                     in->in16s.vscale[i] = in->in16s.vscale[i - 1];
                     for (i = 0; i < hdfdims[2]; i++) {
                         if (gint16(infile, strm, &in->in16s.hscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
@@ -1563,14 +1541,14 @@ gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_s
                 if (in->rank == 2) {
                     for (i = 0; i < hdfdims[0]; i++) {
                         if (gint8(infile, strm, &in->in8s.vscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
                     in->in8s.vscale[i] = in->in8s.vscale[i - 1];
                     for (i = 0; i < hdfdims[1]; i++) {
                         if (gint8(infile, strm, &in->in8s.hscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
@@ -1580,21 +1558,21 @@ gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_s
                 else {
                     for (i = 0; i < hdfdims[0]; i++) {
                         if (gint8(infile, strm, &in->in8s.dscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
                     in->in8s.dscale[i] = in->in8s.dscale[i - 1];
                     for (i = 0; i < hdfdims[1]; i++) {
                         if (gint8(infile, strm, &in->in8s.vscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
                     in->in8s.vscale[i] = in->in8s.vscale[i - 1];
                     for (i = 0; i < hdfdims[2]; i++) {
                         if (gint8(infile, strm, &in->in8s.hscale[i], in)) {
-                            (void)fprintf(stderr, err1, infile);
+                            fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
@@ -1606,25 +1584,25 @@ gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_s
 
 #ifdef DEBUG
     if (in->rank == 2) {
-        (void)printf("\tscales of the axes (vert,horiz):\n\n\t");
+        printf("\tscales of the axes (vert,horiz):\n\n\t");
         for (i = 0; i < hdfdims[0]; i++)
-            (void)printf("%E ", in->vscale[i]);
-        (void)printf("\n\t");
+            printf("%E ", in->vscale[i]);
+        printf("\n\t");
         for (i = 0; i < hdfdims[1]; i++)
-            (void)printf("%E ", in->hscale[i]);
+            printf("%E ", in->hscale[i]);
     }
     else {
-        (void)printf("\tscales of the axes (depth,vert,horiz):\n\n\t");
+        printf("\tscales of the axes (depth,vert,horiz):\n\n\t");
         for (i = 0; i < hdfdims[0]; i++)
-            (void)printf("%E ", in->dscale[i]);
-        (void)printf("\n\t");
+            printf("%E ", in->dscale[i]);
+        printf("\n\t");
         for (i = 0; i < hdfdims[1]; i++)
-            (void)printf("%E ", in->vscale[i]);
-        (void)printf("\n\t");
+            printf("%E ", in->vscale[i]);
+        printf("\n\t");
         for (i = 0; i < hdfdims[2]; i++)
-            (void)printf("%E ", in->hscale[i]);
+            printf("%E ", in->hscale[i]);
     }
-    (void)printf("\n\n\n");
+    printf("\n\n\n");
 #endif /* DEBUG */
 
     return (0);
@@ -1654,38 +1632,38 @@ gtoken(char *s)
      */
     if (s[0] == '-') { /* option name (or negative number) */
         token = ERR;
-        len   = HDstrlen(&s[1]);
+        len   = strlen(&s[1]);
         switch (s[1]) {
             case 'o':
-                if (!HDstrncmp("outfile", &s[1], len))
+                if (!strncmp("outfile", &s[1], len))
                     token = OPT_o;
                 break;
             case 'r':
-                if (!HDstrncmp("raster", &s[1], len))
+                if (!strncmp("raster", &s[1], len))
                     token = OPT_r;
                 break;
             case 'e':
-                if (!HDstrncmp("expand", &s[1], len))
+                if (!strncmp("expand", &s[1], len))
                     token = OPT_e;
                 break;
             case 'i':
-                if (!HDstrncmp("interp", &s[1], len))
+                if (!strncmp("interp", &s[1], len))
                     token = OPT_i;
                 break;
             case 'p':
-                if (!HDstrncmp("palfile", &s[1], len))
+                if (!strncmp("palfile", &s[1], len))
                     token = OPT_p;
                 break;
             case 'f':
-                if (!HDstrncmp("float", &s[1], len))
+                if (!strncmp("float", &s[1], len))
                     token = OPT_f;
                 break;
             case 'h':
-                if (!HDstrncmp("help", &s[1], len))
+                if (!strncmp("help", &s[1], len))
                     token = OPT_h;
                 break;
             case 'm':
-                if (!HDstrncmp("mean", &s[1], len))
+                if (!strncmp("mean", &s[1], len))
                     token = OPT_m;
                 break;
             case 'n':
@@ -1696,13 +1674,13 @@ gtoken(char *s)
                 break;
             default:
                 if (isnum(s)) /* negative number? */
-                    token = NUMBR;
+                    token = OPT_num;
         }
         if (token == ERR)
-            (void)fprintf(stderr, err1, s);
+            fprintf(stderr, err1, s);
     }
     else if (isnum(s)) /* positive number */
-        token = NUMBR;
+        token = OPT_num;
     else /* filename */
         token = FILENAME;
 
@@ -1738,24 +1716,24 @@ gtype(char *infile, struct Input *in, FILE **strm)
         in->is_hdf = TRUE;
     else {
         if ((*strm = fopen(infile, "r")) == NULL) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
         if (fread(buf, 4, 1, *strm) != 1) {
-            (void)fprintf(stderr, err2, infile);
+            fprintf(stderr, err2, infile);
             goto err;
         }
-        if (!HDmemcmp("TEXT", buf, 4) || !HDmemcmp("text", buf, 4)) {
+        if (!memcmp("TEXT", buf, 4) || !memcmp("text", buf, 4)) {
             in->is_text = TRUE;
             if (in->outtype == NO_NE)
                 in->outtype = FP_32;
         }
         else {
-            if (!HDmemcmp("FP64", buf, 4) || !HDmemcmp("fp64", buf, 4)) {
+            if (!memcmp("FP64", buf, 4) || !memcmp("fp64", buf, 4)) {
                 in->is_fp64 = TRUE;
                 if (in->outtype != FP_64)
                     if (in->outtype != NO_NE) {
-                        (void)fprintf(stderr, err4, infile);
+                        fprintf(stderr, err4, infile);
                         goto err;
                     }
                     else
@@ -1763,26 +1741,26 @@ gtype(char *infile, struct Input *in, FILE **strm)
             }
             else {
                 if (in->outtype != NO_NE) {
-                    (void)fprintf(stderr, err4, infile);
+                    fprintf(stderr, err4, infile);
                     goto err;
                 }
-                if (!HDmemcmp("FP32", buf, 4) || !HDmemcmp("fp32", buf, 4)) {
+                if (!memcmp("FP32", buf, 4) || !memcmp("fp32", buf, 4)) {
                     in->is_fp32 = TRUE;
                     in->outtype = FP_32;
                 }
 
-                else if (!HDmemcmp("IN32", buf, 4) || !HDmemcmp("in32", buf, 4))
+                else if (!memcmp("IN32", buf, 4) || !memcmp("in32", buf, 4))
                     in->outtype = INT_32;
-                else if (!HDmemcmp("IN16", buf, 4) || !HDmemcmp("in16", buf, 4))
+                else if (!memcmp("IN16", buf, 4) || !memcmp("in16", buf, 4))
                     in->outtype = INT_16;
-                else if (!HDmemcmp("IN08", buf, 4) || !HDmemcmp("in08", buf, 4))
+                else if (!memcmp("IN08", buf, 4) || !memcmp("in08", buf, 4))
                     in->outtype = INT_8;
                 else {
-                    (void)fprintf(stderr, err3, infile);
+                    fprintf(stderr, err3, infile);
                     goto err;
                 }
                 if (in->outtype == NO_NE) {
-                    (void)fprintf(stderr, err4, infile);
+                    fprintf(stderr, err4, infile);
                     goto err;
                 }
             }
@@ -1805,191 +1783,187 @@ err:
 void
 help(char *name)
 {
-    (void)printf("Name:\n");
-    (void)printf("\t%s (previously fp2hdf)\n\n", name);
-    (void)printf("Purpose:\n");
-    (void)printf("\tTo convert floating point data to HDF Scientific ");
-    (void)printf("Data Set (SDS)\n");
-    (void)printf("\tand/or 8-bit Raster Image Set (RIS8) format, ");
-    (void)printf("storing the results\n");
-    (void)printf("\tin an HDF file.  The image data can be scaled ");
-    (void)printf("about a mean value.\n\n");
+    printf("Name:\n");
+    printf("\t%s (previously fp2hdf)\n\n", name);
+    printf("Purpose:\n");
+    printf("\tTo convert floating point data to HDF Scientific ");
+    printf("Data Set (SDS)\n");
+    printf("\tand/or 8-bit Raster Image Set (RIS8) format, ");
+    printf("storing the results\n");
+    printf("\tin an HDF file.  The image data can be scaled ");
+    printf("about a mean value.\n\n");
 
-    (void)fprintf(stderr, "Synopsis:");
-    (void)fprintf(stderr, "\n\t%s  -h[elp]", name);
-    (void)fprintf(stderr, "\n\t\t Print this summary of usage and exit.");
-    (void)fprintf(stderr, "\n\t\t ");
-    (void)fprintf(stderr, "\n\t%s  -V", name);
-    (void)fprintf(stderr, "\n\t\t Print version of the HDF4 library and exit.");
-    (void)fprintf(stderr, "\n\t\t ");
-    (void)fprintf(
-        stderr, "\n\t%s  <infile> [ [-t[ype] <output-type> | -n] [<infile> [-t[ype] <output-type> | -n]...]",
-        name);
-    (void)fprintf(stderr, "\n\t\t\t\t\t-o[utfile] <outfile> [-r[aster] [ras_opts ...]] [-f[loat]]");
+    fprintf(stderr, "Synopsis:");
+    fprintf(stderr, "\n\t%s  -h[elp]", name);
+    fprintf(stderr, "\n\t\t Print this summary of usage and exit.");
+    fprintf(stderr, "\n\t\t ");
+    fprintf(stderr, "\n\t%s  -V", name);
+    fprintf(stderr, "\n\t\t Print version of the HDF4 library and exit.");
+    fprintf(stderr, "\n\t\t ");
+    fprintf(stderr,
+            "\n\t%s  <infile> [ [-t[ype] <output-type> | -n] [<infile> [-t[ype] <output-type> | -n]...]",
+            name);
+    fprintf(stderr, "\n\t\t\t\t\t-o[utfile] <outfile> [-r[aster] [ras_opts ...]] [-f[loat]]");
 
-    (void)fprintf(stderr, "\n\n\t <infile(s)>:");
-    (void)fprintf(stderr, "\n\t\t Name of the input file(s), containing a single ");
-    (void)fprintf(stderr, "\n\t\t two-dimensional or three-dimensional floating point array ");
-    (void)fprintf(stderr, "\n\t\t in either ASCII text, native floating point, native integer ");
-    (void)fprintf(stderr, "\n\t\t or HDF SDS format.  If an HDF file is used for input, it ");
-    (void)fprintf(stderr, "\n\t\t must contain an SDS. The SDS need only contain a dimension ");
-    (void)fprintf(stderr, "\n\t\t record and the data, but if it also contains maximum and ");
-    (void)fprintf(stderr, "\n\t\t minimum values and/or scales for each axis, these will ");
-    (void)fprintf(stderr, "\n\t\t be used.  If the input format is ASCII text or native ");
-    (void)fprintf(stderr, "\n\t\t floating point or native integer, see \"Notes\" below on ");
-    (void)fprintf(stderr, "\n\t\t how it must be organized.");
+    fprintf(stderr, "\n\n\t <infile(s)>:");
+    fprintf(stderr, "\n\t\t Name of the input file(s), containing a single ");
+    fprintf(stderr, "\n\t\t two-dimensional or three-dimensional floating point array ");
+    fprintf(stderr, "\n\t\t in either ASCII text, native floating point, native integer ");
+    fprintf(stderr, "\n\t\t or HDF SDS format.  If an HDF file is used for input, it ");
+    fprintf(stderr, "\n\t\t must contain an SDS. The SDS need only contain a dimension ");
+    fprintf(stderr, "\n\t\t record and the data, but if it also contains maximum and ");
+    fprintf(stderr, "\n\t\t minimum values and/or scales for each axis, these will ");
+    fprintf(stderr, "\n\t\t be used.  If the input format is ASCII text or native ");
+    fprintf(stderr, "\n\t\t floating point or native integer, see \"Notes\" below on ");
+    fprintf(stderr, "\n\t\t how it must be organized.");
 
-    (void)fprintf(stderr, "\n\n\t -t[ype] <output_type>: ");
-    (void)fprintf(stderr, "\n\t\t Optionally used for every input ASCII file to specify the ");
-    (void)fprintf(stderr, "\n\t\t data type of the data-set to be written. If not specified               ");
-    (void)fprintf(stderr, "\n\t\t default data type is 32-bit floating point. <output-type>");
-    (void)fprintf(stderr, "\n\t\t can be any of the following: FP32 (default), FP64, INT32");
-    (void)fprintf(stderr, "\n\t\t INT16, INT8. It can be used only with ASCII files.");
+    fprintf(stderr, "\n\n\t -t[ype] <output_type>: ");
+    fprintf(stderr, "\n\t\t Optionally used for every input ASCII file to specify the ");
+    fprintf(stderr, "\n\t\t data type of the data-set to be written. If not specified               ");
+    fprintf(stderr, "\n\t\t default data type is 32-bit floating point. <output-type>");
+    fprintf(stderr, "\n\t\t can be any of the following: FP32 (default), FP64, INT32");
+    fprintf(stderr, "\n\t\t INT16, INT8. It can be used only with ASCII files.");
 
-    (void)fprintf(stderr, "\n\n\t -n:  ");
-    (void)fprintf(stderr, "\n\t\t This option is to be used only if the binary input file ");
-    (void)fprintf(stderr, "\n\t\t contains 64-bit floating point data and the default");
-    (void)fprintf(stderr, "\n\t\t behaviour (default behaviour is to write it to a 32-bit");
-    (void)fprintf(stderr, "\n\t\t floating point data-set) should be overridden to write ");
-    (void)fprintf(stderr, "\n\t\t it to a 64-bit floating point data-set.");
+    fprintf(stderr, "\n\n\t -n:  ");
+    fprintf(stderr, "\n\t\t This option is to be used only if the binary input file ");
+    fprintf(stderr, "\n\t\t contains 64-bit floating point data and the default");
+    fprintf(stderr, "\n\t\t behaviour (default behaviour is to write it to a 32-bit");
+    fprintf(stderr, "\n\t\t floating point data-set) should be overridden to write ");
+    fprintf(stderr, "\n\t\t it to a 64-bit floating point data-set.");
 
-    (void)fprintf(stderr, "\n\n\t -o[utfile] <outfile>:");
-    (void)fprintf(stderr, "\n\t\t Data from one or more input files are stored as one or");
-    (void)fprintf(stderr, "\n\t\t more data sets and/or images in one HDF output file,");
-    (void)fprintf(stderr, "\n\t\t \"outfile\".");
+    fprintf(stderr, "\n\n\t -o[utfile] <outfile>:");
+    fprintf(stderr, "\n\t\t Data from one or more input files are stored as one or");
+    fprintf(stderr, "\n\t\t more data sets and/or images in one HDF output file,");
+    fprintf(stderr, "\n\t\t \"outfile\".");
 
-    (void)fprintf(stderr, "\n\n\t -r[aster]:");
-    (void)fprintf(stderr, "\n\t\t Store output as a raster image set in the output file.");
+    fprintf(stderr, "\n\n\t -r[aster]:");
+    fprintf(stderr, "\n\t\t Store output as a raster image set in the output file.");
 
-    (void)fprintf(stderr, "\n\n\t -f[loat]:");
-    (void)fprintf(stderr, "\n\t Store output as a scientific data set in the output file.");
-    (void)fprintf(stderr, "\n\t This is the default if the \"-r\" option is not specified.");
+    fprintf(stderr, "\n\n\t -f[loat]:");
+    fprintf(stderr, "\n\t Store output as a scientific data set in the output file.");
+    fprintf(stderr, "\n\t This is the default if the \"-r\" option is not specified.");
 
-    (void)fprintf(stderr, "\n\n\t ras_opts ...");
-    (void)fprintf(stderr, "\n\n\t -e[xpand] <horiz> <vert> [<depth>]:");
-    (void)fprintf(stderr, "\n\t Expand float data via pixel replication to produce the");
-    (void)fprintf(stderr, "\n\t image(s).  \"horiz\" and \"vert\" give the horizontal and");
-    (void)fprintf(stderr, "\n\t vertical resolution of the image(s) to be produced; and");
-    (void)fprintf(stderr, "\n\t optionally, \"depth\" gives the number of images or depth");
-    (void)fprintf(stderr, "\n\t planes (for 3D input data).");
+    fprintf(stderr, "\n\n\t ras_opts ...");
+    fprintf(stderr, "\n\n\t -e[xpand] <horiz> <vert> [<depth>]:");
+    fprintf(stderr, "\n\t Expand float data via pixel replication to produce the");
+    fprintf(stderr, "\n\t image(s).  \"horiz\" and \"vert\" give the horizontal and");
+    fprintf(stderr, "\n\t vertical resolution of the image(s) to be produced; and");
+    fprintf(stderr, "\n\t optionally, \"depth\" gives the number of images or depth");
+    fprintf(stderr, "\n\t planes (for 3D input data).");
 
-    (void)fprintf(stderr, "\n\n\t -i[nterp] <horiz> <vert> [<depth>]:");
-    (void)fprintf(stderr, "\n\t\t Apply bilinear, or trilinear, interpolation to the float");
-    (void)fprintf(stderr, "\n\t\t data to produce the image(s).  \"horiz\", \"vert\", and \"depth\"");
-    (void)fprintf(stderr, "\n\t\t must be greater than or equal to the dimensions of the");
-    (void)fprintf(stderr, "\n\t\t original dataset.");
-    (void)fprintf(stderr, "\n\t\t If max and min are supplied in input file, this option clips");
-    (void)fprintf(stderr, "\n\t\t values that are greater than max or less then min, setting");
-    (void)fprintf(stderr, "\n\t\t them to the max and min, respectively.");
+    fprintf(stderr, "\n\n\t -i[nterp] <horiz> <vert> [<depth>]:");
+    fprintf(stderr, "\n\t\t Apply bilinear, or trilinear, interpolation to the float");
+    fprintf(stderr, "\n\t\t data to produce the image(s).  \"horiz\", \"vert\", and \"depth\"");
+    fprintf(stderr, "\n\t\t must be greater than or equal to the dimensions of the");
+    fprintf(stderr, "\n\t\t original dataset.");
+    fprintf(stderr, "\n\t\t If max and min are supplied in input file, this option clips");
+    fprintf(stderr, "\n\t\t values that are greater than max or less then min, setting");
+    fprintf(stderr, "\n\t\t them to the max and min, respectively.");
 
-    (void)fprintf(stderr, "\n\n\t -p[alfile] <palfile>:");
-    (void)fprintf(stderr, "\n\t\t Store the palette with the image.  Get the palette from");
-    (void)fprintf(stderr, "\n\t\t \"palfile\"; which may be an HDF file containing a palette,");
-    (void)fprintf(stderr, "\n\t\t or a file containing a raw palette.");
+    fprintf(stderr, "\n\n\t -p[alfile] <palfile>:");
+    fprintf(stderr, "\n\t\t Store the palette with the image.  Get the palette from");
+    fprintf(stderr, "\n\t\t \"palfile\"; which may be an HDF file containing a palette,");
+    fprintf(stderr, "\n\t\t or a file containing a raw palette.");
 
-    (void)fprintf(stderr, "\n\n\t -m[ean] <mean>:");
-    (void)fprintf(stderr, "\n\t\t If a floating point mean value is given, the image will be");
-    (void)fprintf(stderr, "\n\t\t scaled about the mean.  The new extremes (newmax and newmin),");
-    (void)fprintf(stderr, "\n\t\t as given by:");
+    fprintf(stderr, "\n\n\t -m[ean] <mean>:");
+    fprintf(stderr, "\n\t\t If a floating point mean value is given, the image will be");
+    fprintf(stderr, "\n\t\t scaled about the mean.  The new extremes (newmax and newmin),");
+    fprintf(stderr, "\n\t\t as given by:");
 
-    (void)fprintf(stderr, "\n\n\t\t\t newmax = mean + max(abs(max-mean), abs(mean-min))");
-    (void)fprintf(stderr, "\n\t\t\t newmin = mean - max(abs(max-mean), abs(mean-min))");
+    fprintf(stderr, "\n\n\t\t\t newmax = mean + max(abs(max-mean), abs(mean-min))");
+    fprintf(stderr, "\n\t\t\t newmin = mean - max(abs(max-mean), abs(mean-min))");
 
-    (void)fprintf(stderr, "\n\n\t\t will be equidistant from the mean value.  If no mean value");
-    (void)fprintf(stderr, "\n\t\t is given, then the mean will be:  0.5   (max + min)");
+    fprintf(stderr, "\n\n\t\t will be equidistant from the mean value.  If no mean value");
+    fprintf(stderr, "\n\t\t is given, then the mean will be:  0.5   (max + min)");
 
-    (void)fprintf(stderr, "\n\n\t Notes:");
-    (void)fprintf(
+    fprintf(stderr, "\n\n\t Notes:");
+    fprintf(
         stderr,
         "\n\t\t If the input file format is ASCII text or native floating point or native integer(32-bit,");
-    (void)fprintf(stderr, "\n\t\t 16-bit, 8-bit), it");
-    (void)fprintf(stderr, "\n\t\t must have the following input fields:");
+    fprintf(stderr, "\n\t\t 16-bit, 8-bit), it");
+    fprintf(stderr, "\n\t\t must have the following input fields:");
 
-    (void)fprintf(stderr, "\n\t\t format");
-    (void)fprintf(stderr, "\n\t\t nplanes");
-    (void)fprintf(stderr, "\n\t\t nrows");
-    (void)fprintf(stderr, "\n\t\t cols");
-    (void)fprintf(stderr, "\n\t\t max_value");
-    (void)fprintf(stderr, "\n\t\t min_value");
-    (void)fprintf(stderr, "\n\t\t [plane1 plane2 plane3 ...]");
-    (void)fprintf(stderr, "\n\t\t row1 row2 row3 ...");
-    (void)fprintf(stderr, "\n\t\t col1 col2 col3 ...");
-    (void)fprintf(stderr, "\n\t\t data1 data2 data3 ...");
+    fprintf(stderr, "\n\t\t format");
+    fprintf(stderr, "\n\t\t nplanes");
+    fprintf(stderr, "\n\t\t nrows");
+    fprintf(stderr, "\n\t\t cols");
+    fprintf(stderr, "\n\t\t max_value");
+    fprintf(stderr, "\n\t\t min_value");
+    fprintf(stderr, "\n\t\t [plane1 plane2 plane3 ...]");
+    fprintf(stderr, "\n\t\t row1 row2 row3 ...");
+    fprintf(stderr, "\n\t\t col1 col2 col3 ...");
+    fprintf(stderr, "\n\t\t data1 data2 data3 ...");
 
-    (void)fprintf(stderr, "\n\n\t\t Where:");
-    (void)fprintf(stderr, "\n\n\t\t format:");
-    (void)fprintf(stderr,
-                  "\n\t\t\t Format designator (\"TEXT\", \"FP32\", \"FP64\", \"IN32\", \"IN16\", \"IN08\").");
-    (void)fprintf(stderr, "\n\t\t\t nplanes, nrows, ncols:");
-    (void)fprintf(stderr, "\n\t\t\t Dimensions are specified in the order slowest changing dimension first.");
-    (void)fprintf(stderr, "\n\t\t\t ncols is dimension of the fastest changing dimension. (horizontal axis");
-    (void)fprintf(stderr, "\n\t\t\t or X-axis in a 3D scale)");
-    (void)fprintf(stderr, "\n\t\t\t nrows corresponds to dimension of the vertical axis or Y-axis in a 3D ");
-    (void)fprintf(stderr, "\n\t\t\t scale.");
-    (void)fprintf(stderr,
-                  "\n\t\t\t nplanes corresponds to the slowest changing dimension i.e. dimension of ");
-    (void)fprintf(stderr, "\n\t\t\t the depth axis or the Z-axis in a 3D scale (\"1\" for 2D input).");
-    (void)fprintf(stderr, "\n\t\t max_value:");
-    (void)fprintf(stderr, "\n\t\t\t Maximum data value.");
-    (void)fprintf(stderr, "\n\t\t min_value:");
-    (void)fprintf(stderr, "\n\t\t\t Minimum data value.");
-    (void)fprintf(stderr, "\n\t\t plane1, plane2, plane3, ...:");
-    (void)fprintf(stderr, "\n\t\t\t Scales for depth axis.");
-    (void)fprintf(stderr, "\n\t\t row1, row2, row3, ...:");
-    (void)fprintf(stderr, "\n\t\t\t Scales for the vertical axis.");
-    (void)fprintf(stderr, "\n\t\t col1, col2, col3, ...:");
-    (void)fprintf(stderr, "\n\t\t\t Scales for the horizontal axis.");
-    (void)fprintf(stderr, "\n\t\t data1, data2, data3, ...:");
-    (void)fprintf(stderr, "\n\t\t\t The data ordered by rows, left to right and top");
-    (void)fprintf(stderr, "\n\t\t\t to bottom; then optionally, ordered by planes,");
-    (void)fprintf(stderr, "\n\t\t\t front to back.");
+    fprintf(stderr, "\n\n\t\t Where:");
+    fprintf(stderr, "\n\n\t\t format:");
+    fprintf(stderr,
+            "\n\t\t\t Format designator (\"TEXT\", \"FP32\", \"FP64\", \"IN32\", \"IN16\", \"IN08\").");
+    fprintf(stderr, "\n\t\t\t nplanes, nrows, ncols:");
+    fprintf(stderr, "\n\t\t\t Dimensions are specified in the order slowest changing dimension first.");
+    fprintf(stderr, "\n\t\t\t ncols is dimension of the fastest changing dimension. (horizontal axis");
+    fprintf(stderr, "\n\t\t\t or X-axis in a 3D scale)");
+    fprintf(stderr, "\n\t\t\t nrows corresponds to dimension of the vertical axis or Y-axis in a 3D ");
+    fprintf(stderr, "\n\t\t\t scale.");
+    fprintf(stderr, "\n\t\t\t nplanes corresponds to the slowest changing dimension i.e. dimension of ");
+    fprintf(stderr, "\n\t\t\t the depth axis or the Z-axis in a 3D scale (\"1\" for 2D input).");
+    fprintf(stderr, "\n\t\t max_value:");
+    fprintf(stderr, "\n\t\t\t Maximum data value.");
+    fprintf(stderr, "\n\t\t min_value:");
+    fprintf(stderr, "\n\t\t\t Minimum data value.");
+    fprintf(stderr, "\n\t\t plane1, plane2, plane3, ...:");
+    fprintf(stderr, "\n\t\t\t Scales for depth axis.");
+    fprintf(stderr, "\n\t\t row1, row2, row3, ...:");
+    fprintf(stderr, "\n\t\t\t Scales for the vertical axis.");
+    fprintf(stderr, "\n\t\t col1, col2, col3, ...:");
+    fprintf(stderr, "\n\t\t\t Scales for the horizontal axis.");
+    fprintf(stderr, "\n\t\t data1, data2, data3, ...:");
+    fprintf(stderr, "\n\t\t\t The data ordered by rows, left to right and top");
+    fprintf(stderr, "\n\t\t\t to bottom; then optionally, ordered by planes,");
+    fprintf(stderr, "\n\t\t\t front to back.");
 
-    (void)fprintf(stderr,
-                  "\n\n\t\t For FP32 and FP64 input format, \"format\", \"nplanes\", \"nrows\", \"ncols\",");
-    (void)fprintf(stderr, "\n\t\t and \"nplanes\" are native integers; where \"format\" is the integer");
-    (void)fprintf(stderr, "\n\t\t representation of the appropriate 4-character string (0x46503332 for");
-    (void)fprintf(stderr, "\n\t\t \"FP32\" and 0x46503634 for \"FP64\").  The remaining input fields are");
-    (void)fprintf(stderr, "\n\t\t composed of native 32-bit floating point values for FP32 input format,");
-    (void)fprintf(stderr, "\n\t\t or native 64-bit floating point values for FP64 input format.");
+    fprintf(stderr,
+            "\n\n\t\t For FP32 and FP64 input format, \"format\", \"nplanes\", \"nrows\", \"ncols\",");
+    fprintf(stderr, "\n\t\t and \"nplanes\" are native integers; where \"format\" is the integer");
+    fprintf(stderr, "\n\t\t representation of the appropriate 4-character string (0x46503332 for");
+    fprintf(stderr, "\n\t\t \"FP32\" and 0x46503634 for \"FP64\").  The remaining input fields are");
+    fprintf(stderr, "\n\t\t composed of native 32-bit floating point values for FP32 input format,");
+    fprintf(stderr, "\n\t\t or native 64-bit floating point values for FP64 input format.");
 
-    (void)fprintf(
-        stderr,
-        "\n\n\t For IN32, IN16 and IN08 input format, \"format\", \"nplanes\", \"nrows\", \"ncols\",");
-    (void)fprintf(stderr, "\n\t\t and \"nplanes\" are native integers; where \"format\" is the integer");
-    (void)fprintf(stderr,
-                  "\n\t\t representation of the appropriate 4-character string. The remaining input ");
-    (void)fprintf(stderr,
-                  "\n\t\t fields are composed of native 32-bit integer values for IN32 input format,");
-    (void)fprintf(stderr, "\n\t\t or native 16-bit integer values for IN16 input format or native 8-bit ");
-    (void)fprintf(stderr, "\n\t\t integer values for IN08 input format.");
+    fprintf(stderr,
+            "\n\n\t For IN32, IN16 and IN08 input format, \"format\", \"nplanes\", \"nrows\", \"ncols\",");
+    fprintf(stderr, "\n\t\t and \"nplanes\" are native integers; where \"format\" is the integer");
+    fprintf(stderr, "\n\t\t representation of the appropriate 4-character string. The remaining input ");
+    fprintf(stderr, "\n\t\t fields are composed of native 32-bit integer values for IN32 input format,");
+    fprintf(stderr, "\n\t\t or native 16-bit integer values for IN16 input format or native 8-bit ");
+    fprintf(stderr, "\n\t\t integer values for IN08 input format.");
 
-    (void)printf("\nExamples:\n");
-    (void)printf("\tConvert floating point data in \"f1.txt\" to SDS ");
-    (void)printf("format, and store it\n");
-    (void)printf("\tas an SDS in HDF file \"o1\":\n\n");
-    (void)printf("\t\t%s f1.txt -o o1\n\n", name);
-    (void)printf("\tConvert floating point data in \"f2.hdf\" to ");
-    (void)printf("8-bit raster format, and\n");
-    (void)printf("\tstore it as an RIS8 in HDF file \"o2\":\n\n");
-    (void)printf("\t\t%s f2.hdf -o o2 -r\n\n", name);
-    (void)printf("\tConvert floating point data in \"f3.bin\" to ");
-    (void)printf("8-bit raster format and\n");
-    (void)printf("\tSDS format, and store both the RIS8 and the SDS ");
-    (void)printf("in HDF file \"o3\":\n\n");
-    (void)printf("\t\t%s f3.bin -o o3 -r -f\n\n", name);
-    (void)printf("\tConvert floating point data in \"f4\" to a ");
-    (void)printf("500x600 raster image, and\n");
-    (void)printf("\tstore the RIS8 in HDF file \"o4\".  Also store a ");
-    (void)printf("palette from \"palfile\"\n");
-    (void)printf("\twith the image:\n\n");
-    (void)printf("\t\t%s f4 -o o4 -r -e 500 600 -p palfile\n\n", name);
-    (void)printf("\tConvert floating point data in \"f5\" to 200 ");
-    (void)printf("planes of 500x600 raster\n");
-    (void)printf("\timages, and store the RIS8 in HDF file \"o5\".  ");
-    (void)printf("Also scale the image\n");
-    (void)printf("\tdata so that it is centered about a mean value ");
-    (void)printf("of 10.0:\n\n");
-    (void)printf("\t\t%s f5 -o o5 -r -i 500 600 200 -m 10.0\n", name);
+    printf("\nExamples:\n");
+    printf("\tConvert floating point data in \"f1.txt\" to SDS ");
+    printf("format, and store it\n");
+    printf("\tas an SDS in HDF file \"o1\":\n\n");
+    printf("\t\t%s f1.txt -o o1\n\n", name);
+    printf("\tConvert floating point data in \"f2.hdf\" to ");
+    printf("8-bit raster format, and\n");
+    printf("\tstore it as an RIS8 in HDF file \"o2\":\n\n");
+    printf("\t\t%s f2.hdf -o o2 -r\n\n", name);
+    printf("\tConvert floating point data in \"f3.bin\" to ");
+    printf("8-bit raster format and\n");
+    printf("\tSDS format, and store both the RIS8 and the SDS ");
+    printf("in HDF file \"o3\":\n\n");
+    printf("\t\t%s f3.bin -o o3 -r -f\n\n", name);
+    printf("\tConvert floating point data in \"f4\" to a ");
+    printf("500x600 raster image, and\n");
+    printf("\tstore the RIS8 in HDF file \"o4\".  Also store a ");
+    printf("palette from \"palfile\"\n");
+    printf("\twith the image:\n\n");
+    printf("\t\t%s f4 -o o4 -r -e 500 600 -p palfile\n\n", name);
+    printf("\tConvert floating point data in \"f5\" to 200 ");
+    printf("planes of 500x600 raster\n");
+    printf("\timages, and store the RIS8 in HDF file \"o5\".  ");
+    printf("Also scale the image\n");
+    printf("\tdata so that it is centered about a mean value ");
+    printf("of 10.0:\n\n");
+    printf("\t\t%s f5 -o o5 -r -i 500 600 200 -m 10.0\n", name);
 
     return;
 }
@@ -2015,8 +1989,8 @@ indexes(float32 *scale, int dim, int *idx, int res)
     /*
      * determine the midpoints between scale values
      */
-    if ((midpt = (float32 *)HDmalloc((size_t)dim * sizeof(float32))) == NULL) {
-        (void)fprintf(stderr, "%s", err1);
+    if ((midpt = (float32 *)malloc((size_t)dim * sizeof(float32))) == NULL) {
+        fprintf(stderr, "%s", err1);
         goto err;
     }
     for (i = 0; i < dim - 1; i++)
@@ -2044,7 +2018,7 @@ indexes(float32 *scale, int dim, int *idx, int res)
     /*
      * free dynamically allocated memory
      */
-    HDfree((char *)midpt);
+    free(midpt);
 
     return (0);
 
@@ -2114,17 +2088,17 @@ interp(struct Input *in, struct Raster *im)
     /*
      * allocate dynamic memory for the interpolation ratio buffers
      */
-    if ((hratio = (float32 *)HDmalloc((size_t)im->hres * sizeof(float32))) == NULL) {
-        (void)fprintf(stderr, "%s", err1);
+    if ((hratio = (float32 *)malloc((size_t)im->hres * sizeof(float32))) == NULL) {
+        fprintf(stderr, "%s", err1);
         goto err;
     }
-    if ((vratio = (float32 *)HDmalloc((unsigned int)im->vres * sizeof(float32))) == NULL) {
-        (void)fprintf(stderr, "%s", err1);
+    if ((vratio = (float32 *)malloc((unsigned int)im->vres * sizeof(float32))) == NULL) {
+        fprintf(stderr, "%s", err1);
         goto err;
     }
     if (in->rank == 3) {
-        if ((dratio = (float32 *)HDmalloc((unsigned int)im->dres * sizeof(float32))) == NULL) {
-            (void)fprintf(stderr, "%s", err1);
+        if ((dratio = (float32 *)malloc((unsigned int)im->dres * sizeof(float32))) == NULL) {
+            fprintf(stderr, "%s", err1);
             goto err;
         }
     }
@@ -2133,17 +2107,17 @@ interp(struct Input *in, struct Raster *im)
      * allocate dynamic memory for the pixel location offset/increment
      * buffers
      */
-    if ((hinc = (int *)HDmalloc((unsigned int)im->hres * sizeof(int))) == NULL) {
-        (void)fprintf(stderr, "%s", err1);
+    if ((hinc = (int *)malloc((unsigned int)im->hres * sizeof(int))) == NULL) {
+        fprintf(stderr, "%s", err1);
         goto err;
     }
-    if ((voff = (int *)HDmalloc((unsigned int)(im->vres + 1) * sizeof(int))) == NULL) {
-        (void)fprintf(stderr, "%s", err1);
+    if ((voff = (int *)malloc((unsigned int)(im->vres + 1) * sizeof(int))) == NULL) {
+        fprintf(stderr, "%s", err1);
         goto err;
     }
     if (in->rank == 3) {
-        if ((doff = (int *)HDmalloc((unsigned int)(im->dres + 1) * sizeof(int))) == NULL) {
-            (void)fprintf(stderr, "%s", err1);
+        if ((doff = (int *)malloc((unsigned int)(im->dres + 1) * sizeof(int))) == NULL) {
+            fprintf(stderr, "%s", err1);
             goto err;
         }
     }
@@ -2244,14 +2218,14 @@ interp(struct Input *in, struct Raster *im)
     /*
      * free dynamically allocated memory
      */
-    HDfree((char *)hratio);
-    HDfree((char *)vratio);
+    free(hratio);
+    free(vratio);
     if (in->rank == 3)
-        HDfree((char *)dratio);
-    HDfree((char *)hinc);
-    HDfree((char *)voff);
+        free(dratio);
+    free(hinc);
+    free(voff);
     if (in->rank == 3)
-        HDfree((char *)doff);
+        free(doff);
 
     return (0);
 
@@ -2342,7 +2316,7 @@ palette(char *palfile)
      */
     if (Hishdf(palfile)) {
         if (DFPgetpal(palfile, pal)) {
-            (void)fprintf(stderr, err1, palfile);
+            fprintf(stderr, err1, palfile);
             goto err;
         }
 
@@ -2352,19 +2326,19 @@ palette(char *palfile)
     }
     else {
         if ((strm = fopen(palfile, "r")) == NULL) {
-            (void)fprintf(stderr, err2, palfile);
+            fprintf(stderr, err2, palfile);
             goto err;
         }
         if (fread((char *)red, 1, 256, strm) != 256) {
-            (void)fprintf(stderr, err1, palfile);
+            fprintf(stderr, err1, palfile);
             goto err;
         }
         else if (fread((char *)green, 1, 256, strm) != 256) {
-            (void)fprintf(stderr, err1, palfile);
+            fprintf(stderr, err1, palfile);
             goto err;
         }
         else if (fread((char *)blue, 1, 256, strm) != 256) {
-            (void)fprintf(stderr, err1, palfile);
+            fprintf(stderr, err1, palfile);
             goto err;
         }
         (void)fclose(strm);
@@ -2384,7 +2358,7 @@ palette(char *palfile)
      * set up the palette as the default for subsequent images
      */
     if (DFR8setpalette(pal)) {
-        (void)fprintf(stderr, "%s", err3);
+        fprintf(stderr, "%s", err3);
         goto err;
     }
 
@@ -2423,8 +2397,8 @@ pixrep(struct Input *in, struct Raster *im)
     /*
      * determine the scale indexes of the horizontal pixel locations
      */
-    if ((hidx = (int *)HDmalloc((unsigned int)(im->hres + 1) * sizeof(int))) == NULL) {
-        (void)fprintf(stderr, "%s", err1);
+    if ((hidx = (int *)malloc((unsigned int)(im->hres + 1) * sizeof(int))) == NULL) {
+        fprintf(stderr, "%s", err1);
         goto err;
     }
 
@@ -2434,8 +2408,8 @@ pixrep(struct Input *in, struct Raster *im)
     /*
      * determine the scale indexes of the vertical pixel locations
      */
-    if ((vidx = (int *)HDmalloc((unsigned int)(im->vres + 1) * sizeof(int))) == NULL) {
-        (void)fprintf(stderr, "%s", err1);
+    if ((vidx = (int *)malloc((unsigned int)(im->vres + 1) * sizeof(int))) == NULL) {
+        fprintf(stderr, "%s", err1);
         goto err;
     }
 
@@ -2448,8 +2422,8 @@ pixrep(struct Input *in, struct Raster *im)
     dummy = 0;
     didx  = &dummy;
     if (in->rank == 3) {
-        if ((didx = (int *)HDmalloc((unsigned int)(im->dres + 1) * sizeof(int))) == NULL) {
-            (void)fprintf(stderr, "%s", err1);
+        if ((didx = (int *)malloc((unsigned int)(im->dres + 1) * sizeof(int))) == NULL) {
+            fprintf(stderr, "%s", err1);
             goto err;
         }
 
@@ -2460,8 +2434,8 @@ pixrep(struct Input *in, struct Raster *im)
     /*
      * compute the expanded image
      */
-    if ((pix = (unsigned char *)HDmalloc((unsigned int)(in->dims[0] + 1))) == NULL) {
-        (void)fprintf(stderr, "%s", err1);
+    if ((pix = (unsigned char *)malloc((unsigned int)(in->dims[0] + 1))) == NULL) {
+        fprintf(stderr, "%s", err1);
         goto err;
     }
     for (k = 0, odidx = didx[0] - 1; k < im->dres; k++) {
@@ -2505,11 +2479,11 @@ pixrep(struct Input *in, struct Raster *im)
     /*
      * free dynamically allocated space
      */
-    HDfree((char *)hidx);
-    HDfree((char *)vidx);
+    free(hidx);
+    free(vidx);
     if (in->rank == 3)
-        HDfree((char *)didx);
-    HDfree((char *)pix);
+        free(didx);
+    free(pix);
 
     return (0);
 
@@ -2531,7 +2505,7 @@ err:
 static int32
 create_SDS(int32 sd_id, int32 nt, struct Input *in)
 {
-    int32 sds_id;
+    int32 sds_id = FAIL;
 
     if (in->rank == 2) {
         int32 edges[2];
@@ -2560,39 +2534,39 @@ create_SDS(int32 sd_id, int32 nt, struct Input *in)
  *    Returns SUCCEED or FAIL. (bmribler - 2006/8/18)
  */
 static intn
-alloc_data(VOIDP *data, int32 len, int outtype)
+alloc_data(void **data, int32 len, int outtype)
 {
     const char *alloc_err = "Unable to dynamically allocate memory.\n";
 
     switch (outtype) {
         case 0: /* 32-bit float */
         case 5: /* NO_NE */
-            if ((*data = (VOIDP)HDmalloc((size_t)len * sizeof(float32))) == NULL) {
-                (void)fprintf(stderr, "%s", alloc_err);
+            if ((*data = (void *)malloc((size_t)len * sizeof(float32))) == NULL) {
+                fprintf(stderr, "%s", alloc_err);
                 return FAIL;
             }
             break;
         case 1: /* 64-bit float */
-            if ((*data = (VOIDP)HDmalloc((size_t)len * sizeof(float64))) == NULL) {
-                (void)fprintf(stderr, "%s", alloc_err);
+            if ((*data = (void *)malloc((size_t)len * sizeof(float64))) == NULL) {
+                fprintf(stderr, "%s", alloc_err);
                 return FAIL;
             }
             break;
         case 2: /* 32-bit integer */
-            if ((*data = (VOIDP)HDmalloc((size_t)len * sizeof(int32))) == NULL) {
-                (void)fprintf(stderr, "%s", alloc_err);
+            if ((*data = (void *)malloc((size_t)len * sizeof(int32))) == NULL) {
+                fprintf(stderr, "%s", alloc_err);
                 return FAIL;
             }
             break;
         case 3: /* 16-bit integer */
-            if ((*data = (VOIDP)HDmalloc((size_t)len * sizeof(int16))) == NULL) {
-                (void)fprintf(stderr, "%s", alloc_err);
+            if ((*data = (void *)malloc((size_t)len * sizeof(int16))) == NULL) {
+                fprintf(stderr, "%s", alloc_err);
                 return FAIL;
             }
             break;
         case 4: /* 8-bit integer */
-            if ((*data = (VOIDP)HDmalloc((size_t)len * sizeof(int8))) == NULL) {
-                (void)fprintf(stderr, "%s", alloc_err);
+            if ((*data = (void *)malloc((size_t)len * sizeof(int8))) == NULL) {
+                fprintf(stderr, "%s", alloc_err);
                 return FAIL;
             }
             break;
@@ -2620,8 +2594,8 @@ write_SDS(int32 sds_id, struct Input *in)
         edges[1] = in->dims[0];
         start[0] = 0;
         start[1] = 0;
-        if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)in->data) != 0) {
-            (void)fprintf(stderr, "%s", write_err);
+        if (SDwritedata(sds_id, start, NULL, edges, (void *)in->data) != 0) {
+            fprintf(stderr, "%s", write_err);
             return FAIL;
         }
     }
@@ -2633,8 +2607,8 @@ write_SDS(int32 sds_id, struct Input *in)
         start[0] = 0;
         start[1] = 0;
         start[2] = 0;
-        if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)in->data) != 0) {
-            (void)fprintf(stderr, "%s", write_err);
+        if (SDwritedata(sds_id, start, NULL, edges, (void *)in->data) != 0) {
+            fprintf(stderr, "%s", write_err);
             return FAIL;
         }
     }
@@ -2652,7 +2626,7 @@ write_SDS(int32 sds_id, struct Input *in)
  *    Returns SUCCEED or FAIL. (bmribler - 2006/8/18)
  */
 static intn
-set_dimensions(int32 sds_id, struct Input *in, int32 nt, VOIDP dscale, VOIDP vscale, VOIDP hscale)
+set_dimensions(int32 sds_id, struct Input *in, int32 nt, void *dscale, void *vscale, void *hscale)
 {
     int32       dim_id, dim_index;
     const char *dim_err = "Unable to set dimension scales\n";
@@ -2666,8 +2640,8 @@ set_dimensions(int32 sds_id, struct Input *in, int32 nt, VOIDP dscale, VOIDP vsc
         dim_index = 0;
         dim_id    = SDgetdimid(sds_id, dim_index);
 
-        if (SDsetdimscale(dim_id, edges[0], nt, (VOIDP)vscale) == FAIL) {
-            (void)fprintf(stderr, "%s, dim index %d\n", dim_err, dim_index);
+        if (SDsetdimscale(dim_id, edges[0], nt, (void *)vscale) == FAIL) {
+            fprintf(stderr, "%s, dim index %d\n", dim_err, dim_index);
             return FAIL;
         }
 
@@ -2675,7 +2649,7 @@ set_dimensions(int32 sds_id, struct Input *in, int32 nt, VOIDP dscale, VOIDP vsc
         dim_id    = SDgetdimid(sds_id, dim_index);
 
         if (SDsetdimscale(dim_id, edges[1], nt, hscale) != 0) {
-            (void)fprintf(stderr, "%s, dim index %d\n", dim_err, dim_index);
+            fprintf(stderr, "%s, dim index %d\n", dim_err, dim_index);
             return FAIL;
         }
     }
@@ -2689,21 +2663,21 @@ set_dimensions(int32 sds_id, struct Input *in, int32 nt, VOIDP dscale, VOIDP vsc
         dim_id    = SDgetdimid(sds_id, dim_index);
 
         if (SDsetdimscale(dim_id, edges[0], nt, dscale) != 0) {
-            (void)fprintf(stderr, "%s, dim index %d\n", dim_err, dim_index);
+            fprintf(stderr, "%s, dim index %d\n", dim_err, dim_index);
             return FAIL;
         }
         dim_index = 1;
         dim_id    = SDgetdimid(sds_id, dim_index);
 
         if (SDsetdimscale(dim_id, edges[1], nt, vscale) != 0) {
-            (void)fprintf(stderr, "%s, dim index %d\n", dim_err, dim_index);
+            fprintf(stderr, "%s, dim index %d\n", dim_err, dim_index);
             return FAIL;
         }
         dim_index = 2;
         dim_id    = SDgetdimid(sds_id, dim_index);
 
         if (SDsetdimscale(dim_id, edges[2], nt, hscale) != 0) {
-            (void)fprintf(stderr, "%s, dim index %d\n", dim_err, dim_index);
+            fprintf(stderr, "%s, dim index %d\n", dim_err, dim_index);
             return FAIL;
         }
     }
@@ -2742,7 +2716,8 @@ process(struct Options *opt)
     int32          len;
     FILE          *strm = NULL;
     int32          hdf;
-    int32          sd_id, sds_id;
+    int32          sd_id  = FAIL;
+    int32          sds_id = FAIL;
 
 #ifdef DEBUG
     int h, v, d;
@@ -2770,14 +2745,14 @@ process(struct Options *opt)
      * create the HDF output file
      */
     if ((hdf = Hopen(opt->outfile, DFACC_CREATE, 0)) == FAIL) {
-        (void)fprintf(stderr, err1, opt->outfile);
+        fprintf(stderr, err1, opt->outfile);
         goto err;
     }
     (void)Hclose(hdf);
 
     /* new interface */
     if ((sd_id = SDstart(opt->outfile, DFACC_WRITE)) == FAIL) {
-        (void)fprintf(stderr, err1a, opt->outfile);
+        fprintf(stderr, err1a, opt->outfile);
         goto err;
     }
 
@@ -2801,7 +2776,7 @@ process(struct Options *opt)
             in.is_hdf              = TRUE;
             opt->infiles[i].handle = SDstart(opt->infiles[i].filename, DFACC_RDONLY);
             if (opt->infiles[i].handle == FAIL) {
-                (void)fprintf(stderr, err1a, opt->infiles[i].filename);
+                fprintf(stderr, err1a, opt->infiles[i].filename);
                 goto err;
             }
         }
@@ -2820,7 +2795,7 @@ process(struct Options *opt)
             goto err;
 
         /*
-         * initialise the scale variables according to the output type
+         * Initialize the scale variables according to the output type
          * of data set
          */
         if (init_scales(&in))
@@ -2861,13 +2836,13 @@ process(struct Options *opt)
                     if (is_scale == TRUE) {
                         /* set range */
                         if (SDsetrange(sds_id, &in.max, &in.min) != 0) {
-                            (void)fprintf(stderr, "%s", err5a);
+                            fprintf(stderr, "%s", err5a);
                             goto err;
                         }
 
                         /* set dimension scale */
-                        status = set_dimensions(sds_id, &in, DFNT_FLOAT32, (VOIDP)in.dscale, (VOIDP)in.vscale,
-                                                (VOIDP)in.hscale);
+                        status = set_dimensions(sds_id, &in, DFNT_FLOAT32, (void *)in.dscale,
+                                                (void *)in.vscale, (void *)in.hscale);
                         if (status == FAIL)
                             goto err;
                     }
@@ -2887,13 +2862,13 @@ process(struct Options *opt)
                     if (is_scale == TRUE) {
                         /* set range */
                         if (SDsetrange(sds_id, &in.fp64s.max, &in.fp64s.min) != 0) {
-                            (void)fprintf(stderr, "%s", err5a);
+                            fprintf(stderr, "%s", err5a);
                             goto err;
                         }
 
                         /* set dimension scale */
-                        status = set_dimensions(sds_id, &in, DFNT_FLOAT64, (VOIDP)in.fp64s.dscale,
-                                                (VOIDP)in.fp64s.vscale, (VOIDP)in.fp64s.hscale);
+                        status = set_dimensions(sds_id, &in, DFNT_FLOAT64, (void *)in.fp64s.dscale,
+                                                (void *)in.fp64s.vscale, (void *)in.fp64s.hscale);
                         if (status == FAIL)
                             goto err;
                     }
@@ -2913,13 +2888,13 @@ process(struct Options *opt)
                     if (is_scale == TRUE) {
                         /* set range */
                         if (SDsetrange(sds_id, &in.in32s.max, &in.in32s.min) != 0) {
-                            (void)fprintf(stderr, "%s", err5a);
+                            fprintf(stderr, "%s", err5a);
                             goto err;
                         }
 
                         /* set dimension scale */
-                        status = set_dimensions(sds_id, &in, DFNT_INT32, (VOIDP)in.in32s.dscale,
-                                                (VOIDP)in.in32s.vscale, (VOIDP)in.in32s.hscale);
+                        status = set_dimensions(sds_id, &in, DFNT_INT32, (void *)in.in32s.dscale,
+                                                (void *)in.in32s.vscale, (void *)in.in32s.hscale);
                         if (status == FAIL)
                             goto err;
                     }
@@ -2938,13 +2913,13 @@ process(struct Options *opt)
                     if (is_scale == TRUE) {
                         /* set range */
                         if (SDsetrange(sds_id, &in.in16s.max, &in.in16s.min) != 0) {
-                            (void)fprintf(stderr, "%s", err5a);
+                            fprintf(stderr, "%s", err5a);
                             goto err;
                         }
 
                         /* set dimension scale */
-                        status = set_dimensions(sds_id, &in, DFNT_INT16, (VOIDP)in.in16s.dscale,
-                                                (VOIDP)in.in16s.vscale, (VOIDP)in.in16s.hscale);
+                        status = set_dimensions(sds_id, &in, DFNT_INT16, (void *)in.in16s.dscale,
+                                                (void *)in.in16s.vscale, (void *)in.in16s.hscale);
                         if (status == FAIL)
                             goto err;
                     }
@@ -2963,13 +2938,13 @@ process(struct Options *opt)
                     if (is_scale == TRUE) {
                         /* set range */
                         if (SDsetrange(sds_id, &in.in8s.max, &in.in8s.min) != 0) {
-                            (void)fprintf(stderr, "%s", err5a);
+                            fprintf(stderr, "%s", err5a);
                             goto err;
                         }
 
                         /* set dimension scale */
-                        status = set_dimensions(sds_id, &in, DFNT_INT8, (VOIDP)in.in8s.dscale,
-                                                (VOIDP)in.in8s.vscale, (VOIDP)in.in8s.hscale);
+                        status = set_dimensions(sds_id, &in, DFNT_INT8, (void *)in.in8s.dscale,
+                                                (void *)in.in8s.vscale, (void *)in.in8s.hscale);
                         if (status == FAIL)
                             goto err;
                     }
@@ -2981,14 +2956,14 @@ process(struct Options *opt)
             }
             /* close data set */
             if (SDendaccess(sds_id) == FAIL) {
-                (void)fprintf(stderr, "%s", err6a);
+                fprintf(stderr, "%s", err6a);
                 goto err;
             }
 
             /* close the input file */
             if (in.is_hdf == TRUE) {
                 if (SDend(opt->infiles[i].handle) == FAIL) {
-                    (void)fprintf(stderr, "SDend failed");
+                    fprintf(stderr, "SDend failed");
                     goto err;
                 }
             }
@@ -3003,19 +2978,19 @@ process(struct Options *opt)
              */
             im.hres = (opt->hres == 0) ? in.dims[0] : opt->hres;
             if ((im.hres < in.dims[0]) && (opt->ctm == EXPAND)) {
-                (void)fprintf(stderr, "%s", err3a);
-                (void)fprintf(stderr, err3b, "Horiz.");
-                (void)fprintf(stderr, err3c, "horiz.");
-                (void)fprintf(stderr, err3d, in.dims[0]);
+                fprintf(stderr, "%s", err3a);
+                fprintf(stderr, err3b, "Horiz.");
+                fprintf(stderr, err3c, "horiz.");
+                fprintf(stderr, err3d, in.dims[0]);
                 im.hres   = in.dims[0];
                 opt->hres = in.dims[0];
             }
             im.vres = (opt->vres == 0) ? in.dims[1] : opt->vres;
             if ((im.vres < in.dims[1]) && (opt->ctm == EXPAND)) {
-                (void)fprintf(stderr, "%s", err3a);
-                (void)fprintf(stderr, err3b, "Vert.");
-                (void)fprintf(stderr, err3c, "vert.");
-                (void)fprintf(stderr, err3d, in.dims[1]);
+                fprintf(stderr, "%s", err3a);
+                fprintf(stderr, err3b, "Vert.");
+                fprintf(stderr, err3c, "vert.");
+                fprintf(stderr, err3d, in.dims[1]);
                 im.vres   = in.dims[1];
                 opt->vres = in.dims[1];
             }
@@ -3023,17 +2998,17 @@ process(struct Options *opt)
             if (in.rank == 3) {
                 im.dres = (opt->dres == 0) ? in.dims[2] : opt->dres;
                 if ((im.dres < in.dims[2]) && (opt->ctm == EXPAND)) {
-                    (void)fprintf(stderr, "%s", err3a);
-                    (void)fprintf(stderr, err3b, "Depth");
-                    (void)fprintf(stderr, err3c, "depth");
-                    (void)fprintf(stderr, err3d, in.dims[2]);
+                    fprintf(stderr, "%s", err3a);
+                    fprintf(stderr, err3b, "Depth");
+                    fprintf(stderr, err3c, "depth");
+                    fprintf(stderr, err3d, in.dims[2]);
                     im.dres   = in.dims[2];
                     opt->dres = in.dims[2];
                 }
             }
             len = im.hres * im.vres * im.dres;
-            if ((im.image = (unsigned char *)HDmalloc((unsigned int)len)) == NULL) {
-                (void)fprintf(stderr, "%s", err2);
+            if ((im.image = (unsigned char *)malloc((unsigned int)len)) == NULL) {
+                fprintf(stderr, "%s", err2);
                 goto err;
             }
 
@@ -3058,32 +3033,32 @@ process(struct Options *opt)
             len = im.hres * im.vres;
             for (j = 0, ip = im.image; j < im.dres; j++, ip += len) {
                 if (DFR8addimage(opt->outfile, ip, im.hres, im.vres, DFTAG_RLE)) {
-                    (void)fprintf(stderr, "%s", err4);
+                    fprintf(stderr, "%s", err4);
                     goto err;
                 }
             }
 
 #ifdef DEBUG
-            (void)printf("Output Raster Information ...\n\n");
-            (void)printf("\tresolution (horiz,vert,[depth]):\n\n");
+            printf("Output Raster Information ...\n\n");
+            printf("\tresolution (horiz,vert,[depth]):\n\n");
             if (in.rank == 2)
-                (void)printf("\t%d %d\n\n", im.hres, im.vres);
+                printf("\t%d %d\n\n", im.hres, im.vres);
             else
-                (void)printf("\t%d %d %d\n\n", im.hres, im.vres, im.dres);
+                printf("\t%d %d %d\n\n", im.hres, im.vres, im.dres);
             if (opt->mean == TRUE) {
-                (void)printf("\tadjusted max/min values:\n\n");
-                (void)printf("\t%f %f\n\n", in.max, in.min);
+                printf("\tadjusted max/min values:\n\n");
+                printf("\t%f %f\n\n", in.max, in.min);
             }
-            (void)printf("\tcolor index values:");
+            printf("\tcolor index values:");
             for (d = 0, ip = im.image; d < im.dres; d++) {
-                (void)printf("\n");
+                printf("\n");
                 for (v = 0; v < im.vres; v++) {
-                    (void)printf("\n");
+                    printf("\n");
                     for (h = 0; h < im.hres; h++, ip++)
-                        (void)printf("\t%d", *ip);
+                        printf("\t%d", *ip);
                 }
             }
-            (void)printf("\n");
+            printf("\n");
 #endif /* DEBUG */
         }
         /*
@@ -3094,7 +3069,7 @@ process(struct Options *opt)
 
     /* close the output file */
     if (SDend(sd_id) != 0) {
-        (void)fprintf(stderr, "%s", err6);
+        fprintf(stderr, "%s", err6);
         goto err;
     }
 
@@ -3116,48 +3091,49 @@ void
 fpdeallocate(struct Input *in, struct Raster *im, struct Options *opt)
 {
     switch (in->outtype) {
-        case 0:
-            HDfree((char *)in->hscale);
-            HDfree((char *)in->vscale);
+        case 0: /* 32-bit float */
+        case 5: /* NO_NE */
+            free(in->hscale);
+            free(in->vscale);
             if (in->rank == 3)
-                HDfree((char *)in->dscale);
+                free(in->dscale);
 
             if (opt->to_image == TRUE)
-                HDfree((char *)im->image);
+                free(im->image);
             break;
 
-        case 1:
-            HDfree((char *)in->fp64s.hscale);
-            HDfree((char *)in->fp64s.vscale);
+        case 1: /* 64-bit float */
+            free(in->fp64s.hscale);
+            free(in->fp64s.vscale);
             if (in->rank == 3)
-                HDfree((char *)in->fp64s.dscale);
+                free(in->fp64s.dscale);
 
             if (opt->to_image == TRUE)
-                HDfree((char *)im->image);
+                free(im->image);
             break;
 
-        case 2:
-            HDfree((char *)in->in32s.hscale);
-            HDfree((char *)in->in32s.vscale);
+        case 2: /* 32-bit integer */
+            free(in->in32s.hscale);
+            free(in->in32s.vscale);
             if (in->rank == 3)
-                HDfree((char *)in->in32s.dscale);
+                free(in->in32s.dscale);
             break;
 
-        case 3:
-            HDfree((char *)in->in16s.hscale);
-            HDfree((char *)in->in16s.vscale);
+        case 3: /* 16-bit integer */
+            free(in->in16s.hscale);
+            free(in->in16s.vscale);
             if (in->rank == 3)
-                HDfree((char *)in->in16s.dscale);
+                free(in->in16s.dscale);
             break;
 
-        case 4:
-            HDfree((char *)in->in8s.hscale);
-            HDfree((char *)in->in8s.vscale);
+        case 4: /* 8-bit integer */
+            free(in->in8s.hscale);
+            free(in->in8s.vscale);
             if (in->rank == 3)
-                HDfree((char *)in->in8s.dscale);
+                free(in->in8s.dscale);
             break;
     }
-    HDfree((char *)in->data);
+    free(in->data);
 }
 
 /*
@@ -3177,17 +3153,17 @@ init_scales(struct Input *in)
     switch (in->outtype) {
         case 0: /* 32-bit float */
         case 5: /* NO_NE */
-            if ((in->hscale = (float32 *)HDmalloc((size_t)(in->dims[0] + 1) * sizeof(float32))) == NULL) {
-                (void)fprintf(stderr, "%s", err1);
+            if ((in->hscale = (float32 *)malloc((size_t)(in->dims[0] + 1) * sizeof(float32))) == NULL) {
+                fprintf(stderr, "%s", err1);
                 goto err;
             }
-            if ((in->vscale = (float32 *)HDmalloc((size_t)(in->dims[1] + 1) * sizeof(float32))) == NULL) {
-                (void)fprintf(stderr, "%s", err1);
+            if ((in->vscale = (float32 *)malloc((size_t)(in->dims[1] + 1) * sizeof(float32))) == NULL) {
+                fprintf(stderr, "%s", err1);
                 goto err;
             }
             if (in->rank == 3) {
-                if ((in->dscale = (float32 *)HDmalloc((size_t)(in->dims[2] + 1) * sizeof(float32))) == NULL) {
-                    (void)fprintf(stderr, "%s", err1);
+                if ((in->dscale = (float32 *)malloc((size_t)(in->dims[2] + 1) * sizeof(float32))) == NULL) {
+                    fprintf(stderr, "%s", err1);
                     goto err;
                 }
             }
@@ -3195,72 +3171,68 @@ init_scales(struct Input *in)
 
         case 1: /* 64-bit float */
 
-            if ((in->fp64s.hscale = (float64 *)HDmalloc((size_t)(in->dims[0] + 1) * sizeof(float64))) ==
-                NULL) {
-                (void)fprintf(stderr, "%s", err1);
+            if ((in->fp64s.hscale = (float64 *)malloc((size_t)(in->dims[0] + 1) * sizeof(float64))) == NULL) {
+                fprintf(stderr, "%s", err1);
                 goto err;
             }
-            if ((in->fp64s.vscale = (float64 *)HDmalloc((size_t)(in->dims[1] + 1) * sizeof(float64))) ==
-                NULL) {
-                (void)fprintf(stderr, "%s", err1);
+            if ((in->fp64s.vscale = (float64 *)malloc((size_t)(in->dims[1] + 1) * sizeof(float64))) == NULL) {
+                fprintf(stderr, "%s", err1);
                 goto err;
             }
             if (in->rank == 3) {
-                if ((in->fp64s.dscale = (float64 *)HDmalloc((size_t)(in->dims[2] + 1) * sizeof(float64))) ==
+                if ((in->fp64s.dscale = (float64 *)malloc((size_t)(in->dims[2] + 1) * sizeof(float64))) ==
                     NULL) {
-                    (void)fprintf(stderr, "%s", err1);
+                    fprintf(stderr, "%s", err1);
                     goto err;
                 }
             }
             break;
         case 2: /* 32-bit integer */
-            if ((in->in32s.hscale = (int32 *)HDmalloc((size_t)(in->dims[0] + 1) * sizeof(int32))) == NULL) {
-                (void)fprintf(stderr, "%s", err1);
+            if ((in->in32s.hscale = (int32 *)malloc((size_t)(in->dims[0] + 1) * sizeof(int32))) == NULL) {
+                fprintf(stderr, "%s", err1);
                 goto err;
             }
-            if ((in->in32s.vscale = (int32 *)HDmalloc((size_t)(in->dims[1] + 1) * sizeof(int32))) == NULL) {
-                (void)fprintf(stderr, "%s", err1);
+            if ((in->in32s.vscale = (int32 *)malloc((size_t)(in->dims[1] + 1) * sizeof(int32))) == NULL) {
+                fprintf(stderr, "%s", err1);
                 goto err;
             }
             if (in->rank == 3) {
-                if ((in->in32s.dscale = (int32 *)HDmalloc((size_t)(in->dims[2] + 1) * sizeof(int32))) ==
-                    NULL) {
-                    (void)fprintf(stderr, "%s", err1);
+                if ((in->in32s.dscale = (int32 *)malloc((size_t)(in->dims[2] + 1) * sizeof(int32))) == NULL) {
+                    fprintf(stderr, "%s", err1);
                     goto err;
                 }
             }
             break;
 
         case 3: /* 16-bit integer */
-            if ((in->in16s.hscale = (int16 *)HDmalloc((size_t)(in->dims[0] + 1) * sizeof(int16))) == NULL) {
-                (void)fprintf(stderr, "%s", err1);
+            if ((in->in16s.hscale = (int16 *)malloc((size_t)(in->dims[0] + 1) * sizeof(int16))) == NULL) {
+                fprintf(stderr, "%s", err1);
                 goto err;
             }
-            if ((in->in16s.vscale = (int16 *)HDmalloc((size_t)(in->dims[1] + 1) * sizeof(int16))) == NULL) {
-                (void)fprintf(stderr, "%s", err1);
+            if ((in->in16s.vscale = (int16 *)malloc((size_t)(in->dims[1] + 1) * sizeof(int16))) == NULL) {
+                fprintf(stderr, "%s", err1);
                 goto err;
             }
             if (in->rank == 3) {
-                if ((in->in16s.dscale = (int16 *)HDmalloc((size_t)(in->dims[2] + 1) * sizeof(int16))) ==
-                    NULL) {
-                    (void)fprintf(stderr, "%s", err1);
+                if ((in->in16s.dscale = (int16 *)malloc((size_t)(in->dims[2] + 1) * sizeof(int16))) == NULL) {
+                    fprintf(stderr, "%s", err1);
                     goto err;
                 }
             }
             break;
 
         case 4: /* 8-bit integer */
-            if ((in->in8s.hscale = (int8 *)HDmalloc((size_t)(in->dims[0] + 1) * sizeof(int8))) == NULL) {
-                (void)fprintf(stderr, "%s", err1);
+            if ((in->in8s.hscale = (int8 *)malloc((size_t)(in->dims[0] + 1) * sizeof(int8))) == NULL) {
+                fprintf(stderr, "%s", err1);
                 goto err;
             }
-            if ((in->in8s.vscale = (int8 *)HDmalloc((size_t)(in->dims[1] + 1) * sizeof(int8))) == NULL) {
-                (void)fprintf(stderr, "%s", err1);
+            if ((in->in8s.vscale = (int8 *)malloc((size_t)(in->dims[1] + 1) * sizeof(int8))) == NULL) {
+                fprintf(stderr, "%s", err1);
                 goto err;
             }
             if (in->rank == 3) {
-                if ((in->in8s.dscale = (int8 *)HDmalloc((size_t)(in->dims[2] + 1) * sizeof(int8))) == NULL) {
-                    (void)fprintf(stderr, "%s", err1);
+                if ((in->in8s.dscale = (int8 *)malloc((size_t)(in->dims[2] + 1) * sizeof(int8))) == NULL) {
+                    fprintf(stderr, "%s", err1);
                     goto err;
                 }
             }
@@ -3281,41 +3253,41 @@ err:
 void
 usage(char *name)
 {
-    (void)fprintf(stderr, "\nUsage:\t%s -h[elp], OR\n", name);
-    (void)fprintf(stderr, "\t%s -V, OR\n", name);
-    (void)fprintf(stderr, "\t%s <infile> [ [-t[ype] <output-type> | -n] ", name);
-    (void)fprintf(stderr, "[<infile> [-t[ype] <output-type> | -n ]]...]\n");
-    (void)fprintf(stderr, "\t\t\t\t\t-o[utfile] <outfile> [options..]\n");
-    (void)fprintf(stderr, "\n\t-t[ype] <output_type>");
+    fprintf(stderr, "\nUsage:\t%s -h[elp], OR\n", name);
+    fprintf(stderr, "\t%s -V, OR\n", name);
+    fprintf(stderr, "\t%s <infile> [ [-t[ype] <output-type> | -n] ", name);
+    fprintf(stderr, "[<infile> [-t[ype] <output-type> | -n ]]...]\n");
+    fprintf(stderr, "\t\t\t\t\t-o[utfile] <outfile> [options..]\n");
+    fprintf(stderr, "\n\t-t[ype] <output_type>");
 
-    (void)fprintf(stderr, "\n\t\tOptionally used for every input ASCII file to specify the");
-    (void)fprintf(stderr, "\n\t\tdata type of the data-set to be written. If not specified");
-    (void)fprintf(stderr, "\n\t\tdefault data type is 32-bit floating point. <output-type>");
-    (void)fprintf(stderr, "\n\t\tcan be any of the following: FP32 (default), FP64, INT32");
-    (void)fprintf(stderr, "\n\t\tINT16, INT8. It can be used only with ASCII files.");
+    fprintf(stderr, "\n\t\tOptionally used for every input ASCII file to specify the");
+    fprintf(stderr, "\n\t\tdata type of the data-set to be written. If not specified");
+    fprintf(stderr, "\n\t\tdefault data type is 32-bit floating point. <output-type>");
+    fprintf(stderr, "\n\t\tcan be any of the following: FP32 (default), FP64, INT32");
+    fprintf(stderr, "\n\t\tINT16, INT8. It can be used only with ASCII files.");
 
-    (void)fprintf(stderr, "\n\t-n");
-    (void)fprintf(stderr, "\n\t\tThis option is to be used only if the binary input file ");
-    (void)fprintf(stderr, "\n\t\tcontains 64-bit floating point data and the default");
-    (void)fprintf(stderr, "\n\t\tbehaviour (default behaviour is to write it to a 32-bit");
-    (void)fprintf(stderr, "\n\t\tfloating point data-set) should be overridden to write ");
-    (void)fprintf(stderr, "\n\t\tit to a 64-bit floating point data-set.");
-    (void)fprintf(stderr, "\n\n\toptions...\n");
-    (void)fprintf(stderr, "\n\t-r[aster]:\n");
-    (void)fprintf(stderr, "\t\tproduce an image.  Could be ");
-    (void)fprintf(stderr, "followed by:\n");
-    (void)fprintf(stderr, "\t\t-e[xpand] <horiz> <vert> ");
-    (void)fprintf(stderr, "[<depth>]:\n");
-    (void)fprintf(stderr, "\t\t\t resolution with pixel ");
-    (void)fprintf(stderr, "replication\n");
-    (void)fprintf(stderr, "\t\t-i[nterp] <horiz> <vert> ");
-    (void)fprintf(stderr, "[<depth>]:\n");
-    (void)fprintf(stderr, "\t\t\tresolution with interpolation\n");
-    (void)fprintf(stderr, "\t\t-p[alfile] <palfile>:\n");
-    (void)fprintf(stderr, "\t\t\tinclude palette from palfile\n");
-    (void)fprintf(stderr, "\t\t-m[ean] <meanval>:\n");
-    (void)fprintf(stderr, "\t\t\tmean value to scale image ");
-    (void)fprintf(stderr, "around\n");
-    (void)fprintf(stderr, "\t-f[loat]:\n");
-    (void)fprintf(stderr, "\t\tproduce floating point data\n\n");
+    fprintf(stderr, "\n\t-n");
+    fprintf(stderr, "\n\t\tThis option is to be used only if the binary input file ");
+    fprintf(stderr, "\n\t\tcontains 64-bit floating point data and the default");
+    fprintf(stderr, "\n\t\tbehaviour (default behaviour is to write it to a 32-bit");
+    fprintf(stderr, "\n\t\tfloating point data-set) should be overridden to write ");
+    fprintf(stderr, "\n\t\tit to a 64-bit floating point data-set.");
+    fprintf(stderr, "\n\n\toptions...\n");
+    fprintf(stderr, "\n\t-r[aster]:\n");
+    fprintf(stderr, "\t\tproduce an image.  Could be ");
+    fprintf(stderr, "followed by:\n");
+    fprintf(stderr, "\t\t-e[xpand] <horiz> <vert> ");
+    fprintf(stderr, "[<depth>]:\n");
+    fprintf(stderr, "\t\t\t resolution with pixel ");
+    fprintf(stderr, "replication\n");
+    fprintf(stderr, "\t\t-i[nterp] <horiz> <vert> ");
+    fprintf(stderr, "[<depth>]:\n");
+    fprintf(stderr, "\t\t\tresolution with interpolation\n");
+    fprintf(stderr, "\t\t-p[alfile] <palfile>:\n");
+    fprintf(stderr, "\t\t\tinclude palette from palfile\n");
+    fprintf(stderr, "\t\t-m[ean] <meanval>:\n");
+    fprintf(stderr, "\t\t\tmean value to scale image ");
+    fprintf(stderr, "around\n");
+    fprintf(stderr, "\t-f[loat]:\n");
+    fprintf(stderr, "\t\tproduce floating point data\n\n");
 }

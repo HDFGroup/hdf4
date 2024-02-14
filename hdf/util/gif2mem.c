@@ -31,9 +31,12 @@
 **                                                                          **
 **  Copyright (C) 1991-92 by Graphics Software Labs.  All rights reserved.  **
 \****************************************************************************/
+
 #include <stdio.h>
+#include <stdlib.h>
+
 #include "gif.h"
-#include <hdf.h>
+#include "hdf.h"
 
 #define GIF_VERSION "1.00"
 extern int EndianOrder;
@@ -76,7 +79,7 @@ Gif2Mem(BYTE *MemGif)
     /* Allocate memory for the GIF structures           */
     /* Plug the structs into GifMemoryStruct at the end */
     /****************************************************/
-    if (!(gifHead = (GIFHEAD *)HDcalloc(1, sizeof(GIFHEAD)))) {
+    if (!(gifHead = (GIFHEAD *)calloc(1, sizeof(GIFHEAD)))) {
         printf("Could not allocate memory for gifHead\n");
         exit(-1);
     }
@@ -186,8 +189,8 @@ if (ferror(fpGif))
                 ** Decompress the Image
                 */
                 gifImageDesc[ImageCount - 1]->Image = Decompress(gifImageDesc[ImageCount - 1], gifHead);
-                HDfree(gifImageDesc[ImageCount - 1]->GIFImage);
-
+                free(gifImageDesc[ImageCount - 1]->GIFImage);
+                gifImageDesc[ImageCount - 1]->GIFImage = NULL;
                 /*
                 ** Convert the local palette into an HDF compatible palette
                 ** In case the local color table is present, it is written out as the HDFPalette
@@ -288,7 +291,7 @@ if (ferror(fpGif))
                         if (ReadGifGraphicControl(gifGraphicControl[ImageCount - 1], &MemGif))
                             fprintf(stderr, "Error reading Graphic Control Extension information\n");
 
-                        if (!*MemGif++ == 0)
+                        if (!(*MemGif++ == 0))
                             fprintf(stderr, "Error reading Graphic Control Extension\n");
 
                         break;

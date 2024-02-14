@@ -30,8 +30,6 @@
 
 #include "mfhdf.h"
 
-#ifdef HDF
-
 #include "hdftest.h"
 
 #define FILE_NAME "emptySDSs.hdf" /* data file to test empty SDSs */
@@ -156,7 +154,7 @@ test_nonspecial_SDSs(int32 fid)
     edges[1] = X_LENGTH;
 
     /* Write the stored data to the dataset */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)data);
     CHECK(sds_id, FAIL, "In test_nonspecial_SDSs: SDwritedata");
 
     /* Close this SDS */
@@ -215,7 +213,7 @@ test_compressed_SDSs(int32 fid)
     edges[1] = X_LENGTH;
 
     /* Write the stored data to the dataset */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)data);
     CHECK(status, FAIL, "In test_compressed_SDSs: SDwritedata");
 
     /* Close the SDSs */
@@ -288,7 +286,7 @@ test_chunked_SDSs(int32 fid)
     CHECK(sds_id, FAIL, "In test_chunked_SDSs: SDcreate 'ChunkedData'");
 
     /* Fill the SDS array with the fill value */
-    status = SDsetfillvalue(sds_id, (VOIDP)&fill_value);
+    status = SDsetfillvalue(sds_id, (void *)&fill_value);
     CHECK(status, FAIL, "In test_chunked_SDSs: SDsetfillvalue");
 
     /* Set info for chunking */
@@ -324,19 +322,19 @@ test_chunked_SDSs(int32 fid)
     /* Write the chunk with the coordinates (0,0) */
     origin[0] = 0;
     origin[1] = 0;
-    status    = SDwritechunk(sds_id, origin, (VOIDP)chunk1);
+    status    = SDwritechunk(sds_id, origin, (void *)chunk1);
     CHECK(status, FAIL, "In test_chunked_SDSs: SDwritechunk");
 
     /* Write the chunk with the coordinates (1,0) */
     origin[0] = 1;
     origin[1] = 0;
-    status    = SDwritechunk(sds_id, origin, (VOIDP)chunk3);
+    status    = SDwritechunk(sds_id, origin, (void *)chunk3);
     CHECK(status, FAIL, "In test_chunked_SDSs: SDwritechunk");
 
     /* Write the chunk with the coordinates (0,1) */
     origin[0] = 0;
     origin[1] = 1;
-    status    = SDwritechunk(sds_id, origin, (VOIDP)chunk2);
+    status    = SDwritechunk(sds_id, origin, (void *)chunk2);
     CHECK(status, FAIL, "In test_chunked_SDSs: SDwritechunk");
 
     /* Terminate access to the dataset */
@@ -392,7 +390,7 @@ test_unlimited_SDSs(int32 fid)
     edges[1]            = X_LENGTH;
 
     /* Write the data */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)data);
     CHECK(status, FAIL, "In test_unlimited_SDSs: SDwritedata");
 
     /* Terminate access to the unlimited dataset */
@@ -426,7 +424,7 @@ test_unlimited_SDSs(int32 fid)
         edges[1] = X_LENGTH;
 
         /* Append data to the dataset */
-        status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)append_data);
+        status = SDwritedata(sds_id, start, NULL, edges, (void *)append_data);
         CHECK(status, FAIL, "In test_unlimited_SDSs: SDwritedata");
     }
 
@@ -565,5 +563,3 @@ test_checkempty()
         PASSED();
     return num_errs;
 }
-
-#endif /* HDF */

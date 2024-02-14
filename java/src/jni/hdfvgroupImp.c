@@ -25,7 +25,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include <jni.h>
-#include "hdf.h"
+#include "hdfi.h"
 #include "h4jni.h"
 #include "hdfvgroupImp.h"
 
@@ -120,7 +120,7 @@ Java_hdf_hdflib_HDFLibrary_Vgetclass(JNIEnv *env, jclass clss, jlong vgroup_id, 
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(H4_MAX_NC_CLASS + 1)) == NULL)
+    if ((data = (char *)malloc(H4_MAX_NC_CLASS + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vgetclass: failed to allocate data buffer");
 
     if (hdfclassname == NULL)
@@ -144,8 +144,7 @@ Java_hdf_hdflib_HDFLibrary_Vgetclass(JNIEnv *env, jclass clss, jlong vgroup_id, 
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
 
     return;
 }
@@ -159,7 +158,7 @@ Java_hdf_hdflib_HDFLibrary_Vgetname(JNIEnv *env, jclass clss, jlong vgroup_id, j
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(H4_MAX_GR_NAME + 1)) == NULL)
+    if ((data = (char *)malloc(H4_MAX_GR_NAME + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vgetname: failed to allocate data buffer");
 
     if (hdfname == NULL)
@@ -182,8 +181,7 @@ Java_hdf_hdflib_HDFLibrary_Vgetname(JNIEnv *env, jclass clss, jlong vgroup_id, j
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
 
     return;
 }
@@ -476,7 +474,7 @@ Java_hdf_hdflib_HDFLibrary_Vinquire(JNIEnv *env, jclass clss, jlong vgroup_id, j
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(H4_MAX_NC_NAME + 1)) == NULL)
+    if ((data = (char *)malloc(H4_MAX_NC_NAME + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vinquire: failed to allocate data buffer");
 
     if (n_entries == NULL)
@@ -507,8 +505,7 @@ Java_hdf_hdflib_HDFLibrary_Vinquire(JNIEnv *env, jclass clss, jlong vgroup_id, j
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
     if (theArg)
         UNPIN_INT_ARRAY(ENVONLY, n_entries, theArg, (rval == FAIL) ? JNI_ABORT : 0);
 
@@ -624,7 +621,7 @@ Java_hdf_hdflib_HDFLibrary_Vattrinfo(JNIEnv *env, jclass clss, jlong id, jint in
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(256)) == NULL)
+    if ((data = (char *)malloc(256)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vattrinfo2: failed to allocate data buffer");
 
     if (name == NULL)
@@ -656,8 +653,7 @@ Java_hdf_hdflib_HDFLibrary_Vattrinfo(JNIEnv *env, jclass clss, jlong id, jint in
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
     if (theArgs)
         UNPIN_INT_ARRAY(ENVONLY, argv, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
 

@@ -19,6 +19,9 @@
 /* The intrepretation of arguments has changed a little.  A -p introduces a
    palette which will be used for subsequent images, till another -p.
    -i and -c introduce a series of images/compressed images */
+
+#include <stdlib.h>
+
 #include "hdf.h"
 
 int32 xdim, ydim;
@@ -153,7 +156,7 @@ imconv(char *outfile, char *imfile, uint16 compress)
         exit(1);
     }
 
-    if ((space = (char *)HDmalloc((size_t)(xdim * ydim))) == NULL) {
+    if ((space = (char *)malloc((size_t)(xdim * ydim))) == NULL) {
         printf("Not enough memory to convert image\n");
         exit(1);
     }
@@ -171,7 +174,7 @@ imconv(char *outfile, char *imfile, uint16 compress)
         exit(1);
     }
 
-    HDfree(space);
+    free(space);
     fclose(fp);
     return (0);
 }

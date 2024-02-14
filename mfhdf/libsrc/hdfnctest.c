@@ -10,7 +10,7 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "mfhdf.h"
+#include <stdio.h>
 
 #include "hdftest.h"
 
@@ -21,8 +21,8 @@ extern int test_ncunlim();
 int
 main(int argc, char *argv[])
 {
-    intn status;       /* status flag */
-    int  num_errs = 0; /* number of errors so far */
+    int status;       /* status flag */
+    int num_errs = 0; /* number of errors so far */
 
     /* Tests reading/writing datasets with unlimited dimension via HDF
        API (bugzilla 1378) -BMR, Jan 07, 2009 */

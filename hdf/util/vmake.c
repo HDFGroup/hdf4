@@ -30,6 +30,9 @@
  *
  ******************************************************************************/
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "hdf.h"
 
 /*
@@ -71,7 +74,7 @@ main(int ac, char **av)
         exit(0);
     }
     else if (ac == 3) {
-        if (!HDstrcmp(av[2], "-l")) {
+        if (!strcmp(av[2], "-l")) {
             show_help_msg();
             exit(0);
         }
@@ -81,7 +84,7 @@ main(int ac, char **av)
     }
 
     else if (ac == 4) {
-        if (!HDstrcmp(av[2], "-l")) {
+        if (!strcmp(av[2], "-l")) {
             show_help_msg();
             exit(0);
         }
@@ -91,7 +94,7 @@ main(int ac, char **av)
         vsadd(hfile, vsname, fmt);
     }
 
-    else if (!HDstrcmp(av[2], "-l")) {
+    else if (!strcmp(av[2], "-l")) {
         int   i;
         int32 n;
         int32 vgref, ids[50];
@@ -308,11 +311,11 @@ vsadd(char *hfile, char *vsname, char *format)
                 break;
         }
         ret = VSfdefine(vs, fields[i], ftype, order[i]);
-        HDstrcat(allfields, fields[i]);
-        HDstrcat(allfields, ",");
+        strcat(allfields, fields[i]);
+        strcat(allfields, ",");
     }
 
-    i                = (int32)HDstrlen(allfields);
+    i                = (int32)strlen(allfields);
     allfields[i - 1] = '\0'; /* remove last comma */
 
     VSsetname(vs, vsname);
@@ -351,7 +354,7 @@ static int   ntotal = 0;
 
 /* scanf functions */
 static int32
-inplong(VOIDP x)
+inplong(void *x)
 {
     int32 val, ret;
 
@@ -361,7 +364,7 @@ inplong(VOIDP x)
 }
 
 static int32
-inpshort(VOIDP x)
+inpshort(void *x)
 {
     int ret, val;
 
@@ -371,7 +374,7 @@ inpshort(VOIDP x)
 }
 
 static int32
-inpbyte(VOIDP x)
+inpbyte(void *x)
 {
     int ret;
     int val;
@@ -382,7 +385,7 @@ inpbyte(VOIDP x)
 }
 
 static int32
-inpfloat(VOIDP x)
+inpfloat(void *x)
 {
     int   ret;
     float val;
@@ -393,7 +396,7 @@ inpfloat(VOIDP x)
 }
 
 static int32
-inpchar(VOIDP x)
+inpchar(void *x)
 {
     return (scanf("%c ", (char *)x));
 }
@@ -407,7 +410,7 @@ inpdata(unsigned char **bp)
     int32          totalsize, nread, t, i, j, k;
     unsigned char *b;
     int32          maxrec;
-    int32 (*inpfn[MAXVAR])(VOIDP);
+    int32 (*inpfn[MAXVAR])(void *);
     int32 inpsiz[MAXVAR];
 
     for (i = 0; i < ntotal; i++) {
@@ -473,7 +476,7 @@ scanit(char *string, char ***fields, int32 **type, int32 **order)
     int32 c;
 
     compact(string, ss);
-    ns       = (int32)HDstrlen(ss);
+    ns       = (int32)strlen(ss);
     ss[ns++] = ',';
 
     p1 = p2 = 0;
@@ -505,7 +508,7 @@ scanit(char *string, char ***fields, int32 **type, int32 **order)
 int32
 compact(char *ss, char *dd)
 {
-    int i, t, n = (int)HDstrlen(ss);
+    int i, t, n = (int)strlen(ss);
     for (t = 0, i = 0; i < n; i++)
         if (ss[i] != ' ') {
             dd[t++] = ss[i];
@@ -520,7 +523,7 @@ savfld(char *ss, int p1, int p2)
 {
     int32 t = p2 - p1 + 1;
 
-    HDstrncpy(flds[ntotal], &ss[p1], (size_t)t);
+    strncpy(flds[ntotal], &ss[p1], (size_t)t);
     flds[ntotal][t] = '\0';
     return (1);
 } /* savfld */
@@ -530,7 +533,7 @@ savtype(char *ss, int p1, int p2)
 {
     char  temp[20];
     int32 t = p2 - p1 + 1;
-    HDstrncpy(temp, &ss[p1], (size_t)(p2 - p1 + 1));
+    strncpy(temp, &ss[p1], (size_t)(p2 - p1 + 1));
     temp[t] = '\0';
     separate(temp, &fmts[ntotal], &fords[ntotal]);
     ntotal++;
@@ -542,7 +545,7 @@ separate(char *ss, char *fmt, int32 *num)
 {
     int32 i, n;
     i = 0;
-    n = (int32)HDstrlen(ss);
+    n = (int32)strlen(ss);
     while (i < n) {
         if (ss[i] < '0' || ss[i] > '9')
             break;

@@ -6,26 +6,15 @@
 #ifndef NCTEST_ERROR_H
 #define NCTEST_ERROR_H
 
-#ifdef HDF
 #include "hdf.h"
-#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /* Print error message to stderr, don't exit */
-#ifndef NO_STRARG
 extern void derror(const char *fmt, ...);
-#else
-extern void derror();
-#endif
-
-#ifndef NO_STDARG
 extern void error(const char *fmt, ...);
-#else /* VARARGS1 */
-extern void error(const char *fmt, va_dcl);
-#endif
 
 /*
  * Turn off netCDF library handling of errors.  Caller must check all error

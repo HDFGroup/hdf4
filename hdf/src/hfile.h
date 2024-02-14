@@ -18,7 +18,7 @@
 #ifndef H4_HFILE_H
 #define H4_HFILE_H
 
-#include "H4api_adpt.h"
+#include "hdfi.h"
 
 #include "tbbt.h"
 #include "bitvect.h"
@@ -43,15 +43,23 @@
 #define INVALID_OFFSET -1
 #define INVALID_LENGTH -1
 
+/* #define DISKBLOCK_DEBUG */
+#ifdef DISKBLOCK_DEBUG
+
+#define DISKBLOCK_HSIZE sizeof(diskblock_header)
+#define DISKBLOCK_TSIZE sizeof(diskblock_tail)
+
+#endif
+
 /* ----------------------------- Version Tags ----------------------------- */
 /* Library version numbers */
 
 #define LIBVER_MAJOR      4
-#define LIBVER_MINOR      2
-#define LIBVER_RELEASE    15
-#define LIBVER_SUBRELEASE "post0" /* For pre-releases like snap0       */
-                                  /* Empty string for real releases.           */
-#define LIBVER_STRING "HDF Version 4.2 Release 15-post0, March 8, 2020"
+#define LIBVER_MINOR      3
+#define LIBVER_RELEASE    0
+#define LIBVER_SUBRELEASE "1" /* For pre-releases like snap0       */
+                              /* Empty string for real releases.           */
+#define LIBVER_STRING "HDF Version 4.3 Release 0-1, February 5, 2024"
 #define LIBVSTR_LEN   80 /* length of version string  */
 #define LIBVER_LEN    92 /* 4+4+4+80 = 92 */
 /* end of version tags */
@@ -62,7 +70,7 @@
 
 #ifndef FILELIB
 #define FILELIB UNIXBUFIO /* UNIX buffered I/O is the default */
-#endif                    /* FILELIB */
+#endif
 
 #if (FILELIB == UNIXBUFIO)
 /* using C buffered file I/O routines to access files */
@@ -86,7 +94,7 @@ typedef FILE *hdf_file_t;
 typedef int hdf_file_t;
 #define HI_OPEN(p, a)     (((a)&DFACC_WRITE) ? open((p), O_RDWR) : open((p), O_RDONLY))
 #define HI_CREATE(p)      (open((p), O_RDWR | O_CREAT | O_TRUNC, 0666))
-#define HI_CLOSE(f)       (((f = ((close(f) == 0) ? NULL : f)) == NULL) ? SUCCEED : FAIL)
+#define HI_CLOSE(f)       (((f = ((close(f) == 0) ? -1 : f)) == -1) ? SUCCEED : FAIL)
 #define HI_FLUSH(f)       (SUCCEED)
 #define HI_READ(f, b, n)  (((n) == read((f), (char *)(b), (n))) ? SUCCEED : FAIL)
 #define HI_WRITE(f, b, n) (((n) == write((f), (char *)(b), (n))) ? SUCCEED : FAIL)
@@ -95,22 +103,6 @@ typedef int hdf_file_t;
 #define HI_TELL(f)        (lseek((f), (off_t)0, SEEK_CUR))
 #define OPENERR(f)        (f < 0)
 #endif /* FILELIB == UNIXUNBUFIO */
-
-#if (FILELIB == MACIO)
-/* using special routines to redirect to Mac Toolkit I/O */
-typedef short hdf_file_t;
-#define HI_OPEN(x, y)     mopen(x, y)
-#define HI_CREATE(name)   mopen(name, DFACC_CREATE)
-#define HI_CLOSE(x)       (((x = ((mclose(x) == 0) ? NULL : x)) == NULL) ? SUCCEED : FAIL)
-#define HI_FLUSH(a)       (SUCCEED)
-#define HI_READ(a, b, c)  mread(a, (char *)b, (int32)c)
-#define HI_WRITE(a, b, c) mwrite(a, (char *)b, (int32)c)
-#define HI_SEEK(x, y)     mlseek(x, (int32)y, 0)
-#define HI_SEEKEND(x)     mlseek(x, 0L, 2)
-#define HI_TELL(x)        mlseek(x, 0L, 1)
-#define DF_OPENERR(f)     ((f) == -1)
-#define OPENERR(f)        (f < 0)
-#endif /* FILELIB == MACIO */
 
 /* ----------------------- Internal Data Structures ----------------------- */
 /* The internal structure used to keep track of the files opened: an
@@ -138,20 +130,20 @@ typedef short hdf_file_t;
         tag/ref (unique data identifier in file)
 
    Tag  -- identifies the type of data, 16 bit unsigned integer whose
-           value ranges from 1 - 65535. Tags are assigned by NCSA.
+           value ranges from 1 - 65535. Tags are assigned by the library.
            The HDF tag space is divided as follows based on the 2 highest bits:
 
-              00: NCSA reserved ordinary tags
-              01: NCSA reserved special tags(i.e. regular tags made into
+              00: Library reserved ordinary tags
+              01: Library reserved special tags(i.e. regular tags made into
                                                   linked-block, external,
                                                   compressed or chunked.)
               10, 11: User tags.
 
-           Current tag assingments are:
-           00001 - 32767  - reserved for NCSA use
-                            00001 - 16383 - NCSA regular tags
-                            16384 - 32767 - NCSA special tags
-           32768 - 64999  - user definable
+           Current tag assignments are:
+           00001 - 32767  - reserved for library use
+                            00001 - 16383 - library use regular tags
+                            16384 - 32767 - library use special tags
+           32768 - 64999  - user definable tags
            65000 - 65535  - reserved for expansion of format
 
    Reference number - 16 bit unsigned integer whose assignment is not
@@ -308,11 +300,6 @@ typedef struct accrec_t {
     struct accrec_t   *next;         /* for free-list linking */
 } accrec_t;
 
-#ifdef HFILE_MASTER
-/* Pointer to the access record node free list */
-static accrec_t *accrec_free_list = NULL;
-#endif /* HFILE_MASTER */
-
 /* this type is returned to applications programs or other special
    interfaces when they need to know information about a given
    special element.  This is all information that would not be returned
@@ -393,11 +380,11 @@ typedef struct functab_t {
 
 /* --------------------------- Special Elements --------------------------- */
 /* The HDF tag space is divided as follows based on the 2 highest bits:
-   00: NCSA reserved ordinary tags
-   01: NCSA reserved special tags(e.g. linked-block, external, compressed,..)
+   00: Library reserved ordinary tags
+   01: Library reserved special tags(e.g. linked-block, external, compressed,..)
    10, 11: User tags.
 
-   It is relatively cheap to operate with special tags within the NCSA
+   It is relatively cheap to operate with special tags within the library
    reserved tags range. For users to specify special tags and their
    corresponding ordinary tag, the pair has to be added to the
    special_table in hfile.c and SPECIAL_TABLE must be defined. */
@@ -426,6 +413,14 @@ typedef struct functab_t {
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#ifdef DISKBLOCK_DEBUG
+
+HDFLIBAPI const uint8 diskblock_header[4];
+
+HDFLIBAPI const uint8 diskblock_tail[4];
+
+#endif /* DISKBLOCK_DEBUG */
 
 HDFLIBAPI accrec_t *HIget_access_rec(void);
 
@@ -459,7 +454,7 @@ HDFLIBAPI int32 HPread_drec(int32 file_id, atom_t data_id, uint8 **drec_buf);
 
 HDFLIBAPI intn tagcompare(void *k1, void *k2, intn cmparg);
 
-HDFLIBAPI VOID tagdestroynode(void *n);
+HDFLIBAPI void tagdestroynode(void *n);
 
 /*
  ** from hblocks.c
@@ -793,30 +788,5 @@ intn HTPdump_dds(int32 file_id, /* IN: file ID of HDF file to dump info for */
 #ifdef __cplusplus
 }
 #endif
-
-/* #define DISKBLOCK_DEBUG */
-#ifdef DISKBLOCK_DEBUG
-
-#ifndef HFILE_MASTER
-extern
-#endif /* HFILE_MASTER */
-    const uint8 diskblock_header[4]
-#ifdef HFILE_MASTER
-    = {0xde, 0xad, 0xbe, 0xef}
-#endif /* HFILE_MASTER */
-;
-
-#ifndef HFILE_MASTER
-extern
-#endif /* HFILE_MASTER */
-    const uint8 diskblock_tail[4]
-#ifdef HFILE_MASTER
-    = {0xfe, 0xeb, 0xda, 0xed}
-#endif /* HFILE_MASTER */
-;
-#define DISKBLOCK_HSIZE sizeof(diskblock_header)
-#define DISKBLOCK_TSIZE sizeof(diskblock_tail)
-
-#endif /* DISKBLOCK_DEBUG */
 
 #endif /* H4_HFILE_H */

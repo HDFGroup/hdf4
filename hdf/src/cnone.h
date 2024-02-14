@@ -18,16 +18,23 @@
  * Invokes: none
  * Contents: Structures & definitions for "none" encoding.  This header
  *              should only be included in hcomp.c and cnone.c.
- * Structure definitions:
- * Constant definitions:
  *---------------------------------------------------------------------------*/
 
 #ifndef H4_CNONE_H
 #define H4_CNONE_H
 
+#include "hdfi.h"
+
+/* "none" [en|de]coding information */
+typedef struct {
+    intn space_holder; /* merely a space holder so compilers don't barf */
+} comp_coder_none_info_t;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+HDFLIBAPI funclist_t cnone_funcs; /* functions to perform run-length encoding */
 
 /*
  ** from cnone.c
@@ -51,26 +58,6 @@ HDFLIBAPI intn HCPcnone_endaccess(accrec_t *access_rec);
 
 #ifdef __cplusplus
 }
-#endif
-
-/* "none" [en|de]coding information */
-typedef struct {
-    intn space_holder; /* merely a space holder so compilers don't barf */
-} comp_coder_none_info_t;
-
-#ifndef CNONE_MASTER
-extern funclist_t cnone_funcs; /* functions to perform run-length encoding */
-#else
-funclist_t cnone_funcs = {/* functions to perform run-length encoding */
-                          HCPcnone_stread,
-                          HCPcnone_stwrite,
-                          HCPcnone_seek,
-                          HCPcnone_inquire,
-                          HCPcnone_read,
-                          HCPcnone_write,
-                          HCPcnone_endaccess,
-                          NULL,
-                          NULL};
 #endif
 
 #endif /* H4_CNONE_H */

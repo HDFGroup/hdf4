@@ -26,7 +26,7 @@
  *          Each tag/ref combination is called a data identifier (DI).
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "hfile.h"
 
 typedef struct DIlist_struct {
@@ -50,7 +50,7 @@ static DIlist_ptr Group_list[MAX_GROUPS] = {NULL};
  * Invokes:
  * Remarks: Allocates internal storage if necessary
  *---------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 setgroupREC(DIlist_ptr list_rec)
 {
     uintn i;
@@ -61,7 +61,7 @@ setgroupREC(DIlist_ptr list_rec)
             return (int32)GSLOT2ID(i);
         }
 
-    HRETURN_ERROR(DFE_INTERNAL, FAIL)
+    HRETURN_ERROR(DFE_INTERNAL, FAIL);
 } /* setgroupREC */
 
 /*-----------------------------------------------------------------------------
@@ -92,14 +92,14 @@ DFdiread(int32 file_id, uint16 tag, uint16 ref)
         HRETURN_ERROR(DFE_INTERNAL, FAIL);
 
     /* allocate a new structure to hold the group */
-    new_list = (DIlist_ptr)HDmalloc((uint32)sizeof(DIlist));
+    new_list = (DIlist_ptr)malloc((uint32)sizeof(DIlist));
     if (!new_list)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    new_list->DIlist = (uint8 *)HDmalloc((uint32)length);
+    new_list->DIlist = (uint8 *)malloc((uint32)length);
     if (!new_list->DIlist) {
-        HDfree((VOIDP)new_list);
-        HRETURN_ERROR(DFE_NOSPACE, FAIL)
+        free(new_list);
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
     }
 
     new_list->num     = (intn)(length / 4);
@@ -107,9 +107,9 @@ DFdiread(int32 file_id, uint16 tag, uint16 ref)
 
     /* read in group */
     if (Hgetelement(file_id, tag, ref, (uint8 *)new_list->DIlist) < 0) {
-        HDfree((VOIDP)new_list->DIlist);
-        HDfree((VOIDP)new_list);
-        HRETURN_ERROR(DFE_READERROR, FAIL)
+        free(new_list->DIlist);
+        free(new_list);
+        HRETURN_ERROR(DFE_READERROR, FAIL);
     }
     return (int32)setgroupREC(new_list);
 }
@@ -145,8 +145,8 @@ DFdiget(int32 list, uint16 *ptag, uint16 *pref)
     UINT16DECODE(p, *pref);
 
     if (list_rec->current == list_rec->num) {
-        HDfree((VOIDP)list_rec->DIlist); /*if all returned, free storage */
-        HDfree((VOIDP)list_rec);
+        free(list_rec->DIlist); /*if all returned, free storage */
+        free(list_rec);
         Group_list[list & 0xffff] = NULL; /* YUCK! BUG! */
     }
     return SUCCEED;
@@ -172,7 +172,7 @@ DFdinobj(int32 list)
     if (!list_rec)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
-    return (list_rec->num);
+    return list_rec->num;
 } /* DFdinobj() */
 
 /*-----------------------------------------------------------------------------
@@ -192,15 +192,15 @@ DFdisetup(int maxsize)
 {
     DIlist_ptr new_list;
 
-    new_list = (DIlist_ptr)HDmalloc((uint32)sizeof(DIlist));
+    new_list = (DIlist_ptr)malloc((uint32)sizeof(DIlist));
 
     if (!new_list)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    new_list->DIlist = (uint8 *)HDmalloc((uint32)(maxsize * 4));
+    new_list->DIlist = (uint8 *)malloc((uint32)(maxsize * 4));
     if (!new_list->DIlist) {
-        HDfree((VOIDP)new_list);
-        HRETURN_ERROR(DFE_NOSPACE, FAIL)
+        free(new_list);
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
     }
 
     new_list->num     = maxsize;
@@ -266,8 +266,8 @@ DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     ret = Hputelement(file_id, tag, ref, list_rec->DIlist, (int32)list_rec->current * 4);
-    HDfree((VOIDP)list_rec->DIlist);
-    HDfree((VOIDP)list_rec);
+    free(list_rec->DIlist);
+    free(list_rec);
     Group_list[list & 0xffff] = NULL; /* YUCK! BUG! */
     return (intn)ret;
 }
@@ -284,7 +284,7 @@ DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
  *		that info is kept in a global array called Group_List. the size of Group_List
  *		is fixed, and contains MAX_GROUPS pointers. When DFdiget() has returned
  *		the last tag-ref pair from a given group's info, that info is freed, and
- *		the corresponding slot in the Group_List array is available for re-use.
+ *		the corresponding slot in the Group_List array is available for reuse.
  *
  *		If DFdiget() is NOT called for every pair in the group, the group info is
  *		never freed, except by the use of this routine. So when a loop based on
@@ -304,7 +304,7 @@ DFdifree(int32 groupID)
     if (list_rec == NULL)
         return;
 
-    HDfree((void *)list_rec->DIlist);
-    HDfree((void *)list_rec);
+    free(list_rec->DIlist);
+    free(list_rec);
     Group_list[groupID & 0xffff] = NULL;
 }

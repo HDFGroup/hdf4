@@ -1,22 +1,25 @@
 #############################################################################################
 ### ${CTEST_SCRIPT_ARG} is of the form OPTION=VALUE                                       ###
-### BUILD_GENERATOR required [Unix, VS2017, VS201764, VS2015, VS201564, VS2013, VS201364] ###
-### ctest -S HDFconfig.cmake,BUILD_GENERATOR=VS201764 -C Release -VV -O hdf.log           ###
+### BUILD_GENERATOR required [Unix, VS2022, VS202264, VS2019, VS201964]                   ###
+### ctest -S HDF4config.cmake,BUILD_GENERATOR=VS201764 -C Release -VV -O hdf4.log         ###
 #############################################################################################
 
 cmake_minimum_required (VERSION 3.12)
 ############################################################################
 # Usage:
-#     ctest -S HDFconfig.cmake,OPTION=VALUE -C Release -VV -O test.log
+#     ctest -S HDF4config.cmake,OPTION=VALUE -C Release -VV -O test.log
 # where valid options for OPTION are:
 #     BUILD_GENERATOR - The cmake build generator:
+#            MinGW     * MinGW Makefiles
 #            Unix      * Unix Makefiles
+#            VS2022    * Visual Studio 17 2022
+#            VS202264  * Visual Studio 17 2022
+#            VS2019    * Visual Studio 16 2019
+#            VS201964  * Visual Studio 16 2019
 #            VS2017    * Visual Studio 15 2017
 #            VS201764  * Visual Studio 15 2017 Win64
 #            VS2015    * Visual Studio 14 2015
 #            VS201564  * Visual Studio 14 2015 Win64
-#            VS2013    * Visual Studio 12 2013
-#            VS201364  * Visual Studio 12 2013 Win64
 #
 #     INSTALLDIR  -  root folder where hdf is installed
 #                 -  windowsdefault: C:/Program Files/HDF_Group/HDF/4.2.15
@@ -28,15 +31,15 @@ cmake_minimum_required (VERSION 3.12)
 #     NO_MAC_FORTRAN  - Yes to be SHARED on a Mac
 ##############################################################################
 
-set (CTEST_SOURCE_VERSION "4.2.15")
-set (CTEST_SOURCE_VERSEXT "-post0, currently under development")
+set (CTEST_SOURCE_VERSION "4.3.0")
+set (CTEST_SOURCE_VERSEXT "-1, currently under development")
 
 ##############################################################################
 # handle input parameters to script.
 #BUILD_GENERATOR - which CMake generator to use, required
-#INSTALLDIR - HDF-4.2.x root folder
+#INSTALLDIR - HDF-4.3.x root folder
 #CTEST_CONFIGURATION_TYPE - Release, Debug, RelWithDebInfo
-#CTEST_SOURCE_NAME - name of source folder; HDF-4.2.x
+#CTEST_SOURCE_NAME - name of source folder; HDF-4.3.x
 #STATIC_ONLY - Default is YES
 #FORTRAN_LIBRARIES - Default is NO
 #NO_MAC_FORTRAN - set to TRUE to allow shared libs on a Mac
@@ -59,7 +62,7 @@ endif ()
 
 # build generator must be defined
 if (NOT DEFINED BUILD_GENERATOR)
-  message (FATAL_ERROR "BUILD_GENERATOR must be defined - Unix, VS2017, or VS201764, VS2015, VS201564, VS2013, VS201364")
+  message (FATAL_ERROR "BUILD_GENERATOR must be defined - Unix, VS2022, VS202264, VS2019, VS201964")
 endif ()
 
 ###################################################################
@@ -74,7 +77,7 @@ set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCTEST_CONFIGURATION_TYPE:STRING=$
 
 if (NOT DEFINED INSTALLDIR)
   if (WIN32)
-    set (INSTALLDIR "C:/Program Files/HDF_Group/HDF/${CTEST_SOURCE_VERSION}")
+    set (INSTALLDIR "%ProgramFiles%/HDF_Group/HDF/${CTEST_SOURCE_VERSION}")
   else ()
     set (INSTALLDIR "${CTEST_SCRIPT_DIRECTORY}/HDF_Group/HDF/${CTEST_SOURCE_VERSION}")
   endif ()
@@ -110,8 +113,32 @@ endif ()
 #########       Following describes compiler           ############
 if (WIN32 AND NOT MINGW)
   set (SITE_OS_NAME "Windows")
-  set (SITE_OS_VERSION "WIN7")
-  if (BUILD_GENERATOR STREQUAL "VS201764")
+  set (SITE_OS_VERSION "WIN10")
+  if (BUILD_GENERATOR STREQUAL "VS202264")
+    set (CTEST_CMAKE_GENERATOR "Visual Studio 17 2022")
+    set (CMAKE_GENERATOR_ARCHITECTURE "x64")
+    set (SITE_OS_BITS "64")
+    set (SITE_COMPILER_NAME "vs2022")
+    set (SITE_COMPILER_VERSION "17")
+  elseif (BUILD_GENERATOR STREQUAL "VS2022")
+    set (CTEST_CMAKE_GENERATOR "Visual Studio 17 2022")
+    set (CMAKE_GENERATOR_ARCHITECTURE "Win32")
+    set (SITE_OS_BITS "32")
+    set (SITE_COMPILER_NAME "vs2022")
+    set (SITE_COMPILER_VERSION "17")
+  elseif (BUILD_GENERATOR STREQUAL "VS201964")
+    set (CTEST_CMAKE_GENERATOR "Visual Studio 16 2019")
+    set (CMAKE_GENERATOR_ARCHITECTURE "x64")
+    set (SITE_OS_BITS "64")
+    set (SITE_COMPILER_NAME "vs2019")
+    set (SITE_COMPILER_VERSION "16")
+  elseif (BUILD_GENERATOR STREQUAL "VS2019")
+    set (CTEST_CMAKE_GENERATOR "Visual Studio 16 2019")
+    set (CMAKE_GENERATOR_ARCHITECTURE "Win32")
+    set (SITE_OS_BITS "32")
+    set (SITE_COMPILER_NAME "vs2019")
+    set (SITE_COMPILER_VERSION "16")
+  elseif (BUILD_GENERATOR STREQUAL "VS201764")
     set (CTEST_CMAKE_GENERATOR "Visual Studio 15 2017 Win64")
     set (SITE_OS_BITS "64")
     set (SITE_COMPILER_NAME "vs2017")
@@ -152,12 +179,17 @@ if (WIN32 AND NOT MINGW)
     set (SITE_COMPILER_NAME "vs2012")
     set (SITE_COMPILER_VERSION "11")
   else ()
-    message (FATAL_ERROR "Invalid BUILD_GENERATOR must be - Unix, VS2017, or VS201764, VS2015, VS201564, VS2013, VS201364")
+    message (FATAL_ERROR "Invalid BUILD_GENERATOR must be - Unix, VS2022, VS202264, VS2019, VS201964")
   endif ()
 ##  Set the following to unique id your computer  ##
-  set (CTEST_SITE "WIN7${BUILD_GENERATOR}.XXXX")
+  set (CTEST_SITE "WIN10${BUILD_GENERATOR}.XXXX")
 else ()
-  set (CTEST_CMAKE_GENERATOR "Unix Makefiles")
+  set (CTEST_SITE "${SITE_OS_NAME}")
+  if (MINGW)
+    set (CTEST_CMAKE_GENERATOR "MinGW Makefiles")
+  else ()
+    set (CTEST_CMAKE_GENERATOR "Unix Makefiles")
+  endif ()
 ##  Set the following to unique id your computer  ##
   if (APPLE)
     set (CTEST_SITE "MAC.XXXX")
@@ -172,10 +204,69 @@ else ()
 endif ()
 ###################################################################
 
+###################################################################
+#####       Following controls CDash submission               #####
+#set (LOCAL_SUBMIT "TRUE")
+#####       Following controls test process                   #####
+#set (LOCAL_SKIP_TEST "TRUE")
+#set (LOCAL_MEMCHECK_TEST "TRUE")
+#set (LOCAL_COVERAGE_TEST "TRUE")
+#####       Following controls cpack command                  #####
+#set (LOCAL_NO_PACKAGE "TRUE")
+#####       Following controls source update                  #####
+#set (LOCAL_UPDATE "TRUE")
+set (REPOSITORY_URL "https://github.com/HDFGroup/hdf4.git")
+set (REPOSITORY_BRANCH "hdf4_2_16")
+
+#uncomment to use a compressed source file: *.tar on linux or mac *.zip on windows
+#set(CTEST_USE_TAR_SOURCE "${CTEST_SOURCE_VERSION}")
+###################################################################
+
+
+###################################################################
+
 if (WIN32 AND NOT MINGW)
+  set (BINFILEBASE "HDF-${CTEST_SOURCE_VERSION}${CTEST_SOURCE_VERSEXT}-win${SITE_OS_BITS}")
   include (${CTEST_SCRIPT_DIRECTORY}\\HDF4options.cmake)
   include (${CTEST_SCRIPT_DIRECTORY}\\CTestScript.cmake)
+  if (EXISTS "${CTEST_BINARY_DIRECTORY}\\${BINFILEBASE}.exe")
+    file (COPY "${CTEST_BINARY_DIRECTORY}\\${BINFILEBASE}.exe" DESTINATION ${CTEST_SCRIPT_DIRECTORY})
+  endif ()
+  if (EXISTS "${CTEST_BINARY_DIRECTORY}\\${BINFILEBASE}.msi")
+    file (COPY "${CTEST_BINARY_DIRECTORY}\\${BINFILEBASE}.msi" DESTINATION  ${CTEST_SCRIPT_DIRECTORY})
+  endif ()
+  if (EXISTS "${CTEST_BINARY_DIRECTORY}\\${BINFILEBASE}.zip")
+    file (COPY "${CTEST_BINARY_DIRECTORY}\\${BINFILEBASE}.zip" DESTINATION  ${CTEST_SCRIPT_DIRECTORY})
+  endif ()
 else ()
+  set (BINFILEBASE "HDF-${CTEST_SOURCE_VERSION}${CTEST_SOURCE_VERSEXT}")
   include (${CTEST_SCRIPT_DIRECTORY}/HDF4options.cmake)
   include (${CTEST_SCRIPT_DIRECTORY}/CTestScript.cmake)
+  if (APPLE)
+    if (EXISTS "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Darwin.dmg")
+      file (COPY "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Darwin.dmg" DESTINATION ${CTEST_SCRIPT_DIRECTORY})
+    endif ()
+    if (EXISTS "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Darwin.tar.gz")
+      file (COPY "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Darwin.tar.gz" DESTINATION  ${CTEST_SCRIPT_DIRECTORY})
+    endif ()
+    if (EXISTS "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Darwin.sh")
+      file (COPY "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Darwin.sh" DESTINATION ${CTEST_SCRIPT_DIRECTORY})
+    endif ()
+  else ()
+    if (CYGWIN)
+      if (EXISTS "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-CYGWIN.sh")
+        file (COPY "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-CYGWIN.sh" DESTINATION ${CTEST_SCRIPT_DIRECTORY})
+      endif ()
+      if (EXISTS "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-CYGWIN.tar.gz")
+        file (COPY "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-CYGWIN.tar.gz" DESTINATION  ${CTEST_SCRIPT_DIRECTORY})
+      endif ()
+    else ()
+      if (EXISTS "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Linux.sh")
+        file (COPY "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Linux.sh" DESTINATION ${CTEST_SCRIPT_DIRECTORY})
+      endif ()
+      if (EXISTS "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Linux.tar.gz")
+        file (COPY "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Linux.tar.gz" DESTINATION  ${CTEST_SCRIPT_DIRECTORY})
+      endif ()
+    endif ()
+  endif ()
 endif ()

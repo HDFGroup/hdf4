@@ -14,6 +14,8 @@
 #ifndef H4_TUTILS_H
 #define H4_TUTILS_H
 
+#include "hdfi.h"
+
 /* Define these for use in all the tests */
 #ifndef TESTMASTER
 extern
@@ -134,7 +136,7 @@ extern
         if (Verbosity > 9)                                                                                   \
             printf("   Call to HDF routine: %15s at line %4d in %s had value %s \n", where, (int)__LINE__,   \
                    __FILE__, x);                                                                             \
-        if (HDstrcmp(x, val) != 0) {                                                                         \
+        if (strcmp(x, val) != 0) {                                                                           \
             printf("*** UNEXPECTED VALUE from %s is %s at line %4d in %s\n", where, x, (int)__LINE__,        \
                    __FILE__);                                                                                \
             num_errs++;                                                                                      \
@@ -148,7 +150,7 @@ extern
         if (Verbosity > 9)                                                                                   \
             printf("   Call to HDF routine: %15s at line %4d in %s had value %s \n", where, (int)__LINE__,   \
                    __FILE__, x);                                                                             \
-        if (HDstrncmp(x, val, HDstrlen(val)) != 0) {                                                         \
+        if (strncmp(x, val, strlen(val)) != 0) {                                                             \
             printf("*** UNEXPECTED VALUE from %s is %s at line %4d in %s\n", where, x, (int)__LINE__,        \
                    __FILE__);                                                                                \
             num_errs++;                                                                                      \

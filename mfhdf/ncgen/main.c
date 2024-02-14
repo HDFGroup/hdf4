@@ -7,10 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#ifdef __hpux
-#include <locale.h>
-#endif
-#include "getopt.h"
+#include "h4getopt.h"
 
 #include "ncgen.h"
 #include "genlib.h"
@@ -23,16 +20,12 @@ int   fortran_flag;
 int   netcdf_flag;
 char *netcdf_name = NULL; /* name of output netCDF file to write */
 
-extern FILE *yyin, *yyout;
+extern FILE *yyin;
+extern FILE *yyout;
 
 void
 usage()
 {
-    /* derror("Usage: %s [-V] [ -b ] [ -c ] [ -f ] [ -o outfile]  [ file ... ]",
-           progname); */
-
-    /* Replaced the above line with the more detailed lines below.
-       -BMR, HDFFR-1459, 2015/01/19 */
     fprintf(stderr, "Usage: %s [-V] [ -b ] [ -c ] [ -f ] [ -o outfile] [ file ... ]\n", progname);
     fprintf(stderr, "  [-V]\t\t   Display version of the HDF4 library and exit\n");
     fprintf(stderr, "  [-b]\t\t   For binary netCDF output, '.nc' extension\n");
@@ -50,15 +43,8 @@ main(int argc, char *argv[])
 
     yyin  = stdin;
     yyout = stdout;
-#ifdef __hpux
-    setlocale(LC_CTYPE, "");
-#endif
 
-#ifdef MDEBUG
-    malloc_debug(2); /* helps find malloc/free errors on Sun */
-#endif               /* MDEBUG */
-
-    opterr   = 1; /* print error message if bad option */
+    h4opterr = 1; /* print error message if bad option */
     progname = argv[0];
     cdlname  = "-";
 
@@ -66,7 +52,7 @@ main(int argc, char *argv[])
     fortran_flag = 0;
     netcdf_flag  = 0;
 
-    while ((c = getopt(argc, argv, "Vbcfno:")) != EOF)
+    while ((c = h4getopt(argc, argv, "Vbcfno:")) != EOF)
         switch (c) {
             case 'V': /* for c output */
                 printf("%s, %s\n\n", argv[0], LIBVER_STRING);
@@ -86,12 +72,12 @@ main(int argc, char *argv[])
                 break;
             case 'o': /* to explicitly specify output name */
                 netcdf_flag = 1;
-                netcdf_name = (char *)emalloc(strlen(optarg) + 1);
+                netcdf_name = (char *)emalloc(strlen(h4optarg) + 1);
                 if (!netcdf_name) {
                     derror("%s: out of memory", progname);
                     exit(1);
                 }
-                strcpy(netcdf_name, optarg);
+                strcpy(netcdf_name, h4optarg);
                 break;
             case '?':
                 usage();
@@ -103,8 +89,8 @@ main(int argc, char *argv[])
         exit(8);
     }
 
-    argc -= optind;
-    argv += optind;
+    argc -= h4optind;
+    argv += h4optind;
 
     if (argc > 1) {
         derror("%s: only one input file argument permitted", progname);

@@ -17,93 +17,47 @@
 #ifndef H4_TBBT_H
 #define H4_TBBT_H
 
-#include "H4api_adpt.h"
-
-#ifdef lint            /* lint always complains but may complain more if... */
-#define TBBT_INTERNALS /* TBBT_INTERNALS not always defined */
-#endif                 /* lint */
-
-typedef struct tbbt_node TBBT_NODE;
-
-/* Threaded node structure */
-struct tbbt_node {
-    VOIDP data; /* Pointer to user data to be associated with node */
-    VOIDP key;  /* Field to sort nodes on */
-
-#ifdef TBBT_INTERNALS
-#define PARENT 0
-#define LEFT   1
-#define RIGHT  2
-    TBBT_NODE *link[3]; /* Pointers to parent, left child, and right child */
-#define Parent    link[PARENT]
-#define Lchild    link[LEFT]
-#define Rchild    link[RIGHT]
-#define TBBT_FLAG unsigned long
-#define TBBT_LEAF unsigned long
-    TBBT_FLAG flags;    /* Combination of the following bit fields: */
-#define TBBT_HEAVY(s) s /* If the `s' sub-tree is deeper than the other */
-#define TBBT_DOUBLE   4 /* If "heavy" sub-tree is two levels deeper */
-#define TBBT_INTERN   8 /* If node is internal (has two children) */
-#define TBBT_UNBAL    (TBBT_HEAVY(LEFT) | TBBT_HEAVY(RIGHT))
-#define TBBT_FLAGS    (TBBT_UNBAL | TBBT_INTERN | TBBT_DOUBLE)
-#define TBBT_CHILD(s) (TBBT_INTERN | TBBT_HEAVY(s))
-    TBBT_LEAF lcnt;                   /* count of left children */
-    TBBT_LEAF rcnt;                   /* count of right children */
-#define LeftCnt(node)  ((node)->lcnt) /* Left descendants */
-#define RightCnt(node) ((node)->rcnt) /* Left descendants */
-#define Cnt(node, s)   (LEFT == (s) ? LeftCnt(node) : RightCnt(node))
-#define HasChild(n, s) (Cnt(n, s) > 0)
-#define Heavy(n, s)    ((s) & (LeftCnt(n) > RightCnt(n) ? LEFT : LeftCnt(n) == RightCnt(n) ? 0 : RIGHT))
-#define Intern(n)      (LeftCnt(n) && RightCnt(n))
-#define UnBal(n)       (LeftCnt(n) > RightCnt(n) ? LEFT : LeftCnt(n) == RightCnt(n) ? 0 : RIGHT)
-#define Double(n)      (TBBT_DOUBLE & (n)->flags)
-#define Other(side)    (LEFT + RIGHT - (side))
-#define Delta(n, s)    ((Heavy(n, s) ? 1 : -1) * (Double(n) ? 2 : UnBal(n) ? 1 : 0))
-#define SetFlags(n, s, b, i)                                                                                 \
-    ((-2 < (b) && (b) < 2 ? 0 : TBBT_DOUBLE) |                                                               \
-     (0 > (b)   ? TBBT_HEAVY(s)                                                                              \
-      : (b) > 0 ? TBBT_HEAVY(Other(s))                                                                       \
-                : 0) |                                                                                       \
-     ((i) ? TBBT_INTERN : 0))
-};
-
-/* Pointer to the tbbt node free list */
-static TBBT_NODE *tbbt_free_list = NULL;
-
-typedef struct tbbt_tree TBBT_TREE;
-/* Threaded tree structure */
-struct tbbt_tree {
-    TBBT_NODE    *root;
-    unsigned long count;        /* The number of nodes in the tree currently */
-    uintn         fast_compare; /* use a faster in-line compare (with casts) instead of function call */
-    intn (*compar)(VOIDP k1, VOIDP k2, intn cmparg);
-    intn cmparg;
-#endif /* TBBT_INTERNALS */
-};
+#include "hdfi.h"
 
 /* Define the "fast compare" values */
 #define TBBT_FAST_UINT16_COMPARE 1
 #define TBBT_FAST_INT32_COMPARE  2
 
-#ifndef TBBT_INTERNALS
-typedef TBBT_NODE **TBBT_TREE;
-#endif /* TBBT_INTERNALS */
+/* Private TBBT information (defined in tbbt.c) */
+struct tbbt_node_private;
 
-/* Return maximum of two scalar values (use arguments w/o side effects): */
-#define Max(a, b) ((a) > (b) ? (a) : (b))
+/* Private TBBT node information (defined in tbbt.c) */
+struct tbbt_tree_private;
+
+/* Threaded node structure */
+typedef struct tbbt_node {
+    void *data; /* Pointer to user data to be associated with node */
+    void *key;  /* Field to sort nodes on */
+
+    struct tbbt_node_private *priv; /* Private information about the TBBT node */
+} TBBT_NODE;
+
+/* Threaded tree structure */
+typedef struct tbbt_tree {
+    TBBT_NODE *root;
+
+    struct tbbt_tree_private *priv; /* Private information about the TBBT */
+} TBBT_TREE;
 
 /* These routines are designed to allow use of a general-purpose balanced tree
  * implementation.  These trees are appropriate for maintaining in memory one
  * or more lists of items, each list sorted according to key values (key values
  * must form a "completely ordered set") where no two items in a single list
  * can have the same key value.  The following operations are supported:
- *     Create an empty list
- *     Add an item to a list
- *     Look up an item in a list by key value
- *     Look up the Nth item in a list
- *     Delete an item from a list
- *     Find the first/last/next/previous item in a list
- *     Destroy a list
+ *
+ *  - Create an empty list
+ *  - Add an item to a list
+ *  - Look up an item in a list by key value
+ *  - Look up the Nth item in a list
+ *  - Delete an item from a list
+ *  - Find the first/last/next/previous item in a list
+ *  - Destroy a list
+ *
  * Each of the above operations requires Order(log(N)) time where N is the
  * number of items in the list (except for list creation which requires
  * constant time and list destruction which requires Order(N) time if the user-
@@ -143,7 +97,7 @@ typedef TBBT_NODE **TBBT_TREE;
 extern "C" {
 #endif
 
-HDFLIBAPI TBBT_TREE *tbbtdmake(intn (*compar)(VOIDP, VOIDP, intn), intn arg, uintn fast_compare);
+HDFLIBAPI TBBT_TREE *tbbtdmake(int (*compar)(void *, void *, int), int arg, unsigned fast_compare);
 /* Allocates and initializes an empty threaded, balanced, binary tree and
  * returns a pointer to the control structure for it.  You can also create
  * empty trees without this function as long as you never use tbbtd* routines
@@ -204,11 +158,11 @@ HDFLIBAPI TBBT_TREE *tbbtdmake(intn (*compar)(VOIDP, VOIDP, intn), intn arg, uin
  * of ANY tree.  Never use tbbtdfree() except on a tbbtdmake()d tree.
  */
 
-HDFLIBAPI TBBT_NODE *tbbtdfind(TBBT_TREE *tree, VOIDP key, TBBT_NODE **pp);
-HDFLIBAPI TBBT_NODE *tbbtfind(TBBT_NODE *root, VOIDP key, intn (*cmp)(VOIDP, VOIDP, intn), intn arg,
+HDFLIBAPI TBBT_NODE *tbbtdfind(TBBT_TREE *tree, void *key, TBBT_NODE **pp);
+HDFLIBAPI TBBT_NODE *tbbtfind(TBBT_NODE *root, void *key, int (*cmp)(void *, void *, int), int arg,
                               TBBT_NODE **pp);
-HDFLIBAPI TBBT_NODE *tbbtdless(TBBT_TREE *tree, VOIDP key, TBBT_NODE **pp);
-HDFLIBAPI TBBT_NODE *tbbtless(TBBT_NODE *root, VOIDP key, intn (*cmp)(VOIDP, VOIDP, intn), intn arg,
+HDFLIBAPI TBBT_NODE *tbbtdless(TBBT_TREE *tree, void *key, TBBT_NODE **pp);
+HDFLIBAPI TBBT_NODE *tbbtless(TBBT_NODE *root, void *key, int (*cmp)(void *, void *, int), int arg,
                               TBBT_NODE **pp);
 /* Locate a node based on the key given.  A pointer to the node in the tree
  * with a key value matching `key' is returned.  If no such node exists, NULL
@@ -231,16 +185,16 @@ HDFLIBAPI TBBT_NODE *tbbtindx(TBBT_NODE *root, int32 indx);
  * as fast as) `tbbtfirst(root)'.
  */
 
-HDFLIBAPI TBBT_NODE *tbbtdins(TBBT_TREE *tree, VOIDP item, VOIDP key);
-HDFLIBAPI TBBT_NODE *tbbtins(TBBT_NODE **root, VOIDP item, VOIDP key, intn (*cmp)(VOIDP, VOIDP, intn),
-                             intn arg);
+HDFLIBAPI TBBT_NODE *tbbtdins(TBBT_TREE *tree, void *item, void *key);
+HDFLIBAPI TBBT_NODE *tbbtins(TBBT_NODE **root, void *item, void *key, int (*cmp)(void *, void *, int),
+                             int arg);
 /* Insert a new node to the tree having a key value of `key' and a data pointer
  * of `item'.  If a node already exists in the tree with key value `key' or if
  * malloc() fails, NULL is returned (no node is inserted), otherwise a pointer
  * to the inserted node is returned.  `cmp' and `arg' are as for tbbtfind().
  */
 
-HDFLIBAPI VOIDP tbbtrem(TBBT_NODE **root, TBBT_NODE *node, VOIDP *kp);
+HDFLIBAPI void *tbbtrem(TBBT_NODE **root, TBBT_NODE *node, void **kp);
 /* Remove the node pointed to by `node' from the tree with root `root'.  The
  * data pointer for the deleted node is returned.  If the second argument is
  * NULL, NULL is returned.  If `kp' is not NULL, `*kp' is set to point to the
@@ -267,8 +221,8 @@ HDFLIBAPI TBBT_NODE *tbbtprev(TBBT_NODE *node);
  * points the last (first) node of the tree, NULL is returned.
  */
 
-HDFLIBAPI TBBT_TREE *tbbtdfree(TBBT_TREE *tree, VOID (*fd)(VOIDP), VOID (*fk)(VOIDP));
-HDFLIBAPI VOID       tbbtfree(TBBT_NODE **root, VOID (*fd)(VOIDP), VOID (*fk)(VOIDP));
+HDFLIBAPI TBBT_TREE *tbbtdfree(TBBT_TREE *tree, void (*fd)(void *), void (*fk)(void *));
+HDFLIBAPI void       tbbtfree(TBBT_NODE **root, void (*fd)(void *), void (*fk)(void *));
 /* Frees up an entire tree.  `fd' is a pointer to a function that frees/
  * destroys data items, and `fk' is the same for key values.
  *     void free();
@@ -281,10 +235,10 @@ HDFLIBAPI VOID       tbbtfree(TBBT_NODE **root, VOID (*fd)(VOIDP), VOID (*fk)(VO
  * tbbtfree() always sets `root' to be NULL.
  */
 
-HDFLIBAPI VOID tbbtprint(TBBT_NODE *node);
+HDFLIBAPI void tbbtprint(TBBT_NODE *node);
 /* Prints out the data in a node */
 
-HDFLIBAPI VOID tbbtdump(TBBT_TREE *tree, intn method);
+HDFLIBAPI void tbbtdump(TBBT_TREE *tree, int method);
 /* Prints an entire tree.  The method variable determines which sort of
  * traversal is used:
  *      -1 : Pre-Order Traversal
@@ -295,7 +249,7 @@ HDFLIBAPI VOID tbbtdump(TBBT_TREE *tree, intn method);
 HDFLIBAPI long tbbtcount(TBBT_TREE *tree);
 
 /* Terminate the buffers used in the tbbt*() interface */
-HDFPUBLIC intn tbbt_shutdown(void);
+HDFPUBLIC int tbbt_shutdown(void);
 
 #ifdef __cplusplus
 }

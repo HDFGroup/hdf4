@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "h4config.h"
+#include "hdf.h"
+
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else
@@ -17,11 +18,7 @@
 #include "add.h"     /* functions to update in-memory netcdf */
 #include "error.h"
 #include "tests.h"
-#include "alloc.h"
 #include "emalloc.h"
-#ifdef HDF
-#include "hdf.h"
-#endif
 
 #define LEN_OF(array) ((sizeof array) / (sizeof array[0]))
 #define min(A, B)     ((A) < (B) ? (A) : (B))
@@ -66,7 +63,7 @@ test_ncvarid(char *path)
         ncclose(cdfid);
         return;
     }
-    add_var(&test, &xx); /* keep in-memory netcdf in sync */
+    add_var(test_g, &xx); /* keep in-memory netcdf in sync */
 
     /* check id returned for name matches id returned from definition */
     if (ncvarid(cdfid, xx.name) != varid) {
@@ -133,33 +130,33 @@ test_ncvarinq(char *path)
     /* opened, in data mode */
     var.dims = (int *)emalloc(sizeof(int) * H4_MAX_VAR_DIMS);
     var.name = (char *)emalloc(H4_MAX_NC_NAME);
-    for (varid = 0; varid < test.nvars; varid++) { /* loop on all var ids */
+    for (varid = 0; varid < test_g->nvars; varid++) { /* loop on all var ids */
         if (ncvarinq(cdfid, varid, var.name, &var.type, &var.ndims, var.dims, &var.natts) == -1) {
             error("%s: ncvarinq in data mode failed on var id %d", pname, varid);
             ncclose(cdfid);
             return;
         }
         /* compare returned with expected values */
-        if (strcmp(var.name, test.vars[varid].name) != 0) {
+        if (strcmp(var.name, test_g->vars[varid].name) != 0) {
             error("%s: ncvarinq (data mode), name %s, expected %s for id = %d", pname, var.name,
-                  test.vars[varid].name, varid);
+                  test_g->vars[varid].name, varid);
             nerrs++;
         }
-        if (var.type != test.vars[varid].type) {
+        if (var.type != test_g->vars[varid].type) {
             error("%s: ncvarinq (data mode), type %d, expected %d for id = %d", pname, var.type,
-                  test.vars[varid].type, varid);
+                  test_g->vars[varid].type, varid);
             nerrs++;
         }
-        if (var.ndims != test.vars[varid].ndims) {
+        if (var.ndims != test_g->vars[varid].ndims) {
             error("%s: ncvarinq (data mode), ndims %d, expected %d for id = %d", pname, var.ndims,
-                  test.vars[varid].ndims, varid);
+                  test_g->vars[varid].ndims, varid);
             nerrs++;
         }
         else { /* if ndims OK, compare dims */
             for (idim = 0; idim < var.ndims; idim++)
-                if (var.dims[idim] != test.vars[varid].dims[idim]) {
+                if (var.dims[idim] != test_g->vars[varid].dims[idim]) {
                     error("%s: ncvarinq (data mode), dims[%d]=%d, expected %d", pname, idim, var.dims[idim],
-                          test.vars[varid].dims[idim]);
+                          test_g->vars[varid].dims[idim]);
                     nerrs++;
                 }
         }
@@ -170,39 +167,39 @@ test_ncvarinq(char *path)
         return;
     }
     /* in define mode, compare returned with expected values again */
-    for (varid = 0; varid < test.nvars; varid++) { /* loop on all var ids */
+    for (varid = 0; varid < test_g->nvars; varid++) { /* loop on all var ids */
         if (ncvarinq(cdfid, varid, var.name, &var.type, &var.ndims, var.dims, &var.natts) == -1) {
             error("%s: ncvarinq in data mode failed on var id %d", pname, varid);
             ncclose(cdfid);
             return;
         }
-        if (strcmp(var.name, test.vars[varid].name) != 0) {
+        if (strcmp(var.name, test_g->vars[varid].name) != 0) {
             error("%s: ncvarinq (define mode), name %s, expected %s for id = %d", pname, var.name,
-                  test.vars[varid].name, varid);
+                  test_g->vars[varid].name, varid);
             nerrs++;
         }
-        if (var.type != test.vars[varid].type) {
+        if (var.type != test_g->vars[varid].type) {
             error("%s: ncvarinq (define mode), type %d, expected %d for id = %d", pname, var.type,
-                  test.vars[varid].type, varid);
+                  test_g->vars[varid].type, varid);
             nerrs++;
         }
-        if (var.ndims != test.vars[varid].ndims) {
+        if (var.ndims != test_g->vars[varid].ndims) {
             error("%s: ncvarinq (define mode), ndims %d, expected %d for id = %d", pname, var.ndims,
-                  test.vars[varid].ndims, varid);
+                  test_g->vars[varid].ndims, varid);
             nerrs++;
         }
         else { /* if ndims OK, compare dims */
             for (idim = 0; idim < var.ndims; idim++)
-                if (var.dims[idim] != test.vars[varid].dims[idim]) {
+                if (var.dims[idim] != test_g->vars[varid].dims[idim]) {
                     error("%s: ncvarinq (define mode), dims[%d]=%d, expected %d", pname, idim, var.dims[idim],
-                          test.vars[varid].dims[idim]);
+                          test_g->vars[varid].dims[idim]);
                     nerrs++;
                 }
         }
     }
     /* try with bad variable handles, check for failure */
     if (ncvarinq(cdfid, -1, var.name, &var.type, &var.ndims, var.dims, &var.natts) != -1 ||
-        ncvarinq(cdfid, test.nvars, var.name, &var.type, &var.ndims, var.dims, &var.natts) != -1) {
+        ncvarinq(cdfid, test_g->nvars, var.name, &var.type, &var.ndims, var.dims, &var.natts) != -1) {
         error("%s: ncvarinq should have failed on bad variable ids", pname, varid);
         ncclose(cdfid);
         return;
@@ -217,14 +214,14 @@ test_ncvarinq(char *path)
         return;
     }
     /* should fail, since bad handle */
-    if (test.nvars >= 1) { /* if any variables have been defined */
+    if (test_g->nvars >= 1) { /* if any variables have been defined */
         if (ncvarinq(cdfid, varid, var.name, &var.type, &var.ndims, var.dims, &var.natts) != -1) {
             error("%s: ncvarinq failed to report bad netcdf handle ", pname);
             nerrs++;
         }
     }
-    Free((char *)var.dims);
-    Free(var.name);
+    free(var.dims);
+    free(var.name);
     if (nerrs > 0)
         (void)fprintf(stderr, "FAILED! ***\n");
     else
@@ -267,13 +264,13 @@ test_varputget1(int cdfid)
     float         flval;
     double        dbval;
 
-    for (iv = 0; iv < test.nvars; iv++) {              /* for each var in netcdf */
-        for (id = 0; id < test.vars[iv].ndims; id++) { /* set corners */
-            int dsize;                                 /* max dimension size, used for u-r corner */
+    for (iv = 0; iv < test_g->nvars; iv++) {              /* for each var in netcdf */
+        for (id = 0; id < test_g->vars[iv].ndims; id++) { /* set corners */
+            int dsize;                                    /* max dimension size, used for u-r corner */
             /* "lower-left" corner */
             elm[0].coords[id] = 0;
             /* if unlimited dimension, choose record 3 for max, arbitrarily */
-            dsize = test.dims[test.vars[iv].dims[id]].size;
+            dsize = test_g->dims[test_g->vars[iv].dims[id]].size;
             if (dsize == NC_UNLIMITED)
                 dsize = 3;
             /* middle */
@@ -281,8 +278,8 @@ test_varputget1(int cdfid)
             /* "upper-right" corner */
             elm[2].coords[id] = dsize - 1;
         }
-        for (ie = 0; ie < ne; ie++) {     /* for each of ne points */
-            switch (test.vars[iv].type) { /* get values of right type to put */
+        for (ie = 0; ie < ne; ie++) {        /* for each of ne points */
+            switch (test_g->vars[iv].type) { /* get values of right type to put */
                 case NC_BYTE:
                 case NC_CHAR:
                     elm[ie].val.by = (char)(ie + 1);
@@ -313,18 +310,18 @@ test_varputget1(int cdfid)
                     error("%s: bad type, test program error", pname);
             }
             if (ncvarput1(cdfid, iv, elm[ie].coords, voidp) == -1) {
-                error("%s: ncvarput1 failed for point %d, variable %s", pname, ie, test.vars[iv].name);
+                error("%s: ncvarput1 failed for point %d, variable %s", pname, ie, test_g->vars[iv].name);
                 ncclose(cdfid);
                 return 1;
             }
-            add_data(&test, iv, elm[ie].coords, edges); /* keep test in sync */
+            add_data(test_g, iv, elm[ie].coords, edges); /* keep test in sync */
 
             if (ncvarget1(cdfid, iv, elm[ie].coords, tmpp) == -1) {
-                error("%s: ncvarget1 failed for point %d, variable %s", pname, ie, test.vars[iv].name);
+                error("%s: ncvarget1 failed for point %d, variable %s", pname, ie, test_g->vars[iv].name);
                 ncclose(cdfid);
                 return 1;
             }
-            switch (test.vars[iv].type) { /* compare values of right type */
+            switch (test_g->vars[iv].type) { /* compare values of right type */
                 case NC_BYTE:
                 case NC_CHAR:
                     if (elm[ie].val.by != chval) {
@@ -346,7 +343,8 @@ test_varputget1(int cdfid)
                     break;
                 case NC_FLOAT:
                     if (elm[ie].val.fl != flval) {
-                        error("%s: ncvarget1 returned float %g, expected %g", pname, flval, elm[ie].val.fl);
+                        error("%s: ncvarget1 returned float %g, expected %g", pname, (double)flval,
+                              (double)elm[ie].val.fl);
                         nerrs++;
                     }
                     break;
@@ -394,21 +392,22 @@ test_ncvarput1(char *path)
 
     /* find a variable with at least one dimension */
     iv = 0;
-    while (test.vars[iv].ndims <= 0 && iv < test.nvars)
+    while (test_g->vars[iv].ndims <= 0 && iv < test_g->nvars)
         iv++;
-    if (iv < test.nvars) { /* iv is varid of variable with dimensions */
+    if (iv < test_g->nvars) { /* iv is varid of variable with dimensions */
         /* set coords */
         int id; /* dimension id */
-        for (id = 0; id < test.vars[iv].ndims; id++)
+        for (id = 0; id < test_g->vars[iv].ndims; id++)
             elm.coords[id] = 0;
         /* try invalid coordinates, should fail */
-        elm.coords[test.vars[iv].ndims / 2] = -1;
+        elm.coords[test_g->vars[iv].ndims / 2] = -1;
         if (ncvarput1(cdfid, iv, elm.coords, (void *)&elm.val) != -1) {
             error("%s: ncvarput1 should fail for negative coordinate", pname);
             ncclose(cdfid);
             return;
         }
-        elm.coords[test.vars[iv].ndims / 2] = test.dims[test.vars[iv].dims[test.vars[iv].ndims / 2]].size;
+        elm.coords[test_g->vars[iv].ndims / 2] =
+            test_g->dims[test_g->vars[iv].dims[test_g->vars[iv].ndims / 2]].size;
         if (ncvarput1(cdfid, iv, elm.coords, (void *)&elm.val) != -1) {
             error("%s: ncvarput1 should fail for too-high coordinate", pname);
             ncclose(cdfid);
@@ -417,7 +416,7 @@ test_ncvarput1(char *path)
     }
     /* try with bad variable handle, should fail */
     if (ncvarput1(cdfid, -1, elm.coords, (void *)&elm.val) != -1 ||
-        ncvarput1(cdfid, test.nvars, elm.coords, (void *)&elm.val) != -1) {
+        ncvarput1(cdfid, test_g->nvars, elm.coords, (void *)&elm.val) != -1) {
         error("%s: ncvarput1 should fail for bad variable handle", pname);
         ncclose(cdfid);
         return;
@@ -428,7 +427,7 @@ test_ncvarput1(char *path)
         return;
     }
     /* try in define mode, should fail */
-    if (test.nvars > 0)
+    if (test_g->nvars > 0)
         if (ncvarput1(cdfid, 0, elm.coords, (void *)&elm.val) != -1) {
             error("%s: ncvarput1 should fail in define mode", pname);
             ncclose(cdfid);
@@ -484,21 +483,22 @@ test_ncvarget1(char *path)
 
     /* find a variable with at least one dimension */
     iv = 0;
-    while (test.vars[iv].ndims <= 0 && iv < test.nvars)
+    while (test_g->vars[iv].ndims <= 0 && iv < test_g->nvars)
         iv++;
-    if (iv < test.nvars) { /* iv is varid of variable with dimensions */
+    if (iv < test_g->nvars) { /* iv is varid of variable with dimensions */
         /* set coords */
         int id; /* dimension id */
-        for (id = 0; id < test.vars[iv].ndims; id++)
+        for (id = 0; id < test_g->vars[iv].ndims; id++)
             elm.coords[id] = 0;
         /* try invalid coordinates, should fail */
-        elm.coords[test.vars[iv].ndims / 2] = -1;
+        elm.coords[test_g->vars[iv].ndims / 2] = -1;
         if (ncvarget1(cdfid, iv, elm.coords, (void *)&elm.val) != -1) {
             error("%s: ncvarget1 should fail for negative coordinate", pname);
             ncclose(cdfid);
             return;
         }
-        elm.coords[test.vars[iv].ndims / 2] = test.dims[test.vars[iv].dims[test.vars[iv].ndims / 2]].size;
+        elm.coords[test_g->vars[iv].ndims / 2] =
+            test_g->dims[test_g->vars[iv].dims[test_g->vars[iv].ndims / 2]].size;
         if (ncvarget1(cdfid, iv, elm.coords, (void *)&elm.val) != -1) {
             error("%s: ncvarget1 should fail for too-high coordinate", pname);
             ncclose(cdfid);
@@ -507,7 +507,7 @@ test_ncvarget1(char *path)
     }
     /* try with bad variable handle, should fail */
     if (ncvarget1(cdfid, -1, elm.coords, (void *)&elm.val) != -1 ||
-        ncvarget1(cdfid, test.nvars, elm.coords, (void *)&elm.val) != -1) {
+        ncvarget1(cdfid, test_g->nvars, elm.coords, (void *)&elm.val) != -1) {
         error("%s: ncvarget1 should fail for bad variable handle", pname);
         ncclose(cdfid);
         return;
@@ -518,7 +518,7 @@ test_ncvarget1(char *path)
         return;
     }
     /* try in define mode, should fail */
-    if (test.nvars > 0)
+    if (test_g->nvars > 0)
         if (ncvarget1(cdfid, 0, elm.coords, (void *)&elm.val) != -1) {
             error("%s: ncvarget1 should fail in define mode", pname);
             ncclose(cdfid);
@@ -590,7 +590,7 @@ test_ncvarrename(char *path)
         ncclose(cdfid);
         return;
     }
-    add_var(&test, &yy); /* keep in-memory netcdf in sync */
+    add_var(test_g, &yy); /* keep in-memory netcdf in sync */
     zz.dims = (int *)emalloc(sizeof(int) * zz.ndims);
     for (id = 0; id < zz.ndims; id++)
         zz.dims[id] = id;
@@ -599,7 +599,7 @@ test_ncvarrename(char *path)
         ncclose(cdfid);
         return;
     }
-    add_var(&test, &zz); /* keep in-memory netcdf in sync */
+    add_var(test_g, &zz); /* keep in-memory netcdf in sync */
 
     /* rename first variable */
     if (ncvarrename(cdfid, yy_id, newname) == -1) {
@@ -628,7 +628,7 @@ test_ncvarrename(char *path)
         ncclose(cdfid);
         return;
     }
-    (void)strcpy(test.vars[yy_id].name, newname); /* keep test consistent */
+    (void)strcpy(test_g->vars[yy_id].name, newname); /* keep test consistent */
     /* try to rename second variable same as first, should fail */
     if (ncvarrename(cdfid, yy_id, zz.name) != -1) {
         error("%s: ncvarrename should have failed with used name", pname);
@@ -636,7 +636,7 @@ test_ncvarrename(char *path)
         return;
     }
     /* try with bad variable handles, check for failure */
-    if (ncvarrename(cdfid, -1, var.name) != -1 || ncvarrename(cdfid, test.nvars, var.name) != -1) {
+    if (ncvarrename(cdfid, -1, var.name) != -1 || ncvarrename(cdfid, test_g->nvars, var.name) != -1) {
         error("%s: ncvarrename should have failed on bad variable ids", pname);
         ncclose(cdfid);
         return;
@@ -657,7 +657,7 @@ test_ncvarrename(char *path)
         ncclose(cdfid);
         return;
     }
-    (void)strcpy(test.vars[yy_id].name, shortname); /* keep test consistent */
+    (void)strcpy(test_g->vars[yy_id].name, shortname); /* keep test consistent */
     if (ncclose(cdfid) == -1) {
         error("%s: ncclose failed", pname);
         return;
@@ -667,8 +667,8 @@ test_ncvarrename(char *path)
         error("%s: ncvarrename failed to report bad netcdf handle ", pname);
         nerrs++;
     }
-    Free(var.name);
-    Free((char *)var.dims);
+    free(var.name);
+    free(var.dims);
     if (nerrs > 0)
         (void)fprintf(stderr, "FAILED! ***\n");
     else

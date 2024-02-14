@@ -77,7 +77,7 @@
 
 #define PER(A, B)                                                                                            \
     {                                                                                                        \
-        per            = -1;                                                                                 \
+        per            = -1.0;                                                                               \
         not_comparable = 0;                                                                                  \
         both_zero      = 0;                                                                                  \
         if (A == 0 && B == 0)                                                                                \
@@ -260,7 +260,7 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
 
                     else
 
-                        if (per > err_rel) {
+                        if ((float)per > err_rel) {
                         n_diff++;
                         if (n_diff <= max_err_cnt) {
                             print_pos(&ph, i, acc, pos, rank, name1, name2);
@@ -343,7 +343,7 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
 
                     else
 
-                        if (per > err_rel) {
+                        if ((float)per > err_rel) {
                         n_diff++;
                         if (n_diff <= max_err_cnt) {
                             print_pos(&ph, i, acc, pos, rank, name1, name2);
@@ -422,7 +422,7 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
 
                     else
 
-                        if (per > err_rel) {
+                        if ((float)per > err_rel) {
                         n_diff++;
                         if (n_diff <= max_err_cnt) {
                             print_pos(&ph, i, acc, pos, rank, name1, name2);
@@ -462,7 +462,7 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
                 is_fill1 = fill1 && (*fptr1 == *((float32 *)fill1));
                 is_fill2 = fill2 && (*fptr2 == *((float32 *)fill2));
                 if (debug) {
-                    fprintf(fp, "%d %d %f %f\n", is_fill1, is_fill2, *fptr1, *fptr2);
+                    fprintf(fp, "%d %d %f %f\n", is_fill1, is_fill2, (double)*fptr1, (double)*fptr2);
                 }
                 if (!is_fill1 && !is_fill2) {
                     d_avg_diff += (float64)f_diff;
@@ -498,18 +498,18 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
                     {
                         print_pos(&ph, i, acc, pos, rank, name1, name2);
                         printf(SPACES);
-                        printf(FFORMATP_NOTCOMP, *fptr1, *fptr2);
+                        printf(FFORMATP_NOTCOMP, (double)*fptr1, (double)*fptr2);
                         n_diff++;
                     }
 
                     else
 
-                        if (per > err_rel) {
+                        if ((float)per > err_rel) {
                         n_diff++;
                         if (n_diff <= max_err_cnt) {
                             print_pos(&ph, i, acc, pos, rank, name1, name2);
                             printf(SPACES);
-                            printf(FFORMATP, *fptr1, *fptr2, per * 100);
+                            printf(FFORMATP, (double)*fptr1, (double)*fptr2, per * 100);
                         }
                     }
                 }
@@ -519,7 +519,7 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
                     if (n_diff <= max_err_cnt) {
                         print_pos(&ph, i, acc, pos, rank, name1, name2);
                         printf(SPACES);
-                        printf(FFORMAT, *fptr1, *fptr2, fabs(*fptr1 - *fptr2));
+                        printf(FFORMAT, (double)*fptr1, (double)*fptr2, fabs(*fptr1 - *fptr2));
                     }
                 }
                 fptr1++;
@@ -582,7 +582,7 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
 
                     else
 
-                        if (per > err_rel) {
+                        if ((float)per > err_rel) {
                         n_diff++;
                         if (n_diff <= max_err_cnt) {
                             print_pos(&ph, i, acc, pos, rank, name1, name2);

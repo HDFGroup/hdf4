@@ -11,9 +11,10 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "mfhdf.h"
+#include <stdlib.h>
+#include <string.h>
 
-#ifdef HDF
+#include "mfhdf.h"
 
 #include "hdftest.h"
 
@@ -207,7 +208,7 @@ test_netcdf_reading()
                 start[0] = start[1] = 0;
                 edges[0]            = dim_sizes[0];
                 edges[1]            = dim_sizes[1];
-                status              = SDreaddata(sds_id, start, NULL, edges, (VOIDP)array_data);
+                status              = SDreaddata(sds_id, start, NULL, edges, (void *)array_data);
                 CHECK(status, FAIL, "netCDF Read Test 1. SDreaddata failed for dataset in  file test1.nc");
 
                 /* check the data against our buffer 'netcdf_u16[][]' */
@@ -242,5 +243,3 @@ test_netcdf_reading()
     return num_errs;
 } /* test_netcdf_reading() */
 #endif /* NETCDF_READ_TEST */
-
-#endif /* HDF */

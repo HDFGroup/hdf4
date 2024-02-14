@@ -47,7 +47,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "hconv.h"
 
 /*****************************************************************************/
@@ -59,7 +59,7 @@
 /*   Native mode for 1 byte data items                      */
 /************************************************************/
 int
-DFKnb1b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
+DFKnb1b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
     int    fast_processing = 0;
     int    in_place        = 0;
@@ -84,7 +84,7 @@ DFKnb1b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 
     if (fast_processing) {
         if (!in_place) {
-            HDmemcpy(dest, source, num_elm);
+            memcpy(dest, source, num_elm);
             return 0;
         }
         else
@@ -107,7 +107,7 @@ DFKnb1b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 /* -->Native mode for 2 byte data items                     */
 /************************************************************/
 int
-DFKnb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
+DFKnb2b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
     int    fast_processing = 0; /* Default is not fast processing */
     int    in_place        = 0; /* Inplace must be detected */
@@ -133,7 +133,7 @@ DFKnb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 
     if (fast_processing) {
         if (!in_place) {
-            HDmemcpy(dest, source, num_elm * 2);
+            memcpy(dest, source, num_elm * 2);
             return 0;
         }
         else { /* Nothing to do */
@@ -167,7 +167,7 @@ DFKnb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 /* -->Native mode for 4 byte items                          */
 /************************************************************/
 int
-DFKnb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
+DFKnb4b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
     int    fast_processing = 0; /* Default is not fast processing */
     int    in_place        = 0; /* Inplace must be detected */
@@ -193,7 +193,7 @@ DFKnb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 
     if (fast_processing) {
         if (!in_place) {
-            HDmemcpy(dest, source, num_elm * 4);
+            memcpy(dest, source, num_elm * 4);
             return 0;
         }
         else { /* Nothing to do */
@@ -233,7 +233,7 @@ DFKnb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 /* -->Native mode for 8 byte items                          */
 /************************************************************/
 int
-DFKnb8b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
+DFKnb8b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
     int    fast_processing = 0; /* Default is not fast processing */
     int    in_place        = 0; /* Inplace must be detected */
@@ -259,7 +259,7 @@ DFKnb8b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 
     if (fast_processing) {
         if (!in_place) {
-            HDmemcpy(dest, source, num_elm * 8);
+            memcpy(dest, source, num_elm * 8);
             return 0;
         }
         else {
@@ -270,14 +270,14 @@ DFKnb8b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
     /* Generic stride processing */
     if (!in_place)
         for (i = 0; i < num_elm; i++) {
-            HDmemcpy(dest, source, 8);
+            memcpy(dest, source, 8);
             dest += dest_stride;
             source += source_stride;
         }
     else
         for (i = 0; i < num_elm; i++) {
-            HDmemcpy(buf, source, 8);
-            HDmemcpy(dest, buf, 8);
+            memcpy(buf, source, 8);
+            memcpy(dest, buf, 8);
             dest += dest_stride;
             source += source_stride;
         }

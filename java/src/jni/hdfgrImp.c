@@ -25,7 +25,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include <jni.h>
-#include "hdf.h"
+#include "hdfi.h"
 #include "mfhdf.h"
 #include "h4jni.h"
 #include "hdfgrImp.h"
@@ -186,7 +186,7 @@ Java_hdf_hdflib_HDFLibrary_GRgetiminfo(JNIEnv *env, jclass clss, jlong ri_id, jo
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(H4_MAX_GR_NAME + 1)) == NULL)
+    if ((data = (char *)malloc(H4_MAX_GR_NAME + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "GRgetiminfo: failed to allocate data buffer");
 
     if (gr_name == NULL)
@@ -222,8 +222,7 @@ Java_hdf_hdflib_HDFLibrary_GRgetiminfo(JNIEnv *env, jclass clss, jlong ri_id, jo
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
     if (theArgs)
         UNPIN_INT_ARRAY(ENVONLY, argv, theArgs, (rval = FAIL) ? JNI_ABORT : 0);
     if (dims)
@@ -429,7 +428,7 @@ Java_hdf_hdflib_HDFLibrary_GRattrinfo(JNIEnv *env, jclass clss, jlong gr_id, jin
     UNUSED(clss);
 
     /* check for out of memory error ... */
-    if ((data = (char *)HDmalloc(H4_MAX_GR_NAME + 1)) == NULL)
+    if ((data = (char *)malloc(H4_MAX_GR_NAME + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "GRattrinfo: failed to allocate data buffer");
 
     if (name == NULL)
@@ -458,8 +457,7 @@ Java_hdf_hdflib_HDFLibrary_GRattrinfo(JNIEnv *env, jclass clss, jlong gr_id, jin
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
     if (theArgs)
         UNPIN_INT_ARRAY(ENVONLY, argv, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
 

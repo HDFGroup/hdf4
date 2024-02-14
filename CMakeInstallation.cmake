@@ -34,12 +34,10 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
       NAMESPACE ${HDF_PACKAGE_NAMESPACE}
       COMPONENT configinstall
   )
-endif ()
 
-#-----------------------------------------------------------------------------
-# Export all exported targets to the build tree for use by parent project
-#-----------------------------------------------------------------------------
-if (NOT HDF4_EXTERNALLY_CONFIGURED)
+  #-----------------------------------------------------------------------------
+  # Export all exported targets to the build tree for use by parent project
+  #-----------------------------------------------------------------------------
   export (
       TARGETS ${HDF4_LIBRARIES_TO_EXPORT} ${HDF4_LIB_DEPENDENCIES} ${HDF4_UTILS_TO_EXPORT}
       FILE ${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-targets.cmake
@@ -53,7 +51,6 @@ endif ()
 set (HDF4_INCLUDES_BUILD_TIME
     ${HDF4_HDF_SOURCE_DIR}
     ${HDF4_MFHDF_SOURCE_DIR}
-    ${HDF4_MFHDF_XDR_DIR}
     ${HDF4_BINARY_DIR}
 )
 
@@ -103,7 +100,7 @@ endif ()
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
   configure_file (
-      ${HDF_RESOURCES_DIR}/hdf4-config-version.cmake.in
+      ${HDF_RESOURCES_DIR}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config-version.cmake.in
       ${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config-version.cmake @ONLY
   )
   install (
@@ -136,8 +133,12 @@ install (
 #-----------------------------------------------------------------------------
 option (HDF4_PACK_EXAMPLES  "Package the HDF4 Library Examples Compressed File" OFF)
 if (HDF4_PACK_EXAMPLES)
+  if (DEFINED CMAKE_TOOLCHAIN_FILE)
+    get_filename_component(TOOLCHAIN ${CMAKE_TOOLCHAIN_FILE} NAME)
+    set(CTEST_TOOLCHAIN_FILE "\${CTEST_SOURCE_DIRECTORY}/config/toolchain/${TOOLCHAIN}")
+  endif ()
   configure_file (
-      ${HDF_RESOURCES_DIR}/HDF4_Examples.cmake.in
+      ${HDF_RESOURCES_DIR}/examples/HDF4_Examples.cmake.in
       ${HDF4_BINARY_DIR}/HDF4_Examples.cmake @ONLY
   )
   install (
@@ -145,17 +146,13 @@ if (HDF4_PACK_EXAMPLES)
       DESTINATION ${HDF4_INSTALL_DATA_DIR}
       COMPONENT hdfdocuments
   )
-  if (EXISTS "${HDF4_EXAMPLES_COMPRESSED_DIR}/${HDF4_EXAMPLES_COMPRESSED}")
-    execute_process(
-        COMMAND ${CMAKE_COMMAND} -E tar xzf ${HDF4_EXAMPLES_COMPRESSED_DIR}/${HDF4_EXAMPLES_COMPRESSED}
-    )
-    install (
-      DIRECTORY ${HDF4_BINARY_DIR}/HDF4Examples
-      DESTINATION ${HDF4_INSTALL_DATA_DIR}
-      USE_SOURCE_PERMISSIONS
-      COMPONENT hdfdocuments
-    )
-  endif ()
+
+  install (
+    DIRECTORY ${HDF4_SOURCE_DIR}/HDF4Examples
+    DESTINATION ${HDF4_INSTALL_DATA_DIR}
+    USE_SOURCE_PERMISSIONS
+    COMPONENT hdfdocuments
+  )
   install (
       FILES
           ${HDF4_SOURCE_DIR}/release_notes/USING_CMake_Examples.txt
@@ -164,13 +161,13 @@ if (HDF4_PACK_EXAMPLES)
   )
   install (
       FILES
-          ${HDF_RESOURCES_DIR}/CTestScript.cmake
+          ${HDF_RESOURCES_DIR}/examples/CTestScript.cmake
       DESTINATION ${HDF4_INSTALL_DATA_DIR}
       COMPONENT hdfdocuments
   )
   install (
       FILES
-          ${HDF_RESOURCES_DIR}/HDF4_Examples_options.cmake
+          ${HDF_RESOURCES_DIR}/examples/HDF4_Examples_options.cmake
       DESTINATION ${HDF4_INSTALL_DATA_DIR}
       COMPONENT hdfdocuments
   )
@@ -184,7 +181,7 @@ HDF_README_PROPERTIES(HDF4_BUILD_FORTRAN)
 #-----------------------------------------------------------------------------
 # Configure the COPYING.txt file for the windows binary package
 #-----------------------------------------------------------------------------
-if (WIN32 OR MINGW)
+if (WIN32)
   configure_file (${HDF4_SOURCE_DIR}/COPYING ${HDF4_BINARY_DIR}/COPYING.txt @ONLY)
 endif ()
 
@@ -193,8 +190,7 @@ endif ()
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
   install (
-      FILES
-          ${HDF4_SOURCE_DIR}/COPYING
+      FILES ${HDF4_SOURCE_DIR}/COPYING
       DESTINATION ${HDF4_INSTALL_DATA_DIR}
       COMPONENT hdfdocuments
   )
@@ -203,7 +199,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
         ${HDF4_SOURCE_DIR}/release_notes/USING_HDF4_CMake.txt
         ${HDF4_SOURCE_DIR}/release_notes/RELEASE.txt
     )
-    if (WIN32 OR MINGW)
+    if (WIN32)
       set (release_files
           ${release_files}
           ${HDF4_SOURCE_DIR}/release_notes/USING_HDF4_VS.txt
@@ -216,7 +212,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
           ${HDF4_SOURCE_DIR}/release_notes/HISTORY.txt
           ${HDF4_SOURCE_DIR}/release_notes/INSTALL
       )
-      if (WIN32 OR MINGW)
+      if (WIN32)
         set (release_files
             ${release_files}
             ${HDF4_SOURCE_DIR}/release_notes/INSTALL_Windows.txt
@@ -237,29 +233,16 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
   endif ()
 endif ()
 
-if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  if (CMAKE_HOST_UNIX)
-    set (CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/HDF_Group/${HDF4_PACKAGE_NAME}/${HDF4_PACKAGE_VERSION}"
-      CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
-  else ()
-    GetDefaultWindowsPrefixBase(CMAKE_GENERIC_PROGRAM_FILES)
-    set (CMAKE_INSTALL_PREFIX
-      "${CMAKE_GENERIC_PROGRAM_FILES}/HDF_Group/${HDF4_PACKAGE_NAME}/${HDF4_PACKAGE_VERSION}"
-      CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
-    set (CMAKE_GENERIC_PROGRAM_FILES)
-  endif ()
-endif ()
-
 #-----------------------------------------------------------------------------
 # Set the cpack variables
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   set (CPACK_PACKAGE_VENDOR "HDF_Group")
   set (CPACK_PACKAGE_NAME "${HDF4_PACKAGE_NAME}")
-  if (CDASH_LOCAL)
-    set (CPACK_PACKAGE_VERSION "${HDF4_PACKAGE_VERSION}")
-  else ()
+  if (NOT WIN32 OR HDF4_VERS_SUBRELEASE MATCHES "^[0-9]+$")
     set (CPACK_PACKAGE_VERSION "${HDF4_PACKAGE_VERSION_STRING}")
+  else ()
+    set (CPACK_PACKAGE_VERSION "${HDF4_PACKAGE_VERSION}")
   endif ()
   set (CPACK_PACKAGE_VERSION_MAJOR "${HDF4_PACKAGE_VERSION_MAJOR}")
   set (CPACK_PACKAGE_VERSION_MINOR "${HDF4_PACKAGE_VERSION_MINOR}")
@@ -296,7 +279,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
       set (CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES")
       set (CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
     endif ()
-    # set the install/unistall icon used for the installer itself
+    # set the install/uninstall icon used for the installer itself
     # There is a bug in NSI that does not handle full unix paths properly.
     set (CPACK_NSIS_MUI_ICON "${HDF_RESOURCES_DIR}\\\\hdf.ico")
     set (CPACK_NSIS_MUI_UNIICON "${HDF_RESOURCES_DIR}\\\\hdf.ico")
@@ -316,16 +299,26 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
     endif ()
 #WiX variables
     set (CPACK_WIX_UNINSTALL "1")
+    set (CPACK_RESOURCE_FILE_LICENSE "${HDF4_BINARY_DIR}/COPYING.txt")
     set(CPACK_WIX_PRODUCT_ICON "${HDF_RESOURCES_DIR}\\\\hdf.ico")
     set(CPACK_WIX_PROPERTY_ARPCOMMENTS "Hierarchical Data Format (HDF) Software Library and Utilities")
     set(CPACK_WIX_PROPERTY_ARPURLINFOABOUT "${HDF4_PACKAGE_URL}")
     set(CPACK_WIX_PROPERTY_ARPHELPLINK "${HDF4_PACKAGE_BUGREPORT}")
     if (BUILD_SHARED_LIBS)
-      set(CPACK_WIX_PATCH_FILE "${HDF_RESOURCES_DIR}/patch.xml")
+      if (${HDF_CFG_NAME} MATCHES "Debug")
+        set (WIX_CMP_NAME "${HDF4_SRC_LIB_NAME}${CMAKE_DEBUG_POSTFIX}")
+      else ()
+        set (WIX_CMP_NAME "${HDF4_SRC_LIB_NAME}")
+      endif ()
+      configure_file (${HDF_RESOURCES_DIR}/patch.xml.in ${HDF4_BINARY_DIR}/patch.xml @ONLY)
+      set(CPACK_WIX_PATCH_FILE "${HDF4_BINARY_DIR}/patch.xml")
     endif ()
   elseif (APPLE)
     list (APPEND CPACK_GENERATOR "STGZ")
-    list (APPEND CPACK_GENERATOR "DragNDrop")
+    option (HDF4_PACK_MACOSX_DMG  "Package the HDF4 Library using DragNDrop" OFF)
+    if (HDF4_PACK_MACOSX_DMG)
+      list (APPEND CPACK_GENERATOR "DragNDrop")
+    endif ()
     set (CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE ON)
     set (CPACK_PACKAGING_INSTALL_PREFIX "/${CPACK_PACKAGE_INSTALL_DIRECTORY}")
     set (CPACK_PACKAGE_ICON "${HDF_RESOURCES_DIR}/hdf.icns")
@@ -363,15 +356,15 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
     set (CPACK_PACKAGING_INSTALL_PREFIX "/${CPACK_PACKAGE_INSTALL_DIRECTORY}")
     set (CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE ON)
 
-    option (HDF4_PACK_CREATE_DEB  "Package the HDF Library in a DEB package" OFF)
-    if (HDF4_PACK_CREATE_DEB)
+    find_program (DPKGSHLIB_EXE dpkg-shlibdeps)
+    if (DPKGSHLIB_EXE)
       list (APPEND CPACK_GENERATOR "DEB")
       set (CPACK_DEBIAN_PACKAGE_SECTION "Libraries")
       set (CPACK_DEBIAN_PACKAGE_MAINTAINER "${HDF4_PACKAGE_BUGREPORT}")
     endif ()
 
-    option (HDF4_PACK_CREATE_RPM  "Package the HDF Library in a RPM package" OFF)
-    if (HDF4_PACK_CREATE_RPM)
+    find_program (RPMBUILD_EXE rpmbuild)
+    if (RPMBUILD_EXE)
       list (APPEND CPACK_GENERATOR "RPM")
       set (CPACK_RPM_PACKAGE_RELEASE "1")
       set (CPACK_RPM_PACKAGE_RELEASE_DIST ON)
@@ -425,7 +418,6 @@ The HDF data model, file format, API, library, and tools are open and distribute
           set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${JPEG_INCLUDE_DIR_GEN};JPEG;ALL;/")
         else ()
           set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${JPEG_INCLUDE_DIR_GEN};JPEG;libraries;/")
-          set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${JPEG_INCLUDE_DIR_GEN};JPEG;headers;/")
           set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${JPEG_INCLUDE_DIR_GEN};JPEG;configinstall;/")
         endif ()
       endif ()
@@ -434,7 +426,6 @@ The HDF data model, file format, API, library, and tools are open and distribute
           set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ZLIB_INCLUDE_DIR_GEN};ZLIB;ALL;/")
         else ()
           set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ZLIB_INCLUDE_DIR_GEN};ZLIB;libraries;/")
-          set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ZLIB_INCLUDE_DIR_GEN};ZLIB;headers;/")
           set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ZLIB_INCLUDE_DIR_GEN};ZLIB;configinstall;/")
         endif ()
       endif ()
@@ -443,7 +434,6 @@ The HDF data model, file format, API, library, and tools are open and distribute
           set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SZIP_INCLUDE_DIR_GEN};SZIP;ALL;/")
         else ()
           set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SZIP_INCLUDE_DIR_GEN};SZIP;libraries;/")
-          set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SZIP_INCLUDE_DIR_GEN};SZIP;headers;/")
           set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SZIP_INCLUDE_DIR_GEN};SZIP;configinstall;/")
         endif ()
       endif ()
@@ -526,4 +516,5 @@ The HDF data model, file format, API, library, and tools are open and distribute
         INSTALL_TYPES Full Developer User
     )
   endif ()
+
 endif ()

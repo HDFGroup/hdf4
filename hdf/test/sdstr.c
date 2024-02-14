@@ -15,7 +15,7 @@
 **
 ** This program tests correctness of writing and read datastrings
 ** and dimension strings.
-** To avoid the '\0' inserted by HDstrncpy, compare the first 14
+** To avoid the '\0' inserted by strncpy, compare the first 14
 ** characters of output and input strings in subroutine compare()
 **
 ****************************************************************/
@@ -24,7 +24,7 @@
 
 static int number_failed = 0;
 
-static VOID compare(const char *outstring, const char *instring);
+static void compare(const char *outstring, const char *instring);
 
 void
 test_tsdstr(void)
@@ -76,10 +76,10 @@ test_tsdstr(void)
     ret = DFSDsetdimstrs(2, dimlabels[1], dimunits[1], dimfmts[1]);
     RESULT("DFSDsetdimstrs");
 
-    ret = DFSDputdata("sdstrings.hdf", rank, dims, (VOIDP)f32);
+    ret = DFSDputdata("sdstrings.hdf", rank, dims, (void *)f32);
     RESULT("DFSDputdata");
 
-    ret = DFSDgetdata("sdstrings.hdf", rank, dims, (VOIDP)tf32);
+    ret = DFSDgetdata("sdstrings.hdf", rank, dims, (void *)tf32);
     RESULT("DFSDgetdata");
 
     ret = DFSDgetdatastrs(in_datalabel, in_dataunit, in_datafmt, in_coordsys);
@@ -111,10 +111,10 @@ test_tsdstr(void)
     num_errs = num_errs + number_failed;
 }
 
-static VOID
+static void
 compare(const char *outstring, const char *instring)
 {
-    if (0 == HDstrcmp(outstring, instring))
+    if (0 == strcmp(outstring, instring))
         MESSAGE(5, printf("Test passed for %s\n", outstring);)
     else {
         MESSAGE(5, printf(">>> Test failed for %s\n", outstring););

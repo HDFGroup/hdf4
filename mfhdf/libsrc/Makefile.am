@@ -7,8 +7,8 @@ include $(top_srcdir)/config/commence.am
 ## Setup the different includes and preprocessor #defines we need.
 lib_INCLUDES = -I$(top_srcdir)/hdf/src        \
                -I$(top_srcdir)/mfhdf/libsrc
-DEFINES = -DNDEBUG -DHDF
-AM_CPPFLAGS = $(lib_INCLUDES) $(XDRINC) $(DEFINES)
+DEFINES = -DHDF
+AM_CPPFLAGS = $(lib_INCLUDES) $(DEFINES)
 
 #############################################################################
 ##                          Library to build                               ##
@@ -17,9 +17,9 @@ AM_CPPFLAGS = $(lib_INCLUDES) $(XDRINC) $(DEFINES)
 lib_LTLIBRARIES = libmfhdf.la
 
 ## Information for building the "libmfhdf.la" library
-CSOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c    \
-         globdef.c mfsd.c mfdatainfo.c nssdc.c putget.c putgetg.c	\
-	 sharray.c string.c var.c xdrposix.c
+CSOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c	\
+           globdef.c mfsd.c mfdatainfo.c nssdc.c putget.c putgetg.c		\
+           sharray.c string.c var.c h4_xdr.c
 
 if HDF_BUILD_NETCDF
 FSOURCES = $(top_builddir)/mfhdf/fortran/jackets.c $(top_srcdir)/mfhdf/fortran/mfsdf.c $(top_srcdir)/mfhdf/fortran/mfsdff.f
@@ -33,7 +33,7 @@ else
 libmfhdf_la_SOURCES = $(CSOURCES)
 endif
 
-libmfhdf_la_LIBADD = $(XDRLIB) $(top_builddir)/hdf/src/libdf.la
+libmfhdf_la_LIBADD = $(top_builddir)/hdf/src/libdf.la
 
 if HDF_BUILD_NETCDF
 include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h mfhdfi.h mfdatainfo.h

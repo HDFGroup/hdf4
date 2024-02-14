@@ -9,7 +9,7 @@ if BUILD_JAVA_CONDITIONAL
 # Mark this directory as part of the JNI API
 JAVA_API=yes
 
-SUBDIRS=src test examples
+SUBDIRS=src test
 
 endif
 

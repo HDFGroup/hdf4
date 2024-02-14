@@ -35,7 +35,7 @@
  *          dimension, compression, color compensation etc.
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "dfgr.h"
 
 static intn  Newdata   = 0; /* does Readrig contain fresh data? */

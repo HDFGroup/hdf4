@@ -13,31 +13,39 @@
 
 /* General HDF includes */
 
-#include "hdf.h"
-#include <assert.h>
+#include "hdfi.h"
 
 #ifdef H4_HAVE_LIBSZ
 #include "szlib.h"
 #endif
 
-#define CSZIP_MASTER
-#define CODER_CLIENT
 /* HDF compression includes */
 #include "hcompi.h" /* Internal definitions for compression */
 
 /* internal defines */
 #define TMP_BUF_SIZE 8192 /* size of throw-away buffer */
 
+/* functions to perform szip encoding */
+funclist_t cszip_funcs = {HCPcszip_stread,
+                          HCPcszip_stwrite,
+                          HCPcszip_seek,
+                          HCPcszip_inquire,
+                          HCPcszip_read,
+                          HCPcszip_write,
+                          HCPcszip_endaccess,
+                          NULL,
+                          NULL};
+
 /* declaration of the functions provided in this module */
-PRIVATE int32 HCIcszip_staccess(accrec_t *access_rec, int16 acc_mode);
+static int32 HCIcszip_staccess(accrec_t *access_rec, int16 acc_mode);
 
-PRIVATE int32 HCIcszip_init(accrec_t *access_rec);
+static int32 HCIcszip_init(accrec_t *access_rec);
 
-PRIVATE int32 HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf);
+static int32 HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf);
 
-PRIVATE int32 HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf);
+static int32 HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf);
 
-PRIVATE int32 HCIcszip_term(compinfo_t *info);
+static int32 HCIcszip_term(compinfo_t *info);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -58,7 +66,7 @@ PRIVATE int32 HCIcszip_term(compinfo_t *info);
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcszip_init(accrec_t *access_rec)
 {
     compinfo_t             *info;      /* special element information */
@@ -87,16 +95,14 @@ HCIcszip_init(accrec_t *access_rec)
     szip_info->szip_state = SZIP_INIT; /* start in initial state */
     if (szip_info->buffer_size != 0) {
         szip_info->buffer_size = 0; /* offset into the file */
-        if (szip_info->buffer != NULL) {
-            HDfree(szip_info->buffer);
-            szip_info->buffer = NULL;
-        }
+        free(szip_info->buffer);
+        szip_info->buffer = NULL;
     }
     szip_info->offset     = 0; /* offset into the file */
     szip_info->szip_dirty = SZIP_CLEAN;
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* end HCIcszip_init() */
 
 /*--------------------------------------------------------------------------
@@ -120,7 +126,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
 {
 #ifdef H4_HAVE_LIBSZ
@@ -176,7 +182,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
             old_way    = 1;
             good_bytes = in_length;
             in_length  = in_length + 5;
-            if ((in_buffer = (uint8 *)HDmalloc(in_length)) == NULL)
+            if ((in_buffer = (uint8 *)malloc(in_length)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
             cp  = in_buffer;
             *cp = 0;
@@ -186,7 +192,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
         else {
             /*  V4.2r1: in_length is correct */
             old_way = 0;
-            if ((in_buffer = (uint8 *)HDmalloc(in_length)) == NULL)
+            if ((in_buffer = (uint8 *)malloc(in_length)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
         }
 
@@ -196,7 +202,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
             bytes_per_pixel++;
 
         out_length = szip_info->pixels * bytes_per_pixel;
-        if ((out_buffer = (uint8 *)HDmalloc(out_length)) == NULL)
+        if ((out_buffer = (uint8 *)malloc(out_length)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
         /* Read the unompressed data */
@@ -204,28 +210,28 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
             /* this is encoded in V4.2r0 */
             /* the preamble isn't in the file, so read only the data */
             if ((rbytes = Hread(info->aid, in_length - 5, in_buffer + 5)) == FAIL) {
-                HDfree(out_buffer);
-                HDfree(in_buffer);
+                free(out_buffer);
+                free(in_buffer);
                 HRETURN_ERROR(DFE_READERROR, FAIL);
             }
             if (rbytes == 0 || rbytes != (in_length - 5)) {
                 /* is this possible? */
-                HDfree(out_buffer);
-                HDfree(in_buffer);
+                free(out_buffer);
+                free(in_buffer);
                 HRETURN_ERROR(DFE_READERROR, FAIL);
             }
         }
         else {
             /* HDF4.2R1: read the data plus preamble */
             if ((rbytes = Hread(info->aid, in_length, in_buffer)) == FAIL) {
-                HDfree(out_buffer);
-                HDfree(in_buffer);
+                free(out_buffer);
+                free(in_buffer);
                 HRETURN_ERROR(DFE_READERROR, FAIL);
             }
             if (rbytes == 0 || rbytes != in_length) {
                 /* is this possible? */
-                HDfree(out_buffer);
-                HDfree(in_buffer);
+                free(out_buffer);
+                free(in_buffer);
                 HRETURN_ERROR(DFE_READERROR, FAIL);
             }
         }
@@ -235,32 +241,30 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
         if (in_buffer[0] == 1) {
             /* This byte means the data was not compressed -- just copy out */
             szip_info->szip_state = SZIP_RUN;
-            HDmemcpy(out_buffer, in_buffer + 5, good_bytes);
+            memcpy(out_buffer, in_buffer + 5, good_bytes);
             szip_info->buffer      = out_buffer;
             szip_info->buffer_pos  = 0;
             szip_info->buffer_size = good_bytes;
             szip_info->offset      = 0;
             if (good_bytes > length) {
                 /* partial read */
-                HDmemcpy(buf, in_buffer + 5, length);
+                memcpy(buf, in_buffer + 5, length);
                 szip_info->buffer_pos += length;
                 szip_info->buffer_size -= length;
             }
             else {
                 /* read the whole data block to the user buffer */
-                HDmemcpy(buf, in_buffer + 5, good_bytes);
+                memcpy(buf, in_buffer + 5, good_bytes);
                 szip_info->buffer_pos += good_bytes;
                 szip_info->buffer_size -= good_bytes;
             }
             szip_info->offset = szip_info->buffer_pos;
-            HDfree(in_buffer);
+            free(in_buffer);
             if (szip_info->buffer_size == 0) {
-                if (szip_info->buffer != NULL) {
-                    HDfree(szip_info->buffer);
-                    szip_info->buffer = NULL;
-                }
+                free(szip_info->buffer);
+                szip_info->buffer = NULL;
             }
-            return (SUCCEED);
+            return SUCCEED;
         }
 
         /* Decompress the data */
@@ -273,8 +277,8 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
         size_out                     = out_length;
         if (SZ_OK != (status = SZ_BufftoBuffDecompress(out_buffer, &size_out, (in_buffer + 5), good_bytes,
                                                        &sz_param))) {
-            HDfree(out_buffer);
-            HDfree(in_buffer);
+            free(out_buffer);
+            free(in_buffer);
             HRETURN_ERROR(DFE_CDECODE, FAIL);
         }
 
@@ -284,7 +288,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
         }
 
         /* The data is successfully decompressed. Put into the szip struct */
-        HDfree(in_buffer);
+        free(in_buffer);
         szip_info->szip_state  = SZIP_RUN;
         szip_info->buffer      = out_buffer;
         szip_info->buffer_pos  = 0;
@@ -295,26 +299,22 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
     /* copy the data into the return buffer */
     if (length > szip_info->buffer_size) {
         /*  can't happen?? panic?? */
-        if (szip_info->buffer != NULL) {
-            HDfree(szip_info->buffer);
-            szip_info->buffer = NULL;
-        }
-        return (FAIL);
+        free(szip_info->buffer);
+        szip_info->buffer = NULL;
+        return FAIL;
     }
 
-    HDmemcpy(buf, szip_info->buffer + szip_info->buffer_pos, length);
+    memcpy(buf, szip_info->buffer + szip_info->buffer_pos, length);
     szip_info->buffer_pos += length;
     szip_info->buffer_size -= length;
     szip_info->offset = szip_info->buffer_pos;
 
     if (szip_info->buffer_size == 0) {
-        if (szip_info->buffer != NULL) {
-            HDfree(szip_info->buffer);
-            szip_info->buffer = NULL;
-        }
+        free(szip_info->buffer);
+        szip_info->buffer = NULL;
     }
 
-    return (SUCCEED);
+    return SUCCEED;
 
 #else  /* ifdef H4_HAVE_LIBSZ */
     (void)info;
@@ -347,7 +347,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
 {
 #ifdef H4_HAVE_SZIP_ENCODER
@@ -366,7 +366,7 @@ HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
             bytes_per_pixel = 4;
 
         buffer_size = szip_info->pixels * bytes_per_pixel;
-        if ((szip_info->buffer = HDmalloc(buffer_size)) == NULL)
+        if ((szip_info->buffer = malloc(buffer_size)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
         szip_info->buffer_size = buffer_size;
@@ -375,13 +375,13 @@ HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
     }
 
     /* copy the data into the buffer.  This will be written in 'term' function */
-    HDmemcpy(szip_info->buffer + szip_info->buffer_pos, buf, length);
+    memcpy(szip_info->buffer + szip_info->buffer_pos, buf, length);
     szip_info->buffer_pos += length;
     szip_info->buffer_size -= length;
     szip_info->offset     = szip_info->buffer_pos;
     szip_info->szip_dirty = SZIP_DIRTY;
 
-    return (SUCCEED);
+    return SUCCEED;
 
 #else  /* ifdef H4_HAVE_SZIP_ENCODER */
     (void)info;
@@ -412,7 +412,7 @@ HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcszip_term(compinfo_t *info)
 {
 #ifdef H4_HAVE_SZIP_ENCODER
@@ -433,17 +433,15 @@ HCIcszip_term(compinfo_t *info)
 
     szip_info = &(info->cinfo.coder_info.szip_info);
     if (szip_info->szip_state != SZIP_RUN)
-        return (SUCCEED); /* nothing to do */
+        return SUCCEED; /* nothing to do */
 
     if (szip_info->szip_dirty != SZIP_DIRTY) /* Should never happen?? */
     {
         if (szip_info->buffer_size == 0) {
-            if (szip_info->buffer != NULL) {
-                HDfree(szip_info->buffer);
-                szip_info->buffer = NULL;
-            }
+            free(szip_info->buffer);
+            szip_info->buffer = NULL;
         }
-        return (SUCCEED);
+        return SUCCEED;
     }
 
     szip_info->szip_state = SZIP_TERM;
@@ -483,7 +481,7 @@ HCIcszip_term(compinfo_t *info)
        but there isn't any way to prevent it from getting here */
     if (out_buffer_size < 1024)
         out_buffer_size = 1024;
-    if ((out_buffer = HDmalloc(out_buffer_size)) == NULL)
+    if ((out_buffer = malloc(out_buffer_size)) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     /* set params */
@@ -509,27 +507,23 @@ HCIcszip_term(compinfo_t *info)
             cp          = out_buffer;
             cp++;
             INT32ENCODE(cp, szip_info->buffer_pos);
-            HDmemcpy((out_buffer + 5), szip_info->buffer, szip_info->buffer_pos);
-            HDfree(out_buffer);
+            memcpy((out_buffer + 5), szip_info->buffer, szip_info->buffer_pos);
+            free(out_buffer);
             szip_info->szip_dirty = SZIP_CLEAN;
 
             if (szip_info->buffer_size == 0) {
-                if (szip_info->buffer != NULL) {
-                    HDfree(szip_info->buffer);
-                    szip_info->buffer = NULL;
-                }
+                free(szip_info->buffer);
+                szip_info->buffer = NULL;
             }
-            return (SUCCEED);
+            return SUCCEED;
         }
 
         /* compress failed, return error */
         szip_info->szip_dirty = SZIP_CLEAN;
-        HDfree(out_buffer);
+        free(out_buffer);
         if (szip_info->buffer_size == 0) {
-            if (szip_info->buffer != NULL) {
-                HDfree(szip_info->buffer);
-                szip_info->buffer = NULL;
-            }
+            free(szip_info->buffer);
+            szip_info->buffer = NULL;
         }
         HRETURN_ERROR(DFE_CENCODE, FAIL);
     }
@@ -546,17 +540,15 @@ HCIcszip_term(compinfo_t *info)
         cp          = out_buffer;
         cp++;
         INT32ENCODE(cp, szip_info->buffer_pos);
-        HDmemcpy((out_buffer + 5), szip_info->buffer, szip_info->buffer_pos);
+        memcpy((out_buffer + 5), szip_info->buffer, szip_info->buffer_pos);
         Hwrite(info->aid, (szip_info->buffer_pos + 5), out_buffer);
         szip_info->szip_dirty = SZIP_CLEAN;
-        HDfree(out_buffer);
+        free(out_buffer);
         if (szip_info->buffer_size == 0) {
-            if (szip_info->buffer != NULL) {
-                HDfree(szip_info->buffer);
-                szip_info->buffer = NULL;
-            }
+            free(szip_info->buffer);
+            szip_info->buffer = NULL;
         }
-        return (SUCCEED);
+        return SUCCEED;
     }
 
     if ((current_size > 0) && (((int32)size_out + 5) < current_size)) {
@@ -564,24 +556,22 @@ HCIcszip_term(compinfo_t *info)
         /* need to have enough data to overwrite the existing data */
         /* allocate a buffer, fill in the good data. The rest must be
             zeroes */
-        if ((ob = HDmalloc(current_size)) == NULL)
+        if ((ob = malloc(current_size)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
         *ob = 0; /* data needs to be decompressed */
         cp  = ob;
         cp++;
         INT32ENCODE(cp, size_out); /* how much to decompress  (< total size)*/
-        HDmemcpy((ob + 5), out_buffer + 5, size_out);
+        memcpy((ob + 5), out_buffer + 5, size_out);
         Hwrite(info->aid, current_size, ob); /* write out at least 'current_size' bytes */
         szip_info->szip_dirty = SZIP_CLEAN;
-        HDfree(out_buffer);
-        HDfree(ob);
+        free(out_buffer);
+        free(ob);
         if (szip_info->buffer_size == 0) {
-            if (szip_info->buffer != NULL) {
-                HDfree(szip_info->buffer);
-                szip_info->buffer = NULL;
-            }
+            free(szip_info->buffer);
+            szip_info->buffer = NULL;
         }
-        return (SUCCEED);
+        return SUCCEED;
     }
 
     /* Finally!  Write the compressed data. Byte 0 is '0' */
@@ -593,14 +583,12 @@ HCIcszip_term(compinfo_t *info)
 
     szip_info->szip_dirty = SZIP_CLEAN;
     if (szip_info->buffer_size == 0) {
-        if (szip_info->buffer != NULL) {
-            HDfree(szip_info->buffer);
-            szip_info->buffer = NULL;
-        }
+        free(szip_info->buffer);
+        szip_info->buffer = NULL;
     }
-    HDfree(out_buffer);
+    free(out_buffer);
 
-    return (SUCCEED);
+    return SUCCEED;
 
 #else  /* H4_HAVE_SZIP_ENCODER */
     (void)info;
@@ -630,7 +618,7 @@ HCIcszip_term(compinfo_t *info)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcszip_staccess(accrec_t *access_rec, int16 acc_mode)
 {
     compinfo_t *info; /* special element information */
@@ -653,7 +641,7 @@ HCIcszip_staccess(accrec_t *access_rec, int16 acc_mode)
     if (info->aid == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
 
-    return (HCIcszip_init(access_rec)); /* initialize the SZIP info */
+    return HCIcszip_init(access_rec); /* initialize the SZIP info */
 } /* end HCIcszip_staccess() */
 
 /*--------------------------------------------------------------------------
@@ -682,7 +670,7 @@ HCPcszip_stread(accrec_t *access_rec)
 
     if ((ret = HCIcszip_staccess(access_rec, DFACC_READ)) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
-    return (ret);
+    return ret;
 } /* HCPcszip_stread() */
 
 /*--------------------------------------------------------------------------
@@ -711,7 +699,7 @@ HCPcszip_stwrite(accrec_t *access_rec)
 
     if ((ret = HCIcszip_staccess(access_rec, DFACC_WRITE)) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
-    return (ret);
+    return ret;
 } /* HCPcszip_stwrite() */
 
 /*--------------------------------------------------------------------------
@@ -761,26 +749,26 @@ HCPcszip_seek(accrec_t *access_rec, int32 offset, int origin)
             HRETURN_ERROR(DFE_CINIT, FAIL);
     } /* end if */
 
-    if ((tmp_buf = (uint8 *)HDmalloc(TMP_BUF_SIZE)) == NULL) /* get tmp buffer */
+    if ((tmp_buf = (uint8 *)malloc(TMP_BUF_SIZE)) == NULL) /* get tmp buffer */
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     while (szip_info->offset + TMP_BUF_SIZE < offset) /* grab chunks */
     {
         if (HCIcszip_decode(info, TMP_BUF_SIZE, tmp_buf) == FAIL) {
-            HDfree(tmp_buf);
-            HRETURN_ERROR(DFE_CDECODE, FAIL)
-        } /* end if */
+            free(tmp_buf);
+            HRETURN_ERROR(DFE_CDECODE, FAIL);
+        }
     }
     if (szip_info->offset < offset) /* grab the last chunk */
     {
         if (HCIcszip_decode(info, offset - szip_info->offset, tmp_buf) == FAIL) {
-            HDfree(tmp_buf);
-            HRETURN_ERROR(DFE_CDECODE, FAIL)
-        } /* end if */
+            free(tmp_buf);
+            HRETURN_ERROR(DFE_CDECODE, FAIL);
+        }
     }
 
-    HDfree(tmp_buf);
-    return (SUCCEED);
+    free(tmp_buf);
+    return SUCCEED;
 } /* HCPcszip_seek() */
 
 /*--------------------------------------------------------------------------
@@ -814,7 +802,7 @@ HCPcszip_read(accrec_t *access_rec, int32 length, void *data)
     if (HCIcszip_decode(info, length, data) == FAIL)
         HRETURN_ERROR(DFE_CDECODE, FAIL);
 
-    return (length);
+    return length;
 } /* HCPcszip_read() */
 
 /*--------------------------------------------------------------------------
@@ -859,7 +847,7 @@ HCPcszip_write(accrec_t *access_rec, int32 length, const void *data)
     if (HCIcszip_encode(info, length, data) == FAIL)
         HRETURN_ERROR(DFE_CENCODE, FAIL);
 
-    return (length);
+    return length;
 #else /* ifdef H4_HAVE_SZIP_ENCODER */
     (void)access_rec;
     (void)length;
@@ -913,7 +901,7 @@ HCPcszip_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pr
     (void)paccess;
     (void)pspecial;
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* HCPcszip_inquire() */
 
 /*--------------------------------------------------------------------------
@@ -954,7 +942,7 @@ HCPcszip_endaccess(accrec_t *access_rec)
     if (Hendaccess(info->aid) == FAIL)
         HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* HCPcszip_endaccess() */
 
 /*--------------------------------------------------------------------------
@@ -962,7 +950,7 @@ HCPcszip_endaccess(accrec_t *access_rec)
     HCPsetup_szip_parms -- Initialize SZIP parameters
 
  USAGE
-    intn HCPcszip_setup_parms( comp_info *c_info, int32 nt, int32 ndims, int32 *dims, int32 *cdims)
+    intn HCPsetup_szip_parms( comp_info *c_info, int32 nt, int32 ndims, int32 *dims, int32 *cdims)
     comp_info *c_info;    IN/OUT: the szip compression params
     int32 nt;             IN: the number type of the data
     int32 ncomp;          IN: components in GR, 1 for SD
@@ -980,7 +968,7 @@ HCPcszip_endaccess(accrec_t *access_rec)
        pixels_per_scanline
        bits_per_pixel
 
-    This is called from SDsetcompress, SDsetchunk, GRsetcompress, GRsetchunk
+    This is called from GRsetup_szip_parms and SDsetup_szip_parms
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
@@ -1057,7 +1045,7 @@ HCPsetup_szip_parms(comp_info *c_info, int32 nt, int32 ncomp, int32 ndims, int32
     c_info->szip.bits_per_pixel = sz * 8;
 
 done:
-    return (ret_value);
+    return ret_value;
 #else
     /* szip not enabled */
     (void)c_info;
@@ -1067,6 +1055,45 @@ done:
     (void)dims;
     (void)cdims;
 
-    return (FAIL);
+    return FAIL;
 #endif
+}
+
+/*--------------------------------------------------------------------------
+ NAME
+    HCPrm_szip_special_bit -- Removes the special bit that signals szip revised format
+
+ USAGE
+    intn HCPrm_szip_special_bit(comp_info *c_info)
+    comp_info *c_info;    IN/OUT: the szip compression params
+
+ RETURNS
+    Returns SUCCEED
+
+ DESCRIPTION
+
+    A special bit, SZ_H4_REV_2, was introduced to indicate that the szip info
+    was stored in a new way.  This bit was set in the options_mask field
+    of the szip info struct.  As a result, the value of options_mask became
+    incorrect when the special bit was not removed from the options_mask before
+    returning to the application.
+
+    This is used in SDgetcompinfo and GRgetcompinfo.
+
+--------------------------------------------------------------------------*/
+intn
+HCPrm_szip_special_bit(comp_info *c_info)
+{
+    int sz_newway = 0; /* indicates the special bit presents in the options_mask */
+
+    if (c_info == NULL)
+        HRETURN_ERROR(DFE_INTERNAL, FAIL);
+
+    /* if the special bit presents for SZIP compression, remove it to
+       return the correct options_mask */
+    sz_newway = (int)c_info->szip.options_mask & SZ_H4_REV_2;
+    if (sz_newway)
+        c_info->szip.options_mask = c_info->szip.options_mask & ~SZ_H4_REV_2;
+
+    return SUCCEED;
 }

@@ -29,8 +29,6 @@
 #include "szlib.h"
 #endif
 
-#ifdef HDF
-
 #include "hdftest.h"
 
 #define FILE_NAME "sds_szipped.dat"
@@ -99,7 +97,7 @@ main()
     CHECK(status, FAIL, "SDsetcompress");
 
     /* Write the stored data to the 3rd data set. */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the 3rd data set. */
@@ -113,5 +111,3 @@ main()
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
 } /* main */
-
-#endif /* HDF */

@@ -33,12 +33,12 @@ fi
 if test "X-icc" = "X-$cc_vendor" -o "X-icx" = "X-$cc_vendor"; then
 
     # -diag-disable=10441 disables the icc deprecation message
-    CFLAGS="$CFLAGS -Wall -diag-disable=10441"
+    CFLAGS="$CFLAGS -std=c99 -Wall -diag-disable=10441"
     CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
 
-    DEBUG_CFLAGS="$CFLAGS -g"
+    DEBUG_CFLAGS="-g"
     DEBUG_CPPFLAGS=
-    PROD_CFLAGS="$CFLAGS -O3"
+    PROD_CFLAGS="-O3"
     PROD_CPPFLAGS=
     PROFILE_CFLAGS="-pg"
     PROFILE_CPPFLAGS=

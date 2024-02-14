@@ -125,16 +125,6 @@ if (MSVC)
   set (CMAKE_MFC_FLAG 0)
 endif ()
 
-set (MAKE_SYSTEM)
-if (CMAKE_BUILD_TOOL MATCHES "make")
-  set (MAKE_SYSTEM 1)
-endif ()
-
-set (CFG_INIT "/${CMAKE_CFG_INTDIR}")
-if (MAKE_SYSTEM)
-  set (CFG_INIT "")
-endif ()
-
 #-----------------------------------------------------------------------------
 # Compiler specific flags : Shouldn't there be compiler tests for these
 #-----------------------------------------------------------------------------
@@ -156,7 +146,9 @@ endif ()
 #-----------------------------------------------------------------------------
 # All libs/tests/examples need the main include directories
 #-----------------------------------------------------------------------------
-INCLUDE_DIRECTORIES (${ZLIB_BINARY_DIR} ${ZLIB_SOURCE_DIR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+set_directory_properties(PROPERTIES INCLUDE_DIRECTORIES 
+    "${ZLIB_BINARY_DIR};${ZLIB_SOURCE_DIR};${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
+)
 
 #============================================================================
 # zlib
@@ -257,7 +249,7 @@ TARGET_C_PROPERTIES (${ZLIB_LIB_TARGET} STATIC)
 target_link_libraries (${ZLIB_LIB_TARGET} PRIVATE ${LINK_LIBS})
 H4_SET_LIB_OPTIONS (${ZLIB_LIB_TARGET} ${ZLIB_LIB_NAME} STATIC)
 set_target_properties(${ZLIB_LIB_TARGET} PROPERTIES
-    PUBLIC_HEADER "${ZLIB_PUBLIC_HEADERS}"
+    PUBLIC_HEADER ""
     LINKER_LANGUAGE C
     INTERFACE_INCLUDE_DIRECTORIES "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
 )
@@ -295,17 +287,6 @@ if (WIN32)
     file(TO_CMAKE_PATH "$ENV{WIX}" CPACK_WIX_ROOT)
   endif ()
   find_program (WIX_EXECUTABLE candle  PATHS "${CPACK_WIX_ROOT}/bin")
-endif ()
-
-#-----------------------------------------------------------------------------
-# Add file(s) to CMake Install
-#-----------------------------------------------------------------------------
-if (NOT ZLIB_INSTALL_NO_DEVELOPMENT)
-  install (
-      FILES ${PROJECT_BINARY_DIR}/zconf.h
-      DESTINATION ${ZLIB_INSTALL_INCLUDE_DIR}
-      COMPONENT headers
-  )
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -397,20 +378,6 @@ if (NOT ZLIB_EXTERNALLY_CONFIGURED)
 endif ()
 
 #-----------------------------------------------------------------------------
-# Add Document File(s) to CMake Install
-#-----------------------------------------------------------------------------
-if (NOT ZLIB_EXTERNALLY_CONFIGURED)
-  install (
-      FILES
-          ${ZLIB_SOURCE_DIR}/FAQ
-          ${ZLIB_SOURCE_DIR}/README
-          ${ZLIB_SOURCE_DIR}/INDEX
-      DESTINATION ${ZLIB_INSTALL_DATA_DIR}
-      COMPONENT documents
-  )
-endif ()
-
-#-----------------------------------------------------------------------------
 # Check for Installation Utilities
 #-----------------------------------------------------------------------------
 if (WIN32)
@@ -423,22 +390,32 @@ if (WIN32)
 endif ()
 
 #-----------------------------------------------------------------------------
+# Configure the LICENSE.txt file for the windows binary package
+#-----------------------------------------------------------------------------
+if (WIN32)
+  configure_file (${ZLIB_SOURCE_DIR}/LICENSE ${ZLIB_BINARY_DIR}/ZLIB_LICENSE.txt @ONLY)
+else ()
+  configure_file (${ZLIB_SOURCE_DIR}/LICENSE ${ZLIB_BINARY_DIR}/ZLIB_LICENSE @ONLY)
+endif ()
+configure_file (${ZLIB_SOURCE_DIR}/README ${ZLIB_BINARY_DIR}/ZLIB_README @ONLY)
+
+#-----------------------------------------------------------------------------
 # Set the cpack variables
 #-----------------------------------------------------------------------------
 if (NOT ZLIB_EXTERNALLY_CONFIGURED)
   set (CPACK_PACKAGE_VENDOR "HDF_Group")
   set (CPACK_PACKAGE_NAME "${ZLIB_PACKAGE_NAME}")
-  if (CDASH_LOCAL)
-    set (CPACK_PACKAGE_VERSION "${ZLIB_PACKAGE_VERSION}")
-  else ()
+  if (NOT WIN32 OR ZLIB_VERS_SUBRELEASE MATCHES "^[0-9]+$")
     set (CPACK_PACKAGE_VERSION "${ZLIB_PACKAGE_VERSION_STRING}")
+  else ()
+    set (CPACK_PACKAGE_VERSION "${ZLIB_PACKAGE_VERSION}")
   endif ()
   set (CPACK_PACKAGE_VERSION_MAJOR "${ZLIB_PACKAGE_VERSION_MAJOR}")
   set (CPACK_PACKAGE_VERSION_MINOR "${ZLIB_PACKAGE_VERSION_MINOR}")
   set (CPACK_PACKAGE_VERSION_PATCH "")
-  set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/README")
-  set (CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
-  set (CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README")
+  set (CPACK_RESOURCE_FILE_LICENSE "${ZLIB_BINARY_DIR}/ZLIB_LICENSE")
+  set (CPACK_PACKAGE_DESCRIPTION_FILE "${ZLIB_BINARY_DIR}/ZLIB_README")
+  set (CPACK_RESOURCE_FILE_README "${ZLIB_BINARY_DIR}/ZLIB_README")
   set (CPACK_PACKAGE_RELOCATABLE TRUE)
   set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "zlib Installation")
   set (CPACK_PACKAGE_INSTALL_DIRECTORY "${CPACK_PACKAGE_VENDOR}/${CPACK_PACKAGE_NAME}/${CPACK_PACKAGE_VERSION}")
@@ -472,7 +449,7 @@ if (NOT ZLIB_EXTERNALLY_CONFIGURED)
     endif ()
 #WiX variables
     set (CPACK_WIX_UNINSTALL "1")
-    set (CPACK_RESOURCE_FILE_LICENSE "${JPEG_BINARY_DIR}/README")
+    set (CPACK_RESOURCE_FILE_LICENSE "${ZLIB_BINARY_DIR}/ZLIB_LICENSE.txt")
   elseif (APPLE)
     list (APPEND CPACK_GENERATOR "STGZ")
     list (APPEND CPACK_GENERATOR "DragNDrop")
@@ -523,7 +500,6 @@ if (NOT ZLIB_EXTERNALLY_CONFIGURED)
   include (InstallRequiredSystemLibraries)
 
   set (CPACK_INSTALL_CMAKE_PROJECTS "${ZLIB_BINARY_DIR};ZLIB;libraries;/")
-  set (CPACK_INSTALL_CMAKE_PROJECTS "${ZLIB_BINARY_DIR};ZLIB;headers;/")
   set (CPACK_INSTALL_CMAKE_PROJECTS "${ZLIB_BINARY_DIR};ZLIB;configinstall;/")
 
   set (CPACK_ALL_INSTALL_TYPES Full Developer User)
@@ -535,32 +511,11 @@ if (NOT ZLIB_EXTERNALLY_CONFIGURED)
 
   cpack_add_component_group(Runtime)
 
-  cpack_add_component_group(Documents
-      EXPANDED
-      DESCRIPTION "Release notes for zlib"
-  )
-
-  cpack_add_component_group(Development
-      EXPANDED
-      DESCRIPTION "All of the tools you'll need to develop applications"
-  )
-
   cpack_add_component (libraries
       DISPLAY_NAME "ZLIB Libraries"
       REQUIRED
       GROUP Runtime
       INSTALL_TYPES Full Developer User
-  )
-  cpack_add_component (headers
-      DISPLAY_NAME "ZLIB Headers"
-      DEPENDS libraries
-      GROUP Development
-      INSTALL_TYPES Full Developer
-  )
-  cpack_add_component (documents
-      DISPLAY_NAME "ZLIB Documents"
-      GROUP Documents
-      INSTALL_TYPES Full Developer
   )
   cpack_add_component (configinstall
       DISPLAY_NAME "ZLIB CMake files"

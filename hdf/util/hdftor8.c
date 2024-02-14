@@ -16,6 +16,9 @@
  * Extract images from HDF file to raster files
  */
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "hdf.h"
 
 #define PALETTE_SIZE 768 /* size of palette array */
@@ -293,7 +296,7 @@ fillStr(const char **template, char **stringOut, char *string, char specialChar)
 
     for (templateLen = 1; *(++(*template)) == specialChar; templateLen++)
         ;
-    stringLen = (int)HDstrlen(string);
+    stringLen = (int)strlen(string);
 
     for (i = templateLen - stringLen; i > 0; i--)
         *(*stringOut)++ = '0';
@@ -323,9 +326,8 @@ newSpace(int32 size)
     static char *oldSpace = NULL; /* must be static */
 
     if (size >= oldSize) {
-        if (oldSpace != NULL)
-            HDfree(oldSpace);
-        if ((oldSpace = (char *)HDmalloc((uint32)size)) == NULL) {
+        free(oldSpace);
+        if ((oldSpace = (char *)malloc((uint32)size)) == NULL) {
             puts("Out of memory. Abort.");
             exit(1);
         }

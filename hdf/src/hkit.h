@@ -18,7 +18,7 @@
 #ifndef H4_HKIT_H
 #define H4_HKIT_H
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "hfile.h"
 
 /* tag_messages is the list of tag descriptions in the system, kept as
@@ -37,7 +37,7 @@ typedef struct tag_descript_t {
  *        Please keep tag descriptions <= 30 characters - a
  *        lot of pretty-printing code depends on it.
  */
-PRIVATE const tag_descript_t tag_descriptions[] = {
+static const tag_descript_t tag_descriptions[] = {
     /* low-level set */
     {DFTAG_NULL, string(DFTAG_NULL), "No Data"},
     {DFTAG_LINKED, string(DFTAG_LINKED), "Linked Blocks Indicator"},
@@ -124,7 +124,7 @@ typedef struct nt_descript_t {
     const char *desc; /* nt description */
 } nt_descript_t;
 
-PRIVATE const nt_descript_t nt_descriptions[] = {
+static const nt_descript_t nt_descriptions[] = {
 
     /* Masks for types */
     {DFNT_NATIVE, string(DFNT_NATIVE), "native format"},

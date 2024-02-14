@@ -1,8 +1,9 @@
-HDF version 4.2.15-post0 currently under development
+HDF version 4.3.0-1 currently under development
 
-![HDF Logo](doc/img/HDF.png)
+![HDF Logo](doc/img/HDF4.png)
 
 [![master build status](https://img.shields.io/github/actions/workflow/status/HDFGroup/hdf4/main.yml?branch=master&label=master)](https://github.com/HDFGroup/hdf4/actions?query=branch%3Amaster)
+[![HDF-EOS build status](https://img.shields.io/github/actions/workflow/status/HDFGroup/hdf4/hdfeos2.yml?branch=master&label=HDF-EOS)](https://github.com/HDFGroup/hdf4/actions?query=branch%3Amaster)
 [![BSD](https://img.shields.io/badge/License-BSD-blue.svg)](https://github.com/HDFGroup/hdf4/blob/develop/COPYING)
 
 DOCUMENTATION
@@ -25,7 +26,7 @@ details for several common platforms and configurations.
 FORUM and NEWS
 --------------
 The following public forums are provided for public announcements and discussions
-of interest to the general HDF5 Community.
+of interest to the general HDF4 Community.
 
    - Homepage of the Forum
    https://forum.hdfgroup.org
@@ -53,9 +54,29 @@ new features and bug fixes, though we try to have at least one release of each
 maintenance branch per year. Future HDF4 releases indicated on this schedule
 are tentative.
 
+| Release | New Features |
+| ------- | ------------ |
+| 4.3.0 | Remove XDR, Stop deploying internal header files |
+| 4.4.0 | Drop FORTRAN 77 support, Unified library |
+
+HDF 4.3.0 (February 2024)
+* Minimum XDR functionality will be built into the library, so linking to TI-RPC, etc. will not be necessary
+* We will no longer deploy undocumented, internal header files (the public, documented HDF4 API will not be affected)
+
+The 4.2 maintenance line will be retired when 4.3.0 releases. There are no
+more planned HDF4 4.3.x releases.
+
+HDF 4.4.0 (February 2025)
+* We will drop support for FORTRAN 77 and move to modern Fortran (2003 or 2008)
+* libdf and libmfhdf will be merged into a single libhdf4 library, Fortran will be built as a separate library
+
 
 SNAPSHOTS, PREVIOUS RELEASES AND SOURCE CODE
 --------------------------------------------
+Periodically development code snapshots are provided at the following URL:
+    
+   https://github.com/HDFGroup/hdf4/releases/tag/snapshot
+
 Source packages for current and previous releases are located at:
     
    https://portal.hdfgroup.org/display/support/Download+HDF4
@@ -87,8 +108,6 @@ Source Distribution Layout
 
    mfhdf  -- The netCDF(mfhdf) part of the HDF/mfhdf distribution and
              additional HDF utilities, such as hdp, hrepack, hdfimport, etc.
-
-   man    -- An incomplete set of man page(s) for HDF.
 
    release\_notes -- 
              Installation instructions for UNIX and Windows.

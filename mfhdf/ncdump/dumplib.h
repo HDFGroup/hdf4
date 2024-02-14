@@ -8,28 +8,12 @@
 
 extern char *progname; /* for error messages */
 
-#ifndef EXIT_FAILURE
-#define EXIT_SUCCESS 0
-#define EXIT_FAILURE 1
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /* Print error message to stderr, don't exit */
-#ifndef NO_STDARG
 extern void error(const char *fmt, ...);
-#else
-extern void error();
-#endif
-
-/*
-extern void	error		(
-                                       char *fmt,
-                                       ...
-                                       );
-*/
 
 /* set position in line before lput() calls */
 extern void set_indent(int indent);

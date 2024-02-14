@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.12)
-project (HDF4_MFHDF_HDIFF)
+project (HDF4_MFHDF_HDIFF C)
 
 if (WIN32)
   set (CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:LIBCMT")
@@ -18,12 +18,12 @@ set (hdiff_SRCS
     ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff_table.c
     ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff_vs.c
     ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff_dim.c
-    ${HDF4_MFHDFSOURCE_DIR}/getopt.c
+    ${HDF4_MFHDF_UTIL_DIR}/h4getopt.c
 )
 
 if (NOT ONLY_SHARED_LIBS)
   add_executable(hdiff ${hdiff_SRCS})
-  target_include_directories(hdiff PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>")
+  target_include_directories(hdiff PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_BINARY_DIR};${HDF4_MFHDF_UTIL_DIR}")
   TARGET_C_PROPERTIES (hdiff STATIC)
   target_link_libraries(hdiff PRIVATE ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdiff")
@@ -33,7 +33,7 @@ endif ()
 
 if (BUILD_SHARED_LIBS)
   add_executable(hdiff-shared ${hdiff_SRCS})
-  target_include_directories(hdiff-shared PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>")
+  target_include_directories(hdiff-shared PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_BINARY_DIR};${HDF4_MFHDF_UTIL_DIR}")
   TARGET_C_PROPERTIES (hdiff-shared SHARED)
   target_link_libraries(hdiff-shared PRIVATE ${HDF4_MF_LIBSH_TARGET} ${HDF4_SRC_LIBSH_TARGET} ${LINK_LIBS})
   set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdiff-shared")

@@ -25,10 +25,6 @@
  *	test_getntinfo   - test Hgetntinfo
  ****************************************************************************/
 
-#ifndef MFAN_TESTER
-#define MFAN_TESTER /* to use MFAN API */
-#endif
-
 #include "hdf.h"
 #include "tdatainfo.h"
 #include "tproto.h"
@@ -64,10 +60,10 @@ typedef struct {
 intn
 alloc_info(t_hdf_datainfo_t *info, uintn info_count)
 {
-    info->offsets = (int32 *)HDmalloc(info_count * sizeof(int32));
+    info->offsets = (int32 *)malloc(info_count * sizeof(int32));
     if (info->offsets == NULL)
         return -1;
-    info->lengths = (int32 *)HDmalloc(info_count * sizeof(int32));
+    info->lengths = (int32 *)malloc(info_count * sizeof(int32));
     if (info->lengths == NULL)
         return -1;
     return 0;
@@ -77,10 +73,8 @@ void
 free_info(t_hdf_datainfo_t *info)
 {
     if (info != NULL) {
-        if (info->offsets != NULL)
-            HDfree(info->offsets);
-        if (info->lengths != NULL)
-            HDfree(info->lengths);
+        free(info->offsets);
+        free(info->lengths);
     }
 }
 
@@ -267,16 +261,6 @@ test_simple_vs()
     n_blocks = VSgetdatainfo(vsid, 0, 0, NULL, NULL);
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
     VERIFY_VOID(n_blocks, 1, "VSgetdatainfo NONSPECIAL_VS");
-
-#ifdef NOTUSED
-    /* Allocate space to record the vdata's data info */
-    if (alloc_info(&vs_info, n_blocks) == -1)
-        exit(1);
-
-    /* Record various info */
-    vs_info.n_values = 5;
-    vs_info.numtype  = DFNT_CHAR;
-#endif
 
     /* Get offset/length */
     n_blocks = VSgetdatainfo(vsid, 0, n_blocks, &offset, &length);
@@ -532,7 +516,7 @@ readnoHDF_char(const char *filename, const int32 offset, const int32 length, con
     }
 
     /* Allocate buffers for SDS' data */
-    readcbuf = (char *)HDmalloc(length * sizeof(char));
+    readcbuf = (char *)malloc(length * sizeof(char));
     if (readcbuf == NULL) {
         fprintf(stderr, "readnoHDF_char: allocation readcbuf failed\n");
         ret_value = FAIL;
@@ -542,13 +526,13 @@ readnoHDF_char(const char *filename, const int32 offset, const int32 length, con
     readlen = fread((void *)readcbuf, 1, length, fd);
     if (readlen > 0) {
         /* Compare data read without HDF4 lib against the original buffer */
-        if (HDstrncmp(readcbuf, orig_buf, readlen) != 0)
+        if (strncmp(readcbuf, orig_buf, readlen) != 0)
             fprintf(stderr,
                     "Failure: non-HDF reading got different values than written values\n   >>> written = "
                     "%s\n   >>> read = %s\n",
                     orig_buf, readcbuf);
     }
-    HDfree(readcbuf);
+    free(readcbuf);
     /* Close the file */
     if (fclose(fd) == -1) {
         fprintf(stderr, "readnoHDF_char: unable to close file %s", filename);
@@ -603,7 +587,7 @@ get_annot_datainfo(int32 an_id, ann_type annot_type, int32 num_anns, t_ann_info_
 
         /* Store annotation text for later checking against data read from
            the file without HDF4 library */
-        HDstrcpy(ann_info[ann_info_num].anntext, ann_text);
+        strcpy(ann_info[ann_info_num].anntext, ann_text);
 
         /* Terminate access to the current annotation. */
         status_n = ANendaccess(ann_id);
@@ -612,7 +596,7 @@ get_annot_datainfo(int32 an_id, ann_type annot_type, int32 num_anns, t_ann_info_
         /* Number of annotations whose datainfo is retrieved */
         ret_value++;
     }
-    return (ret_value);
+    return ret_value;
 } /* get_annot_datainfo */
 
 /****************************************************************************
@@ -914,14 +898,14 @@ test_oneblock_ri()
     /* Create and write 3 more images: RLE, Deflate, and Skipping Huffman */
 
     /* No compression info for the RLE image */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
 
     /* Create and write the RLE compressed image to this file, starting the
        data values with the letter 'r' */
     status = make_comp_image(grid, RLE_IMAGE, 'r', COMP_CODE_RLE, &cinfo);
 
     /* Set the compression info for the image with Skipping Huffman method */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     cinfo.skphuff.skp_size = SKPHUFF_SKIPSIZE;
 
     /* Create and write the Skipping Huffman compressed image to this file,
@@ -929,7 +913,7 @@ test_oneblock_ri()
     status = make_comp_image(grid, SKPHUFF_IMAGE, 's', COMP_CODE_SKPHUFF, &cinfo);
 
     /* Set the compression info for the image with Deflate method */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     cinfo.deflate.level = DEFLATE_LEVEL;
 
     /* Create and write the Deflate compressed image to this file, starting the
@@ -937,7 +921,7 @@ test_oneblock_ri()
     status = make_comp_image(grid, DEFLATE_IMAGE, 'd', COMP_CODE_DEFLATE, &cinfo);
 
     /* Set the compression method for the image with JPEG method */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     cinfo.jpeg.quality        = 100;
     cinfo.jpeg.force_baseline = 1;
 
@@ -988,7 +972,7 @@ test_oneblock_ri()
                     buffer[kk][jj] = 'n' + jj;
 
             /* Work around to pass check_image into readnoHDF_char w/o warning*/
-            HDmemcpy(check_image, buffer, WIDTH * LENGTH);
+            memcpy(check_image, buffer, WIDTH * LENGTH);
 
             /* Open the file with fopen, read data at the offset obtained and verify
                the values */
@@ -1125,9 +1109,9 @@ test_getpalinfo()
     uint8 image_buf[WIDTH][LENGTH][N_COMPS_IMG]; /* data of raster image */
     uint8 palette_buf1[N_ENTRIES][N_COMPS_PAL];  /* for LUT mostly */
     uint8 palette_buf2[N_ENTRIES][N_COMPS_PAL];
-    uint8 paletteA[N_ENTRIES * N_COMPS_PAL]; /* for IP8 mostly */
-    uint8 paletteB[N_ENTRIES * N_COMPS_PAL];
-    uint8 paletteD[N_ENTRIES * N_COMPS_PAL];
+    uint8 paletteA[N_ENTRIES * N_COMPS_PAL] = {0}; /* for IP8 mostly */
+    uint8 paletteB[N_ENTRIES * N_COMPS_PAL] = {0};
+    uint8 paletteD[N_ENTRIES * N_COMPS_PAL] = {0};
     intn  n_pals = 0; /* number of palettes, returned by DFPnpals and GRgetpalinfo */
 
     hdf_ddinfo_t *palinfo_array = NULL; /* list of palette DDs */
@@ -1222,7 +1206,7 @@ test_getpalinfo()
     edges[1]            = LENGTH;
 
     /* Write the data in the buffer into the image array */
-    status = GRwriteimage(riid, start, NULL, edges, (VOIDP)image_buf);
+    status = GRwriteimage(riid, start, NULL, edges, (void *)image_buf);
 
     /* Initialize the palette data */
     for (ii = 0; ii < N_ENTRIES; ii++) {
@@ -1235,7 +1219,7 @@ test_getpalinfo()
     palid = GRgetlutid(riid, 0);
 
     /* Write data to the palette. */
-    status = GRwritelut(palid, N_COMPS_PAL, DFNT_UINT8, interlace_mode, N_ENTRIES, (VOIDP)palette_buf1);
+    status = GRwritelut(palid, N_COMPS_PAL, DFNT_UINT8, interlace_mode, N_ENTRIES, (void *)palette_buf1);
 
     /* DFPnpals now sees another palette */
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
@@ -1249,7 +1233,7 @@ test_getpalinfo()
     riid = GRcreate(grid, IMAGE2_WITH_PAL, N_COMPS_IMG, DFNT_UINT8, interlace_mode, dim_sizes);
 
     /* Write the data in the buffer into the image array */
-    status = GRwriteimage(riid, start, NULL, edges, (VOIDP)image_buf);
+    status = GRwriteimage(riid, start, NULL, edges, (void *)image_buf);
 
     /* Get the id of the palette attached to the image IMAGE2_WITH_PAL */
     palid = GRgetlutid(riid, 0);
@@ -1262,7 +1246,7 @@ test_getpalinfo()
     }
 
     /* Write data to the palette */
-    status = GRwritelut(palid, N_COMPS_PAL, DFNT_UINT8, interlace_mode, N_ENTRIES, (VOIDP)palette_buf2);
+    status = GRwritelut(palid, N_COMPS_PAL, DFNT_UINT8, interlace_mode, N_ENTRIES, (void *)palette_buf2);
 
     /* DFPnpals now sees another palette */
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
@@ -1278,7 +1262,7 @@ test_getpalinfo()
     CHECK_VOID(riid, FAIL, "GRcreate");
 
     /* Write the data in the buffer into the image array */
-    status = GRwriteimage(riid, start, NULL, edges, (VOIDP)image_buf);
+    status = GRwriteimage(riid, start, NULL, edges, (void *)image_buf);
     CHECK_VOID(status, FAIL, "GRwriteimage");
 
     /* Terminate access to the image */
@@ -1320,7 +1304,7 @@ test_getpalinfo()
     CHECK_VOID(riid, FAIL, "GRcreate");
 
     /* Write the data in the buffer into the image array. */
-    status = GRwriteimage(riid, start, NULL, edges, (VOIDP)image_buf);
+    status = GRwriteimage(riid, start, NULL, edges, (void *)image_buf);
     CHECK_VOID(status, FAIL, "GRwriteimage");
 
     /* Get the identifier of the palette attached to the image ANO_IMAGE_NAME */
@@ -1328,7 +1312,7 @@ test_getpalinfo()
     CHECK_VOID(palid, FAIL, "GRgetlutid");
 
     /* Write data to the palette. */
-    status = GRwritelut(palid, N_COMPS_PAL, DFNT_UINT8, interlace_mode, N_ENTRIES, (VOIDP)palette_buf2);
+    status = GRwritelut(palid, N_COMPS_PAL, DFNT_UINT8, interlace_mode, N_ENTRIES, (void *)palette_buf2);
 
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
     CHECK_VOID(n_pals, FAIL, "DFPnpals");
@@ -1375,7 +1359,7 @@ test_getpalinfo()
         n_pals = GRgetpalinfo(grid, 0, NULL);
         CHECK_VOID(n_pals, FAIL, "GRgetpalinfo");
 
-        palinfo_array = (hdf_ddinfo_t *)HDmalloc(n_pals * sizeof(hdf_ddinfo_t));
+        palinfo_array = (hdf_ddinfo_t *)malloc(n_pals * sizeof(hdf_ddinfo_t));
         CHECK_ALLOC(palinfo_array, "palinfo_array", "test_getpalinfo");
 
         n_pals = GRgetpalinfo(grid, n_pals, palinfo_array);
@@ -1383,39 +1367,39 @@ test_getpalinfo()
 
         /* Read and verify data of the first palette which is pointed to by both
            data identifiers 201/ref and 301/ref */
-        /* inbuf = (uint8 *) HDmalloc(palinfo_array[0].length * sizeof(uint8));
+        /* inbuf = (uint8 *) malloc(palinfo_array[0].length * sizeof(uint8));
          */
-        inbuf = (uint8 *)HDmalloc(palinfo_array[0].length);
+        inbuf = (uint8 *)malloc(palinfo_array[0].length);
         CHECK_ALLOC(inbuf, "inbuf", "test_getpalinfo");
         status = Hgetelement(fid, palinfo_array[0].tag, palinfo_array[0].ref, inbuf);
         CHECK_VOID(status, FAIL, "Hgetelement");
 
-        if (HDmemcmp(inbuf, paletteA, palinfo_array[0].length) != 0)
+        if (memcmp(inbuf, paletteA, palinfo_array[0].length) != 0)
             fprintf(stderr,
                     "palette data pointed by tag/ref = %d/%d at offset/length = %d/%d differs from written\n",
                     palinfo_array[0].tag, palinfo_array[0].ref, palinfo_array[0].offset,
                     palinfo_array[0].length);
-        HDfree(inbuf);
+        free(inbuf);
 
         /* Read and verify data of the palette pointed to by 301/4.  This is the
            data element that was not revealed by DFPgetpal because the tag/ref pair
            201/4 is associated with a different offset */
 
-        /* inbuf = (uint8 *) HDmalloc(palinfo_array[7].length * sizeof(uint8));
+        /* inbuf = (uint8 *) malloc(palinfo_array[7].length * sizeof(uint8));
          */
-        inbuf = (uint8 *)HDmalloc(palinfo_array[7].length);
+        inbuf = (uint8 *)malloc(palinfo_array[7].length);
         CHECK_ALLOC(inbuf, "inbuf", "test_getpalinfo");
         status = Hgetelement(fid, palinfo_array[7].tag, palinfo_array[7].ref, inbuf);
         CHECK_VOID(status, FAIL, "Hgetelement");
 
-        if (HDmemcmp(inbuf, palette_buf1, palinfo_array[7].length) != 0)
+        if (memcmp(inbuf, palette_buf1, palinfo_array[7].length) != 0)
             fprintf(stderr,
                     "palette data pointed by tag/ref = %d/%d at offset/length = %d/%d differs from written\n",
                     palinfo_array[7].tag, palinfo_array[7].ref, palinfo_array[7].offset,
                     palinfo_array[7].length);
-        HDfree(inbuf);
+        free(inbuf);
 
-        HDfree(palinfo_array);
+        free(palinfo_array);
     }
 
     /* Terminate access to the GR interface and close the file */

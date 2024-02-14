@@ -1,0 +1,28 @@
+/** @page CH9_UG Palettes (DFP API)
+
+Navigate back: \ref index "Contents" / \ref UG
+<hr>
+
+\section sec_dfpapi Palettes (DFP API)
+
+\subsection subsec_dfpapi_overview
+\subsection subsec_dfpapi_model
+\subsection subsec_dfpapi_api
+\subsubsection subsubsec_dfpapi_api_lib
+\subsection subsec_dfpapi_write
+\subsubsection subsubsec_dfpapi_write_pal
+\subsubsection subsubsec_dfpapi_write_ref
+\subsection subsec_dfpapi_read
+\subsubsection subsubsec_dfpapi_read_get
+\subsubsection subsubsec_dfpapi_read_ref
+\subsubsection subsubsec_dfpapi_read_next
+\subsection subsec_dfpapi_other
+\subsubsection subsubsec_dfpapi_other_query
+\subsubsection subsubsec_dfpapi_other_num
+\subsection subsec_dfpapi_back
+
+
+<hr>
+Navigate back: \ref index "Contents" / \ref UG
+
+*/

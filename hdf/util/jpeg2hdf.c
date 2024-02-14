@@ -11,10 +11,11 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "hdf.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "hdfi.h"
 
 /* Size of the file buffer to copy through */
 #define MAX_FILE_BUF 16384
@@ -72,11 +73,11 @@ typedef enum { /* JPEG marker codes */
                M_ERROR = 0x100
 } JPEG_MARKER;
 
-PRIVATE int32 num_bytes;              /* number of bytes until the SOS code. */
-PRIVATE int32 image_width    = 0;     /* width of the JPEG image in pixels */
-PRIVATE int32 image_height   = 0;     /* height of the JPEG image in pixels */
-PRIVATE intn  num_components = 0;     /* number of components in the JPEG image */
-PRIVATE uint8 file_buf[MAX_FILE_BUF]; /* size of the buffer to copy through */
+static int32 num_bytes;              /* number of bytes until the SOS code. */
+static int32 image_width    = 0;     /* width of the JPEG image in pixels */
+static int32 image_height   = 0;     /* height of the JPEG image in pixels */
+static intn  num_components = 0;     /* number of components in the JPEG image */
+static uint8 file_buf[MAX_FILE_BUF]; /* size of the buffer to copy through */
 
 /*
  * Routines to parse JPEG markers & save away the useful info.
@@ -104,13 +105,13 @@ get_2bytes(FILE *f)
     return (a << 8) + jgetc(f);
 }
 
-static VOID
+static void
 get_sof(FILE *f)
 /* Process a SOFn marker */
 {
     short ci;
 
-    (VOID) get_2bytes(f);
+    (void)get_2bytes(f);
 
     jgetc(f); /* data_precision */
     image_height   = get_2bytes(f);
@@ -124,7 +125,7 @@ get_sof(FILE *f)
     }
 }
 
-static VOID
+static void
 skip_variable(FILE *f)
 /* Skip over an unknown or uninteresting variable-length marker */
 {
@@ -133,7 +134,7 @@ skip_variable(FILE *f)
     length = get_2bytes(f);
 
     for (length -= 2; length > 0; length--)
-        (VOID) jgetc(f);
+        (void)jgetc(f);
 }
 
 static intn
@@ -284,7 +285,7 @@ DFJPEGaddrig(int32 file_id, uint16 ref, uint16 ctag)
     return (DFdiwrite(file_id, GroupID, DFTAG_RIG, ref));
 }
 
-static VOID
+static void
 usage(void)
 {
     printf("USAGE: jpeg2hdf <input JPEG file> <output HDF file>\n");

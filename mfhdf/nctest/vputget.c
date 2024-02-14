@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "h4config.h"
+#include "hdf.h"
+
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else
@@ -18,11 +19,7 @@
 #include "val.h"
 #include "error.h"
 #include "tests.h"
-#include "alloc.h"
 #include "emalloc.h"
-#ifdef HDF
-#include "hdf.h"
-#endif
 
 #define max(A, B) ((A) > (B) ? (A) : (B))
 
@@ -55,14 +52,14 @@ test_varputget(int cdfid)
     } hc[3], tmp;                   /* test hypercubes */
     int nel[3];                     /* number of elements in hypercube */
 
-    for (iv = 0; iv < test.nvars; iv++) { /* for each var in netcdf */
+    for (iv = 0; iv < test_g->nvars; iv++) { /* for each var in netcdf */
         for (ie = 0; ie < ne; ie++)
             nel[ie] = 1; /* to compute space for hypercube values */
 
-        for (id = 0; id < test.vars[iv].ndims; id++) { /* set cubes */
+        for (id = 0; id < test_g->vars[iv].ndims; id++) { /* set cubes */
 
             /* max dimension size, 5 for records */
-            int dsize = test.dims[test.vars[iv].dims[id]].size;
+            int dsize = test_g->dims[test_g->vars[iv].dims[id]].size;
             if (dsize == NC_UNLIMITED)
                 dsize = 5;
 
@@ -84,43 +81,43 @@ test_varputget(int cdfid)
         for (ie = 0; ie < ne; ie++) { /* for each of ne points */
 
             /* allocate space for the cube of values */
-            hc[ie].vals = emalloc(nel[ie] * nctypelen(test.vars[iv].type) + 8);
-            tmp.vals    = emalloc(nel[ie] * nctypelen(test.vars[iv].type) + 8);
+            hc[ie].vals = emalloc(nel[ie] * nctypelen(test_g->vars[iv].type) + 8);
+            tmp.vals    = emalloc(nel[ie] * nctypelen(test_g->vars[iv].type) + 8);
 
             /* fill allocated space with different values of right type */
-            val_fill(test.vars[iv].type, nel[ie], hc[ie].vals);
+            val_fill(test_g->vars[iv].type, nel[ie], hc[ie].vals);
 
             if (ncvarput(cdfid, iv, hc[ie].cor, hc[ie].edg, hc[ie].vals) == -1) {
-                error("%s: ncvarput failed for point %d, variable %s", pname, ie, test.vars[iv].name);
+                error("%s: ncvarput failed for point %d, variable %s", pname, ie, test_g->vars[iv].name);
                 nerrs++;
-                errvar(&test, &test.vars[iv]);
+                errvar(test_g, &test_g->vars[iv]);
                 (void)fprintf(stderr, "  corner = (");
-                for (id = 0; id < test.vars[iv].ndims; id++)
+                for (id = 0; id < test_g->vars[iv].ndims; id++)
                     (void)fprintf(stderr, "%d%s", (int)hc[ie].cor[id],
-                                  (id < test.vars[iv].ndims - 1) ? ", " : "");
+                                  (id < test_g->vars[iv].ndims - 1) ? ", " : "");
                 (void)fprintf(stderr, ")\n");
                 (void)fprintf(stderr, "  edge = (");
-                for (id = 0; id < test.vars[iv].ndims; id++)
+                for (id = 0; id < test_g->vars[iv].ndims; id++)
                     (void)fprintf(stderr, "%d%s", (int)hc[ie].edg[id],
-                                  (id < test.vars[iv].ndims - 1) ? ", " : "");
+                                  (id < test_g->vars[iv].ndims - 1) ? ", " : "");
                 (void)fprintf(stderr, ")\n");
             }
             else {
-                add_data(&test, iv, hc[ie].cor, hc[ie].edg); /* keep test in sync */
+                add_data(test_g, iv, hc[ie].cor, hc[ie].edg); /* keep test in sync */
                 if (ncvarget(cdfid, iv, hc[ie].cor, hc[ie].edg, tmp.vals) == -1) {
-                    error("%s: ncvarget failed for point %d, variable %s", pname, ie, test.vars[iv].name);
+                    error("%s: ncvarget failed for point %d, variable %s", pname, ie, test_g->vars[iv].name);
                     nerrs++;
                 }
                 else {
-                    if (val_cmp(test.vars[iv].type, nel[ie], hc[ie].vals, tmp.vals) != 0) {
+                    if (val_cmp(test_g->vars[iv].type, nel[ie], hc[ie].vals, tmp.vals) != 0) {
                         error("%s: bad values returned from ncvarget", pname);
                         nerrs++;
-                        errvar(&test, &test.vars[iv]); /* describe var */
+                        errvar(test_g, &test_g->vars[iv]); /* describe var */
                     }
                 }
             }
-            Free((char *)hc[ie].vals);
-            Free((char *)tmp.vals);
+            free(hc[ie].vals);
+            free(tmp.vals);
         }
     }
     return nerrs;

@@ -71,7 +71,7 @@
    Hgetlibversion  -- return version info on current HDF library
    Hgetfileversion -- return version info on HDF file
    HPgetdiskblock  -- Get the offset of a free block in the file.
-   HPfreediskblock -- Release a block in a file to be re-used.
+   HPfreediskblock -- Release a block in a file to be reused.
    HDread_drec -- reads a description record
    HDcheck_empty   -- determines if an element has been written with data
    HDget_special_info -- get information about a special element
@@ -110,27 +110,31 @@
    HIread_version       -- reads a version tag from a file
    + */
 
-#include <string.h>
-
-#define HMASTER
-#include "hdf.h"
-#undef HMASTER
-#define HFILE_MASTER
-#include "hfile.h"
 #include <errno.h>
+
+#include "hdfi.h"
+#include "hfile.h"
 #include "glist.h" /* for double-linked lists, stacks and queues */
 
 /*--------------------- Locally defined Globals -----------------------------*/
 
 /* The default state of the file DD caching */
-PRIVATE intn default_cache = TRUE;
+static intn default_cache = TRUE;
 
 /* Whether we've installed the library termination function yet for this interface */
-PRIVATE intn          library_terminate = FALSE;
-PRIVATE Generic_list *cleanup_list      = NULL;
+static intn          library_terminate = FALSE;
+static Generic_list *cleanup_list      = NULL;
 
 /* Whether to install the atexit routine */
-PRIVATE intn install_atexit = TRUE;
+static intn install_atexit = TRUE;
+
+/* Pointer to the access record node free list */
+static accrec_t *accrec_free_list = NULL;
+
+#ifdef DISKBLOCK_DEBUG
+const uint8 diskblock_header[4] = {0xde, 0xad, 0xbe, 0xef};
+const uint8 diskblock_tail[4]   = {0xfe, 0xeb, 0xda, 0xed};
+#endif
 
 /*--------------------- Externally defined Globals --------------------------*/
 /* Function tables declarations.  These function tables contain pointers
@@ -168,9 +172,6 @@ functab_t functab[] = {
     {SPECIAL_EXT, &ext_funcs},
     {SPECIAL_COMP, &comp_funcs},
     {SPECIAL_CHUNKED, &chunked_funcs},
-#ifdef LATER
-    {SPECIAL_VLINKED, &vlnk_funcs},
-#endif
     {SPECIAL_BUFFERED, &buf_funcs},
     {SPECIAL_COMPRAS, &cr_funcs},
     {0, NULL} /* terminating record; add new record */
@@ -180,29 +181,27 @@ functab_t functab[] = {
 /*
  ** Declaration of private functions.
  */
-PRIVATE intn HIunlock(filerec_t *file_rec);
+static intn HIunlock(filerec_t *file_rec);
 
-PRIVATE filerec_t *HIget_filerec_node(const char *path);
+static filerec_t *HIget_filerec_node(const char *path);
 
-PRIVATE intn HIrelease_filerec_node(filerec_t *file_rec);
+static intn HIrelease_filerec_node(filerec_t *file_rec);
 
-PRIVATE intn HIvalid_magic(hdf_file_t file);
+static intn HIvalid_magic(hdf_file_t file);
 
-PRIVATE intn HIextend_file(filerec_t *file_rec);
+static intn HIextend_file(filerec_t *file_rec);
 
-PRIVATE funclist_t *HIget_function_table(accrec_t *access_rec);
+static funclist_t *HIget_function_table(accrec_t *access_rec);
 
-PRIVATE intn HIupdate_version(int32);
+static intn HIupdate_version(int32);
 
-PRIVATE intn HIread_version(int32);
+static intn HIread_version(int32);
 
-PRIVATE intn HIcheckfileversion(int32 file_id);
+static intn HIcheckfileversion(int32 file_id);
 
-PRIVATE intn HIsync(filerec_t *file_rec);
+static intn HIsync(filerec_t *file_rec);
 
-PRIVATE intn HIstart(void);
-
-/* #define TESTING */
+static intn HIstart(void);
 
 /*--------------------------------------------------------------------------
 NAME
@@ -276,7 +275,6 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
                provide for write, then try to reopen file for writing.
                This cannot be done on OS (such as the SXOS) where only one
                open is allowed per file at any time. */
-#ifndef NO_MULTI_OPEN
             hdf_file_t f;
 
             /* Sync. the file before throwing away the old file handle */
@@ -296,9 +294,6 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
             file_rec->file      = f;
             file_rec->f_cur_off = 0;
             file_rec->last_op   = H4_OP_UNKNOWN;
-#else  /* NO_MULTI_OPEN */
-            HGOTO_ERROR(DFE_DENIED, FAIL);
-#endif /* NO_MULTI_OPEN */
         }
 
         /* There is now one more open to this file. */
@@ -320,11 +315,6 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
                     HGOTO_ERROR(DFE_BADOPEN, FAIL);
             }
             else {
-#ifdef STDIO_BUF
-                /* Testing stdio buffered i/o */
-                if (HDsetvbuf(file_rec->file, my_stdio_buf, _IOFBF, MY_STDIO_BUF_SIZE) != 0)
-                    HGOTO_ERROR(DFE_BADOPEN, FAIL);
-#endif /* STDIO_BUF */
                 /* Open existing file successfully. */
                 file_rec->access = acc_mode | DFACC_READ;
 
@@ -360,11 +350,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 
             file_rec->f_cur_off = 0;
             file_rec->last_op   = H4_OP_UNKNOWN;
-#ifdef STDIO_BUF
-            /* Testing stdio buffered i/o */
-            if (HDsetvbuf(file_rec->file, my_stdio_buf, _IOFBF, MY_STDIO_BUF_SIZE) != 0)
-                HGOTO_ERROR(DFE_BADOPEN, FAIL);
-#endif /* STDIO_BUF */
+
             /* set up the newly created (and empty) file with
                the magic cookie and initial data descriptor records */
             if (HP_write(file_rec, HDFMAGIC, MAGICLEN) == FAIL)
@@ -1839,7 +1825,7 @@ DESCRIPTION
 NOTE
 
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 HIsync(filerec_t *file_rec)
 {
     intn ret_value = SUCCEED;
@@ -2058,7 +2044,7 @@ HDdont_atexit(void)
     if (install_atexit == TRUE)
         install_atexit = FALSE;
 
-    return (ret_value);
+    return ret_value;
 } /* end HDdont_atexit() */
 
 /*==========================================================================
@@ -2083,7 +2069,7 @@ Internal Routines
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 HIstart(void)
 {
     intn ret_value = SUCCEED;
@@ -2111,7 +2097,7 @@ HIstart(void)
 
     if (cleanup_list == NULL) {
         /* allocate list to hold terminateion fcns */
-        if ((cleanup_list = HDmalloc(sizeof(Generic_list))) == NULL)
+        if ((cleanup_list = malloc(sizeof(Generic_list))) == NULL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
         /* initialize list */
@@ -2120,7 +2106,7 @@ HIstart(void)
     }
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* end HIstart() */
 
 /*--------------------------------------------------------------------------
@@ -2155,7 +2141,7 @@ HPregister_term_func(hdf_termfunc_t term_func)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* end HPregister_term_func() */
 
 /*--------------------------------------------------------------------------
@@ -2196,7 +2182,7 @@ HPend(void)
     /* can't issue errors if you're free'ing the error stack. */
     HDGLdestroy_list(cleanup_list); /* clear the list of interface cleanup routines */
     /* free allocated list struct */
-    HDfree(cleanup_list);
+    free(cleanup_list);
     /* re-initialize */
     cleanup_list = NULL;
 
@@ -2221,7 +2207,7 @@ DESCRIPTION
    member of the file_rec.  This is mainly written as a function so that
    the functionality is localized.
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 HIextend_file(filerec_t *file_rec)
 {
     uint8 temp      = 0;
@@ -2248,7 +2234,7 @@ DESCRIPTION
    Set up the table of special functions for a given special element
 
 --------------------------------------------------------------------------*/
-PRIVATE funclist_t *
+static funclist_t *
 HIget_function_table(accrec_t *access_rec)
 {
     filerec_t  *file_rec; /* file record */
@@ -2324,23 +2310,23 @@ done:
 /*--------------------------------------------------------------------------
 HIunlock -- unlock a previously locked file record
 --------------------------------------------------------------------------*/
-PRIVATE int
+static int
 HIunlock(filerec_t *file_rec)
 {
     /* unlock the file record */
     file_rec->attach--;
 
-    return (SUCCEED);
+    return SUCCEED;
 }
 
 /* ------------------------- SPECIAL TAG ROUTINES ------------------------- */
 /*
    The HDF tag space is divided as follows based on the 2 highest bits:
-   00: NCSA reserved ordinary tags
-   01: NCSA reserved special tags
+   00: Library reserved ordinary tags
+   01: Library reserved special tags
    10, 11: User tags.
 
-   It is relatively cheap to operate with special tags within the NCSA
+   It is relatively cheap to operate with special tags within the library
    reserved tags range.  For users to specify special tags and their
    corresponding ordinary tag, the pair has to be added to the
    special_table.
@@ -2364,7 +2350,7 @@ typedef struct special_table_t {
     uint16 special_tag;
 } special_table_t;
 
-PRIVATE special_table_t special_table[] = {
+static special_table_t special_table[] = {
     {0x8010, 0x4000 | 0x8010}, /* dummy */
 };
 
@@ -2453,7 +2439,7 @@ done:
     returns SUCCEED (0).
  DESCRIPTION
     Copies values from #defines in hfile.h to provided buffers. This
-        information is statistically compilied into the HDF library, so
+        information is statistically compiled into the HDF library, so
         it is not necessary to have any files open to get this information.
 
 --------------------------------------------------------------------------*/
@@ -2467,7 +2453,7 @@ Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *releasev, char *string)
     *releasev = LIBVER_RELEASE;
     HIstrncpy(string, LIBVER_STRING, LIBVSTR_LEN + 1);
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* HDgetlibversion */
 
 /*--------------------------------------------------------------------------
@@ -2526,12 +2512,12 @@ done:
     Checks that the file's version is current and update it if it isn't.
 
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 HIcheckfileversion(int32 file_id)
 {
     filerec_t *file_rec;
-    uint32     lmajorv, lminorv, lrelease;
-    uint32     fmajorv, fminorv, frelease;
+    uint32     lmajorv = 0, lminorv = 0, lrelease = 0;
+    uint32     fmajorv = 0, fminorv = 0, frelease = 0;
     char       string[LIBVSTR_LEN + 1]; /* len 80+1  */
     intn       newver    = 0;
     intn       ret_value = SUCCEED;
@@ -2585,16 +2571,16 @@ done:
        absolute paths.
 
 --------------------------------------------------------------------------*/
-PRIVATE filerec_t *
+static filerec_t *
 HIget_filerec_node(const char *path)
 {
     filerec_t *ret_value = NULL;
 
     if ((ret_value = HAsearch_atom(FIDGROUP, HPcompare_filerec_path, path)) == NULL) {
-        if ((ret_value = (filerec_t *)HDcalloc(1, sizeof(filerec_t))) == NULL)
+        if ((ret_value = (filerec_t *)calloc(1, sizeof(filerec_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
 
-        if ((ret_value->path = (char *)HDstrdup(path)) == NULL)
+        if ((ret_value->path = (char *)strdup(path)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
 
         /* Initialize annotation stuff */
@@ -2624,7 +2610,7 @@ done:
         Release a file record back to the system
 
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 HIrelease_filerec_node(filerec_t *file_rec)
 {
     /* Close file if it's opened */
@@ -2632,9 +2618,8 @@ HIrelease_filerec_node(filerec_t *file_rec)
         HI_CLOSE(file_rec->file);
 
     /* Free all the components of the file record */
-    if (file_rec->path != NULL)
-        HDfree(file_rec->path);
-    HDfree(file_rec);
+    free(file_rec->path);
+    free(file_rec);
 
     return SUCCEED;
 } /* HIrelease_filerec_node */
@@ -2696,7 +2681,7 @@ HPcompare_filerec_path(const void *obj, const void *key)
         if (BADFREC(frec))
             ret_value = FALSE;
         else {
-            if (!HDstrcmp(frec->path, fname))
+            if (!strcmp(frec->path, fname))
                 ret_value = TRUE;
             else
                 ret_value = FALSE;
@@ -2739,7 +2724,7 @@ HPcompare_accrec_tagref(const void *rec1, const void *rec2)
     } /* end if */
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* HPcompare_accrec_tagref */
 
 /*--------------------------------------------------------------------------
@@ -2755,7 +2740,7 @@ done:
        file are the HDF "magic number" HDFMAGIC
 
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 HIvalid_magic(hdf_file_t file)
 {
     char b[MAGICLEN];       /* Temporary buffer */
@@ -2800,12 +2785,12 @@ HIget_access_rec(void)
         accrec_free_list = accrec_free_list->next;
     } /* end if */
     else {
-        if ((ret_value = (accrec_t *)HDmalloc(sizeof(accrec_t))) == NULL)
+        if ((ret_value = (accrec_t *)malloc(sizeof(accrec_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end else */
 
     /* Initialize to zeros */
-    HDmemset(ret_value, 0, sizeof(accrec_t));
+    memset(ret_value, 0, sizeof(accrec_t));
 
 done:
     return ret_value;
@@ -2846,7 +2831,7 @@ HIrelease_accrec_node(accrec_t *acc)
     entry.
 
 --------------------------------------------------------------------------*/
-PRIVATE int
+static int
 HIupdate_version(int32 file_id)
 {
     /* uint32 lmajorv, lminorv, lrelease; */
@@ -2874,8 +2859,8 @@ HIupdate_version(int32 file_id)
         UINT32ENCODE(p, file_rec->version.minorv);
         UINT32ENCODE(p, file_rec->version.release);
         HIstrncpy((char *)p, file_rec->version.string, LIBVSTR_LEN);
-        i = (int)HDstrlen((char *)p);
-        HDmemset(&p[i], 0, LIBVSTR_LEN - i);
+        i = (int)strlen((char *)p);
+        memset(&p[i], 0, LIBVSTR_LEN - i);
     }
 
     if (Hputelement(file_id, (uint16)DFTAG_VERSION, (uint16)1, lversion, (int32)LIBVER_LEN) == FAIL)
@@ -2904,7 +2889,7 @@ done:
     Writes to version fields of appropriate file_records[] entry.
 
 --------------------------------------------------------------------------*/
-PRIVATE int
+static int
 HIread_version(int32 file_id)
 {
     filerec_t *file_rec;
@@ -2922,7 +2907,7 @@ HIread_version(int32 file_id)
         file_rec->version.majorv  = 0;
         file_rec->version.minorv  = 0;
         file_rec->version.release = 0;
-        HDstrcpy(file_rec->version.string, "");
+        strcpy(file_rec->version.string, "");
         file_rec->version.modified = 0;
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
     }
@@ -3021,7 +3006,7 @@ done:
 
 /*-----------------------------------------------------------------------
 NAME
-   HPfreediskblock --- Release a block in a file to be re-used.
+   HPfreediskblock --- Release a block in a file to be reused.
 USAGE
    intn HPfreediskblock(file_rec, block_off, block_size)
    filerec_t *file_rec;     IN: ptr to the file record
@@ -3152,11 +3137,11 @@ Hshutdown(void)
             curr             = accrec_free_list;
             accrec_free_list = accrec_free_list->next;
             curr->next       = NULL;
-            HDfree(curr);
-        } /* end while */
-    }     /* end if */
+            free(curr);
+        }
+    }
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end Hshutdown() */
 
 /* #define HFILE_SEEKINFO */
@@ -3344,7 +3329,7 @@ HPread_drec(int32 file_id, atom_t data_id, uint8 **drec_buf)
     if (HTPinquire(data_id, &drec_tag, &drec_ref, NULL, &drec_len) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-    if ((*drec_buf = (uint8 *)HDmalloc(drec_len)) == NULL)
+    if ((*drec_buf = (uint8 *)malloc(drec_len)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* get the special info header */
@@ -3494,8 +3479,7 @@ HDcheck_empty(int32 file_id, uint16 tag, uint16 ref, intn *emptySDS /* TRUE if d
     }
 
 done:
-    if (local_ptbuf != NULL)
-        HDfree(local_ptbuf);
+    free(local_ptbuf);
 
     return ret_value;
 } /* end HDcheck_empty() */
@@ -3532,143 +3516,67 @@ Hgetntinfo(const int32 numbertype, hdf_ntinfo_t *nt_info)
 
     /* Get byte order string */
     if ((DFNT_LITEND & numbertype) > 0) {
-        HDstrcpy(nt_info->byte_order, "littleEndian");
+        strcpy(nt_info->byte_order, "littleEndian");
     }
     else
-        HDstrcpy(nt_info->byte_order, "bigEndian");
+        strcpy(nt_info->byte_order, "bigEndian");
 
     /* Get type name string; must mask native and little-endian to make
        sure we get standard type */
     switch ((numbertype & ~DFNT_NATIVE) & ~DFNT_LITEND) {
         case DFNT_UCHAR8:
-            HDstrcpy(nt_info->type_name, "uchar8");
+            strcpy(nt_info->type_name, "uchar8");
             break;
         case DFNT_CHAR8:
-            HDstrcpy(nt_info->type_name, "char8");
+            strcpy(nt_info->type_name, "char8");
             break;
         case DFNT_FLOAT32:
-            HDstrcpy(nt_info->type_name, "float32");
+            strcpy(nt_info->type_name, "float32");
             break;
         case DFNT_FLOAT64:
-            HDstrcpy(nt_info->type_name, "float64");
+            strcpy(nt_info->type_name, "float64");
             break;
         case DFNT_FLOAT128:
-            HDstrcpy(nt_info->type_name, "float128");
+            strcpy(nt_info->type_name, "float128");
             break;
         case DFNT_INT8:
-            HDstrcpy(nt_info->type_name, "int8");
+            strcpy(nt_info->type_name, "int8");
             break;
         case DFNT_UINT8:
-            HDstrcpy(nt_info->type_name, "uint8");
+            strcpy(nt_info->type_name, "uint8");
             break;
         case DFNT_INT16:
-            HDstrcpy(nt_info->type_name, "int16");
+            strcpy(nt_info->type_name, "int16");
             break;
         case DFNT_UINT16:
-            HDstrcpy(nt_info->type_name, "uint16");
+            strcpy(nt_info->type_name, "uint16");
             break;
         case DFNT_INT32:
-            HDstrcpy(nt_info->type_name, "int32");
+            strcpy(nt_info->type_name, "int32");
             break;
         case DFNT_UINT32:
-            HDstrcpy(nt_info->type_name, "uint32");
+            strcpy(nt_info->type_name, "uint32");
             break;
         case DFNT_INT64:
-            HDstrcpy(nt_info->type_name, "int64");
+            strcpy(nt_info->type_name, "int64");
             break;
         case DFNT_UINT64:
-            HDstrcpy(nt_info->type_name, "uint64");
+            strcpy(nt_info->type_name, "uint64");
             break;
         case DFNT_INT128:
-            HDstrcpy(nt_info->type_name, "int128");
+            strcpy(nt_info->type_name, "int128");
             break;
         case DFNT_UINT128:
-            HDstrcpy(nt_info->type_name, "uint128");
+            strcpy(nt_info->type_name, "uint128");
             break;
         case DFNT_CHAR16:
-            HDstrcpy(nt_info->type_name, "char16");
+            strcpy(nt_info->type_name, "char16");
             break;
         case DFNT_UCHAR16:
-            HDstrcpy(nt_info->type_name, "uchar16");
+            strcpy(nt_info->type_name, "uchar16");
             break;
         default:
             return FAIL;
     } /* end switch */
     return SUCCEED;
 } /* Hgetntinfo */
-
-#ifdef HAVE_FMPOOL
-/******************************************************************************
-NAME
-     Hmpset - set pagesize and maximum number of pages to cache on next open/create
-
-DESCRIPTION
-     Set the pagesize and maximum number of pages to cache on the next
-     open/create of a file. A pagesize that is a power of 2 is recommended.
-
-     The values set here only affect the next open/creation of a file and
-     do not change a particular file's paging behaviour after it has been
-     opened or created. This maybe changed in a later release.
-
-     Use flags argument of 'MP_PAGEALL' if the whole file is to be cached
-     in memory otherwise pass in zero.
-
-RETURNS
-     Returns SUCCEED if successful and FAIL otherwise
-
-NOTE
-     This calls the real routine MPset().
-     Currently 'maxcache' has to be greater than 1. Maybe use special
-     case of 0 to specify you want to turn page buffering off or use
-     the flags argument.
-
-******************************************************************************/
-int
-Hmpset(int pagesize, /* IN: pagesize to use for next open/create */
-       int maxcache, /* IN: max number of pages to cache */
-       int flags     /* IN: flags = 0, MP_PAGEALL */
-)
-{
-    int ret_value = SUCCEED;
-
-    /* call the real routine */
-    ret_value = MPset(pagesize, maxcache, flags);
-
-done:
-    return ret_value;
-}
-
-/******************************************************************************
-NAME
-     Hmpget - get last pagesize and max number of pages cached for open/create
-
-DESCRIPTION
-     This gets the last pagesize and maximum number of pages cached for
-     the last open/create of a file.
-
-RETURNS
-     Returns SUCCEED.
-
-NOTES
-     This routine calls the real routine MPget().
-******************************************************************************/
-int
-Hmpget(int *pagesize, /* OUT: pagesize to used in last open/create */
-       int *maxcache, /* OUT: max number of pages cached in last open/create */
-       int  flags     /* IN: */
-)
-{
-    int psize     = 0;
-    int mcache    = 0;
-    int ret_value = SUCCEED;
-
-    /* call the real routine */
-    ret_value = MPget(&psize, &mcache, flags);
-    *pagesize = psize;
-    *maxcache = mcache;
-
-done:
-    return ret_value;
-} /* Hmpget() */
-
-#endif /* HAVE_FMPOOL */

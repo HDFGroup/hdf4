@@ -17,8 +17,8 @@
  Part of the HDF Vset interface.
 
  VDATAs are handled by routines in here.
- PRIVATE functions manipulate vsdir and are used only within this file.
- PRIVATE data structures in here pertain to vdatas in vsdir only.
+ static functions manipulate vsdir and are used only within this file.
+ static data structures in here pertain to vdatas in vsdir only.
 
 
 LOCAL ROUTINES
@@ -58,15 +58,15 @@ EXPORTED ROUTINES
 
 *************************************************************************/
 
-#define VSET_INTERFACE
-#include "hdf.h"
+#include "hdfi.h"
+#include "vgint.h"
 
 /* Private Function Prototypes */
-PRIVATE intn vunpackvs(VDATA *vs, uint8 buf[], int32 len);
+static intn vunpackvs(VDATA *vs, uint8 buf[], int32 len);
 
 /* Temporary buffer for I/O */
-PRIVATE uint32 Vhbufsize = 0;
-PRIVATE uint8 *Vhbuf     = NULL;
+static uint32 Vhbufsize = 0;
+static uint8 *Vhbuf     = NULL;
 
 /* Pointers to the VDATA & vsinstance node free lists */
 static VDATA        *vdata_free_list      = NULL;
@@ -100,15 +100,15 @@ VSIget_vdata_node(void)
     }
     else /* allocate a new node */
     {
-        if ((ret_value = (VDATA *)HDmalloc(sizeof(VDATA))) == NULL)
+        if ((ret_value = (VDATA *)malloc(sizeof(VDATA))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end else */
 
     /* Initialize to zeros */
-    HDmemset(ret_value, 0, sizeof(VDATA));
+    memset(ret_value, 0, sizeof(VDATA));
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* VSIget_vdata_node */
 
 /******************************************************************************
@@ -156,15 +156,15 @@ VSIget_vsinstance_node(void)
     }
     else /* allocate a new vsinstance record */
     {
-        if ((ret_value = (vsinstance_t *)HDmalloc(sizeof(vsinstance_t))) == NULL)
+        if ((ret_value = (vsinstance_t *)malloc(sizeof(vsinstance_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end else */
 
     /* Initialize to zeros */
-    HDmemset(ret_value, 0, sizeof(vsinstance_t));
+    memset(ret_value, 0, sizeof(vsinstance_t));
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* VSIget_vsinstance_node */
 
 /******************************************************************************
@@ -213,9 +213,9 @@ VSPhshutdown(void)
             v               = vdata_free_list;
             vdata_free_list = vdata_free_list->next;
             v->next         = NULL;
-            HDfree(v);
-        } /* end while */
-    }     /* end if */
+            free(v);
+        }
+    }
 
     /* Release the vsinstance free-list if it exists */
     if (vsinstance_free_list != NULL) {
@@ -223,16 +223,16 @@ VSPhshutdown(void)
             vs                   = vsinstance_free_list;
             vsinstance_free_list = vsinstance_free_list->next;
             vs->next             = NULL;
-            HDfree(vs);
-        } /* end while */
-    }     /* end if */
+            free(vs);
+        }
+    }
 
     /* free buffer */
     if (Vhbuf != NULL) {
-        HDfree(Vhbuf);
+        free(Vhbuf);
         Vhbuf     = NULL;
         Vhbufsize = 0;
-    } /* end if */
+    }
 
     /* free the parsing buffer */
     ret_value = VPparse_shutdown();
@@ -296,7 +296,7 @@ int32
 vexistvs(HFILEID f, /* IN: file handle */
          uint16  vsid /* IN: vdata id i.e. ref */)
 {
-    return ((NULL == vsinst(f, vsid)) ? FAIL : TRUE);
+    return (NULL == vsinst(f, vsid)) ? FAIL : TRUE;
 } /* vexistvs */
 
 /* ------------------------------------------------------------------ */
@@ -326,7 +326,7 @@ CONTENTS of VS stored in HDF file with tag VSDESCTAG:
 
 /* ------------------------------- vpackvs ----------------------------------- */
 /*
-   The following 2 PRIVATE routines, vpackvs and vunpackvs, packs and unpacks
+   The following 2 static routines, vpackvs and vunpackvs, packs and unpacks
    a VDATA structure into a compact form suitable for storing in the HDF file.
  */
 
@@ -400,26 +400,26 @@ vpackvs(VDATA *vs,    /* IN/OUT: */
 
         /* save each field length and name - omit the null */
         for (i = 0; i < vs->wlist.n; i++) {
-            slen = HDstrlen(vs->wlist.name[i]);
+            slen = strlen(vs->wlist.name[i]);
             INT16ENCODE(bb, slen);
 
-            HDstrcpy((char *)bb, vs->wlist.name[i]);
+            strcpy((char *)bb, vs->wlist.name[i]);
             bb += slen;
         }
     } /* end if */
 
     /* save the vsnamelen and vsname - omit the null */
-    slen = HDstrlen(vs->vsname);
+    slen = strlen(vs->vsname);
     INT16ENCODE(bb, slen);
 
-    HDstrcpy((char *)bb, vs->vsname);
+    strcpy((char *)bb, vs->vsname);
     bb += slen;
 
     /* save the vsclasslen and vsclass- omit the null */
-    slen = HDstrlen(vs->vsclass);
+    slen = strlen(vs->vsclass);
     INT16ENCODE(bb, slen);
 
-    HDstrcpy((char *)bb, vs->vsclass);
+    strcpy((char *)bb, vs->vsclass);
     bb += slen;
 
     /* save the expansion tag/ref pair */
@@ -471,7 +471,7 @@ RETURNS
    SUCCEED / FAIL
 
 *******************************************************************************/
-PRIVATE intn
+static intn
 vunpackvs(VDATA *vs,    /* IN/OUT: */
           uint8  buf[], /* IN: */
           int32  len /* IN: */)
@@ -514,8 +514,16 @@ vunpackvs(VDATA *vs,    /* IN/OUT: */
         INT16DECODE(bb, int16var);
         vs->wlist.n = (intn)int16var;
 
-        if (vs->wlist.n == 0) { /* Special case for Vdata with 0 fields defined */
-            /* Initialize buffer to NULL & carry over to other arrays */
+        if (vs->wlist.n < 0) {
+            /* Negative numbers are an error and would cause enormous buffers
+             * to be allocated.
+             */
+            HGOTO_ERROR(DFE_NOSPACE, FAIL);
+        }
+        else if (vs->wlist.n == 0) {
+            /* Special case for Vdata with 0 fields defined
+             * Initialize buffer to NULL & carry over to other arrays
+             */
             vs->wlist.bptr  = NULL;
             vs->wlist.type  = NULL;
             vs->wlist.off   = NULL;
@@ -525,9 +533,10 @@ vunpackvs(VDATA *vs,    /* IN/OUT: */
 
             /* Initialize the array of pointers to field names to NULL also */
             vs->wlist.name = NULL;
-        }      /* end if */
-        else { /* Allocate buffer to hold all the int16/uint16 arrays */
-            if (NULL == (vs->wlist.bptr = HDmalloc(sizeof(uint16) * (size_t)(vs->wlist.n * 5))))
+        }
+        else {
+            /* Allocate buffer to hold all the int16/uint16 arrays */
+            if (NULL == (vs->wlist.bptr = malloc(sizeof(uint16) * (size_t)(vs->wlist.n * 5))))
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* Use buffer to support the other arrays */
@@ -550,12 +559,12 @@ vunpackvs(VDATA *vs,    /* IN/OUT: */
                 UINT16DECODE(bb, vs->wlist.order[i]);
 
             /* retrieve the field names (and each field name's length)  */
-            if (NULL == (vs->wlist.name = HDmalloc(sizeof(char *) * (size_t)vs->wlist.n)))
+            if (NULL == (vs->wlist.name = malloc(sizeof(char *) * (size_t)vs->wlist.n)))
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             for (i = 0; i < vs->wlist.n; i++) {
                 INT16DECODE(bb, int16var); /* this gives the length */
-                if (NULL == (vs->wlist.name[i] = HDmalloc((int16var + 1) * sizeof(char))))
+                if (NULL == (vs->wlist.name[i] = malloc((int16var + 1) * sizeof(char))))
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 HIstrncpy(vs->wlist.name[i], (char *)bb, int16var + 1);
@@ -595,7 +604,7 @@ vunpackvs(VDATA *vs,    /* IN/OUT: */
             if (vs->flags & VS_ATTR_SET) { /* get attr info */
                 INT32DECODE(bb, vs->nattrs);
 
-                if (NULL == (vs->alist = (vs_attr_t *)HDmalloc(vs->nattrs * sizeof(vs_attr_t))))
+                if (NULL == (vs->alist = (vs_attr_t *)malloc(vs->nattrs * sizeof(vs_attr_t))))
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 for (i = 0; i < vs->nattrs; i++) {
@@ -647,23 +656,21 @@ vsdestroynode(void *n /* IN: Node in TBBT-tree */)
         if (vs != NULL) {
             /* Free the dynamically allocated VData fields */
             for (i = 0; i < vs->wlist.n; i++)
-                HDfree(vs->wlist.name[i]);
+                free(vs->wlist.name[i]);
 
-            HDfree(vs->wlist.name);
-            HDfree(vs->wlist.bptr);
+            free(vs->wlist.name);
+            free(vs->wlist.bptr);
 
-            if (vs->rlist.item != NULL)
-                HDfree(vs->rlist.item);
+            free(vs->rlist.item);
 
-            if (vs->alist != NULL)
-                HDfree(vs->alist);
+            free(vs->alist);
 
             VSIrelease_vdata_node(vs);
-        } /* end if */
+        }
 
         /* release this instance to the free list ? */
         VSIrelease_vsinstance_node((vsinstance_t *)n);
-    } /* end if 'n' */
+    }
 
 } /* vsdestroynode */
 
@@ -704,11 +711,11 @@ VSPgetinfo(HFILEID f, /* IN: file handle */
         Vhbufsize = vh_length;
 
         if (Vhbuf != NULL)
-            HDfree(Vhbuf);
+            free(Vhbuf);
 
-        if ((Vhbuf = (uint8 *)HDmalloc(Vhbufsize)) == NULL)
+        if ((Vhbuf = (uint8 *)malloc(Vhbufsize)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
-    } /* end if */
+    }
 
     /* get Vdata header from file */
     if (Hgetelement(f, DFTAG_VH, ref, Vhbuf) == FAIL)
@@ -1021,17 +1028,16 @@ VSdetach(int32 vkey /* IN: vdata key? */)
 
             if (need > Vhbufsize) {
                 Vhbufsize = need;
-                if (Vhbuf)
-                    HDfree(Vhbuf);
+                free(Vhbuf);
 
-                if ((Vhbuf = HDmalloc(Vhbufsize)) == NULL)
+                if ((Vhbuf = malloc(Vhbufsize)) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
-            } /* end if */
+            }
 
             if (FAIL == vpackvs(vs, Vhbuf, &vspacksize))
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-            /* if VH size changed we need to re-use the tag/ref
+            /* if VH size changed we need to reuse the tag/ref
              * for new header. This will cause the pointer to the
              * original vdata header to be lost but this is okay.  */
             if (vs->new_h_sz) {
@@ -1061,10 +1067,10 @@ VSdetach(int32 vkey /* IN: vdata key? */)
 
         /* remove all defined symbols */
         for (i = 0; i < vs->nusym; i++)
-            HDfree(vs->usym[i].name);
+            free(vs->usym[i].name);
 
         if (vs->usym != NULL)
-            HDfree(vs->usym); /* free the actual array */
+            free(vs->usym); /* free the actual array */
 
         vs->nusym = 0;
         vs->usym  = NULL;
@@ -1168,7 +1174,7 @@ VSgetid(HFILEID f, /* IN: file handle */
         if (vf->vstree == NULL)
             HGOTO_DONE(FAIL);
 
-        if ((t = (void **)tbbtfirst((TBBT_NODE *)*(vf->vstree))) == NULL)
+        if ((t = (void **)tbbtfirst(vf->vstree->root)) == NULL)
             HGOTO_DONE(FAIL);
 
         /* we assume 't' is valid at this point */

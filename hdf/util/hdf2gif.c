@@ -12,12 +12,9 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "gif.h"
-
-#define HDFNAME     "laser.hdf"
-#define VGROUPCLASS "RIG0.0"
-#define GIFNAME     "temp.gif"
 
 extern int hdfWriteGIF(FILE *fp, BYTE *pic, int ptype, int w, int h, BYTE *rmap, BYTE *gmap, BYTE *bmap,
                        BYTE *pc2ncmap, int numcols, int colorstyle, int BitsPerPixel);
@@ -145,7 +142,7 @@ main(int argc, char **argv)
 
         if (has_local_palette) {
             status = GRgetlutinfo(pal_id, &ncomp, &data_type, &interlace_mode, &num_entries);
-            status = GRreadlut(pal_id, (VOIDP)&GlobalPalette);
+            status = GRreadlut(pal_id, (void *)&GlobalPalette);
         }
 
         status = GRgetiminfo(ri_id, gr_name, &ncomp, &data_type, &interlace_mode, dim_sizes, &num_attrs);

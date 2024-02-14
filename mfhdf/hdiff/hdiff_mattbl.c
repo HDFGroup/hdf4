@@ -13,6 +13,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "hdiff_mattbl.h"
 
@@ -43,7 +44,7 @@ match_table_add(match_table_t *table, unsigned *flags, char *path, int32 tag1, i
 
     if (table->nobjs == table->size) {
         table->size *= 2;
-        table->objs = (match_info_t *)HDrealloc(table->objs, table->size * sizeof(match_info_t));
+        table->objs = (match_info_t *)realloc(table->objs, table->size * sizeof(match_info_t));
 
         for (i = table->nobjs; i < table->size; i++) {
             table->objs[i].tag1 = table->objs[i].ref1 = -1;
@@ -57,7 +58,7 @@ match_table_add(match_table_t *table, unsigned *flags, char *path, int32 tag1, i
     table->objs[i].ref1 = ref1;
     table->objs[i].tag2 = tag2;
     table->objs[i].ref2 = ref2;
-    HDstrcpy(table->objs[i].obj_name, path);
+    strcpy(table->objs[i].obj_name, path);
     table->objs[i].flags[0] = flags[0];
     table->objs[i].flags[1] = flags[1];
 }
@@ -80,11 +81,11 @@ void
 match_table_init(match_table_t **tbl)
 {
     uint32         i;
-    match_table_t *table = (match_table_t *)HDmalloc(sizeof(match_table_t));
+    match_table_t *table = (match_table_t *)malloc(sizeof(match_table_t));
 
     table->size  = 20;
     table->nobjs = 0;
-    table->objs  = (match_info_t *)HDmalloc(table->size * sizeof(match_info_t));
+    table->objs  = (match_info_t *)malloc(table->size * sizeof(match_info_t));
 
     for (i = 0; i < table->size; i++) {
         table->objs[i].tag1 = table->objs[i].ref1 = -1;
@@ -112,6 +113,6 @@ match_table_init(match_table_t **tbl)
 void
 match_table_free(match_table_t *table)
 {
-    HDfree(table->objs);
-    HDfree(table);
+    free(table->objs);
+    free(table);
 }

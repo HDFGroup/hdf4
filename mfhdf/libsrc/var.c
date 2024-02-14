@@ -14,12 +14,7 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <string.h>
 #include "local_nc.h"
-
-#ifdef NOT_USED
-static int ncvarcpy(int, int, int);
-#endif /* NOT_USED */
 
 NC_var *
 NC_new_var(const char *name, nc_type type, int ndims, const int *dims)
@@ -46,7 +41,6 @@ NC_new_var(const char *name, nc_type type, int ndims, const int *dims)
     ret->szof   = NC_typelen(type);
     ret->begin  = 0;
 
-#ifdef HDF
     ret->vgid        = 0;
     ret->data_ref    = 0;
     ret->data_tag    = DATA_TAG; /* Assume normal data unless set   */
@@ -61,7 +55,6 @@ NC_new_var(const char *name, nc_type type, int ndims, const int *dims)
     ret->is_ragged   = FALSE;
     ret->created     = FALSE; /* This is set in SDcreate() if it's a new SDS */
     ret->set_length  = FALSE; /* This is set in SDwritedata() if the data needs its length set */
-#endif
 
     return (ret);
 alloc_err:
@@ -107,11 +100,8 @@ done:
  * 'compile' the shape and len of a variable
  *  return -1 on error
  */
-#ifndef HDF
-static
-#endif
-    int
-    NC_var_shape(NC_var *var, NC_array *dims)
+int
+NC_var_shape(NC_var *var, NC_array *dims)
 {
     unsigned long *shape, *dsizes;
     int            ii;
@@ -120,11 +110,7 @@ static
     NC_dim       **dp;
     size_t         xszof;
 
-#ifdef HDF
     xszof = var->HDFsize;
-#else
-    xszof = NC_xtypelen(var->type);
-#endif
 
     /* Fixed memory leaks reported in bug# 418. BMR - Apr 8, 01 */
 
@@ -202,10 +188,8 @@ static
     }
 
 out:
-/* don't round-up for HDF-encoded files */
-#ifdef HDF
+    /* don't round-up for HDF-encoded files */
     if (var->cdf->file_type != HDF_FILE)
-#endif
 
         switch (var->type) {
             case NC_BYTE:
@@ -286,17 +270,9 @@ ncvardef(int cdfid, const char *name, nc_type type, int ndims, const int dims[])
         if (NC_incr_array(handle->vars, (Void *)var) == NULL)
             return (-1);
     }
-#ifdef HDF
     (*var)->cdf = handle; /* for NC_var_shape */
-#endif
     if (NC_var_shape(*var, handle->dims) != -1) {
-#ifdef HDF
-#ifdef NOT_YET
-        (*var)->ndg_ref = Htagnewref(handle->hdf_file, DFTAG_NDG);
-#else  /* NOT_YET */
         (*var)->ndg_ref = Hnewref(handle->hdf_file);
-#endif /* NOT_YET */
-#endif
         return (handle->vars->count - 1);
     }
     /* unwind */
@@ -323,9 +299,7 @@ NC_computeshapes(NC *handle)
         return (0);
     vbase = (NC_var **)handle->vars->values;
     for (vpp = vbase; vpp < &vbase[handle->vars->count]; vpp++) {
-#ifdef HDF
         (*vpp)->cdf = handle;
-#endif
 
         if (NC_var_shape(*vpp, handle->dims) == -1)
             return (-1);
@@ -425,11 +399,7 @@ ncvarinq(int cdfid, int varid, char *name, nc_type *typep, int *ndimsp, int dims
         return (-1);
 
     if (name != NULL) {
-#ifdef HDF
         (void)memcpy(name, vp->name->values, vp->name->len);
-#else
-        (void)strncpy(name, vp->name->values, vp->name->len);
-#endif
         name[vp->name->len] = 0;
     }
 
@@ -519,182 +489,6 @@ ncvarrename(int cdfid, int varid, const char *newname)
     return (varid);
 }
 
-#ifdef NOT_USED
-/*
- * Given valid handle, name string, and length of the name, get a var.
- *  else NULL on error
- */
-static NC_var *
-NC_hvarid(NC *handle, const char *name, int namelen)
-{
-    NC_var **dp;
-    int      ii;
-    if (handle->vars == NULL)
-        return NULL;
-    dp = (NC_var **)handle->vars->values;
-    for (ii = 0; ii < handle->vars->count; ii++, dp++) {
-        if (namelen == (*dp)->name->len && strncmp(name, (*dp)->name->values, namelen) == 0) {
-            return (*dp); /* normal exit */
-        }
-    }
-    return NULL; /* not found */
-}
-
-/*
- * Copy the values of a variable from an input netCDF to an output netCDF.
- * Input and output var assumed to have the same shape.
- * return -1 on error.
- *
- * This function added to support the netcdf operators. The interface
- * is not documented. We plan to supersede it with something more
- * general in a future release.
- */
-static int
-ncvarcpy(int incdf, int varid, int outcdf)
-{
-    NC     *inhandle, *outhandle;
-    NC_var *invp, *outvp;
-    int     ndims;
-    int     ii;
-
-    cdf_routine_name = "ncvarcpy";
-
-    inhandle = NC_check_id(incdf);
-    if (inhandle == NULL)
-        return (-1);
-
-    if (inhandle->flags & NC_INDEF) {
-        NCadvise(NC_EINDEFINE, "%s in define mode.", inhandle->path);
-        return (-1);
-    }
-
-    outhandle = NC_check_id(outcdf);
-    if (outhandle == NULL)
-        return (-1);
-
-    if (!(outhandle->flags & NC_RDWR)) {
-        /* output file isn't writable */
-        NCadvise(NC_EPERM, "%s is not writable", outhandle->path);
-        return -1;
-    }
-
-    if (outhandle->flags & NC_INDEF) {
-        NCadvise(NC_EINDEFINE, "%s in define mode.", outhandle->path);
-        return (-1);
-    }
-
-    /* find the variable in the input cdf */
-    if (inhandle->vars == NULL || (invp = NC_hlookupvar(inhandle, varid)) == NULL) {
-        NCadvise(NC_ENOTVAR, "%s: varid %d not found", inhandle->path, varid);
-        return (-1);
-    }
-
-    /* find the variable in the output cdf */
-    outvp = NC_hvarid(outhandle, invp->name->values, invp->name->len);
-    if (outvp == NULL) {
-        NCadvise(NC_ENOTVAR, "%s: variable %s not found", outhandle->path, invp->name->values);
-        return (-1);
-    }
-
-    /* can we even attempt to copy without conversion? */
-    if (outvp->type != invp->type) {
-        NCadvise(NC_EINVAL, "Input and output variables must be same type");
-        return -1;
-    }
-
-    ndims = invp->assoc->count;
-
-    if (ndims == 0) {
-        /* special case scalar vars */
-        if (outvp->assoc->count != 0) {
-            NCadvise(NC_EINVAL, "Input and output variables must be same shape");
-            return -1;
-        }
-    }
-    else {
-        long end[H4_MAX_VAR_DIMS];
-        memcpy(end, invp->shape, ndims * sizeof(unsigned long));
-        if (IS_RECVAR(invp)) {
-            /* assert(*end == 0) ; */
-            *end = inhandle->numrecs;
-        }
-
-        for (ii = 0; ii < ndims; ii++)
-            end[ii]--;
-        /* at this point, end is the largest valid coord of invp */
-        if (!NCcoordck(outhandle, outvp, end)) {
-            NCadvise(NC_EINVAL, "Input and output variables not conformable");
-            return -1;
-        }
-        /* Fill is side effect of NCcoordck */
-    }
-
-    /* four cases, really not necessary here, left for future generalization */
-    if (IS_RECVAR(invp)) {
-        if (IS_RECVAR(outvp)) {
-            long outoff, inoff;
-            /* both input and output are rec vars */
-            /* check that input fits in output. (per record) */
-            if (invp->len > outvp->len) {
-                NCadvise(NC_EINVALCOORDS, "Output var smaller than input");
-                return -1;
-            }
-            /* copy the data */
-            outoff = outhandle->begin_rec + outvp->begin;
-            inoff  = inhandle->begin_rec + invp->begin;
-            outhandle->flags |= NC_NDIRTY;
-            for (ii = 0; ii < inhandle->numrecs; ii++) {
-                if (!xdr_setpos(outhandle->xdrs, outoff)) {
-                    NCadvise(NC_EXDR, "%s: xdr_setpos", outhandle->path);
-                    return -1;
-                }
-                if (!xdr_setpos(inhandle->xdrs, inoff)) {
-                    NCadvise(NC_EXDR, "%s: xdr_setpos", inhandle->path);
-                    return -1;
-                }
-                /* copy data */
-                if (!NC_dcpy(outhandle->xdrs, inhandle->xdrs, invp->len))
-                    return (-1);
-                outoff += outhandle->recsize;
-                inoff += inhandle->recsize;
-            }
-        }
-        else {
-            NCadvise(NC_EINVAL, "Input and output variables must be same shape");
-            return -1;
-        }
-    }
-    else {
-        if (IS_RECVAR(outvp)) {
-            /* input not rec var, output is rec var */
-            NCadvise(NC_EINVAL, "Input and output variables must be same shape");
-            return -1;
-        }
-        else {
-            /* both input and output are not rec vars */
-            /* check that input fits in output. */
-            if (invp->len > outvp->len) {
-                NCadvise(NC_EINVALCOORDS, "Output var smaller than input");
-                return -1;
-            }
-            if (!xdr_setpos(outhandle->xdrs, outvp->begin)) {
-                NCadvise(NC_EXDR, "%s: xdr_setpos", outhandle->path);
-                return -1;
-            }
-            if (!xdr_setpos(inhandle->xdrs, invp->begin)) {
-                NCadvise(NC_EXDR, "%s: xdr_setpos", inhandle->path);
-                return -1;
-            }
-            /* copy data */
-            outhandle->flags |= NC_NDIRTY;
-            if (!NC_dcpy(outhandle->xdrs, inhandle->xdrs, invp->len))
-                return (-1);
-        }
-    }
-    return 0;
-}
-#endif /* NOT_USED */
-
 bool_t
 xdr_NC_var(XDR *xdrs, NC_var **vpp)
 {
@@ -722,12 +516,12 @@ xdr_NC_var(XDR *xdrs, NC_var **vpp)
     if (!xdr_NC_array(xdrs, &((*vpp)->attrs)))
         return (FALSE);
 
-    if (!xdr_int(xdrs, &temp_type)) {
+    if (!h4_xdr_int(xdrs, &temp_type)) {
         return (FALSE);
     }
     (*vpp)->type = (nc_type)temp_type;
 
-    if (!xdr_u_int(xdrs, &temp_len)) {
+    if (!h4_xdr_u_int(xdrs, &temp_len)) {
         return (FALSE);
     }
     (*vpp)->len = (unsigned long)temp_len;
@@ -737,12 +531,10 @@ xdr_NC_var(XDR *xdrs, NC_var **vpp)
 
     if (xdrs->x_op == XDR_ENCODE)
         begin = (*vpp)->begin;
-    if (!xdr_u_int(xdrs, &begin))
+    if (!h4_xdr_u_int(xdrs, &begin))
         return (FALSE);
     if (xdrs->x_op == XDR_DECODE)
         (*vpp)->begin = begin;
-
-#ifdef HDF
 
     if (xdrs->x_op == XDR_DECODE) {
 
@@ -751,8 +543,6 @@ xdr_NC_var(XDR *xdrs, NC_var **vpp)
         (*vpp)->aid       = FAIL;
         (*vpp)->is_ragged = FALSE;
     }
-
-#endif
 
     return (TRUE);
 }

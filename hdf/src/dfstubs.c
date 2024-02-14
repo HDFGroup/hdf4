@@ -40,59 +40,40 @@
  **   Doug Ilg
  */
 
-#include "dfstubs.h"
+#include "hdfi.h"
 #include "df.h"
 
-#define CKMALLOC(x, ret)                                                                                     \
-    {                                                                                                        \
-        if (!x) {                                                                                            \
-            DFerror = DFE_NOSPACE;                                                                           \
-            return (ret);                                                                                    \
-        }                                                                                                    \
-    }
-
-#define CKSEEK(x, y, z, ret)                                                                                 \
-    {                                                                                                        \
-        if (DF_SEEK(x, (long)y, z) < 0) {                                                                    \
-            DFerror = DFE_SEEKERROR;                                                                         \
-            return (ret);                                                                                    \
-        }                                                                                                    \
-    }
-
-#define CKSEEKEND(x, y, z, ret)                                                                              \
-    {                                                                                                        \
-        if (DF_SKEND(x, (long)y, z) < 0) {                                                                   \
-            DFerror = DFE_SEEKERROR;                                                                         \
-            return (ret);                                                                                    \
-        }                                                                                                    \
-    }
-
-#define CKREAD(x, y, z, f, ret)                                                                              \
-    {                                                                                                        \
-        if (DF_READ((char *)x, (int)(y), (int)(z), (f)) < 0) {                                               \
-            DFerror = DFE_READERROR;                                                                         \
-            return (ret);                                                                                    \
-        }                                                                                                    \
-    }
-
-#define CKWRITE(x, y, z, f, ret)                                                                             \
-    {                                                                                                        \
-        if (DF_WRITE((char *)x, (int)y, (int)z, f) < 0) {                                                    \
-            DFerror = DFE_WRITEERROR;                                                                        \
-            return (ret);                                                                                    \
-        }                                                                                                    \
-    }
+#define DFACC_APPEND  8
+#define DFEL_ABSENT   0
+#define DFEL_RESIDENT 1
+#define DFSRCH_OLD    0
+#define DFSRCH_NEW    1
 
 /*
  *  Important Internal Variables
  */
-PRIVATE DF *DFlist = NULL; /* pointer to list of open DFs */
-#ifdef PERM_OUT
-PRIVATE int            DFinuse    = 0;    /* How many are currently in use */
-PRIVATE uint16         DFmaxref   = 0;    /* which is the largest ref used? */
-PRIVATE unsigned char *DFreflist  = NULL; /* list of refs in use */
-PRIVATE char           patterns[] = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
-#endif /* PERM_OUT */
+static DF *DFlist = NULL; /* pointer to list of open DFs */
+
+static int32  DFid        = 0;
+static int32  DFaid       = 0;
+static int    DFaccmode   = 0;
+static int    DFelaccmode = 0;
+static uint16 search_tag  = 0;
+static uint16 search_ref  = 0;
+static int    search_stat = DFSRCH_NEW;
+static int32  search_aid  = 0;
+static int    DFelstat    = DFEL_ABSENT;
+static int32  DFelsize    = 0;
+static int32  DFelseekpos = 0;
+static uint16 acc_tag     = 0;
+static uint16 acc_ref     = 0;
+static char  *DFelement   = NULL;
+
+int DFerror = 0; /* Error code for DF routines */
+
+/* prototypes for internal routines */
+static int DFIclearacc(void);
+static int DFIcheck(DF *dfile);
 
 /*
  ** NAME
@@ -121,7 +102,7 @@ DFopen(char *name, int acc_mode, int ndds)
 {
     if (DFIcheck(DFlist) == 0) {
         DFerror = DFE_TOOMANY;
-        return (NULL);
+        return NULL;
     }
     else
         DFerror = DFE_NONE;
@@ -131,14 +112,14 @@ DFopen(char *name, int acc_mode, int ndds)
 
     if (DFid == -1) {
         DFerror = (int)HEvalue(1);
-        return (NULL);
+        return NULL;
     }
     else {
         /*
            DFlist = makedf(DFid);
          */
         DFlist = (DF *)&DFid;
-        return (DFlist);
+        return DFlist;
     }
 }
 
@@ -164,14 +145,14 @@ DFclose(DF *dfile)
 
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
-        return (FAIL);
+        return FAIL;
     }
     else
         DFerror = DFE_NONE;
 
     if (DFelstat == DFEL_RESIDENT) {
         Hputelement(DFid, acc_tag, acc_ref, (unsigned char *)DFelement, DFelsize);
-        HDfree(DFelement);
+        free(DFelement);
     }
     else
         Hendaccess(DFaid);
@@ -192,7 +173,7 @@ DFclose(DF *dfile)
         DFerror = (int)HEvalue(1);
     }
 
-    return (ret);
+    return ret;
 }
 
 /*
@@ -223,7 +204,7 @@ DFdescriptors(DF *dfile, DFdesc ptr[], int begin, int num)
 
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
-        return (-1);
+        return -1;
     }
     else
         DFerror = DFE_NONE;
@@ -232,7 +213,7 @@ DFdescriptors(DF *dfile, DFdesc ptr[], int begin, int num)
 
     if (aid == FAIL) {
         DFerror = (int)HEvalue(1);
-        return (-1);
+        return -1;
     }
 
     for (i = 2; i <= begin; i++) {
@@ -240,7 +221,7 @@ DFdescriptors(DF *dfile, DFdesc ptr[], int begin, int num)
         if (ret == FAIL) {
             Hendaccess(aid);
             DFerror = (int)HEvalue(1);
-            return (-1);
+            return -1;
         }
     }
 
@@ -250,13 +231,13 @@ DFdescriptors(DF *dfile, DFdesc ptr[], int begin, int num)
         ret = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
         if (ret == FAIL) {
             Hendaccess(aid);
-            return (i);
+            return i;
         }
         Hinquire(aid, NULL, &ptr[i].tag, &ptr[i].ref, &ptr[i].length, &ptr[i].offset, NULL, NULL, NULL);
     }
     Hendaccess(aid);
 
-    return (i);
+    return i;
 }
 
 /*
@@ -283,13 +264,13 @@ DFnumber(DF *dfile, uint16 tag)
 
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
-        return (-1);
+        return -1;
     }
     else
         DFerror = DFE_NONE;
 
     num = Hnumber(DFid, tag);
-    return (num);
+    return num;
 }
 
 /*
@@ -314,7 +295,7 @@ DFsetfind(DF *dfile, uint16 tag, uint16 ref)
 {
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
-        return (-1);
+        return -1;
     }
     else
         DFerror = DFE_NONE;
@@ -324,7 +305,7 @@ DFsetfind(DF *dfile, uint16 tag, uint16 ref)
 
     search_stat = DFSRCH_NEW;
 
-    return (0);
+    return 0;
 }
 
 /*
@@ -350,7 +331,7 @@ DFfind(DF *dfile, DFdesc *ptr)
 
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
-        return (-1);
+        return -1;
     }
     else
         DFerror = DFE_NONE;
@@ -368,12 +349,12 @@ DFfind(DF *dfile, DFdesc *ptr)
         DFerror  = DFE_NOMATCH;
         ptr->tag = 0;
         ptr->ref = 0;
-        return (-1);
+        return -1;
     }
 
     Hinquire(search_aid, NULL, &ptr->tag, &ptr->ref, &ptr->length, &ptr->offset, NULL, NULL, NULL);
 
-    return (0);
+    return 0;
 }
 
 /*
@@ -410,7 +391,7 @@ DFaccess(DF *dfile, uint16 tag, uint16 ref, char *acc_mode)
 
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
-        return (-1);
+        return -1;
     }
     else
         DFerror = DFE_NONE;
@@ -423,30 +404,20 @@ DFaccess(DF *dfile, uint16 tag, uint16 ref, char *acc_mode)
             accmode = DFACC_WRITE;
             if (((DFaccmode & DFACC_WRITE) == 0) && ((DFaccmode & DFACC_CREATE) == 0)) {
                 DFerror = DFE_BADACC;
-                return (-1);
+                return -1;
             }
             break;
         case 'a':
             accmode = DFACC_APPEND;
             if (((DFaccmode & DFACC_WRITE) == 0) && ((DFaccmode & DFACC_CREATE) == 0)) {
                 DFerror = DFE_BADACC;
-                return (-1);
+                return -1;
             }
             break;
         default:
             DFerror = DFE_BADACC;
-            return (-1);
+            return -1;
     }
-
-    /* test
-       if (((tag != acc_tag) || (ref != acc_ref)) || (accmode != DFelaccmode))
-       if (DFelstat == DFEL_RESIDENT) {
-       Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-       HDfree(DFelement);
-       }
-       else
-       Hendaccess(DFaid);
-       test */
 
     acc_tag     = tag;
     acc_ref     = ref;
@@ -461,26 +432,8 @@ DFaccess(DF *dfile, uint16 tag, uint16 ref, char *acc_mode)
             if (DFelsize <= 0) {
                 DFIclearacc();
                 DFerror = (int)HEvalue(1);
-                return (-1);
+                return -1;
             }
-            /* test
-               DFaid = Hstartread(DFid, acc_tag, acc_ref);
-               if (DFaid != FAIL) {
-               Hinquire(DFaid, (int32*)NULL, (uint16*)NULL, (uint16*)NULL,
-               &DFelsize, (int32*)NULL, (int32*)NULL,
-               (int32*)NULL, (int32*)NULL);
-               inq_accid(DFaid, &dle_num, &index, &(dfile->up_access));
-               Hendaccess(DFaid);
-               ptr = dfile->list;
-               for (i=0; i<dle_num; i++)
-               ptr = ptr->next;
-               dfile->up_dd = &(ptr->dd[index]);
-               } else {
-               DFIclearacc();
-               DFerror = HEvalue(1);
-               return(-1);
-               }
-               test */
             break;
             /* _maybe_ treat 'w' and 'a' in the same general 'a'-way */
         case 'w':
@@ -496,16 +449,16 @@ DFaccess(DF *dfile, uint16 tag, uint16 ref, char *acc_mode)
             if (DFelsize == FAIL) {
                 DFIclearacc();
                 DFerror = (int)HEvalue(1);
-                return (-1);
+                return -1;
             }
             DFelseekpos = DFelsize;
             break;
     }
 
-    return (0);
+    return 0;
 }
 
-PRIVATE int
+static int
 DFIclearacc(void)
 {
     Hendaccess(DFaid);
@@ -517,7 +470,7 @@ DFIclearacc(void)
     DFelstat    = DFEL_ABSENT;
     DFelement   = NULL;
 
-    return (0);
+    return 0;
 }
 
 /*
@@ -541,7 +494,7 @@ DFIclearacc(void)
 int
 DFstart(DF *dfile, uint16 tag, uint16 ref, char *acc_mode)
 {
-    return (DFaccess(dfile, tag, ref, acc_mode));
+    return DFaccess(dfile, tag, ref, acc_mode);
 }
 
 /*
@@ -569,7 +522,7 @@ DFread(DF *dfile, char *ptr, int32 len)
 
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
-        return (-1);
+        return -1;
     }
     else
         DFerror = DFE_NONE;
@@ -579,7 +532,7 @@ DFread(DF *dfile, char *ptr, int32 len)
     if (ret == FAIL) {
         Hendaccess(DFaid);
         DFerror = (int)HEvalue(1);
-        return (-1);
+        return -1;
     }
 
     ret = Hread(DFaid, len, (unsigned char *)ptr);
@@ -587,11 +540,11 @@ DFread(DF *dfile, char *ptr, int32 len)
 
     if (ret == FAIL) {
         DFerror = (int)HEvalue(1);
-        return (-1);
+        return -1;
     }
     else {
         DFelseekpos += ret;
-        return (ret);
+        return ret;
     }
 }
 
@@ -618,7 +571,7 @@ DFseek(DF *dfile, int32 offset)
 
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
-        return (-1);
+        return -1;
     }
     else
         DFerror = DFE_NONE;
@@ -627,18 +580,18 @@ DFseek(DF *dfile, int32 offset)
        and writing more data */
     if (offset > DFelsize) {
         DFerror = DFE_BADSEEK;
-        return (-1);
+        return -1;
     }
     else {
         ret = Hseek(DFaid, offset, DF_START);
         if (ret == FAIL) {
             DFerror = (int)HEvalue(1);
-            return (-1);
+            return -1;
         }
         DFelseekpos = offset;
     }
 
-    return (0);
+    return 0;
 }
 
 /*
@@ -671,11 +624,11 @@ DFwrite(DF *dfile, char *ptr, int32 len)
 
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
-        return (-1);
+        return -1;
     }
     if ((DFelaccmode != DFACC_WRITE) && (DFelaccmode != DFACC_APPEND)) {
         DFerror = DFE_BADACC;
-        return (-1);
+        return -1;
     }
     else
         DFerror = DFE_NONE;
@@ -698,7 +651,7 @@ DFwrite(DF *dfile, char *ptr, int32 len)
             else {
                 Hendaccess(DFaid);
                 DFerror = DFE_NOTENOUGH;
-                return (-1);
+                return -1;
             }
         }
     }
@@ -715,7 +668,7 @@ DFwrite(DF *dfile, char *ptr, int32 len)
     DFelsize = size;
     DFelstat = DFEL_RESIDENT;
 
-    return (ret);
+    return ret;
 }
 
 /*
@@ -742,20 +695,12 @@ DFupdate(DF *dfile)
 {
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
-        return (-1);
+        return -1;
     }
     else
         DFerror = DFE_NONE;
 
-    /* test
-       if (DFelstat == DFEL_RESIDENT) {
-       Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-       HDfree(DFelement);
-       DFIclearacc();
-       }
-       test */
-
-    return (0);
+    return 0;
 }
 
 /*
@@ -783,12 +728,12 @@ DFstat(DF *dfile, DFdata *dfinfo)
 
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
-        return (-1);
+        return -1;
     }
     else
         DFerror = DFE_NONE;
 
-    return (0);
+    return 0;
 }
 
 /*
@@ -815,25 +760,17 @@ DFgetelement(DF *dfile, uint16 tag, uint16 ref, char *ptr)
 {
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
-        return (-1);
+        return -1;
     }
     else
         DFerror = DFE_NONE;
 
-    /* test
-       if (DFelstat == DFEL_RESIDENT) {
-       Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-       HDfree(DFelement);
-       DFIclearacc();
-       }
-       test */
-
     if (Hgetelement(DFid, tag, ref, (unsigned char *)ptr) == -1) {
         DFerror = (int)HEvalue(1);
-        return (-1);
+        return -1;
     }
     else
-        return (Hlength(DFid, tag, ref));
+        return Hlength(DFid, tag, ref);
 }
 
 /*
@@ -860,25 +797,17 @@ DFputelement(DF *dfile, uint16 tag, uint16 ref, char *ptr, int32 len)
 {
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
-        return (-1);
+        return -1;
     }
     else
         DFerror = DFE_NONE;
 
-    /* test
-       if (DFelstat == DFEL_RESIDENT) {
-       Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-       HDfree(DFelement);
-       DFIclearacc();
-       }
-       test */
-
     if (Hputelement(DFid, tag, ref, (unsigned char *)ptr, len) == FAIL) {
         DFerror = (int)HEvalue(1);
-        return (-1);
+        return -1;
     }
     else
-        return (Hlength(DFid, tag, ref));
+        return Hlength(DFid, tag, ref);
 }
 
 /*
@@ -905,17 +834,17 @@ DFdup(DF *dfile, uint16 itag, uint16 iref, uint16 otag, uint16 oref)
 {
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
-        return (-1);
+        return -1;
     }
     else
         DFerror = DFE_NONE;
 
     if (Hdupdd(DFid, itag, iref, otag, oref) != SUCCEED) {
         DFerror = (int)HEvalue(1);
-        return (-1);
+        return -1;
     }
     else
-        return (0);
+        return 0;
 }
 
 /*
@@ -941,17 +870,17 @@ DFdel(DF *dfile, uint16 tag, uint16 ref)
 {
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
-        return (-1);
+        return -1;
     }
     else
         DFerror = DFE_NONE;
 
     if (Hdeldd(DFid, tag, ref) != 0) {
         DFerror = (int)HEvalue(1);
-        return (-1);
+        return -1;
     }
     else
-        return (0);
+        return 0;
 }
 
 /*
@@ -976,7 +905,7 @@ DFnewref(DF *dfile)
 
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
-        return (0);
+        return 0;
     }
     else
         DFerror = DFE_NONE;
@@ -984,10 +913,10 @@ DFnewref(DF *dfile)
     ret = Hnewref(DFid);
     if (ret == 0xffff) {
         DFerror = (int)HEvalue(1);
-        return (0);
+        return 0;
     }
 
-    return (ret);
+    return ret;
 }
 
 /*
@@ -1015,11 +944,11 @@ DFishdf(char *filename)
     dummy = Hopen(filename, DFACC_READ, 0);
     if (dummy == -1) {
         DFerror = (int)HEvalue(1);
-        return (-1);
+        return -1;
     }
     else {
         Hclose(dummy);
-        return (0);
+        return 0;
     }
 }
 
@@ -1040,7 +969,7 @@ DFishdf(char *filename)
 int
 DFerrno(void)
 {
-    return (DFerror);
+    return DFerror;
 }
 
 /*-----------------------------------------------------------------------------
@@ -1051,267 +980,23 @@ DFerrno(void)
  * Users:   HDF systems programmers, several routines in this file
  *---------------------------------------------------------------------------*/
 
-PRIVATE int
+static int
 DFIcheck(DF *dfile)
 {
     DFerror = DFE_NONE;
 
     if ((dfile != (DF *)&DFid) || (DFid == 0)) {
         DFerror = DFE_DFNULL;
-        return (-1);
+        return -1;
     }
 
     if ((DFaccmode & DFACC_ALL) != DFaccmode) {
         DFerror = DFE_BADACC;
-        return (-1);
+        return -1;
     }
     else
-        return (0);
-
-    /* test
-       if (!dfile) {
-       DFerror = DFE_DFNULL;
-       return(-1);
-       }
-
-       if ((dfile->access & DFACC_ALL) != dfile->access)
-       DFerror = DFE_BADACC;
-
-       if ((dfile->type >1) || (dfile->type <-1))
-       DFerror = DFE_ILLTYPE;
-
-       if (!dfile->list)
-       DFerror= DFE_BADDDLIST;
-
-       if (DFerror)
-       return(-1);
-       else
-       return(0);
-       test */
+        return 0;
 }
-
-#ifdef PERM_OUT
-/*-----------------------------------------------------------------------------
- * Name:    DFIfind
- * Purpose: perform wildcard searches
- * Inputs:  dfile: pointer to open DF file
- *          tag, ref: tag, ref (possibly wildcard) being searched for
- *          isfirst: 1 if first call to DFIfind for this tag/ref, else 0
- *          ltag, lref: last tag and ref returned for this search,
- *              don't care if isfirst set
- *          cDLEp, cddp: pointers to DLE and DD number to return matched DD in
- * Returns: 0 on success, -1 on failure
- *          if success, cDLEp and cddp are set to point to matched DD
- * Users:   HDF system programmers, DFfind, HDF utilities, many routines
- * Remarks: The searching algorithm is a little complex.  It returns entries
- *          in the sorting order of refs, then tags.  Even after a candidate
- *          is found, searching continues till best candidate found.  Best way
- *          to check if conditions: work it out independently for yourself!
- *---------------------------------------------------------------------------*/
-
-int
-        DFIfind(dfile, tag, ref, isfirst, ltag, lref, cDLEp, cddp)
-DF     *dfile;
-DFdle **cDLEp;
-int    *cddp;
-int     isfirst; /* 1 if no prev search, 0 otherwise */
-uint16  tag, ref, ltag, lref;
-{
-    DFdle *DLEp;
-    int    i, found = 0;
-    uint16 ctag = 0, cref = 0, wtag, wref; /* ctag, cref: tag, ref found so far */
-    /* wtag, wref: tag, ref being checked */
-
-    if (isfirst) {
-        search_tag = tag;
-        search_ref = ref;
-    }
-
-    DLEp = dfile->list; /* start of DLE list */
-
-    if (tag && ref) {                                 /* No wildcards */
-        if (isfirst) {                                /* if not already found */
-            while (DLEp) {                            /* go through list */
-                for (i = 0; i < DLEp->ddh.dds; i++) { /* for all DDs */
-                    if (DLEp->dd[i].tag == tag && DLEp->dd[i].ref == ref) {
-                        *cDLEp = DLEp;
-                        *cddp  = i;
-                        return (0);
-                    }
-                }
-                DLEp = DLEp->next;
-            }
-        }
-    }
-    else if (tag && !ref) /* wildcard ref */
-        while (DLEp) {
-            for (i = 0; i < DLEp->ddh.dds; i++) {
-                wtag = DLEp->dd[i].tag;
-                wref = DLEp->dd[i].ref;
-                /* condition = tag match, better than found so far (if any),
-                   follows what was returned last time (if any) */
-                if ((wtag == tag) && (!found || (wref < cref)) && (isfirst || (wref > lref))) {
-                    ctag   = wtag;
-                    cref   = wref;
-                    *cDLEp = DLEp;
-                    *cddp  = i;
-                    found  = 1;
-                }
-            }
-            DLEp = DLEp->next;
-        }
-    else if (!tag && ref) /* wildcard tag */
-        while (DLEp) {
-            for (i = 0; i < DLEp->ddh.dds; i++) {
-                wtag = DLEp->dd[i].tag;
-                wref = DLEp->dd[i].ref;
-                if ((wref == ref) && (isfirst || (wtag > ltag)) && (!found || (wtag < ctag))) {
-                    ctag   = wtag;
-                    cref   = wref;
-                    *cDLEp = DLEp;
-                    *cddp  = i;
-                    found  = 1;
-                }
-            }
-            DLEp = DLEp->next;
-        }
-    else if (!tag && !ref) /* wildcard tag & ref */
-        while (DLEp) {
-            for (i = 0; i < DLEp->ddh.dds; i++) {
-                wtag = DLEp->dd[i].tag;
-                wref = DLEp->dd[i].ref;
-                if ((isfirst || (wref > lref) || (wref == lref && wtag > ltag)) &&
-                    (!found || (wref < cref) || (wref == cref && wtag < ctag)) &&
-                    (wtag != DFTAG_NULL)) /* empty DDs are invisible */
-                {
-                    ctag   = wtag;
-                    cref   = wref;
-                    *cDLEp = DLEp;
-                    *cddp  = i;
-                    found  = 1;
-                }
-            }
-            DLEp = DLEp->next;
-        }
-    return (found - 1); /* 0 or -1 */
-}
-
-/*-----------------------------------------------------------------------------
- * Name:    DFIemptyDD
- * Purpose: find an empty DD to use, or create a block of DDs if necessary
- * Inputs:  dfile: pointer to open DF file
- * Returns: pointer to an empty DD
- * Invokes: DFIfind
- * Users:   HDF system programmers, DFaccess, DFdup
- *---------------------------------------------------------------------------*/
-
-DFdd     *
-DFIemptyDD(dfile)
-DF *dfile;
-{
-    DFdle *cDLEp;
-    int    cdd;
-
-    if (!DFIfind(dfile, DFTAG_NULL, DFREF_WILDCARD, 1, 0, 0, &cDLEp, &cdd))
-        return (&(cDLEp->dd[cdd])); /* there is an empty DD */
-
-    else { /* add new DDH block */
-        int32  fpos;
-        DFdle *p, *dle;
-        DFddh  ddh;
-        DFdd   dd;
-        int    j;
-        char   MYtbuf[12]; /* My own tbuf so that the content
-                              of DFtbuf will be preserved */
-
-        CKSEEKEND(dfile->file, (long)0, 2, NULL); /* go to end of df */
-        fpos     = (int32)DF_TELL(dfile->file);
-        ddh.dds  = dfile->defdds; /* Initialize ddh */
-        ddh.next = 0;
-        dd.tag   = DFTAG_NULL; /* and all DD's */
-        dd.ref   = 0;
-#ifdef DF_STRUCTOK
-        CKWRITE(&ddh, sizeof(DFddh), 1, dfile->file, NULL);
-#else  /*DF_STRUCTOK */
-        {
-            char *p;
-            p = MYtbuf;
-            INT16WRITE(p, ddh.dds);
-            INT32WRITE(p, ddh.next);
-            CKWRITE(MYtbuf, 6, 1, dfile->file, NULL); /* 6 = size of header */
-        }
-#endif /*DF_STRUCTOK */
-        for (j = 0; j < ddh.dds; j++) {
-#ifdef DF_STRUCTOK
-            CKWRITE(&dd, sizeof(DFdd), 1, dfile->file, NULL);
-#else  /*DF_STRUCTOK */
-            {
-                char *p;
-                p = MYtbuf;
-                UINT16WRITE(p, dd.tag);
-                UINT16WRITE(p, dd.tag);
-                INT32WRITE(p, dd.offset);
-                INT32WRITE(p, dd.length);
-                CKWRITE(MYtbuf, 12, 1, dfile->file, NULL); /* 12=size of dd */
-            }
-#endif /*DF_STRUCTOK */
-        }
-
-        p = dfile->list; /* find end of list */
-        while (p->next)
-            p = p->next;
-
-        p->ddh.next = fpos; /* new dd goes at end of file */
-        dle         = (DFdle *)DFIgetspace((unsigned)(sizeof(DFdle) + (ddh.dds - 1) * sizeof(DFdd)));
-        /* one dd included in dle */
-        CKMALLOC(dle, NULL);
-        p->next   = dle; /* insert dle at end of list */
-        dle->next = NULL;
-        HDmemcpy((char *)&dle->ddh, (char *)&ddh, sizeof(DFddh));
-        for (j = 0; j < ddh.dds; j++)
-            HDmemcpy((char *)&dle->dd[j], (char *)&dd, sizeof(DFdd));
-        return (&(dle->dd[0]));
-    }
-    return (NULL); /* dummy, for return value checking */
-}
-
-/* Simplified version without the overhead.  This is useful if you */
-/* know that the args are okay, and if you need to read many time */
-/* (like in a loop in DFSDIgetslice()) */
-int32
-      DFIread(dfile, ptr, len)
-DF   *dfile;
-char *ptr;
-int32 len;
-{
-    int32 maxlen;
-    maxlen = dfile->up_dd->length - ((int32)DF_TELL(dfile->file) - dfile->up_dd->offset);
-    if (len > maxlen)
-        len = maxlen;
-    if (len < 0) { /* will also catch reads from beyond element */
-        DFerror = DFE_BADLEN;
-        return (-1);
-    }
-
-    if (len) { /* NOTE: cast to (int) will limit to 64K on 16 bit m/cs */
-        CKREAD(ptr, (int)len, 1, dfile->file, -1);
-    }
-
-    return (len);
-}
-
-/* Simplified version without the overhead.  This is useful if you */
-/* know that the args are okay, and if you need to seek many time */
-/* (like in a loop in DFSDIgetslice()) */
-int32
-      DFIseek(dfile, offset)
-DF   *dfile;
-int32 offset;
-{
-    CKSEEK(dfile->file, (long)dfile->up_dd->offset + offset, 0, -1);
-    return (offset);
-}
-#endif /* PERM_OUT */
 
 /*-----------------------------------------------------------------------------
  * Name:    DFIerr
@@ -1332,7 +1017,7 @@ DFIerr(DF *dfile)
     if (dfile != NULL)
         (void)DFclose(dfile);
     DFerror = saveerror;
-    return (-1);
+    return -1;
 }
 
 /*-----------------------------------------------------------------------------
@@ -1344,26 +1029,26 @@ DFIgetspace(uint32 qty)
 {
     void *ret;
 
-    ret     = (void *)HDmalloc(qty);
+    ret     = (void *)malloc(qty);
     DFerror = (int)HEvalue(1);
-    return (ret);
+    return ret;
 }
 
 void *
 DFIfreespace(void *ptr)
 {
-    HDfree(ptr);
-    return (NULL);
+    free(ptr);
+    return NULL;
 }
 
 intn
 DFIc2fstr(char *str, int len)
 {
-    return (HDc2fstr(str, len));
+    return HDc2fstr(str, len);
 }
 
 char *
 DFIf2cstring(_fcd fdesc, intn len)
 {
-    return (HDf2cstring(fdesc, len));
+    return HDf2cstring(fdesc, len);
 }

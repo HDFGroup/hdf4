@@ -16,3 +16,17 @@ Users who want to build and run an application with HDF4 in Visual Studio
 without using CMake should consult the USING_HDF4_VS.txt file.. Building
 applications with the dynamic/shared hdf4 libraries requires that the
 "H4_BUILT_AS_DYNAMIC_LIB" compile definition be used.
+
+Additional Third-party Software Requirements:
+
+   1)  Flex and Bison programs are required to regenerate the ncgen parsers.
+       This is not required to build the library and is only necessary if you
+       change the input files.
+   
+   2)  The Win flex-bison project, a port of Flex & Bison tools
+       to the Windows platform, is recommended. Download from:
+           http://sourceforge.net/projects/winflexbison
+
+   3)  CMake version 2.8.11.1 or higher is needed to use Win flex-bison.
+       Using an earlier version of CMake will require renaming the executables
+       without the "win_" prefix.

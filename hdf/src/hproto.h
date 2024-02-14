@@ -14,7 +14,10 @@
 #ifndef H4_H_PROTO
 #define H4_H_PROTO
 
+#include <stdio.h> /* for FILE */
+
 #include "H4api_adpt.h"
+#include "hdf.h"
 
 /* Useful macros, which someday might become actual functions */
 /* Wrappers for Hinquire. feb-2-92 */
@@ -324,8 +327,6 @@ HDFLIBAPI char *HIstrncpy(char *dest, const char *source, intn len);
 
 HDFLIBAPI int32 HDspaceleft(void);
 
-HDFPUBLIC char *HDstrdup(const char *s);
-
 HDFLIBAPI intn HDc2fstr(char *str, intn len);
 
 HDFLIBAPI char *HDf2cstring(_fcd fdesc, intn len);
@@ -367,9 +368,6 @@ HDFLIBAPI intn HXsetdir(const char *dir);
 HDFLIBAPI int32 HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type, model_info *m_info,
                          comp_coder_t coder_type, comp_info *c_info);
 
-HDFLIBAPI intn HCPgetcompress(int32 file_id, uint16 data_tag, uint16 data_ref, comp_coder_t *coder_type,
-                              comp_info *c_info);
-
 HDFLIBAPI intn HCPgetcompinfo(int32 file_id, uint16 data_tag, uint16 data_ref, comp_coder_t *coder_type,
                               comp_info *c_info);
 
@@ -395,6 +393,7 @@ HDFLIBAPI intn HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info *
 
 HDFLIBAPI intn HCPsetup_szip_parms(comp_info *c_info, int32 nt, int32 ncomp, int32 ndims, int32 *dims,
                                    int32 *cdims);
+HDFLIBAPI intn HCPrm_szip_special_bit(comp_info *c_info);
 /*
  ** from hbuffer.c
  */
@@ -443,6 +442,40 @@ HDFLIBAPI intn Hgetbit(int32 bitid);
 HDFLIBAPI int32 Hendbitaccess(int32 bitfile_id, intn flushbit);
 
 HDFLIBAPI intn HPbitshutdown(void);
+
+/*
+ ** from hdatainfo.c
+ */
+
+/* Structure that holds a data descriptor */
+typedef struct hdf_ddinfo_t {
+    uint16 tag;
+    uint16 ref;
+    int32  offset;
+    int32  length;
+} hdf_ddinfo_t;
+
+/*
+ ** Public functions for getting raw data information - from hdatainfo.c
+ */
+HDFLIBAPI intn ANgetdatainfo(int32 ann_id, int32 *offset, int32 *length);
+
+HDFLIBAPI intn HDgetdatainfo(int32 file_id, uint16 data_tag, uint16 data_ref, int32 *chk_coord,
+                             uintn start_block, uintn info_count, int32 *offsetarray, int32 *lengtharray);
+
+HDFLIBAPI intn VSgetdatainfo(int32 vsid, uintn start_block, uintn info_count, int32 *offsetarray,
+                             int32 *lengtharray);
+
+HDFLIBAPI intn VSgetattdatainfo(int32 vsid, int32 findex, intn attrindex, int32 *offset, int32 *length);
+
+HDFLIBAPI intn Vgetattdatainfo(int32 vgid, intn attrindex, int32 *offset, int32 *length);
+
+HDFLIBAPI intn GRgetdatainfo(int32 riid, uintn start_block, uintn info_count, int32 *offsetarray,
+                             int32 *lengtharray);
+
+HDFLIBAPI intn GRgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length);
+
+HDFLIBAPI intn GRgetpalinfo(int32 gr_id, uintn pal_count, hdf_ddinfo_t *palinfo_array);
 
 /*
  ** from dfutil.c
@@ -812,7 +845,9 @@ HDFLIBAPI intn DFKsb4b(void *s, void *d, uint32 num_elm, uint32 source_stride, u
 
 HDFLIBAPI intn DFKsb8b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-/* Multi-file Annotation C-routines found in mfan.c */
+/*
+ ** Multi-file Annotation - from mfan.c
+ */
 HDFLIBAPI int32 ANstart(int32 file_id);
 
 HDFLIBAPI intn ANfileinfo(int32 an_id, int32 *n_file_label, int32 *n_file_desc, int32 *n_obj_label,
@@ -848,10 +883,9 @@ HDFLIBAPI uint16 ANatype2tag(ann_type atype);
 
 HDFLIBAPI ann_type ANtag2atype(uint16 atag);
 
-/* BMR: Removed because this function is meant to be private.
-HDFLIBAPI intn ANdestroy(void); */
-
-/* Multi-file Raster C-routines found in mfgr.c */
+/*
+ ** Multi-file General Raster - from mfgr.c
+ */
 HDFLIBAPI intn rigcompare(void *k1, void *k2, intn cmparg);
 
 HDFLIBAPI int32 GRstart(int32 hdf_file_id);
@@ -968,7 +1002,7 @@ typedef union hdf_chunk_def_u {
       The image currently cannot be special already.  i.e. NBIT,
       COMPRESSED, or EXTERNAL. This is an Error.
 
-      The definition of the HDF_CHUNK_DEF union with relvant fields is:
+      The definition of the HDF_CHUNK_DEF union with relevant fields is:
 
       typedef union hdf_chunk_def_u
       {
@@ -1190,56 +1224,6 @@ RETURNS
 HDFLIBAPI intn GRsetchunkcache(int32 riid,     /* IN: raster access id */
                                int32 maxcache, /* IN: max number of chunks to cache */
                                int32 flags /* IN: flags = 0, HDF_CACHEALL */);
-
-#ifdef HAVE_FMPOOL
-/******************************************************************************
-NAME
-     Hmpset - set pagesize and maximum number of pages to cache on next open/create
-
-DESCRIPTION
-     Set the pagesize and maximum number of pages to cache on the next
-     open/create of a file. A pagesize that is a power of 2 is recommended.
-
-     The values set here only affect the next open/creation of a file and
-     do not change a particular file's paging behaviour after it has been
-     opened or created. This maybe changed in a later release.
-
-     Use flags argument of 'MP_PAGEALL' if the whole file is to be cached
-     in memory otherwise pass in zero.
-
-RETURNS
-     Returns SUCCEED if successful and FAIL otherwise
-
-NOTE
-     This calls the real routine MPset().
-     Currently 'maxcache' has to be greater than 1. Maybe use special
-     case of 0 to specify you want to turn page buffering off or use
-     the flags argument.
-
-******************************************************************************/
-HDFLIBAPI int Hmpset(int pagesize, /* IN: pagesize to use for next open/create */
-                     int maxcache, /* IN: max number of pages to cache */
-                     int flags /* IN: flags = 0, MP_PAGEALL */);
-
-/******************************************************************************
-NAME
-     Hmpget - get last pagesize and max number of pages cached for open/create
-
-DESCRIPTION
-     This gets the last pagesize and maximum number of pages cached for
-     the last open/create of a file.
-
-RETURNS
-     Returns SUCCEED.
-
-NOTES
-     This routine calls the real routine MPget().
-******************************************************************************/
-HDFLIBAPI int Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
-                     int *maxcache, /*OUT: max number of pages cached in last open/create */
-                     int  flags /* IN: */);
-
-#endif /* HAVE_FMPOOL */
 
 /* Vset interface functions (used to be in vproto.h) */
 

@@ -143,33 +143,15 @@
  *      available by the National Center for Supercomputing Applications,
  *      University of Illinois, Urbana-Champaign (ftp.ncsa.uiuc.edu).
  *
- * History:
- *      Beta version:                                           17-May-89
- *              (by Mike Folk mfolk@ncsa.uiuc.edu)
- *      Revision to put in the mean option:                     15-Sep-89
- *              (by Glen Mortensen gam@inel.gov)
- *      Officially released:                                    01-Dec-89
- *              (by NCSA ftp.ncsa.uiuc.edu)
- *      Revision to fix some bugs:                              16-Mar-90
- *              (by Mike Folk mfolk@ncsa.uiuc.edu)
- *      Revision to support 3D and native fp input:             15-May-90
- *              (by Bob Weaver baw@inel.gov)
- *      Revision to fix bug in interp() :                    17-Oct-90
- *              (by Fred Walsteijn nwalstyn@fys.ruu.n)
- *      Revision to fix bug in interp() :                    23-Nov-90
- *              Now it clips values outside of max and min.
- *              (by Fred Walsteijn nwalstyn@fys.ruu.n)
- *      Revision to start to use HDF 3.2 (and 3.3) library:  22-Jun-93
- *              Still lots to do to support other number types.
- *              (by Chris Houck chouck@ncsa.uiuc.edu)
- *
  */
 
-#include "hdf.h"
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
 #include <ctype.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "hdf.h"
 
 #ifdef H4_HAVE_SYS_STAT_H
 #include <sys/stat.h>
@@ -225,7 +207,7 @@ struct Input {
     float32 *hscale;    /* horizontal scales */
     float32 *vscale;    /* vertical scales */
     float32 *dscale;    /* depth scales */
-    VOIDP    data;      /* input data */
+    void    *data;      /* input data */
 };
 
 /*
@@ -246,7 +228,7 @@ struct Raster {
 #define OPT_r    2  /* convert to image */
 #define OPT_e    3  /* expand image via pixel replication */
 #define OPT_i    4  /* make interpolated image */
-#define NUMBR    5  /* resolution of enlarged image */
+#define OPT_num  5  /* resolution of enlarged image */
 #define OPT_p    6  /* palette filename */
 #define OPT_f    7  /* convert to float (default) */
 #define OPT_h    8  /* request for explanation */
@@ -259,7 +241,7 @@ struct Raster {
 static int state_table[17][10] = {
 
     /* token ordering:
-       FILENAME     OPT_o   OPT_r   OPT_e   OPT_i   NUMBR   OPT_p   OPT_f
+       FILENAME     OPT_o   OPT_r   OPT_e   OPT_i   OPT_num   OPT_p   OPT_f
        OPT_h        OPT_m   */
 
     /* state 0: start */
@@ -404,7 +386,7 @@ main(int argc, char *argv[])
             case 2: /* -o found; look for outfile */
                 break;
             case 3: /* get outfile name */
-                (void)HDstrcpy(opt.outfile, argv[i]);
+                (void)strcpy(opt.outfile, argv[i]);
                 outfile_named = TRUE;
                 break;
             case 4: /* -r found */
@@ -429,7 +411,7 @@ main(int argc, char *argv[])
                 opt.pal = TRUE;
                 break;
             case 11: /* get pal filename */
-                (void)HDstrcpy(opt.palfile, argv[i]);
+                (void)strcpy(opt.palfile, argv[i]);
                 break;
             case 12: /* -f found (after a -r) */
             case 13: /* -f found (no -r yet) */
@@ -546,19 +528,6 @@ gdata(char *infile, struct Input *in, FILE *strm, int *is_maxmin)
         *is_maxmin = TRUE;
     }
 
-#ifdef DEBUG
-    (void)printf("\tdata:");
-    for (k = 0, fp32 = in->data; k < in->dims[2]; k++) {
-        (void)printf("\n");
-        for (j = 0; j < in->dims[1]; j++) {
-            (void)printf("\n\t");
-            for (i = 0; i < in->dims[0]; i++, fp32++)
-                (void)printf("%E ", *fp32);
-        }
-    }
-    (void)printf("\n\n\n");
-#endif /* DEBUG */
-
     return (0);
 
 err:
@@ -648,13 +617,6 @@ gdimen(char *infile, struct Input *inp, FILE *strm)
         (void)fprintf(stderr, err3, infile);
         goto err;
     }
-
-#ifdef DEBUG
-    (void)printf("\nInput Information ...\n\n");
-    (void)printf("\trank:\n\n\t%d\n\n", inp->rank);
-    (void)printf("\tdimensions (nplanes,nrows,ncols):\n\n");
-    (void)printf("\t%d %d %d\n\n", inp->dims[2], inp->dims[1], inp->dims[0]);
-#endif /* DEBUG */
 
     return (0);
 
@@ -778,11 +740,6 @@ gmaxmin(char *infile, struct Input *in, FILE *strm, int *is_maxmin)
             *is_maxmin = TRUE;
     }
 
-#ifdef DEBUG
-    (void)printf("\tinput maximum/minimum values:\n\n");
-    (void)printf("\t%E %E\n\n", in->max, in->min);
-#endif /* DEBUG */
-
     return (0);
 
 err:
@@ -896,29 +853,6 @@ gscale(char *infile, struct Input *in, FILE *strm, int *is_scale)
         }
     }
 
-#ifdef DEBUG
-    if (in->rank == 2) {
-        (void)printf("\tscales of the axes (vert,horiz):\n\n\t");
-        for (i = 0; i < hdfdims[0]; i++)
-            (void)printf("%E ", in->vscale[i]);
-        (void)printf("\n\t");
-        for (i = 0; i < hdfdims[1]; i++)
-            (void)printf("%E ", in->hscale[i]);
-    }
-    else {
-        (void)printf("\tscales of the axes (depth,vert,horiz):\n\n\t");
-        for (i = 0; i < hdfdims[0]; i++)
-            (void)printf("%E ", in->dscale[i]);
-        (void)printf("\n\t");
-        for (i = 0; i < hdfdims[1]; i++)
-            (void)printf("%E ", in->vscale[i]);
-        (void)printf("\n\t");
-        for (i = 0; i < hdfdims[2]; i++)
-            (void)printf("%E ", in->hscale[i]);
-    }
-    (void)printf("\n\n\n");
-#endif /* DEBUG */
-
     return (0);
 
 err:
@@ -946,49 +880,49 @@ gtoken(char *s)
      */
     if (s[0] == '-') { /* option name (or negative number) */
         token = ERR;
-        len   = HDstrlen(&s[1]);
+        len   = strlen(&s[1]);
         switch (s[1]) {
             case 'o':
-                if (!HDstrncmp("outfile", &s[1], len))
+                if (!strncmp("outfile", &s[1], len))
                     token = OPT_o;
                 break;
             case 'r':
-                if (!HDstrncmp("raster", &s[1], len))
+                if (!strncmp("raster", &s[1], len))
                     token = OPT_r;
                 break;
             case 'e':
-                if (!HDstrncmp("expand", &s[1], len))
+                if (!strncmp("expand", &s[1], len))
                     token = OPT_e;
                 break;
             case 'i':
-                if (!HDstrncmp("interp", &s[1], len))
+                if (!strncmp("interp", &s[1], len))
                     token = OPT_i;
                 break;
             case 'p':
-                if (!HDstrncmp("palfile", &s[1], len))
+                if (!strncmp("palfile", &s[1], len))
                     token = OPT_p;
                 break;
             case 'f':
-                if (!HDstrncmp("float", &s[1], len))
+                if (!strncmp("float", &s[1], len))
                     token = OPT_f;
                 break;
             case 'h':
-                if (!HDstrncmp("help", &s[1], len))
+                if (!strncmp("help", &s[1], len))
                     token = OPT_h;
                 break;
             case 'm':
-                if (!HDstrncmp("mean", &s[1], len))
+                if (!strncmp("mean", &s[1], len))
                     token = OPT_m;
                 break;
             default:
                 if (isnum(s)) /* negative number? */
-                    token = NUMBR;
+                    token = OPT_num;
         }
         if (token == ERR)
             (void)fprintf(stderr, err1, s);
     }
     else if (isnum(s)) /* positive number */
-        token = NUMBR;
+        token = OPT_num;
     else /* filename */
         token = FILENAME;
 
@@ -1025,7 +959,7 @@ gtype(char *infile, struct Input *in, FILE **strm)
             (void)fprintf(stderr, err2, infile);
             goto err;
         }
-        if (!HDmemcmp("TEXT", buf, 4) || !HDmemcmp("text", buf, 4)) {
+        if (!memcmp("TEXT", buf, 4) || !memcmp("text", buf, 4)) {
 #if defined H4_HAVE_WIN32_API
             _fmode = _O_TEXT;
 #endif
@@ -1037,9 +971,9 @@ gtype(char *infile, struct Input *in, FILE **strm)
                 (void)fprintf(stderr, err2, infile);
                 goto err;
             }
-            if (!HDmemcmp("FP32", buf, 4) || !HDmemcmp("fp32", buf, 4))
+            if (!memcmp("FP32", buf, 4) || !memcmp("fp32", buf, 4))
                 in->is_fp32 = TRUE;
-            else if (!HDmemcmp("FP64", buf, 4) || !HDmemcmp("fp64", buf, 4))
+            else if (!memcmp("FP64", buf, 4) || !memcmp("fp64", buf, 4))
                 in->is_fp64 = TRUE;
             else {
                 (void)fprintf(stderr, err3, infile);
@@ -1258,7 +1192,7 @@ indexes(float32 *scale, int dim, int *idx, int res)
     /*
      * determine the midpoints between scale values
      */
-    if ((midpt = (float32 *)HDmalloc((size_t)dim * sizeof(float32))) == NULL) {
+    if ((midpt = (float32 *)malloc((size_t)dim * sizeof(float32))) == NULL) {
         (void)fprintf(stderr, "%s", err1);
         goto err;
     }
@@ -1287,7 +1221,7 @@ indexes(float32 *scale, int dim, int *idx, int res)
     /*
      * free dynamically allocated memory
      */
-    HDfree((char *)midpt);
+    free(midpt);
 
     return (0);
 
@@ -1357,16 +1291,16 @@ interp(struct Input *in, struct Raster *im)
     /*
      * allocate dynamic memory for the interpolation ratio buffers
      */
-    if ((hratio = (float32 *)HDmalloc((size_t)im->hres * sizeof(float32))) == NULL) {
+    if ((hratio = (float32 *)malloc((size_t)im->hres * sizeof(float32))) == NULL) {
         (void)fprintf(stderr, "%s", err1);
         goto err;
     }
-    if ((vratio = (float32 *)HDmalloc((unsigned int)im->vres * sizeof(float32))) == NULL) {
+    if ((vratio = (float32 *)malloc((unsigned int)im->vres * sizeof(float32))) == NULL) {
         (void)fprintf(stderr, "%s", err1);
         goto err;
     }
     if (in->rank == 3) {
-        if ((dratio = (float32 *)HDmalloc((unsigned int)im->dres * sizeof(float32))) == NULL) {
+        if ((dratio = (float32 *)malloc((unsigned int)im->dres * sizeof(float32))) == NULL) {
             (void)fprintf(stderr, "%s", err1);
             goto err;
         }
@@ -1376,16 +1310,16 @@ interp(struct Input *in, struct Raster *im)
      * allocate dynamic memory for the pixel location offset/increment
      * buffers
      */
-    if ((hinc = (int *)HDmalloc((unsigned int)im->hres * sizeof(int))) == NULL) {
+    if ((hinc = (int *)malloc((unsigned int)im->hres * sizeof(int))) == NULL) {
         (void)fprintf(stderr, "%s", err1);
         goto err;
     }
-    if ((voff = (int *)HDmalloc((unsigned int)(im->vres + 1) * sizeof(int))) == NULL) {
+    if ((voff = (int *)malloc((unsigned int)(im->vres + 1) * sizeof(int))) == NULL) {
         (void)fprintf(stderr, "%s", err1);
         goto err;
     }
     if (in->rank == 3) {
-        if ((doff = (int *)HDmalloc((unsigned int)(im->dres + 1) * sizeof(int))) == NULL) {
+        if ((doff = (int *)malloc((unsigned int)(im->dres + 1) * sizeof(int))) == NULL) {
             (void)fprintf(stderr, "%s", err1);
             goto err;
         }
@@ -1487,14 +1421,14 @@ interp(struct Input *in, struct Raster *im)
     /*
      * free dynamically allocated memory
      */
-    HDfree((char *)hratio);
-    HDfree((char *)vratio);
+    free(hratio);
+    free(vratio);
     if (in->rank == 3)
-        HDfree((char *)dratio);
-    HDfree((char *)hinc);
-    HDfree((char *)voff);
+        free(dratio);
+    free(hinc);
+    free(voff);
     if (in->rank == 3)
-        HDfree((char *)doff);
+        free(doff);
 
     return (0);
 
@@ -1667,7 +1601,7 @@ pixrep(struct Input *in, struct Raster *im)
     /*
      * determine the scale indexes of the horizontal pixel locations
      */
-    if ((hidx = (int *)HDmalloc((unsigned int)(im->hres + 1) * sizeof(int))) == NULL) {
+    if ((hidx = (int *)malloc((unsigned int)(im->hres + 1) * sizeof(int))) == NULL) {
         (void)fprintf(stderr, "%s", err1);
         goto err;
     }
@@ -1678,7 +1612,7 @@ pixrep(struct Input *in, struct Raster *im)
     /*
      * determine the scale indexes of the vertical pixel locations
      */
-    if ((vidx = (int *)HDmalloc((unsigned int)(im->vres + 1) * sizeof(int))) == NULL) {
+    if ((vidx = (int *)malloc((unsigned int)(im->vres + 1) * sizeof(int))) == NULL) {
         (void)fprintf(stderr, "%s", err1);
         goto err;
     }
@@ -1692,7 +1626,7 @@ pixrep(struct Input *in, struct Raster *im)
     dummy = 0;
     didx  = &dummy;
     if (in->rank == 3) {
-        if ((didx = (int *)HDmalloc((unsigned int)(im->dres + 1) * sizeof(int))) == NULL) {
+        if ((didx = (int *)malloc((unsigned int)(im->dres + 1) * sizeof(int))) == NULL) {
             (void)fprintf(stderr, "%s", err1);
             goto err;
         }
@@ -1704,7 +1638,7 @@ pixrep(struct Input *in, struct Raster *im)
     /*
      * compute the expanded image
      */
-    if ((pix = (unsigned char *)HDmalloc((unsigned int)(in->dims[0] + 1))) == NULL) {
+    if ((pix = (unsigned char *)malloc((unsigned int)(in->dims[0] + 1))) == NULL) {
         (void)fprintf(stderr, "%s", err1);
         goto err;
     }
@@ -1749,11 +1683,11 @@ pixrep(struct Input *in, struct Raster *im)
     /*
      * free dynamically allocated space
      */
-    HDfree((char *)hidx);
-    HDfree((char *)vidx);
+    free(hidx);
+    free(vidx);
     if (in->rank == 3)
-        HDfree((char *)didx);
-    HDfree((char *)pix);
+        free(didx);
+    free(pix);
 
     return (0);
 
@@ -1781,9 +1715,6 @@ process(struct Options *opt)
     int32          len;
     FILE          *strm;
     int32          hdf;
-#ifdef DEBUG
-    int h, v, d;
-#endif /* DEBUG */
 
     const char *err1  = "Error creating HDF output file: %s.\n";
     const char *err2  = "Unable to dynamically allocate memory.\n";
@@ -1838,16 +1769,16 @@ process(struct Options *opt)
         /*
          * get the scale for each axis
          */
-        if ((in.hscale = (float32 *)HDmalloc((size_t)(in.dims[0] + 1) * sizeof(float32))) == NULL) {
+        if ((in.hscale = (float32 *)malloc((size_t)(in.dims[0] + 1) * sizeof(float32))) == NULL) {
             (void)fprintf(stderr, "%s", err2);
             goto err;
         }
-        if ((in.vscale = (float32 *)HDmalloc((size_t)(in.dims[1] + 1) * sizeof(float32))) == NULL) {
+        if ((in.vscale = (float32 *)malloc((size_t)(in.dims[1] + 1) * sizeof(float32))) == NULL) {
             (void)fprintf(stderr, "%s", err2);
             goto err;
         }
         if (in.rank == 3) {
-            if ((in.dscale = (float32 *)HDmalloc((size_t)(in.dims[2] + 1) * sizeof(float32))) == NULL) {
+            if ((in.dscale = (float32 *)malloc((size_t)(in.dims[2] + 1) * sizeof(float32))) == NULL) {
                 (void)fprintf(stderr, "%s", err2);
                 goto err;
             }
@@ -1859,7 +1790,7 @@ process(struct Options *opt)
          * get the input data
          */
         len = in.dims[0] * in.dims[1] * in.dims[2];
-        if ((in.data = (VOIDP)HDmalloc((size_t)len * sizeof(float32))) == NULL) {
+        if ((in.data = (void *)malloc((size_t)len * sizeof(float32))) == NULL) {
             (void)fprintf(stderr, "%s", err2);
             goto err;
         }
@@ -1966,7 +1897,7 @@ process(struct Options *opt)
                 }
             }
             len = im.hres * im.vres * im.dres;
-            if ((im.image = (unsigned char *)HDmalloc((unsigned int)len)) == NULL) {
+            if ((im.image = (unsigned char *)malloc((unsigned int)len)) == NULL) {
                 (void)fprintf(stderr, "%s", err2);
                 goto err;
             }
@@ -1996,41 +1927,18 @@ process(struct Options *opt)
                     goto err;
                 }
             }
-
-#ifdef DEBUG
-            (void)printf("Output Raster Information ...\n\n");
-            (void)printf("\tresolution (horiz,vert,[depth]):\n\n");
-            if (in.rank == 2)
-                (void)printf("\t%d %d\n\n", im.hres, im.vres);
-            else
-                (void)printf("\t%d %d %d\n\n", im.hres, im.vres, im.dres);
-            if (opt->mean == TRUE) {
-                (void)printf("\tadjusted max/min values:\n\n");
-                (void)printf("\t%f %f\n\n", in.max, in.min);
-            }
-            (void)printf("\tcolor index values:");
-            for (d = 0, ip = im.image; d < im.dres; d++) {
-                (void)printf("\n");
-                for (v = 0; v < im.vres; v++) {
-                    (void)printf("\n");
-                    for (h = 0; h < im.hres; h++, ip++)
-                        (void)printf("\t%d", *ip);
-                }
-            }
-            (void)printf("\n");
-#endif /* DEBUG */
         }
 
         /*
          * free dynamically allocated space
          */
-        HDfree((char *)in.hscale);
-        HDfree((char *)in.vscale);
+        free(in.hscale);
+        free(in.vscale);
         if (in.rank == 3)
-            HDfree((char *)in.dscale);
-        HDfree((char *)in.data);
+            free(in.dscale);
+        free(in.data);
         if (opt->to_image == TRUE)
-            HDfree((char *)im.image);
+            free(im.image);
     }
 
     return (0);

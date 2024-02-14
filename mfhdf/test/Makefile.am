@@ -8,12 +8,8 @@ include $(top_srcdir)/config/commence.am
 test_INCLUDES=-I$(top_srcdir)/hdf/src         \
               -I$(top_srcdir)/mfhdf/libsrc    \
               -I$(top_builddir)/mfhdf/libsrc
-DEFINES=-DNDEBUG -DHDF
-AM_CPPFLAGS=$(test_INCLUDES) $(XDRINC) $(DEFINES)
-
-if HDF_BUILD_XDR
-XDRLIB = $(top_builddir)/mfhdf/xdr/libxdr.la
-endif
+DEFINES=-DHDF
+AM_CPPFLAGS=$(test_INCLUDES) $(DEFINES)
 
 #############################################################################
 ##                              Testing                                    ##
@@ -25,17 +21,17 @@ check_PROGRAMS = cdftest hdfnctest hdftest
 check_SCRIPTS = testmfhdf.sh
 
 cdftest_SOURCES = cdftest.c
-cdftest_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB) @LIBS@
+cdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
 
 hdfnctest_SOURCES = hdfnctest.c tutils.c tncvargetfill.c tunlim.c	\
 		    tncunlim.c
-hdfnctest_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB) @LIBS@
+hdfnctest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
 
 hdftest_SOURCES = hdftest.c tutils.c tchunk.c tcomp.c tcoordvar.c	\
 		  tdim.c temptySDSs.c tattributes.c texternal.c tfile.c	\
 		  tmixed_apis.c tnetcdf.c trank0.c tsd.c tsdsprops.c	\
 		  tszip.c tattdatainfo.c tdatainfo.c tdatasizes.c
-hdftest_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB) @LIBS@
+hdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
 
 #############################################################################
 ##                          And the cleanup                                ##

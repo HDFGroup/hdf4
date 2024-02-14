@@ -17,11 +17,11 @@
 /* Size of the file buffer to copy through */
 #define MAX_FILE_BUF 16384
 
-PRIVATE uint8 file_buf[MAX_FILE_BUF]; /* size of the buffer to copy through */
+static uint8 file_buf[MAX_FILE_BUF]; /* size of the buffer to copy through */
 
-static VOID usage(void);
+static void usage(void);
 
-static VOID
+static void
 usage(void)
 {
     printf("USAGE: hdf2jpeg <input HDF file> <output JPEG file template>\n");
@@ -56,15 +56,15 @@ main(int argc, char *argv[])
     if (argc < 3)
         usage();
 
-    if ((jfif_char = (char *)HDstrchr(argv[2], '#')) == NULL)
-        HDstrcpy(jfif_name, argv[2]); /* copy the JPEG file name */
+    if ((jfif_char = (char *)strchr(argv[2], '#')) == NULL)
+        strcpy(jfif_name, argv[2]); /* copy the JPEG file name */
     else {
         if (jfif_char > argv[2]) { /* copy initial portion */
-            HDstrncpy(jfif_name, argv[2], (size_t)(jfif_char - argv[2]));
+            strncpy(jfif_name, argv[2], (size_t)(jfif_char - argv[2]));
             jfif_name[jfif_char - argv[2]] = '\0'; /* terminate the string */
         }                                          /* end if */
-        HDstrcat(jfif_name, "%d");                 /* append formatter */
-        HDstrcat(jfif_name, jfif_char + 1);        /* complete the name */
+        strcat(jfif_name, "%d");                   /* append formatter */
+        strcat(jfif_name, jfif_char + 1);          /* complete the name */
         jfif_formatted = TRUE;
     } /* end else */
 

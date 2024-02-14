@@ -1,15 +1,16 @@
-# ****************************************************************************
-# * NCSA HDF                                                                 *
-# * Software Development Group                                               *
-# * National Center for Supercomputing Applications                          *
-# * University of Illinois at Urbana-Champaign                               *
-# * 605 E. Springfield, Champaign IL 61820                                   *
-# *                                                                          *
-# * For conditions of distribution and use, see the accompanying             *
-# * hdf/COPYING file.                                                        *
-# *                                                                          *
-# ***************************************************************************
-#
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Copyright by The HDF Group.                                               *
+ * Copyright by the Board of Trustees of the University of Illinois.         *
+ * All rights reserved.                                                      *
+ *                                                                           *
+ * This file is part of HDF.  The full HDF copyright notice, including       *
+ * terms governing use, modification, and redistribution, is contained in    *
+ * the COPYING file, which can be found at the root of the source code       *
+ * distribution tree, or in https://support.hdfgroup.org/ftp/HDF/releases/.  *
+ * If you do not have access to either file, you may request a copy from     *
+ * help@hdfgroup.org.                                                        *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 #
 # ##################################################################
 #
@@ -34,7 +35,7 @@ H_HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h hcomp.h hconv.h hbitio.h \
        hlimits.h hntdefs.h htags.h hkit.h hcompi.h bitvect.h atom.h \
        dynarray.h linklist.h hchunks.h cszip.h
 
-DF_HDRS=df.h dfi.h dfstubs.h dfufp2i.h
+DF_HDRS=df.h dfufp2i.h
 DFAN_HDRS=dfan.h
 DFRI_HDRS=dfrig.h dfgr.h
 DFSD_HDRS=dfsd.h

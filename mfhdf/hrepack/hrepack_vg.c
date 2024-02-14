@@ -12,6 +12,8 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include <assert.h>
+#include <stdlib.h>
+
 #include "hdf.h"
 #include "mfhdf.h"
 
@@ -53,21 +55,19 @@ copy_vgroup_attrs(int32 vg_in, int32 vg_out, char *path, options_t *options)
             printf("Failed to get attribute %d of <%s>\n", i, path);
             continue;
         }
-        if ((buf = (char *)HDmalloc((size_t)(size * n_values))) == NULL) {
+        if ((buf = (char *)malloc((size_t)(size * n_values))) == NULL) {
             printf("Failed to get memory for attribute %d of <%s>\n", i, path);
             continue;
         }
         if ((Vgetattr2(vg_in, i, buf)) == FAIL) {
             printf("Failed to get attribute %d of <%s>\n", i, path);
-            if (buf)
-                HDfree(buf);
+            free(buf);
             continue;
         }
         if ((Vsetattr(vg_out, attr_name, data_type, n_values, buf)) == FAIL) {
             printf("Failed to set attribute %d of <%s>\n", i, path);
         }
-        if (buf)
-            HDfree(buf);
+        free(buf);
     }
     return 1;
 }

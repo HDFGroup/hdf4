@@ -18,13 +18,12 @@
  * Contents:
  *  Structure definitions: DFANdirentry, DFANdirhead
  *  Constant definitions: DFAN_LABEL, DFAN_DESC
- * Remarks: none
  *----------------------------------------------------------------------------*/
 
 #ifndef H4_DFAN_H
 #define H4_DFAN_H
 
-#include "hdf.h"
+#include "hdfi.h"
 
 #define DFAN_LABEL 0
 #define DFAN_DESC  1

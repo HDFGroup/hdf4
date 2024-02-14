@@ -1,0 +1,126 @@
+name: hdf4 dev CMake icx CI
+
+# Controls when the action will run. Triggers the workflow on a call
+on:
+  workflow_call:
+    inputs:
+      build_mode:
+        description: "release vs. debug build"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  # Linux (Ubuntu) w/ gcc + CMake
+  #
+  Intel_oneapi_linux:
+    name: "ubuntu-oneapi ${{ inputs.build_mode }}"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      # Only CMake need ninja-build, but we just install it unilaterally
+      # libssl, etc. are needed for the ros3 VFD
+      - name: Install Linux Dependencies
+        run: |
+           sudo apt update
+           sudo apt-get install ninja-build doxygen graphviz
+           sudo apt install libssl3 libssl-dev libcurl4 libcurl4-openssl-dev
+
+      - name: add oneAPI to env
+        uses: fortran-lang/setup-fortran@v1
+        id: setup-fortran
+        with:
+          compiler: intel
+          version: '2023.2'
+
+      - name: CMake Configure with oneapi
+        shell: bash
+        env:
+          FC: ${{ steps.setup-fortran.outputs.fc }}
+          CC: ${{ steps.setup-fortran.outputs.cc }}
+          CXX: ${{ steps.setup-fortran.outputs.cxx }}
+        run: |
+          mkdir "${{ runner.workspace }}/build"
+          cd "${{ runner.workspace }}/build"
+          cmake -C ${{ github.workspace }}/config/cmake/cacheinit.cmake -G Ninja \
+          -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
+          -DCMAKE_TOOLCHAIN_FILE=config/toolchain/intel.cmake \
+          -DJPEG_USE_LOCALCONTENT=OFF \
+          -DLIBAEC_USE_LOCALCONTENT=OFF \
+          -DZLIB_USE_LOCALCONTENT=OFF \
+          -DHDF4_BUILD_FORTRAN=OFF \
+          $GITHUB_WORKSPACE
+
+      # BUILD
+      - name: CMake Build
+        shell: bash
+        env:
+          FC: ${{ steps.setup-fortran.outputs.fc }}
+          CC: ${{ steps.setup-fortran.outputs.cc }}
+          CXX: ${{ steps.setup-fortran.outputs.cxx }}
+        run: |
+          cmake --build . --parallel 3 --config ${{ inputs.build_mode }}
+        working-directory: ${{ runner.workspace }}/build
+
+      # RUN TESTS
+      - name: CMake Run Tests
+        shell: bash
+        env:
+          FC: ${{ steps.setup-fortran.outputs.fc }}
+          CC: ${{ steps.setup-fortran.outputs.cc }}
+          CXX: ${{ steps.setup-fortran.outputs.cxx }}
+        run: |
+          ctest . --parallel 2 -C ${{ inputs.build_mode }} -V
+        working-directory: ${{ runner.workspace }}/build
+
+  Intel_oneapi_windows:
+    name: "windows-oneapi ${{ inputs.build_mode }}"
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      - name: Install Dependencies (Windows)
+        run: choco install ninja
+
+      - name: add oneAPI to env
+        uses: fortran-lang/setup-fortran@v1
+        id: setup-fortran
+        with:
+          compiler: intel
+          version: '2023.2'
+
+      - name: CMake Configure with oneapi
+        shell: pwsh
+        env:
+          FC: ${{ steps.setup-fortran.outputs.fc }}
+          CC: ${{ steps.setup-fortran.outputs.cc }}
+          CXX: ${{ steps.setup-fortran.outputs.cxx }}
+        run: |
+          mkdir "${{ runner.workspace }}/build"
+          Set-Location -Path "${{ runner.workspace }}\\build"
+          cmake -C ${{ github.workspace }}/config/cmake/cacheinit.cmake -G Ninja -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} -DHDF4_BUILD_FORTRAN=OFF -DJPEG_USE_LOCALCONTENT=OFF -DLIBAEC_USE_LOCALCONTENT=OFF -DZLIB_USE_LOCALCONTENT=OFF ${{ github.workspace }}
+
+      # BUILD
+      - name: CMake Build
+        shell: pwsh
+        env:
+          FC: ${{ steps.setup-fortran.outputs.fc }}
+          CC: ${{ steps.setup-fortran.outputs.cc }}
+          CXX: ${{ steps.setup-fortran.outputs.cxx }}
+        run: |
+          cmake --build . --parallel 3 --config ${{ inputs.build_mode }}
+        working-directory: ${{ runner.workspace }}/build
+
+      # RUN TESTS
+      - name: CMake Run Tests
+        shell: pwsh
+        env:
+          FC: ${{ steps.setup-fortran.outputs.fc }}
+          CC: ${{ steps.setup-fortran.outputs.cc }}
+          CXX: ${{ steps.setup-fortran.outputs.cxx }}
+        run: |
+          ctest . --parallel 2 -C ${{ inputs.build_mode }} -V -E "HDP-dumpv|h4ex_GR_create|h4ex_GR_write|h4ex_VG_add"
+        working-directory: ${{ runner.workspace }}/build

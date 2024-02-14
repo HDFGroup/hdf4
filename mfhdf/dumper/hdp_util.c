@@ -27,7 +27,7 @@ tagnum_to_name(intn num)
     else
         ret = HDgettagsname((uint16)num);
     if (ret == NULL)
-        ret = HDstrdup(unknown_tag);
+        ret = strdup(unknown_tag);
     return (ret);
 } /* end tagnum_to_name() */
 
@@ -50,22 +50,22 @@ make_file_list(intn curr_arg, intn argc, char *argv[])
     if (curr_arg > argc) /* consistency check */
         return (NULL);
 
-    ret = (filelist_t *)HDmalloc(sizeof(filelist_t));
+    ret = (filelist_t *)malloc(sizeof(filelist_t));
     if (ret == NULL) {
         fprintf(stderr, "make_file_list: space allocation failed\n");
         return (NULL);
     }
-    ret->file_arr = (char **)HDmalloc(sizeof(char *) * ((argc - curr_arg) + 1));
+    ret->file_arr = (char **)malloc(sizeof(char *) * ((argc - curr_arg) + 1));
     if (ret->file_arr == NULL) {
         fprintf(stderr, "make_file_list: space allocation failed\n");
-        HDfree(ret);
+        free(ret);
         return (NULL);
-    } /* end if */
+    }
 
     ret->max_files = (argc - curr_arg);
     ret->curr_file = 0;
     for (i = 0; curr_arg < argc; i++, curr_arg++)
-        ret->file_arr[i] = HDstrdup(argv[curr_arg]);
+        ret->file_arr[i] = strdup(argv[curr_arg]);
     return (ret);
 } /* end make_file_list() */
 
@@ -89,30 +89,28 @@ free_node_vg_info_t(vg_info_t *aNode)
         if (aNode->children != NULL) {
             for (i = 0; i < aNode->n_entries; i++)
                 if (aNode->children[i] != NULL) {
-                    HDfree(aNode->children[i]);
+                    free(aNode->children[i]);
                     aNode->children[i] = NULL;
                 }
-            HDfree(aNode->children);
+            free(aNode->children);
             aNode->children = NULL;
         }
         if (aNode->type != NULL) {
             for (i = 0; i < aNode->n_entries; i++)
                 if (aNode->type[i] != NULL) {
-                    HDfree(aNode->type[i]);
+                    free(aNode->type[i]);
                     aNode->type[i] = NULL;
                 }
-            HDfree(aNode->type);
+            free(aNode->type);
             aNode->type = NULL;
         }
-        if (aNode->vg_name != NULL) {
-            HDfree(aNode->vg_name);
-            aNode->vg_name = NULL;
-        }
+        free(aNode->vg_name);
+        aNode->vg_name = NULL;
     }
     return (aNode);
 } /* end of free_node_vg_info_t */
 
-/* free_struct_list use HDfree to free the list of vgroup info structs */
+/* free_struct_list use free() to free the list of vgroup info structs */
 vg_info_t **
 free_vginfo_list(vg_info_t **nodelist, int32 num_items)
 {
@@ -123,32 +121,30 @@ free_vginfo_list(vg_info_t **nodelist, int32 num_items)
         for (i = 0; i < num_items; i++)
             if (nodelist[i] != NULL) {
                 nodelist[i] = free_node_vg_info_t(nodelist[i]);
-                HDfree(nodelist[i]);
+                free(nodelist[i]);
                 nodelist[i] = NULL;
             }
-        HDfree(nodelist);
+        free(nodelist);
     }
     return (NULL);
 } /* end of free_vginfo_list */
 
-/* free_struct_list use HDfree to free the list of vgroup info structs */
+/* free_struct_list use free() to free the list of vgroup info structs */
 obj_chosen_t **
 free_node_obj_chosen_t(obj_chosen_t *aNode)
 {
     if (aNode != NULL) {
         if (aNode->name != NULL) {
             fprintf(stderr, " name = %s \n", aNode->name);
-            HDfree(aNode->name);
+            free(aNode->name);
         }
-        if (aNode->classname != NULL) {
-            HDfree(aNode->classname);
-        }
-        HDfree(aNode);
+        free(aNode->classname);
+        free(aNode);
     }
     return (NULL);
 } /* end of free_node_obj_chosen_t */
 
-/* free_struct_list use HDfree to free the list of vgroup info structs */
+/* free_struct_list use free() to free the list of vgroup info structs */
 void
 free_obj_chosen_t_list(obj_chosen_t **nodelist, int32 num_items)
 {
@@ -157,19 +153,15 @@ free_obj_chosen_t_list(obj_chosen_t **nodelist, int32 num_items)
     /* if the list is not NULL, free each node then reset the list to NULL */
     if ((*nodelist) != NULL) {
         for (i = 0; i < num_items; i++) {
-            if ((*nodelist)[i].name != NULL) {
-                HDfree((*nodelist)[i].name);
-            }
-            if ((*nodelist)[i].classname != NULL) {
-                HDfree((*nodelist)[i].classname);
-            }
+            free((*nodelist)[i].name);
+            free((*nodelist)[i].classname);
         }
-        HDfree((*nodelist));
+        free((*nodelist));
         (*nodelist) = NULL;
     }
 } /* end of free_obj_chosen_t_list */
 
-/* free_str_list use HDfree to free the list of strings of characters */
+/* free_str_list use free() to free the list of strings of characters */
 char **
 free_str_list(char **str_list, int32 num_items)
 {
@@ -177,20 +169,18 @@ free_str_list(char **str_list, int32 num_items)
 
     if (str_list != NULL) {
         for (i = 0; i < num_items; i++)
-            if (str_list[i] != NULL)
-                HDfree(str_list[i]);
-        HDfree(str_list);
+            free(str_list[i]);
+        free(str_list);
     }
     return (NULL);
 } /* end of free_str_list */
 
-/* free_num_list use HDfree to free the list of integers; this routine
+/* free_num_list use free() to free the list of integers; this routine
    is short but can be used in many different places and very convenient */
 int32 *
 free_num_list(int32 *num_list)
 {
-    if (num_list != NULL)
-        HDfree(num_list);
+    free(num_list);
     return (NULL);
 } /* end of free_num_list */
 
@@ -200,9 +190,9 @@ free_file_list(filelist_t *f_list)
     intn i;
 
     for (i = 0; i < f_list->max_files; i++)
-        HDfree(f_list->file_arr[i]);
-    HDfree(f_list->file_arr);
-    HDfree(f_list);
+        free(f_list->file_arr[i]);
+    free(f_list->file_arr);
+    free(f_list);
 } /* end free_file_list() */
 
 /*
@@ -221,31 +211,31 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
             return (NULL);
         if ((nobj = DFdinobj(gid)) == FAIL)
             return (NULL);
-        if ((ret = (groupinfo_t *)HDmalloc(sizeof(groupinfo_t))) == NULL) {
+        if ((ret = (groupinfo_t *)malloc(sizeof(groupinfo_t))) == NULL) {
             fprintf(stderr, "make_group_list: space allocation failed\n");
             return (NULL);
         }
         ret->max_dds = nobj;
         ret->curr_dd = 0;
         if (nobj > 0) {
-            if ((ret->dd_arr = (DFdi *)HDmalloc(sizeof(DFdi) * nobj)) == NULL) {
+            if ((ret->dd_arr = (DFdi *)malloc(sizeof(DFdi) * nobj)) == NULL) {
                 fprintf(stderr, "make_group_list: space allocation failed\n");
-                HDfree(ret);
+                free(ret);
                 return (NULL);
-            } /* end if */
+            }
             for (i = 0; i < nobj; i++) {
                 if (DFdiget(gid, &ret->dd_arr[i].tag, &ret->dd_arr[i].ref) == FAIL) {
-                    HDfree(ret->dd_arr);
-                    HDfree(ret);
+                    free(ret->dd_arr);
+                    free(ret);
                     return (NULL);
-                } /* end if */
-            }     /* end for */
-        }         /* end if */
-        else {    /* paranoia sets in... */
+                }
+            }
+        }
+        else {
             ret->max_dds = ret->curr_dd = 0;
             ret->dd_arr                 = NULL;
-        }  /* end else */
-    }      /* end if */
+        }
+    }
     else { /* check for Vgroup? */
         int32 vkey;
 
@@ -261,43 +251,43 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
                     int32 *temp_tag;
                     int32 *temp_ref;
 
-                    if ((temp_tag = (int32 *)HDmalloc(sizeof(int32) * nobj)) == NULL) {
+                    if ((temp_tag = (int32 *)malloc(sizeof(int32) * nobj)) == NULL) {
                         fprintf(stderr, "make_group_list: space allocation failed\n");
                         Vdetach(vkey);
                         return (NULL);
                     } /* end if */
-                    if ((temp_ref = (int32 *)HDmalloc(sizeof(int32) * nobj)) == NULL) {
+                    if ((temp_ref = (int32 *)malloc(sizeof(int32) * nobj)) == NULL) {
                         fprintf(stderr, "make_group_list: space allocation failed\n");
 
                         Vdetach(vkey);
-                        HDfree(temp_tag);
+                        free(temp_tag);
                         return (NULL);
                     } /* end if */
 
                     if (Vgettagrefs(vkey, temp_tag, temp_ref, nobj) == FAIL) {
                         Vdetach(vkey);
-                        HDfree(temp_tag);
-                        HDfree(temp_ref);
+                        free(temp_tag);
+                        free(temp_ref);
                         return (NULL);
                     } /* end if */
 
-                    if ((ret = (groupinfo_t *)HDmalloc(sizeof(groupinfo_t))) == NULL) {
+                    if ((ret = (groupinfo_t *)malloc(sizeof(groupinfo_t))) == NULL) {
                         fprintf(stderr, "make_group_list: space allocation failed\n");
 
                         Vdetach(vkey);
-                        HDfree(temp_tag);
-                        HDfree(temp_ref);
+                        free(temp_tag);
+                        free(temp_ref);
                         return (NULL);
                     } /* end if */
                     ret->max_dds = nobj;
                     ret->curr_dd = 0;
-                    if ((ret->dd_arr = (DFdi *)HDmalloc(sizeof(DFdi) * nobj)) == NULL) {
+                    if ((ret->dd_arr = (DFdi *)malloc(sizeof(DFdi) * nobj)) == NULL) {
                         fprintf(stderr, "make_group_list: space allocation failed\n");
 
                         Vdetach(vkey);
-                        HDfree(temp_tag);
-                        HDfree(temp_ref);
-                        HDfree(ret);
+                        free(temp_tag);
+                        free(temp_ref);
+                        free(ret);
                         return (NULL);
                     } /* end if */
 
@@ -306,10 +296,10 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
                         ret->dd_arr[i].ref = (uint16)temp_ref[i];
                     } /* end for */
 
-                    HDfree(temp_tag);
-                    HDfree(temp_ref);
+                    free(temp_tag);
+                    free(temp_ref);
                 } /* if nobj > 0 */
-                /* BMR: 7/28/00 must add this one, otherwise, HDfree fails later */
+                /* BMR: 7/28/00 must add this one, otherwise, free fails later */
                 else /* nobj <= 0 */
                     return (NULL);
             }    /* end if */
@@ -347,9 +337,8 @@ void
 free_group_list(groupinfo_t *g_list)
 {
     if (g_list != NULL) {
-        if (g_list->dd_arr != NULL)
-            HDfree(g_list->dd_arr);
-        HDfree(g_list);
+        free(g_list->dd_arr);
+        free(g_list);
     }
 } /* end free_group_list() */
 
@@ -375,24 +364,24 @@ make_obj_list(int32 fid, uint32 options)
         return (NULL);
 
     /* allocate space for the object list - exit at failure??? */
-    if ((obj_ret = (objlist_t *)HDmalloc(sizeof(objlist_t))) == NULL) {
+    if ((obj_ret = (objlist_t *)malloc(sizeof(objlist_t))) == NULL) {
         fprintf(stderr, "make_obj_list: space allocation failed\n");
         return (NULL);
     }
 
     obj_ret->max_obj     = nobj; /* set the number of objects */
     obj_ret->curr_obj    = 0;
-    obj_ret->raw_obj_arr = (objinfo_t *)HDmalloc(sizeof(objinfo_t) * nobj);
+    obj_ret->raw_obj_arr = (objinfo_t *)malloc(sizeof(objinfo_t) * nobj);
 
     /* should it exit on failure ??? */
     if (obj_ret->raw_obj_arr == NULL) {
         fprintf(stderr, "make_obj_list: space allocation failed\n");
-        HDfree(obj_ret);
+        free(obj_ret);
         return (NULL);
-    } /* end if */
+    }
 
     /* Clear array of dd/object information */
-    HDmemset(obj_ret->raw_obj_arr, 0, sizeof(objinfo_t) * nobj);
+    memset(obj_ret->raw_obj_arr, 0, sizeof(objinfo_t) * nobj);
 
     /*
      * Read all the tag/ref's in the file into an array
@@ -401,8 +390,8 @@ make_obj_list(int32 fid, uint32 options)
     aid = Hstartread(fid, DFTAG_WILDCARD, DFREF_WILDCARD);
     if (aid == FAIL) {
         HEprint(stderr, 0);
-        HDfree(obj_ret->raw_obj_arr);
-        HDfree(obj_ret);
+        free(obj_ret->raw_obj_arr);
+        free(obj_ret);
         return (NULL);
     } /* end if */
 
@@ -417,13 +406,13 @@ make_obj_list(int32 fid, uint32 options)
                     obj_ret->raw_obj_arr[n].is_special = 0;
                 }      /* end if */
                 else { /* copy over special information we found */
-                    obj_ret->raw_obj_arr[n].spec_info = (sp_info_block_t *)HDmalloc(sizeof(sp_info_block_t));
+                    obj_ret->raw_obj_arr[n].spec_info = (sp_info_block_t *)malloc(sizeof(sp_info_block_t));
                     if (obj_ret->raw_obj_arr[n].spec_info == NULL) {
                         fprintf(stderr, "make_obj_list: space allocation failed\n");
                         obj_ret->raw_obj_arr[n].is_special = 0;
                     }
                     else
-                        HDmemcpy(obj_ret->raw_obj_arr[n].spec_info, &info, sizeof(sp_info_block_t));
+                        memcpy(obj_ret->raw_obj_arr[n].spec_info, &info, sizeof(sp_info_block_t));
                 } /* end else */
             }     /* end if */
         }         /* end if */
@@ -432,21 +421,21 @@ make_obj_list(int32 fid, uint32 options)
 
     if (Hendaccess(aid) == FAIL) {
         HEprint(stderr, 0);
-        HDfree(obj_ret->raw_obj_arr);
-        HDfree(obj_ret);
+        free(obj_ret->raw_obj_arr);
+        free(obj_ret);
         return (NULL);
-    } /* end if */
+    }
 
     /* Post-process the list of dd/objects, adding more information */
     /*  Also set up the pointers for the sorted list to be manipulated later */
 
-    obj_ret->srt_obj_arr = (objinfo_t **)HDmalloc(sizeof(objinfo_t *) * nobj);
+    obj_ret->srt_obj_arr = (objinfo_t **)malloc(sizeof(objinfo_t *) * nobj);
     if (obj_ret->srt_obj_arr == NULL) {
         fprintf(stderr, "make_obj_list: space allocation failed\n");
-        HDfree(obj_ret->raw_obj_arr);
-        HDfree(obj_ret);
+        free(obj_ret->raw_obj_arr);
+        free(obj_ret);
         return (NULL);
-    } /* end if */
+    }
 
     /* Loop for more information */
     for (n = 0; n < nobj; n++) {
@@ -465,8 +454,8 @@ make_obj_list(int32 fid, uint32 options)
                     /* do not free these because even this element has no group
                        list, it still can be displayed */
                     /*
-                                   HDfree(obj_ret->raw_obj_arr);
-                                   HDfree(obj_ret);
+                                   free(obj_ret->raw_obj_arr);
+                                   free(obj_ret);
                                    return (NULL);
                     */
                 } /* end if */
@@ -531,11 +520,11 @@ free_obj_list(objlist_t *o_list)
             if (obj_ptr->is_group)
                 free_group_list(obj_ptr->group_info);
             if (obj_ptr->is_special)
-                HDfree(obj_ptr->spec_info);
+                free(obj_ptr->spec_info);
         } /* end for */
-        HDfree(o_list->srt_obj_arr);
-        HDfree(o_list->raw_obj_arr);
-        HDfree(o_list);
+        free(o_list->srt_obj_arr);
+        free(o_list->raw_obj_arr);
+        free(o_list);
     }
     else
         fprintf(stderr, ">>>free_obj_list failed - attempting to free a NULL list \n");
@@ -597,12 +586,10 @@ sort(int32 *chosen, int32 choices)
    if it is not NULL.  Its purpose is to make cleaning up simpler
    throughout the entire dumper */
 void
-resetBuff(VOIDP *ptr)
+resetBuff(void **ptr)
 {
-    if (*ptr != NULL) {
-        HDfree(*ptr);
-        *ptr = NULL;
-    }
+    free(*ptr);
+    *ptr = NULL;
 }
 
 /* parse_number_opts take a list of numbers separated by commas then
@@ -629,7 +616,7 @@ parse_number_opts(char *argv[], int *curr_arg, number_filter_t *filter)
     }
 
     /* then traverse the list and count the number of items in it */
-    while ((tempPtr = HDstrchr(ptr, ',')) != NULL) {
+    while ((tempPtr = strchr(ptr, ',')) != NULL) {
         numItems++;        /* count number of items in the list */
         ptr = tempPtr + 1; /* forward pointer to next item, after a comma */
     }                      /* end while */
@@ -641,7 +628,7 @@ parse_number_opts(char *argv[], int *curr_arg, number_filter_t *filter)
         numItems = numItems + filter->num_items;
 
         /* Allocate a new list */
-        newlist = (int32 *)HDmalloc(sizeof(intn) * numItems);
+        newlist = (int32 *)malloc(sizeof(intn) * numItems);
         CHECK_ALLOC(newlist, "newlist", "parse_number_opts");
 
         /* If filter->num_list is already allocated, transfer pointers over
@@ -649,7 +636,7 @@ parse_number_opts(char *argv[], int *curr_arg, number_filter_t *filter)
         if (filter->num_list != NULL) {
             for (i = 0; i < filter->num_items; i++)
                 newlist[i] = filter->num_list[i];
-            HDfree(filter->num_list);
+            free(filter->num_list);
         }
 
         /* Set _cdfs to the new list */
@@ -659,7 +646,7 @@ parse_number_opts(char *argv[], int *curr_arg, number_filter_t *filter)
 
     else {
         /* allocate space to hold all the items in the list */
-        filter->num_list = (int32 *)HDmalloc(sizeof(intn) * numItems);
+        filter->num_list = (int32 *)malloc(sizeof(intn) * numItems);
         CHECK_ALLOC(filter->num_list, "filter->num_list", "parse_number_opts");
     }
 
@@ -667,7 +654,7 @@ parse_number_opts(char *argv[], int *curr_arg, number_filter_t *filter)
     ptr = argv[*curr_arg];
     i   = 0; /* index of the list */
     while (i < numItems) {
-        tempPtr = HDstrchr(ptr, ',');
+        tempPtr = strchr(ptr, ',');
         if (tempPtr != NULL)
             *tempPtr = '\0';             /* end the string of digits */
         filter->num_list[i] = atoi(ptr); /* convert string to digits */
@@ -700,7 +687,7 @@ parse_string_opts(char *argv[], int *curr_arg, char_filter_t *filter)
     }
 
     /* then traverse the list and count the number of strings in it */
-    while ((tempPtr = HDstrchr(ptr, ',')) != NULL) {
+    while ((tempPtr = strchr(ptr, ',')) != NULL) {
         numItems++;
         ptr = tempPtr + 1;
     }                 /* end while */
@@ -708,22 +695,22 @@ parse_string_opts(char *argv[], int *curr_arg, char_filter_t *filter)
         numItems++;
 
     /* allocate space to hold pointers that will point to the given strings */
-    filter->str_list = (char **)HDmalloc(sizeof(char *) * numItems);
+    filter->str_list = (char **)malloc(sizeof(char *) * numItems);
     CHECK_ALLOC(filter->str_list, "filter->str_list", "parse_string_opts");
 
     /* go back to the beginning of the list and read in the given strings */
     ptr = argv[*curr_arg];
     i   = 0; /* init the index of the list */
     while (i < numItems) {
-        tempPtr = HDstrchr(ptr, ','); /* find the end of a string */
+        tempPtr = strchr(ptr, ','); /* find the end of a string */
         if (tempPtr != NULL)
             *tempPtr = '\0'; /* end the string with a NULL char */
 
         /* allocate space for each string */
-        filter->str_list[i] = (char *)HDmalloc(sizeof(char) * (HDstrlen(ptr) + 1));
+        filter->str_list[i] = (char *)malloc(sizeof(char) * (strlen(ptr) + 1));
         CHECK_ALLOC(filter->str_list[i], "filter->str_list[i]", "parse_string_opts");
-        HDstrcpy(filter->str_list[i], ptr); /* get the current string */
-        ptr = tempPtr + 1;                  /* move pointer to next item or end of list */
+        strcpy(filter->str_list[i], ptr); /* get the current string */
+        ptr = tempPtr + 1;                /* move pointer to next item or end of list */
         i++;
     } /* end while */
 
@@ -747,7 +734,7 @@ parse_value_opts(char *argv[], int *curr_arg, dump_info_t **dump_opts, info_type
     int32         numItems = 0, i;
     char         *tempPtr  = NULL;
     char         *ptr      = NULL;
-    obj_chosen_t *newlist;
+    obj_chosen_t *newlist  = NULL;
 
     /* put a temp ptr at the beginning of the given list of numbers,
        separated by commas, for example, 1,2,3 */
@@ -760,7 +747,7 @@ parse_value_opts(char *argv[], int *curr_arg, dump_info_t **dump_opts, info_type
     }
 
     /* then traverse the list and count the number of items in it */
-    while ((tempPtr = HDstrchr(ptr, ',')) != NULL) {
+    while ((tempPtr = strchr(ptr, ',')) != NULL) {
         numItems++;        /* count number of items in the list */
         ptr = tempPtr + 1; /* forward pointer to next item, after a comma */
     }                      /* end while */
@@ -769,26 +756,28 @@ parse_value_opts(char *argv[], int *curr_arg, dump_info_t **dump_opts, info_type
 
     if ((*dump_opts)->all_types != NULL) {
         /* Update number of chosen SDSs so far */
-        numItems = numItems + (*dump_opts)->num_chosen;
+        int32 newItems = numItems + (*dump_opts)->num_chosen;
 
         /* Allocate a new list */
-        newlist = (obj_chosen_t *)HDmalloc(sizeof(obj_chosen_t) * numItems);
+        newlist = (obj_chosen_t *)malloc(sizeof(obj_chosen_t) * newItems);
         CHECK_ALLOC(newlist, "newlist", "parse_value_opts");
 
         /* transfer pointers from (*dump_opts)->all_types over to the new list
            and deallocate the old list of pointers */
         for (i = 0; i < (*dump_opts)->num_chosen; i++)
             newlist[i] = (*dump_opts)->all_types[i];
-        for (i = (*dump_opts)->num_chosen; i < numItems; i++)
+        for (i = (*dump_opts)->num_chosen; i < newItems; i++)
             init_obj_chosen_node(&newlist[i]);
 
+        free((*dump_opts)->all_types);
         /* Set (*dump_opts)->all_types to the new list */
         (*dump_opts)->all_types = newlist;
+        numItems                = newItems;
         newlist                 = NULL;
     }
     else {
         /* allocate space to hold all the items in the list */
-        (*dump_opts)->all_types = (obj_chosen_t *)HDmalloc(sizeof(obj_chosen_t) * numItems);
+        (*dump_opts)->all_types = (obj_chosen_t *)malloc(sizeof(obj_chosen_t) * numItems);
         CHECK_ALLOC((*dump_opts)->all_types, "filter", "parse_value_opts");
 
         /* Initialize all nodes */
@@ -802,7 +791,7 @@ parse_value_opts(char *argv[], int *curr_arg, dump_info_t **dump_opts, info_type
     /* index of the list, it should start at 0 or at the number of SDSs chosen so far */
     i = (*dump_opts)->num_chosen != NO_SPECIFIC ? (*dump_opts)->num_chosen : 0;
     while (i < numItems) {
-        tempPtr = HDstrchr(ptr, ',');
+        tempPtr = strchr(ptr, ',');
         if (tempPtr != NULL)
             *tempPtr = '\0'; /* end the string of digits */
         switch (info_type) {
@@ -818,18 +807,18 @@ parse_value_opts(char *argv[], int *curr_arg, dump_info_t **dump_opts, info_type
 
             case IS_NAME:
                 /* get the current string of characters for name */
-                (*dump_opts)->all_types[i].name = (char *)HDmalloc(sizeof(char) * (HDstrlen(ptr) + 1));
+                (*dump_opts)->all_types[i].name = (char *)malloc(sizeof(char) * (strlen(ptr) + 1));
                 CHECK_ALLOC((*dump_opts)->all_types[i].name, "(*dump_opts)->all_types[i].name",
                             "parse_string_opts");
-                HDstrcpy((*dump_opts)->all_types[i].name, ptr);
+                strcpy((*dump_opts)->all_types[i].name, ptr);
                 break;
 
             case IS_CLASS:
                 /* get the current string of characters for class name */
-                (*dump_opts)->all_types[i].classname = (char *)HDmalloc(sizeof(char) * (HDstrlen(ptr) + 1));
+                (*dump_opts)->all_types[i].classname = (char *)malloc(sizeof(char) * (strlen(ptr) + 1));
                 CHECK_ALLOC((*dump_opts)->all_types[i].classname, "(*dump_opts)->all_types[i].classname",
                             "parse_string_opts");
-                HDstrcpy((*dump_opts)->all_types[i].classname, ptr);
+                strcpy((*dump_opts)->all_types[i].classname, ptr);
                 break;
 
             default:
@@ -858,7 +847,7 @@ alloc_index_list(int32 **index_list, int32 num_chosen)
 {
     int32 i = -1; /* used to pass into HDmemfill as dummmy? */
 
-    *index_list = (int32 *)HDmalloc(sizeof(int32) * num_chosen);
+    *index_list = (int32 *)malloc(sizeof(int32) * num_chosen);
     CHECK_ALLOC(*index_list, "index_list", "alloc_index_list");
 
     i = (-1);

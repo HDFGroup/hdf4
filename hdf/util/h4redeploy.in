@@ -6,7 +6,7 @@
 
 ## Update HDF4 compiler tools after the HDF4 software has been installed
 ## in a new location.
-## For help page, use "h5redeploy -help"
+## For help page, use "h4redeploy -help"
 
 # Function definitions
 
@@ -101,7 +101,7 @@ for x in $h4tools; do
     if [ -f $x ]; then
 	foundtools="$foundtools $x"
 	if [ ! -w $x ]; then
-	    ERROR "h5tool($x) is not writable"
+	    ERROR "hdftool($x) is not writable"
 	    exit 1
 	fi
     fi
@@ -127,7 +127,7 @@ fi
 
 
 # Create the update commands
-CMDFILE=/tmp/h5redeploy.$$
+CMDFILE=/tmp/h4redeploy.$$
 touch $CMDFILE
 chmod 0600 $CMDFILE
 echo "/^prefix/c"                 >> $CMDFILE

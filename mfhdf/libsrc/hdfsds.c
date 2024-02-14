@@ -72,23 +72,22 @@
 
  **************************************************************************/
 
-#ifdef HDF
 #include "local_nc.h"
 
 #define SDG_MAX_INITIAL 100
 
 /* local variables */
-PRIVATE intn    sdgCurrent;
-PRIVATE intn    sdgMax;
-PRIVATE uint16 *sdgTable = NULL;
-PRIVATE uint8  *ptbuf    = NULL;
+static intn    sdgCurrent;
+static intn    sdgMax;
+static uint16 *sdgTable = NULL;
+static uint8  *ptbuf    = NULL;
 
 /* Local routines */
-PRIVATE intn hdf_query_seen_sdg(uint16 ndgRef);
+static intn hdf_query_seen_sdg(uint16 ndgRef);
 
-PRIVATE intn hdf_register_seen_sdg(uint16 ndgRef);
+static intn hdf_register_seen_sdg(uint16 ndgRef);
 
-PRIVATE intn hdf_read_ndgs(NC *handle);
+static intn hdf_read_ndgs(NC *handle);
 
 uint8 *hdf_get_pred_str_attr(NC *handle, uint16 stratt_tag, uint16 satt_ref, int null_count);
 
@@ -107,7 +106,7 @@ uint8 *hdf_get_pred_str_attr(NC *handle, uint16 stratt_tag, uint16 satt_ref, int
    TRUE / FALSE
 
 ******************************************************************************/
-PRIVATE intn
+static intn
 hdf_query_seen_sdg(uint16 ndgRef)
 {
     intn i;
@@ -135,7 +134,7 @@ hdf_query_seen_sdg(uint16 ndgRef)
    SUCCEED / FAIL
 
 ******************************************************************************/
-PRIVATE intn
+static intn
 hdf_register_seen_sdg(uint16 sdgRef)
 {
     intn ret_value = SUCCEED;
@@ -180,7 +179,7 @@ done:
    SUCCEED / FAIL
 
 ******************************************************************************/
-PRIVATE intn
+static intn
 hdf_check_nt(uint8 *ntstring, int32 *type)
 {
     intn ret_value = SUCCEED;
@@ -212,7 +211,7 @@ hdf_check_nt(uint8 *ntstring, int32 *type)
    DFE_NONE / <error code>
 
 ******************************************************************************/
-PRIVATE hdf_err_code_t
+static hdf_err_code_t
 hdf_read_rank(int32 acc_id, int16 *rank)
 {
     uint8         *p, *local_buf = NULL;
@@ -260,7 +259,7 @@ done:
    DFE_NONE / <error code>
 
 ******************************************************************************/
-PRIVATE hdf_err_code_t
+static hdf_err_code_t
 hdf_read_dimsizes(int32 acc_id, int16 rank, int32 *dimsizes)
 {
     uint8         *p, *local_buf = NULL;
@@ -309,7 +308,7 @@ done:
    DFE_NONE / <error code>
 
 ******************************************************************************/
-PRIVATE hdf_err_code_t
+static hdf_err_code_t
 hdf_read_NT(int32 acc_id, NC *handle, uint8 *ntstring_buf)
 {
     uint16         ntTag;
@@ -356,7 +355,7 @@ done:
    DFE_NONE / <error code>
 
 ******************************************************************************/
-PRIVATE hdf_err_code_t
+static hdf_err_code_t
 hdf_get_sdc(NC *handle, uint16 tmpRef, NC_attr **tmp_attr, intn *curr_attr)
 {
     uint8         *coordbuf = NULL; /* buffer to store coord system info */
@@ -380,7 +379,7 @@ hdf_get_sdc(NC *handle, uint16 tmpRef, NC_attr **tmp_attr, intn *curr_attr)
 
     coordbuf[len] = '\0';
     if (coordbuf[0] != '\0') {
-        *tmp_attr = (NC_attr *)NC_new_attr(_HDF_CoordSys, NC_CHAR, HDstrlen(coordbuf), coordbuf);
+        *tmp_attr = (NC_attr *)NC_new_attr(_HDF_CoordSys, NC_CHAR, strlen(coordbuf), coordbuf);
         if (*tmp_attr == NULL) {
             HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
         }
@@ -466,7 +465,7 @@ done:
    DFE_NONE / <error code>
 
 ******************************************************************************/
-PRIVATE hdf_err_code_t
+static hdf_err_code_t
 hdf_get_desc_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr, intn *curr_attr)
 {
     intn           i;
@@ -522,7 +521,7 @@ hdf_get_desc_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr,
             sprintf(hremark, "%s-%d", _HDF_Remarks, i + 1);
 
             /* add it as an attribute */
-            *tmp_attr = (NC_attr *)NC_new_attr(hremark, NC_CHAR, HDstrlen(ann_desc), ann_desc);
+            *tmp_attr = (NC_attr *)NC_new_attr(hremark, NC_CHAR, strlen(ann_desc), ann_desc);
 
             if (NULL == *tmp_attr) {
                 HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
@@ -567,7 +566,7 @@ done:
    DFE_NONE / <error code>
 
 ******************************************************************************/
-PRIVATE hdf_err_code_t
+static hdf_err_code_t
 hdf_get_label_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr, intn *curr_attr)
 {
     intn           i;
@@ -624,7 +623,7 @@ hdf_get_label_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr
             sprintf(hlabel, "%s-%d", _HDF_AnnoLabel, i + 1);
 
             /* add as attribute */
-            *tmp_attr = (NC_attr *)NC_new_attr(hlabel, NC_CHAR, HDstrlen(ann_label), ann_label);
+            *tmp_attr = (NC_attr *)NC_new_attr(hlabel, NC_CHAR, strlen(ann_label), ann_label);
 
             if (NULL == tmp_attr) {
                 HGOTO_ERROR(DFE_ANAPIERROR, DFE_ANAPIERROR);
@@ -669,7 +668,7 @@ done:
    DFE_NONE / <error code>
 
 ******************************************************************************/
-PRIVATE hdf_err_code_t
+static hdf_err_code_t
 hdf_luf_to_attrs(char *labelstr, char *unitstr, char *formatstr, NC_attr **tmp_attr, intn *curr_attr)
 {
     hdf_err_code_t ret_value = DFE_NONE;
@@ -677,7 +676,7 @@ hdf_luf_to_attrs(char *labelstr, char *unitstr, char *formatstr, NC_attr **tmp_a
     /* label => "long_name"  */
     if (labelstr && (labelstr[0] != '\0') > 0) {
         *tmp_attr =
-            (NC_attr *)NC_new_attr(_HDF_LongName, NC_CHAR, HDstrlen((char *)labelstr), (Void *)labelstr);
+            (NC_attr *)NC_new_attr(_HDF_LongName, NC_CHAR, strlen((char *)labelstr), (Void *)labelstr);
 
         if (NULL == *tmp_attr) {
             HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
@@ -691,7 +690,7 @@ hdf_luf_to_attrs(char *labelstr, char *unitstr, char *formatstr, NC_attr **tmp_a
 
     /* Units => 'units' */
     if (unitstr && (unitstr[0] != '\0') > 0) {
-        *tmp_attr = (NC_attr *)NC_new_attr(_HDF_Units, NC_CHAR, HDstrlen((char *)unitstr), (Void *)unitstr);
+        *tmp_attr = (NC_attr *)NC_new_attr(_HDF_Units, NC_CHAR, strlen((char *)unitstr), (Void *)unitstr);
 
         if (NULL == *tmp_attr) {
             HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
@@ -706,7 +705,7 @@ hdf_luf_to_attrs(char *labelstr, char *unitstr, char *formatstr, NC_attr **tmp_a
     /* Format => 'format' */
     if (formatstr && (formatstr[0] != '\0') > 0) {
         *tmp_attr =
-            (NC_attr *)NC_new_attr(_HDF_Format, NC_CHAR, HDstrlen((char *)formatstr), (Void *)formatstr);
+            (NC_attr *)NC_new_attr(_HDF_Format, NC_CHAR, strlen((char *)formatstr), (Void *)formatstr);
 
         if (NULL == *tmp_attr) {
             HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
@@ -738,14 +737,14 @@ done:
    DFE_NONE / <error code>
 
 ******************************************************************************/
-PRIVATE hdf_err_code_t
+static hdf_err_code_t
 hdf_get_rangeinfo(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
 {
     uint8          tBuf[128] = "";
     intn           idx       = 0; /* index for tBuf */
     hdf_err_code_t ret_value = DFE_NONE;
 
-    if (FAIL == DFKconvert((VOIDP)ptbuf, (VOIDP)tBuf, hdftype, 2, DFACC_READ, 0, 0)) {
+    if (FAIL == DFKconvert((void *)ptbuf, (void *)tBuf, hdftype, 2, DFACC_READ, 0, 0)) {
         HGOTO_ERROR(DFE_BADCONV, FAIL);
     }
 
@@ -794,7 +793,7 @@ done:
    DFE_NONE / <error code>
 
 ******************************************************************************/
-PRIVATE hdf_err_code_t
+static hdf_err_code_t
 hdf_get_cal(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
 {
     uint8          tBuf[128] = "";
@@ -813,7 +812,7 @@ hdf_get_cal(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
         nt_nctype  = NC_LONG;
     }
 
-    if (FAIL == DFKconvert((VOIDP)ptbuf, (VOIDP)tBuf, hdftype, 4, DFACC_READ, 0, 0)) {
+    if (FAIL == DFKconvert((void *)ptbuf, (void *)tBuf, hdftype, 4, DFACC_READ, 0, 0)) {
         HGOTO_ERROR(DFE_BADCONV, FAIL);
     }
 
@@ -869,7 +868,7 @@ hdf_get_cal(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
     }
 
     /* don't forget number_type  */
-    if (FAIL == DFKconvert((VOIDP)(ptbuf + idx + incr), (VOIDP)tBuf, nt_hdftype, 1, DFACC_READ, 0, 0)) {
+    if (FAIL == DFKconvert((void *)(ptbuf + idx + incr), (void *)tBuf, nt_hdftype, 1, DFACC_READ, 0, 0)) {
         HGOTO_ERROR(DFE_BADCONV, FAIL);
     }
 
@@ -904,7 +903,7 @@ done:
    SUCCEED / FAIL
 
 ******************************************************************************/
-PRIVATE intn
+static intn
 hdf_read_ndgs(NC *handle)
 {
     char  tmpname[80] = "";
@@ -1011,9 +1010,6 @@ hdf_read_ndgs(NC *handle)
             }
 
             /* OK, now we need to get the relevant dimension structure */
-#ifdef DEBUG
-            printf("Found NDG at %d %d\n", ndgTag, ndgRef);
-#endif
 
             /* read the group into memory */
             if ((GroupID = DFdiread(handle->hdf_file, ndgTag, ndgRef)) < 0) {
@@ -1277,7 +1273,7 @@ hdf_read_ndgs(NC *handle)
                 if (lRef) {
                     labelvalue = (char *)labelbuf;
                     for (i = 0; i < dim + 1; i++)
-                        labelvalue += HDstrlen(labelvalue) + 1;
+                        labelvalue += strlen(labelvalue) + 1;
                     if (labelvalue[0] != '\0')
                         new_dim = SUCCEED;
                 }
@@ -1285,7 +1281,7 @@ hdf_read_ndgs(NC *handle)
                 if (uRef) {
                     unitvalue = (char *)unitbuf;
                     for (i = 0; i < dim + 1; i++)
-                        unitvalue += HDstrlen(unitvalue) + 1;
+                        unitvalue += strlen(unitvalue) + 1;
                     if (unitvalue[0] != '\0')
                         new_dim = SUCCEED;
                 }
@@ -1293,7 +1289,7 @@ hdf_read_ndgs(NC *handle)
                 if (fRef) {
                     formatvalue = (char *)formatbuf;
                     for (i = 0; i < dim + 1; i++)
-                        formatvalue += HDstrlen(formatvalue) + 1;
+                        formatvalue += strlen(formatvalue) + 1;
                     if (formatvalue[0] != '\0')
                         new_dim = SUCCEED;
                 }
@@ -1352,11 +1348,7 @@ hdf_read_ndgs(NC *handle)
                     vars[current_var]->data_tag = DFTAG_SDS; /* not normal data */
                     vars[current_var]->data_ref = sRef;
                     vars[current_var]->HDFtype  = scaletypes[dim];
-#ifdef NOT_YET
-                    vars[current_var]->ndg_ref = Htagnewref(handle->hdf_file, DFTAG_NDG);
-#else  /* NOT_YET */
-                    vars[current_var]->ndg_ref = Hnewref(handle->hdf_file);
-#endif /* NOT_YET */
+                    vars[current_var]->ndg_ref  = Hnewref(handle->hdf_file);
                     /* Indicate that it is unknown whether the current
                        variable is an SDS or a coordinate variable.
                        bugzilla 624 - BMR - 05/16/2007 */
@@ -1645,5 +1637,3 @@ hdf_read_sds_cdf(XDR *xdrs, NC **handlep)
 done:
     return ret_value;
 } /* hdf_read_sds_cdf */
-
-#endif /* HDF */

@@ -31,7 +31,7 @@ set (HDF4_MFHDF_LIBSRC_CSRCS
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/sharray.c
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/string.c
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/var.c
-    ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/xdrposix.c
+    ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/h4_xdr.c
 )
 
 set (HDF4_MFHDF_LIBSRC_INSTALL_CHDRS
@@ -44,8 +44,9 @@ set (HDF4_MFHDF_LIBSRC_INSTALL_CHDRS
 
 set (HDF4_MFHDF_LIBSRC_CHDRS
     ${HDF4_MFHDF_LIBSRC_INSTALL_CHDRS}
-    ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/alloc.h
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/error.h
+    ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/mfprivate.h
+    ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/h4_xdr.h
 )
 
 if (HDF4_ENABLE_NETCDF)
@@ -59,7 +60,7 @@ endif ()
 if (NOT ONLY_SHARED_LIBS)
   add_library (${HDF4_MF_LIB_TARGET} STATIC ${HDF4_MFHDF_LIBSRC_CSRCS} ${HDF4_MFHDF_LIBSRC_CHDRS})
   target_include_directories (${HDF4_MF_LIB_TARGET}
-      PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>"
+      PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_BINARY_DIR};${HDF4_COMP_INCLUDE_DIRECTORIES}"
       INTERFACE "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
   )
   target_compile_options(${HDF4_MF_LIB_TARGET} PRIVATE "${HDF4_CMAKE_C_FLAGS}")
@@ -69,9 +70,7 @@ if (NOT ONLY_SHARED_LIBS)
           ${HDF_EXTRA_FLAGS}
   )
   TARGET_C_PROPERTIES (${HDF4_MF_LIB_TARGET} STATIC)
-  if (HDF4_BUILD_XDR_LIB)
-    target_link_libraries (${HDF4_MF_LIB_TARGET} PUBLIC ${HDF4_MF_XDR_LIB_TARGET})
-  endif ()
+  target_link_libraries (${HDF4_MF_LIB_TARGET} PUBLIC "$<$<OR:$<PLATFORM_ID:Windows>,$<PLATFORM_ID:MinGW>>:ws2_32.lib>")
   target_link_libraries (${HDF4_MF_LIB_TARGET} PUBLIC ${HDF4_SRC_LIB_TARGET})
   set_global_variable (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_MF_LIB_TARGET}")
   H4_SET_LIB_OPTIONS (${HDF4_MF_LIB_TARGET} ${HDF4_MF_LIB_NAME} STATIC)
@@ -86,7 +85,7 @@ endif ()
 if (BUILD_SHARED_LIBS)
   add_library (${HDF4_MF_LIBSH_TARGET} SHARED ${HDF4_MFHDF_LIBSRC_CSRCS} ${HDF4_MFHDF_LIBSRC_CHDRS})
   target_include_directories (${HDF4_MF_LIBSH_TARGET}
-      PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>"
+      PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_BINARY_DIR};${HDF4_COMP_INCLUDE_DIRECTORIES}"
       INTERFACE "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
   )
   target_compile_options(${HDF4_MF_LIBSH_TARGET} PRIVATE "${HDF4_CMAKE_C_FLAGS}")
@@ -96,9 +95,7 @@ if (BUILD_SHARED_LIBS)
           ${HDF_EXTRA_FLAGS}
   )
   TARGET_C_PROPERTIES (${HDF4_MF_LIBSH_TARGET} SHARED)
-  if (HDF4_BUILD_XDR_LIB)
-    target_link_libraries (${HDF4_MF_LIBSH_TARGET} PUBLIC ${HDF4_MF_XDR_LIBSH_TARGET})
-  endif ()
+  target_link_libraries (${HDF4_MF_LIBSH_TARGET} PUBLIC "$<$<OR:$<PLATFORM_ID:Windows>,$<PLATFORM_ID:MinGW>>:ws2_32.lib>")
   target_link_libraries (${HDF4_MF_LIBSH_TARGET} PUBLIC ${HDF4_SRC_LIBSH_TARGET})
   set_global_variable (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_MF_LIBSH_TARGET}")
   H4_SET_LIB_OPTIONS (${HDF4_MF_LIBSH_TARGET} ${HDF4_MF_LIB_NAME} SHARED)
@@ -155,18 +152,33 @@ set (_PKG_CONFIG_LIBDIR \${exec_prefix}/lib)
 set (_PKG_CONFIG_INCLUDEDIR \${prefix}/include)
 set (_PKG_CONFIG_LIBNAME "${HDF4_SRC_LIB_CORENAME}")
 set (_PKG_CONFIG_VERSION "${HDF4_PACKAGE_VERSION}")
+set (PKGCONFIG_LIBNAME "${HDF4_SRC_LIB_CORENAME}")
+if (${HDF_CFG_NAME} MATCHES "Debug")
+  set (PKGCONFIG_LIBNAME "${PKGCONFIG_LIBNAME}${CMAKE_DEBUG_POSTFIX}")
+endif ()
+set (MFPKGCONFIG_LIBNAME "${HDF4_MF_LIB_CORENAME}")
+if (${HDF_CFG_NAME} MATCHES "Debug")
+  set (MFPKGCONFIG_LIBNAME "${MFPKGCONFIG_LIBNAME}${CMAKE_DEBUG_POSTFIX}")
+endif ()
 
-foreach (libs ${LINK_LIBS} ${LINK_COMP_LIBS})
+foreach (libs ${LINK_LIBS})
   set (_PKG_CONFIG_LIBS_PRIVATE "${_PKG_CONFIG_LIBS_PRIVATE} -l${libs}")
 endforeach ()
 
-set (_PKG_CONFIG_LIBS "${_PKG_CONFIG_LIBS} -l${HDF4_SRC_LIB_CORENAME} -l${HDF4_MF_LIB_CORENAME}")
+# The settings for the compression libs depends on if they have pkconfig support
+# Assuming they don't
+foreach (libs ${LINK_COMP_LIBS})
+#  set (_PKG_CONFIG_REQUIRES_PRIVATE "${_PKG_CONFIG_REQUIRES_PRIVATE} -l${libs}")
+  set (_PKG_CONFIG_LIBS_PRIVATE "${_PKG_CONFIG_LIBS_PRIVATE} -l${libs}")
+endforeach ()
+set (_PKG_CONFIG_REQUIRES_PRIVATE)
+
+set (_PKG_CONFIG_LIBS "${_PKG_CONFIG_LIBS} -l${PKGCONFIG_LIBNAME} -l${MFPKGCONFIG_LIBNAME}")
 if (BUILD_SHARED_LIBS)
-  set (_PKG_CONFIG_SH_LIBS "${_PKG_CONFIG_SH_LIBS} -l${HDF4_SRC_LIB_CORENAME} -l${HDF4_MF_LIB_CORENAME}")
+  set (_PKG_CONFIG_SH_LIBS "${_PKG_CONFIG_SH_LIBS} -l${PKGCONFIG_LIBNAME} -l${MFPKGCONFIG_LIBNAME}")
 endif ()
 
 set (_PKG_CONFIG_REQUIRES)
-set (_PKG_CONFIG_REQUIRES_PRIVATE)
 
 configure_file (
     ${HDF_RESOURCES_DIR}/libhdf4.pc.in
@@ -192,4 +204,24 @@ if (NOT WIN32)
       PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
       COMPONENT libraries
   )
+endif ()
+
+#-----------------------------------------------------------------------------
+# Option to build documentation
+#-----------------------------------------------------------------------------
+if (DOXYGEN_FOUND)
+  # This custom target and doxygen/configure work together
+  # Replace variables inside @@ with the current values
+  add_custom_target (hdf4mflib_doc ALL
+        COMMAND ${DOXYGEN_EXECUTABLE} ${HDF4_BINARY_DIR}/Doxyfile
+        WORKING_DIRECTORY ${HDF4_MFHDFSOURCE_DIR}
+        COMMENT "Generating HDF4 library Source API documentation with Doxygen"
+        VERBATIM )
+
+  if (NOT TARGET doxygen)
+    add_custom_target (doxygen)
+  endif ()
+
+  add_dependencies (doxygen hdf4mflib_doc)
+
 endif ()

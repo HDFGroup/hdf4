@@ -25,44 +25,23 @@
 #ifndef H4_CRLE_H
 #define H4_CRLE_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/*
- ** from crle.c
- */
-
-HDFLIBAPI int32 HCPcrle_stread(accrec_t *rec);
-
-HDFLIBAPI int32 HCPcrle_stwrite(accrec_t *rec);
-
-HDFLIBAPI int32 HCPcrle_seek(accrec_t *access_rec, int32 offset, int origin);
-
-HDFLIBAPI int32 HCPcrle_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
-                                int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
-                                int16 *pspecial);
-
-HDFLIBAPI int32 HCPcrle_read(accrec_t *access_rec, int32 length, void *data);
-
-HDFLIBAPI int32 HCPcrle_write(accrec_t *access_rec, int32 length, const void *data);
-
-HDFLIBAPI intn HCPcrle_endaccess(accrec_t *access_rec);
-
-#ifdef __cplusplus
-}
-#endif
+#include "hdfi.h"
 
 /* size of the RLE buffer */
 #define RLE_BUF_SIZE 128
+
 /* NIL code for run bytes */
 #define RLE_NIL (-1)
+
 /* minimum length of run */
 #define RLE_MIN_RUN 3
+
 /* maximum length of run */
 #define RLE_MAX_RUN (RLE_BUF_SIZE + RLE_MIN_RUN - 1)
+
 /* minimum length of mix */
 #define RLE_MIN_MIX 1
+
 /*
  * Notes on RLE_MIN_RUN and RLE_MIN_MIX:
  * (excerpt from QAK's email to RA - see bug HDFFR-1261)
@@ -94,19 +73,34 @@ typedef struct {
     } rle_state;  /* state of the buffer storage */
 } comp_coder_rle_info_t;
 
-#ifndef CRLE_MASTER
-extern funclist_t crle_funcs; /* functions to perform run-length encoding */
-#else
-funclist_t crle_funcs = {/* functions to perform run-length encoding */
-                         HCPcrle_stread,
-                         HCPcrle_stwrite,
-                         HCPcrle_seek,
-                         HCPcrle_inquire,
-                         HCPcrle_read,
-                         HCPcrle_write,
-                         HCPcrle_endaccess,
-                         NULL,
-                         NULL};
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+HDFLIBAPI funclist_t crle_funcs; /* functions to perform run-length encoding */
+
+/*
+ ** from crle.c
+ */
+
+HDFLIBAPI int32 HCPcrle_stread(accrec_t *rec);
+
+HDFLIBAPI int32 HCPcrle_stwrite(accrec_t *rec);
+
+HDFLIBAPI int32 HCPcrle_seek(accrec_t *access_rec, int32 offset, int origin);
+
+HDFLIBAPI int32 HCPcrle_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
+                                int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
+                                int16 *pspecial);
+
+HDFLIBAPI int32 HCPcrle_read(accrec_t *access_rec, int32 length, void *data);
+
+HDFLIBAPI int32 HCPcrle_write(accrec_t *access_rec, int32 length, const void *data);
+
+HDFLIBAPI intn HCPcrle_endaccess(accrec_t *access_rec);
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* H4_CRLE_H */

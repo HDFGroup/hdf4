@@ -27,7 +27,7 @@ HEif(HE_CMD *cmd)
     HE_PRED *pred;    /* predicates */
     HE_CMD  *cmdTail; /* last cmd we've seen in the sublist */
 
-    if (cmd->argc == 2 && !HDstrcmp(cmd->argv[1], "-help")) {
+    if (cmd->argc == 2 && !strcmp(cmd->argv[1], "-help")) {
         puts("if [<predicates>]");
         puts("  <commands>*");
         puts("end");
@@ -43,7 +43,7 @@ HEif(HE_CMD *cmd)
     /* execute the sub list only is the predicates are satisfied */
     if (satPred(currDesc, pred)) {
         /* go through sub-list until an end is encountered */
-        for (cmdTail = cmd->sub; cmdTail && HDstrcmp(cmdTail->argv[0], "end"); cmdTail = cmdTail->next)
+        for (cmdTail = cmd->sub; cmdTail && strcmp(cmdTail->argv[0], "end"); cmdTail = cmdTail->next)
             if (cmdTail->func)
                 he_status = (*cmdTail->func)(cmdTail);
             else {
@@ -63,7 +63,7 @@ HEselect(HE_CMD *cmd)
     HE_PRED *pred;       /* predicate structure */
     HE_CMD  *cmdTail;    /* last cmd we've seen in the sublist */
 
-    if (cmd->argc == 2 && !HDstrcmp(cmd->argv[1], "-help")) {
+    if (cmd->argc == 2 && !strcmp(cmd->argv[1], "-help")) {
         puts("select [<predicates>]");
         puts("  <commands>*");
         puts("end");
@@ -83,7 +83,7 @@ HEselect(HE_CMD *cmd)
     /* step through all elements */
     for (he_currDesc = 0; he_currDesc < he_numDesc; he_currDesc++)
         if (currTag != DFTAG_NULL && satPred(currDesc, pred)) {
-            for (cmdTail = cmd->sub; HDstrcmp(cmdTail->argv[0], "end"); cmdTail = cmdTail->next)
+            for (cmdTail = cmd->sub; strcmp(cmdTail->argv[0], "end"); cmdTail = cmdTail->next)
                 if (cmdTail->func)
                     he_status = (*cmdTail->func)(cmdTail);
                 else {
@@ -108,7 +108,7 @@ HEnext(HE_CMD *cmd)
     int      tmp;
     HE_PRED *predicates;
 
-    if (cmd->argc == 2 && !HDstrcmp(cmd->argv[1], "-help")) {
+    if (cmd->argc == 2 && !strcmp(cmd->argv[1], "-help")) {
         puts("next [<predicates>]");
         puts("\tMove to the next element that satisfies the predicate");
         return HE_OK;
@@ -128,8 +128,7 @@ HEnext(HE_CMD *cmd)
 
     /* replace this only if it is non-empty */
     if (predicates[0].key != 0) {
-        if (he_predicates)
-            HDfree(he_predicates);
+        free(he_predicates);
         he_predicates = predicates;
     }
 
@@ -155,7 +154,7 @@ HEprev(HE_CMD *cmd)
     int      tmp;
     HE_PRED *predicates;
 
-    if (cmd->argc == 2 && !HDstrcmp(cmd->argv[1], "-help")) {
+    if (cmd->argc == 2 && !strcmp(cmd->argv[1], "-help")) {
         puts("prev [<predicates>]");
         puts("\tMove to the next element that satisfies the predicate");
         return HE_OK;
@@ -174,8 +173,7 @@ HEprev(HE_CMD *cmd)
         return HE_FAIL;
 
     if (predicates[0].key != 0) {
-        if (he_predicates)
-            HDfree(he_predicates);
+        free(he_predicates);
         he_predicates = predicates;
     }
 
@@ -234,34 +232,34 @@ HEdump(HE_CMD *cmd)
                     }
                     break;
                 case HE_DECIMAL:
-                    HDstrcpy(format, "-i");
+                    strcpy(format, "-i");
                     break;
                 case HE_UDECIMAL:
-                    HDstrcpy(format, "-d");
+                    strcpy(format, "-d");
                     break;
                 case HE_SHORT:
-                    HDstrcpy(format, "-j");
+                    strcpy(format, "-j");
                     break;
                 case HE_USHORT:
-                    HDstrcpy(format, "-s");
+                    strcpy(format, "-s");
                     break;
                 case HE_BYTE:
-                    HDstrcpy(format, "-b");
+                    strcpy(format, "-b");
                     break;
                 case HE_OCTAL:
-                    HDstrcpy(format, "-o");
+                    strcpy(format, "-o");
                     break;
                 case HE_HEX:
-                    HDstrcpy(format, "-x");
+                    strcpy(format, "-x");
                     break;
                 case HE_FLOAT:
-                    HDstrcpy(format, "-f");
+                    strcpy(format, "-f");
                     break;
                 case HE_DOUBLE:
-                    HDstrcpy(format, "-e");
+                    strcpy(format, "-e");
                     break;
                 case HE_ASCII:
-                    HDstrcpy(format, "-a");
+                    strcpy(format, "-a");
                     break;
                 case HE_RAW:
                     raw = DFNT_NATIVE;
@@ -328,10 +326,10 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
 
         case 'i': {
             int32 *idata;
-            idata = (int32 *)HDmalloc(length / 4 * sizeof(int32));
+            idata = (int32 *)malloc(length / 4 * sizeof(int32));
 
-            DFKconvert((VOIDP)(data + offset), (VOIDP)idata, DFNT_INT32 | raw_flag, length / 4, DFACC_READ, 0,
-                       0);
+            DFKconvert((void *)(data + offset), (void *)idata, DFNT_INT32 | raw_flag, length / 4, DFACC_READ,
+                       0, 0);
             printf("%8d: ", offset);
             for (i = 0; i < length / 4; i++) {
                 printf("%11d ", (int)idata[i]);
@@ -341,14 +339,14 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)idata);
+            free(idata);
         } break;
 
         case 'd': {
             uint32 *idata;
-            idata = (uint32 *)HDmalloc(length / 4 * sizeof(int32));
+            idata = (uint32 *)malloc(length / 4 * sizeof(int32));
 
-            DFKconvert((VOIDP)(data + offset), (VOIDP)idata, DFNT_UINT32 | raw_flag, length / 4, DFACC_READ,
+            DFKconvert((void *)(data + offset), (void *)idata, DFNT_UINT32 | raw_flag, length / 4, DFACC_READ,
                        0, 0);
             printf("%8d: ", offset);
             for (i = 0; i < length / 4; i++) {
@@ -359,13 +357,13 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)idata);
+            free(idata);
         } break;
         case 'j': {
             int16 *sdata;
-            sdata = (int16 *)HDmalloc(length / 2 * sizeof(int16));
-            DFKconvert((VOIDP)(data + offset), (VOIDP)sdata, DFNT_INT16 | raw_flag, length / 2, DFACC_READ, 0,
-                       0);
+            sdata = (int16 *)malloc(length / 2 * sizeof(int16));
+            DFKconvert((void *)(data + offset), (void *)sdata, DFNT_INT16 | raw_flag, length / 2, DFACC_READ,
+                       0, 0);
 
             printf("%8d: ", offset);
             for (i = 0; i < length / 2; i++) {
@@ -376,14 +374,14 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)sdata);
+            free(sdata);
         } break;
 
         case 's': {
             uint16 *sdata;
-            sdata = (uint16 *)HDmalloc(length / 2 * sizeof(uint16));
+            sdata = (uint16 *)malloc(length / 2 * sizeof(uint16));
 
-            DFKconvert((VOIDP)(data + offset), (VOIDP)sdata, DFNT_UINT16 | raw_flag, length / 2, DFACC_READ,
+            DFKconvert((void *)(data + offset), (void *)sdata, DFNT_UINT16 | raw_flag, length / 2, DFACC_READ,
                        0, 0);
             printf("%8d: ", offset);
             for (i = 0; i < length / 2; i++) {
@@ -394,14 +392,15 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)sdata);
+            free(sdata);
         } break;
 
         case 'b': {
             uint8 *bdata;
-            bdata = (uint8 *)HDmalloc(length);
+            bdata = (uint8 *)malloc(length);
 
-            DFKconvert((VOIDP)(data + offset), (VOIDP)bdata, DFNT_UINT8 | raw_flag, length, DFACC_READ, 0, 0);
+            DFKconvert((void *)(data + offset), (void *)bdata, DFNT_UINT8 | raw_flag, length, DFACC_READ, 0,
+                       0);
             printf("%8d: ", offset);
             for (i = 0; i < length; i++) {
                 printf("%6d ", bdata[i]);
@@ -411,47 +410,47 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)bdata);
+            free(bdata);
         } break;
 
         case 'x': {
-            intn *idata;
-            intn  sizeintn;
+            int   *idata;
+            size_t sizeint;
 
-            sizeintn = sizeof(intn);
-            idata    = (intn *)HDmalloc((size_t)(length / 4 * sizeintn));
-            DFKconvert((VOIDP)(data + offset), (VOIDP)idata, DFNT_NINT32 | raw_flag, length / 4, DFACC_READ,
+            sizeint = sizeof(int);
+            idata   = (int *)malloc((size_t)(length / 4 * sizeint));
+            DFKconvert((void *)(data + offset), (void *)idata, DFNT_NINT32 | raw_flag, length / 4, DFACC_READ,
                        0, 0);
             printf("%8d: ", offset);
-            for (i = 0; i < length / sizeintn; i++) {
+            for (i = 0; i < length / sizeint; i++) {
                 printf("%10x ", idata[i]);
                 if (++len > 5) {
                     len = 0;
-                    printf("\n%8d: ", (int)(offset + (i + 1) * sizeintn));
+                    printf("\n%8d: ", (int)(offset + (i + 1) * sizeint));
                 }
             }
             printf("\n");
-            HDfree((VOIDP)idata);
+            free(idata);
         } break;
 
         case 'o': {
-            intn *idata;
-            intn  sizeintn;
+            int   *idata;
+            size_t sizeint;
 
-            sizeintn = sizeof(intn);
-            idata    = (intn *)HDmalloc((size_t)(length / 4 * sizeintn));
-            DFKconvert((VOIDP)(data + offset), (VOIDP)idata, DFNT_NINT32 | raw_flag, length / 4, DFACC_READ,
+            sizeint = sizeof(int);
+            idata   = (int *)malloc((size_t)(length / 4 * sizeint));
+            DFKconvert((void *)(data + offset), (void *)idata, DFNT_NINT32 | raw_flag, length / 4, DFACC_READ,
                        0, 0);
             printf("%8d: ", offset);
-            for (i = 0; i < length / sizeintn; i++) {
+            for (i = 0; i < length / sizeint; i++) {
                 printf("%10o ", idata[i]);
                 if (++len > 4) {
                     len = 0;
-                    printf("\n%8d: ", (int)(offset + (i + 1) * sizeintn));
+                    printf("\n%8d: ", (int)(offset + (i + 1) * sizeint));
                 }
             }
             printf("\n");
-            HDfree((VOIDP)idata);
+            free(idata);
         } break;
 
         case 'a': {
@@ -473,29 +472,29 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
 
         case 'f': {
             float32 *fdata;
-            fdata = (float32 *)HDmalloc(length / 4 * sizeof(float32));
+            fdata = (float32 *)malloc(length / 4 * sizeof(float32));
 
-            DFKconvert((VOIDP)(data + offset), (VOIDP)fdata, DFNT_FLOAT32 | raw_flag, length / 4, DFACC_READ,
-                       0, 0);
+            DFKconvert((void *)(data + offset), (void *)fdata, DFNT_FLOAT32 | raw_flag, length / 4,
+                       DFACC_READ, 0, 0);
 
             printf("%8d: ", offset);
             for (i = 0; i < length / 4; i++) {
-                printf("%15e", fdata[i]);
+                printf("%15e", (double)fdata[i]);
                 if (++len > 3) {
                     len = 0;
                     printf("\n%8d: ", (int)(offset + (i + 1) * 4));
                 }
             }
             printf("\n");
-            HDfree((VOIDP)fdata);
+            free(fdata);
         } break;
 
         case 'e': {
             float64 *fdata;
-            fdata = (float64 *)HDmalloc(length / 8 * sizeof(float64));
+            fdata = (float64 *)malloc(length / 8 * sizeof(float64));
 
-            DFKconvert((VOIDP)(data + offset), (VOIDP)fdata, DFNT_FLOAT64 | raw_flag, length / 8, DFACC_READ,
-                       0, 0);
+            DFKconvert((void *)(data + offset), (void *)fdata, DFNT_FLOAT64 | raw_flag, length / 8,
+                       DFACC_READ, 0, 0);
 
             printf("%8d: ", offset);
             for (i = 0; i < length / 8; i++) {
@@ -506,7 +505,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)fdata);
+            free(fdata);
         } break;
 
         default:
@@ -514,7 +513,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
             break;
     }
 
-    HDfree(data);
+    free(data);
 
     return HE_OK;
 }
@@ -580,14 +579,13 @@ info(int all, int longout, int group, int label)
     int  start, end;
     int  d;
     int *mark;
-    int  i, j;
 
     if (!fileOpen()) {
         noFile();
         return HE_OK;
     }
 
-    if (!group || (!isGrp(currTag) && !all)) {
+    if (!group || ((!isGrp(currTag) && !all))) {
         if (all) {
             start = 0;
             end   = he_numDesc - 1;
@@ -595,7 +593,12 @@ info(int all, int longout, int group, int label)
         else
             start = end = he_currDesc;
 
-        for (i = start; i <= end; i++)
+        /* The gcc optimizer thinks it can optimize away the conditional here,
+         * which raises a strict-overflow warning. The volatile keyword
+         * prevents optimization (possibly unrolling the for loop) and
+         * squashes the warning.
+         */
+        for (volatile int i = start; i <= end; i++)
             if (he_desc[i].tag == DFTAG_NULL)
                 empty++;
             else {
@@ -611,7 +614,7 @@ info(int all, int longout, int group, int label)
             printf("Empty (tag %d) : %d slots.\n", DFTAG_NULL, empty);
     }
     else {
-        mark = (int *)HDcalloc(he_numDesc, sizeof(int));
+        mark = (int *)calloc(he_numDesc, sizeof(int));
 
         if (all) {
             start = 0;
@@ -624,14 +627,14 @@ info(int all, int longout, int group, int label)
             }
             start = end = currGrpNo;
         }
-        for (i = start; i <= end; i++) {
+        for (int i = start; i <= end; i++) {
             printf("**Group %d:\n", i + 1); /* 1 based */
             idx = he_grp[i].desc;
             infoDesc(idx, longout, label);
 
             mark[idx] = YES;
 
-            for (j = 0; j < he_grp[i].size; j++)
+            for (int j = 0; j < he_grp[i].size; j++)
                 if ((d = findDesc(he_grp[i].ddList + j)) >= 0) {
                     mark[d] = 1;
                     infoDesc(d, longout, 0);
@@ -642,7 +645,7 @@ info(int all, int longout, int group, int label)
         }
         if (all) {
             puts("\n**These do not belong to any group:");
-            for (i = 0; i < he_numDesc; i++)
+            for (int i = 0; i < he_numDesc; i++)
                 if (!mark[i]) {
                     if (he_desc[i].tag == DFTAG_NULL)
                         empty++;
@@ -668,8 +671,8 @@ infoDesc(int desc, int longout, int label)
         printf("\t%-30s: (Tag %d)", "Unknown Tag", he_desc[desc].tag);
     else {
         printf("\t%-30s: (Tag %d)", name, he_desc[desc].tag);
-        HDfree(name);
-    } /* end else */
+        free(name);
+    }
 
     if (longout)
         printf("\n\tRef: %d, Offset: %ld, Length: %ld (bytes)\n", he_desc[desc].ref,
@@ -822,14 +825,13 @@ findFunc(char *fword)
 {
     unsigned len;
     int      found = -1;
-    uintn    i;
 
-    len = HDstrlen((const char *)fword);
+    len = strlen((const char *)fword);
 
-    for (i = 0; i < sizeof(he_funcTab) / sizeof(he_funcTab[0]); i++)
-        if (!HDstrncmp(he_funcTab[i].str, (const char *)fword, len)) {
+    for (int i = 0; i < sizeof(he_funcTab) / sizeof(he_funcTab[0]); i++)
+        if (!strncmp(he_funcTab[i].str, (const char *)fword, len)) {
             /* check for exact match */
-            if (HDstrlen(he_funcTab[i].str) == len)
+            if (strlen(he_funcTab[i].str) == len)
                 return he_funcTab[i].func;
 
             if (found < 0)
@@ -951,8 +953,8 @@ nextWord(char **p)
         s++;
     len = (unsigned)(s - q);
 
-    word = (char *)HDmalloc(len + 1);
-    HDstrncpy(word, q, len);
+    word = (char *)malloc(len + 1);
+    strncpy(word, q, len);
     word[len] = '\0';
 
     *p = s;
@@ -973,7 +975,7 @@ parseCmd(char **p)
     if (!(**p))
         return NULL;
 
-    cmd       = (HE_CMD *)HDcalloc(1, sizeof(HE_CMD));
+    cmd       = (HE_CMD *)calloc(1, sizeof(HE_CMD));
     cmd->next = cmd->sub = (HE_CMD *)NULL;
     cmd->argc            = 1;
     cmd->argv[0]         = nextWord(p);
@@ -995,7 +997,7 @@ parseCmd(char **p)
         while (cmdTail->next)
             cmdTail = cmdTail->next;
 
-        for (word = nextWord(p); word && HDstrcmp(word, ";"); word = nextWord(p), cmdTail->argc++)
+        for (word = nextWord(p); word && strcmp(word, ";"); word = nextWord(p), cmdTail->argc++)
             cmdTail->argv[cmdTail->argc] = word;
 
         while (**p && (isspace((int)**p) || (**p == ';')))
@@ -1054,7 +1056,7 @@ getCmd(void)
         he_nestLevel++;
 
         cmd->sub = getCmd();
-        for (cmdTail = cmd->sub; cmdTail && HDstrcmp(cmdTail->argv[0], "end"); /* while != "end" */
+        for (cmdTail = cmd->sub; cmdTail && strcmp(cmdTail->argv[0], "end"); /* while != "end" */
              cmdTail = cmdTail->next)
             cmdTail->next = getCmd();
 
@@ -1078,7 +1080,7 @@ setAlias(char *str, HE_CMD *cmd)
     int i;
 
     for (i = 0; i < he_numAlias; i++)
-        if (!HDstrcmp(str, he_aliasTab[i].str)) {
+        if (!strcmp(str, he_aliasTab[i].str)) {
             he_aliasTab[i].cmd = cmd;
             return HE_OK;
         }
@@ -1098,7 +1100,7 @@ mkDupCmd(HE_CMD *cmd)
     int     i;
     HE_CMD *dupCmd;
 
-    dupCmd       = (HE_CMD *)HDcalloc(1, sizeof(HE_CMD));
+    dupCmd       = (HE_CMD *)calloc(1, sizeof(HE_CMD));
     dupCmd->func = cmd->func;
     dupCmd->argc = cmd->argc;
     dupCmd->next = dupCmd->sub = (HE_CMD *)NULL;
@@ -1117,7 +1119,7 @@ findAlias(char *str)
     HE_CMD *cmdTail;
 
     for (i = 0; i < he_numAlias; i++)
-        if (!HDstrcmp(str, he_aliasTab[i].str)) {
+        if (!strcmp(str, he_aliasTab[i].str)) {
             cmd    = he_aliasTab[i].cmd;
             dupCmd = mkDupCmd(cmd);
 
@@ -1133,13 +1135,11 @@ findAlias(char *str)
 int
 HEunalias(HE_CMD *cmd)
 {
-    int a, i, j;
-
-    for (a = 1; a < cmd->argc; a++)
-        for (i = 0; i < he_numAlias; i++)
-            if (!HDstrcmp(cmd->argv[a], he_aliasTab[i].str)) {
+    for (int a = 1; a < cmd->argc; a++)
+        for (int i = 0; i < he_numAlias; i++)
+            if (!strcmp(cmd->argv[a], he_aliasTab[i].str)) {
                 he_numAlias--;
-                for (j = i; j < he_numAlias; j++) {
+                for (int j = i; j < he_numAlias; j++) {
                     he_aliasTab[j].str = he_aliasTab[j + 1].str;
                     he_aliasTab[j].cmd = he_aliasTab[j + 1].cmd;
                 }
@@ -1151,12 +1151,10 @@ HEunalias(HE_CMD *cmd)
 void
 printAlias(char *word, HE_CMD *cmd)
 {
-    int j;
-
     printf("%s:", word);
     for (; cmd; cmd = cmd->next) {
         printf("\t");
-        for (j = 0; j < cmd->argc; j++)
+        for (int j = 0; j < cmd->argc; j++)
             printf("%s ", cmd->argv[j]);
         puts("");
     }
@@ -1200,10 +1198,9 @@ HE_PRED *he_predicates;
 int
 resetPred(void)
 {
-    if (he_predicates != NULL)
-        HDfree(he_predicates);
+    free(he_predicates);
 
-    he_predicates        = (HE_PRED *)HDcalloc(2, sizeof(HE_PRED));
+    he_predicates        = (HE_PRED *)calloc(2, sizeof(HE_PRED));
     he_predicates[0].key = HEK_GROUP;
     he_predicates[1].key = 0;
 
@@ -1227,16 +1224,15 @@ struct {
 int
 findKey(char *word)
 {
-    uintn    i;
     unsigned len;
     int      found = -1;
 
-    len = HDstrlen(word);
+    len = strlen(word);
 
-    for (i = 0; i < sizeof(he_keyTab) / sizeof(he_keyTab[0]); i++)
-        if (!HDstrncmp(he_keyTab[i].str, word, len)) {
+    for (int i = 0; i < sizeof(he_keyTab) / sizeof(he_keyTab[0]); i++)
+        if (!strncmp(he_keyTab[i].str, word, len)) {
             /* if this is an exact match, just return */
-            if (HDstrlen(he_keyTab[i].str) == len)
+            if (strlen(he_keyTab[i].str) == len)
                 return he_keyTab[i].key;
             if (found < 0)
                 found = (int)i;
@@ -1275,7 +1271,7 @@ parsePred(int argc, char *argv[])
     char    *s;
     char    *tok;
 
-    pred = (HE_PRED *)HDcalloc(HE_PRED_SZ, sizeof(HE_PRED));
+    pred = (HE_PRED *)calloc(HE_PRED_SZ, sizeof(HE_PRED));
 
     for (i = 1; i < argc; i++) {
         s = argv[i];
@@ -1289,10 +1285,10 @@ parsePred(int argc, char *argv[])
 
             if (state != 2) {
                 if ((key = findKey(tok)) == HE_NOTFOUND) {
-                    HDfree(pred);
+                    free(pred);
                     return NULL;
                 }
-                HDfree(tok);
+                free(tok);
             }
 
             switch (state) {
@@ -1300,7 +1296,7 @@ parsePred(int argc, char *argv[])
                     /* Ready to accept a predicate */
                     if (!(key & HE_PREDICATE)) {
                         fprintf(stderr, "Parse error: %s.\n", argv[i]);
-                        HDfree(pred);
+                        free(pred);
                         return NULL;
                     }
                     pred[++predNum].key = key & ~(HE_PREDICATE | HE_COMPARATOR);
@@ -1318,7 +1314,7 @@ parsePred(int argc, char *argv[])
                     }
                     else {
                         fprintf(stderr, "Parse error: %s.\n", argv[i]);
-                        HDfree(pred);
+                        free(pred);
                         return NULL;
                     }
                     break;
@@ -1409,7 +1405,7 @@ nextToken(char **p)
         while (*s && !isalnum((int)*s))
             s++;
 
-    q = tok = (char *)HDmalloc((s - (*p)) + 1);
+    q = tok = (char *)malloc((s - (*p)) + 1);
     while (*p != s)
         *q++ = *(*p)++;
     *q = '\0';

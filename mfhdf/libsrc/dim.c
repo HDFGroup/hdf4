@@ -14,7 +14,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <string.h>
 #include "local_nc.h"
 
 NC_dim *
@@ -30,13 +29,11 @@ NC_new_dim(const char *name, long size)
     if (ret->name == NULL)
         goto alloc_err;
 
-    ret->size = size;
-#ifdef HDF
+    ret->size  = size;
     ret->vgid  = 0; /* no vgroup representing this dimension yet -BMR 2010/12/29 */
     ret->count = 1;
     /*        ret->dim00_compat = (size == NC_UNLIMITED)? 0 : 1;  */
     ret->dim00_compat = 0;
-#endif /* HDF */
     return (ret);
 alloc_err:
     nc_serror("NC_new_dim");
@@ -55,13 +52,11 @@ NC_free_dim(NC_dim *dim)
     int ret_value = SUCCEED;
 
     if (dim != NULL) {
-#ifdef HDF
         if (dim->count > 1) {
             dim->count -= 1;
             ret_value = SUCCEED;
             goto done;
         }
-#endif /* HDF */
 
         if (NC_free_string(dim->name) == FAIL) {
             ret_value = FAIL;
@@ -198,11 +193,7 @@ ncdiminq(int cdfid, int dimid, char *name, long *sizep)
     dp += dimid;
 
     if (name != NULL) {
-#ifdef HDF
         (void)memcpy(name, (*dp)->name->values, (size_t)(*dp)->name->len);
-#else
-        (void)strncpy(name, (*dp)->name->values, (size_t)(*dp)->name->len);
-#endif
         name[(*dp)->name->len] = 0;
     }
     if (sizep != 0) {
@@ -276,26 +267,24 @@ xdr_NC_dim(XDR *xdrs, NC_dim **dpp)
 {
     if (xdrs->x_op == XDR_FREE) {
         NC_free_dim((*dpp));
-        return (TRUE);
+        return TRUE;
     }
 
     if (xdrs->x_op == XDR_DECODE) {
         *dpp = malloc(sizeof(NC_dim));
         if (*dpp == NULL) {
             nc_serror("xdr_NC_dim");
-            return (FALSE);
+            return FALSE;
         }
     }
 
-#ifdef HDF
     /* hmm...what does this do? */
     if (xdrs->x_op == XDR_DECODE)
         (*dpp)->count = 0;
-#endif
 
     if (!xdr_NC_string(xdrs, &((*dpp)->name)))
-        return (FALSE);
-    return (xdr_long(xdrs, &((*dpp)->size)));
+        return FALSE;
+    return h4_xdr_int(xdrs, &((*dpp)->size));
 }
 
 /*

@@ -11,6 +11,9 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "hdf.h"
 #include "mfhdf.h"
 #include "hcomp.h"
@@ -151,12 +154,10 @@ read_data(const char *fname)
     g_length_y = h;
     g_length_x = w;
 
-    if (g_image_data != NULL) {
-        HDfree(g_image_data);
-        g_image_data = NULL;
-    }
+    free(g_image_data);
+    g_image_data = NULL;
 
-    g_image_data = (unsigned char *)HDmalloc(w * h * color_planes * sizeof(unsigned char));
+    g_image_data = (unsigned char *)malloc((size_t)(w * h * color_planes) * sizeof(unsigned char));
 
     for (i = 0; i < h * w * color_planes; i++) {
         count = fscanf(f, "%d", &n);
@@ -175,141 +176,14 @@ error:
 }
 
 /*-------------------------------------------------------------------------
- * Function: vg_getngrpdep
- *
- * Purpose: utility function to get number of vgroups dependencies in
- *  file HFILEID f
- *
- * Return: number of vgroups dependencies in file
- *
- * Programmer: Pedro Vicente, pvn@hdfgroup.org
- *
- * Date: September 10, 2007
- *
- *-------------------------------------------------------------------------
- */
-
-static int
-vg_getngrpdep(HFILEID f)
-{
-    int32  vg, vgt;
-    int32  vgid = -1;
-    int32  vsid = -1;
-    int32  vstag;
-    int32  i, nvg, n, ne, nlnk;
-    uint16 name_len;
-    char  *vgname;
-
-    Vstart(f);
-
-    nvg  = 0;
-    nlnk = 0;
-    while ((vgid = Vgetid(f, vgid)) != -1) {
-        vg = Vattach(f, vgid, "r");
-        if (vg == FAIL) {
-            printf("cannot open vg id=%d\n", (int)vgid);
-        }
-        /* Get vgroup's name */
-        if (Vgetnamelen(vg, &name_len) == FAIL) {
-            printf("Error: Could not get name length for group with ref <%d>\n", vgid);
-            continue;
-        }
-        vgname = (char *)HDmalloc(sizeof(char) * (name_len + 1));
-
-        Vinquire(vg, &n, vgname);
-        VQuerytag(vg);
-        VQueryref(vg);
-
-        for (i = 0; i < Vntagrefs(vg); i++) {
-            Vgettagref(vg, i, &vstag, &vsid);
-
-            if (vstag == DFTAG_VG) {
-                vgt = Vattach(f, vsid, "r");
-
-                if (vgt == FAIL) {
-                    printf("cannot open vg id=%d\n", (int)vsid);
-                    continue;
-                }
-
-                Vinquire(vgt, &ne, vgname);
-
-                VQuerytag(vgt);
-                VQueryref(vgt);
-
-                Vdetach(vgt);
-
-                nlnk++;
-
-            } /* if */
-
-        } /* for */
-
-        Vdetach(vg);
-        nvg++;
-
-    } /* while */
-
-    Vend(f);
-
-    return nlnk;
-}
-
-/*-------------------------------------------------------------------------
- * Function: vg_verifygrpdep
- *
- * Purpose: utility function to verify number of vgroups dependencies in
- *  2 files NAME1 and NAME2
- *
- * Return: 0, group dependencies are the same in both files
- *         1, they are not the same
- *        -1, error
- *
- * Programmer: Pedro Vicente, pvn@hdfgroup.org
- *
- * Date: September 10, 2007
- *
- *-------------------------------------------------------------------------
- */
-static int
-vg_verifygrpdep(char *name1, char *name2)
-{
-    HFILEID f1;
-    HFILEID f2;
-    int32   nlnk1;
-    int32   nlnk2;
-
-    if ((f1 = Hopen(name1, DFACC_READ, 0)) == FAIL) {
-        printf("\nFile (%s) failed to open.\n", name1);
-        return -1;
-    }
-    if ((f2 = Hopen(name2, DFACC_READ, 0)) == FAIL) {
-        printf("\nFile (%s) failed to open.\n", name2);
-        return -1;
-    }
-
-    nlnk1 = vg_getngrpdep(f1);
-    nlnk2 = vg_getngrpdep(f2);
-
-    Hclose(f1);
-    Hclose(f2);
-
-    return (nlnk1 == nlnk2) ? 0 : 1;
-}
-
-/*-------------------------------------------------------------------------
  * Function: set_chunk_def
  *
  * Purpose: set chunk parameters. used by GR and SDS
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: September 15, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 static void
 set_chunk_def(comp_coder_t comp_type, int32 *dim, int32 ncomps, int32 bits_per_pixel, /* for szip */
               HDF_CHUNK_DEF *chunk_def)
@@ -364,474 +238,6 @@ set_chunk_def(comp_coder_t comp_type, int32 *dim, int32 ncomps, int32 bits_per_p
 }
 
 /*-------------------------------------------------------------------------
- * verify functions
- *-------------------------------------------------------------------------
- */
-
-/*-------------------------------------------------------------------------
- * Function: cmp_gr
- *
- * Purpose: compare 2 GR images
- *
- * Return: same as memcmp
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: September 03, 2003
- *
- *-------------------------------------------------------------------------
- */
-
-static int
-cmp_gr(int32 ri1_id, int32 ri2_id)
-{
-    int32 dimsizes[2],   /* dimensions of an image */
-        n_comps,         /* number of components an image contains */
-        interlace_mode1, /* interlace mode of an image */
-        dtype,           /* number type of an image */
-        n_attrs;         /* number of attributes belong to an image */
-    int32 interlace_mode2;
-    char  gr_name[H4_MAX_GR_NAME];
-    int   j, rank = 2;
-    int32 start[2], /* read start */
-        edges[2],   /* read edges */
-        numtype,    /* number type */
-        eltsz,      /* element size */
-        nelms,      /* number of elements */
-        data_size;
-    VOIDP buf1 = NULL, buf2 = NULL;
-    int   cmp = -1;
-
-    GRgetiminfo(ri1_id, gr_name, &n_comps, &dtype, &interlace_mode1, dimsizes, &n_attrs);
-    GRgetiminfo(ri2_id, gr_name, &n_comps, &dtype, &interlace_mode2, dimsizes, &n_attrs);
-
-    printf("Comparing GR <%s>: ", gr_name);
-
-    /*-------------------------------------------------------------------------
-     * match interlace
-     * NOTE: GR images are always stored as pixel_interlace (0) on disk
-     *       that does not happen with images saved with the
-     *       DF24 - Single-file 24-Bit Raster Image Interface,
-     *       where the interlace mode on disk can be 0, 1 or 2
-     *-------------------------------------------------------------------------
-     */
-    if (interlace_mode1 != interlace_mode2) {
-        printf("Warning: different interlace mode: <%d> and <%d>", interlace_mode1, interlace_mode2);
-        interlace_mode1 = interlace_mode2;
-    }
-
-    /*-------------------------------------------------------------------------
-     * check for data size before printing
-     *-------------------------------------------------------------------------
-     */
-
-    /* compute the number of the bytes for each value. */
-    numtype = dtype & DFNT_MASK;
-    eltsz   = DFKNTsize(numtype | DFNT_NATIVE);
-
-    /* set edges of GR */
-    nelms = 1;
-    for (j = 0; j < rank; j++) {
-        nelms *= dimsizes[j];
-        edges[j] = dimsizes[j];
-        start[j] = 0;
-    }
-
-    data_size = dimsizes[0] * dimsizes[1] * n_comps * eltsz;
-
-    /*-------------------------------------------------------------------------
-     * read gr 1
-     *-------------------------------------------------------------------------
-     */
-
-    /* alloc */
-    if ((buf1 = (VOIDP)HDmalloc(data_size)) == NULL) {
-        printf("Failed to allocate %d elements of size %d\n", nelms, eltsz);
-        goto out;
-    }
-
-    /* read data */
-    if (GRreadimage(ri1_id, start, NULL, edges, buf1) == FAIL) {
-        printf("Could not read GR\n");
-        goto out;
-    }
-
-    /*-------------------------------------------------------------------------
-     * read gr 2
-     *-------------------------------------------------------------------------
-     */
-
-    /* alloc */
-    if ((buf2 = (VOIDP)HDmalloc(data_size)) == NULL) {
-        printf("Failed to allocate %d elements of size %d\n", nelms, eltsz);
-        goto out;
-    }
-
-    /* read data */
-    if (GRreadimage(ri2_id, start, NULL, edges, buf2) == FAIL) {
-        printf("Could not read GR\n");
-        goto out;
-    }
-
-    cmp = HDmemcmp(buf1, buf2, data_size);
-    if (cmp != 0)
-        printf("Differences found\n");
-    else
-        printf("\n");
-
-out:
-    /* terminate access to the GRs */
-    GRendaccess(ri1_id);
-    GRendaccess(ri2_id);
-    if (buf1)
-        HDfree(buf1);
-    if (buf2)
-        HDfree(buf2);
-    return cmp;
-}
-
-/*-------------------------------------------------------------------------
- * Function: sds_verifiy_comp
- *
- * Purpose: utility function to verify compression for SDS_NAME
- *
- * Return: 0, -1 on error
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 3, 2003
- *
- *-------------------------------------------------------------------------
- */
-static int
-sds_verifiy_comp(const char *sds_name, int32 in_comp_type, int32 in_comp_info)
-{
-    comp_coder_t comp_type; /* to retrieve compression type into */
-    comp_info    comp_info; /* compression structure */
-    int32        sd_id, sds_id, sds_index;
-
-    /* get chunk and comp */
-    sd_id     = SDstart(HREPACK_FILE1_OUT, DFACC_RDONLY);
-    sds_index = SDnametoindex(sd_id, sds_name);
-    if ((sds_id = SDselect(sd_id, sds_index)) == FAIL) {
-        printf("Error: Cannot open sds <%s>", sds_name);
-        SDend(sd_id);
-        return -1;
-    }
-
-    /*-------------------------------------------------------------------------
-     * retrieve and verify the compression info
-     *-------------------------------------------------------------------------
-     */
-
-    comp_type = COMP_CODE_NONE; /* reset variables before retrieving info */
-    HDmemset(&comp_info, 0, sizeof(comp_info));
-    SDgetcompinfo(sds_id, &comp_type, &comp_info);
-    if (comp_type != in_comp_type) {
-        printf("Error: Compression type does not match ");
-        SDendaccess(sds_id);
-        SDend(sd_id);
-        return -1;
-    }
-    if (in_comp_info) {
-        if (comp_info.skphuff.skp_size != in_comp_info) {
-            printf("Error: compression information does not match ");
-            SDendaccess(sds_id);
-            SDend(sd_id);
-            return -1;
-        }
-    }
-
-    /* terminate access to the sds */
-    SDendaccess(sds_id);
-
-    /* terminate access to the sd interface */
-    SDend(sd_id);
-
-    return 0;
-}
-
-/*-------------------------------------------------------------------------
- * Function: sds_verifiy_comp_all
- *
- * Purpose: utility function to verify compression for all SDSs
- *
- * Return: 0, -1 on error
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 3, 2003
- *
- *-------------------------------------------------------------------------
- */
-static int
-sds_verifiy_comp_all(comp_coder_t in_comp_type, int in_comp_info)
-{
-    comp_coder_t comp_type;                            /* to retrieve compression type into */
-    comp_info    comp_info;                            /* compression structure */
-    int32        sd_id, sds_id, sds_index, n_datasets, /* number of datasets in the file */
-        n_file_attrs,                                  /* number of file attributes */
-        data_type,                                     /* number type  */
-        rrank,                                         /* read rank */
-        n_attrs,                                       /* number of attributes */
-        dim_sizes[H4_MAX_VAR_DIMS];                    /* dimensions of an image */
-    char name[H4_MAX_GR_NAME];                         /* name of dataset */
-    int  info;
-    intn empty_sds;
-    int  is_record = 0;
-
-    /* initialize the sd interface */
-    sd_id = SDstart(HREPACK_FILE1_OUT, DFACC_READ);
-
-    /* determine the number of data sets in the file */
-    if (SDfileinfo(sd_id, &n_datasets, &n_file_attrs) == FAIL) {
-        printf("Error: Cannot get file information");
-        SDend(sd_id);
-        return -1;
-    }
-
-    for (sds_index = 0; sds_index < n_datasets; sds_index++) {
-        sds_id = SDselect(sd_id, sds_index);
-
-        /* skip dimension scales */
-        if (SDiscoordvar(sds_id)) {
-            SDendaccess(sds_id);
-            continue;
-        }
-
-        name[0] = '\0';
-        if (SDgetinfo(sds_id, name, &rrank, dim_sizes, &data_type, &n_attrs) == FAIL) {
-            printf("Error: can't read info for SDS <%s>", name);
-            SDendaccess(sds_id);
-            SDend(sd_id);
-            return -1;
-        }
-
-        /*-------------------------------------------------------------------------
-         * check if the input SDS is empty
-         *-------------------------------------------------------------------------
-         */
-        if (SDcheckempty(sds_id, &empty_sds) == FAIL) {
-            printf("Failed to check empty SDS <%s>\n", name);
-            SDendaccess(sds_id);
-            SDend(sd_id);
-            return -1;
-        }
-
-        /*-------------------------------------------------------------------------
-         * retrieve and verify the compression info
-         *-------------------------------------------------------------------------
-         */
-
-        if (empty_sds == 0) {
-
-            comp_type = COMP_CODE_NONE; /* reset variables before retrieving info */
-            HDmemset(&comp_info, 0, sizeof(comp_info));
-
-            if (SDisrecord(sds_id))
-                is_record = 1;
-
-            /* unlimited dimensions don't work with compression */
-            if (!is_record) {
-
-                if (SDgetcompinfo(sds_id, &comp_type, &comp_info) == FAIL) {
-                    printf("Warning: can't read compression for SDS <%s>", name);
-                }
-                else {
-                    if (comp_type != in_comp_type) {
-                        printf("Error: compression type does not match <%s>", name);
-                        SDendaccess(sds_id);
-                        SDend(sd_id);
-                        return -1;
-                    }
-                    if (in_comp_type) {
-                        switch (in_comp_type) {
-                            case COMP_CODE_NONE:
-                                break;
-                            case COMP_CODE_RLE:
-                                break;
-                            case COMP_CODE_SZIP:
-                                break;
-                            case COMP_CODE_SKPHUFF:
-                                info = comp_info.skphuff.skp_size;
-                                break;
-                            case COMP_CODE_DEFLATE:
-                                info = comp_info.deflate.level;
-                                break;
-                            default:
-                                printf("Error: Unrecognized compression code %d\n", in_comp_type);
-                                info = -1;
-                                break;
-                        };
-
-                        if (info != in_comp_info) {
-                            printf("Error: compression information does not match for <%s>", name);
-                            SDendaccess(sds_id);
-                            SDend(sd_id);
-                            return -1;
-                        }
-                    }
-                }
-
-            } /* is_record */
-
-        } /* empty_sds */
-
-        /* terminate access to the current dataset */
-        SDendaccess(sds_id);
-    }
-
-    /* terminate access to the sd interface */
-    SDend(sd_id);
-
-    return 0;
-}
-
-/*-------------------------------------------------------------------------
- * Function: sds_verifiy_chunk
- *
- * Purpose: utility function to verify chunking for  SDS_NAME
- *
- * Return: 0, -1 on error
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 3, 2003
- *
- *-------------------------------------------------------------------------
- */
-static int
-sds_verifiy_chunk(const char *sds_name, int32 in_chunk_flags, int rank, int32 *in_chunk_lengths)
-{
-    HDF_CHUNK_DEF chunk_def;   /* chunk definition read */
-    int32         chunk_flags; /* chunking flag */
-    int32         sd_id, sds_id, sds_index;
-    int           i;
-
-    /* get chunk and comp */
-    sd_id     = SDstart(HREPACK_FILE1_OUT, DFACC_RDONLY);
-    sds_index = SDnametoindex(sd_id, sds_name);
-    if ((sds_id = SDselect(sd_id, sds_index)) == FAIL) {
-        printf("Error: cannot open sds <%s>", sds_name);
-        SDend(sd_id);
-        return -1;
-    }
-    SDgetchunkinfo(sds_id, &chunk_def, &chunk_flags);
-
-    /*-------------------------------------------------------------------------
-     * retrieve and verify the chunk info
-     *-------------------------------------------------------------------------
-     */
-    if (chunk_flags != (in_chunk_flags)) {
-        printf("Error: chunk flags do not match");
-        SDendaccess(sds_id);
-        SDend(sd_id);
-        return -1;
-    }
-    for (i = 0; i < rank; i++) {
-        if (chunk_def.chunk_lengths[i] != in_chunk_lengths[i]) {
-            printf("Error: chunk lengths do not match ");
-            SDendaccess(sds_id);
-            SDend(sd_id);
-            return -1;
-        }
-    }
-
-    /* terminate access to the sds */
-    SDendaccess(sds_id);
-
-    /* terminate access to the sd interface */
-    SDend(sd_id);
-
-    return 0;
-}
-
-/*-------------------------------------------------------------------------
- * Function: sds_verifiy_chunk_all
- *
- * Purpose: utility function to verify chunking for all SDSs
- *
- * Return: 0, -1 on error
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 3, 2003
- *
- *-------------------------------------------------------------------------
- */
-static int
-sds_verifiy_chunk_all(int32 in_chunk_flags, int rank, int32 *in_chunk_lengths, const char *sds_exclude)
-{
-    HDF_CHUNK_DEF chunk_def;                            /* chunk definition read */
-    int32         chunk_flags;                          /* chunking flag */
-    int32         sd_id, sds_id, sds_index, n_datasets, /* number of datasets in the file */
-        n_file_attrs,                                   /* number of file attributes */
-        data_type,                                      /* number type  */
-        rrank,                                          /* read rank */
-        n_attrs,                                        /* number of attributes */
-        dim_sizes[H4_MAX_VAR_DIMS];                     /* dimensions of an image */
-    char name[H4_MAX_GR_NAME];                          /* name of dataset */
-    int  i;
-
-    /* initialize the sd interface */
-    sd_id = SDstart(HREPACK_FILE1_OUT, DFACC_READ);
-
-    /* determine the number of data sets in the file */
-    if (SDfileinfo(sd_id, &n_datasets, &n_file_attrs) == FAIL) {
-        printf("Error: cannot get file information");
-        SDend(sd_id);
-        return -1;
-    }
-
-    for (sds_index = 0; sds_index < n_datasets; sds_index++) {
-        sds_id = SDselect(sd_id, sds_index);
-
-        /* skip dimension scales */
-        if (SDiscoordvar(sds_id)) {
-            SDendaccess(sds_id);
-            continue;
-        }
-
-        SDgetinfo(sds_id, name, &rrank, dim_sizes, &data_type, &n_attrs);
-        SDgetchunkinfo(sds_id, &chunk_def, &chunk_flags);
-
-        /* do not compare this one */
-        if (strcmp(name, sds_exclude) == 0) {
-            SDendaccess(sds_id);
-            SDend(sd_id);
-            return 0;
-        }
-
-        /*-------------------------------------------------------------------------
-         * retrieve and verify the chunk info
-         *-------------------------------------------------------------------------
-         */
-        if (chunk_flags != (in_chunk_flags)) {
-            printf("Error: chunk flags do not match");
-            SDendaccess(sds_id);
-            SDend(sd_id);
-            return -1;
-        }
-        for (i = 0; i < rank; i++) {
-            if (chunk_def.chunk_lengths[i] != in_chunk_lengths[i]) {
-                printf("Error: chunk lengths do not match ");
-                SDendaccess(sds_id);
-                SDend(sd_id);
-                return -1;
-            }
-        }
-
-        /* terminate access to the current dataset */
-        SDendaccess(sds_id);
-    }
-
-    /* terminate access to the sd interface */
-    SDend(sd_id);
-
-    return 0;
-}
-
-/*-------------------------------------------------------------------------
  * add functions
  *-------------------------------------------------------------------------
  */
@@ -843,13 +249,8 @@ sds_verifiy_chunk_all(int32 in_chunk_flags, int rank, int32 *in_chunk_lengths, c
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 19, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 static int
 add_an(int32 file_id, int32 tag, int32 ref)
 {
@@ -907,10 +308,6 @@ add_an(int32 file_id, int32 tag, int32 ref)
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
 static int
@@ -930,10 +327,10 @@ add_gr_ffile(const char *name_file, int32 gr_id, const char *gr_name, int32 inte
 
     /* compose the name of the file to open, using the srcdir, if appropriate */
     if (srcdir) {
-        HDstrcpy(data_file, srcdir);
-        HDstrcat(data_file, "/");
+        strcpy(data_file, srcdir);
+        strcat(data_file, "/");
     }
-    HDstrcat(data_file, name_file);
+    strcat(data_file, name_file);
 
     if (read_data(data_file) > 0) {
         /* set the data type, interlace mode, and dimensions of the image */
@@ -953,13 +350,13 @@ add_gr_ffile(const char *name_file, int32 gr_id, const char *gr_name, int32 inte
         edges[1]            = g_length_y;
 
         /* write the data in the buffer into the image array */
-        if (GRwriteimage(ri_id, start, NULL, edges, (VOIDP)g_image_data) == FAIL) {
+        if (GRwriteimage(ri_id, start, NULL, edges, (void *)g_image_data) == FAIL) {
             printf("Error: Could not write GR <%s>\n", gr_name);
         }
 
         /* assign an attribute to the SDS */
         n_values = 2;
-        if (GRsetattr(ri_id, "Myattr", DFNT_UINT8, n_values, (VOIDP)attr_values) == FAIL) {
+        if (GRsetattr(ri_id, "Myattr", DFNT_UINT8, n_values, (void *)attr_values) == FAIL) {
             printf("Error: Could not write attributes for GR <%s>\n", gr_name);
             return FAIL;
         }
@@ -987,10 +384,8 @@ add_gr_ffile(const char *name_file, int32 gr_id, const char *gr_name, int32 inte
 
     } /* read data */
 
-    if (g_image_data != NULL) {
-        HDfree(g_image_data);
-        g_image_data = NULL;
-    }
+    free(g_image_data);
+    g_image_data = NULL;
 
     return SUCCEED;
 }
@@ -1004,13 +399,8 @@ add_gr_ffile(const char *name_file, int32 gr_id, const char *gr_name, int32 inte
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 18, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 static int
 add_gr(const char  *gr_name,     /* gr name */
        int32        file_id,     /* file ID */
@@ -1018,7 +408,7 @@ add_gr(const char  *gr_name,     /* gr name */
        int32        vgroup_id,   /* group ID */
        int32        chunk_flags, /* chunk flags */
        comp_coder_t comp_type,   /* compression flag */
-       comp_info   *comp_info /* compression structure */)
+       comp_info   *c_info /* compression structure */)
 {
     int32 ri_id,        /* raster image identifier */
         gr_ref,         /* reference number of the GR image */
@@ -1026,9 +416,11 @@ add_gr(const char  *gr_name,     /* gr name */
         edges[2],       /* number of elements to be written along each dimension */
         dim_gr[2],      /* dimension sizes of the image array */
         interlace_mode, /* interlace mode of the image */
-        data_type,      /* data type of the image data */
-        data[Y_DIM_GR][X_DIM_GR];
-    int           i, j, n = 0, ncomps = 1;
+        data_type;      /* data type of the image data */
+
+    int32        *data   = NULL; /* [Y_DIM_GR][X_DIM_GR] */
+    int           n      = 0;
+    int           ncomps = 1;
     HDF_CHUNK_DEF chunk_def; /* Chunking definitions */
 
     /* set the data type, interlace mode, and dimensions of the image */
@@ -1038,9 +430,11 @@ add_gr(const char  *gr_name,     /* gr name */
     dim_gr[1]      = X_DIM_GR;
 
     /* data set data initialization */
-    for (j = 0; j < Y_DIM_GR; j++) {
-        for (i = 0; i < X_DIM_GR; i++)
-            data[j][i] = n++;
+    if (NULL == (data = (int32 *)malloc(Y_DIM_GR * X_DIM_GR * sizeof(int32))))
+        goto fail;
+    for (int j = 0; j < Y_DIM_GR; j++) {
+        for (int i = 0; i < X_DIM_GR; i++)
+            data[(j * X_DIM_GR) + i] = n++;
     }
 
     /*define some compression specific parameters */
@@ -1051,11 +445,11 @@ add_gr(const char  *gr_name,     /* gr name */
             break;
 
         case COMP_CODE_SKPHUFF:
-            comp_info->skphuff.skp_size = 1;
+            c_info->skphuff.skp_size = 1;
             break;
 
         case COMP_CODE_DEFLATE:
-            comp_info->deflate.level = 6;
+            c_info->deflate.level = 6;
             break;
 
         case COMP_CODE_SZIP:
@@ -1063,12 +457,12 @@ add_gr(const char  *gr_name,     /* gr name */
             /* not supported for GR */
 #ifdef H4_HAVE_LIBSZ
             if (SZ_encoder_enabled()) {
-                comp_info->szip.pixels_per_block = 2;
-                comp_info->szip.options_mask     = SZ_EC_OPTION_MASK;
-                comp_info->szip.options_mask |= SZ_RAW_OPTION_MASK;
-                comp_info->szip.pixels              = 0;
-                comp_info->szip.pixels_per_scanline = 0;
-                comp_info->szip.bits_per_pixel      = 0;
+                c_info->szip.pixels_per_block = 2;
+                c_info->szip.options_mask     = SZ_EC_OPTION_MASK;
+                c_info->szip.options_mask |= SZ_RAW_OPTION_MASK;
+                c_info->szip.pixels              = 0;
+                c_info->szip.pixels_per_scanline = 0;
+                c_info->szip.bits_per_pixel      = 0;
             }
             else {
                 printf("Warning: SZIP encoding not available\n");
@@ -1084,7 +478,7 @@ add_gr(const char  *gr_name,     /* gr name */
     /* create the raster image array */
     if ((ri_id = GRcreate(gr_id, gr_name, ncomps, data_type, interlace_mode, dim_gr)) == FAIL) {
         printf("Error: Could not create GR <%s>\n", gr_name);
-        return FAIL;
+        goto fail;
     }
 
     /* set chunk */
@@ -1138,16 +532,16 @@ add_gr(const char  *gr_name,     /* gr name */
         }
         if (GRsetchunk(ri_id, chunk_def, chunk_flags) == FAIL) {
             printf("Error: Could not set chunk for GR <%s>\n", gr_name);
-            return FAIL;
+            goto fail;
         }
     }
 
     /* use compress without chunk-in */
     else if ((chunk_flags == HDF_NONE || chunk_flags == HDF_CHUNK) && comp_type > COMP_CODE_NONE &&
              comp_type < COMP_CODE_INVALID) {
-        if (GRsetcompress(ri_id, comp_type, comp_info) == FAIL) {
+        if (GRsetcompress(ri_id, comp_type, c_info) == FAIL) {
             printf("Error: Could not set compress for GR <%s>\n", gr_name);
-            return FAIL;
+            goto fail;
         }
     }
 
@@ -1157,9 +551,9 @@ add_gr(const char  *gr_name,     /* gr name */
     edges[1]            = X_DIM_GR;
 
     /* write the data in the buffer into the image array */
-    if (GRwriteimage(ri_id, start, NULL, edges, (VOIDP)data) == FAIL) {
+    if (GRwriteimage(ri_id, start, NULL, edges, (void *)data) == FAIL) {
         printf("Error: Could not set write GR <%s>\n", gr_name);
-        return FAIL;
+        goto fail;
     }
 
     /* obtain the reference number of the GR using its identifier */
@@ -1169,21 +563,26 @@ add_gr(const char  *gr_name,     /* gr name */
     if (vgroup_id) {
         if (Vaddtagref(vgroup_id, TAG_GRP_IMAGE, gr_ref) == FAIL) {
             printf("Error: Could not add GR <%s> to group\n", gr_name);
-            return FAIL;
+            goto fail;
         }
     }
 
     /* terminate access to the raster image */
     if (GRendaccess(ri_id) == FAIL) {
         printf("Error: Could not close GR <%s>\n", gr_name);
-        return FAIL;
+        goto fail;
     }
 
     /* add an annotation and label to the object */
     if (add_an(file_id, DFTAG_RI, gr_ref) < 0)
-        return FAIL;
+        goto fail;
 
+    free(data);
     return SUCCEED;
+
+fail:
+    free(data);
+    return FAIL;
 }
 
 /*-------------------------------------------------------------------------
@@ -1192,10 +591,6 @@ add_gr(const char  *gr_name,     /* gr name */
  * Purpose: utility function to write global attributes
  *
  * Return: SUCCEED, FAIL
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 30, 2003
  *
  *-------------------------------------------------------------------------
  */
@@ -1214,7 +609,7 @@ add_glb_attrs(const char *fname, int32 file_id, int32 sd_id, int32 gr_id)
      *-------------------------------------------------------------------------
      */
     /* assign an attribute to the SD */
-    if (SDsetattr(sd_id, "MySDgattr", DFNT_UINT8, n_values, (VOIDP)attr_values) == FAIL) {
+    if (SDsetattr(sd_id, "MySDgattr", DFNT_UINT8, n_values, (void *)attr_values) == FAIL) {
         printf("Could not set SDS attr\n");
         return FAIL;
     }
@@ -1225,7 +620,7 @@ add_glb_attrs(const char *fname, int32 file_id, int32 sd_id, int32 gr_id)
      */
 
     /* assign an attribute to the GR */
-    if (GRsetattr(gr_id, "MyGRgattr", DFNT_UINT8, n_values, (VOIDP)attr_values) == FAIL) {
+    if (GRsetattr(gr_id, "MyGRgattr", DFNT_UINT8, n_values, (void *)attr_values) == FAIL) {
         printf("Could not set GR attr\n");
         return FAIL;
     }
@@ -1242,13 +637,8 @@ add_glb_attrs(const char *fname, int32 file_id, int32 sd_id, int32 gr_id)
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 static int
 add_r8(const char *image_file, const char *fname, int32 file_id, int32 vgroup_id)
 {
@@ -1258,10 +648,10 @@ add_r8(const char *image_file, const char *fname, int32 file_id, int32 vgroup_id
 
     /* compose the name of the file to open, using the srcdir, if appropriate */
     if (srcdir) {
-        HDstrcpy(data_file, srcdir);
-        HDstrcat(data_file, "/");
+        strcpy(data_file, srcdir);
+        strcat(data_file, "/");
     }
-    HDstrcat(data_file, image_file);
+    strcat(data_file, image_file);
 
     if (read_data(data_file) > 0) {
         /* add a palette */
@@ -1292,10 +682,8 @@ add_r8(const char *image_file, const char *fname, int32 file_id, int32 vgroup_id
             return FAIL;
     }
 
-    if (g_image_data != NULL) {
-        HDfree(g_image_data);
-        g_image_data = NULL;
-    }
+    free(g_image_data);
+    g_image_data = NULL;
 
     return SUCCEED;
 }
@@ -1309,10 +697,6 @@ add_r8(const char *image_file, const char *fname, int32 file_id, int32 vgroup_id
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
 static int
@@ -1324,10 +708,10 @@ add_r24(const char *image_file, const char *fname, int32 file_id, intn il, int32
 
     /* compose the name of the file to open, using the srcdir, if appropriate */
     if (srcdir) {
-        HDstrcpy(data_file, srcdir);
-        HDstrcat(data_file, "/");
+        strcpy(data_file, srcdir);
+        strcat(data_file, "/");
     }
-    HDstrcat(data_file, image_file);
+    strcat(data_file, image_file);
 
     if (read_data(data_file) > 0) {
         /* set interlace */
@@ -1359,10 +743,8 @@ add_r24(const char *image_file, const char *fname, int32 file_id, intn il, int32
 
     } /* read_data */
 
-    if (g_image_data != NULL) {
-        HDfree(g_image_data);
-        g_image_data = NULL;
-    }
+    free(g_image_data);
+    g_image_data = NULL;
 
     return SUCCEED;
 }
@@ -1378,41 +760,34 @@ add_r24(const char *image_file, const char *fname, int32 file_id, intn il, int32
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
 static int
-add_sd(const char  *fname,       /* file name */
-       int32        file_id,     /* file ID */
+add_sd(int32        file_id,     /* file ID */
        int32        sd_id,       /* SD id */
        const char  *sds_name,    /* sds name */
        int32        vgroup_id,   /* group ID */
        int32        chunk_flags, /* chunk flags */
        comp_coder_t comp_type,   /* compression flag */
-       comp_info   *comp_info /* compression structure */)
+       comp_info   *c_info /* compression structure */)
 
 {
-    int32 sds_id,       /* data set identifier */
-        sds_ref,        /* reference number of the data set */
-        dim_sds[2],     /* dimension of the data set */
-        rank = 2,       /* rank of the data set array */
-        n_values,       /* number of values of attribute */
-        dim_index,      /* dimension index */
-        dim_id,         /* dimension ID */
-        start[2],       /* write start */
-        edges[2],       /* write edges */
-        fill_value = 2, /* fill value */
-        data[Y_DIM][X_DIM], bits_per_pixel = 32;
-    float32       sds_values[2] = {2., 10.}; /* values of the SDS attribute  */
-    int16         data_X[X_DIM];             /* X dimension dimension scale */
-    float64       data_Y[Y_DIM];             /* Y dimension dimension scale */
-    int           i, j;
-    HDF_CHUNK_DEF chunk_def; /* Chunking definitions */
-
-    (void)fname;
+    int32 sds_id = FAIL;                 /* data set identifier */
+    int32 sds_ref,                       /* reference number of the data set */
+        dim_sds[2],                      /* dimension of the data set */
+        rank = 2,                        /* rank of the data set array */
+        n_values,                        /* number of values of attribute */
+        dim_index,                       /* dimension index */
+        dim_id,                          /* dimension ID */
+        start[2],                        /* write start */
+        edges[2],                        /* write edges */
+        fill_value               = 2;    /* fill value */
+    int32        *data           = NULL; /* [Y_DIM][X_DIM] */
+    int32         bits_per_pixel = 32;
+    float32       sds_values[2]  = {2., 10.}; /* values of the SDS attribute  */
+    int16        *data_X         = NULL;      /* X dimension dimension scale */
+    float64      *data_Y         = NULL;      /* Y dimension dimension scale */
+    HDF_CHUNK_DEF chunk_def;                  /* Chunking definitions */
 
     /* set the size of the SDS's dimension */
     dim_sds[0] = Y_DIM;
@@ -1426,22 +801,22 @@ add_sd(const char  *fname,       /* file name */
             break;
 
         case COMP_CODE_SKPHUFF:
-            comp_info->skphuff.skp_size = 1;
+            c_info->skphuff.skp_size = 1;
             break;
 
         case COMP_CODE_DEFLATE:
-            comp_info->deflate.level = 6;
+            c_info->deflate.level = 6;
             break;
 
         case COMP_CODE_SZIP:
 #ifdef H4_HAVE_LIBSZ
             if (SZ_encoder_enabled()) {
-                comp_info->szip.pixels_per_block = 2;
-                comp_info->szip.options_mask     = SZ_EC_OPTION_MASK;
-                comp_info->szip.options_mask |= SZ_RAW_OPTION_MASK;
-                comp_info->szip.pixels              = 0;
-                comp_info->szip.pixels_per_scanline = 0;
-                comp_info->szip.bits_per_pixel      = 0;
+                c_info->szip.pixels_per_block = 2;
+                c_info->szip.options_mask     = SZ_EC_OPTION_MASK;
+                c_info->szip.options_mask |= SZ_RAW_OPTION_MASK;
+                c_info->szip.pixels              = 0;
+                c_info->szip.pixels_per_scanline = 0;
+                c_info->szip.bits_per_pixel      = 0;
             }
             else {
                 printf("Warning: SZIP encoding not available\n");
@@ -1453,20 +828,27 @@ add_sd(const char  *fname,       /* file name */
     }
 
     /* data set data initialization */
-    for (j = 0; j < Y_DIM; j++) {
-        for (i = 0; i < X_DIM; i++)
-            data[j][i] = (i + j) + 1;
+    if (NULL == (data = (int32 *)malloc(Y_DIM * X_DIM * sizeof(int32))))
+        goto fail;
+    for (int j = 0; j < Y_DIM; j++) {
+        for (int i = 0; i < X_DIM; i++)
+            data[(j * X_DIM) + i] = (i + j) + 1;
     }
     /* initialize dimension scales */
-    for (i = 0; i < X_DIM; i++)
+    if (NULL == (data_X = (int16 *)malloc(X_DIM * sizeof(int16))))
+        goto fail;
+    for (int16 i = 0; i < X_DIM; i++)
         data_X[i] = i;
-    for (i = 0; i < Y_DIM; i++)
+
+    if (NULL == (data_Y = (float64 *)malloc(Y_DIM * sizeof(float64))))
+        goto fail;
+    for (int i = 0; i < Y_DIM; i++)
         data_Y[i] = 0.1 * i;
 
     /* create the SDS */
     if ((sds_id = SDcreate(sd_id, sds_name, DFNT_INT32, rank, dim_sds)) < 0) {
         printf("Could not create SDS <%s>\n", sds_name);
-        return FAIL;
+        goto fail;
     }
 
     /* set chunk */
@@ -1480,14 +862,14 @@ add_sd(const char  *fname,       /* file name */
 
     /* use compress without chunk-in */
     else if (chunk_flags == HDF_NONE && comp_type > COMP_CODE_NONE && comp_type < COMP_CODE_INVALID) {
-        if (SDsetcompress(sds_id, comp_type, comp_info) == FAIL) {
+        if (SDsetcompress(sds_id, comp_type, c_info) == FAIL) {
             printf("Failed to set compress for SDS <%s>\n", sds_name);
             goto fail;
         }
     }
 
     /* set a fill value */
-    if (SDsetfillvalue(sds_id, (VOIDP)&fill_value) == FAIL) {
+    if (SDsetfillvalue(sds_id, (void *)&fill_value) == FAIL) {
         printf("Failed to set fillvaclue for SDS <%s>\n", sds_name);
         goto fail;
     }
@@ -1499,14 +881,14 @@ add_sd(const char  *fname,       /* file name */
     edges[1] = X_DIM;
 
     /* write the stored data to the data set */
-    if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)data) == FAIL) {
+    if (SDwritedata(sds_id, start, NULL, edges, (void *)data) == FAIL) {
         printf("Failed to set write for SDS <%s>\n", sds_name);
         goto fail;
     }
 
     /* assign an attribute to the SDS */
     n_values = 2;
-    if (SDsetattr(sds_id, "Valid_range", DFNT_FLOAT32, n_values, (VOIDP)sds_values) == FAIL) {
+    if (SDsetattr(sds_id, "Valid_range", DFNT_FLOAT32, n_values, (void *)sds_values) == FAIL) {
         printf("Failed to set attr for SDS <%s>\n", sds_name);
         goto fail;
     }
@@ -1530,7 +912,7 @@ add_sd(const char  *fname,       /* file name */
                     printf("Failed to set dims for SDS <%s>\n", sds_name);
                     goto fail;
                 }
-                if (SDsetdimscale(dim_id, n_values, DFNT_FLOAT64, (VOIDP)data_Y) == FAIL) {
+                if (SDsetdimscale(dim_id, n_values, DFNT_FLOAT64, (void *)data_Y) == FAIL) {
                     printf("Failed to set dims for SDS <%s>\n", sds_name);
                     goto fail;
                 }
@@ -1546,7 +928,7 @@ add_sd(const char  *fname,       /* file name */
                     printf("Failed to set dims for SDS <%s>\n", sds_name);
                     goto fail;
                 }
-                if (SDsetdimscale(dim_id, n_values, DFNT_INT16, (VOIDP)data_X) == FAIL) {
+                if (SDsetdimscale(dim_id, n_values, DFNT_INT16, (void *)data_X) == FAIL) {
                     printf("Failed to set dims for SDS <%s>\n", sds_name);
                     goto fail;
                 }
@@ -1580,9 +962,15 @@ add_sd(const char  *fname,       /* file name */
         goto fail;
     }
 
+    free(data);
+    free(data_X);
+    free(data_Y);
     return SUCCEED;
 
 fail:
+    free(data);
+    free(data_X);
+    free(data_Y);
     SDendaccess(sds_id);
     return FAIL;
 }
@@ -1598,33 +986,26 @@ fail:
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 static int
-add_sd3d(const char  *fname,       /* file name */
-         int32        file_id,     /* file ID */
+add_sd3d(int32        file_id,     /* file ID */
          int32        sd_id,       /* SD interface identifier */
          const char  *sds_name,    /* sds name */
          int32        vgroup_id,   /* group ID */
          int32        chunk_flags, /* chunk flags */
          comp_coder_t comp_type,   /* compression flag */
-         comp_info   *comp_info /* compression structure */)
+         comp_info   *c_info /* compression structure */)
 
 {
-    int32 sds_id,       /* data set identifier */
-        sds_ref,        /* reference number of the data set */
-        dim_sds[3],     /* dimension of the data set */
-        rank = 3,       /* rank of the data set array */
-        start[3],       /* write start */
-        fill_value = 2, /* fill value */
-        data[Z_DIM][Y_DIM][X_DIM];
-    int           i, j, k;
-    HDF_CHUNK_DEF chunk_def; /* Chunking definitions */
+    int32 sds_id = FAIL;       /* data set identifier */
+    int32 sds_ref,             /* reference number of the data set */
+        dim_sds[3],            /* dimension of the data set */
+        rank = 3,              /* rank of the data set array */
+        start[3],              /* write start */
+        fill_value     = 2;    /* fill value */
+    int32        *data = NULL; /* [Z_DIM][Y_DIM][X_DIM] */
+    HDF_CHUNK_DEF chunk_def;   /* Chunking definitions */
 
     /* Define chunk's dimensions */
     chunk_def.chunk_lengths[0] = Z_DIM / 2;
@@ -1640,10 +1021,14 @@ add_sd3d(const char  *fname,       /* file name */
     chunk_def.comp.cinfo.deflate.level = 6;
 
     /* data set data initialization */
-    for (k = 0; k < Z_DIM; k++) {
-        for (j = 0; j < Y_DIM; j++)
-            for (i = 0; i < X_DIM; i++)
-                data[k][j][i] = (i + j) + 1;
+    if (NULL == (data = (int32 *)malloc(Z_DIM * Y_DIM * X_DIM * sizeof(int32))))
+        goto fail;
+    for (int k = 0; k < Z_DIM; k++) {
+        for (int j = 0; j < Y_DIM; j++)
+            for (int i = 0; i < X_DIM; i++) {
+                int32 idx = (k * Y_DIM * X_DIM) + (j * X_DIM) + i;
+                data[idx] = (i + j) + 1;
+            }
     }
 
     /* set the size of the SDS's dimension */
@@ -1654,7 +1039,7 @@ add_sd3d(const char  *fname,       /* file name */
     /* create the SDS */
     if ((sds_id = SDcreate(sd_id, sds_name, DFNT_INT32, rank, dim_sds)) < 0) {
         printf("Could not create SDS <%s>\n", sds_name);
-        return FAIL;
+        goto fail;
     }
 
     /* set chunk */
@@ -1667,14 +1052,14 @@ add_sd3d(const char  *fname,       /* file name */
 
     /* use compress without chunk-in */
     else if ((chunk_flags == HDF_NONE) && comp_type > COMP_CODE_NONE && comp_type < COMP_CODE_INVALID) {
-        if (SDsetcompress(sds_id, comp_type, comp_info) == FAIL) {
+        if (SDsetcompress(sds_id, comp_type, c_info) == FAIL) {
             printf("Failed to set compress for SDS <%s>\n", sds_name);
             goto fail;
         }
     }
 
     /* set a fill value */
-    if (SDsetfillvalue(sds_id, (VOIDP)&fill_value) == FAIL) {
+    if (SDsetfillvalue(sds_id, (void *)&fill_value) == FAIL) {
         printf("Failed to set fill for SDS <%s>\n", sds_name);
         goto fail;
     }
@@ -1685,7 +1070,7 @@ add_sd3d(const char  *fname,       /* file name */
     start[2] = 0;
 
     /* write the stored data to the data set */
-    if (SDwritedata(sds_id, start, NULL, dim_sds, (VOIDP)data) == FAIL) {
+    if (SDwritedata(sds_id, start, NULL, dim_sds, (void *)data) == FAIL) {
         printf("Failed to write SDS <%s>\n", sds_name);
         goto fail;
     }
@@ -1710,10 +1095,12 @@ add_sd3d(const char  *fname,       /* file name */
         goto fail;
     }
 
+    free(data);
     return SUCCEED;
 
 fail:
     SDendaccess(sds_id);
+    free(data);
     return FAIL;
 }
 
@@ -1782,15 +1169,17 @@ add_unl_sd(int32       sd_id,    /* SD id */
 
     if (do_write) {
 
-        int32 start[2], /* write start */
-            edges[2],   /* write edges */
-            buf[Y_DIM][X_DIM];
-        int i, j;
+        int32  start[2]; /* write start */
+        int32  edges[2]; /* write edges */
+        int32 *buf = NULL;
+
+        if (NULL == (buf = calloc(1, Y_DIM * X_DIM * sizeof(int32))))
+            goto fail;
 
         /* data set data initialization */
-        for (j = 0; j < Y_DIM; j++) {
-            for (i = 0; i < X_DIM; i++) {
-                buf[j][i] = (i + j) + 1;
+        for (int j = 0; j < Y_DIM; j++) {
+            for (int i = 0; i < X_DIM; i++) {
+                buf[(j * X_DIM) + i] = (i + j) + 1;
             }
         }
         /* define the location and size of the data to be written to the data set */
@@ -1800,10 +1189,13 @@ add_unl_sd(int32       sd_id,    /* SD id */
         edges[1] = X_DIM;
 
         /* write the stored data to the data set */
-        if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)buf) == FAIL) {
+        if (SDwritedata(sds_id, start, NULL, edges, (void *)buf) == FAIL) {
             printf("Failed to set write for SDS <%s>\n", sds_name);
+            free(buf);
             goto fail;
         }
+
+        free(buf);
     }
 
     /* terminate access to the SDS */
@@ -1829,13 +1221,8 @@ fail:
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 static int
 add_vs(const char *vs_name, int32 file_id, int32 vgroup_id)
 {
@@ -1883,12 +1270,12 @@ add_vs(const char *vs_name, int32 file_id, int32 vgroup_id)
      * elements contain the two values of the third field.
      */
     for (i = 0; i < N_RECORDS; i++) {
-        data_buf[i][0] = (float32)1.0 * i;
-        data_buf[i][1] = (float32)2.0 * i;
-        data_buf[i][2] = (float32)3.0 * i;
-        data_buf[i][3] = (float32)0.1 + i;
-        data_buf[i][4] = 0.0;
-        data_buf[i][5] = 65.0;
+        data_buf[i][0] = 1.0F * (float)i;
+        data_buf[i][1] = 2.0F * (float)i;
+        data_buf[i][2] = 3.0F * (float)i;
+        data_buf[i][3] = 0.1F + (float)i;
+        data_buf[i][4] = 0.0F;
+        data_buf[i][5] = 65.0F;
     }
 
     /* Write the data from data_buf to the vdata with full interlacing mode */
@@ -1947,13 +1334,8 @@ add_vs(const char *vs_name, int32 file_id, int32 vgroup_id)
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 30, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 static int
 add_file_an(int32 file_id)
 {
@@ -2044,7 +1426,7 @@ add_file_an(int32 file_id)
     }
 
     /* Terminate access to the AN interface */
-    if (ANend(an_id) == FAIL == FAIL) {
+    if (ANend(an_id) == FAIL) {
         printf("Could not end AN\n");
         return FAIL;
     }
@@ -2059,13 +1441,8 @@ add_file_an(int32 file_id)
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 19, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 static int
 add_pal(const char *fname)
 {
@@ -2077,9 +1454,9 @@ add_pal(const char *fname)
      *-------------------------------------------------------------------------
      */
     for (i = 0, n = 0; i < 256 * 3; i += 3, n++) {
-        pal[i]     = n;       /* red */
-        pal[i + 1] = 0;       /* green */
-        pal[i + 2] = 255 - n; /* blue */
+        pal[i]     = (uint8)n;         /* red */
+        pal[i + 1] = 0;                /* green */
+        pal[i + 2] = (uint8)(255 - n); /* blue */
     }
 
     if (DFPaddpal(fname, pal) == FAIL) {
@@ -2098,15 +1475,11 @@ add_pal(const char *fname)
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: September 15, 2003
- *
  *-------------------------------------------------------------------------
  */
+#ifdef H4_HAVE_LIBSZ
 static int
-add_sd_szip(const char *fname,          /* file name */
-            int32       file_id,        /* file ID */
+add_sd_szip(int32       file_id,        /* file ID */
             int32       sd_id,          /* SD interface identifier */
             const char *sds_name,       /* sds name */
             int32       vgroup_id,      /* group ID */
@@ -2121,33 +1494,28 @@ add_sd_szip(const char *fname,          /* file name */
         sds_ref,                              /* reference number of the data set */
         rank                = 2;              /* rank of the data set array */
     comp_coder_t  comp_type = COMP_CODE_NONE; /* compression flag */
-    comp_info     comp_info;                  /* compression structure */
+    comp_info     c_info;                     /* compression structure */
     HDF_CHUNK_DEF chunk_def;                  /* chunking definitions */
     int32         edges[2],                   /* write edges */
         start[2] = {0, 0};                    /* write start */
 
-    (void)fname;
     (void)file_id;
 
     edges[0] = dim[0];
     edges[1] = dim[1];
 
-#ifdef H4_HAVE_LIBSZ
     if (SZ_encoder_enabled()) {
-        comp_type                       = COMP_CODE_SZIP;
-        comp_info.szip.pixels_per_block = 2;
-        comp_info.szip.options_mask     = SZ_EC_OPTION_MASK;
-        comp_info.szip.options_mask |= SZ_RAW_OPTION_MASK;
-        comp_info.szip.pixels              = 0;
-        comp_info.szip.pixels_per_scanline = 0;
-        comp_info.szip.bits_per_pixel      = 0;
+        comp_type                    = COMP_CODE_SZIP;
+        c_info.szip.pixels_per_block = 2;
+        c_info.szip.options_mask     = SZ_EC_OPTION_MASK;
+        c_info.szip.options_mask |= SZ_RAW_OPTION_MASK;
+        c_info.szip.pixels              = 0;
+        c_info.szip.pixels_per_scanline = 0;
+        c_info.szip.bits_per_pixel      = 0;
     }
     else {
         printf("Warning: SZIP encoding not available\n");
     }
-#else
-    printf("Warning: SZIP compression not available\n");
-#endif
 
     /* create the SDS */
     sds_id = SDcreate(sd_id, sds_name, nt, rank, dim);
@@ -2167,14 +1535,14 @@ add_sd_szip(const char *fname,          /* file name */
 
     /* use compress without chunk-in */
     else if (chunk_flags == HDF_NONE && comp_type > COMP_CODE_NONE && comp_type < COMP_CODE_INVALID) {
-        if (SDsetcompress(sds_id, comp_type, &comp_info) == FAIL) {
+        if (SDsetcompress(sds_id, comp_type, &c_info) == FAIL) {
             printf("Failed to set compress for SDS <%s>\n", sds_name);
             goto fail;
         }
     }
 
     /* write the stored data to the data set */
-    if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)data) == FAIL) {
+    if (SDwritedata(sds_id, start, NULL, edges, (void *)data) == FAIL) {
         printf("Failed to writer SDS <%s>\n", sds_name);
         goto fail;
     }
@@ -2202,6 +1570,7 @@ fail:
     SDendaccess(sds_id);
     return FAIL;
 }
+#endif /* H4_HAVE_LIBSZ */
 
 /*-------------------------------------------------------------------------
  * Function: do_file_all
@@ -2212,9 +1581,8 @@ fail:
  *
  *-------------------------------------------------------------------------
  */
-
 static int
-do_file_all(char *fname)
+do_file_all(const char *fname)
 {
     int32 vgroup1_id,                             /* vgroup identifier */
         vgroup2_id,                               /* vgroup identifier */
@@ -2227,7 +1595,7 @@ do_file_all(char *fname)
     char         vg_attr[3]    = {'A', 'B', 'C'}; /* vg attribute values*/
     comp_coder_t comp_type;                       /* to retrieve compression type into */
     int32        chunk_flags;                     /* Chunking flag */
-    comp_info    comp_info;                       /* compression structure */
+    comp_info    c_info;                          /* Compression structure */
 
     /*-------------------------------------------------------------------------
      * create a file with SDSs, images , groups and vdatas
@@ -2317,19 +1685,19 @@ do_file_all(char *fname)
     /* add non chunked, non compressed sds */
     chunk_flags = HDF_NONE;
     comp_type   = COMP_CODE_NONE;
-    if (add_sd(fname, file_id, sd_id, "dset1", vgroup1_id, chunk_flags, comp_type, NULL) < 0)
+    if (add_sd(file_id, sd_id, "dset1", vgroup1_id, chunk_flags, comp_type, NULL) < 0)
         goto out;
-    if (add_sd(fname, file_id, sd_id, "dset2", vgroup2_id, chunk_flags, comp_type, NULL) < 0)
+    if (add_sd(file_id, sd_id, "dset2", vgroup2_id, chunk_flags, comp_type, NULL) < 0)
         goto out;
-    if (add_sd(fname, file_id, sd_id, "dset3", vgroup3_id, chunk_flags, comp_type, NULL) < 0)
+    if (add_sd(file_id, sd_id, "dset3", vgroup3_id, chunk_flags, comp_type, NULL) < 0)
         goto out;
-    if (add_sd(fname, file_id, sd_id, "dset4", 0, chunk_flags, comp_type, NULL) < 0)
+    if (add_sd(file_id, sd_id, "dset4", 0, chunk_flags, comp_type, NULL) < 0)
         goto out;
-    if (add_sd(fname, file_id, sd_id, "dset5", 0, chunk_flags, comp_type, NULL) < 0)
+    if (add_sd(file_id, sd_id, "dset5", 0, chunk_flags, comp_type, NULL) < 0)
         goto out;
-    if (add_sd(fname, file_id, sd_id, "dset6", 0, chunk_flags, comp_type, NULL) < 0)
+    if (add_sd(file_id, sd_id, "dset6", 0, chunk_flags, comp_type, NULL) < 0)
         goto out;
-    if (add_sd3d(fname, file_id, sd_id, "dset7", 0, chunk_flags, comp_type, NULL) < 0)
+    if (add_sd3d(file_id, sd_id, "dset7", 0, chunk_flags, comp_type, NULL) < 0)
         goto out;
 
     /*-------------------------------------------------------------------------
@@ -2343,13 +1711,13 @@ do_file_all(char *fname)
     /* add a chunked, non compressed sds */
     chunk_flags = HDF_CHUNK;
     comp_type   = COMP_CODE_NONE;
-    if (add_sd(fname, file_id, sd_id, "dset_chunk", 0, chunk_flags, comp_type, NULL) < 0)
+    if (add_sd(file_id, sd_id, "dset_chunk", 0, chunk_flags, comp_type, NULL) < 0)
         goto out;
 
     /* add a chunked-compressed sds with SDsetchunk */
     chunk_flags = HDF_CHUNK | HDF_COMP;
     comp_type   = COMP_CODE_DEFLATE;
-    if (add_sd(fname, file_id, sd_id, "dset_chunk_comp", 0, chunk_flags, comp_type, &comp_info) < 0)
+    if (add_sd(file_id, sd_id, "dset_chunk_comp", 0, chunk_flags, comp_type, &c_info) < 0)
         goto out;
 
     /*-------------------------------------------------------------------------
@@ -2360,7 +1728,7 @@ do_file_all(char *fname)
     /* add some non chunked, compressed sds */
     chunk_flags = HDF_NONE;
     comp_type   = COMP_CODE_DEFLATE;
-    if (add_sd(fname, file_id, sd_id, "dset_gzip", 0, chunk_flags, comp_type, &comp_info) < 0)
+    if (add_sd(file_id, sd_id, "dset_gzip", 0, chunk_flags, comp_type, &c_info) < 0)
         goto out;
 
     /*-------------------------------------------------------------------------
@@ -2387,7 +1755,7 @@ do_file_all(char *fname)
     /* add some non chunked, compressed sds */
     chunk_flags = HDF_NONE;
     comp_type   = COMP_CODE_RLE;
-    if (add_sd(fname, file_id, sd_id, "dset_rle", 0, chunk_flags, comp_type, &comp_info) < 0)
+    if (add_sd(file_id, sd_id, "dset_rle", 0, chunk_flags, comp_type, &c_info) < 0)
         goto out;
 
     /*-------------------------------------------------------------------------
@@ -2398,7 +1766,7 @@ do_file_all(char *fname)
     /* add some non chunked, compressed sds */
     chunk_flags = HDF_NONE;
     comp_type   = COMP_CODE_SKPHUFF;
-    if (add_sd(fname, file_id, sd_id, "dset_huff", 0, chunk_flags, comp_type, &comp_info) < 0)
+    if (add_sd(file_id, sd_id, "dset_huff", 0, chunk_flags, comp_type, &c_info) < 0)
         goto out;
 
 #if defined(H4_HAVE_LIBSZ)
@@ -2409,7 +1777,7 @@ do_file_all(char *fname)
     if (SZ_encoder_enabled()) {
         chunk_flags = HDF_NONE;
         comp_type   = COMP_CODE_SZIP;
-        if (add_sd(fname, file_id, sd_id, "dset_szip", 0, chunk_flags, comp_type, &comp_info) < 0)
+        if (add_sd(file_id, sd_id, "dset_szip", 0, chunk_flags, comp_type, &c_info) < 0)
             goto out;
 
         {
@@ -2423,8 +1791,7 @@ do_file_all(char *fname)
                     for (i = 0; i < XD1; i++)
                         buf[j][i] = (int32)(i + j) + 1;
                 }
-                if (add_sd_szip(fname, file_id, sd_id, "dset32szip", 0, HDF_NONE, DFNT_INT32, bpp, dim, buf) <
-                    0)
+                if (add_sd_szip(file_id, sd_id, "dset32szip", 0, HDF_NONE, DFNT_INT32, bpp, dim, buf) < 0)
                     return FAIL;
             }
         }
@@ -2462,7 +1829,7 @@ do_file_all(char *fname)
 
     chunk_flags = HDF_NONE;
     comp_type   = COMP_CODE_NONE;
-    if (add_gr("gr_none", file_id, gr_id, 0, chunk_flags, comp_type, &comp_info) < 0)
+    if (add_gr("gr_none", file_id, gr_id, 0, chunk_flags, comp_type, &c_info) < 0)
         goto out;
 
     /*-------------------------------------------------------------------------
@@ -2472,7 +1839,7 @@ do_file_all(char *fname)
 
     chunk_flags = HDF_NONE;
     comp_type   = COMP_CODE_DEFLATE;
-    if (add_gr("gr_gzip", file_id, gr_id, 0, chunk_flags, comp_type, &comp_info) < 0)
+    if (add_gr("gr_gzip", file_id, gr_id, 0, chunk_flags, comp_type, &c_info) < 0)
         goto out;
 
 #if defined(H4_GR_SZIP)
@@ -2487,7 +1854,7 @@ do_file_all(char *fname)
     if (SZ_encoder_enabled()) {
         chunk_flags = HDF_NONE;
         comp_type   = COMP_CODE_SZIP;
-        if (add_gr("gr_szip", file_id, gr_id, 0, chunk_flags, comp_type, &comp_info) < 0)
+        if (add_gr("gr_szip", file_id, gr_id, 0, chunk_flags, comp_type, &c_info) < 0)
             goto out;
     }
 
@@ -2592,9 +1959,8 @@ out:
  * write a big file for hyperslab reading
  *-------------------------------------------------------------------------
  */
-
 static int
-do_file_hyperslab(char *fname)
+do_file_hyperslab(const char *fname)
 {
 
     int32 sd_id;    /* SD interface identifier */
@@ -2625,7 +1991,7 @@ do_file_hyperslab(char *fname)
     /* initial values */
     for (j = 0; j < DIM0; j++) {
         for (i = 0; i < DIM1; i++)
-            array_data[j][i] = (i + j) + 1;
+            array_data[j][i] = (uint8)(i + j + 1);
     }
 
     /* define the location, pattern, and size of the data set */
@@ -2635,7 +2001,7 @@ do_file_hyperslab(char *fname)
     edges[0] = DIM0; /* 10 */
     edges[1] = DIM1; /* 5 */
 
-    if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)array_data) == FAIL)
+    if (SDwritedata(sds_id, start, NULL, edges, (void *)array_data) == FAIL)
         goto error;
 
     /* terminate access to the datasets and SD interface */
@@ -2655,7 +2021,7 @@ do_file_hyperslab(char *fname)
 
     /* store array values to be appended */
     for (i = 0; i < DIM1; i++)
-        append_data[i] = i + 1;
+        append_data[i] = (uint8)(i + 1);
 
     /* define the location of the append */
     for (n = 0; n < ADD_ROWS; n++) {
@@ -2665,7 +2031,7 @@ do_file_hyperslab(char *fname)
         edges[1] = DIM1; /* 5 elements */
 
         /* append data to file */
-        if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)append_data) == FAIL)
+        if (SDwritedata(sds_id, start, NULL, edges, (void *)append_data) == FAIL)
             goto error;
     }
 
@@ -2696,9 +2062,8 @@ error:
  *
  *-------------------------------------------------------------------------
  */
-
 static int
-do_file_groups(char *name)
+do_file_groups(const char *name)
 {
 
     int32 vg0_id, /* vgroup identifier */
@@ -2808,7 +2173,6 @@ out:
  *
  *-------------------------------------------------------------------------
  */
-
 static int
 generate_files(void)
 {
@@ -2854,17 +2218,8 @@ generate_files(void)
  * D) In each test the verifiy_comp_chunk function is called to compare
  *  the input and output compression and chunking parameters
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 3, 2003
- *
- * Modifications:
- *  July 7, 2007. Add test for hyperslab repacking in HREPACK_FILE2
- *  September 12, 2007. Add test for duplicate vgroup insertions in HREPACK_FILE3
- *
  *-------------------------------------------------------------------------
  */
-
 int
 main(void)
 {

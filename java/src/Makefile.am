@@ -67,7 +67,7 @@ clean:
 	rm -f classhdf_java.stamp
 
 
-# Clean examples when check-clean is invoked
+# Clean when check-clean is invoked
 check-clean :: ;
 
 #include $(top_srcdir)/config/conclude.am

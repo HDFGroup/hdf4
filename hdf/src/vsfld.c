@@ -36,9 +36,10 @@ EXPORTED ROUTINES
 
 ************************************************************************/
 
-#define VSET_INTERFACE
-#include "hdf.h"
 #include <stdarg.h>
+
+#include "hdfi.h"
+#include "vgint.h"
 
 /*
  ** ==================================================================
@@ -119,7 +120,7 @@ VSsetfields(int32 vkey, const char *fields)
 
                 /* allocate space for the internal WRITELIST structures */
                 /* Allocate buffer to hold all the int16/uint16 arrays */
-                if ((wlist->bptr = HDmalloc(sizeof(uint16) * (size_t)(ac * 5))) == NULL)
+                if ((wlist->bptr = malloc(sizeof(uint16) * (size_t)(ac * 5))) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 /* Use buffer to support the other arrays */
@@ -128,23 +129,23 @@ VSsetfields(int32 vkey, const char *fields)
                 wlist->isize = wlist->off + ac;
                 wlist->order = wlist->isize + ac;
                 wlist->esize = wlist->order + ac;
-                if ((wlist->name = HDmalloc(sizeof(char *) * (size_t)ac)) == NULL) {
-                    HDfree(wlist->bptr);
+                if ((wlist->name = malloc(sizeof(char *) * (size_t)ac)) == NULL) {
+                    free(wlist->bptr);
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                } /* end if */
+                }
 
                 for (i = 0; i < ac; i++) {
                     found = FALSE;
                     /* --- first look in the user's symbol table --- */
                     for (j = 0; j < vs->nusym; j++)
-                        if (!HDstrcmp(av[i], vs->usym[j].name)) {
+                        if (!strcmp(av[i], vs->usym[j].name)) {
                             found = TRUE;
 
-                            if ((wlist->name[wlist->n] = HDstrdup(vs->usym[j].name)) == NULL) {
-                                HDfree(wlist->name);
-                                HDfree(wlist->bptr);
+                            if ((wlist->name[wlist->n] = strdup(vs->usym[j].name)) == NULL) {
+                                free(wlist->name);
+                                free(wlist->bptr);
                                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                            } /* end if */
+                            }
                             order                  = vs->usym[j].order;
                             wlist->type[wlist->n]  = vs->usym[j].type;
                             wlist->order[wlist->n] = order;
@@ -171,14 +172,14 @@ VSsetfields(int32 vkey, const char *fields)
                     /* --- now look in the reserved symbol table --- */
                     if (!found) {
                         for (j = 0; j < (intn)NRESERVED; j++)
-                            if (!HDstrcmp(av[i], rstab[j].name)) {
+                            if (!strcmp(av[i], rstab[j].name)) {
                                 found = TRUE;
 
-                                if ((wlist->name[wlist->n] = HDstrdup(rstab[j].name)) == NULL) {
-                                    HDfree(wlist->name);
-                                    HDfree(wlist->bptr);
+                                if ((wlist->name[wlist->n] = strdup(rstab[j].name)) == NULL) {
+                                    free(wlist->name);
+                                    free(wlist->bptr);
                                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                                } /* end if */
+                                }
                                 order                  = rstab[j].order;
                                 wlist->type[wlist->n]  = rstab[j].type;
                                 wlist->order[wlist->n] = order;
@@ -218,17 +219,16 @@ VSsetfields(int32 vkey, const char *fields)
     if (vs->nvertices > 0) {
         rlist    = &(vs->rlist);
         rlist->n = 0;
-        if (rlist->item != NULL)
-            HDfree(rlist->item);
+        free(rlist->item);
         rlist->item = NULL;
 
         /* Allocate enough space for the read list */
-        if ((rlist->item = (intn *)HDmalloc(sizeof(intn) * (size_t)(ac))) == NULL)
+        if ((rlist->item = (intn *)malloc(sizeof(intn) * (size_t)(ac))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         for (i = 0; i < ac; i++) {
             found = FALSE;
             for (j = 0; j < vs->wlist.n; j++)
-                if (!HDstrcmp(av[i], vs->wlist.name[j])) { /*  see if field exist */
+                if (!strcmp(av[i], vs->wlist.name[j])) { /*  see if field exist */
                     found = TRUE;
 
                     rlist->item[rlist->n] = j; /* save as index into wlist->name */
@@ -288,7 +288,7 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
 
     /* --- then look in the user's symbol table --- */
     for (replacesym = 0, j = 0; j < vs->nusym; j++)
-        if (!HDstrcmp(av[0], vs->usym[j].name)) {
+        if (!strcmp(av[0], vs->usym[j].name)) {
             if (localtype != rstab[j].type && order != rstab[j].order) {
                 replacesym = 1;
                 break;
@@ -303,11 +303,11 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
         usymid = (intn)vs->nusym;
         /* use temporary pointer in case we run out of memory, so we don't loose original list */
         if (tmp_sym == NULL) {
-            if ((tmp_sym = (SYMDEF *)HDmalloc(sizeof(SYMDEF) * (size_t)(usymid + 1))) == NULL)
+            if ((tmp_sym = (SYMDEF *)malloc(sizeof(SYMDEF) * (size_t)(usymid + 1))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
         else {
-            if ((tmp_sym = (SYMDEF *)HDrealloc(tmp_sym, sizeof(SYMDEF) * (size_t)(usymid + 1))) == NULL)
+            if ((tmp_sym = (SYMDEF *)realloc(tmp_sym, sizeof(SYMDEF) * (size_t)(usymid + 1))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
         vs->usym = tmp_sym;
@@ -317,7 +317,7 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
        type sizes are smaller than max(int16) */
 
     /* Copy the symbol [field] information */
-    if ((vs->usym[usymid].name = (char *)HDstrdup(av[0])) == NULL)
+    if ((vs->usym[usymid].name = (char *)strdup(av[0])) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     vs->usym[usymid].type  = (int16)localtype;
     vs->usym[usymid].order = (uint16)order;
@@ -644,22 +644,22 @@ VSgetexternalfile(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset)
 
     /* Vdata should have an aid */
     if (vs->aid == 0 || vs->aid == FAIL)
-        HGOTO_ERROR(DFE_ARGS, FAIL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     else {
-        HDmemset(&info_block, 0, sizeof(sp_info_block_t));
+        memset(&info_block, 0, sizeof(sp_info_block_t));
 
         /* HDget_special_info gets the special type and the special info */
         if (HDget_special_info(vs->aid, &info_block) == FAIL)
-            HGOTO_ERROR(DFE_INTERNAL, FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
         /* If the vdata has external element, return the external file info */
         if (info_block.key == SPECIAL_EXT) {
             /* If the file name is not available, the file is probably
                 corrupted, so we need to report it. */
-            if (info_block.path == NULL || HDstrlen(info_block.path) <= 0)
+            if (info_block.path == NULL || strlen(info_block.path) <= 0)
                 ret_value = FAIL;
             else {
-                size_t ext_file_len = HDstrlen(info_block.path);
+                size_t ext_file_len = strlen(info_block.path);
 
                 /* If caller requests the length of the external file name
                    only, return the length */
@@ -671,7 +671,7 @@ VSgetexternalfile(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset)
                         HGOTO_ERROR(DFE_ARGS, FAIL);
 
                     /* Get the name and its length */
-                    HDstrncpy(ext_filename, info_block.path, buf_size);
+                    strncpy(ext_filename, info_block.path, buf_size);
                     actual_len = buf_size < ext_file_len ? buf_size : ext_file_len;
 
                     /* Get the offset in the external file if it's requested */
@@ -745,11 +745,11 @@ VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset,
 
     /* Vdata should have an aid */
     if (vs->aid == 0 || vs->aid == FAIL)
-        HGOTO_ERROR(DFE_ARGS, FAIL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     else {
         intn            retcode = 0;
         sp_info_block_t info_block;
-        HDmemset(&info_block, 0, sizeof(sp_info_block_t));
+        memset(&info_block, 0, sizeof(sp_info_block_t));
 
         /* Get the special info */
         retcode = HDget_special_info(vs->aid, &info_block);
@@ -763,14 +763,14 @@ VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset,
 
             /* Some failure occurred in HDget_special_info */
             else
-                HGOTO_ERROR(DFE_ARGS, FAIL)
+                HGOTO_ERROR(DFE_ARGS, FAIL);
         }
 
         /* If the vdata has external element, get the external info */
         else if (info_block.key == SPECIAL_EXT) {
             /* If the file name is not available, the file is probably
                 corrupted, so we need to report it. */
-            if (info_block.path == NULL || HDstrlen(info_block.path) <= 0)
+            if (info_block.path == NULL || strlen(info_block.path) <= 0)
                 ret_value = FAIL;
             else {
                 intn tmp_len = (intn)info_block.length_file_name;
@@ -791,7 +791,7 @@ VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset,
                     actual_fname_len = (intn)buf_size < tmp_len ? (intn)buf_size : tmp_len;
 
                     /* Get the name */
-                    HDstrncpy(ext_filename, info_block.path, buf_size);
+                    strncpy(ext_filename, info_block.path, buf_size);
 
                     /* Get offset/length of the external data if requested */
                     if (offset != NULL)
@@ -833,7 +833,7 @@ USAGE
          fields in buf.
     void * fldbufpt[]; IN: array of pointers to field buffers.
 RETURNS
-    SUCCEED(0) on success; FIAL(-1) otherwise.
+    SUCCEED(0) on success; FAIL(-1) otherwise.
 DESCRIPTION
     1. This pack/unpack routine is convenient for users. It also
        serves for FORTRAN programs to pack/unpack numeric and
@@ -891,8 +891,8 @@ VSfpack(int32 vsid, intn packtype, const char *fields_in_buf, void *buf, intn bu
             HGOTO_ERROR(DFE_ARGS, FAIL);
     }
     blist.n    = ac;
-    blist.idx  = (int32 *)HDmalloc((size_t)ac * sizeof(int32));
-    blist.offs = (int32 *)HDmalloc((size_t)ac * sizeof(int32));
+    blist.idx  = (int32 *)malloc((size_t)ac * sizeof(int32));
+    blist.offs = (int32 *)malloc((size_t)ac * sizeof(int32));
     if ((blist.idx == NULL) || (blist.offs == NULL))
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     /* fill arrays blist.msizes and blist.offs; calculate
@@ -911,7 +911,7 @@ VSfpack(int32 vsid, intn packtype, const char *fields_in_buf, void *buf, intn bu
                     break;
                 }
 #else
-                if (HDstrcmp(s, w->name[j]) == 0) {
+                if (strcmp(s, w->name[j]) == 0) {
                     found = 1;
                     break;
                 }
@@ -943,11 +943,11 @@ VSfpack(int32 vsid, intn packtype, const char *fields_in_buf, void *buf, intn bu
     else
         ac = blist.n;
     /* fill array of fmsizes, foffs, fbufps */
-    if ((fmsizes = (int32 *)HDmalloc((size_t)ac * sizeof(int32))) == NULL)
+    if ((fmsizes = (int32 *)malloc((size_t)ac * sizeof(int32))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    if ((foffs = (int32 *)HDmalloc((size_t)ac * sizeof(int32))) == NULL)
+    if ((foffs = (int32 *)malloc((size_t)ac * sizeof(int32))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    if ((fbufps = (uint8 **)HDmalloc((size_t)ac * sizeof(uint8 *))) == NULL)
+    if ((fbufps = (uint8 **)malloc((size_t)ac * sizeof(uint8 *))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     if (fields != NULL) { /* a subset of buf fields */
         for (i = 0; i < ac; i++) {
@@ -961,7 +961,7 @@ VSfpack(int32 vsid, intn packtype, const char *fields_in_buf, void *buf, intn bu
                     break;
                 }
 #else
-                if (HDstrcmp(s, w->name[blist.idx[j]]) == 0) {
+                if (strcmp(s, w->name[blist.idx[j]]) == 0) {
                     found = 1;
                     break;
                 }
@@ -989,7 +989,7 @@ VSfpack(int32 vsid, intn packtype, const char *fields_in_buf, void *buf, intn bu
         /* memory copy fields data to vdata buf */
         for (i = 0; i < n_records; i++) {
             for (j = 0; j < ac; j++) {
-                HDmemcpy(bufp + foffs[j], fbufps[j], fmsizes[j]);
+                memcpy(bufp + foffs[j], fbufps[j], fmsizes[j]);
                 fbufps[j] += fmsizes[j];
             }
             bufp += b_rec_size;
@@ -998,7 +998,7 @@ VSfpack(int32 vsid, intn packtype, const char *fields_in_buf, void *buf, intn bu
     else { /* unpack from buf to fields */
         for (i = 0; i < n_records; i++) {
             for (j = 0; j < ac; j++) {
-                HDmemcpy(fbufps[j], bufp + foffs[j], fmsizes[j]);
+                memcpy(fbufps[j], bufp + foffs[j], fmsizes[j]);
                 fbufps[j] += fmsizes[j];
             }
             bufp += b_rec_size;
@@ -1006,18 +1006,11 @@ VSfpack(int32 vsid, intn packtype, const char *fields_in_buf, void *buf, intn bu
     }
 
 done:
-    if (ret_value == FAIL) {
-    }
-    if (blist.idx != NULL)
-        HDfree(blist.idx);
-    if (blist.offs != NULL)
-        HDfree(blist.offs);
-    if (fmsizes != NULL)
-        HDfree(fmsizes);
-    if (foffs != NULL)
-        HDfree(foffs);
-    if (fbufps != NULL)
-        HDfree(fbufps);
+    free(blist.idx);
+    free(blist.offs);
+    free(fmsizes);
+    free(foffs);
+    free(fbufps);
 
     return ret_value;
 } /* VSfpack */

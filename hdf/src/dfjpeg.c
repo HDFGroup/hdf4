@@ -22,7 +22,7 @@
  *      that has to know about how to use the JPEG routines.
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 
 /* Hack to prevent libjpeg from re-defining `boolean` in a way that clashes
  * with windows.h. This MUST come before including jpeglib.h.
@@ -78,7 +78,7 @@ hdf_init_destination(struct jpeg_compress_struct *cinfo_ptr)
     hdf_dest_ptr dest = (hdf_dest_ptr)cinfo_ptr->dest;
     int32        temp_aid;
 
-    if ((dest->buffer = HDmalloc(sizeof(JOCTET) * OUTPUT_BUF_SIZE)) == NULL)
+    if ((dest->buffer = malloc(sizeof(JOCTET) * OUTPUT_BUF_SIZE)) == NULL)
         ERREXIT1(cinfo_ptr, JERR_OUT_OF_MEMORY, (int)1);
 
     /* Create empty JPEG5/GREYJPEG5 tag/ref to indicate the image */
@@ -144,7 +144,7 @@ hdf_term_destination(struct jpeg_compress_struct *cinfo_ptr)
     Hendaccess(dest->aid);
 
     /* Free the output buffer */
-    HDfree(dest->buffer);
+    free(dest->buffer);
 
 } /* end hdf_term_destination() */
 
@@ -171,7 +171,7 @@ jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag,
 {
     hdf_dest_ptr dest;
 
-    if ((dest = HDmalloc(sizeof(hdf_destination_mgr))) == NULL)
+    if ((dest = malloc(sizeof(hdf_destination_mgr))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     cinfo_ptr->dest               = (struct jpeg_destination_mgr *)dest;
@@ -189,7 +189,7 @@ jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag,
     dest->ydim    = ydim;
     dest->scheme  = scheme;
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end jpeg_HDF_dest() */
 
 /*-----------------------------------------------------------------------------
@@ -206,9 +206,9 @@ intn
 jpeg_HDF_dest_term(struct jpeg_compress_struct *cinfo_ptr)
 {
     /* all we need to do for now is to free up the dest. mgr structure */
-    HDfree(cinfo_ptr->dest);
+    free(cinfo_ptr->dest);
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end jpeg_HDF_dest_term() */
 
 /***********************************************************************/
@@ -246,10 +246,10 @@ DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim, const vo
     intn                         row_stride;
     const uint8                 *image_buffer = image;
 
-    if ((cinfo_ptr = HDcalloc(1, sizeof(struct jpeg_compress_struct))) == NULL)
+    if ((cinfo_ptr = calloc(1, sizeof(struct jpeg_compress_struct))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    if ((jerr_ptr = HDmalloc(sizeof(struct jpeg_error_mgr))) == NULL)
+    if ((jerr_ptr = malloc(sizeof(struct jpeg_error_mgr))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     /* Initialize the error-handling routines */
@@ -305,8 +305,8 @@ DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim, const vo
     jpeg_HDF_dest_term(cinfo_ptr);
 
     /* Free update memory allocated */
-    HDfree(jerr_ptr);
-    HDfree(cinfo_ptr);
+    free(jerr_ptr);
+    free(cinfo_ptr);
 
-    return (SUCCEED); /* we must be ok... */
+    return SUCCEED; /* we must be ok... */
 } /* end DFCIjpeg() */

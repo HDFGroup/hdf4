@@ -23,33 +23,35 @@
    EXPORTED ROUTINES
    None of these routines are designed to be called by other users except
    for the modeling layer of the compression routines.
-
-   AUTHOR
-   Quincey Koziol
-
-   MODIFICATION HISTORY
-   4/25/94     Starting writing specs & coding prototype
  */
-
-/* General HDF includes */
-#include "hdf.h"
-
-#define CSKPHUFF_MASTER
-#define CODER_CLIENT
-/* HDF compression includes */
-#include "hcompi.h" /* Internal definitions for compression */
-
-/* Internal Defines */
-/* #define TESTING */
-#define TMP_BUF_SIZE 8192 /* size of throw-away buffer */
 
 /*
  *   This piece of code uses Semi-Splay trees to Huffman encode a raster
  *   image file.
  */
 
+/* General HDF includes */
+#include "hdfi.h"
+
+/* HDF compression includes */
+#include "hcompi.h" /* Internal definitions for compression */
+
+/* Internal Defines */
+#define TMP_BUF_SIZE 8192 /* size of throw-away buffer */
+
+/* functions to perform skipping huffman encoding */
+funclist_t cskphuff_funcs = {HCPcskphuff_stread,
+                             HCPcskphuff_stwrite,
+                             HCPcskphuff_seek,
+                             HCPcskphuff_inquire,
+                             HCPcskphuff_read,
+                             HCPcskphuff_write,
+                             HCPcskphuff_endaccess,
+                             NULL,
+                             NULL};
+
 /* declaration of the functions provided in this module */
-PRIVATE int32 HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf);
+static int32 HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -138,7 +140,7 @@ HCIcskphuff_splay(comp_coder_skphuff_info_t *skphuff_info, uint8 plain)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
 {
     compinfo_t                *info;         /* special element information */
@@ -147,15 +149,9 @@ HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
 
     info = (compinfo_t *)access_rec->special_info;
 
-#ifdef TESTING
-    printf("HCIcskphuff_init(): before Hbitseek() call\n");
-#endif                                     /* TESTING */
     if (Hbitseek(info->aid, 0, 0) == FAIL) /* seek to beginning of element */
         HRETURN_ERROR(DFE_SEEKERROR, FAIL);
 
-#ifdef TESTING
-    printf("HCIcskphuff_init(): after Hbitseek() call\n");
-#endif /* TESTING */
     skphuff_info = &(info->cinfo.coder_info.skphuff_info);
 
     /* Initialize RLE state information */
@@ -164,32 +160,25 @@ HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
 
     if (alloc_buf == TRUE) {
         /* allocate pointers to the compression buffers */
-        if ((skphuff_info->left = (uintn **)HDmalloc(sizeof(uintn *) * (uintn)skphuff_info->skip_size)) ==
+        if ((skphuff_info->left = (uintn **)malloc(sizeof(uintn *) * (uintn)skphuff_info->skip_size)) == NULL)
+            HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        if ((skphuff_info->right = (uintn **)malloc(sizeof(uintn *) * (uintn)skphuff_info->skip_size)) ==
             NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
-        if ((skphuff_info->right = (uintn **)HDmalloc(sizeof(uintn *) * (uintn)skphuff_info->skip_size)) ==
-            NULL)
-            HRETURN_ERROR(DFE_NOSPACE, FAIL);
-        if ((skphuff_info->up = (uint8 **)HDmalloc(sizeof(uint8 *) * (uintn)skphuff_info->skip_size)) == NULL)
+        if ((skphuff_info->up = (uint8 **)malloc(sizeof(uint8 *) * (uintn)skphuff_info->skip_size)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-#ifdef TESTING
-        printf("HCIcskphuff_init(): halfway through allocating space\n");
-#endif /* TESTING */
         /* allocate compression buffer for each skipping byte */
         for (i = 0; i < skphuff_info->skip_size; i++) {
-            if ((skphuff_info->left[i] = (uintn *)HDmalloc(sizeof(uintn) * SUCCMAX)) == NULL)
+            if ((skphuff_info->left[i] = (uintn *)malloc(sizeof(uintn) * SUCCMAX)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
-            if ((skphuff_info->right[i] = (uintn *)HDmalloc(sizeof(uintn) * SUCCMAX)) == NULL)
+            if ((skphuff_info->right[i] = (uintn *)malloc(sizeof(uintn) * SUCCMAX)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
-            if ((skphuff_info->up[i] = (uint8 *)HDmalloc(sizeof(uint8) * TWICEMAX)) == NULL)
+            if ((skphuff_info->up[i] = (uint8 *)malloc(sizeof(uint8) * TWICEMAX)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
         } /* end for */
     }     /* end if */
 
-#ifdef TESTING
-    printf("HCIcskphuff_init(): after allocating space\n");
-#endif /* TESTING */
     for (k = 0; k < skphuff_info->skip_size; k++) {
         for (i = 0; i < TWICEMAX; i++) /* initialize the up pointers to point to their parent in the tree */
             skphuff_info->up[k][i] = (uint8)(i >> 1);
@@ -200,10 +189,7 @@ HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
         } /* end for */
     }     /* end for */
 
-#ifdef TESTING
-    printf("HCIcskphuff_init(): after initializing arrays\n");
-#endif /* TESTING */
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCIcskphuff_init() */
 
 /*--------------------------------------------------------------------------
@@ -227,7 +213,7 @@ HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcskphuff_decode(compinfo_t *info, int32 length, uint8 *buf)
 {
     comp_coder_skphuff_info_t *skphuff_info; /* ptr to skipping Huffman info */
@@ -240,16 +226,9 @@ HCIcskphuff_decode(compinfo_t *info, int32 length, uint8 *buf)
 
     orig_length = length; /* save this for later */
     while (length > 0) {  /* decode until we have all the bytes we need */
-#ifdef TESTING
-        printf("length=%ld\n", (long)length);
-#endif            /* TESTING */
-        a = ROOT; /* start at the root of the tree and find the leaf we need */
+        a = ROOT;         /* start at the root of the tree and find the leaf we need */
 
         do { /* walk down once for each bit on the path */
-#ifdef TESTING
-            intn bitcount = 0;
-            printf("bitcount=%d\n", ++bitcount);
-#endif /* TESTING */
             if (Hbitread(info->aid, 1, &bit) == FAIL)
                 HRETURN_ERROR(DFE_CDECODE, FAIL);
             a = ((bit == 0) ? (skphuff_info->left[skphuff_info->skip_pos][a])
@@ -263,7 +242,7 @@ HCIcskphuff_decode(compinfo_t *info, int32 length, uint8 *buf)
         length--;
     }                                    /* end while */
     skphuff_info->offset += orig_length; /* incr. abs. offset into the file */
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCIcskphuff_decode() */
 
 /*--------------------------------------------------------------------------
@@ -288,7 +267,7 @@ HCIcskphuff_decode(compinfo_t *info, int32 length, uint8 *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcskphuff_encode(compinfo_t *info, int32 length, const uint8 *buf)
 {
     comp_coder_skphuff_info_t *skphuff_info; /* ptr to skipping Huffman info */
@@ -338,7 +317,7 @@ HCIcskphuff_encode(compinfo_t *info, int32 length, const uint8 *buf)
     } /* end while */
 
     skphuff_info->offset += orig_length; /* incr. abs. offset into the file */
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCIcskphuff_encode() */
 
 /*--------------------------------------------------------------------------
@@ -361,7 +340,7 @@ HCIcskphuff_encode(compinfo_t *info, int32 length, const uint8 *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcskphuff_term(compinfo_t *info)
 {
     comp_coder_skphuff_info_t *skphuff_info; /* ptr to skipping Huffman info */
@@ -373,17 +352,17 @@ HCIcskphuff_term(compinfo_t *info)
 
     /* Free the buffers we allocated */
     for (i = 0; i < skphuff_info->skip_size; i++) {
-        HDfree(skphuff_info->left[i]);
-        HDfree(skphuff_info->right[i]);
-        HDfree(skphuff_info->up[i]);
-    } /* end for */
+        free(skphuff_info->left[i]);
+        free(skphuff_info->right[i]);
+        free(skphuff_info->up[i]);
+    }
 
     /* Free the buffer arrays */
-    HDfree(skphuff_info->left);
-    HDfree(skphuff_info->right);
-    HDfree(skphuff_info->up);
+    free(skphuff_info->left);
+    free(skphuff_info->right);
+    free(skphuff_info->up);
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCIcskphuff_term() */
 
 /*--------------------------------------------------------------------------
@@ -406,16 +385,13 @@ HCIcskphuff_term(compinfo_t *info)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcskphuff_staccess(accrec_t *access_rec, int16 acc_mode)
 {
     compinfo_t *info; /* special element information */
 
     info = (compinfo_t *)access_rec->special_info;
 
-#ifdef TESTING
-    printf("HCIcskphuff_staccess(): before bitio calls\n");
-#endif /* TESTING */
     /* need to check for not writing, as opposed to read access */
     /* because of the way the access works */
     if (!(acc_mode & DFACC_WRITE))
@@ -425,14 +401,11 @@ HCIcskphuff_staccess(accrec_t *access_rec, int16 acc_mode)
         Hbitappendable(info->aid);
     } /* end else */
 
-#ifdef TESTING
-    printf("HCIcskphuff_staccess(): after bitio calls\n");
-#endif /* TESTING */
     if (info->aid == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
     if ((acc_mode & DFACC_WRITE) && Hbitappendable(info->aid) == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
-    return (HCIcskphuff_init(access_rec, TRUE)); /* initialize the skip-Huffman info */
+    return HCIcskphuff_init(access_rec, TRUE); /* initialize the skip-Huffman info */
 } /* end HCIcskphuff_staccess() */
 
 /*--------------------------------------------------------------------------
@@ -462,7 +435,7 @@ HCPcskphuff_stread(accrec_t *access_rec)
 
     if ((ret = HCIcskphuff_staccess(access_rec, DFACC_READ)) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
-    return (ret);
+    return ret;
 } /* HCPcskphuff_stread() */
 
 /*--------------------------------------------------------------------------
@@ -490,15 +463,9 @@ HCPcskphuff_stwrite(accrec_t *access_rec)
 {
     int32 ret;
 
-#ifdef TESTING
-    printf("HCPcskphuff_stwrite(): before call to HCIcskphuff_staccess()\n");
-#endif
     if ((ret = HCIcskphuff_staccess(access_rec, DFACC_WRITE)) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
-#ifdef TESTING
-    printf("HCPcskphuff_stwrite(): after call to HCIcskphuff_staccess(), ret=%d\n", (int)ret);
-#endif
-    return (ret);
+    return ret;
 } /* HCPcskphuff_stwrite() */
 
 /*--------------------------------------------------------------------------
@@ -540,24 +507,24 @@ HCPcskphuff_seek(accrec_t *access_rec, int32 offset, int origin)
     if (offset < skphuff_info->offset) { /* need to seek from the beginning */
         if (HCIcskphuff_init(access_rec, FALSE) == FAIL)
             HRETURN_ERROR(DFE_CINIT, FAIL);
-    } /* end if */
+    }
 
-    if ((tmp_buf = (uint8 *)HDmalloc(TMP_BUF_SIZE)) == NULL) /* get tmp buffer */
+    if ((tmp_buf = (uint8 *)malloc(TMP_BUF_SIZE)) == NULL) /* get tmp buffer */
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     while (skphuff_info->offset + TMP_BUF_SIZE < offset) /* grab chunks */
         if (HCIcskphuff_decode(info, TMP_BUF_SIZE, tmp_buf) == FAIL) {
-            HDfree(tmp_buf);
-            HRETURN_ERROR(DFE_CDECODE, FAIL)
+            free(tmp_buf);
+            HRETURN_ERROR(DFE_CDECODE, FAIL);
         }                              /* end if */
     if (skphuff_info->offset < offset) /* grab the last chunk */
         if (HCIcskphuff_decode(info, offset - skphuff_info->offset, tmp_buf) == FAIL) {
-            HDfree(tmp_buf);
-            HRETURN_ERROR(DFE_CDECODE, FAIL)
-        } /* end if */
+            free(tmp_buf);
+            HRETURN_ERROR(DFE_CDECODE, FAIL);
+        }
 
-    HDfree(tmp_buf);
-    return (SUCCEED);
+    free(tmp_buf);
+    return SUCCEED;
 } /* HCPcskphuff_seek() */
 
 /*--------------------------------------------------------------------------
@@ -591,7 +558,7 @@ HCPcskphuff_read(accrec_t *access_rec, int32 length, void *data)
     if (HCIcskphuff_decode(info, length, data) == FAIL)
         HRETURN_ERROR(DFE_CDECODE, FAIL);
 
-    return (length);
+    return length;
 } /* HCPcskphuff_read() */
 
 /*--------------------------------------------------------------------------
@@ -633,7 +600,7 @@ HCPcskphuff_write(accrec_t *access_rec, int32 length, const void *data)
     if (HCIcskphuff_encode(info, length, data) == FAIL)
         HRETURN_ERROR(DFE_CENCODE, FAIL);
 
-    return (length);
+    return length;
 } /* HCPcskphuff_write() */
 
 /*--------------------------------------------------------------------------
@@ -679,7 +646,7 @@ HCPcskphuff_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 
     (void)paccess;
     (void)pspecial;
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* HCPcskphuff_inquire() */
 
 /*--------------------------------------------------------------------------
@@ -716,5 +683,5 @@ HCPcskphuff_endaccess(accrec_t *access_rec)
     if (Hendbitaccess(info->aid, 0) == FAIL)
         HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* HCPcskphuff_endaccess() */

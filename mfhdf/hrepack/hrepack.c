@@ -11,6 +11,9 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "hdf.h"
 #include "mfhdf.h"
 #include "hrepack.h"
@@ -94,7 +97,7 @@ hrepack_addcomp(const char *str, options_t *options)
     }
 
     /* initialize parse struct to FAIL */
-    HDmemset(&comp, FAIL, sizeof(comp_info_t));
+    memset(&comp, FAIL, sizeof(comp_info_t));
 
     /* parse the -t option */
     if ((obj_list = parse_comp(str, &n_objs, &comp)) == NULL)
@@ -102,7 +105,7 @@ hrepack_addcomp(const char *str, options_t *options)
 
     /* searh for the "*" all objects character */
     for (i = 0; i < n_objs; i++) {
-        if (HDstrcmp("*", obj_list[i].obj) == 0) {
+        if (strcmp("*", obj_list[i].obj) == 0) {
             /* if we are compressing all set the global comp type */
             options->all_comp = 1;
             options->comp_g   = comp;
@@ -119,12 +122,12 @@ hrepack_addcomp(const char *str, options_t *options)
             goto out;
     }
 
-    HDfree(obj_list);
+    free(obj_list);
     return SUCCEED;
 
 out:
 
-    HDfree(obj_list);
+    free(obj_list);
     return FAIL;
 }
 
@@ -164,7 +167,7 @@ hrepack_addchunk(const char *str, options_t *options)
 
     /* searh for the "*" all objects character */
     for (i = 0; i < n_objs; i++) {
-        if (HDstrcmp("*", obj_list[i].obj) == 0) {
+        if (strcmp("*", obj_list[i].obj) == 0) {
             /* if we are chunking all set the global chunking type */
             options->all_chunk    = 1;
             options->chunk_g.rank = chunk_rank;
@@ -183,12 +186,12 @@ hrepack_addchunk(const char *str, options_t *options)
             goto out;
     }
 
-    HDfree(obj_list);
+    free(obj_list);
     return SUCCEED;
 
 out:
 
-    HDfree(obj_list);
+    free(obj_list);
     return FAIL;
 }
 
@@ -203,7 +206,7 @@ out:
 void
 hrepack_init(options_t *options, int verbose)
 {
-    HDmemset(options, 0, sizeof(options_t));
+    memset(options, 0, sizeof(options_t));
     options->threshold = 1024;
     options->verbose   = verbose;
     options_table_init(&(options->op_tbl));
@@ -342,7 +345,7 @@ int
 read_info(const char *filename, options_t *options)
 {
     char  stype[10];
-    char  comp_info[1024];
+    char  info[1024]; /* compression info */
     FILE *fp = NULL;
     char  c;
     int   i;
@@ -363,7 +366,7 @@ read_info(const char *filename, options_t *options)
          * comp
          *-------------------------------------------------------------------------
          */
-        if (HDstrcmp(stype, "-t") == 0) {
+        if (strcmp(stype, "-t") == 0) {
 
             /* find beginning of info */
             i = 0;
@@ -379,19 +382,19 @@ read_info(const char *filename, options_t *options)
                 count = fscanf(fp, "%c", &c);
                 if (count != 1)
                     goto out;
-                comp_info[i] = c;
+                info[i] = c;
                 i++;
             }
-            comp_info[i - 1] = '\0'; /*cut the last " */
+            info[i - 1] = '\0'; /*cut the last " */
 
-            if (hrepack_addcomp(comp_info, options) < 0)
+            if (hrepack_addcomp(info, options) < 0)
                 goto out;
         }
         /*-------------------------------------------------------------------------
          * chunk
          *-------------------------------------------------------------------------
          */
-        else if (HDstrcmp(stype, "-c") == 0) {
+        else if (strcmp(stype, "-c") == 0) {
 
             /* find beginning of info */
             i = 0;
@@ -407,12 +410,12 @@ read_info(const char *filename, options_t *options)
                 count = fscanf(fp, "%c", &c);
                 if (count != 1)
                     goto out;
-                comp_info[i] = c;
+                info[i] = c;
                 i++;
             }
-            comp_info[i - 1] = '\0'; /*cut the last " */
+            info[i - 1] = '\0'; /*cut the last " */
 
-            if (hrepack_addchunk(comp_info, options) < 0)
+            if (hrepack_addchunk(info, options) < 0)
                 goto out;
         }
         /*-------------------------------------------------------------------------

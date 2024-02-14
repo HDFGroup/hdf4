@@ -1,5 +1,4 @@
 * text=auto !eol
-bin/bbrelease -text
 bin/h4_release_check.sh -text
 config/cmake/CPack.Info.plist.in -text svneol=unset#application/xml
 config/cmake/FindJNI.cmake -text
@@ -67,12 +66,6 @@ hdf/util/testfiles/tvattr.hdf -text
 java/CMakeLists.txt -text
 java/Makefile.am -text
 java/Makefile.in -text
-java/examples/CMakeLists.txt -text
-java/examples/HDF4DatasetCreate.java -text
-java/examples/HDF4FileCreate.java -text
-java/examples/HDF4GroupCreate.java -text
-java/examples/Makefile.am -text
-java/examples/Makefile.in -text
 java/lib/ext/slf4j-nop-1.7.33.jar -text svneol=unset#application/zip
 java/lib/ext/slf4j-simple-1.7.33.jar -text svneol=unset#application/zip
 java/lib/hamcrest-core.jar -text svneol=unset#application/java-archive

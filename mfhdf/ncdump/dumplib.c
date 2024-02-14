@@ -3,17 +3,13 @@
  *   See netcdf/README file for copying and redistribution conditions.
  *********************************************************************/
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef NO_STDARG
-#include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
+#include "hdf.h"
 
-#include "h4config.h"
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else
@@ -25,24 +21,14 @@
 /*
  * Print error message to stderr, don't exit
  */
-#ifndef NO_STDARG
 void
 error(const char *fmt, ...)
-#else
-/*VARARGS1*/
-void error(fmt, va_alist) const char *fmt;
-va_dcl
-#endif
 {
     va_list args;
 
     (void)fprintf(stderr, "*** %s: ", progname);
 
-#ifndef NO_STDARG
     va_start(args, fmt);
-#else
-    va_start(args);
-#endif
     (void)vfprintf(stderr, fmt, args);
     va_end(args);
 
