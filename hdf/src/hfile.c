@@ -2516,8 +2516,8 @@ static intn
 HIcheckfileversion(int32 file_id)
 {
     filerec_t *file_rec;
-    uint32     lmajorv, lminorv, lrelease;
-    uint32     fmajorv, fminorv, frelease;
+    uint32     lmajorv = 0, lminorv = 0, lrelease = 0;
+    uint32     fmajorv = 0, fminorv = 0, frelease = 0;
     char       string[LIBVSTR_LEN + 1]; /* len 80+1  */
     intn       newver    = 0;
     intn       ret_value = SUCCEED;
