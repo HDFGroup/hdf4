@@ -44,22 +44,26 @@ jobs:
            ninja:p
 
       - name: CMake Configure
-        shell: pwsh
         run: |
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
-          cmake -C ${{ github.workspace }}/config/cmake/cacheinit.cmake -G Ninja -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} -DHDF4_BUILD_FORTRAN=OFF -DJPEG_USE_LOCALCONTENT=OFF -DLIBAEC_USE_LOCALCONTENT=OFF -DZLIB_USE_LOCALCONTENT=OFF ${{ github.workspace }}
-
+          cmake -C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
+            -DCMAKE_TOOLCHAIN_FILE="" \
+            -DJPEG_USE_LOCALCONTENT=OFF \
+            -DLIBAEC_USE_LOCALCONTENT=OFF \
+            -DZLIB_USE_LOCALCONTENT=OFF \
+            -DHDF4_BUILD_FORTRAN=OFF \
+            $GITHUB_WORKSPACE
       # BUILD
       - name: CMake Build
-        shell: pwsh
         run: |
           cmake --build . --parallel 3 --config ${{ inputs.build_mode }}
         working-directory: ${{ runner.workspace }}/build
 
       # RUN TESTS
       - name: CMake Run Tests
-        shell: pwsh
         run: |
           ctest . --parallel 2 -C ${{ inputs.build_mode }} -V
 #          ctest . --parallel 2 -C ${{ inputs.build_mode }} -V -E "HDP-dumpv|h4ex_GR_create|h4ex_GR_write|h4ex_VG_add"
