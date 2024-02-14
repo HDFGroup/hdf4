@@ -48,13 +48,7 @@ jobs:
         run: |
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
-          cmake -C ${{ github.workspace }}/config/cmake/cacheinit.cmake -G Ninja \
-          -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
-          -DJPEG_USE_LOCALCONTENT=OFF \
-          -DLIBAEC_USE_LOCALCONTENT=OFF \
-          -DZLIB_USE_LOCALCONTENT=OFF \
-          -DHDF4_BUILD_FORTRAN=OFF \
-          $GITHUB_WORKSPACE
+          cmake -C ${{ github.workspace }}/config/cmake/cacheinit.cmake -G Ninja -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} -DHDF4_BUILD_FORTRAN=OFF -DJPEG_USE_LOCALCONTENT=OFF -DLIBAEC_USE_LOCALCONTENT=OFF -DZLIB_USE_LOCALCONTENT=OFF ${{ github.workspace }}
 
       # BUILD
       - name: CMake Build
