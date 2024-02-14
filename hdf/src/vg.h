@@ -65,9 +65,4 @@
 #define VSET_OLD_VERSION 2                /* All version <= 2 use old type mappings */
 #define VSET_OLD_TYPES   VSET_OLD_VERSION /* For backward compatibility */
 
-/* Only include the library header if the VSET_INTERFACE macro is defined */
-#ifdef VSET_INTERFACE
-#include "vgint.h" /* Library VSet information header */
-#endif             /* VSET_INTERFACE */
-
 #endif /* H4_VG_H */

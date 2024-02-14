@@ -36,9 +36,10 @@ EXPORTED ROUTINES
 
 ************************************************************************/
 
-#define VSET_INTERFACE
-#include "hdfi.h"
 #include <stdarg.h>
+
+#include "hdfi.h"
+#include "vgint.h"
 
 /*
  ** ==================================================================

@@ -34,8 +34,8 @@ EXPORTED ROUTINES
 
 ************************************************************************/
 
-#define VSET_INTERFACE
 #include "hdfi.h"
+#include "vgint.h"
 
 #ifndef MIN
 #define MIN(a, b) ((a) < (b) ? (a) : (b))

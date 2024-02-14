@@ -26,8 +26,9 @@
  *
  *
  ******************************************************************************/
-#define VSET_INTERFACE
+
 #include "hdf.h"
+#include "vgint.h"
 
 static int condensed;
 
