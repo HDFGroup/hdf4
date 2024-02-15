@@ -25,6 +25,21 @@ permissions:
 
 # Previous workflows must pass to get here so tag the commit that created the files
 jobs:
+  log-the-inputs:
+    runs-on: ubuntu-latest
+    outputs:
+      rel_tag: ${{ steps.get-tag-name.outputs.RELEASE_TAG }}
+    steps:
+    - name: Get inputs
+      id: get-inputs
+      env:
+        ENVIRON: ${{ inputs.use_environ }}
+        TAG: ${{ inputs.use_tag }}
+        NAME_BASE: ${{ inputs.file_base }}
+      run: |
+        echo "$TAG" >> $GITHUB_OUTPUT
+        echo "$NAME_BASE" >> $GITHUB_OUTPUT
+
   PreRelease-delfiles:
     runs-on: ubuntu-latest
     needs: create-tag
