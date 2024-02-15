@@ -86,6 +86,26 @@
       "description": "GNUC Standard Config for x64 (Release)",
       "inherits": [
         "ci-x64-Release-GNUC",
+        "ci-Fortran",
+        "ci-Java",
+        "ci-StdShar"
+      ]
+    },
+     {
+      "name": "ci-StdShar-Clang-Fortran",
+      "description": "Clang Standard Config for x64 (Release)",
+      "inherits": [
+        "ci-x64-Release-Clang",
+        "ci-Fortran",
+        "ci-Java",
+        "ci-StdShar"
+      ]
+    },
+    {
+      "name": "ci-StdShar-GNUC-Fortran",
+      "description": "GNUC Standard Config for x64 (Release)",
+      "inherits": [
+        "ci-x64-Release-GNUC",
         "ci-Java",
         "ci-StdShar"
       ]
@@ -242,6 +262,15 @@
       ]
     },
     {
+      "name": "ci-StdShar-Clang-Fortran",
+      "steps": [
+        {"type": "configure", "name": "ci-StdShar-Clang-Fortran"},
+        {"type": "build", "name": "ci-StdShar-Clang"},
+        {"type": "test", "name": "ci-StdShar-Clang"},
+        {"type": "package", "name": "ci-StdShar-Clang"}
+      ]
+    },
+    {
       "name": "ci-StdShar-OSX-Clang",
       "steps": [
         {"type": "configure", "name": "ci-StdShar-Clang"},
@@ -254,6 +283,15 @@
       "name": "ci-StdShar-GNUC",
       "steps": [
         {"type": "configure", "name": "ci-StdShar-GNUC"},
+        {"type": "build", "name": "ci-StdShar-GNUC"},
+        {"type": "test", "name": "ci-StdShar-GNUC"},
+        {"type": "package", "name": "ci-StdShar-GNUC"}
+      ]
+    },
+    {
+      "name": "ci-StdShar-GNUC-Fortran",
+      "steps": [
+        {"type": "configure", "name": "ci-StdShar-GNUC-Fortran"},
         {"type": "build", "name": "ci-StdShar-GNUC"},
         {"type": "test", "name": "ci-StdShar-GNUC"},
         {"type": "package", "name": "ci-StdShar-GNUC"}
