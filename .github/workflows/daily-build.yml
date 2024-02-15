@@ -18,7 +18,7 @@ jobs:
       hdf4-name: ${{ steps.gethdf4base.outputs.HDF4_NAME_BASE }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4.1.1
 
     - name: Get hdf4 release base name
       uses: dsaltares/fetch-gh-release-asset@master
