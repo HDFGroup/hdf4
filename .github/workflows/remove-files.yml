@@ -42,6 +42,7 @@ jobs:
         if: ${{ (inputs.use_environ == 'snapshots') }}
         uses: mknejp/delete-release-assets@v1
         with:
+          token: ${{ github.token }}
           tag: "${{ inputs.use_tag }}"
           assets: |
               ${{ steps.get-file-base.outputs.FILE_BASE }}.doxygen.zip
