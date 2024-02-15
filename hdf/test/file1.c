@@ -33,6 +33,14 @@ test_file_limits(void)
     int   i;
     int32 ret;
 
+#ifdef H4_HAVE_WIN32_API
+    /* Windows can only have 512 stdio files open by default, so we need
+     * to bump this to handle BIG files open at once.
+     */
+    ret = _setmaxstdio(1024);
+    CHECK_VOID(ret, FAIL, "_setmaxstdio");
+#endif
+
     MESSAGE(5, puts("Opening many files of same name"););
     for (i = 0; i < BIG; i++) {
         files[i] = Hopen("thf.hdf", DFACC_RDWR, 0);
