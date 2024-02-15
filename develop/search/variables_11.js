@@ -27,5 +27,6 @@ var searchData=
   ['right_24',['right',['../structcomp__coder__skphuff__info__t.html#aea64681cc49029ef9ae3bac96d54144f',1,'comp_coder_skphuff_info_t']]],
   ['rle_5finfo_25',['rle_info',['../structcomp__coder__info__t.html#a9e95d3f44f082090eda5deb1a0fe6364',1,'comp_coder_info_t']]],
   ['rle_5fstate_26',['rle_state',['../structcomp__coder__rle__info__t.html#a41fa761e92afa8e17347df3369a2b815',1,'comp_coder_rle_info_t']]],
-  ['rlist_27',['rlist',['../structvdata__desc.html#a1ab283baa22c846c58a3aeda4f71a317',1,'vdata_desc']]]
+  ['rlist_27',['rlist',['../structvdata__desc.html#a1ab283baa22c846c58a3aeda4f71a317',1,'vdata_desc']]],
+  ['root_28',['root',['../struct_t_b_b_t___t_r_e_e.html#a1120ef2cd890d5d2359f257bb3b83b64',1,'TBBT_TREE']]]
 ];

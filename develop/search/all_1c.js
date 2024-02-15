@@ -15,7 +15,7 @@ var searchData=
   ['yystype_5fis_5fdeclared_12',['YYSTYPE_IS_DECLARED',['../ncgentab_8h.html#af0232d21120b2cfc5e5f82f0fbadab3c',1,'ncgentab.h']]],
   ['yystype_5fis_5ftrivial_13',['YYSTYPE_IS_TRIVIAL',['../ncgentab_8h.html#a2e3dbf169c5ee24cf6af37c61cf3995d',1,'ncgentab.h']]],
   ['yytoken_5fkind_5ft_14',['yytoken_kind_t',['../ncgentab_8h.html#acf1bb827670472d9223423aaf6361c36',1,'ncgentab.h']]],
-  ['yytokentype_15',['YYTOKENTYPE',['../ncgentab_8h.html#a69ca0fbcc6d7aa5e8f47b11fc0048208',1,'ncgentab.h']]],
-  ['yytokentype_16',['yytokentype',['../ncgentab_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9',1,'ncgentab.h']]],
+  ['yytokentype_15',['yytokentype',['../ncgentab_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9',1,'ncgentab.h']]],
+  ['yytokentype_16',['YYTOKENTYPE',['../ncgentab_8h.html#a69ca0fbcc6d7aa5e8f47b11fc0048208',1,'ncgentab.h']]],
   ['yyundef_17',['YYUNDEF',['../ncgentab_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a903fe594d5954ab68a1e3eb37405f115',1,'ncgentab.h']]]
 ];

@@ -31,9 +31,10 @@ var searchData=
   ['previous_28',['previous',['../struct_generic__list__element.html#a3fd73bf0fed10812fb213c7fcdfd9447',1,'Generic_list_element']]],
   ['print_5flevels_29',['print_levels',['../hproto__fortran_8h.html#a6fc038ab0116f47f6e2236fff82d32ea',1,'hproto_fortran.h']]],
   ['print_5fpal_30',['print_pal',['../structdump__info__t.html#ab13e02544e33121a7a2901ff28150c47',1,'dump_info_t']]],
-  ['progname_31',['progname',['../dumplib_8h.html#ab9e1449fd00c98428516f0b41eddcb10',1,'progname:&#160;dumplib.h'],['../vardata_8h.html#ab9e1449fd00c98428516f0b41eddcb10',1,'progname:&#160;vardata.h'],['../genlib_8h.html#ab9e1449fd00c98428516f0b41eddcb10',1,'progname:&#160;genlib.h']]],
-  ['ptedump_32',['PTEDump',['../struct_g_i_f_p_l_a_i_n_t_e_x_t.html#ac8da24fa646754425698c88d9d82e6ae',1,'GIFPLAINTEXT']]],
-  ['ptr_33',['ptr',['../hproto__fortran_8h.html#aec6ee4e4197f9909704c4b9dba33c556',1,'hproto_fortran.h']]],
-  ['pxdim_34',['pxdim',['../hproto__fortran_8h.html#a7b262a96f7fcdc267faa9ea7bb2b1bfa',1,'hproto_fortran.h']]],
-  ['pydim_35',['pydim',['../hproto__fortran_8h.html#acbc74f7cdcfab86f1a9fd63f56315f44',1,'hproto_fortran.h']]]
+  ['priv_31',['priv',['../struct_t_b_b_t___n_o_d_e.html#a183a1cdd0776ce0478d78275fdfa1d95',1,'TBBT_NODE::priv'],['../struct_t_b_b_t___t_r_e_e.html#ab4fdd8df684732f5e2d7824e4725ad49',1,'TBBT_TREE::priv']]],
+  ['progname_32',['progname',['../dumplib_8h.html#ab9e1449fd00c98428516f0b41eddcb10',1,'progname:&#160;dumplib.h'],['../vardata_8h.html#ab9e1449fd00c98428516f0b41eddcb10',1,'progname:&#160;vardata.h'],['../genlib_8h.html#ab9e1449fd00c98428516f0b41eddcb10',1,'progname:&#160;genlib.h']]],
+  ['ptedump_33',['PTEDump',['../struct_g_i_f_p_l_a_i_n_t_e_x_t.html#ac8da24fa646754425698c88d9d82e6ae',1,'GIFPLAINTEXT']]],
+  ['ptr_34',['ptr',['../hproto__fortran_8h.html#aec6ee4e4197f9909704c4b9dba33c556',1,'hproto_fortran.h']]],
+  ['pxdim_35',['pxdim',['../hproto__fortran_8h.html#a7b262a96f7fcdc267faa9ea7bb2b1bfa',1,'hproto_fortran.h']]],
+  ['pydim_36',['pydim',['../hproto__fortran_8h.html#acbc74f7cdcfab86f1a9fd63f56315f44',1,'hproto_fortran.h']]]
 ];

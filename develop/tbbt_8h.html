@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.0-6ff01fb</span>
+   &#160;<span id="projectnumber">4.3.0-958a771</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -107,7 +107,6 @@ $(function(){initNavTree('tbbt_8h.html',''); initResizable(); });
   <div class="summary">
 <a href="#nested-classes">Data Structures</a> &#124;
 <a href="#define-members">Macros</a> &#124;
-<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">tbbt.h File Reference</div></div>
 </div><!--header-->
@@ -116,7 +115,9 @@ $(function(){initNavTree('tbbt_8h.html',''); initResizable(); });
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtbbt__node.html">TBBT_NODE</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_t_b_b_t___t_r_e_e.html">TBBT_TREE</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
@@ -125,77 +126,49 @@ Macros</h2></td></tr>
 <tr class="separator:a3b359139fbc7a39f73adc33b8f3f6d61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42a7a2956cb12bafa3e6eb4b2ef419e4" id="r_a42a7a2956cb12bafa3e6eb4b2ef419e4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a42a7a2956cb12bafa3e6eb4b2ef419e4">TBBT_FAST_INT32_COMPARE</a>&#160;&#160;&#160;2</td></tr>
 <tr class="separator:a42a7a2956cb12bafa3e6eb4b2ef419e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4886a8f966a69949cefc46a6a3468006" id="r_a4886a8f966a69949cefc46a6a3468006"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4886a8f966a69949cefc46a6a3468006">Max</a>(a,  b)&#160;&#160;&#160;((a) &gt; (b) ? (a) : (b))</td></tr>
-<tr class="separator:a4886a8f966a69949cefc46a6a3468006"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
-Typedefs</h2></td></tr>
-<tr class="memitem:a439a88dbba8a8f0df329eb7bfa0acae8" id="r_a439a88dbba8a8f0df329eb7bfa0acae8"><td class="memItemLeft" align="right" valign="top">typedef TBBT_NODE **&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a439a88dbba8a8f0df329eb7bfa0acae8">TBBT_TREE</a></td></tr>
-<tr class="separator:a439a88dbba8a8f0df329eb7bfa0acae8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ac092d4c1553c75991793e5bc518e7ea3" id="r_ac092d4c1553c75991793e5bc518e7ea3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a439a88dbba8a8f0df329eb7bfa0acae8">TBBT_TREE</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac092d4c1553c75991793e5bc518e7ea3">tbbtdmake</a> (<a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>(*compar)(void *, void *, <a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>), <a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a> arg, <a class="el" href="hdf_8h.html#a8f0189616483670e42751f89a02501b5">uintn</a> fast_compare)</td></tr>
-<tr class="separator:ac092d4c1553c75991793e5bc518e7ea3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7164ee640087501e80e69e50b8ac1a97" id="r_a7164ee640087501e80e69e50b8ac1a97"><td class="memItemLeft" align="right" valign="top">TBBT_NODE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7164ee640087501e80e69e50b8ac1a97">tbbtdfind</a> (<a class="el" href="#a439a88dbba8a8f0df329eb7bfa0acae8">TBBT_TREE</a> *tree, void *key, TBBT_NODE **pp)</td></tr>
+<tr class="memitem:a1635d8b0972a164a1b49ace402ce1f40" id="r_a1635d8b0972a164a1b49ace402ce1f40"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_t_b_b_t___t_r_e_e.html">TBBT_TREE</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1635d8b0972a164a1b49ace402ce1f40">tbbtdmake</a> (int(*compar)(void *, void *, int), int arg, unsigned fast_compare)</td></tr>
+<tr class="separator:a1635d8b0972a164a1b49ace402ce1f40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7164ee640087501e80e69e50b8ac1a97" id="r_a7164ee640087501e80e69e50b8ac1a97"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7164ee640087501e80e69e50b8ac1a97">tbbtdfind</a> (<a class="el" href="struct_t_b_b_t___t_r_e_e.html">TBBT_TREE</a> *tree, void *key, <a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> **pp)</td></tr>
 <tr class="separator:a7164ee640087501e80e69e50b8ac1a97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a870d5fc3aab66e7a1385faae991c75" id="r_a8a870d5fc3aab66e7a1385faae991c75"><td class="memItemLeft" align="right" valign="top">TBBT_NODE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8a870d5fc3aab66e7a1385faae991c75">tbbtfind</a> (TBBT_NODE *root, void *key, <a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>(*cmp)(void *, void *, <a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>), <a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a> arg, TBBT_NODE **pp)</td></tr>
-<tr class="separator:a8a870d5fc3aab66e7a1385faae991c75"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae6808574fbcfa93623856406fdebe20b" id="r_ae6808574fbcfa93623856406fdebe20b"><td class="memItemLeft" align="right" valign="top">TBBT_NODE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae6808574fbcfa93623856406fdebe20b">tbbtdless</a> (<a class="el" href="#a439a88dbba8a8f0df329eb7bfa0acae8">TBBT_TREE</a> *tree, void *key, TBBT_NODE **pp)</td></tr>
+<tr class="memitem:a1a38e4f6d848a61e5cc42e11e6aa0d82" id="r_a1a38e4f6d848a61e5cc42e11e6aa0d82"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1a38e4f6d848a61e5cc42e11e6aa0d82">tbbtfind</a> (<a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *root, void *key, int(*cmp)(void *, void *, int), int arg, <a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> **pp)</td></tr>
+<tr class="separator:a1a38e4f6d848a61e5cc42e11e6aa0d82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6808574fbcfa93623856406fdebe20b" id="r_ae6808574fbcfa93623856406fdebe20b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae6808574fbcfa93623856406fdebe20b">tbbtdless</a> (<a class="el" href="struct_t_b_b_t___t_r_e_e.html">TBBT_TREE</a> *tree, void *key, <a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> **pp)</td></tr>
 <tr class="separator:ae6808574fbcfa93623856406fdebe20b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f37af77521cd261939005c93972567f" id="r_a6f37af77521cd261939005c93972567f"><td class="memItemLeft" align="right" valign="top">TBBT_NODE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6f37af77521cd261939005c93972567f">tbbtless</a> (TBBT_NODE *root, void *key, <a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>(*cmp)(void *, void *, <a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>), <a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a> arg, TBBT_NODE **pp)</td></tr>
-<tr class="separator:a6f37af77521cd261939005c93972567f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a663583b77ab8bd40158cd8c81948f167" id="r_a663583b77ab8bd40158cd8c81948f167"><td class="memItemLeft" align="right" valign="top">TBBT_NODE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a663583b77ab8bd40158cd8c81948f167">tbbtindx</a> (TBBT_NODE *root, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> indx)</td></tr>
+<tr class="memitem:aea7492a6170edc1fbd18886bafc395d2" id="r_aea7492a6170edc1fbd18886bafc395d2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aea7492a6170edc1fbd18886bafc395d2">tbbtless</a> (<a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *root, void *key, int(*cmp)(void *, void *, int), int arg, <a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> **pp)</td></tr>
+<tr class="separator:aea7492a6170edc1fbd18886bafc395d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a663583b77ab8bd40158cd8c81948f167" id="r_a663583b77ab8bd40158cd8c81948f167"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a663583b77ab8bd40158cd8c81948f167">tbbtindx</a> (<a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *root, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> indx)</td></tr>
 <tr class="separator:a663583b77ab8bd40158cd8c81948f167"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e1baa1ea0a2aeb3af6ad48647337ee1" id="r_a3e1baa1ea0a2aeb3af6ad48647337ee1"><td class="memItemLeft" align="right" valign="top">TBBT_NODE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3e1baa1ea0a2aeb3af6ad48647337ee1">tbbtdins</a> (<a class="el" href="#a439a88dbba8a8f0df329eb7bfa0acae8">TBBT_TREE</a> *tree, void *item, void *key)</td></tr>
+<tr class="memitem:a3e1baa1ea0a2aeb3af6ad48647337ee1" id="r_a3e1baa1ea0a2aeb3af6ad48647337ee1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3e1baa1ea0a2aeb3af6ad48647337ee1">tbbtdins</a> (<a class="el" href="struct_t_b_b_t___t_r_e_e.html">TBBT_TREE</a> *tree, void *item, void *key)</td></tr>
 <tr class="separator:a3e1baa1ea0a2aeb3af6ad48647337ee1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83dc15cecb016e494ccfe03cbebc9a1a" id="r_a83dc15cecb016e494ccfe03cbebc9a1a"><td class="memItemLeft" align="right" valign="top">TBBT_NODE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a83dc15cecb016e494ccfe03cbebc9a1a">tbbtins</a> (TBBT_NODE **root, void *item, void *key, <a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>(*cmp)(void *, void *, <a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>), <a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a> arg)</td></tr>
-<tr class="separator:a83dc15cecb016e494ccfe03cbebc9a1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33c3890307639475a8f890f85a2a167b" id="r_a33c3890307639475a8f890f85a2a167b"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a33c3890307639475a8f890f85a2a167b">tbbtrem</a> (TBBT_NODE **root, TBBT_NODE *node, void **kp)</td></tr>
+<tr class="memitem:a18ee654fa6aa9f2b9a1277225f7ec957" id="r_a18ee654fa6aa9f2b9a1277225f7ec957"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a18ee654fa6aa9f2b9a1277225f7ec957">tbbtins</a> (<a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> **root, void *item, void *key, int(*cmp)(void *, void *, int), int arg)</td></tr>
+<tr class="separator:a18ee654fa6aa9f2b9a1277225f7ec957"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33c3890307639475a8f890f85a2a167b" id="r_a33c3890307639475a8f890f85a2a167b"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a33c3890307639475a8f890f85a2a167b">tbbtrem</a> (<a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> **root, <a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *node, void **kp)</td></tr>
 <tr class="separator:a33c3890307639475a8f890f85a2a167b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c3427ed733eafa0d25f605eabfce426" id="r_a1c3427ed733eafa0d25f605eabfce426"><td class="memItemLeft" align="right" valign="top">TBBT_NODE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c3427ed733eafa0d25f605eabfce426">tbbtfirst</a> (TBBT_NODE *root)</td></tr>
+<tr class="memitem:a1c3427ed733eafa0d25f605eabfce426" id="r_a1c3427ed733eafa0d25f605eabfce426"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c3427ed733eafa0d25f605eabfce426">tbbtfirst</a> (<a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *root)</td></tr>
 <tr class="separator:a1c3427ed733eafa0d25f605eabfce426"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae21d9040b9c5a61f8fa9bdd96922120e" id="r_ae21d9040b9c5a61f8fa9bdd96922120e"><td class="memItemLeft" align="right" valign="top">TBBT_NODE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae21d9040b9c5a61f8fa9bdd96922120e">tbbtlast</a> (TBBT_NODE *root)</td></tr>
+<tr class="memitem:ae21d9040b9c5a61f8fa9bdd96922120e" id="r_ae21d9040b9c5a61f8fa9bdd96922120e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae21d9040b9c5a61f8fa9bdd96922120e">tbbtlast</a> (<a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *root)</td></tr>
 <tr class="separator:ae21d9040b9c5a61f8fa9bdd96922120e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ee4db209d802d1446016c9a6b2a3da0" id="r_a7ee4db209d802d1446016c9a6b2a3da0"><td class="memItemLeft" align="right" valign="top">TBBT_NODE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7ee4db209d802d1446016c9a6b2a3da0">tbbtnext</a> (TBBT_NODE *node)</td></tr>
+<tr class="memitem:a7ee4db209d802d1446016c9a6b2a3da0" id="r_a7ee4db209d802d1446016c9a6b2a3da0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7ee4db209d802d1446016c9a6b2a3da0">tbbtnext</a> (<a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *node)</td></tr>
 <tr class="separator:a7ee4db209d802d1446016c9a6b2a3da0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a8267ae480d39404f30ef5d2ee5d1b5" id="r_a6a8267ae480d39404f30ef5d2ee5d1b5"><td class="memItemLeft" align="right" valign="top">TBBT_NODE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a8267ae480d39404f30ef5d2ee5d1b5">tbbtprev</a> (TBBT_NODE *node)</td></tr>
+<tr class="memitem:a6a8267ae480d39404f30ef5d2ee5d1b5" id="r_a6a8267ae480d39404f30ef5d2ee5d1b5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a8267ae480d39404f30ef5d2ee5d1b5">tbbtprev</a> (<a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *node)</td></tr>
 <tr class="separator:a6a8267ae480d39404f30ef5d2ee5d1b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a92f93020468def1e1182d0d010a7ec90" id="r_a92f93020468def1e1182d0d010a7ec90"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a439a88dbba8a8f0df329eb7bfa0acae8">TBBT_TREE</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a92f93020468def1e1182d0d010a7ec90">tbbtdfree</a> (<a class="el" href="#a439a88dbba8a8f0df329eb7bfa0acae8">TBBT_TREE</a> *tree, void(*fd)(void *), void(*fk)(void *))</td></tr>
+<tr class="memitem:a92f93020468def1e1182d0d010a7ec90" id="r_a92f93020468def1e1182d0d010a7ec90"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_t_b_b_t___t_r_e_e.html">TBBT_TREE</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a92f93020468def1e1182d0d010a7ec90">tbbtdfree</a> (<a class="el" href="struct_t_b_b_t___t_r_e_e.html">TBBT_TREE</a> *tree, void(*fd)(void *), void(*fk)(void *))</td></tr>
 <tr class="separator:a92f93020468def1e1182d0d010a7ec90"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f93ad14235d05129393e5cfa0a00295" id="r_a5f93ad14235d05129393e5cfa0a00295"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f93ad14235d05129393e5cfa0a00295">tbbtfree</a> (TBBT_NODE **root, void(*fd)(void *), void(*fk)(void *))</td></tr>
+<tr class="memitem:a5f93ad14235d05129393e5cfa0a00295" id="r_a5f93ad14235d05129393e5cfa0a00295"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f93ad14235d05129393e5cfa0a00295">tbbtfree</a> (<a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> **root, void(*fd)(void *), void(*fk)(void *))</td></tr>
 <tr class="separator:a5f93ad14235d05129393e5cfa0a00295"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4c128845454331a3da6dd96d6f75b4c" id="r_ab4c128845454331a3da6dd96d6f75b4c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4c128845454331a3da6dd96d6f75b4c">tbbtprint</a> (TBBT_NODE *node)</td></tr>
+<tr class="memitem:ab4c128845454331a3da6dd96d6f75b4c" id="r_ab4c128845454331a3da6dd96d6f75b4c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4c128845454331a3da6dd96d6f75b4c">tbbtprint</a> (<a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *node)</td></tr>
 <tr class="separator:ab4c128845454331a3da6dd96d6f75b4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa6ae7367014a2f35ecfe896344ddf898" id="r_aa6ae7367014a2f35ecfe896344ddf898"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa6ae7367014a2f35ecfe896344ddf898">tbbtdump</a> (<a class="el" href="#a439a88dbba8a8f0df329eb7bfa0acae8">TBBT_TREE</a> *tree, <a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a> method)</td></tr>
-<tr class="separator:aa6ae7367014a2f35ecfe896344ddf898"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e99e551ec15c5aa0fce0ce2a2fc92f0" id="r_a9e99e551ec15c5aa0fce0ce2a2fc92f0"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9e99e551ec15c5aa0fce0ce2a2fc92f0">tbbtcount</a> (<a class="el" href="#a439a88dbba8a8f0df329eb7bfa0acae8">TBBT_TREE</a> *tree)</td></tr>
+<tr class="memitem:a6b3e766bdae219ad02cc88a3d9ca8cc9" id="r_a6b3e766bdae219ad02cc88a3d9ca8cc9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b3e766bdae219ad02cc88a3d9ca8cc9">tbbtdump</a> (<a class="el" href="struct_t_b_b_t___t_r_e_e.html">TBBT_TREE</a> *tree, int method)</td></tr>
+<tr class="separator:a6b3e766bdae219ad02cc88a3d9ca8cc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e99e551ec15c5aa0fce0ce2a2fc92f0" id="r_a9e99e551ec15c5aa0fce0ce2a2fc92f0"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9e99e551ec15c5aa0fce0ce2a2fc92f0">tbbtcount</a> (<a class="el" href="struct_t_b_b_t___t_r_e_e.html">TBBT_TREE</a> *tree)</td></tr>
 <tr class="separator:a9e99e551ec15c5aa0fce0ce2a2fc92f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a625f7f7c23494c4f6c4b77236c720ada" id="r_a625f7f7c23494c4f6c4b77236c720ada"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a625f7f7c23494c4f6c4b77236c720ada">tbbt_shutdown</a> (void)</td></tr>
-<tr class="separator:a625f7f7c23494c4f6c4b77236c720ada"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a57f60e0b95fb2c52b3946dcce6df2d" id="r_a8a57f60e0b95fb2c52b3946dcce6df2d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8a57f60e0b95fb2c52b3946dcce6df2d">tbbt_shutdown</a> (void)</td></tr>
+<tr class="separator:a8a57f60e0b95fb2c52b3946dcce6df2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
-<a id="a4886a8f966a69949cefc46a6a3468006" name="a4886a8f966a69949cefc46a6a3468006"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4886a8f966a69949cefc46a6a3468006">&#9670;&#160;</a></span>Max</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define Max</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">a, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">b</span>&#160;)&#160;&#160;&#160;((a) &gt; (b) ? (a) : (b))</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a42a7a2956cb12bafa3e6eb4b2ef419e4" name="a42a7a2956cb12bafa3e6eb4b2ef419e4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a42a7a2956cb12bafa3e6eb4b2ef419e4">&#9670;&#160;</a></span>TBBT_FAST_INT32_COMPARE</h2>
 
@@ -224,30 +197,15 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<h2 class="groupheader">Typedef Documentation</h2>
-<a id="a439a88dbba8a8f0df329eb7bfa0acae8" name="a439a88dbba8a8f0df329eb7bfa0acae8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a439a88dbba8a8f0df329eb7bfa0acae8">&#9670;&#160;</a></span>TBBT_TREE</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef TBBT_NODE** <a class="el" href="#a439a88dbba8a8f0df329eb7bfa0acae8">TBBT_TREE</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a625f7f7c23494c4f6c4b77236c720ada" name="a625f7f7c23494c4f6c4b77236c720ada"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a625f7f7c23494c4f6c4b77236c720ada">&#9670;&#160;</a></span>tbbt_shutdown()</h2>
+<a id="a8a57f60e0b95fb2c52b3946dcce6df2d" name="a8a57f60e0b95fb2c52b3946dcce6df2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a57f60e0b95fb2c52b3946dcce6df2d">&#9670;&#160;</a></span>tbbt_shutdown()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a> tbbt_shutdown </td>
+          <td class="memname">int tbbt_shutdown </td>
           <td>(</td>
           <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td></td>
@@ -269,7 +227,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">long tbbtcount </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="#a439a88dbba8a8f0df329eb7bfa0acae8">TBBT_TREE</a> *</td>          <td class="paramname"><span class="paramname"><em>tree</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___t_r_e_e.html">TBBT_TREE</a> *</td>          <td class="paramname"><span class="paramname"><em>tree</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -292,9 +250,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">TBBT_NODE * tbbtdfind </td>
+          <td class="memname"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> * tbbtdfind </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="#a439a88dbba8a8f0df329eb7bfa0acae8">TBBT_TREE</a> *</td>          <td class="paramname"><span class="paramname"><em>tree</em>, </span></td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___t_r_e_e.html">TBBT_TREE</a> *</td>          <td class="paramname"><span class="paramname"><em>tree</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -304,7 +262,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">TBBT_NODE **</td>          <td class="paramname"><span class="paramname"><em>pp</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> **</td>          <td class="paramname"><span class="paramname"><em>pp</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -326,9 +284,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="#a439a88dbba8a8f0df329eb7bfa0acae8">TBBT_TREE</a> * tbbtdfree </td>
+          <td class="memname"><a class="el" href="struct_t_b_b_t___t_r_e_e.html">TBBT_TREE</a> * tbbtdfree </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="#a439a88dbba8a8f0df329eb7bfa0acae8">TBBT_TREE</a> *</td>          <td class="paramname"><span class="paramname"><em>tree</em>, </span></td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___t_r_e_e.html">TBBT_TREE</a> *</td>          <td class="paramname"><span class="paramname"><em>tree</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -360,9 +318,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">TBBT_NODE * tbbtdins </td>
+          <td class="memname"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> * tbbtdins </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="#a439a88dbba8a8f0df329eb7bfa0acae8">TBBT_TREE</a> *</td>          <td class="paramname"><span class="paramname"><em>tree</em>, </span></td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___t_r_e_e.html">TBBT_TREE</a> *</td>          <td class="paramname"><span class="paramname"><em>tree</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -394,9 +352,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">TBBT_NODE * tbbtdless </td>
+          <td class="memname"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> * tbbtdless </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="#a439a88dbba8a8f0df329eb7bfa0acae8">TBBT_TREE</a> *</td>          <td class="paramname"><span class="paramname"><em>tree</em>, </span></td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___t_r_e_e.html">TBBT_TREE</a> *</td>          <td class="paramname"><span class="paramname"><em>tree</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -406,7 +364,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">TBBT_NODE **</td>          <td class="paramname"><span class="paramname"><em>pp</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> **</td>          <td class="paramname"><span class="paramname"><em>pp</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -418,8 +376,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ac092d4c1553c75991793e5bc518e7ea3" name="ac092d4c1553c75991793e5bc518e7ea3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac092d4c1553c75991793e5bc518e7ea3">&#9670;&#160;</a></span>tbbtdmake()</h2>
+<a id="a1635d8b0972a164a1b49ace402ce1f40" name="a1635d8b0972a164a1b49ace402ce1f40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1635d8b0972a164a1b49ace402ce1f40">&#9670;&#160;</a></span>tbbtdmake()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -428,19 +386,19 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="#a439a88dbba8a8f0df329eb7bfa0acae8">TBBT_TREE</a> * tbbtdmake </td>
+          <td class="memname"><a class="el" href="struct_t_b_b_t___t_r_e_e.html">TBBT_TREE</a> * tbbtdmake </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>(*)(void *, void *, <a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>)</td>          <td class="paramname"><span class="paramname"><em>compar</em>, </span></td>
+          <td class="paramtype">int(*)(void *, void *, int)</td>          <td class="paramname"><span class="paramname"><em>compar</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a></td>          <td class="paramname"><span class="paramname"><em>arg</em>, </span></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>arg</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdf_8h.html#a8f0189616483670e42751f89a02501b5">uintn</a></td>          <td class="paramname"><span class="paramname"><em>fast_compare</em></span>&#160;)</td>
+          <td class="paramtype">unsigned</td>          <td class="paramname"><span class="paramname"><em>fast_compare</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -452,8 +410,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aa6ae7367014a2f35ecfe896344ddf898" name="aa6ae7367014a2f35ecfe896344ddf898"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa6ae7367014a2f35ecfe896344ddf898">&#9670;&#160;</a></span>tbbtdump()</h2>
+<a id="a6b3e766bdae219ad02cc88a3d9ca8cc9" name="a6b3e766bdae219ad02cc88a3d9ca8cc9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b3e766bdae219ad02cc88a3d9ca8cc9">&#9670;&#160;</a></span>tbbtdump()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -464,12 +422,12 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void tbbtdump </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="#a439a88dbba8a8f0df329eb7bfa0acae8">TBBT_TREE</a> *</td>          <td class="paramname"><span class="paramname"><em>tree</em>, </span></td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___t_r_e_e.html">TBBT_TREE</a> *</td>          <td class="paramname"><span class="paramname"><em>tree</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a></td>          <td class="paramname"><span class="paramname"><em>method</em></span>&#160;)</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>method</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -481,8 +439,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a8a870d5fc3aab66e7a1385faae991c75" name="a8a870d5fc3aab66e7a1385faae991c75"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8a870d5fc3aab66e7a1385faae991c75">&#9670;&#160;</a></span>tbbtfind()</h2>
+<a id="a1a38e4f6d848a61e5cc42e11e6aa0d82" name="a1a38e4f6d848a61e5cc42e11e6aa0d82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a38e4f6d848a61e5cc42e11e6aa0d82">&#9670;&#160;</a></span>tbbtfind()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -491,9 +449,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">TBBT_NODE * tbbtfind </td>
+          <td class="memname"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> * tbbtfind </td>
           <td>(</td>
-          <td class="paramtype">TBBT_NODE *</td>          <td class="paramname"><span class="paramname"><em>root</em>, </span></td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *</td>          <td class="paramname"><span class="paramname"><em>root</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -503,17 +461,17 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>(*)(void *, void *, <a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>)</td>          <td class="paramname"><span class="paramname"><em>cmp</em>, </span></td>
+          <td class="paramtype">int(*)(void *, void *, int)</td>          <td class="paramname"><span class="paramname"><em>cmp</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a></td>          <td class="paramname"><span class="paramname"><em>arg</em>, </span></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>arg</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">TBBT_NODE **</td>          <td class="paramname"><span class="paramname"><em>pp</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> **</td>          <td class="paramname"><span class="paramname"><em>pp</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -535,9 +493,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">TBBT_NODE * tbbtfirst </td>
+          <td class="memname"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> * tbbtfirst </td>
           <td>(</td>
-          <td class="paramtype">TBBT_NODE *</td>          <td class="paramname"><span class="paramname"><em>root</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *</td>          <td class="paramname"><span class="paramname"><em>root</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -562,7 +520,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void tbbtfree </td>
           <td>(</td>
-          <td class="paramtype">TBBT_NODE **</td>          <td class="paramname"><span class="paramname"><em>root</em>, </span></td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> **</td>          <td class="paramname"><span class="paramname"><em>root</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -594,9 +552,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">TBBT_NODE * tbbtindx </td>
+          <td class="memname"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> * tbbtindx </td>
           <td>(</td>
-          <td class="paramtype">TBBT_NODE *</td>          <td class="paramname"><span class="paramname"><em>root</em>, </span></td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *</td>          <td class="paramname"><span class="paramname"><em>root</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -613,8 +571,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a83dc15cecb016e494ccfe03cbebc9a1a" name="a83dc15cecb016e494ccfe03cbebc9a1a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a83dc15cecb016e494ccfe03cbebc9a1a">&#9670;&#160;</a></span>tbbtins()</h2>
+<a id="a18ee654fa6aa9f2b9a1277225f7ec957" name="a18ee654fa6aa9f2b9a1277225f7ec957"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a18ee654fa6aa9f2b9a1277225f7ec957">&#9670;&#160;</a></span>tbbtins()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -623,9 +581,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">TBBT_NODE * tbbtins </td>
+          <td class="memname"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> * tbbtins </td>
           <td>(</td>
-          <td class="paramtype">TBBT_NODE **</td>          <td class="paramname"><span class="paramname"><em>root</em>, </span></td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> **</td>          <td class="paramname"><span class="paramname"><em>root</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -640,12 +598,12 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>(*)(void *, void *, <a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>)</td>          <td class="paramname"><span class="paramname"><em>cmp</em>, </span></td>
+          <td class="paramtype">int(*)(void *, void *, int)</td>          <td class="paramname"><span class="paramname"><em>cmp</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a></td>          <td class="paramname"><span class="paramname"><em>arg</em></span>&#160;)</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>arg</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -667,9 +625,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">TBBT_NODE * tbbtlast </td>
+          <td class="memname"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> * tbbtlast </td>
           <td>(</td>
-          <td class="paramtype">TBBT_NODE *</td>          <td class="paramname"><span class="paramname"><em>root</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *</td>          <td class="paramname"><span class="paramname"><em>root</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -682,8 +640,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a6f37af77521cd261939005c93972567f" name="a6f37af77521cd261939005c93972567f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6f37af77521cd261939005c93972567f">&#9670;&#160;</a></span>tbbtless()</h2>
+<a id="aea7492a6170edc1fbd18886bafc395d2" name="aea7492a6170edc1fbd18886bafc395d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea7492a6170edc1fbd18886bafc395d2">&#9670;&#160;</a></span>tbbtless()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -692,9 +650,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">TBBT_NODE * tbbtless </td>
+          <td class="memname"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> * tbbtless </td>
           <td>(</td>
-          <td class="paramtype">TBBT_NODE *</td>          <td class="paramname"><span class="paramname"><em>root</em>, </span></td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *</td>          <td class="paramname"><span class="paramname"><em>root</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -704,17 +662,17 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>(*)(void *, void *, <a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>)</td>          <td class="paramname"><span class="paramname"><em>cmp</em>, </span></td>
+          <td class="paramtype">int(*)(void *, void *, int)</td>          <td class="paramname"><span class="paramname"><em>cmp</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a></td>          <td class="paramname"><span class="paramname"><em>arg</em>, </span></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>arg</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">TBBT_NODE **</td>          <td class="paramname"><span class="paramname"><em>pp</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> **</td>          <td class="paramname"><span class="paramname"><em>pp</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -736,9 +694,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">TBBT_NODE * tbbtnext </td>
+          <td class="memname"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> * tbbtnext </td>
           <td>(</td>
-          <td class="paramtype">TBBT_NODE *</td>          <td class="paramname"><span class="paramname"><em>node</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *</td>          <td class="paramname"><span class="paramname"><em>node</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -761,9 +719,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">TBBT_NODE * tbbtprev </td>
+          <td class="memname"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> * tbbtprev </td>
           <td>(</td>
-          <td class="paramtype">TBBT_NODE *</td>          <td class="paramname"><span class="paramname"><em>node</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *</td>          <td class="paramname"><span class="paramname"><em>node</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -788,7 +746,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void tbbtprint </td>
           <td>(</td>
-          <td class="paramtype">TBBT_NODE *</td>          <td class="paramname"><span class="paramname"><em>node</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *</td>          <td class="paramname"><span class="paramname"><em>node</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -813,12 +771,12 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void * tbbtrem </td>
           <td>(</td>
-          <td class="paramtype">TBBT_NODE **</td>          <td class="paramname"><span class="paramname"><em>root</em>, </span></td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> **</td>          <td class="paramname"><span class="paramname"><em>root</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">TBBT_NODE *</td>          <td class="paramname"><span class="paramname"><em>node</em>, </span></td>
+          <td class="paramtype"><a class="el" href="struct_t_b_b_t___n_o_d_e.html">TBBT_NODE</a> *</td>          <td class="paramname"><span class="paramname"><em>node</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
