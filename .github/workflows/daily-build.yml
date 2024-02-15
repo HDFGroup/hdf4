@@ -21,7 +21,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Get hdf4 release base name
-      uses: dsaltares/fetch-gh-release-asset@v1
+      uses: dsaltares/fetch-gh-release-asset@master
       with:
         version: 'tags/snapshot'
         file: 'last-file.txt'
