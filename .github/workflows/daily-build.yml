@@ -79,7 +79,7 @@ jobs:
       contents: write # In order to allow file deletion
     uses: ./.github/workflows/remove-files.yml
     with:
-      file_base: ${{ needs.get-old-names.outputs.hdf5-name }}
+      file_base: ${{ needs.get-old-names.outputs.hdf4-name }}
       use_tag: snapshot
       use_environ: snapshots
     if: ${{ needs.call-workflow-tarball.outputs.has_changes == 'true' }}
