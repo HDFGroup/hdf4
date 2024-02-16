@@ -328,6 +328,20 @@ esac
 AM_CONDITIONAL([HDF_BUILD_FORTRAN], [test "X$BUILD_FORTRAN" = "Xyes"])
 AC_SUBST([BUILD_FORTRAN])
 
+## -------------------------------------------------------------------------
+## Build static libraries by default. Furthermore, fortran shared libraries
+## are unsupported. Disallow a user from enabling both shared libraries and
+## fortran.
+if test "X${enable_shared}" != "Xyes"; then
+    enable_shared="no"
+fi
+
+if test "X${enable_shared}" = "Xyes"; then
+    if test "X${BUILD_FORTRAN}" = "Xyes"; then
+        AC_MSG_ERROR([Cannot build shared fortran libraries. Please configure with --disable-fortran flag.])
+    fi
+fi
+
 ## ----------------------------------------------------------------------
 ## Check if they would like the Java native interface (JNI) compiled
 ##
@@ -386,22 +400,7 @@ else
   AC_MSG_RESULT([no])
 fi
 
-## -------------------------------------------------------------------------
-## Build static libraries by default. Furthermore, fortran shared libraries
-## are unsupported. Disallow a user from enabling both shared libraries and
-## fortran.
-if test "X${enable_shared}" != "Xyes"; then
-    enable_shared="no"
-fi
-
-if test "X${enable_shared}" = "Xyes"; then
-    if test "X${BUILD_FORTRAN}" = "Xyes"; then
-        AC_MSG_ERROR([Cannot build shared fortran libraries. Please configure with --disable-fortran flag.])
-    fi
-fi
-
 AC_PROG_LN_S
-
 
 ## ----------------------------------------------------------------------
 ## Check which archiving tool to use. This needs to be done before
