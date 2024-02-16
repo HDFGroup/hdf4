@@ -310,7 +310,7 @@ DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, void *image, int32 xdim, int32
      */
     struct jpeg_decompress_struct *cinfo_ptr;
     struct jpeg_error_mgr         *jerr_ptr;
-    JDIMENSION                     lines_read, lines_left;
+    JDIMENSION                     lines_read;
     JSAMPARRAY                     buffer;
 
     if ((cinfo_ptr = calloc(1, sizeof(struct jpeg_decompress_struct))) == NULL)
@@ -335,14 +335,12 @@ DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, void *image, int32 xdim, int32
     jpeg_start_decompress(cinfo_ptr);
 
     /* read the whole image in */
-    lines_left = (JDIMENSION)ydim;
     while (cinfo_ptr->output_scanline < cinfo_ptr->output_height) {
         buffer     = (JSAMPARRAY)&image;
         lines_read = jpeg_read_scanlines(cinfo_ptr, buffer, 1);
-        lines_left -= lines_read;
         image = (char *)image +
                 ((size_t)cinfo_ptr->output_width * (size_t)cinfo_ptr->output_components * lines_read);
-    } /* end while */
+    }
 
     /* Finish reading stuff in */
     jpeg_finish_decompress(cinfo_ptr);

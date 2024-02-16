@@ -22,7 +22,6 @@ main(int argv, char *argc[])
 {
 
     GIFTOMEM     GifMemoryStruct;
-    GIFIMAGEDESC gifImageDesc;
 
     FILE *fpGif;
     int32 i;

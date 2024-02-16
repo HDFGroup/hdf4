@@ -1731,13 +1731,15 @@ gtype(char *infile, struct Input *in, FILE **strm)
         else {
             if (!memcmp("FP64", buf, 4) || !memcmp("fp64", buf, 4)) {
                 in->is_fp64 = TRUE;
-                if (in->outtype != FP_64)
+                if (in->outtype != FP_64) {
                     if (in->outtype != NO_NE) {
                         fprintf(stderr, err4, infile);
                         goto err;
                     }
-                    else
+                    else {
                         in->outtype = FP_32;
+                    }
+                }
             }
             else {
                 if (in->outtype != NO_NE) {
