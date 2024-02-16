@@ -136,6 +136,12 @@ if (NOT ONLY_SHARED_LIBS)
       INTERFACE_INCLUDE_DIRECTORIES "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
   )
   set (install_targets ${HDF4_SRC_LIB_TARGET})
+#
+#  add_custom_command(TARGET ${HDF4_SRC_LIB_TARGET}
+#       COMMAND ${CMAKE_COMMAND} -E create_symlink $<TARGET_FILE_NAME:HDF4_SRC_LIB_TARGET> $<TARGET_FILE_NAME:HDF4_SRC_LIB_SYM_TARGET>
+#       DEPENDS $<TARGET_FILE_NAME:HDF4_SRC_LIB_TARGET>
+#  )
+#  set (install_targets ${install_targets} ${HDF4_SRC_LIB_SYM_TARGET})
 endif ()
 
 if (BUILD_SHARED_LIBS)
@@ -161,6 +167,12 @@ if (BUILD_SHARED_LIBS)
       INTERFACE_COMPILE_DEFINITIONS H4_BUILT_AS_DYNAMIC_LIB=1
   )
   set (install_targets ${install_targets} ${HDF4_SRC_LIBSH_TARGET})
+#
+#  add_custom_command(TARGET ${HDF4_SRC_LIBSH_TARGET}
+#       COMMAND ${CMAKE_COMMAND} -E create_symlink $<TARGET_FILE_NAME:HDF4_SRC_LIBSH_TARGET> $<TARGET_FILE_NAME:HDF4_SRC_LIBSH_SYM_TARGET>
+#       DEPENDS $<TARGET_FILE_NAME:HDF4_SRC_LIBSH_TARGET>
+#  )
+#  set (install_targets ${install_targets} ${HDF4_SRC_LIBSH_SYM_TARGET})
 endif ()
 
 #-----------------------------------------------------------------------------

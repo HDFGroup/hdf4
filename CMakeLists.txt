@@ -149,6 +149,7 @@ mark_as_advanced (HDF4_NO_PACKAGES)
 # Set the core names of all the libraries
 #-----------------------------------------------------------------------------
 set (HDF4_SRC_LIB_CORENAME          "hdf")
+set (HDF4_SRC_LIB_SYM_CORENAME      "df")
 set (HDF4_SRC_FCSTUB_LIB_CORENAME   "hdf_fcstub")
 set (HDF4_SRC_FORTRAN_LIB_CORENAME  "hdf_fortran")
 set (HDF4_MF_LIB_CORENAME           "mfhdf")
@@ -166,6 +167,7 @@ set (HDF4_JAVA_TEST_LIB_CORENAME    "jartest4")
 # Set the true names of all the libraries if customized by external project
 #-----------------------------------------------------------------------------
 set (HDF4_SRC_LIB_NAME          "${HDF4_EXTERNAL_LIB_PREFIX}${HDF4_SRC_LIB_CORENAME}")
+set (HDF4_SRC_LIB_SYM_NAME      "${HDF4_EXTERNAL_LIB_PREFIX}${HDF4_SRC_LIB_SYM_CORENAME}")
 set (HDF4_SRC_FCSTUB_LIB_NAME   "${HDF4_EXTERNAL_LIB_PREFIX}${HDF4_SRC_FCSTUB_LIB_CORENAME}")
 set (HDF4_SRC_FORTRAN_LIB_NAME  "${HDF4_EXTERNAL_LIB_PREFIX}${HDF4_SRC_FORTRAN_LIB_CORENAME}")
 set (HDF4_MF_LIB_NAME           "${HDF4_EXTERNAL_LIB_PREFIX}${HDF4_MF_LIB_CORENAME}")
@@ -183,6 +185,7 @@ set (HDF4_JAVA_TEST_LIB_NAME    "${HDF4_EXTERNAL_LIB_PREFIX}${HDF4_JAVA_TEST_LIB
 # Set the target names of all the libraries
 #-----------------------------------------------------------------------------
 set (HDF4_SRC_LIB_TARGET          "${HDF4_SRC_LIB_CORENAME}-static")
+set (HDF4_SRC_LIB_SYM_TARGET      "${HDF4_SRC_LIB_SYM_CORENAME}-static")
 set (HDF4_SRC_FCSTUB_LIB_TARGET   "${HDF4_SRC_FCSTUB_LIB_CORENAME}-static")
 set (HDF4_SRC_FORTRAN_LIB_TARGET  "${HDF4_SRC_FORTRAN_LIB_CORENAME}-static")
 set (HDF4_MF_LIB_TARGET           "${HDF4_MF_LIB_CORENAME}-static")
@@ -195,6 +198,7 @@ set (HDF4_TOOLS_LIB_TARGET        "${HDF4_TOOLS_LIB_CORENAME}-static")
 set (HDF4_JAVA_JNI_LIB_TARGET     "${HDF4_JAVA_JNI_LIB_CORENAME}")
 set (HDF4_JAVA_HDF_LIB_TARGET     "${HDF4_JAVA_HDF_LIB_CORENAME}")
 set (HDF4_JAVA_TEST_LIB_TARGET    "${HDF4_JAVA_TEST_LIB_CORENAME}")
+set (HDF4_SRC_LIBSH_SYM_TARGET      "${HDF4_SRC_LIB_SYM_CORENAME}-shared")
 set (HDF4_SRC_LIBSH_TARGET          "${HDF4_SRC_LIB_CORENAME}-shared")
 set (HDF4_SRC_FCSTUB_LIBSH_TARGET   "${HDF4_SRC_FCSTUB_LIB_CORENAME}-shared")
 set (HDF4_SRC_FORTRAN_LIBSH_TARGET  "${HDF4_SRC_FORTRAN_LIB_CORENAME}-shared")
