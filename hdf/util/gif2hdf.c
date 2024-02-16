@@ -21,7 +21,7 @@ int
 main(int argv, char *argc[])
 {
 
-    GIFTOMEM     GifMemoryStruct;
+    GIFTOMEM GifMemoryStruct;
 
     FILE *fpGif;
     int32 i;

@@ -338,7 +338,7 @@ DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, void *image, int32 xdim, int32
     while (cinfo_ptr->output_scanline < cinfo_ptr->output_height) {
         buffer     = (JSAMPARRAY)&image;
         lines_read = jpeg_read_scanlines(cinfo_ptr, buffer, 1);
-        image = (char *)image +
+        image      = (char *)image +
                 ((size_t)cinfo_ptr->output_width * (size_t)cinfo_ptr->output_components * lines_read);
     }
 
