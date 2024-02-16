@@ -17,7 +17,14 @@
 
 #include "tproto.h"
 #include "hfile.h"
-#define BIG            600
+
+/* This value can cause platform-specific problems as the number of files
+ * that can be open at one time via fopen() is often capped by the OS.
+ *
+ * The current value doesn't seem to cause problems on any platform.
+ */
+#define BIG 127
+
 #define TESTFILE_NAME  "thf"
 #define TESTREF_NAME   "tref.hdf"
 #define MAX_REF_TESTED MAX_REF
@@ -35,7 +42,10 @@ test_file_limits(void)
 
 #ifdef H4_HAVE_WIN32_API
     /* Windows can only have 512 stdio files open by default, so we need
-     * to bump this to handle BIG files open at once.
+     * to bump this to handle large values for BIG files open at once.
+     *
+     * Technically no longer necessary since BIG was adjusted to < 512, but
+     * worth keeping around in case we need to set this in the future.
      */
     ret = _setmaxstdio(1024);
     CHECK_VOID(ret, FAIL, "_setmaxstdio");
