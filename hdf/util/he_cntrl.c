@@ -936,8 +936,9 @@ getLine(char *p)
 char *
 nextWord(char **p)
 {
-    char    *word;
-    char    *s, *q;
+    char    *word = NULL;
+    char    *s    = NULL;
+    char    *q    = NULL;
     unsigned len;
 
     q = *p;
@@ -1267,15 +1268,16 @@ parsePred(int argc, char *argv[])
     int      predNum = -1;
     int      state   = 0;
     int      key     = 0;
-    int      i;
-    char    *s;
-    char    *tok;
 
     pred = (HE_PRED *)calloc(HE_PRED_SZ, sizeof(HE_PRED));
 
-    for (i = 1; i < argc; i++) {
-        s = argv[i];
+    for (int i = 1; i < argc; i++) {
+
+        char *s = argv[i];
+
         while (*s) {
+            char *tok = NULL;
+
             if (state != 2)
                 tok = nextToken(&s);
             else
@@ -1330,6 +1332,7 @@ parsePred(int argc, char *argv[])
                         pred[predNum].arg.str = copyStr(tok);
                     }
                     state = 0;
+                    free(tok);
                     break;
 
                 default:
