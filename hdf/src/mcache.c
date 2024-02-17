@@ -819,22 +819,21 @@ mcache_stat(MCACHE *mp /* IN: MCACHE cookie */)
     /* check inputs */
     if (mp != NULL) {
         fprintf(stderr, "%u pages in the object\n", mp->npages);
-        fprintf(stderr, "page size %u, caching %u pages of %u page max cache\n", mp->pagesize,
-                      mp->curcache, mp->maxcache);
-        fprintf(stderr, "%u page puts, %u page gets, %u page new\n", mp->pageput, mp->pageget,
-                      mp->pagenew);
+        fprintf(stderr, "page size %u, caching %u pages of %u page max cache\n", mp->pagesize, mp->curcache,
+                mp->maxcache);
+        fprintf(stderr, "%u page puts, %u page gets, %u page new\n", mp->pageput, mp->pageget, mp->pagenew);
         fprintf(stderr, "%u page allocs, %u page flushes\n", mp->pagealloc, mp->pageflush);
         if (mp->cachehit + mp->cachemiss)
             fprintf(stderr, "%.0f%% cache hit rate (%u hits, %u misses)\n",
-                          ((double)mp->cachehit / (mp->cachehit + mp->cachemiss)) * 100, mp->cachehit,
-                          mp->cachemiss);
+                    ((double)mp->cachehit / (mp->cachehit + mp->cachemiss)) * 100, mp->cachehit,
+                    mp->cachemiss);
         fprintf(stderr, "%u page reads, %u page writes\n", mp->pageread, mp->pagewrite);
         fprintf(stderr, "%u listhits, %u listallocs\n", mp->listhit, mp->listalloc);
         fprintf(stderr, "sizeof(MCACHE)=%zu, sizeof(BKT)=%zu, sizeof(L_ELEM)=%zu\n", sizeof(MCACHE),
-                      sizeof(BKT), sizeof(L_ELEM));
+                sizeof(BKT), sizeof(L_ELEM));
         fprintf(stderr, "memory pool used %u bytes\n",
-                      (int32)(sizeof(MCACHE) + (sizeof(BKT) + mp->pagesize) * mp->curcache +
-                              (sizeof(L_ELEM) * mp->npages)));
+                (int32)(sizeof(MCACHE) + (sizeof(BKT) + mp->pagesize) * mp->curcache +
+                        (sizeof(L_ELEM) * mp->npages)));
         sep = "";
         cnt = 0;
         for (bp = mp->lqh.cqh_first; bp != (void *)&mp->lqh; bp = bp->q.cqe_next) {

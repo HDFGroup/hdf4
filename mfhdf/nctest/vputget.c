@@ -94,12 +94,12 @@ test_varputget(int cdfid)
                 fprintf(stderr, "  corner = (");
                 for (id = 0; id < test_g->vars[iv].ndims; id++)
                     fprintf(stderr, "%d%s", (int)hc[ie].cor[id],
-                                  (id < test_g->vars[iv].ndims - 1) ? ", " : "");
+                            (id < test_g->vars[iv].ndims - 1) ? ", " : "");
                 fprintf(stderr, ")\n");
                 fprintf(stderr, "  edge = (");
                 for (id = 0; id < test_g->vars[iv].ndims; id++)
                     fprintf(stderr, "%d%s", (int)hc[ie].edg[id],
-                                  (id < test_g->vars[iv].ndims - 1) ? ", " : "");
+                            (id < test_g->vars[iv].ndims - 1) ? ", " : "");
                 fprintf(stderr, ")\n");
             }
             else {
