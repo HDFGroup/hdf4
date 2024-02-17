@@ -364,7 +364,7 @@ AC_ARG_ENABLE([java],
 
 if test "X$HDF_JAVA" = "Xyes"; then
   if test "X${enable_shared}" != "Xno"; then
-    echo "yes"
+    AC_MSG_RESULT([yes])
     if test "X$CLASSPATH" = "X"; then
       H4_CLASSPATH=".:$srcdir/java/lib"
     else
@@ -568,14 +568,14 @@ AC_ARG_ENABLE([static_exec],
               [STATIC_EXEC=$enableval])
 
 if test "X$STATIC_EXEC" = "Xyes"; then
-  echo "yes"
+  AC_MSG_RESULT([yes])
   ## Issue a warning if -static flag is not supported.
   if test "X$lt_cv_prog_compiler_static_works" = "Xno"; then
-      echo "    warning: -static flag not supported on this system; executable won't statically link shared system libraries."
+      AC_MSG_WARN([-static flag not supported on this system; executable won't statically link shared system libraries])
   fi
   LT_STATIC_EXEC="-all-static"
 else
-  echo "no"
+  AC_MSG_RESULT([no])
   LT_STATIC_EXEC=""
 fi
 
