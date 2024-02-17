@@ -834,8 +834,8 @@ test_szip_chunk()
     for (j = 0; j < CLENGTH; j++) {
         for (i = 0; i < CWIDTH; i++) {
             if (chunk_out[j][i] != chunk4[j][i]) {
-                fprintf(stderr, "Bogus val in loc [%d][%d] in chunk #4, want %ld got %ld\n", j, i,
-                        chunk4[j][i], chunk_out[j][i]);
+                fprintf(stderr, "Bogus val in loc [%d][%d] in chunk #4, want %d got %d\n", j, i, chunk4[j][i],
+                        chunk_out[j][i]);
                 num_errs++;
             }
         }
@@ -852,8 +852,8 @@ test_szip_chunk()
     for (j = 0; j < CLENGTH; j++) {
         for (i = 0; i < CWIDTH; i++)
             if (chunk_out[j][i] != chunk5[j][i]) {
-                fprintf(stderr, "Bogus val in loc [%d][%d] in chunk #5, want %ld got %ld\n", j, i,
-                        chunk5[j][i], chunk_out[j][i]);
+                fprintf(stderr, "Bogus val in loc [%d][%d] in chunk #5, want %d got %d\n", j, i, chunk5[j][i],
+                        chunk_out[j][i]);
                 num_errs++;
             }
     }
@@ -885,9 +885,6 @@ test_szip_chunk()
 #define CHK_DIM1      2  /* second dimension of the chunk */
 #define CHK_DIM2      2  /* third dimension of the chunk */
 
-int16 all_data[SDS_DIM0][SDS_DIM1][SDS_DIM2];
-int16 out_data[SDS_DIM0][SDS_DIM1][SDS_DIM2];
-
 static intn
 test_szip_chunk_3d()
 {
@@ -903,8 +900,11 @@ test_szip_chunk_3d()
     int16         fill_value = 0; /* Fill value */
     comp_coder_t  comp_type;      /* to retrieve compression type into */
     comp_info     cinfo;          /* compression information structure */
-    int           num_errs = 0;   /* number of errors so far */
-    int           i, j, k;
+    int16         all_data[SDS_DIM0][SDS_DIM1][SDS_DIM2];
+    int16         out_data[SDS_DIM0][SDS_DIM1][SDS_DIM2];
+
+    int num_errs = 0; /* number of errors so far */
+    int i, j, k;
 
     for (i = 0; i < SDS_DIM0; i++) {
         for (j = 0; j < SDS_DIM1; j++) {
@@ -1024,7 +1024,7 @@ test_szip_chunk_3d()
         for (j = 0; j < SDS_DIM1; j++) {
             for (k = 0; k < SDS_DIM2; k++) {
                 if (out_data[i][j][k] != all_data[i][j][k]) {
-                    fprintf(stderr, "Bogus val in loc [%d][%d][%d] want %ld got %ld\n", i, j, k,
+                    fprintf(stderr, "Bogus val in loc [%d][%d][%d] want %d got %d\n", i, j, k,
                             out_data[i][j][k], all_data[i][j][k]);
                     num_errs++;
                 }

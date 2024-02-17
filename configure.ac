@@ -756,12 +756,14 @@ case "X-$withval" in
   X-yes)
     HAVE_SZIP="yes"
     AC_CHECK_HEADERS([szlib.h], [HAVE_SZLIB_H="yes"], [unset HAVE_SZIP])
-    if test "x$HAVE_SZLIB" = "xyes" -a "x$HAVE_SZLIB_H" = "xyes"; then
+    if test "x$HAVE_SZIP" = "xyes" -a "x$HAVE_SZLIB_H" = "xyes"; then
       AC_CHECK_LIB([sz], [SZ_BufftoBuffCompress],, [unset HAVE_SZIP])
     fi
 
     if test -z "$HAVE_SZIP"; then
       AC_MSG_ERROR([couldn't find szlib library])
+    else
+      USE_COMP_SZIP="yes"
     fi
     ;;
   X-|X-no|X-none)

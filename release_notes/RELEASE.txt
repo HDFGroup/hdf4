@@ -156,6 +156,16 @@ Support for new platforms and compilers
 Bugs fixed since HDF 4.2.16
 ===========================
 
+    - Fix --with-szlib with no paths not detecting the encoder
+
+      The --with-szlib option in the Autotools has been broken when used
+      without include/library paths for the past decade (git blame says 11
+      years ago). A misnamed variable and a missing setting would skip
+      the encoder check, so the library could only be added in decode-only
+      mode.
+
+      This has been fixed and szip encoding will now be detected normally.
+
     - Fixed an external file bug introduced in 4.2.16
 
       Fixing HDFFR-1607 introduced a bug where the flag that indicates whether
