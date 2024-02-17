@@ -74,7 +74,7 @@ test_ncattput(char *path)
         {"ww", NC_LONG, 1, ___, 0};
     static struct cdfatt tmp; /* attribute */
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -316,9 +316,9 @@ test_ncattput(char *path)
     }
     free(tmp.name);
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 /*
@@ -342,7 +342,7 @@ test_ncattinq(char *path)
     static struct cdfvar vv =   /* new variable */
         {"vv", NC_SHORT, 2, ___, 0};
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -428,9 +428,9 @@ test_ncattinq(char *path)
         nerrs++;
     }
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 /*
@@ -459,7 +459,7 @@ test_ncattget(char *path)
 
     static char pname[] = "test_ncattget";
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -519,9 +519,9 @@ test_ncattget(char *path)
             error("   cdfid=%d, varname=%s, attname=%s, type=%d, len=%d", cdfid,
                   test_g->vars[test_g->atts[ia].var].name, test_g->atts[ia].name, test_g->atts[ia].type,
                   test_g->atts[ia].len);
-            (void)fprintf(stderr, "should have got:");
+            fprintf(stderr, "should have got:");
             val_out(test_g->atts[ia].type, test_g->atts[ia].len, test_g->atts[ia].val);
-            (void)fprintf(stderr, "    instead got:");
+            fprintf(stderr, "    instead got:");
             val_out(tmp.type, tmp.len, tmp.val);
             nerrs++;
         }
@@ -562,9 +562,9 @@ test_ncattget(char *path)
             error("   cdfid=%d, varname=%s, attname=%s, type=%d, len=%d", cdfid,
                   test_g->vars[test_g->atts[ia].var].name, test_g->atts[ia].name, test_g->atts[ia].type,
                   test_g->atts[ia].len);
-            (void)fprintf(stderr, "should have got:");
+            fprintf(stderr, "should have got:");
             val_out(test_g->atts[ia].type, test_g->atts[ia].len, test_g->atts[ia].val);
-            (void)fprintf(stderr, "    instead got:");
+            fprintf(stderr, "    instead got:");
             val_out(tmp.type, tmp.len, tmp.val);
             nerrs++;
         }
@@ -593,9 +593,9 @@ test_ncattget(char *path)
         return;
     }
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 /*
@@ -633,7 +633,7 @@ test_ncattcopy(char *path1, char *path2)
         {___, "att", NC_FLOAT, LEN_OF(float_vals), (void *)float_vals};
     static struct cdfatt tmp; /* attribute */
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if ((cdfid = ncopen(path1, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -911,9 +911,9 @@ test_ncattcopy(char *path1, char *path2)
         nerrs++;
     }
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 /*
@@ -939,7 +939,7 @@ test_ncattname(char *path)
     static struct cdfatt att          = /* attribute */
         {___, ___, NC_SHORT, LEN_OF(short_vals), (void *)short_vals};
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -1103,9 +1103,9 @@ test_ncattname(char *path)
     free(tmp.name);
     free(att.name);
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 /*
@@ -1134,7 +1134,7 @@ test_ncattrename(char *path)
         {___, "arggh", NC_SHORT, LEN_OF(short_vals), (void *)short_vals};
     int ynum; /* attribute number */
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -1256,9 +1256,9 @@ test_ncattrename(char *path)
         return;
     }
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 /*
@@ -1291,7 +1291,7 @@ test_ncattdel(char *path)
     int           natts;            /* number of variable attributes */
     int           xdimid;           /* id of unlimited dimension */
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -1434,7 +1434,7 @@ test_ncattdel(char *path)
     free(vtmp.name);
     free(yav.dims);
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }

@@ -48,7 +48,7 @@ test_ncdimdef(char *path)
     int xdimid; /* id of unlimited dimension, or -1 if none */
     int dimid;  /* dimension id */
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -126,9 +126,9 @@ test_ncdimdef(char *path)
         nerrs++;
     }
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 /*
@@ -149,7 +149,7 @@ test_ncdimid(char *path)
     static struct cdfdim nn =    /* dimension */
         {"nn", 1};               /* 1 should be a valid dimension size */
 
-    (void)fprintf(stderr, "*** Testing %s ...\t\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -207,9 +207,9 @@ test_ncdimid(char *path)
         nerrs++;
     }
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 /*
@@ -229,7 +229,7 @@ test_ncdiminq(char *path)
     int           dimid; /* dimension id */
     struct cdfdim dim;   /* dimension */
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -304,9 +304,9 @@ test_ncdiminq(char *path)
     }
     free(dim.name);
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 /*
@@ -332,7 +332,7 @@ test_ncdimrename(char *path)
     static struct cdfdim qq = /* dimension */
         {"qq", 10};
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -418,7 +418,7 @@ test_ncdimrename(char *path)
     }
     free(dim.name);
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }

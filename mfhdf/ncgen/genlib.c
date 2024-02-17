@@ -22,9 +22,9 @@ derror(const char *fmt, ...)
     va_list args;
 
     if (lineno == 1)
-        (void)fprintf(stderr, "%s: %s: ", progname, cdlname);
+        fprintf(stderr, "%s: %s: ", progname, cdlname);
     else
-        (void)fprintf(stderr, "%s: %s line %d: ", progname, cdlname, lineno);
+        fprintf(stderr, "%s: %s line %d: ", progname, cdlname, lineno);
 
     va_start(args, fmt);
 

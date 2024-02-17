@@ -84,7 +84,7 @@ h4getopt(int argc, char *const argv[], const char *optstring)
         if (*place == 0)
             ++h4optind;
         if (h4opterr && *optstring != ':')
-            (void)fprintf(stderr, "unknown option -- %c\n", h4optopt);
+            fprintf(stderr, "unknown option -- %c\n", h4optopt);
         return BADCH;
     }
 
@@ -108,7 +108,7 @@ h4getopt(int argc, char *const argv[], const char *optstring)
             if (*optstring == ':')
                 return BADARG;
             if (h4opterr)
-                (void)fprintf(stderr, "option requires an argument -- %c\n", h4optopt);
+                fprintf(stderr, "option requires an argument -- %c\n", h4optopt);
             return BADCH;
         }
         place = EMSG;

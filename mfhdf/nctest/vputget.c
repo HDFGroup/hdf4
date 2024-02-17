@@ -91,16 +91,16 @@ test_varputget(int cdfid)
                 error("%s: ncvarput failed for point %d, variable %s", pname, ie, test_g->vars[iv].name);
                 nerrs++;
                 errvar(test_g, &test_g->vars[iv]);
-                (void)fprintf(stderr, "  corner = (");
+                fprintf(stderr, "  corner = (");
                 for (id = 0; id < test_g->vars[iv].ndims; id++)
-                    (void)fprintf(stderr, "%d%s", (int)hc[ie].cor[id],
-                                  (id < test_g->vars[iv].ndims - 1) ? ", " : "");
-                (void)fprintf(stderr, ")\n");
-                (void)fprintf(stderr, "  edge = (");
+                    fprintf(stderr, "%d%s", (int)hc[ie].cor[id],
+                            (id < test_g->vars[iv].ndims - 1) ? ", " : "");
+                fprintf(stderr, ")\n");
+                fprintf(stderr, "  edge = (");
                 for (id = 0; id < test_g->vars[iv].ndims; id++)
-                    (void)fprintf(stderr, "%d%s", (int)hc[ie].edg[id],
-                                  (id < test_g->vars[iv].ndims - 1) ? ", " : "");
-                (void)fprintf(stderr, ")\n");
+                    fprintf(stderr, "%d%s", (int)hc[ie].edg[id],
+                            (id < test_g->vars[iv].ndims - 1) ? ", " : "");
+                fprintf(stderr, ")\n");
             }
             else {
                 add_data(test_g, iv, hc[ie].cor, hc[ie].edg); /* keep test in sync */

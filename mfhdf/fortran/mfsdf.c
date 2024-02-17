@@ -18,6 +18,9 @@
 
   The basic routines called by fortran will be of the form sfxxxx
 */
+
+#include <stdlib.h>
+
 #include "mfsdf.h"
 
 intf nsfscfill(intf *id, _fcd val);

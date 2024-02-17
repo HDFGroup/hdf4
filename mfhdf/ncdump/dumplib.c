@@ -26,13 +26,13 @@ error(const char *fmt, ...)
 {
     va_list args;
 
-    (void)fprintf(stderr, "*** %s: ", progname);
+    fprintf(stderr, "*** %s: ", progname);
 
     va_start(args, fmt);
     (void)vfprintf(stderr, fmt, args);
     va_end(args);
 
-    (void)fprintf(stderr, "\n");
+    fprintf(stderr, "\n");
     (void)fflush(stderr); /* to ensure log files are current */
 }
 

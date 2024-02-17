@@ -600,7 +600,7 @@ main(void)
     cdf_assert(ncvarget1(id, Byte_id, indices[6], (ncvoid *)&got) != -1);
     printf("got val = %c (0x%02x) \n", got.by[0], got.by[0]);
 
-    /* (void)memset(new,0,256) ; */
+    /* memset(new,0,256) ; */
     {
         char *cp = new;
         for (; cp < &new[sizeof(new) - 1]; *cp++ = 0)

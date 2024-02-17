@@ -88,8 +88,6 @@ load_netcdf(void *rec_start) /* write out record from in-memory structure */
         derror("error putting value for variable %s", vars[varnum].name);
 }
 
-#define fpr (void)fprintf
-
 /*
  * Remove trailing zeros (after decimal point) but not trailing decimal
  * point from ss, a string representation of a floating-point number that

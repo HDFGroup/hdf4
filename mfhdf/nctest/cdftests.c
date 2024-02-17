@@ -39,7 +39,7 @@ test_nccreate(char *path)
     static char pname[] = "test_nccreate";
     int         cdfid;
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if ((cdfid = nccreate(path, NC_CLOBBER)) == -1) {
         error("%s: nccreate failed to NC_CLOBBER", pname);
@@ -72,9 +72,9 @@ test_nccreate(char *path)
     /* Initialize in-memory netcdf to empty */
     add_reset(test_g);
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 /*
@@ -98,7 +98,7 @@ test_ncopen(char *path)
     static struct cdfatt title       =                    /* attribute */
         {NC_GLOBAL, "title", NC_CHAR, LEN_OF(title_val), (void *)title_val};
 
-    (void)fprintf(stderr, "*** Testing %s ...\t\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t\t", &pname[5]);
 
     if ((cdfid0 = ncopen(xpath, NC_NOWRITE)) != -1) {
         error("%s: ncopen should fail opening nonexistent file", pname);
@@ -168,9 +168,9 @@ test_ncopen(char *path)
         nerrs++;
     }
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 /*
@@ -199,7 +199,7 @@ test_ncredef(char *path)
     static struct cdfatt aa_units    = /* attribute */
         {___, "units", NC_CHAR, LEN_OF(units_val), (void *)units_val};
 
-    (void)fprintf(stderr, "*** Testing %s ...\t\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -259,9 +259,9 @@ test_ncredef(char *path)
     }
     free(aa.dims);
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 /*
@@ -291,7 +291,7 @@ test_ncendef(char *path)
     static struct cdfatt bb_range     =             /* attribute */
         {___, "valid_range", NC_FLOAT, LEN_OF(bb_rangev), (void *)bb_rangev};
 
-    (void)fprintf(stderr, "*** Testing %s ...\t\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -353,9 +353,9 @@ test_ncendef(char *path)
         nerrs++;
     }
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 /*
@@ -373,7 +373,7 @@ test_ncclose(char *path)
     static char pname[] = "test_ncclose";
     int         cdfid; /* netcdf id */
 
-    (void)fprintf(stderr, "*** Testing %s ...\t\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -405,9 +405,9 @@ test_ncclose(char *path)
         nerrs++;
     }
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 /*
@@ -448,7 +448,7 @@ test_ncinquire(char *path)
     static struct cdfatt cc_units    = /* attribute */
         {___, "units", NC_CHAR, LEN_OF(units_val), (void *)units_val};
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -562,9 +562,9 @@ test_ncinquire(char *path)
         nerrs++;
     }
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 /*
@@ -591,7 +591,7 @@ test_ncsync(char *path)
     static struct cdfatt dd_fill_val    = /* attribute */
         {___, "fill_value", NC_SHORT, LEN_OF(dd_fill_valv), (void *)dd_fill_valv};
 
-    (void)fprintf(stderr, "*** Testing %s ...\t\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t\t", &pname[5]);
 
     if ((cdfid0 = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen in NC_WRITE mode failed", pname);
@@ -694,9 +694,9 @@ test_ncsync(char *path)
         nerrs++;
     }
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 /*
@@ -718,7 +718,7 @@ test_ncabort(char *path)
         {___, "temp", NC_SHORT, LEN_OF(attv), (void *)attv};
     int cdfid; /* netcdf id */
 
-    (void)fprintf(stderr, "*** Testing %s ...\t\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -777,7 +777,7 @@ test_ncabort(char *path)
         nerrs++;
     }
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }

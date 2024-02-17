@@ -85,7 +85,7 @@ pr_vals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *va
         case NC_CHAR:
             gp.cp = (char *)vals;
             if (fmt == 0 || VD_STREQ(fmt, "%s") || VD_STREQ(fmt, "")) { /* as string */
-                Printf("\"");
+                printf("\"");
                 /* adjust len so trailing nulls don't get printed */
                 sp = gp.cp + len;
                 while (len > 0 && *--sp == '\0')
@@ -93,40 +93,40 @@ pr_vals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *va
                 for (iel = 0; iel < len; iel++)
                     switch (uc = *gp.cp++ & 0377) {
                         case '\b':
-                            Printf("\\b");
+                            printf("\\b");
                             break;
                         case '\f':
-                            Printf("\\f");
+                            printf("\\f");
                             break;
                         case '\n': /* generate linebreaks after new-lines */
-                            Printf("\\n\",\n    \"");
+                            printf("\\n\",\n    \"");
                             break;
                         case '\r':
-                            Printf("\\r");
+                            printf("\\r");
                             break;
                         case '\t':
-                            Printf("\\t");
+                            printf("\\t");
                             break;
                         case '\v':
-                            Printf("\\v");
+                            printf("\\v");
                             break;
                         case '\\':
-                            Printf("\\\\");
+                            printf("\\\\");
                             break;
                         case '\'':
-                            Printf("\\\'");
+                            printf("\\\'");
                             break;
                         case '\"':
-                            Printf("\\\"");
+                            printf("\\\"");
                             break;
                         default:
                             if (isprint(uc))
-                                Printf("%c", uc);
+                                printf("%c", uc);
                             else
-                                Printf("\\%.3o", uc);
+                                printf("\\%.3o", uc);
                             break;
                     }
-                Printf("\"");
+                printf("\"");
             }
             else { /* use format from C_format attribute */
                 for (iel = 0; iel < len - 1; iel++) {
@@ -221,14 +221,14 @@ static void
 lastdelim(bool more, bool lastrow)
 {
     if (more) {
-        Printf(", ");
+        printf(", ");
     }
     else {
         if (lastrow) {
-            Printf(";");
+            printf(";");
         }
         else {
-            Printf(",");
+            printf(",");
         }
     }
 }
@@ -247,23 +247,23 @@ annotate(struct ncvar *vp, struct fspec *fsp, long cor[], long iel)
     int id;
 
     /* print indices according to data_lang */
-    (void)printf("  // %s(", vp->name);
+    printf("  // %s(", vp->name);
     switch (fsp->data_lang) {
         case LANG_C:
             /* C variable indices */
             for (id = 0; id < vrank - 1; id++)
-                Printf("%d,", (int)cor[id]);
-            Printf("%d", (int)(cor[id] + iel));
+                printf("%d,", (int)cor[id]);
+            printf("%d", (int)(cor[id] + iel));
             break;
         case LANG_F:
             /* Fortran variable indices */
-            Printf("%d", (int)(cor[vrank - 1] + iel + 1));
+            printf("%d", (int)(cor[vrank - 1] + iel + 1));
             for (id = vrank - 2; id >= 0; id--) {
-                Printf(",%d", (int)(1 + cor[id]));
+                printf(",%d", (int)(1 + cor[id]));
             }
             break;
     }
-    Printf(")\n    ");
+    printf(")\n    ");
 }
 
 /*
@@ -313,18 +313,18 @@ pr_cvals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *v
         case NC_BYTE:
             gp.cp = (char *)vals;
             for (iel = 0; iel < len - 1; iel++) {
-                Printf(fmt, *gp.cp++);
-                Printf(", ");
+                printf(fmt, *gp.cp++);
+                printf(", ");
                 annotate(vp, fsp, cor, iel);
             }
-            Printf(fmt, *gp.cp++);
+            printf(fmt, *gp.cp++);
             lastdelim(more, lastrow);
             annotate(vp, fsp, cor, iel);
             break;
         case NC_CHAR:
             gp.cp = (char *)vals;
             if (fmt == 0 || VD_STREQ(fmt, "%s") || VD_STREQ(fmt, "")) { /* as string */
-                Printf("\"");
+                printf("\"");
                 /* adjust len so trailing nulls don't get printed */
                 sp = gp.cp + len;
                 while (len > 0 && *--sp == '\0')
@@ -332,49 +332,49 @@ pr_cvals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *v
                 for (iel = 0; iel < len; iel++)
                     switch (uc = *gp.cp++ & 0377) {
                         case '\b':
-                            Printf("\\b");
+                            printf("\\b");
                             break;
                         case '\f':
-                            Printf("\\f");
+                            printf("\\f");
                             break;
                         case '\n': /* generate linebreaks after new-lines */
-                            Printf("\\n\",\n    \"");
+                            printf("\\n\",\n    \"");
                             break;
                         case '\r':
-                            Printf("\\r");
+                            printf("\\r");
                             break;
                         case '\t':
-                            Printf("\\t");
+                            printf("\\t");
                             break;
                         case '\v':
-                            Printf("\\v");
+                            printf("\\v");
                             break;
                         case '\\':
-                            Printf("\\\\");
+                            printf("\\\\");
                             break;
                         case '\'':
-                            Printf("\\\'");
+                            printf("\\\'");
                             break;
                         case '\"':
-                            Printf("\\\"");
+                            printf("\\\"");
                             break;
                         default:
                             if (isprint(uc))
-                                Printf("%c", uc);
+                                printf("%c", uc);
                             else
-                                Printf("\\%.3o", uc);
+                                printf("\\%.3o", uc);
                             break;
                     }
-                Printf("\"");
+                printf("\"");
                 annotate(vp, fsp, cor, 0);
             }
             else { /* use format from C_format attribute */
                 for (iel = 0; iel < len - 1; iel++) {
-                    Printf(fmt, *gp.cp++);
-                    Printf(", ");
+                    printf(fmt, *gp.cp++);
+                    printf(", ");
                     annotate(vp, fsp, cor, iel);
                 }
-                Printf(fmt, *gp.cp++);
+                printf(fmt, *gp.cp++);
                 lastdelim(more, lastrow);
                 annotate(vp, fsp, cor, iel);
             }
@@ -382,22 +382,22 @@ pr_cvals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *v
         case NC_SHORT:
             gp.sp = (short *)vals;
             for (iel = 0; iel < len - 1; iel++) {
-                Printf(fmt, *gp.sp++);
-                Printf(", ");
+                printf(fmt, *gp.sp++);
+                printf(", ");
                 annotate(vp, fsp, cor, iel);
             }
-            Printf(fmt, *gp.sp++);
+            printf(fmt, *gp.sp++);
             lastdelim(more, lastrow);
             annotate(vp, fsp, cor, iel);
             break;
         case NC_LONG:
             gp.lp = (nclong *)vals;
             for (iel = 0; iel < len - 1; iel++) {
-                Printf(fmt, *gp.lp++);
-                Printf(", ");
+                printf(fmt, *gp.lp++);
+                printf(", ");
                 annotate(vp, fsp, cor, iel);
             }
-            Printf(fmt, *gp.lp++);
+            printf(fmt, *gp.lp++);
             lastdelim(more, lastrow);
             annotate(vp, fsp, cor, iel);
             break;
@@ -405,17 +405,17 @@ pr_cvals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *v
             gp.fp = (float *)vals;
             for (iel = 0; iel < len - 1; iel++) {
                 if (*gp.fp >= fill_float)
-                    Printf("FloatInf");
+                    printf("FloatInf");
                 else
-                    Printf(fmt, (double)*gp.fp);
-                Printf(",");
+                    printf(fmt, (double)*gp.fp);
+                printf(",");
                 annotate(vp, fsp, cor, iel);
                 gp.fp++;
             }
             if (*gp.fp >= fill_float)
-                Printf("FloatInf");
+                printf("FloatInf");
             else
-                Printf(fmt, (double)*gp.fp);
+                printf(fmt, (double)*gp.fp);
             lastdelim(more, lastrow);
             annotate(vp, fsp, cor, iel);
             gp.fp++;
@@ -424,18 +424,18 @@ pr_cvals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *v
             gp.dp = (double *)vals;
             for (iel = 0; iel < len - 1; iel++) {
                 if (*gp.dp >= fill_double)
-                    Printf("DoubleInf");
+                    printf("DoubleInf");
                 else {
-                    Printf(fmt, *gp.dp);
+                    printf(fmt, *gp.dp);
                 }
-                Printf(",");
+                printf(",");
                 annotate(vp, fsp, cor, iel);
                 gp.dp++;
             }
             if (*gp.dp >= fill_double)
-                Printf("DoubleInf");
+                printf("DoubleInf");
             else
-                Printf(fmt, *gp.dp);
+                printf(fmt, *gp.dp);
             lastdelim(more, lastrow);
             annotate(vp, fsp, cor, iel);
             gp.dp++;
@@ -509,11 +509,11 @@ vardata(struct ncvar *vp, long vdims[], int ncid, int varid, struct fspec *fsp)
     fixed_var = sanitize_string(vp->name, fsp->fix_str);
 
     if (vrank <= 1) {
-        Printf("\n %s = ", fixed_var);
+        printf("\n %s = ", fixed_var);
         set_indent(strlen(fixed_var) + 4);
     }
     else {
-        Printf("\n %s =\n  ", fixed_var);
+        printf("\n %s =\n  ", fixed_var);
         set_indent(2);
     }
 
@@ -544,29 +544,29 @@ vardata(struct ncvar *vp, long vdims[], int ncid, int varid, struct fspec *fsp)
             corsav = cor[vrank - 1];
             if (fsp->brief_data_cmnts != false && vrank > 1 &&
                 left > 0) { /* print brief comment with indices range */
-                Printf("// %s(", fixed_var);
+                printf("// %s(", fixed_var);
                 switch (fsp->data_lang) {
                     case LANG_C:
                         /* print brief comment with C variable indices */
                         for (id = 0; id < vrank - 1; id++)
-                            Printf("%d,", (int)cor[id]);
+                            printf("%d,", (int)cor[id]);
                         if (vdims[vrank - 1] == 1)
-                            Printf("0");
+                            printf("0");
                         else
-                            Printf(" 0-%d", (int)vdims[vrank - 1] - 1);
+                            printf(" 0-%d", (int)vdims[vrank - 1] - 1);
                         break;
                     case LANG_F:
                         /* print brief comment with Fortran variable indices */
                         if (vdims[vrank - 1] == 1)
-                            Printf("1");
+                            printf("1");
                         else
-                            Printf("1-%d ", (int)vdims[vrank - 1]);
+                            printf("1-%d ", (int)vdims[vrank - 1]);
                         for (id = vrank - 2; id >= 0; id--) {
-                            Printf(",%d", (int)(1 + cor[id]));
+                            printf(",%d", (int)(1 + cor[id]));
                         }
                         break;
                 }
-                Printf(")\n    ");
+                printf(")\n    ");
                 set_indent(4);
             }
         }

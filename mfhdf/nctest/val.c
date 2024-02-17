@@ -211,33 +211,33 @@ val_out(nc_type type, long len, void *vals)
         double *dp;
     } gp;
 
-    (void)fprintf(stderr, "   ");
+    fprintf(stderr, "   ");
     switch (type) {
         case NC_BYTE:
         case NC_CHAR:
             gp.cp = (char *)vals;
             for (iel = 0; iel < len; iel++)
-                (void)fprintf(stderr, "%d%s", *gp.cp++, iel < len - 1 ? ", " : "");
+                fprintf(stderr, "%d%s", *gp.cp++, iel < len - 1 ? ", " : "");
             break;
         case NC_SHORT:
             gp.sp = (short *)vals;
             for (iel = 0; iel < len; iel++)
-                (void)fprintf(stderr, "%d%s", *gp.sp++, iel < len - 1 ? ", " : "");
+                fprintf(stderr, "%d%s", *gp.sp++, iel < len - 1 ? ", " : "");
             break;
         case NC_LONG:
             gp.lp = (nclong *)vals;
             for (iel = 0; iel < len; iel++)
-                (void)fprintf(stderr, "%d%s", (int)*gp.lp++, iel < len - 1 ? ", " : "");
+                fprintf(stderr, "%d%s", (int)*gp.lp++, iel < len - 1 ? ", " : "");
             break;
         case NC_FLOAT:
             gp.fp = (float *)vals;
             for (iel = 0; iel < len; iel++)
-                (void)fprintf(stderr, "%g%s", (double)*gp.fp++, iel < len - 1 ? ", " : "");
+                fprintf(stderr, "%g%s", (double)*gp.fp++, iel < len - 1 ? ", " : "");
             break;
         case NC_DOUBLE:
             gp.dp = (double *)vals;
             for (iel = 0; iel < len; iel++)
-                (void)fprintf(stderr, "%g%s", *gp.dp++, iel < len - 1 ? ", " : "");
+                fprintf(stderr, "%g%s", *gp.dp++, iel < len - 1 ? ", " : "");
             break;
         default:
             error("%s: bad type, test program error", pname);
