@@ -44,7 +44,7 @@ test_ncvargetg(char *path)
     } hc;                           /* test hypercube */
     long strides[H4_MAX_VAR_DIMS];  /* external, I/O strides */
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -149,7 +149,7 @@ test_ncvargetg(char *path)
     }
     free(hc.vals);
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }

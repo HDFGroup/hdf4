@@ -26,13 +26,13 @@ error(const char *fmt, ...)
 {
     va_list args;
 
-    (void)fprintf(stderr, "*** ");
+    fprintf(stderr, "*** ");
 
     va_start(args, fmt);
     (void)vfprintf(stderr, fmt, args);
     va_end(args);
 
-    (void)fprintf(stderr, "\n");
+    fprintf(stderr, "\n");
     error_count++;
 }
 

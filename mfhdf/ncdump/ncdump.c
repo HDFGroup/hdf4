@@ -149,13 +149,13 @@ pr_att_vals(nc_type type, int len, void *vals)
             gp.cp = (char *)vals;
             for (iel = 0; iel < len; iel++)
                 if (isprint(uc = *gp.cp++ & 0377))
-                    Printf("'%c'%s", uc, iel < len - 1 ? ", " : "");
+                    printf("'%c'%s", uc, iel < len - 1 ? ", " : "");
                 else
-                    Printf("'\\%o'%s", uc, iel < len - 1 ? ", " : "");
+                    printf("'\\%o'%s", uc, iel < len - 1 ? ", " : "");
             break;
         case NC_CHAR:
             gp.cp = (char *)vals;
-            Printf("\"");
+            printf("\"");
             /* adjust len so trailing nulls don't get printed */
             sp = gp.cp + len - 1;
             while (*sp-- == '\0' && len > 0)
@@ -163,47 +163,47 @@ pr_att_vals(nc_type type, int len, void *vals)
             for (iel = 0; iel < len; iel++)
                 switch (uc = *gp.cp++ & 0377) {
                     case '\b':
-                        Printf("\\b");
+                        printf("\\b");
                         break;
                     case '\f':
-                        Printf("\\f");
+                        printf("\\f");
                         break;
                     case '\n': /* generate linebreaks after new-lines */
-                        Printf("\\n\",\n    \"");
+                        printf("\\n\",\n    \"");
                         break;
                     case '\r':
-                        Printf("\\r");
+                        printf("\\r");
                         break;
                     case '\t':
-                        Printf("\\t");
+                        printf("\\t");
                         break;
                     case '\v':
-                        Printf("\\v");
+                        printf("\\v");
                         break;
                     case '\\':
-                        Printf("\\\\");
+                        printf("\\\\");
                         break;
                     case '\'':
-                        Printf("\\'");
+                        printf("\\'");
                         break;
                     case '\"':
-                        Printf("\\\"");
+                        printf("\\\"");
                         break;
                     default:
-                        Printf("%c", uc);
+                        printf("%c", uc);
                         break;
                 }
-            Printf("\"");
+            printf("\"");
             break;
         case NC_SHORT:
             gp.sp = (short *)vals;
             for (iel = 0; iel < len; iel++)
-                Printf("%ds%s", *gp.sp++, iel < len - 1 ? ", " : "");
+                printf("%ds%s", *gp.sp++, iel < len - 1 ? ", " : "");
             break;
         case NC_LONG:
             gp.lp = (nclong *)vals;
             for (iel = 0; iel < len; iel++)
-                Printf("%d%s", (int)*gp.lp++, iel < len - 1 ? ", " : "");
+                printf("%d%s", (int)*gp.lp++, iel < len - 1 ? ", " : "");
             break;
         case NC_FLOAT:
             gp.fp = (float *)vals;
@@ -215,7 +215,7 @@ pr_att_vals(nc_type type, int len, void *vals)
                 gps[ll + 1] = '\0';
                 gps[ll]     = 'f';
                 tztrim(gps); /* trim trailing 0's after '.' */
-                Printf("%s%s", gps, iel < len - 1 ? ", " : "");
+                printf("%s%s", gps, iel < len - 1 ? ", " : "");
             }
             break;
         case NC_DOUBLE:
@@ -223,7 +223,7 @@ pr_att_vals(nc_type type, int len, void *vals)
             for (iel = 0; iel < len; iel++) {
                 (void)sprintf(gps, d_fmt, *gp.dp++);
                 tztrim(gps); /* trim trailing 0's after '.' */
-                Printf("%s%s", gps, iel < len - 1 ? ", " : "");
+                printf("%s%s", gps, iel < len - 1 ? ", " : "");
             }
             break;
         default:
@@ -306,7 +306,7 @@ do_ncdump(char *path, struct fspec *specp)
     if (specp->name == NULL)
         specp->name = name_path(path);
 
-    Printf("netcdf %s {\n", specp->name);
+    printf("netcdf %s {\n", specp->name);
 
     /*
      * get number of dimensions, number of variables, number of global
@@ -316,7 +316,7 @@ do_ncdump(char *path, struct fspec *specp)
 
     /* get dimension info */
     if (ndims > 0) {
-        Printf("dimensions:\n");
+        printf("dimensions:\n");
 
         for (dimid = 0; dimid < ndims; dimid++) {
             char *fixed_str = NULL;
@@ -331,15 +331,15 @@ do_ncdump(char *path, struct fspec *specp)
             }
 
             if (dimid == xdimid)
-                Printf("\t%s = %s ; // (%d currently)\n", fixed_str, "UNLIMITED", (int)dims[dimid].size);
+                printf("\t%s = %s ; // (%d currently)\n", fixed_str, "UNLIMITED", (int)dims[dimid].size);
             else
-                Printf("\t%s = %ld ;\n", fixed_str, dims[dimid].size);
+                printf("\t%s = %ld ;\n", fixed_str, dims[dimid].size);
 
             free(fixed_str);
         }
     }
 
-    Printf("\nvariables:\n");
+    printf("\nvariables:\n");
 
     /* get variable info, with variable attributes */
     for (varid = 0; varid < nvars; varid++) {
@@ -353,10 +353,10 @@ do_ncdump(char *path, struct fspec *specp)
             return;
         }
 
-        Printf("\t%s %s", type_name(var.type), fixed_var);
+        printf("\t%s %s", type_name(var.type), fixed_var);
 
         if (var.ndims > 0)
-            Printf("(");
+            printf("(");
 
         for (id = 0; id < var.ndims; id++) {
             char *fixed_dim = sanitize_string(dims[var.dims[id]].name, specp->fix_str);
@@ -367,11 +367,11 @@ do_ncdump(char *path, struct fspec *specp)
                 return;
             }
 
-            Printf("%s%s", fixed_dim, id < var.ndims - 1 ? ", " : ")");
+            printf("%s%s", fixed_dim, id < var.ndims - 1 ? ", " : ")");
             free(fixed_dim);
         }
 
-        Printf(" ;\n");
+        printf(" ;\n");
 
         /* get variable attributes */
         for (ia = 0; ia < var.natts; ia++) {
@@ -386,7 +386,7 @@ do_ncdump(char *path, struct fspec *specp)
                 return;
             }
 
-            Printf("\t\t%s:%s = ", fixed_var, fixed_att);
+            printf("\t\t%s:%s = ", fixed_var, fixed_att);
             (void)ncattinq(ncid, varid, att.name, &att.type, &att.len);
             att.val = (void *)malloc((unsigned)att.len * nctypelen(att.type));
 
@@ -400,7 +400,7 @@ do_ncdump(char *path, struct fspec *specp)
 
             (void)ncattget(ncid, varid, att.name, att.val);
             pr_att_vals(att.type, att.len, att.val);
-            Printf(" ;\n");
+            printf(" ;\n");
             free(att.val);
             free(fixed_att);
         }
@@ -410,7 +410,7 @@ do_ncdump(char *path, struct fspec *specp)
 
     /* get global attributes */
     if (ngatts > 0)
-        Printf("\n// global attributes:\n");
+        printf("\n// global attributes:\n");
 
     for (ia = 0; ia < ngatts; ia++) {
         char *fixed_att;
@@ -423,7 +423,7 @@ do_ncdump(char *path, struct fspec *specp)
             return;
         }
 
-        Printf("\t\t:%s = ", fixed_att);
+        printf("\t\t:%s = ", fixed_att);
 
         (void)ncattinq(ncid, NC_GLOBAL, att.name, &att.type, &att.len);
         att.val = malloc((unsigned)(att.len * nctypelen(att.type)));
@@ -437,14 +437,14 @@ do_ncdump(char *path, struct fspec *specp)
 
         (void)ncattget(ncid, NC_GLOBAL, att.name, att.val);
         pr_att_vals(att.type, att.len, att.val);
-        Printf(" ;\n");
+        printf(" ;\n");
         free(att.val);
         free(fixed_att);
     }
 
     if (!specp->header_only) {
         if (nvars > 0)
-            Printf("\ndata:\n");
+            printf("\ndata:\n");
 
         /* output variable data */
         for (varid = 0; varid < nvars; varid++) {
@@ -525,7 +525,7 @@ do_ncdump(char *path, struct fspec *specp)
         }
     }
 
-    Printf("}\n");
+    printf("}\n");
     (void)ncclose(ncid);
 }
 

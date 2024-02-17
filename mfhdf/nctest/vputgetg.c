@@ -116,26 +116,26 @@ test_varputgetg(int cdfid)
                 error("%s: ncvarputg failed for point %d, variable %s", pname, ie, test_g->vars[iv].name);
                 nerrs++;
                 errvar(test_g, &test_g->vars[iv]);
-                (void)fprintf(stderr, "  corner = (");
+                fprintf(stderr, "  corner = (");
                 for (id = 0; id < test_g->vars[iv].ndims; id++)
-                    (void)fprintf(stderr, "%d%s", (int)hc[ie].cor[id],
+                    fprintf(stderr, "%d%s", (int)hc[ie].cor[id],
                                   (id < test_g->vars[iv].ndims - 1) ? ", " : "");
-                (void)fprintf(stderr, ")\n");
-                (void)fprintf(stderr, "  edge = (");
+                fprintf(stderr, ")\n");
+                fprintf(stderr, "  edge = (");
                 for (id = 0; id < test_g->vars[iv].ndims; id++)
-                    (void)fprintf(stderr, "%d%s", (int)hc[ie].edg[id],
+                    fprintf(stderr, "%d%s", (int)hc[ie].edg[id],
                                   (id < test_g->vars[iv].ndims - 1) ? ", " : "");
-                (void)fprintf(stderr, ")\n");
-                (void)fprintf(stderr, "  external strides = (");
+                fprintf(stderr, ")\n");
+                fprintf(stderr, "  external strides = (");
                 for (id = 0; id < test_g->vars[iv].ndims; id++)
-                    (void)fprintf(stderr, "%d%s", (int)strides[id],
+                    fprintf(stderr, "%d%s", (int)strides[id],
                                   (id < test_g->vars[iv].ndims - 1) ? ", " : "");
-                (void)fprintf(stderr, ")\n");
-                (void)fprintf(stderr, "  internal basis vector = (");
+                fprintf(stderr, ")\n");
+                fprintf(stderr, "  internal basis vector = (");
                 for (id = 0; id < test_g->vars[iv].ndims; id++)
-                    (void)fprintf(stderr, "%d%s", (int)basis[id],
+                    fprintf(stderr, "%d%s", (int)basis[id],
                                   (id < test_g->vars[iv].ndims - 1) ? ", " : "");
-                (void)fprintf(stderr, ")\n");
+                fprintf(stderr, ")\n");
             }
             else {
                 long dsize[H4_MAX_VAR_DIMS];

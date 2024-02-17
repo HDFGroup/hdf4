@@ -42,7 +42,7 @@ test_ncvarget(char *path)
         void *vals;                 /* pointer to block of values */
     } hc;                           /* test hypercube */
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -143,7 +143,7 @@ test_ncvarget(char *path)
     }
     free(hc.vals);
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }

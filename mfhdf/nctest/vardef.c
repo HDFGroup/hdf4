@@ -59,7 +59,7 @@ test_ncvardef(char *path)
     int                  nd   = LEN_OF(di); /* number of dimensions */
     int                  di_id[LEN_OF(di)]; /* dimension ids */
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -272,7 +272,7 @@ test_ncvardef(char *path)
     for (iv = 0; iv < nv; iv++)
         free(va[iv].dims);
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }

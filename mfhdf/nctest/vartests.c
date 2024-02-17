@@ -42,7 +42,7 @@ test_ncvarid(char *path)
     static struct cdfvar xx =   /* variable */
         {"xx", NC_FLOAT, 1, ___, 0};
 
-    (void)fprintf(stderr, "*** Testing %s ...\t\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -98,9 +98,9 @@ test_ncvarid(char *path)
         nerrs++;
     }
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 /*
@@ -121,7 +121,7 @@ test_ncvarinq(char *path)
     struct cdfvar var;   /* variable */
     int           idim;
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -223,9 +223,9 @@ test_ncvarinq(char *path)
     free(var.dims);
     free(var.name);
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 struct cdfelm { /* coordinates and generic value */
@@ -381,7 +381,7 @@ test_ncvarput1(char *path)
     int           iv;    /* variable id */
     struct cdfelm elm;   /* coordinates and value of test point */
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -448,9 +448,9 @@ test_ncvarput1(char *path)
         nerrs++;
     }
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 /*
@@ -472,7 +472,7 @@ test_ncvarget1(char *path)
     int           iv;    /* variable id */
     struct cdfelm elm;   /* coordinates and value of test point */
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -539,9 +539,9 @@ test_ncvarget1(char *path)
         nerrs++;
     }
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
 
 /*
@@ -569,7 +569,7 @@ test_ncvarrename(char *path)
     static struct cdfvar zz =                 /* variable */
         {"zz", NC_BYTE, 2, ___, 0};
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
         error("%s: ncopen failed", pname);
@@ -670,7 +670,7 @@ test_ncvarrename(char *path)
     free(var.name);
     free(var.dims);
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }

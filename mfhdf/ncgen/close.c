@@ -19,8 +19,6 @@ cl_netcdf()
         derror("error closing netcdf");
 }
 
-#define fpr (void)fprintf
-
 static void
 cl_c()
 {

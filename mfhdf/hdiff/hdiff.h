@@ -11,8 +11,6 @@
 #include "mfhdf.h"
 #include "hdiff_table.h"
 
-#define Printf (void)printf
-
 /* Maximum value for max_err_cnt */
 #define MAX_DIFF 0x7FFFFFFF
 

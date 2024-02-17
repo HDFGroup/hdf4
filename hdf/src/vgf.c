@@ -680,7 +680,7 @@ nvssextfc(intf *id, _fcd name, intf *offset, intf *namelen)
     if (!fn)
         return FAIL;
     ret = (intf)VSsetexternalfile(*id, fn, *offset);
-    free((void *)fn);
+    free(fn);
     return ret;
 }
 

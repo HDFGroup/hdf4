@@ -314,8 +314,8 @@ fline(const char *stmnt)
     while (len > 0) {
         if (line >= FORT_MAX_LINES)
             derror("FORTRAN statement too long: %s", stmnt);
-        (void)fprintf(fout, "     %c", cont[line++]);
-        (void)fprintf(fout, "%.66s\n", stmnt);
+        fprintf(fout, "     %c", cont[line++]);
+        fprintf(fout, "%.66s\n", stmnt);
         len -= 66;
         if (len > 0)
             stmnt += 66;

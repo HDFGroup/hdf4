@@ -131,13 +131,13 @@ pr_att_vals(nc_type type, int len, void *vals)
             gp.cp = (char *)vals;
             for (iel = 0; iel < len; iel++)
                 if (isprint(uc = *gp.cp++ & 0377))
-                    Printf("'%c'%s", uc, iel < len - 1 ? ", " : "");
+                    printf("'%c'%s", uc, iel < len - 1 ? ", " : "");
                 else
-                    Printf("'\\%o'%s", uc, iel < len - 1 ? ", " : "");
+                    printf("'\\%o'%s", uc, iel < len - 1 ? ", " : "");
             break;
         case DFNT_CHAR:
             gp.cp = (char *)vals;
-            Printf("\"");
+            printf("\"");
             /* adjust len so trailing nulls don't get printed */
             sp = gp.cp + len - 1;
             while (*sp-- == '\0' && len > 0)
@@ -145,47 +145,47 @@ pr_att_vals(nc_type type, int len, void *vals)
             for (iel = 0; iel < len; iel++)
                 switch (uc = *gp.cp++ & 0377) {
                     case '\b':
-                        Printf("\\b");
+                        printf("\\b");
                         break;
                     case '\f':
-                        Printf("\\f");
+                        printf("\\f");
                         break;
                     case '\n': /* generate linebreaks after new-lines */
-                        Printf("\\n\",\n    \"");
+                        printf("\\n\",\n    \"");
                         break;
                     case '\r':
-                        Printf("\\r");
+                        printf("\\r");
                         break;
                     case '\t':
-                        Printf("\\t");
+                        printf("\\t");
                         break;
                     case '\v':
-                        Printf("\\v");
+                        printf("\\v");
                         break;
                     case '\\':
-                        Printf("\\\\");
+                        printf("\\\\");
                         break;
                     case '\'':
-                        Printf("\\'");
+                        printf("\\'");
                         break;
                     case '\"':
-                        Printf("\\\"");
+                        printf("\\\"");
                         break;
                     default:
-                        Printf("%c", uc);
+                        printf("%c", uc);
                         break;
                 }
-            Printf("\"");
+            printf("\"");
             break;
         case DFNT_INT16:
             gp.sp = (int16 *)vals;
             for (iel = 0; iel < len; iel++)
-                Printf("%ds%s", *gp.sp++, iel < len - 1 ? ", " : "");
+                printf("%ds%s", *gp.sp++, iel < len - 1 ? ", " : "");
             break;
         case DFNT_INT32:
             gp.lp = (int32 *)vals;
             for (iel = 0; iel < len; iel++)
-                Printf("%d%s", *gp.lp++, iel < len - 1 ? ", " : "");
+                printf("%d%s", *gp.lp++, iel < len - 1 ? ", " : "");
             break;
         case DFNT_FLOAT:
             gp.fp = (float32 *)vals;
@@ -197,7 +197,7 @@ pr_att_vals(nc_type type, int len, void *vals)
                 gps[ll + 1] = '\0';
                 gps[ll]     = 'f';
                 tztrim(gps); /* trim trailing 0's after '.' */
-                Printf("%s%s", gps, iel < len - 1 ? ", " : "");
+                printf("%s%s", gps, iel < len - 1 ? ", " : "");
             }
             break;
         case DFNT_DOUBLE:
@@ -205,7 +205,7 @@ pr_att_vals(nc_type type, int len, void *vals)
             for (iel = 0; iel < len; iel++) {
                 (void)sprintf(gps, d_fmt, *gp.dp++);
                 tztrim(gps); /* trim trailing 0's after '.' */
-                Printf("%s%s", gps, iel < len - 1 ? ", " : "");
+                printf("%s%s", gps, iel < len - 1 ? ", " : "");
             }
             break;
         default:

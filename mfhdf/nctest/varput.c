@@ -45,7 +45,7 @@ test_ncvarput(char *path)
     int tmp;
     int id; /* dimension id */
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     /* handle case where struct netcdf test is uninitialised */
     hc.cor[0] = 0;
@@ -150,7 +150,7 @@ test_ncvarput(char *path)
     }
     free(hc.vals);
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }

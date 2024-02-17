@@ -210,7 +210,7 @@ rImage(int usepal)
      *  If a palette should be used, send it with the M command.
      */
     if (usepal) {
-        (void)printf("\033^M;0;256;768;rseq^"); /* start map */
+        printf("\033^M;0;256;768;rseq^"); /* start map */
 
         thischar = (int8 *)rgb;
         for (j = 0; j < 768; j++) {
@@ -236,7 +236,7 @@ rImage(int usepal)
         newxsize = rleIt((char *)thisline, (char *)space, (int)xdim);
         thisline += xdim; /* increment to next line */
 
-        (void)printf("\033^R;0;%d;%d;%d;rseq^", i * factor, factor, newxsize);
+        printf("\033^R;0;%d;%d;%d;rseq^", i * factor, factor, newxsize);
 
         thischar = space;
         for (j = 0; j < newxsize; j++) {

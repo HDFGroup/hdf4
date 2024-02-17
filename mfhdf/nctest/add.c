@@ -29,7 +29,7 @@ add_dim(struct netcdf *test, struct cdfdim *idim)
     static char pname[] = "add_dim";
 
     if (test->ndims >= H4_MAX_NC_DIMS) {
-        (void)fprintf(stderr, "%s: too many dimensions (%d)", pname, test->ndims);
+        fprintf(stderr, "%s: too many dimensions (%d)", pname, test->ndims);
         return;
     }
     test->dims[test->ndims].size = idim->size;
@@ -48,7 +48,7 @@ add_var(struct netcdf *test, struct cdfvar *ivar)
     int         i;
 
     if (test->nvars >= H4_MAX_NC_VARS) {
-        (void)fprintf(stderr, "%s: too many variables (%d)", pname, test->nvars);
+        fprintf(stderr, "%s: too many variables (%d)", pname, test->nvars);
         return;
     }
 
@@ -71,7 +71,7 @@ add_att(struct netcdf *test, int varid, struct cdfatt *iatt)
     int         ia; /* attribute number */
 
     if (test->natts >= MAX_TEST_ATTS) {
-        (void)fprintf(stderr, "%s: too many attributes (%d)", pname, test->natts);
+        fprintf(stderr, "%s: too many attributes (%d)", pname, test->natts);
         return;
     }
 
@@ -135,7 +135,7 @@ del_att(struct netcdf *test, int varid, struct cdfatt *iatt)
         }
     }
     /* not found */
-    (void)fprintf(stderr, "%s: no such attribute as (%s, %s)", pname, test->vars[varid].name, iatt->name);
+    fprintf(stderr, "%s: no such attribute as (%s, %s)", pname, test->vars[varid].name, iatt->name);
 }
 
 /* keep max record written updated */
@@ -178,8 +178,8 @@ errvar(struct netcdf *cdfp, struct cdfvar *varp)
             break;
     }
 
-    (void)fprintf(stderr, "  name=%s  type=%s  dims=(", varp->name, types);
+    fprintf(stderr, "  name=%s  type=%s  dims=(", varp->name, types);
     for (id = 0; id < varp->ndims; id++)
-        (void)fprintf(stderr, "%d%s", (int)cdfp->dims[varp->dims[id]].size, id < varp->ndims - 1 ? ", " : "");
-    (void)fprintf(stderr, ")\n");
+        fprintf(stderr, "%d%s", (int)cdfp->dims[varp->dims[id]].size, id < varp->ndims - 1 ? ", " : "");
+    fprintf(stderr, ")\n");
 }

@@ -353,7 +353,7 @@ main(int argc, char *argv[])
      * validate the number of command line arguments
      */
     if (argc < 2) {
-        (void)fprintf(stderr, err1, argc);
+        fprintf(stderr, err1, argc);
         usage(argv[0]);
         goto err;
     }
@@ -428,7 +428,7 @@ main(int argc, char *argv[])
                 break;
             case ERR: /* command syntax error */
             default:
-                (void)fprintf(stderr, "%s", err2);
+                fprintf(stderr, "%s", err2);
                 usage(argv[0]);
                 goto err;
         }
@@ -438,7 +438,7 @@ main(int argc, char *argv[])
      * make sure an output file was specified
      */
     if (!outfile_named) {
-        (void)fprintf(stderr, "%s", err3);
+        fprintf(stderr, "%s", err3);
         usage(argv[0]);
         goto err;
     }
@@ -456,7 +456,7 @@ main(int argc, char *argv[])
     return (0);
 
 err:
-    (void)fprintf(stderr, "%s", err4);
+    fprintf(stderr, "%s", err4);
     return (1);
 }
 
@@ -496,7 +496,7 @@ gdata(char *infile, struct Input *in, FILE *strm, int *is_maxmin)
         }
 
         if (DFSDgetdata(infile, in->rank, hdfdims, in->data)) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
     }
@@ -505,7 +505,7 @@ gdata(char *infile, struct Input *in, FILE *strm, int *is_maxmin)
             for (j = 0; j < in->dims[1]; j++) {
                 for (i = 0; i < in->dims[0]; i++, fp32++) {
                     if (gfloat(infile, strm, fp32, in)) {
-                        (void)fprintf(stderr, err1, infile);
+                        fprintf(stderr, err1, infile);
                         goto err;
                     }
                 }
@@ -557,13 +557,13 @@ gdimen(char *infile, struct Input *inp, FILE *strm)
      */
     if (inp->is_hdf == TRUE) {
         if (DFSDgetdims(infile, &inp->rank, hdfdims, 3) == FAIL) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
 
         /* don't know how to deal with other numbers yet */
         if (DFSDgetNT(&nt) == FAIL || nt != DFNT_FLOAT32) {
-            (void)fprintf(stderr, err4, infile);
+            fprintf(stderr, err4, infile);
             goto err;
         }
 
@@ -582,7 +582,7 @@ gdimen(char *infile, struct Input *inp, FILE *strm)
             inp->dims[2] = hdfdims[0];
         }
         else {
-            (void)fprintf(stderr, err2, inp->rank, infile);
+            fprintf(stderr, err2, inp->rank, infile);
             goto err;
         }
 
@@ -593,7 +593,7 @@ gdimen(char *infile, struct Input *inp, FILE *strm)
     }
     else {
         if (gint(infile, strm, &inp->dims[2], inp)) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
         if (inp->dims[2] > 1)
@@ -601,11 +601,11 @@ gdimen(char *infile, struct Input *inp, FILE *strm)
         else
             inp->rank = 2;
         if (gint(infile, strm, &inp->dims[1], inp)) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
         if (gint(infile, strm, &inp->dims[0], inp)) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
     }
@@ -614,7 +614,7 @@ gdimen(char *infile, struct Input *inp, FILE *strm)
      * validate dimension sizes
      */
     if ((inp->dims[0] < 2) || (inp->dims[1] < 2)) {
-        (void)fprintf(stderr, err3, infile);
+        fprintf(stderr, err3, infile);
         goto err;
     }
 
@@ -643,20 +643,20 @@ gfloat(char *infile, FILE *strm, float32 *fp32, struct Input *in)
     if (in->is_text == TRUE) {
 
         if (fscanf(strm, "%e", fp32) != 1) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
     }
     else if (in->is_fp32 == TRUE) {
 
         if (fread((char *)fp32, sizeof(float32), 1, strm) != 1) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
     }
     else {
         if (fread((char *)&fp64, sizeof(float64), 1, strm) != 1) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
         *fp32 = (float32)fp64;
@@ -686,7 +686,7 @@ gint(char *infile, FILE *strm, int *ival, struct Input *in)
      */
     if (in->is_text == TRUE) {
         if (fscanf(strm, "%d", ival) != 1) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
 
@@ -696,7 +696,7 @@ gint(char *infile, FILE *strm, int *ival, struct Input *in)
     }
     else {
         if (fread((char *)ival, sizeof(int), 1, strm) != 1) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
     }
@@ -729,11 +729,11 @@ gmaxmin(char *infile, struct Input *in, FILE *strm, int *is_maxmin)
     }
     else {
         if (gfloat(infile, strm, &in->max, in)) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
         if (gfloat(infile, strm, &in->min, in)) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
         if (in->max > in->min)
@@ -815,14 +815,14 @@ gscale(char *infile, struct Input *in, FILE *strm, int *is_scale)
         if (in->rank == 2) {
             for (i = 0; i < hdfdims[0]; i++) {
                 if (gfloat(infile, strm, &in->vscale[i], in)) {
-                    (void)fprintf(stderr, err1, infile);
+                    fprintf(stderr, err1, infile);
                     goto err;
                 }
             }
             in->vscale[i] = in->vscale[i - 1];
             for (i = 0; i < hdfdims[1]; i++) {
                 if (gfloat(infile, strm, &in->hscale[i], in)) {
-                    (void)fprintf(stderr, err1, infile);
+                    fprintf(stderr, err1, infile);
                     goto err;
                 }
             }
@@ -831,21 +831,21 @@ gscale(char *infile, struct Input *in, FILE *strm, int *is_scale)
         else {
             for (i = 0; i < hdfdims[0]; i++) {
                 if (gfloat(infile, strm, &in->dscale[i], in)) {
-                    (void)fprintf(stderr, err1, infile);
+                    fprintf(stderr, err1, infile);
                     goto err;
                 }
             }
             in->dscale[i] = in->dscale[i - 1];
             for (i = 0; i < hdfdims[1]; i++) {
                 if (gfloat(infile, strm, &in->vscale[i], in)) {
-                    (void)fprintf(stderr, err1, infile);
+                    fprintf(stderr, err1, infile);
                     goto err;
                 }
             }
             in->vscale[i] = in->vscale[i - 1];
             for (i = 0; i < hdfdims[2]; i++) {
                 if (gfloat(infile, strm, &in->hscale[i], in)) {
-                    (void)fprintf(stderr, err1, infile);
+                    fprintf(stderr, err1, infile);
                     goto err;
                 }
             }
@@ -919,7 +919,7 @@ gtoken(char *s)
                     token = OPT_num;
         }
         if (token == ERR)
-            (void)fprintf(stderr, err1, s);
+            fprintf(stderr, err1, s);
     }
     else if (isnum(s)) /* positive number */
         token = OPT_num;
@@ -952,11 +952,11 @@ gtype(char *infile, struct Input *in, FILE **strm)
         in->is_hdf = TRUE;
     else {
         if ((*strm = fopen(infile, "r")) == NULL) {
-            (void)fprintf(stderr, err1, infile);
+            fprintf(stderr, err1, infile);
             goto err;
         }
         if (fread(buf, 4, 1, *strm) != 1) {
-            (void)fprintf(stderr, err2, infile);
+            fprintf(stderr, err2, infile);
             goto err;
         }
         if (!memcmp("TEXT", buf, 4) || !memcmp("text", buf, 4)) {
@@ -968,7 +968,7 @@ gtype(char *infile, struct Input *in, FILE **strm)
         else {
             rewind(*strm);
             if (fread(buf, sizeof(int), 1, *strm) != 1) {
-                (void)fprintf(stderr, err2, infile);
+                fprintf(stderr, err2, infile);
                 goto err;
             }
             if (!memcmp("FP32", buf, 4) || !memcmp("fp32", buf, 4))
@@ -976,7 +976,7 @@ gtype(char *infile, struct Input *in, FILE **strm)
             else if (!memcmp("FP64", buf, 4) || !memcmp("fp64", buf, 4))
                 in->is_fp64 = TRUE;
             else {
-                (void)fprintf(stderr, err3, infile);
+                fprintf(stderr, err3, infile);
                 goto err;
             }
         }
@@ -998,174 +998,174 @@ err:
 void
 help(char *name)
 {
-    (void)printf("Name:\n");
-    (void)printf("\t %s\n\n", name);
-    (void)printf("Purpose:\n");
-    (void)printf("\t To convert floating point data to HDF Scientific ");
-    (void)printf("Data Set (SDS)\n");
-    (void)printf("\t and/or 8-bit Raster Image Set (RIS8) format, ");
-    (void)printf("storing the results\n");
-    (void)printf("\t in an HDF file.  The image data can be scaled ");
-    (void)printf("about a mean value.\n\n");
-    (void)printf("Version:\n");
-    (void)printf("\t v1.1 (Apr 30, 1990)\n\n");
-    (void)printf("Synopsis:\n");
-    (void)printf("\t %s -h[elp], OR\n", name);
-    (void)printf("\t %s <infile> [<infile>...] -o[utfile] ", name);
-    (void)printf("<outfile>\n");
-    (void)printf("\t\t [-r[aster] [ras_opts ...]] [-f[loat]]\n\n");
-    (void)printf("\t -h[elp]:\n");
-    (void)printf("\t\t Print a helpful summary of usage, and exit.\n\n");
-    (void)printf("\t infile(s):\n");
-    (void)printf("\t\t Input file(s), containing a single ");
-    (void)printf("two-dimensional or\n");
-    (void)printf("\t\t three-dimensional floating point array in ");
-    (void)printf("either ASCII\n");
-    (void)printf("\t\t text, native floating point, or HDF SDS format.  ");
-    (void)printf("If an\n");
-    (void)printf("\t\t HDF file is used for input, it must contain an ");
-    (void)printf("SDS.\n");
-    (void)printf("\t\t The SDS need only contain a dimension record and ");
-    (void)printf("the\n");
-    (void)printf("\t\t data, but if it also contains maximum and ");
-    (void)printf("minimum values\n");
-    (void)printf("\t\t and/or scales for each axis, these will be ");
-    (void)printf("used.  If the\n");
-    (void)printf("\t\t input format is ASCII text or native floating ");
-    (void)printf("point, see\n");
-    (void)printf("\t\t \"Notes\" below on how it must be organized.\n\n");
-    (void)printf("\t -o[utfile] <outfile>:\n");
-    (void)printf("\t\t Data from one or more input files are stored as ");
-    (void)printf("one or\n");
-    (void)printf("\t\t more data sets and/or images in one HDF output ");
-    (void)printf("file,\n\t\t\"outfile\".\n\n");
-    (void)printf("\t -r[aster]:\n");
-    (void)printf("\t\t Store output as a raster image set in the ");
-    (void)printf("output file\n\n");
-    (void)printf("\t -f[loat]:\n");
-    (void)printf("\t\t Store output as a scientific data set in the ");
-    (void)printf("the output file.\n");
-    (void)printf("\t\t This is the default if the \"-r\" option is not ");
-    (void)printf("specified.\n\n");
-    (void)printf("\t ras_opts ...\n\n");
-    (void)printf("\t -e[xpand] <horiz> <vert> [<depth>]:\n");
-    (void)printf("\t\t Expand float data via pixel replication to ");
-    (void)printf("produce the\n");
-    (void)printf("\t\t image(s).  \"horiz\" and \"vert\" give the ");
-    (void)printf("horizontal and\n");
-    (void)printf("\t\t vertical resolution of the image(s) to be ");
-    (void)printf("produced; and\n");
-    (void)printf("\t\t optionally, \"depth\" gives the number of ");
-    (void)printf("images or depth\n");
-    (void)printf("\t\t planes (for 3D input data).\n\n");
-    (void)printf("\t-i[nterp] <horiz> <vert> [<depth>]:\n");
-    (void)printf("\t\t Apply bilinear, or trilinear, interpolation to ");
-    (void)printf("the float\n");
-    (void)printf("\t\t data to produce the image(s).  \"horiz\", ");
-    (void)printf("\"vert\", and \"depth\"\n");
-    (void)printf("\t\t must be greater than or equal to the dimensions ");
-    (void)printf("of the\n");
-    (void)printf("\t\t original dataset.\n\n");
-    (void)printf("\t -p[alfile] <palfile>:\n");
-    (void)printf("\t\t Store the palette with the image.  Get the ");
-    (void)printf("palette from\n");
-    (void)printf("\t\t \"palfile\"; which may be an HDF file containing ");
-    (void)printf("a palette,\n");
-    (void)printf("\t\t or a file containing a raw palette.\n\n");
-    (void)printf("\t -m[ean] <mean>:\n");
-    (void)printf("\t\t If a floating point mean value is given, the ");
-    (void)printf("image will be\n");
-    (void)printf("\t\t scaled about the mean.  The new extremes ");
-    (void)printf("(newmax and newmin),\n");
-    (void)printf("\t\t as given by:\n\n");
-    (void)printf("\t\t   newmax = mean + max(abs(max-mean), ");
-    (void)printf("abs(mean-min))\n");
-    (void)printf("\t\t   newmin = mean - max(abs(max-mean), ");
-    (void)printf("abs(mean-min))\n\n");
-    (void)printf("\t\t will be equidistant from the mean value.  If ");
-    (void)printf("no mean value\n");
-    (void)printf("\t\t is given, then the mean will be:  0.5 * (max ");
-    (void)printf("+ min)\n\n");
-    (void)printf("Notes:\n");
-    (void)printf("\t If the input file format is ASCII text or native ");
-    (void)printf("floating point, it\n");
-    (void)printf("\t must have the following input fields:\n\n");
-    (void)printf("\t\t format\n");
-    (void)printf("\t\t nplanes\n");
-    (void)printf("\t\t nrows\n");
-    (void)printf("\t\t ncols\n");
-    (void)printf("\t\t max_value\n");
-    (void)printf("\t\t min_value\n");
-    (void)printf("\t\t [plane1 plane2 plane3 ...]\n");
-    (void)printf("\t\t row1 row2 row3 ...\n");
-    (void)printf("\t\t col1 col2 col3 ...\n");
-    (void)printf("\t\t data1 data2 data3 ...\n");
-    (void)printf("\t\t ...\n\n");
-    (void)printf("\t Where:\n");
-    (void)printf("\t\t format:\n");
-    (void)printf("\t\t\t Format designator (\"TEXT\", \"FP32\" or ");
-    (void)printf("\"FP64\").\n");
-    (void)printf("\t\t nplanes:\n");
-    (void)printf("\t\t\t Dimension of the depth axis (\"1\" for 2D ");
-    (void)printf("input).\n");
-    (void)printf("\t\t nrows:\n");
-    (void)printf("\t\t\t Dimension of the vertical axis.\n");
-    (void)printf("\t\t ncols:\n");
-    (void)printf("\t\t\t Dimension of the horizontal axis.\n");
-    (void)printf("\t\t max_value:\n");
-    (void)printf("\t\t\t Maximum data value.\n");
-    (void)printf("\t\t min_value:\n");
-    (void)printf("\t\t\t Minimum data value.\n");
-    (void)printf("\t\t plane1, plane2, plane3, ...:\n");
-    (void)printf("\t\t\t Scales for depth axis.\n");
-    (void)printf("\t\t row1, row2, row3, ...:\n");
-    (void)printf("\t\t\t Scales for the vertical axis.\n");
-    (void)printf("\t\t col1, col2, col3, ...:\n");
-    (void)printf("\t\t\t Scales for the horizontal axis.\n");
-    (void)printf("\t\t data1, data2, data3, ...:\n");
-    (void)printf("\t\t\t The data ordered by rows, left to right and ");
-    (void)printf("top\n");
-    (void)printf("\t\t\t to bottom; then optionally, ordered by planes,\n");
-    (void)printf("\t\t\t front to back.\n\n");
-    (void)printf("\t For FP32 and FP64 input format, \"format\", ");
-    (void)printf("\"nplanes\", \"nrows\", \"ncols\",\n");
-    (void)printf("\t and \"nplanes\" are native integers; where ");
-    (void)printf("\"format\" is the integer\n");
-    (void)printf("\t representation of the appropriate 4-character ");
-    (void)printf("string (0x46503332 for\n");
-    (void)printf("\t \"FP32\" and 0x46503634 for \"FP64\").  The ");
-    (void)printf("remaining input fields are\n");
-    (void)printf("\t composed of native 32-bit floating point values for ");
-    (void)printf("FP32 input format,\n");
-    (void)printf("\t or native 64-bit floating point values for FP64 ");
-    (void)printf("input format.\n\n");
-    (void)printf("Examples:\n");
-    (void)printf("\t Convert floating point data in \"f1.txt\" to SDS ");
-    (void)printf("format, and store it\n");
-    (void)printf("\t as an SDS in HDF file \"o1\":\n\n");
-    (void)printf("\t\t %s f1.txt -o o1\n\n", name);
-    (void)printf("\t Convert floating point data in \"f2.hdf\" to ");
-    (void)printf("8-bit raster format, and\n");
-    (void)printf("\t store it as an RIS8 in HDF file \"o2\":\n\n");
-    (void)printf("\t\t %s f2.hdf -o o2 -r\n\n", name);
-    (void)printf("\t Convert floating point data in \"f3.bin\" to ");
-    (void)printf("8-bit raster format and\n");
-    (void)printf("\t SDS format, and store both the RIS8 and the SDS ");
-    (void)printf("in HDF file \"o3\":\n\n");
-    (void)printf("\t\t %s f3.bin -o o3 -r -f\n\n", name);
-    (void)printf("\t Convert floating point data in \"f4\" to a ");
-    (void)printf("500x600 raster image, and\n");
-    (void)printf("\t store the RIS8 in HDF file \"o4\".  Also store a ");
-    (void)printf("palette from \"palfile\"\n");
-    (void)printf("\t with the image:\n\n");
-    (void)printf("\t\t %s f4 -o o4 -r -e 500 600 -p palfile\n\n", name);
-    (void)printf("\t Convert floating point data in \"f5\" to 200 ");
-    (void)printf("planes of 500x600 raster\n");
-    (void)printf("\t images, and store the RIS8 in HDF file \"o5\".  ");
-    (void)printf("Also scale the image\n");
-    (void)printf("\t data so that it is centered about a mean value ");
-    (void)printf("of 10.0:\n\n");
-    (void)printf("\t\t %s f5 -o o5 -r -i 500 600 200 -m 10.0\n", name);
+    printf("Name:\n");
+    printf("\t %s\n\n", name);
+    printf("Purpose:\n");
+    printf("\t To convert floating point data to HDF Scientific ");
+    printf("Data Set (SDS)\n");
+    printf("\t and/or 8-bit Raster Image Set (RIS8) format, ");
+    printf("storing the results\n");
+    printf("\t in an HDF file.  The image data can be scaled ");
+    printf("about a mean value.\n\n");
+    printf("Version:\n");
+    printf("\t v1.1 (Apr 30, 1990)\n\n");
+    printf("Synopsis:\n");
+    printf("\t %s -h[elp], OR\n", name);
+    printf("\t %s <infile> [<infile>...] -o[utfile] ", name);
+    printf("<outfile>\n");
+    printf("\t\t [-r[aster] [ras_opts ...]] [-f[loat]]\n\n");
+    printf("\t -h[elp]:\n");
+    printf("\t\t Print a helpful summary of usage, and exit.\n\n");
+    printf("\t infile(s):\n");
+    printf("\t\t Input file(s), containing a single ");
+    printf("two-dimensional or\n");
+    printf("\t\t three-dimensional floating point array in ");
+    printf("either ASCII\n");
+    printf("\t\t text, native floating point, or HDF SDS format.  ");
+    printf("If an\n");
+    printf("\t\t HDF file is used for input, it must contain an ");
+    printf("SDS.\n");
+    printf("\t\t The SDS need only contain a dimension record and ");
+    printf("the\n");
+    printf("\t\t data, but if it also contains maximum and ");
+    printf("minimum values\n");
+    printf("\t\t and/or scales for each axis, these will be ");
+    printf("used.  If the\n");
+    printf("\t\t input format is ASCII text or native floating ");
+    printf("point, see\n");
+    printf("\t\t \"Notes\" below on how it must be organized.\n\n");
+    printf("\t -o[utfile] <outfile>:\n");
+    printf("\t\t Data from one or more input files are stored as ");
+    printf("one or\n");
+    printf("\t\t more data sets and/or images in one HDF output ");
+    printf("file,\n\t\t\"outfile\".\n\n");
+    printf("\t -r[aster]:\n");
+    printf("\t\t Store output as a raster image set in the ");
+    printf("output file\n\n");
+    printf("\t -f[loat]:\n");
+    printf("\t\t Store output as a scientific data set in the ");
+    printf("the output file.\n");
+    printf("\t\t This is the default if the \"-r\" option is not ");
+    printf("specified.\n\n");
+    printf("\t ras_opts ...\n\n");
+    printf("\t -e[xpand] <horiz> <vert> [<depth>]:\n");
+    printf("\t\t Expand float data via pixel replication to ");
+    printf("produce the\n");
+    printf("\t\t image(s).  \"horiz\" and \"vert\" give the ");
+    printf("horizontal and\n");
+    printf("\t\t vertical resolution of the image(s) to be ");
+    printf("produced; and\n");
+    printf("\t\t optionally, \"depth\" gives the number of ");
+    printf("images or depth\n");
+    printf("\t\t planes (for 3D input data).\n\n");
+    printf("\t-i[nterp] <horiz> <vert> [<depth>]:\n");
+    printf("\t\t Apply bilinear, or trilinear, interpolation to ");
+    printf("the float\n");
+    printf("\t\t data to produce the image(s).  \"horiz\", ");
+    printf("\"vert\", and \"depth\"\n");
+    printf("\t\t must be greater than or equal to the dimensions ");
+    printf("of the\n");
+    printf("\t\t original dataset.\n\n");
+    printf("\t -p[alfile] <palfile>:\n");
+    printf("\t\t Store the palette with the image.  Get the ");
+    printf("palette from\n");
+    printf("\t\t \"palfile\"; which may be an HDF file containing ");
+    printf("a palette,\n");
+    printf("\t\t or a file containing a raw palette.\n\n");
+    printf("\t -m[ean] <mean>:\n");
+    printf("\t\t If a floating point mean value is given, the ");
+    printf("image will be\n");
+    printf("\t\t scaled about the mean.  The new extremes ");
+    printf("(newmax and newmin),\n");
+    printf("\t\t as given by:\n\n");
+    printf("\t\t   newmax = mean + max(abs(max-mean), ");
+    printf("abs(mean-min))\n");
+    printf("\t\t   newmin = mean - max(abs(max-mean), ");
+    printf("abs(mean-min))\n\n");
+    printf("\t\t will be equidistant from the mean value.  If ");
+    printf("no mean value\n");
+    printf("\t\t is given, then the mean will be:  0.5 * (max ");
+    printf("+ min)\n\n");
+    printf("Notes:\n");
+    printf("\t If the input file format is ASCII text or native ");
+    printf("floating point, it\n");
+    printf("\t must have the following input fields:\n\n");
+    printf("\t\t format\n");
+    printf("\t\t nplanes\n");
+    printf("\t\t nrows\n");
+    printf("\t\t ncols\n");
+    printf("\t\t max_value\n");
+    printf("\t\t min_value\n");
+    printf("\t\t [plane1 plane2 plane3 ...]\n");
+    printf("\t\t row1 row2 row3 ...\n");
+    printf("\t\t col1 col2 col3 ...\n");
+    printf("\t\t data1 data2 data3 ...\n");
+    printf("\t\t ...\n\n");
+    printf("\t Where:\n");
+    printf("\t\t format:\n");
+    printf("\t\t\t Format designator (\"TEXT\", \"FP32\" or ");
+    printf("\"FP64\").\n");
+    printf("\t\t nplanes:\n");
+    printf("\t\t\t Dimension of the depth axis (\"1\" for 2D ");
+    printf("input).\n");
+    printf("\t\t nrows:\n");
+    printf("\t\t\t Dimension of the vertical axis.\n");
+    printf("\t\t ncols:\n");
+    printf("\t\t\t Dimension of the horizontal axis.\n");
+    printf("\t\t max_value:\n");
+    printf("\t\t\t Maximum data value.\n");
+    printf("\t\t min_value:\n");
+    printf("\t\t\t Minimum data value.\n");
+    printf("\t\t plane1, plane2, plane3, ...:\n");
+    printf("\t\t\t Scales for depth axis.\n");
+    printf("\t\t row1, row2, row3, ...:\n");
+    printf("\t\t\t Scales for the vertical axis.\n");
+    printf("\t\t col1, col2, col3, ...:\n");
+    printf("\t\t\t Scales for the horizontal axis.\n");
+    printf("\t\t data1, data2, data3, ...:\n");
+    printf("\t\t\t The data ordered by rows, left to right and ");
+    printf("top\n");
+    printf("\t\t\t to bottom; then optionally, ordered by planes,\n");
+    printf("\t\t\t front to back.\n\n");
+    printf("\t For FP32 and FP64 input format, \"format\", ");
+    printf("\"nplanes\", \"nrows\", \"ncols\",\n");
+    printf("\t and \"nplanes\" are native integers; where ");
+    printf("\"format\" is the integer\n");
+    printf("\t representation of the appropriate 4-character ");
+    printf("string (0x46503332 for\n");
+    printf("\t \"FP32\" and 0x46503634 for \"FP64\").  The ");
+    printf("remaining input fields are\n");
+    printf("\t composed of native 32-bit floating point values for ");
+    printf("FP32 input format,\n");
+    printf("\t or native 64-bit floating point values for FP64 ");
+    printf("input format.\n\n");
+    printf("Examples:\n");
+    printf("\t Convert floating point data in \"f1.txt\" to SDS ");
+    printf("format, and store it\n");
+    printf("\t as an SDS in HDF file \"o1\":\n\n");
+    printf("\t\t %s f1.txt -o o1\n\n", name);
+    printf("\t Convert floating point data in \"f2.hdf\" to ");
+    printf("8-bit raster format, and\n");
+    printf("\t store it as an RIS8 in HDF file \"o2\":\n\n");
+    printf("\t\t %s f2.hdf -o o2 -r\n\n", name);
+    printf("\t Convert floating point data in \"f3.bin\" to ");
+    printf("8-bit raster format and\n");
+    printf("\t SDS format, and store both the RIS8 and the SDS ");
+    printf("in HDF file \"o3\":\n\n");
+    printf("\t\t %s f3.bin -o o3 -r -f\n\n", name);
+    printf("\t Convert floating point data in \"f4\" to a ");
+    printf("500x600 raster image, and\n");
+    printf("\t store the RIS8 in HDF file \"o4\".  Also store a ");
+    printf("palette from \"palfile\"\n");
+    printf("\t with the image:\n\n");
+    printf("\t\t %s f4 -o o4 -r -e 500 600 -p palfile\n\n", name);
+    printf("\t Convert floating point data in \"f5\" to 200 ");
+    printf("planes of 500x600 raster\n");
+    printf("\t images, and store the RIS8 in HDF file \"o5\".  ");
+    printf("Also scale the image\n");
+    printf("\t data so that it is centered about a mean value ");
+    printf("of 10.0:\n\n");
+    printf("\t\t %s f5 -o o5 -r -i 500 600 200 -m 10.0\n", name);
 
     return;
 }
@@ -1193,7 +1193,7 @@ indexes(float32 *scale, int dim, int *idx, int res)
      * determine the midpoints between scale values
      */
     if ((midpt = (float32 *)malloc((size_t)dim * sizeof(float32))) == NULL) {
-        (void)fprintf(stderr, "%s", err1);
+        fprintf(stderr, "%s", err1);
         goto err;
     }
     for (i = 0; i < dim - 1; i++)
@@ -1292,16 +1292,16 @@ interp(struct Input *in, struct Raster *im)
      * allocate dynamic memory for the interpolation ratio buffers
      */
     if ((hratio = (float32 *)malloc((size_t)im->hres * sizeof(float32))) == NULL) {
-        (void)fprintf(stderr, "%s", err1);
+        fprintf(stderr, "%s", err1);
         goto err;
     }
     if ((vratio = (float32 *)malloc((unsigned int)im->vres * sizeof(float32))) == NULL) {
-        (void)fprintf(stderr, "%s", err1);
+        fprintf(stderr, "%s", err1);
         goto err;
     }
     if (in->rank == 3) {
         if ((dratio = (float32 *)malloc((unsigned int)im->dres * sizeof(float32))) == NULL) {
-            (void)fprintf(stderr, "%s", err1);
+            fprintf(stderr, "%s", err1);
             goto err;
         }
     }
@@ -1311,16 +1311,16 @@ interp(struct Input *in, struct Raster *im)
      * buffers
      */
     if ((hinc = (int *)malloc((unsigned int)im->hres * sizeof(int))) == NULL) {
-        (void)fprintf(stderr, "%s", err1);
+        fprintf(stderr, "%s", err1);
         goto err;
     }
     if ((voff = (int *)malloc((unsigned int)(im->vres + 1) * sizeof(int))) == NULL) {
-        (void)fprintf(stderr, "%s", err1);
+        fprintf(stderr, "%s", err1);
         goto err;
     }
     if (in->rank == 3) {
         if ((doff = (int *)malloc((unsigned int)(im->dres + 1) * sizeof(int))) == NULL) {
-            (void)fprintf(stderr, "%s", err1);
+            fprintf(stderr, "%s", err1);
             goto err;
         }
     }
@@ -1519,7 +1519,7 @@ palette(char *palfile)
      */
     if (Hishdf(palfile)) {
         if (DFPgetpal(palfile, pal)) {
-            (void)fprintf(stderr, err1, palfile);
+            fprintf(stderr, err1, palfile);
             goto err;
         }
 
@@ -1529,19 +1529,19 @@ palette(char *palfile)
     }
     else {
         if ((strm = fopen(palfile, "r")) == NULL) {
-            (void)fprintf(stderr, err2, palfile);
+            fprintf(stderr, err2, palfile);
             goto err;
         }
         if (fread((char *)red, 1, 256, strm) != 256) {
-            (void)fprintf(stderr, err1, palfile);
+            fprintf(stderr, err1, palfile);
             goto err;
         }
         else if (fread((char *)green, 1, 256, strm) != 256) {
-            (void)fprintf(stderr, err1, palfile);
+            fprintf(stderr, err1, palfile);
             goto err;
         }
         else if (fread((char *)blue, 1, 256, strm) != 256) {
-            (void)fprintf(stderr, err1, palfile);
+            fprintf(stderr, err1, palfile);
             goto err;
         }
         (void)fclose(strm);
@@ -1561,7 +1561,7 @@ palette(char *palfile)
      * set up the palette as the default for subsequent images
      */
     if (DFR8setpalette(pal)) {
-        (void)fprintf(stderr, "%s", err3);
+        fprintf(stderr, "%s", err3);
         goto err;
     }
 
@@ -1602,7 +1602,7 @@ pixrep(struct Input *in, struct Raster *im)
      * determine the scale indexes of the horizontal pixel locations
      */
     if ((hidx = (int *)malloc((unsigned int)(im->hres + 1) * sizeof(int))) == NULL) {
-        (void)fprintf(stderr, "%s", err1);
+        fprintf(stderr, "%s", err1);
         goto err;
     }
 
@@ -1613,7 +1613,7 @@ pixrep(struct Input *in, struct Raster *im)
      * determine the scale indexes of the vertical pixel locations
      */
     if ((vidx = (int *)malloc((unsigned int)(im->vres + 1) * sizeof(int))) == NULL) {
-        (void)fprintf(stderr, "%s", err1);
+        fprintf(stderr, "%s", err1);
         goto err;
     }
 
@@ -1627,7 +1627,7 @@ pixrep(struct Input *in, struct Raster *im)
     didx  = &dummy;
     if (in->rank == 3) {
         if ((didx = (int *)malloc((unsigned int)(im->dres + 1) * sizeof(int))) == NULL) {
-            (void)fprintf(stderr, "%s", err1);
+            fprintf(stderr, "%s", err1);
             goto err;
         }
 
@@ -1639,7 +1639,7 @@ pixrep(struct Input *in, struct Raster *im)
      * compute the expanded image
      */
     if ((pix = (unsigned char *)malloc((unsigned int)(in->dims[0] + 1))) == NULL) {
-        (void)fprintf(stderr, "%s", err1);
+        fprintf(stderr, "%s", err1);
         goto err;
     }
     for (k = 0, odidx = didx[0] - 1; k < im->dres; k++) {
@@ -1736,7 +1736,7 @@ process(struct Options *opt)
      * create the HDF output file
      */
     if ((hdf = Hopen(opt->outfile, DFACC_CREATE, 0)) == FAIL) {
-        (void)fprintf(stderr, err1, opt->outfile);
+        fprintf(stderr, err1, opt->outfile);
         goto err;
     }
     (void)Hclose(hdf);
@@ -1770,16 +1770,16 @@ process(struct Options *opt)
          * get the scale for each axis
          */
         if ((in.hscale = (float32 *)malloc((size_t)(in.dims[0] + 1) * sizeof(float32))) == NULL) {
-            (void)fprintf(stderr, "%s", err2);
+            fprintf(stderr, "%s", err2);
             goto err;
         }
         if ((in.vscale = (float32 *)malloc((size_t)(in.dims[1] + 1) * sizeof(float32))) == NULL) {
-            (void)fprintf(stderr, "%s", err2);
+            fprintf(stderr, "%s", err2);
             goto err;
         }
         if (in.rank == 3) {
             if ((in.dscale = (float32 *)malloc((size_t)(in.dims[2] + 1) * sizeof(float32))) == NULL) {
-                (void)fprintf(stderr, "%s", err2);
+                fprintf(stderr, "%s", err2);
                 goto err;
             }
         }
@@ -1791,7 +1791,7 @@ process(struct Options *opt)
          */
         len = in.dims[0] * in.dims[1] * in.dims[2];
         if ((in.data = (void *)malloc((size_t)len * sizeof(float32))) == NULL) {
-            (void)fprintf(stderr, "%s", err2);
+            fprintf(stderr, "%s", err2);
             goto err;
         }
         if (gdata(opt->infiles[i], &in, strm, &is_maxmin))
@@ -1816,45 +1816,45 @@ process(struct Options *opt)
             }
 
             if (DFSDsetNT(DFNT_FLOAT32)) {
-                (void)fprintf(stderr, "%s", err5);
+                fprintf(stderr, "%s", err5);
                 goto err;
             }
             if (is_scale == TRUE) {
                 if (DFSDsetdims(in.rank, hdfdims)) {
-                    (void)fprintf(stderr, "%s", err5);
+                    fprintf(stderr, "%s", err5);
                     goto err;
                 }
                 if (DFSDsetrange(&in.max, &in.min)) {
-                    (void)fprintf(stderr, "%s", err5);
+                    fprintf(stderr, "%s", err5);
                     goto err;
                 }
                 if (in.rank == 2) {
                     if (DFSDsetdimscale(1, hdfdims[0], in.vscale)) {
-                        (void)fprintf(stderr, "%s", err5);
+                        fprintf(stderr, "%s", err5);
                         goto err;
                     }
                     if (DFSDsetdimscale(2, hdfdims[1], in.hscale)) {
-                        (void)fprintf(stderr, "%s", err5);
+                        fprintf(stderr, "%s", err5);
                         goto err;
                     }
                 }
                 else {
                     if (DFSDsetdimscale(1, hdfdims[0], in.dscale)) {
-                        (void)fprintf(stderr, "%s", err5);
+                        fprintf(stderr, "%s", err5);
                         goto err;
                     }
                     if (DFSDsetdimscale(2, hdfdims[1], in.vscale)) {
-                        (void)fprintf(stderr, "%s", err5);
+                        fprintf(stderr, "%s", err5);
                         goto err;
                     }
                     if (DFSDsetdimscale(3, hdfdims[2], in.hscale)) {
-                        (void)fprintf(stderr, "%s", err5);
+                        fprintf(stderr, "%s", err5);
                         goto err;
                     }
                 }
             }
             if (DFSDadddata(opt->outfile, in.rank, hdfdims, in.data)) {
-                (void)fprintf(stderr, "%s", err5);
+                fprintf(stderr, "%s", err5);
                 goto err;
             }
         }
@@ -1868,19 +1868,19 @@ process(struct Options *opt)
              */
             im.hres = (opt->hres == 0) ? in.dims[0] : opt->hres;
             if ((im.hres < in.dims[0]) && (opt->ctm == EXPAND)) {
-                (void)fprintf(stderr, "%s", err3a);
-                (void)fprintf(stderr, err3b, "Horiz.");
-                (void)fprintf(stderr, err3c, "horiz.");
-                (void)fprintf(stderr, err3d, in.dims[0]);
+                fprintf(stderr, "%s", err3a);
+                fprintf(stderr, err3b, "Horiz.");
+                fprintf(stderr, err3c, "horiz.");
+                fprintf(stderr, err3d, in.dims[0]);
                 im.hres   = in.dims[0];
                 opt->hres = in.dims[0];
             }
             im.vres = (opt->vres == 0) ? in.dims[1] : opt->vres;
             if ((im.vres < in.dims[1]) && (opt->ctm == EXPAND)) {
-                (void)fprintf(stderr, "%s", err3a);
-                (void)fprintf(stderr, err3b, "Vert.");
-                (void)fprintf(stderr, err3c, "vert.");
-                (void)fprintf(stderr, err3d, in.dims[1]);
+                fprintf(stderr, "%s", err3a);
+                fprintf(stderr, err3b, "Vert.");
+                fprintf(stderr, err3c, "vert.");
+                fprintf(stderr, err3d, in.dims[1]);
                 im.vres   = in.dims[1];
                 opt->vres = in.dims[1];
             }
@@ -1888,17 +1888,17 @@ process(struct Options *opt)
             if (in.rank == 3) {
                 im.dres = (opt->dres == 0) ? in.dims[2] : opt->dres;
                 if ((im.dres < in.dims[2]) && (opt->ctm == EXPAND)) {
-                    (void)fprintf(stderr, "%s", err3a);
-                    (void)fprintf(stderr, err3b, "Depth");
-                    (void)fprintf(stderr, err3c, "depth");
-                    (void)fprintf(stderr, err3d, in.dims[2]);
+                    fprintf(stderr, "%s", err3a);
+                    fprintf(stderr, err3b, "Depth");
+                    fprintf(stderr, err3c, "depth");
+                    fprintf(stderr, err3d, in.dims[2]);
                     im.dres   = in.dims[2];
                     opt->dres = in.dims[2];
                 }
             }
             len = im.hres * im.vres * im.dres;
             if ((im.image = (unsigned char *)malloc((unsigned int)len)) == NULL) {
-                (void)fprintf(stderr, "%s", err2);
+                fprintf(stderr, "%s", err2);
                 goto err;
             }
 
@@ -1923,7 +1923,7 @@ process(struct Options *opt)
             len = im.hres * im.vres;
             for (j = 0, ip = im.image; j < im.dres; j++, ip += len) {
                 if (DFR8addimage(opt->outfile, ip, im.hres, im.vres, DFTAG_RLE)) {
-                    (void)fprintf(stderr, "%s", err4);
+                    fprintf(stderr, "%s", err4);
                     goto err;
                 }
             }
@@ -1957,27 +1957,27 @@ err:
 void
 usage(char *name)
 {
-    (void)fprintf(stderr, "\nUsage:\t%s -h[elp], OR\n", name);
-    (void)fprintf(stderr, "\t%s <infile> [<infile>...] ", name);
-    (void)fprintf(stderr, "-o[utfile] <outfile> [options...]\n\n");
-    (void)fprintf(stderr, "\toptions...\n");
-    (void)fprintf(stderr, "\t    -r[aster]:\n");
-    (void)fprintf(stderr, "\t        produce an image.  Could be ");
-    (void)fprintf(stderr, "followed by:\n");
-    (void)fprintf(stderr, "\t        -e[xpand] <horiz> <vert> ");
-    (void)fprintf(stderr, "[<depth>]:\n");
-    (void)fprintf(stderr, "\t            resolution with pixel ");
-    (void)fprintf(stderr, "replication\n");
-    (void)fprintf(stderr, "\t        -i[nterp] <horiz> <vert> ");
-    (void)fprintf(stderr, "[<depth>]:\n");
-    (void)fprintf(stderr, "\t            resolution with interpolation\n");
-    (void)fprintf(stderr, "\t        -p[alfile] <palfile>:\n");
-    (void)fprintf(stderr, "\t            include palette from palfile\n");
-    (void)fprintf(stderr, "\t        -m[ean] <meanval>:\n");
-    (void)fprintf(stderr, "\t            mean value to scale image ");
-    (void)fprintf(stderr, "around\n");
-    (void)fprintf(stderr, "\t    -f[loat]:\n");
-    (void)fprintf(stderr, "\t        produce floating point data\n\n");
+    fprintf(stderr, "\nUsage:\t%s -h[elp], OR\n", name);
+    fprintf(stderr, "\t%s <infile> [<infile>...] ", name);
+    fprintf(stderr, "-o[utfile] <outfile> [options...]\n\n");
+    fprintf(stderr, "\toptions...\n");
+    fprintf(stderr, "\t    -r[aster]:\n");
+    fprintf(stderr, "\t        produce an image.  Could be ");
+    fprintf(stderr, "followed by:\n");
+    fprintf(stderr, "\t        -e[xpand] <horiz> <vert> ");
+    fprintf(stderr, "[<depth>]:\n");
+    fprintf(stderr, "\t            resolution with pixel ");
+    fprintf(stderr, "replication\n");
+    fprintf(stderr, "\t        -i[nterp] <horiz> <vert> ");
+    fprintf(stderr, "[<depth>]:\n");
+    fprintf(stderr, "\t            resolution with interpolation\n");
+    fprintf(stderr, "\t        -p[alfile] <palfile>:\n");
+    fprintf(stderr, "\t            include palette from palfile\n");
+    fprintf(stderr, "\t        -m[ean] <meanval>:\n");
+    fprintf(stderr, "\t            mean value to scale image ");
+    fprintf(stderr, "around\n");
+    fprintf(stderr, "\t    -f[loat]:\n");
+    fprintf(stderr, "\t        produce floating point data\n\n");
 
     return;
 }

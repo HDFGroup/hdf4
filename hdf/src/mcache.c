@@ -818,31 +818,31 @@ mcache_stat(MCACHE *mp /* IN: MCACHE cookie */)
 
     /* check inputs */
     if (mp != NULL) {
-        (void)fprintf(stderr, "%u pages in the object\n", mp->npages);
-        (void)fprintf(stderr, "page size %u, caching %u pages of %u page max cache\n", mp->pagesize,
+        fprintf(stderr, "%u pages in the object\n", mp->npages);
+        fprintf(stderr, "page size %u, caching %u pages of %u page max cache\n", mp->pagesize,
                       mp->curcache, mp->maxcache);
-        (void)fprintf(stderr, "%u page puts, %u page gets, %u page new\n", mp->pageput, mp->pageget,
+        fprintf(stderr, "%u page puts, %u page gets, %u page new\n", mp->pageput, mp->pageget,
                       mp->pagenew);
-        (void)fprintf(stderr, "%u page allocs, %u page flushes\n", mp->pagealloc, mp->pageflush);
+        fprintf(stderr, "%u page allocs, %u page flushes\n", mp->pagealloc, mp->pageflush);
         if (mp->cachehit + mp->cachemiss)
-            (void)fprintf(stderr, "%.0f%% cache hit rate (%u hits, %u misses)\n",
+            fprintf(stderr, "%.0f%% cache hit rate (%u hits, %u misses)\n",
                           ((double)mp->cachehit / (mp->cachehit + mp->cachemiss)) * 100, mp->cachehit,
                           mp->cachemiss);
-        (void)fprintf(stderr, "%u page reads, %u page writes\n", mp->pageread, mp->pagewrite);
-        (void)fprintf(stderr, "%u listhits, %u listallocs\n", mp->listhit, mp->listalloc);
-        (void)fprintf(stderr, "sizeof(MCACHE)=%zu, sizeof(BKT)=%zu, sizeof(L_ELEM)=%zu\n", sizeof(MCACHE),
+        fprintf(stderr, "%u page reads, %u page writes\n", mp->pageread, mp->pagewrite);
+        fprintf(stderr, "%u listhits, %u listallocs\n", mp->listhit, mp->listalloc);
+        fprintf(stderr, "sizeof(MCACHE)=%zu, sizeof(BKT)=%zu, sizeof(L_ELEM)=%zu\n", sizeof(MCACHE),
                       sizeof(BKT), sizeof(L_ELEM));
-        (void)fprintf(stderr, "memory pool used %u bytes\n",
+        fprintf(stderr, "memory pool used %u bytes\n",
                       (int32)(sizeof(MCACHE) + (sizeof(BKT) + mp->pagesize) * mp->curcache +
                               (sizeof(L_ELEM) * mp->npages)));
         sep = "";
         cnt = 0;
         for (bp = mp->lqh.cqh_first; bp != (void *)&mp->lqh; bp = bp->q.cqe_next) {
-            (void)fprintf(stderr, "%s%u", sep, bp->pgno);
+            fprintf(stderr, "%s%u", sep, bp->pgno);
             if (bp->flags & MCACHE_DIRTY)
-                (void)fprintf(stderr, "d");
+                fprintf(stderr, "d");
             if (bp->flags & MCACHE_PINNED)
-                (void)fprintf(stderr, "P");
+                fprintf(stderr, "P");
             if (++cnt == 10) {
                 sep = "\n";
                 cnt = 0;
@@ -850,8 +850,8 @@ mcache_stat(MCACHE *mp /* IN: MCACHE cookie */)
             else
                 sep = ", ";
         }
-        (void)fprintf(stderr, "\n");
-        (void)fprintf(stderr, "Element hits\n");
+        fprintf(stderr, "\n");
+        fprintf(stderr, "Element hits\n");
         sep    = "";
         cnt    = 0;
         hitcnt = 0;
@@ -859,7 +859,7 @@ mcache_stat(MCACHE *mp /* IN: MCACHE cookie */)
             lhead = &mp->lhqh[entry];
             for (lp = lhead->cqh_first; lp != (void *)lhead; lp = lp->hl.cqe_next) {
                 cnt++;
-                (void)fprintf(stderr, "%s%u(%u)", sep, lp->pgno, lp->elemhit);
+                fprintf(stderr, "%s%u(%u)", sep, lp->pgno, lp->elemhit);
                 hitcnt += lp->elemhit;
                 if (cnt >= 8) {
                     sep = "\n";
@@ -869,12 +869,12 @@ mcache_stat(MCACHE *mp /* IN: MCACHE cookie */)
                     sep = ", ";
             }
             if (cnt >= 8) {
-                (void)fprintf(stderr, "\n");
+                fprintf(stderr, "\n");
                 cnt = 0;
             }
         }
-        (void)fprintf(stderr, "\n");
-        (void)fprintf(stderr, "Total num of elemhits=%d\n", hitcnt);
+        fprintf(stderr, "\n");
+        fprintf(stderr, "Total num of elemhits=%d\n", hitcnt);
     } /* end if mp */
 }
 #endif /* STATISTICS */

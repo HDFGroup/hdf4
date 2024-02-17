@@ -50,7 +50,7 @@ test_ncvarget_unlim(char *basefile)
     long        start[3], count[3];
     int         i, j, n;
 
-    (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
+    fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
     if (srcdir) {
         strcpy(testfile, srcdir);
@@ -156,7 +156,7 @@ test_ncvarget_unlim(char *basefile)
     status = ncclose(ncid);
 
     if (nerrs > 0)
-        (void)fprintf(stderr, "FAILED! ***\n");
+        fprintf(stderr, "FAILED! ***\n");
     else
-        (void)fprintf(stderr, "ok ***\n");
+        fprintf(stderr, "ok ***\n");
 }
