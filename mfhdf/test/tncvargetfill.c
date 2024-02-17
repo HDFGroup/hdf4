@@ -166,8 +166,6 @@ test_1dim_multivars()
     /* result data to compare against read data */
     int16 sdresult1[] = {300, 301, 302, 303, -1, -1, 306, 307};
     int16 sdresult2[] = {102, 104};
-    int16 ncresult1[] = {300, 301, 302, 303, -1, -1, 306, 307}; /* same as sd result */
-    int16 ncresult2[] = {102, 104, -2, -2, -2, -2, -2, -2};
 
     /* Create a new file */
     fid = SDstart(FILENAME1, DFACC_CREATE);
@@ -677,9 +675,6 @@ test_readings(long max_numrecs)
 
     /* data resulted from reading at start=[4,0,0] for edges=[6,1,1] */
     int16 result3D_start400_edge611[6] = {-3, -3, -3, 800, -3, -3};
-
-    /* data resulted from reading at start=[4] for edges=[6] */
-    int16 result1D_start4_edge6[] = {302, 303, -1, -1, -1, -1};
 
     /* Open the file for reading and writing with nc API */
     ncid = ncopen(FILENAME2, NC_RDWR);

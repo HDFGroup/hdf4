@@ -4513,6 +4513,9 @@ test_mgr_chunkwr_pixel(int flag)
     /********************** End of variable declaration **********************/
 
     i = flag;
+
+    memset(&chunk_def, 0, sizeof(HDF_CHUNK_DEF));
+
     /*
      * Create and open the file.
      */
@@ -4576,6 +4579,7 @@ test_mgr_chunkwr_pixel(int flag)
             break;
         }
         default: {
+            comp_flag = HDF_NONE;
             printf("Error\n");
             break;
         }

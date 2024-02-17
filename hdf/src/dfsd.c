@@ -2824,7 +2824,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
             /* if dataluf non-NULL, set up to write */
             if (sdg->dataluf[luf] && sdg->dataluf[luf][0]) {
                 strcpy((char *)bufp, sdg->dataluf[luf]);
-                bufp += strlen(bufp) + 1;
+                bufp += strlen((char *)bufp) + 1;
             }
             else { /* dataluf NULL */
                 *bufp++ = '\0';
@@ -2834,7 +2834,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
             for (i = 0; i < sdg->rank; i++) {
                 if (sdg->dimluf[luf] && sdg->dimluf[luf][i] && sdg->dimluf[luf][i][0]) { /* dimluf not NULL */
                     strcpy((char *)bufp, sdg->dimluf[luf][i]);
-                    bufp += strlen(bufp) + 1;
+                    bufp += strlen((char *)bufp) + 1;
                 }
                 else { /* dimluf NULL */
                     *bufp++ = '\0';
@@ -4660,7 +4660,6 @@ DFSDwriteslab(int32 start[], int32 stride[], int32 count[], void *data)
     int32 fileNTsize;  /* size of this NT in the file  */
     int32 localNTsize; /* size of this NT as it occurs in this machine */
     int32 numelements; /* number of floats to read at once */
-    int32 sdgsize;     /* number of bytes to be written in the SDG */
     int32 rowsize;     /* number of bytes to be written at once */
                        /*   in the hyperslab */
     int32  fileoffset; /* offset into the current dataset in the file */
@@ -4716,11 +4715,6 @@ DFSDwriteslab(int32 start[], int32 stride[], int32 count[], void *data)
     localNTsize     = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
     fileNTsize      = DFKNTsize(numtype);
     fileNT          = Writesdg.filenumsubclass;
-
-    /* Calculate total bytes in SDS that can be written */
-    sdgsize = fileNTsize;
-    for (i = 0; i < Writesdg.rank; i++)
-        sdgsize *= Writesdg.dimsizes[i];
 
     /* Set Access Id */
     aid = Writesdg.aid;

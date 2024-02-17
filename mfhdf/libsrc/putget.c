@@ -1806,31 +1806,32 @@ ncvarput(int cdfid, int varid, const long *start, const long *edges, ncvoid *val
 int
 NC_fill_buffer(NC *handle, int varid, const long *edges, void *values)
 {
-    NC_var       *vp;
-    NC_attr     **attr;
+    NC_var       *vp   = NULL;
+    NC_attr     **attr = NULL;
     unsigned long buf_size;
-    int           ii;
 
     /* Find the variable structure */
     if (handle->vars == NULL)
-        return (-1);
+        return -1;
     vp = NC_hlookupvar(handle, varid);
     if (vp == NULL)
-        return (-1);
+        return -1;
 
     /* Compute the size of the buffer using the edges */
     buf_size = 1;
-    for (ii = 0; ii < vp->assoc->count; ii++)
+    for (int ii = 0; ii < vp->assoc->count; ii++)
         buf_size = buf_size * edges[ii];
 
     /* Find user-defined fill-value and fill the buffer with it */
     attr = NC_findattr(&vp->attrs, _FillValue);
     if (attr != NULL)
-        if (HDmemfill(values, (*attr)->data->values, vp->szof, buf_size) == NULL)
-            return (-1);
+        if (HDmemfill(values, (*attr)->data->values, vp->szof, buf_size) == NULL) {
+            return -1;
+        }
         /* If no user-defined fill-value, fill the buffer with default fill-value */
-        else
+        else {
             NC_arrayfill(values, buf_size * vp->szof, vp->type);
+        }
     return 0;
 }
 
