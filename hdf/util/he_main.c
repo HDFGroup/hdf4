@@ -280,10 +280,14 @@ backupName(const char *file)
 int
 backupFile(char *file)
 {
-    char *back; /* backup file name */
+    char *back = NULL; /* backup file name */
+    int   f    = -1;
 
     back = backupName(file);
-    return copyFile(file, back);
+    f    = copyFile(file, back);
+    free(back);
+
+    return f;
 }
 
 int
@@ -405,7 +409,7 @@ initFile(char *file)
 int
 closeFile(int keep)
 {
-    char *back;
+    char *back = NULL;
 
     if (!fileOpen()) {
         fprintf(stderr, "No open file to close.\n");
