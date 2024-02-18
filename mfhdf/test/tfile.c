@@ -375,16 +375,13 @@ test_longfilename()
 static int
 test_fileformat()
 {
-    int32       fid;                  /* file id */
-    intn        ishdf            = 0; /* true if file has HDF format */
-    intn        isnetcdf         = 0; /* true if file has classic netCDF format */
-    intn        isnetcdf64       = 0; /* true if file has 64-bit netCDF format */
-    intn        num_errs         = 0; /* number of errors so far */
-    char        testfile[512]    = "";
-    const char *hdf_basename     = "hdffile.hdf"; /* hdf file to test */
-    const char *netcdf1_basename = "Roy.nc";      /* classic netCDF file to test */
-    const char *netcdf2_basename = "Roy-64.nc";   /* netCDF 64-bit file to test */
-    intn        status           = 0;             /* status returned by called functions */
+    int32       fid;                          /* file id */
+    intn        ishdf        = 0;             /* true if file has HDF format */
+    intn        isnetcdf     = 0;             /* true if file has classic netCDF format */
+    intn        isnetcdf64   = 0;             /* true if file has 64-bit netCDF format */
+    intn        num_errs     = 0;             /* number of errors so far */
+    const char *hdf_basename = "hdffile.hdf"; /* hdf file to test */
+    intn        status       = 0;             /* status returned by called functions */
 
     /* Create an empty HDF file to test Hishdf. */
     fid = SDstart(hdf_basename, DFACC_CREATE);
@@ -400,27 +397,31 @@ test_fileformat()
     isnetcdf64 = HDisnetcdf64(hdf_basename);
     VERIFY(isnetcdf64, FALSE, "test_fileformat: HDisnetcdf64");
 
-    /* Make the name of the classic netCDF file */
-    make_datafilename(netcdf1_basename, testfile, sizeof(testfile));
+    /* Test a classic netCDF file */
+    {
+        const char *netcdf_filename = get_srcdir_filename("Roy.nc");
 
-    /* Verify that this is not an HDF file */
-    ishdf = Hishdf(testfile);
-    VERIFY(ishdf, FALSE, "test_fileformat: Hishdf");
+        /* Verify that this is not an HDF file */
+        ishdf = Hishdf(netcdf_filename);
+        VERIFY(ishdf, FALSE, "test_fileformat: Hishdf");
 
-    /* Verify that this is a classic netCDF file */
-    isnetcdf = HDisnetcdf(testfile);
-    VERIFY(isnetcdf, TRUE, "test_fileformat: HDisnetcdf");
+        /* Verify that this is a classic netCDF file */
+        isnetcdf = HDisnetcdf(netcdf_filename);
+        VERIFY(isnetcdf, TRUE, "test_fileformat: HDisnetcdf");
+    }
 
-    /* Make the name of the netCDF 64-bit file */
-    make_datafilename(netcdf2_basename, testfile, sizeof(testfile));
+    /* Test a 64-bit netCDF file */
+    {
+        const char *netcdf_filename = get_srcdir_filename("Roy-64.nc");
 
-    /* Verify that this is a netCDF 64-bit file */
-    isnetcdf64 = HDisnetcdf64(testfile);
-    VERIFY(isnetcdf64, TRUE, "test_fileformat: HDisnetcdf64");
+        /* Verify that this is a netCDF 64-bit file */
+        isnetcdf64 = HDisnetcdf64(netcdf_filename);
+        VERIFY(isnetcdf64, TRUE, "test_fileformat: HDisnetcdf64");
 
-    /* Verify that this is not a classic netCDF file */
-    isnetcdf = HDisnetcdf(testfile);
-    VERIFY(isnetcdf, FALSE, "test_fileformat: HDisnetcdf");
+        /* Verify that this is not a classic netCDF file */
+        isnetcdf = HDisnetcdf(netcdf_filename);
+        VERIFY(isnetcdf, FALSE, "test_fileformat: HDisnetcdf");
+    }
 
     return num_errs;
 }

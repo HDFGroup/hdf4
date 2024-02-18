@@ -15,8 +15,69 @@
 #include <string.h>
 
 #include "mfhdf.h"
-
 #include "hdftest.h"
+#include "srcdir_str.h"
+
+/* Buffer to construct path in and return pointer to */
+static char srcdir_path[1024];
+
+/* Buffer to construct file in and return pointer to */
+static char srcdir_testpath[1024];
+
+/*-------------------------------------------------------------------------
+ * Function:    get_srcdir_filename
+ *
+ * Purpose:     Append the test file name to the srcdir path and return the whole string
+ *
+ * Return:      The string or NULL (errors or not enough space)
+ *
+ *-------------------------------------------------------------------------
+ */
+const char *
+get_srcdir_filename(const char *filename)
+{
+    const char *srcdir = get_srcdir();
+
+    /* Check for error */
+    if (NULL == srcdir)
+        return NULL;
+
+    /* Build path to test file */
+    if ((strlen(srcdir) + strlen(filename) + 1) < sizeof(srcdir_testpath)) {
+        snprintf(srcdir_testpath, sizeof(srcdir_testpath), "%s/%s", srcdir, filename);
+        return srcdir_testpath;
+    }
+
+    /* If not enough space, just return NULL */
+    return NULL;
+} /* end get_srcdir_filename() */
+
+/*-------------------------------------------------------------------------
+ * Function:    get_srcdir
+ *
+ * Purpose:     Just return the srcdir path
+ *
+ * Return:      The string
+ *
+ *-------------------------------------------------------------------------
+ */
+const char *
+get_srcdir(void)
+{
+    const char *srcdir = getenv("srcdir");
+
+    /* Check for using the srcdir from configure time */
+    if (NULL == srcdir)
+        srcdir = config_srcdir;
+
+    /* Build path to all test files */
+    if ((strlen(srcdir) + 2) < sizeof(srcdir_path)) {
+        snprintf(srcdir_path, sizeof(srcdir_path), "%s/", srcdir);
+        return (srcdir_path);
+    }
+    else
+        return NULL;
+} /* end get_srcdir() */
 
 /********************************************************************
    Name: make_sourcepath() - Generates the source path

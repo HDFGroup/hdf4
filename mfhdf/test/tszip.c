@@ -1215,17 +1215,13 @@ test_getszipinfo()
     int32        attributes   = -1;
     char         name[H4_MAX_NC_NAME];
     comp_coder_t comp_type;
-    int32        comp_size     = -1;
-    int32        uncomp_size   = -1;
-    int32        orig_size     = -1;
-    int          num_errs      = 0; /* number of errors so far */
-    char         testfile[512] = "";
-    const char  *basename      = "sds_szipped.dat";
+    int32        comp_size   = -1;
+    int32        uncomp_size = -1;
+    int32        orig_size   = -1;
+    int          num_errs    = 0; /* number of errors so far */
+    const char  *testfile    = get_srcdir_filename("sds_szipped.dat");
 
     /********************* End of variable declaration ***********************/
-
-    /* Make the name for the test file */
-    make_datafilename(basename, testfile, sizeof(testfile));
 
     /* Open the file and select dataset SDS1_NAME */
     sd_id = SDstart(testfile, DFACC_RDONLY);
@@ -1314,8 +1310,7 @@ test_getszipdata()
     int         i, j;
     int         num_errs = 0; /* number of errors so far */
     int32       out_data[SZ_LENGTH][SZ_WIDTH];
-    char        testfile[512] = "";
-    const char *basename      = "sds_szipped.dat";
+    const char *testfile = get_srcdir_filename("sds_szipped.dat");
 
     /* data to compare against read data from sds_szipped.dat */
     int32 in_data[SZ_LENGTH][SZ_WIDTH] = {
@@ -1327,9 +1322,6 @@ test_getszipdata()
         {500, 500, 600, 600, 300}};
 
     /********************* End of variable declaration ***********************/
-
-    /* Make the name for the test file */
-    make_datafilename(basename, testfile, sizeof(testfile));
 
     /* Open the file */
     sd_id = SDstart(testfile, DFACC_READ);

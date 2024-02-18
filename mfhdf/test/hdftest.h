@@ -101,6 +101,12 @@
 
 /*************************** Utility Functions ***************************/
 
+/* Just return the srcdir path */
+const char *get_srcdir(void);
+
+/* Append the test file name to the srcdir path and return the whole string */
+const char *get_srcdir_filename(const char *filename);
+
 /* Generates the correct name of the source path */
 intn make_sourcepath(char *src_path, unsigned int size);
 

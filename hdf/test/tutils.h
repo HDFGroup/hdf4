@@ -212,12 +212,14 @@ extern
 
 #define ABS(x) ((int)(x) < 0 ? (-x) : x)
 
+/* Just return the srcdir path */
+const char *get_srcdir(void);
+
+/* Append the test file name to the srcdir path and return the whole string */
+const char *get_srcdir_filename(const char *filename);
+
 intn fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor);
 void print_mismatched(const void *s1, const void *s2, int32 size2cmp);
-
-/* Generate the correct name for the test file, by prepending the source path
-   if it exists, otherwise, assume it is the local directory */
-intn make_datafilename(char *basename, char *testfile, unsigned int size);
 
 /* System command to use for Cleanup */
 #if defined _WIN32
