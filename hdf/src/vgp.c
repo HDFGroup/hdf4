@@ -645,6 +645,10 @@ Vinitialize(HFILEID f /* IN: file handle */)
     /* clear error stack */
     HEclear();
 
+    /* Check file ID */
+    if (f < 0)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     /* Perform global, one-time initialization */
     if (library_terminate == FALSE) {
         if (VIstart() == FAIL)

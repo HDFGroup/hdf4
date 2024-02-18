@@ -205,7 +205,7 @@ static intn HIstart(void);
 
 /*--------------------------------------------------------------------------
 NAME
-   Hopen -- Opens a HDF file.
+   Hopen -- Opens or creates an HDF file.
 USAGE
    int32 Hopen(path, access, ndds)
    char *path;             IN: Name of file to be opened.
