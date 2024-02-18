@@ -300,50 +300,42 @@ test_undefined(void)
 static void
 test_vgisinternal()
 {
-    int32 fid, vgroup_id;
-    intn  is_internal = FALSE;
-    int32 vref        = -1;
-    intn  ii, status;
-    char  testfile[H4_MAX_NC_NAME] = "";
-    char  internal_array2[2]       = {TRUE, TRUE};
+    int32       fid, vgroup_id;
+    intn        is_internal = FALSE;
+    int32       vref        = -1;
+    intn        ii, status;
+    const char *testfile           = get_srcdir_filename(GR_FILE);
+    char        internal_array2[2] = {TRUE, TRUE};
 
     /* Use a GR file to test Vgisinternal on internal vgroups */
 
-    /* The file GR_FILE is an existing file in the test_files directory,
-       make_datafilename builds the file name with correct path */
-    if (make_datafilename(GR_FILE, testfile, H4_MAX_NC_NAME) != FAIL) {
-        /* Open the old GR file and initialize the V interface */
-        fid = Hopen(testfile, DFACC_READ, 0);
-        CHECK_VOID(fid, FAIL, "Hopen: grtdfui83.hdf");
-        status = Vstart(fid);
-        CHECK_VOID(status, FAIL, "Vstart");
+    /* Open the old GR file and initialize the V interface */
+    fid = Hopen(testfile, DFACC_READ, 0);
+    CHECK_VOID(fid, FAIL, "Hopen: grtdfui83.hdf");
+    status = Vstart(fid);
+    CHECK_VOID(status, FAIL, "Vstart");
 
-        ii = 0;
-        while ((vref = Vgetid(fid, vref)) != FAIL) { /* until no more vgroups */
-            vgroup_id = Vattach(fid, vref, "r");     /* attach to vgroup */
+    ii = 0;
+    while ((vref = Vgetid(fid, vref)) != FAIL) { /* until no more vgroups */
+        vgroup_id = Vattach(fid, vref, "r");     /* attach to vgroup */
 
-            /* Test that the current vgroup is or is not internal as specified
-               in the array internal_array2 */
-            is_internal = Vgisinternal(vgroup_id);
-            CHECK_VOID(is_internal, FAIL, "Vgisinternal");
-            VERIFY_VOID(is_internal, internal_array2[ii], "Vgisinternal");
+        /* Test that the current vgroup is or is not internal as specified
+           in the array internal_array2 */
+        is_internal = Vgisinternal(vgroup_id);
+        CHECK_VOID(is_internal, FAIL, "Vgisinternal");
+        VERIFY_VOID(is_internal, internal_array2[ii], "Vgisinternal");
 
-            status = Vdetach(vgroup_id);
-            CHECK_VOID(status, FAIL, "Vdetach");
+        status = Vdetach(vgroup_id);
+        CHECK_VOID(status, FAIL, "Vdetach");
 
-            ii++; /* increment vgroup index */
-        }
-
-        /* Terminate access to the V interface and close the file */
-        status = Vend(fid);
-        CHECK_VOID(status, FAIL, "Vend");
-        status = Hclose(fid);
-        CHECK_VOID(status, FAIL, "Hclose");
+        ii++; /* increment vgroup index */
     }
-    else {
-        fprintf(stderr, "ERROR>>> Unable to make filename for %s\n", GR_FILE);
-        H4_FAILED()
-    }
+
+    /* Terminate access to the V interface and close the file */
+    status = Vend(fid);
+    CHECK_VOID(status, FAIL, "Vend");
+    status = Hclose(fid);
+    CHECK_VOID(status, FAIL, "Hclose");
 } /* test_vgisinternal */
 
 void

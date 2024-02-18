@@ -1208,6 +1208,7 @@ AC_CONFIG_FILES([Makefile
                  hdf/fortran/Makefile
                  hdf/src/Makefile
                  hdf/test/Makefile
+                 hdf/test/srcdir_str.h
                  hdf/util/Makefile
                  hdf/util/h4cc
                  hdf/util/h4fc
