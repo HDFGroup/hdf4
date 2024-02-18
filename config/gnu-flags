@@ -125,6 +125,16 @@ if test "X-gcc" = "X-$cc_vendor"; then
     PROFILE_CFLAGS="-pg"
     PROFILE_CPPFLAGS=
 
+    ####################
+    # General warnings #
+    ####################
+
+    # Add various general warning flags in gnu-warnings for gcc versions 4.8 and later.
+    if test $cc_vers_major -eq 4 -a $cc_vers_minor -ge 8 -o $cc_vers_major -gt 4; then
+        CFLAGS="$CFLAGS $(load_gnu_arguments general)"
+        CFLAGS="$CFLAGS $(load_gnu_arguments no-developer-general)"
+    fi
+
     #############################
     # Version-specific warnings #
     #############################
