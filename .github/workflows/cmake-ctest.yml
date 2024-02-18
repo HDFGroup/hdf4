@@ -76,7 +76,7 @@ jobs:
         run: |
           mkdir "${{ runner.workspace }}/build"
           mkdir "${{ runner.workspace }}/build/hdf4"
-          Copy-Item -Path ${{ runner.workspace }}/hdf4/hdfsrc/COPYING -Destination ${{ runner.workspace }}/build/hdf4/
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/hdfsrc/LICENSE -Destination ${{ runner.workspace }}/build/hdf4/
           Copy-Item -Path ${{ runner.workspace }}/hdf4/hdfsrc/README.md -Destination ${{ runner.workspace }}/build/hdf4/
           Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-MSVC/* -Destination ${{ runner.workspace }}/build/hdf4/ -Include *.zip
           cd "${{ runner.workspace }}/build"
@@ -143,7 +143,7 @@ jobs:
         run: |
           mkdir "${{ runner.workspace }}/build"
           mkdir "${{ runner.workspace }}/build/hdf4"
-          cp ${{ runner.workspace }}/hdf4/hdfsrc/COPYING ${{ runner.workspace }}/build/hdf4
+          cp ${{ runner.workspace }}/hdf4/hdfsrc/LICENSE ${{ runner.workspace }}/build/hdf4
           cp ${{ runner.workspace }}/hdf4/hdfsrc/README.md ${{ runner.workspace }}/build/hdf4
           cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-GNUC/*.tar.gz ${{ runner.workspace }}/build/hdf4
           cd "${{ runner.workspace }}/build"
@@ -226,7 +226,7 @@ jobs:
         run: |
           mkdir "${{ runner.workspace }}/build"
           mkdir "${{ runner.workspace }}/build/hdf4"
-          cp ${{ runner.workspace }}/hdf4/hdfsrc/COPYING ${{ runner.workspace }}/build/hdf4
+          cp ${{ runner.workspace }}/hdf4/hdfsrc/LICENSE ${{ runner.workspace }}/build/hdf4
           cp ${{ runner.workspace }}/hdf4/hdfsrc/README.md ${{ runner.workspace }}/build/hdf4
           cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Clang/*.tar.gz ${{ runner.workspace }}/build/hdf4
           cd "${{ runner.workspace }}/build"
@@ -310,7 +310,7 @@ jobs:
         run: |
           mkdir "${{ runner.workspace }}/build"
           mkdir "${{ runner.workspace }}/build/hdf4"
-          Copy-Item -Path ${{ runner.workspace }}/hdf4/hdfsrc/COPYING -Destination ${{ runner.workspace }}/build/hdf4/
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/hdfsrc/LICENSE -Destination ${{ runner.workspace }}/build/hdf4/
           Copy-Item -Path ${{ runner.workspace }}/hdf4/hdfsrc/README.md -Destination ${{ runner.workspace }}/build/hdf4/
           Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/* -Destination ${{ runner.workspace }}/build/hdf4/ -Include *.zip
           cd "${{ runner.workspace }}/build"
@@ -383,7 +383,7 @@ jobs:
         run: |
           mkdir "${{ runner.workspace }}/build"
           mkdir "${{ runner.workspace }}/build/hdf4"
-          cp ${{ runner.workspace }}/hdf4/hdfsrc/COPYING ${{ runner.workspace }}/build/hdf4
+          cp ${{ runner.workspace }}/hdf4/hdfsrc/LICENSE ${{ runner.workspace }}/build/hdf4
           cp ${{ runner.workspace }}/hdf4/hdfsrc/README.md ${{ runner.workspace }}/build/hdf4
           cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/*.tar.gz ${{ runner.workspace }}/build/hdf4
           cd "${{ runner.workspace }}/build"

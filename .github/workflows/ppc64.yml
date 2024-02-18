@@ -8,7 +8,7 @@ on:
     paths-ignore:
     - '.github/CODEOWNERS'
     - 'release_notes/**'
-    - 'COPYING'
+    - 'LICENSE'
     - '**.md'
 
 jobs:

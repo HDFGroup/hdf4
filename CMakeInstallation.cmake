@@ -179,10 +179,10 @@ endif ()
 HDF_README_PROPERTIES(HDF4_BUILD_FORTRAN)
 
 #-----------------------------------------------------------------------------
-# Configure the COPYING.txt file for the windows binary package
+# Configure the LICENSE.txt file for the windows binary package
 #-----------------------------------------------------------------------------
 if (WIN32)
-  configure_file (${HDF4_SOURCE_DIR}/COPYING ${HDF4_BINARY_DIR}/COPYING.txt @ONLY)
+  configure_file (${HDF4_SOURCE_DIR}/LICENSE ${HDF4_BINARY_DIR}/LICENSE.txt @ONLY)
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -190,7 +190,7 @@ endif ()
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
   install (
-      FILES ${HDF4_SOURCE_DIR}/COPYING
+      FILES ${HDF4_SOURCE_DIR}/LICENSE
       DESTINATION ${HDF4_INSTALL_DATA_DIR}
       COMPONENT hdfdocuments
   )
@@ -247,7 +247,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   set (CPACK_PACKAGE_VERSION_MAJOR "${HDF4_PACKAGE_VERSION_MAJOR}")
   set (CPACK_PACKAGE_VERSION_MINOR "${HDF4_PACKAGE_VERSION_MINOR}")
   set (CPACK_PACKAGE_VERSION_PATCH "")
-  set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
+  set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
   if (EXISTS "${HDF4_SOURCE_DIR}/release_notes")
     set (CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/release_notes/RELEASE.txt")
     set (CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/release_notes/RELEASE.txt")
@@ -299,7 +299,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
     endif ()
 #WiX variables
     set (CPACK_WIX_UNINSTALL "1")
-    set (CPACK_RESOURCE_FILE_LICENSE "${HDF4_BINARY_DIR}/COPYING.txt")
+    set (CPACK_RESOURCE_FILE_LICENSE "${HDF4_BINARY_DIR}/LICENSE.txt")
     set(CPACK_WIX_PRODUCT_ICON "${HDF_RESOURCES_DIR}\\\\hdf.ico")
     set(CPACK_WIX_PROPERTY_ARPCOMMENTS "Hierarchical Data Format (HDF) Software Library and Utilities")
     set(CPACK_WIX_PROPERTY_ARPURLINFOABOUT "${HDF4_PACKAGE_URL}")
