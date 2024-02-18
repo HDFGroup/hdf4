@@ -5,7 +5,7 @@
 # the various compilation modes.
 
 #
-# Prepend `$srcdir/config/gnu-warnings/` to the filename suffix(es) given as
+# Prepend `$srcdir/config/clang-warnings/` to the filename suffix(es) given as
 # subroutine argument(s), remove comments starting with # and ending
 # at EOL, replace spans of whitespace (including newlines) with spaces,
 # and re-emit the file(s) thus filtered on the standard output stream.
