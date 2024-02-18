@@ -1,6 +1,12 @@
 cmake_minimum_required (VERSION 3.12)
 project (HDF4_MFHDF_TEST C)
 
+#-----------------------------------------------------------------------------
+# Generate the srcdir_str.h file
+#-----------------------------------------------------------------------------
+set (srcdir ${HDF4_MFHDF_TEST_SOURCE_DIR})
+configure_file (${HDF4_MFHDF_TEST_SOURCE_DIR}/srcdir_str.h.in srcdir_str.h  @ONLY)
+
 set (hdftest_SRCS
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/hdftest.c
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/tchunk.c
@@ -25,7 +31,7 @@ set (hdftest_SRCS
 
 #-- Adding test for hdftest
 add_executable (hdftest ${hdftest_SRCS})
-target_include_directories(hdftest PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_COMP_INCLUDE_DIRECTORIES};${HDF4_BINARY_DIR}")
+target_include_directories(hdftest PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_COMP_INCLUDE_DIRECTORIES};${HDF4_BINARY_DIR};${CMAKE_CURRENT_BINARY_DIR}")
 if (NOT BUILD_SHARED_LIBS)
   TARGET_C_PROPERTIES (hdftest STATIC)
   target_link_libraries (hdftest PRIVATE ${HDF4_MF_LIB_TARGET})
