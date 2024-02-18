@@ -4,6 +4,20 @@
 # after configure starts and defines, among other things, flags for
 # the various compilation modes.
 
+#
+# Prepend `$srcdir/config/gnu-warnings/` to the filename suffix(es) given as
+# subroutine argument(s), remove comments starting with # and ending
+# at EOL, replace spans of whitespace (including newlines) with spaces,
+# and re-emit the file(s) thus filtered on the standard output stream.
+#
+load_clang_arguments()
+{
+    set -- $(for arg; do
+        sed 's,#.*$,,' $srcdir/config/clang-warnings/${arg}
+    done)
+    IFS=' ' echo "$*"
+}
+
 # Get the compiler version in a way that works for clang
 # unless a compiler version is already known
 #
@@ -43,14 +57,30 @@ if test "X-clang" = "X-$cc_vendor" -o "X-Apple LLVM" = "X-$cc_vendor"; then
     echo "compiler '$CC' is $cc_vendor-$cc_version"
 
     CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
-    CFLAGS="$CFLAGS -std=c99 -Wall -pedantic"
+    CFLAGS="$CFLAGS -std=c99"
 
-    DEBUG_CFLAGS="-g"
+    DEBUG_CFLAGS="-g -ftrapv -fno-common"
+    # -Og is only understood by clang 4+ and Xcode 9+
+    # Otherwise use -O1 (which is what -Og usually equates to)
+    if test "X-clang" = "X-$cc_vendor" -a $cc_vers_major -ge 4 -o "X-Apple LLVM" = "X-$cc_vendor" -a $cc_vers_major -ge 9; then
+        DEBUG_CFLAGS="$DEBUG_CFLAGS -Og"
+    else
+        DEBUG_CFLAGS="$DEBUG_CFLAGS -O1"
+    fi
     DEBUG_CPPFLAGS=
-    PROD_CFLAGS="-O2"
+
+    PROD_CFLAGS="-O3"
     PROD_CPPFLAGS=
+
     PROFILE_CFLAGS="-pg"
     PROFILE_CPPFLAGS=
+
+    ###########
+    # General #
+    ###########
+
+    CFLAGS="$CFLAGS $(load_clang_arguments general)"
+    CFLAGS="$CFLAGS $(load_clang_arguments no-developer-general)"
 
     #################
     # Flags are set #
