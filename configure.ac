@@ -745,12 +745,15 @@ esac
 
 ## ----------------------------------------------------------------------
 ## Is the szip library present?
+##
+## Now that libaec is easily available, we attempt to detect it by
+## default
 AC_SUBST(USE_COMP_SZIP) USE_COMP_SZIP="no"
 AC_SUBST(SZIP_HAS_ENCODER) SZIP_HAS_ENCODER="no"
 AC_ARG_WITH([szlib],
             [AS_HELP_STRING([--with-szlib=DIR],
-                            [Use szlib library [default=no]])],,
-            [withval=no])
+                            [Use szlib library [default=yes]])],,
+            [withval=yes])
 
 case "X-$withval" in
   X-yes)

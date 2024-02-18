@@ -184,10 +184,10 @@ endif ()
 #-----------------------------------------------------------------------------
 # Option for SzLib support
 #-----------------------------------------------------------------------------
-option (HDF4_ENABLE_SZIP_SUPPORT "Use SZip Filter" OFF)
+option (HDF4_ENABLE_SZIP_SUPPORT "Use SZip Filter" ON)
 set (SZIP_INFO "disabled")
 if (HDF4_ENABLE_SZIP_SUPPORT)
-  option (HDF4_ENABLE_SZIP_ENCODING "Use SZip Encoding" OFF)
+  option (HDF4_ENABLE_SZIP_ENCODING "Use SZip Encoding" ON)
   if (NOT SZIP_USE_EXTERNAL)
     set(SZIP_FOUND FALSE)
     set(libaec_USE_STATIC_LIBS ${USE_LIBAEC_STATIC})

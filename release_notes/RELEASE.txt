@@ -39,6 +39,11 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - szip support enabled by default
+
+      Now that libaec is easily available, HDF4 will attempt to build w/
+      szip + encoder by default in both CMake and the Autotools.
+
     - XDR changes
 
       We now only support building HDF4 with the XDR implementation packaged
