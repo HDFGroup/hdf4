@@ -86,14 +86,13 @@
       "description": "GNUC Standard Config for x64 (Release)",
       "inherits": [
         "ci-x64-Release-GNUC",
-        "ci-Fortran",
         "ci-Java",
         "ci-StdShar"
       ]
     },
-     {
+    {
       "name": "ci-StdShar-Clang-Fortran",
-      "description": "Clang Standard Config for x64 (Release)",
+      "description": "Clang Standard Fortran Config for x64 (Release)",
       "inherits": [
         "ci-x64-Release-Clang",
         "ci-Fortran",
@@ -103,9 +102,10 @@
     },
     {
       "name": "ci-StdShar-GNUC-Fortran",
-      "description": "GNUC Standard Config for x64 (Release)",
+      "description": "GNUC Standard Fortran Config for x64 (Release)",
       "inherits": [
         "ci-x64-Release-GNUC",
+        "ci-Fortran",
         "ci-Java",
         "ci-StdShar"
       ]
@@ -130,11 +130,28 @@
       ]
     },
     {
+      "name": "ci-StdShar-Clang-Fortran",
+      "description": "Clang Standard Fortran Build for x64 (Release)",
+      "configurePreset": "ci-StdShar-Clang-Fortran",
+      "inherits": [
+        "ci-x64-Release-Clang"
+      ]
+    },
+    {
       "name": "ci-StdShar-Clang",
       "description": "Clang Standard Build for x64 (Release)",
       "configurePreset": "ci-StdShar-Clang",
       "inherits": [
         "ci-x64-Release-Clang"
+      ]
+    },
+    {
+      "name": "ci-StdShar-GNUC-Fortran",
+      "description": "GNUC Standard Fortran Build for x64 (Release)",
+      "configurePreset": "ci-StdShar-GNUC-Fortran",
+      "verbose": true,
+      "inherits": [
+        "ci-x64-Release-GNUC"
       ]
     },
     {
@@ -172,6 +189,13 @@
       ]
     },
     {
+      "name": "ci-StdShar-Clang-Fortran",
+      "configurePreset": "ci-StdShar-Clang-Fortran",
+      "inherits": [
+        "ci-x64-Release-Clang"
+      ]
+    },
+    {
       "name": "ci-StdShar-OSX-Clang",
       "configurePreset": "ci-StdShar-Clang",
       "inherits": [
@@ -191,6 +215,13 @@
     {
       "name": "ci-StdShar-GNUC",
       "configurePreset": "ci-StdShar-GNUC",
+      "inherits": [
+        "ci-x64-Release-GNUC"
+      ]
+    },
+    {
+      "name": "ci-StdShar-GNUC-Fortran",
+      "configurePreset": "ci-StdShar-GNUC-Fortran",
       "inherits": [
         "ci-x64-Release-GNUC"
       ]
@@ -232,8 +263,18 @@
       "inherits": "ci-x64-Release-Clang"
     },
     {
+      "name": "ci-StdShar-Clang-Fortran",
+      "configurePreset": "ci-StdShar-Clang-Fortran",
+      "inherits": "ci-x64-Release-Clang"
+    },
+    {
       "name": "ci-StdShar-GNUC",
       "configurePreset": "ci-StdShar-GNUC",
+      "inherits": "ci-x64-Release-GNUC"
+    },
+    {
+      "name": "ci-StdShar-GNUC-Fortran",
+      "configurePreset": "ci-StdShar-GNUC-Fortran",
       "inherits": "ci-x64-Release-GNUC"
     },
     {
@@ -265,9 +306,9 @@
       "name": "ci-StdShar-Clang-Fortran",
       "steps": [
         {"type": "configure", "name": "ci-StdShar-Clang-Fortran"},
-        {"type": "build", "name": "ci-StdShar-Clang"},
-        {"type": "test", "name": "ci-StdShar-Clang"},
-        {"type": "package", "name": "ci-StdShar-Clang"}
+        {"type": "build", "name": "ci-StdShar-Clang-Fortran"},
+        {"type": "test", "name": "ci-StdShar-Clang-Fortran"},
+        {"type": "package", "name": "ci-StdShar-Clang-Fortran"}
       ]
     },
     {
@@ -292,9 +333,9 @@
       "name": "ci-StdShar-GNUC-Fortran",
       "steps": [
         {"type": "configure", "name": "ci-StdShar-GNUC-Fortran"},
-        {"type": "build", "name": "ci-StdShar-GNUC"},
-        {"type": "test", "name": "ci-StdShar-GNUC"},
-        {"type": "package", "name": "ci-StdShar-GNUC"}
+        {"type": "build", "name": "ci-StdShar-GNUC-Fortran"},
+        {"type": "test", "name": "ci-StdShar-GNUC-Fortran"},
+        {"type": "package", "name": "ci-StdShar-GNUC-Fortran"}
       ]
     },
     {
