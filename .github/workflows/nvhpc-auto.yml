@@ -49,7 +49,7 @@ jobs:
           $GITHUB_WORKSPACE/configure \
             FCFLAGS="-fPIC -fortranlibs" \
             --enable-build-mode=${{ inputs.build_mode }} \
-            --enable-fortran \
+            --disable-fortran \
             --enable-shared \
           #cat config.log
 
