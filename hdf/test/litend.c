@@ -65,7 +65,7 @@ static void
 test_little_read(void)
 {
     intn     rank;
-    int32    dimsizes[2];
+    int32    dimsizes[2] = {-1, -1};
     int32    numbertype;
     int8    *data_i8;
     uint8   *data_u8;
@@ -84,6 +84,7 @@ test_little_read(void)
     MESSAGE(10, printf("Testing Little-Endian INT8 Reading Routines\n"););
 
     ret = DFSDgetdims(filename, &rank, dimsizes, 2);
+
     RESULT("DFSDgetdims");
     if (dimsizes[0] != CDIM_Y || dimsizes[1] != CDIM_X) {
         fprintf(stderr, "Dimensions for INT8 data were incorrect\n");
