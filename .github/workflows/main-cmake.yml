@@ -123,10 +123,6 @@ jobs:
            sudo apt-get install -y ninja-build libtirpc-dev graphviz
         if: matrix.os == 'ubuntu-latest'
 
-      - name: Install Dependencies (Windows)
-        run: choco install ninja
-        if: matrix.os == 'windows-latest'
-
       - name: Install Dependencies (macOS)
         run: brew install ninja
         if: matrix.os == 'macos-13'
