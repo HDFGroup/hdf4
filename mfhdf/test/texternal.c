@@ -728,7 +728,7 @@ test_change_extdir(void)
     intn   num_errs    = 0; /* number of errors in compression test so far */
 
     status = make_sourcepath(dir_name, MAX_PATH_LEN);
-    CHECK(status, FAIL, "make_datafilename");
+    CHECK(status, FAIL, "make_sourcepath");
 
     /* When srcdir is not available, make up a directory to create the external
        file to cause subsequent reads to look outside of the current directory */
@@ -889,7 +889,7 @@ test_HDFFR_1609(void)
     intn  num_errs          = 0; /* number of errors in compression test so far */
 
     status = make_sourcepath(dir_name, MAX_PATH_LEN);
-    CHECK(status, FAIL, "make_datafilename");
+    CHECK(status, FAIL, "make_sourcepath");
 
     /* When srcdir is not available, make up a directory to create the external
        file to cause subsequent reads to look outside of the current directory */
