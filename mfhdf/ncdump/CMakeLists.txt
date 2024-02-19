@@ -8,24 +8,24 @@ set (ncdump_SRCS
     ${HDF4_MFHDF_UTIL_DIR}/h4getopt.c
 )
 
-if (NOT ONLY_SHARED_LIBS)
-  add_executable (ncdump ${ncdump_SRCS})
-  target_include_directories (ncdump PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_MFHDF_UTIL_DIR};${HDF4_BINARY_DIR}")
-  TARGET_C_PROPERTIES (ncdump STATIC)
-  target_link_libraries (ncdump PRIVATE ${HDF4_MF_LIB_TARGET})
-  set_target_properties (ncdump PROPERTIES COMPILE_DEFINITIONS "HDF")
+if (BUILD_STATIC_LIBS)
+  add_executable (ncdump${H4_NAME_STATIC_TOOLS} ${ncdump_SRCS})
+  target_include_directories (ncdump${H4_NAME_STATIC_TOOLS} PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_MFHDF_UTIL_DIR};${HDF4_BINARY_DIR}")
+  TARGET_C_PROPERTIES (ncdump${H4_NAME_STATIC_TOOLS} STATIC)
+  target_link_libraries (ncdump${H4_NAME_STATIC_TOOLS} PRIVATE ${HDF4_MF_LIB_TARGET})
+  set_target_properties (ncdump${H4_NAME_STATIC_TOOLS} PROPERTIES COMPILE_DEFINITIONS "HDF")
 
-  set (H4_DEP_EXECUTABLES ncdump)
+  set (H4_DEP_EXECUTABLES ncdump${H4_NAME_STATIC_TOOLS})
 endif ()
 
 if (BUILD_SHARED_LIBS)
-  add_executable (ncdump-shared ${ncdump_SRCS})
-  target_include_directories (ncdump-shared PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_MFHDF_UTIL_DIR};${HDF4_BINARY_DIR}")
-  TARGET_C_PROPERTIES (ncdump-shared SHARED)
-  target_link_libraries (ncdump-shared PRIVATE ${HDF4_MF_LIBSH_TARGET})
-  set_target_properties (ncdump-shared PROPERTIES COMPILE_DEFINITIONS "HDF")
+  add_executable (ncdump${H4_NAME_SHARED_TOOLS} ${ncdump_SRCS})
+  target_include_directories (ncdump${H4_NAME_SHARED_TOOLS} PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_MFHDF_UTIL_DIR};${HDF4_BINARY_DIR}")
+  TARGET_C_PROPERTIES (ncdump${H4_NAME_SHARED_TOOLS} SHARED)
+  target_link_libraries (ncdump${H4_NAME_SHARED_TOOLS} PRIVATE ${HDF4_MF_LIBSH_TARGET})
+  set_target_properties (ncdump${H4_NAME_SHARED_TOOLS} PROPERTIES COMPILE_DEFINITIONS "HDF")
 
-  set (H4_DEP_EXECUTABLES ${H4_DEP_EXECUTABLES} ncdump-shared)
+  set (H4_DEP_EXECUTABLES ${H4_DEP_EXECUTABLES} ncdump${H4_NAME_SHARED_TOOLS})
 endif ()
 
 if (BUILD_TESTING)

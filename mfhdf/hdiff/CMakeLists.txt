@@ -21,24 +21,24 @@ set (hdiff_SRCS
     ${HDF4_MFHDF_UTIL_DIR}/h4getopt.c
 )
 
-if (NOT ONLY_SHARED_LIBS)
-  add_executable(hdiff ${hdiff_SRCS})
-  target_include_directories(hdiff PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_BINARY_DIR};${HDF4_MFHDF_UTIL_DIR}")
-  TARGET_C_PROPERTIES (hdiff STATIC)
-  target_link_libraries(hdiff PRIVATE ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdiff")
+if (BUILD_STATIC_LIBS)
+  add_executable(hdiff${H4_NAME_STATIC_TOOLS} ${hdiff_SRCS})
+  target_include_directories(hdiff${H4_NAME_STATIC_TOOLS} PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_BINARY_DIR};${HDF4_MFHDF_UTIL_DIR}")
+  TARGET_C_PROPERTIES (hdiff${H4_NAME_STATIC_TOOLS} STATIC)
+  target_link_libraries(hdiff${H4_NAME_STATIC_TOOLS} PRIVATE ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
+  set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdiff${H4_NAME_STATIC_TOOLS}")
 
   set (H4_DEP_EXECUTABLES hdiff)
 endif ()
 
 if (BUILD_SHARED_LIBS)
-  add_executable(hdiff-shared ${hdiff_SRCS})
-  target_include_directories(hdiff-shared PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_BINARY_DIR};${HDF4_MFHDF_UTIL_DIR}")
-  TARGET_C_PROPERTIES (hdiff-shared SHARED)
-  target_link_libraries(hdiff-shared PRIVATE ${HDF4_MF_LIBSH_TARGET} ${HDF4_SRC_LIBSH_TARGET} ${LINK_LIBS})
-  set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdiff-shared")
+  add_executable(hdiff${H4_NAME_SHARED_TOOLS} ${hdiff_SRCS})
+  target_include_directories(hdiff${H4_NAME_SHARED_TOOLS} PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_BINARY_DIR};${HDF4_MFHDF_UTIL_DIR}")
+  TARGET_C_PROPERTIES (hdiff${H4_NAME_SHARED_TOOLS} SHARED)
+  target_link_libraries(hdiff${H4_NAME_SHARED_TOOLS} PRIVATE ${HDF4_MF_LIBSH_TARGET} ${HDF4_SRC_LIBSH_TARGET} ${LINK_LIBS})
+  set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdiff${H4_NAME_SHARED_TOOLS}")
 
-  set (H4_DEP_EXECUTABLES ${H4_DEP_EXECUTABLES} hdiff-shared)
+  set (H4_DEP_EXECUTABLES ${H4_DEP_EXECUTABLES} hdiff${H4_NAME_SHARED_TOOLS})
 endif ()
 
 if (BUILD_TESTING)

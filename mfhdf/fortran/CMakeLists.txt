@@ -32,7 +32,7 @@ set (FORTRAN_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 #-----------------------------------------------------------------------------
 # Add Main fortran library
 #-----------------------------------------------------------------------------
-if (NOT ONLY_SHARED_LIBS)
+if (BUILD_STATIC_LIBS)
   add_library (${HDF4_MF_FCSTUB_LIB_TARGET} STATIC ${HDF4_MFHDF_LIBSRC_CSTUB_FSRCS} ${HDF4_MFHDF_LIBSRC_CSTUB_FHDRS} ${HDF4_HDF_SRC_CHDRS} ${HDF4_HDFSOURCE_DIR}/hproto_fortran.h)
   target_include_directories(${HDF4_MF_FCSTUB_LIB_TARGET}
       PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_BINARY_DIR}"
@@ -88,7 +88,7 @@ set (HDF4_MF_FORTRAN_SRCS
 )
 set_source_files_properties (${HDF4_MF_FORTRAN_SRCS} PROPERTIES LANGUAGE Fortran)
 #-----------------------------------------------------------------------------
-if (NOT ONLY_SHARED_LIBS)
+if (BUILD_STATIC_LIBS)
   add_library (${HDF4_MF_FORTRAN_LIB_TARGET} STATIC ${HDF4_MF_FORTRAN_SRCS})
   target_include_directories (${HDF4_MF_FORTRAN_LIB_TARGET}
       PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_MFHDF_FORTRAN_BINARY_DIR};${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_HDF_TESTSOURCE_DIR}"

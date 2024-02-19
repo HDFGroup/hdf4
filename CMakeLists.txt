@@ -335,9 +335,17 @@ set (H4_ENABLE_STATIC_LIB NO)
 option (BUILD_SHARED_LIBS "Build Shared Libraries" ON)
 set (H4_ENABLE_SHARED_LIB NO)
 
+option (ONLY_STATIC_TOOLS "Only Build Static Tools" OFF)
+mark_as_advanced (ONLY_SHARED_LIBS)
+option (ONLY_SHARED_TOOLS "Only Build Shared Tools" OFF)
+mark_as_advanced (ONLY_SHARED_LIBS)
+option (HDF4_BUILD_STATIC_TOOLS "Build Static Tools" ON)
+option (HDF4_BUILD_SHARED_TOOLS "Build Shared Tools" ON)
+
 # only shared libraries is true if user forces static OFF
 if (NOT BUILD_STATIC_LIBS)
   set (ONLY_SHARED_LIBS ON CACHE BOOL "Only Build Shared Libraries" FORCE)
+  set (ONLY_SHARED_TOOLS ON CACHE BOOL "Only Build Shared Tools" FORCE)
 endif ()
 
 # only shared libraries is set ON by user then force settings
@@ -345,6 +353,41 @@ if (ONLY_SHARED_LIBS)
   set (H4_ENABLE_STATIC_LIB NO)
   set (BUILD_SHARED_LIBS ON CACHE BOOL "Build Shared Libraries" FORCE)
   set (BUILD_STATIC_LIBS OFF CACHE BOOL "Build Static Libraries" FORCE)
+  set (HDF4_BUILD_STATIC_TOOLS OFF CACHE BOOL "Only Build Static Tools" FORCE)
+endif ()
+
+if (ONLY_SHARED_TOOLS AND BUILD_SHARED_LIBS)
+  set (HDF4_BUILD_SHARED_TOOLS ON CACHE BOOL "Build Shared Tools" FORCE)
+  set (HDF4_BUILD_STATIC_TOOLS OFF CACHE BOOL "Build Static Tools" FORCE)
+endif ()
+
+if (ONLY_STATIC_TOOLS AND BUILD_STATIC_LIBS)
+  set (HDF4_BUILD_SHARED_TOOLS OFF CACHE BOOL "Build Shared Tools" FORCE)
+  set (HDF4_BUILD_STATIC_TOOLS ON CACHE BOOL "Build Static Tools" FORCE)
+endif ()
+
+#option (HDF4_EXT_STATIC_TOOLS "Name Extension for Static Tools (none static)" "none")
+set (HDF4_EXT_STATIC_TOOLS "none" CACHE STRING "Name Extension for Static Tools (none static)")
+set_property (CACHE HDF4_EXT_STATIC_TOOLS PROPERTY STRINGS none static)
+mark_as_advanced (HDF4_EXT_STATIC_TOOLS)
+#option (HDF4_EXT_SHARED_TOOLS "Name Extension for Shared Tools (none shared)" "none")
+set (HDF4_EXT_SHARED_TOOLS "shared" CACHE STRING "Name Extension for Shared Tools (none shared)")
+set_property (CACHE HDF4_EXT_STATIC_TOOLS PROPERTY STRINGS none shared)
+mark_as_advanced (HDF4_EXT_STATIC_TOOLS)
+if (HDF4_EXT_STATIC_TOOLS MATCHES "none" AND HDF4_EXT_SHARED_TOOLS MATCHES "none")
+#if both selected none static wins if both types being built
+  set (HDF4_EXT_SHARED_TOOLS "shared" CACHE STRING "Name Extension for Shared Tools (none shared)" FORCE)
+endif ()
+
+if (HDF4_EXT_STATIC_TOOLS MATCHES "none")
+  set (H4_NAME_STATIC_TOOLS "" CACHE BOOL "Name Extension for Static Tools" FORCE)
+else ()
+  set (H4_NAME_STATIC_TOOLS "-${HDF4_EXT_STATIC_TOOLS}" CACHE BOOL "Name Extension for Static Tools" FORCE)
+endif ()
+if (HDF4_EXT_SHARED_TOOLS MATCHES "none")
+  set (H4_NAME_SHARED_TOOLS "" CACHE BOOL "Name Extension for Shared Tools" FORCE)
+else ()
+  set (H4_NAME_SHARED_TOOLS "-${HDF4_EXT_SHARED_TOOLS}" CACHE BOOL "Name Extension for Shared Tools" FORCE)
 endif ()
 
 if (BUILD_STATIC_LIBS)
@@ -355,12 +398,6 @@ if (BUILD_SHARED_LIBS)
 endif ()
 
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-if (NOT BUILD_SHARED_LIBS)
-  set (tgt_file_ext "")
-else ()
-  set (tgt_file_ext "-shared")
-endif ()
 
 add_definitions (-DHAVE_CONFIG_H)
 
