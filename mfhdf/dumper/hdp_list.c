@@ -202,16 +202,16 @@ print_list_header(list_info_t *list_opts)
 intn
 print_annots_by_object(const char *fname, int32 an_id, ann_type annot_type, uint16 tag, uint16 ref)
 {
-    intn   i;
-    char  *buf = NULL;
-    int32  ann_num;
-    int32  ann_length;
-    int32  ann_id          = FAIL;
-    int32 *ann_list        = NULL;
-    char  *annot_type_text = "invalid";                /* "label" or "description" */
-    char  *func_name       = "print_annots_by_object"; /* used to print error msg */
-    char   error_item[256];                            /* holds tag, ref, and fname for error msg */
-    intn   ret_value = SUCCEED;
+    intn        i;
+    char       *buf = NULL;
+    int32       ann_num;
+    int32       ann_length;
+    int32       ann_id          = FAIL;
+    int32      *ann_list        = NULL;
+    const char *annot_type_text = "invalid";                /* "label" or "description" */
+    const char *func_name       = "print_annots_by_object"; /* used to print error msg */
+    char        error_item[256];                            /* holds tag, ref, and fname for error msg */
+    intn        ret_value = SUCCEED;
 
     /* stores the current values tag, ref, and file name in error_item,
          just to simplify the error printing statement */
@@ -327,13 +327,13 @@ print_all_file_labels, and print_all_file_descs for the common code. */
 intn
 print_annots_in_file(int32 an_id, const char *fname, int32 n_annotations, ann_type annot_type)
 {
-    intn  i;
-    int32 len;
-    char *annotation      = NULL;
-    char *func_name       = "print_annots_in_file";
-    int32 ann_id          = FAIL;
-    char *annot_type_text = "invalid"; /* "label" or "description" */
-    intn  ret_value       = SUCCEED;
+    intn        i;
+    int32       len;
+    char       *annotation      = NULL;
+    const char *func_name       = "print_annots_in_file";
+    int32       ann_id          = FAIL;
+    const char *annot_type_text = "invalid"; /* "label" or "description" */
+    intn        ret_value       = SUCCEED;
 
     /* validate annotation type before processing */
     if (annot_type == AN_DATA_LABEL)

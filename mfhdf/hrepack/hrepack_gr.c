@@ -82,10 +82,10 @@ copy_gr(int32 infile_id, int32 outfile_id, int32 gr_in, int32 gr_out, int32 tag,
         eltsz,              /* element size */
         nelms,              /* number of elements */
         data_size;
-    void *buf = NULL;
-    uint8 pal_data[256 * 3];
-    int   can_compress = 1; /* flag to tell if a compression is supported */
-    char *pal_path     = "palette";
+    void       *buf = NULL;
+    uint8       pal_data[256 * 3];
+    int         can_compress = 1; /* flag to tell if a compression is supported */
+    const char *pal_path     = "palette";
 
     ri_index = GRreftoindex(gr_in, (uint16)ref);
     ri_id    = GRselect(gr_in, ri_index);

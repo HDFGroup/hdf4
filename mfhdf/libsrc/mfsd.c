@@ -2959,9 +2959,8 @@ SDgetdimstrs(int32 id, /* IN:  dataset ID */
     NC_dim   *dim    = NULL;
     NC_attr **attr   = NULL;
     char     *name   = NULL;
-    int32     ii;
     int32     namelen;
-    intn      ret_value = SUCCEED;
+    int       ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -2990,10 +2989,10 @@ SDgetdimstrs(int32 id, /* IN:  dataset ID */
         name    = dim->name->values;
         namelen = strlen(name);
         dp      = (NC_var **)handle->vars->values;
-        for (ii = 0; ii < handle->vars->count; ii++, dp++) {
+        for (int i = 0; i < handle->vars->count; i++, dp++) {
             /* eliminate vars with rank > 1, coord vars only have rank 1 */
-            if ((*dp)->assoc->count == 1)
-                if (namelen == (*dp)->name->len && strncmp(name, (*dp)->name->values, strlen(name)) == 0)
+            if ((*dp)->assoc->count == 1) {
+                if (namelen == (*dp)->name->len && strncmp(name, (*dp)->name->values, strlen(name)) == 0) {
                     /* because a dim was given, make sure that this is a coord var */
                     /* if it is an SDS, the function will fail */
                     if ((*dp)->var_type == IS_SDSVAR) {
@@ -3008,6 +3007,8 @@ SDgetdimstrs(int32 id, /* IN:  dataset ID */
                     {
                         var = (*dp);
                     }
+                }
+            }
         }
     }
 
@@ -3555,14 +3556,13 @@ done:
 intn
 SDsetup_szip_parms(int32 id, NC *handle, comp_info *c_info, int32 *cdims)
 {
-    NC_dim *dim;      /* to check if the dimension is unlimited */
-    int32   dimindex; /* to obtain the NC_dim record */
+    NC_dim *dim = NULL; /* to check if the dimension is unlimited */
+    int32   dimindex;   /* to obtain the NC_dim record */
     NC_var *var = NULL;
     int32   ndims;
-    int     i;
     int32   xdims[H4_MAX_VAR_DIMS];
     int32   nt;
-    intn    ret_value = SUCCEED;
+    int     ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -3577,9 +3577,11 @@ SDsetup_szip_parms(int32 id, NC *handle, comp_info *c_info, int32 *cdims)
     }
 
     ndims = var->assoc->count;
-    for (i = 0; i < ndims; i++) {
+    for (int i = 0; i < ndims; i++) {
         dimindex = var->assoc->values[i];
         dim      = SDIget_dim(handle, dimindex);
+        if (dim == NULL)
+            HGOTO_ERROR(DFE_ARGS, FAIL);
         xdims[i] = dim->size;
     }
 
@@ -3588,7 +3590,7 @@ SDsetup_szip_parms(int32 id, NC *handle, comp_info *c_info, int32 *cdims)
     ret_value = HCPsetup_szip_parms(c_info, nt, 1, ndims, xdims, cdims);
 
 done:
-    return (ret_value);
+    return ret_value;
 }
 #endif
 /******************************************************************************

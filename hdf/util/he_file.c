@@ -486,10 +486,10 @@ put(char *template, int verbose)
 int
 HEputR8(HE_CMD *cmd)
 {
-    int   i;
-    int   verbose = NO;
-    char *image   = "img#.@.%";
-    char *pal     = "pal#";
+    int         i;
+    int         verbose = NO;
+    const char *image   = "img#.@.%";
+    const char *pal     = "pal#";
 
     for (i = 1; i < cmd->argc; i++)
         if (cmd->argv[i][0] == '-')

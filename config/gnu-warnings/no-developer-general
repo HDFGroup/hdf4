@@ -6,3 +6,4 @@
 # regarding the library settings string (H4libhdf4_settings). We'll turn
 # it off here but leave it on in the developer flags.
 -Wno-overlength-strings
+-Wno-format-nonliteral

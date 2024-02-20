@@ -134,7 +134,7 @@ test_szip_RI8bit()
     /********************** End of variable declaration **********************/
 
     HCget_config_info(COMP_CODE_SZIP, &comp_config);
-    CHECK_VOID((comp_config & COMP_DECODER_ENABLED | COMP_ENCODER_ENABLED), 0,
+    CHECK_VOID(((comp_config & COMP_DECODER_ENABLED) && (comp_config & COMP_ENCODER_ENABLED)), 0,
                "SZIP Compression not available");
 
     /* Create and open the file for sziped data */
@@ -347,7 +347,7 @@ test_szip_RI16bit()
     /********************** End of variable declaration **********************/
 
     HCget_config_info(COMP_CODE_SZIP, &comp_config);
-    CHECK_VOID((comp_config & COMP_DECODER_ENABLED | COMP_ENCODER_ENABLED), 0,
+    CHECK_VOID(((comp_config & COMP_DECODER_ENABLED) && (comp_config & COMP_ENCODER_ENABLED)), 0,
                "SZIP Compression not available");
 
     /* Create and open the file for sziped data */
@@ -560,7 +560,7 @@ test_szip_RI32bit()
     /********************** End of variable declaration **********************/
 
     HCget_config_info(COMP_CODE_SZIP, &comp_config);
-    CHECK_VOID((comp_config & COMP_DECODER_ENABLED | COMP_ENCODER_ENABLED), 0,
+    CHECK_VOID(((comp_config & COMP_DECODER_ENABLED) && (comp_config & COMP_ENCODER_ENABLED)), 0,
                "SZIP Compression not available");
 
     /* Create and open the file for sziped data */
@@ -773,7 +773,7 @@ test_szip_RIfl32bit()
     /********************** End of variable declaration **********************/
 
     HCget_config_info(COMP_CODE_SZIP, &comp_config);
-    CHECK_VOID((comp_config & COMP_DECODER_ENABLED | COMP_ENCODER_ENABLED), 0,
+    CHECK_VOID(((comp_config & COMP_DECODER_ENABLED) && (comp_config & COMP_ENCODER_ENABLED)), 0,
                "SZIP Compression not available");
 
     /* Create and open the file for sziped data */
@@ -987,7 +987,7 @@ test_szip_RIfl64bit()
     /********************** End of variable declaration **********************/
 
     HCget_config_info(COMP_CODE_SZIP, &comp_config);
-    CHECK_VOID((comp_config & COMP_DECODER_ENABLED | COMP_ENCODER_ENABLED), 0,
+    CHECK_VOID(((comp_config & COMP_DECODER_ENABLED) && (comp_config & COMP_ENCODER_ENABLED)), 0,
                "SZIP Compression not available");
 
     /* Create and open the file for sziped data */
@@ -1144,7 +1144,7 @@ test_szip_chunk()
     uint32        comp_config;
     comp_coder_t  comp_type;
     int8          data_out[N_COMPS * LENGTH_CH * WIDTH_CH];
-    char         *image_name = "Image_chunked_sziped";
+    const char   *image_name = "Image_chunked_sziped";
     HDF_CHUNK_DEF chunk_def;
     int8          chunk_buf[18];
 
@@ -1169,7 +1169,7 @@ test_szip_chunk()
     /********************** End of variable declaration **********************/
 
     HCget_config_info(COMP_CODE_SZIP, &comp_config);
-    CHECK_VOID((comp_config & COMP_DECODER_ENABLED | COMP_ENCODER_ENABLED), 0,
+    CHECK_VOID(((comp_config & COMP_DECODER_ENABLED) && (comp_config & COMP_ENCODER_ENABLED)), 0,
                "SZIP Compression not available");
 
     /* Create and open the file for chunked and sziped data. */

@@ -123,8 +123,8 @@ pr_att_vals(nc_type type, int len, void *vals)
     char         *sp;
     unsigned char uc;
     char          gps[30]; /* for ascii of a float or double precision */
-    char         *f_fmt = "%#.8g";
-    char         *d_fmt = "%#.16g";
+    const char   *f_fmt = "%#.8g";
+    const char   *d_fmt = "%#.16g";
 
     switch (type) {
         case DFNT_INT8:
