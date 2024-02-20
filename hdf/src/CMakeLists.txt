@@ -66,6 +66,22 @@ set (HDF4_HDF_SRC_CSRCS
 )
 
 set (HDF4_HDF_SRC_CHDRS
+    ${HDF4_HDF_SRC_SOURCE_DIR}/H4api_adpt.h
+    #${HDF4_BINARY_DIR}/h4config.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hbitio.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hcomp.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hdatainfo.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hdf.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/herr.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hlimits.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hntdefs.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hproto.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/htags.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/mfgr.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/vg.h
+)
+
+set (HDF4_PRIVATE_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/atom.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/bitvect.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/cdeflate.h
@@ -81,37 +97,21 @@ set (HDF4_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfsd.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfufp2i.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/dynarray.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/H4api_adpt.h
-    #${HDF4_BINARY_DIR}/h4config.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/hbitio.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/glist.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hchunks.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/hcomp.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hcompi.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hconv.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/hdatainfo.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/hdf.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hdfi.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/herr.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hfile.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hkit.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/hlimits.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/hntdefs.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/hproto.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hqueue.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/htags.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/linklist.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/mcache.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/mfan.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/mfani.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/mfgr.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/mfgri.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/mstdio.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/tbbt.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/vg.h
-)
-
-set (HDF4_PRIVATE_HDF_SRC_CHDRS
-    ${HDF4_HDF_SRC_SOURCE_DIR}/glist.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/mcache.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/vgint.h
 )
 
