@@ -262,6 +262,10 @@ annotate(struct ncvar *vp, struct fspec *fsp, long cor[], long iel)
                 printf(",%d", (int)(1 + cor[id]));
             }
             break;
+        case LANG_NONE:
+        default:
+            /* Might want to make this an error */
+            break;
     }
     printf(")\n    ");
 }
@@ -564,6 +568,10 @@ vardata(struct ncvar *vp, long vdims[], int ncid, int varid, struct fspec *fsp)
                         for (id = vrank - 2; id >= 0; id--) {
                             printf(",%d", (int)(1 + cor[id]));
                         }
+                        break;
+                    case LANG_NONE:
+                    default:
+                        /* Might want to make this an error */
                         break;
                 }
                 printf(")\n    ");

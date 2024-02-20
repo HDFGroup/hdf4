@@ -60,11 +60,10 @@ test_mgr_compress_a()
         int32        start[2];           /* start of image data to grab */
         int32        stride[2];          /* stride of image data to grab */
         int32        count[2];           /* Size of image data to operate on */
-        intn         i, j;               /* indices */
 
         /* Initialize data we are going to write out */
-        for (i = 0; i < 10; i++)
-            for (j = 0; j < 10; j++)
+        for (int i = 0; i < 10; i++)
+            for (int j = 0; j < 10; j++)
                 image0[i][j] = (uint8)(i + j);
 
         /* Get the first image in this file */
@@ -103,7 +102,7 @@ test_mgr_compress_a()
         if (memcmp(image, image0, 10 * 10) != 0) {
             MESSAGE(3, printf("Error reading data for gzip compressed image\n"););
             num_errs++;
-        } /* end if */
+        }
 
         /* Close the empty image */
         ret = GRendaccess(riid);
@@ -159,7 +158,7 @@ test_mgr_compress_a()
         if (memcmp(image, image0, 10 * 10) != 0) {
             MESSAGE(3, printf("Error reading 2nd data for gzip compressed image\n"););
             num_errs++;
-        } /* end if */
+        }
 
         /* Close the empty image */
         ret = GRendaccess(riid);
@@ -210,11 +209,10 @@ test_mgr_compress_b()
         int32        interlace_mode, n_comps, n_attrs, datatype; /* Image information */
         char         name[30];                                   /* Buffer for retrieving image name */
         uint8        attr;                                       /* Attribute data */
-        intn         i, j;                                       /* indices */
 
         /* Initialize data we are going to write out */
-        for (i = 0; i < 10; i++)
-            for (j = 0; j < 10; j++)
+        for (int i = 0; i < 10; i++)
+            for (int j = 0; j < 10; j++)
                 image0[i][j] = (uint8)(i + j);
 
         /* Get the first image in this file */
@@ -286,7 +284,7 @@ test_mgr_compress_b()
         if (memcmp(image, image0, 10 * 10) != 0) {
             MESSAGE(3, printf("Error reading data for gzip compressed image\n"););
             num_errs++;
-        } /* end if */
+        }
 
         /* Close the image */
         ret = GRendaccess(riid);
@@ -309,16 +307,15 @@ test_mgr_compress_b()
 static int
 test_mgr_compress_c()
 {
-    intn  status;       /* status for functions returning an intn */
-    int32 file_id,      /* HDF file identifier */
-        gr_id,          /* GR interface identifier */
-        ri_id,          /* raster image identifier */
-        start[2],       /* start position to write for each dimension */
-        edges[2],       /* number of elements to be written along each dimension */
-        dim_sizes[2],   /* dimension sizes of the image array */
-        interlace_mode, /* interlace mode of the image */
-        data_type,      /* data type of the image data */
-        i, j;
+    int       status;         /* status for functions returning an int */
+    int32     file_id;        /* HDF file identifier */
+    int32     gr_id;          /* GR interface identifier */
+    int32     ri_id;          /* raster image identifier */
+    int32     start[2];       /* start position to write for each dimension */
+    int32     edges[2];       /* number of elements to be written along each dimension */
+    int32     dim_sizes[2];   /* dimension sizes of the image array */
+    int32     interlace_mode; /* interlace mode of the image */
+    int32     data_type;      /* data type of the image data */
     uint8     image_buf[128][128][3];
     uint8     read_buf[128][128][3];
     comp_info c_info;
@@ -351,11 +348,11 @@ test_mgr_compress_c()
     CHECK(status, FAIL, "GRsetcompress");
 
     /* Fill the image data buffer with values */
-    for (i = 0; i < 128; i++)
-        for (j = 0; j < 128; j++) {
-            image_buf[i][j][0] = (i + j) + 1;
-            image_buf[i][j][1] = (i + j) + 1;
-            image_buf[i][j][2] = (i + j) + 1;
+    for (uint8 i = 0; i < 128; i++)
+        for (uint8 j = 0; j < 128; j++) {
+            image_buf[i][j][0] = (uint8)(i + j + 1);
+            image_buf[i][j][1] = (uint8)(i + j + 1);
+            image_buf[i][j][2] = (uint8)(i + j + 1);
         }
 
     /* Write data in the buffer into the image array */
@@ -399,7 +396,7 @@ test_mgr_compress_c()
     if (fuzzy_memcmp(image_buf, read_buf, 128 * 128 * 3, JPEG_FUZZ) != 0) {
         MESSAGE(3, printf("tmgrcomp: Error reading data for 24-bit JPEG compressed image\n"););
         num_errs++;
-    } /* end if */
+    }
 
     /* Terminate access to raster image and to GR */
     /* interface and, close the HDF file.         */
@@ -443,21 +440,20 @@ test_mgr_compress_c()
 #define DEFLATE_LEVEL    7  /* arbitrary */
 #define SKPHUFF_SKIPSIZE 28 /* arbitrary */
 
-static intn
-make_comp_image(int32 grid, char *img_name, comp_coder_t comp_type, /* Compression method */
-                comp_info *cinfo, char *message)                    /* Compression parameters */
+static int
+make_comp_image(int32 grid, const char *img_name, comp_coder_t comp_type, /* Compression method */
+                comp_info *cinfo, char *message)                          /* Compression parameters */
 {
     int32 riid;               /* RI ID of the working image */
     int32 dims[2] = {10, 10}; /* dimensions for the empty image */
     uint8 image_data[10][10]; /* space for the image data */
     int32 start[2];           /* start of image data to grab */
     int32 stride[2];          /* stride of image data to grab */
-    intn  i, j;               /* indices */
-    intn  ret_value;          /* generic return value */
+    int   ret_value;          /* generic return value */
 
     /* Initialize data we are going to write out */
-    for (i = 0; i < 10; i++)
-        for (j = 0; j < 10; j++)
+    for (int i = 0; i < 10; i++)
+        for (int j = 0; j < 10; j++)
             image_data[i][j] = (uint8)(i + j + 10);
 
     /* Create the image */
@@ -502,7 +498,7 @@ test_get_compress()
     comp_coder_t comp_type;    /* Compression method */
     comp_info    cinfo;        /* Compression parameters - union */
     char         err_func[80]; /* name of the functions where failure occurs */
-    intn         status;       /* generic return value */
+    int          status;       /* generic return value */
 
     /* D - Retrieve compression information of compressed images */
     MESSAGE(8, printf("Verify the compression information of compressed images\n"););
@@ -689,7 +685,7 @@ test_mgr_chunk_compress()
 
     /************************* Variable declaration **************************/
 
-    intn  status;        /* status for functions returning an intn */
+    int   status;        /* status for functions returning an int */
     int32 file_id,       /* HDF file identifier */
         gr_id,           /* GR interface identifier */
         ri_id[N_IMAGES], /* raster image identifier */
@@ -704,7 +700,7 @@ test_mgr_chunk_compress()
 
     comp_coder_t  comp_type;
     int16         data_out[3 * Y_LENGTH * X_LENGTH];
-    char         *image_name[] = {"Image_NO", "Image_RL", "Image_Sk", "Image_DF"};
+    const char   *image_name[] = {"Image_NO", "Image_RL", "Image_Sk", "Image_DF"};
     HDF_CHUNK_DEF chunk_def[N_IMAGES];
     int16         chunk_buf[18];
 
@@ -879,7 +875,7 @@ test_mgr_chunk_compress()
             MESSAGE(3, printf("Error in reading chunk at line %d\n", __LINE__););
             MESSAGE(3, printf("Image #%d\n", (int)img_num););
             num_errs++;
-        } /* end if */
+        }
 
         /* Read the whole image. */
         start[0] = start[1] = 0;
@@ -892,7 +888,7 @@ test_mgr_chunk_compress()
             MESSAGE(3, printf("%d: Error reading data for the whole image\n", __LINE__););
             MESSAGE(3, printf("%d: Compression method\n", (int)img_num););
             num_errs++;
-        } /* end if */
+        }
 
         status = GRendaccess(ri_id[img_num]);
         CHECK(status, FAIL, "GRendaccess");

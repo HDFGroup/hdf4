@@ -141,7 +141,7 @@ test_1dim_singlevar()
         long start[] = {0};
         long edges[1];
         edges[0] = dimsize;
-        memset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0 * sizeof(short));
         status = ncvarget(ncid, varid, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -174,7 +174,7 @@ test_1dim_singlevar()
         long start[] = {0};
         long edges[1];
         edges[0] = dimsize;
-        memset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0 * sizeof(short));
         status = ncvarget(ncid, varid, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -404,7 +404,7 @@ test_1dim_multivars()
         long start[] = {0};
         long edges[1];
         edges[0] = dimsize;
-        memset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0 * sizeof(short));
 
         /* Read and verify data of Variable 1 */
         status = ncvarget(ncid, varid1, start, edges, outdata);
@@ -421,7 +421,7 @@ test_1dim_multivars()
 
         /* Read and verify data of Variable 2 */
         edges[0] = 2; /* only reading what written to this variable so far */
-        memset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0 * sizeof(short));
         status = ncvarget(ncid, varid2, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -437,7 +437,7 @@ test_1dim_multivars()
         /* Try to read again but up to the max number of records, 4 in this case
            because the other variable in the file has 4 elements written */
         edges[0] = dimsize;
-        memset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0 * sizeof(short));
         status = ncvarget(ncid, varid2, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -482,7 +482,7 @@ test_1dim_multivars()
 
         /* Read and verify data of Variable 1 */
         /* read data should be: 300  301  302  303  400  401 */
-        memset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0 * sizeof(short));
         status = ncvarget(ncid, varid1, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -497,7 +497,7 @@ test_1dim_multivars()
         /* Read and verify data of Variable 2 */
         /* read data should be: 102  104  -2  -2  -2  -2 */
         edges[0] = 2;
-        memset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0 * sizeof(short));
         status = ncvarget(ncid, varid2, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -534,7 +534,7 @@ test_1dim_multivars()
 
         /* Read and verify data of Variable 1 */
         /* read data should be: 300  301  302  303  400  401  -1 */
-        memset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0 * sizeof(short));
         status = ncvarget(ncid, varid1, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -548,7 +548,7 @@ test_1dim_multivars()
 
         /* Read and verify data of Variable 1 */
         /* read data should be: 102  104  -2  -2  200  201  202 */
-        memset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0 * sizeof(short));
         status = ncvarget(ncid, varid2, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -588,7 +588,7 @@ test_1dim_multivars()
 
         /* Read and verify data of Variable 1; read data should be: */
         /* 300 301 302 303 400 401 -1 -1 -1 -1 -1 -1 500 501 502    */
-        memset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0 * sizeof(short));
         status = ncvarget(ncid, varid1, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -602,7 +602,7 @@ test_1dim_multivars()
 
         /* Read and verify data of Variable 2; read data should be: */
         /* 102 104 -2 -2 200 201 202 -2 -2 -2 -2 -2 -2 -2 -2 */
-        memset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0 * sizeof(short));
         status = ncvarget(ncid, varid2, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -615,7 +615,7 @@ test_1dim_multivars()
         }
     } /* end read data */
 
-#if NOTRUN
+#if 0
     /* The following test is to verify that attempting to read pass the maximum
        number of records in the file will fail.  However, because ncvarget leads
        to the internal function NCcoordck which uses NCadvise to display the
