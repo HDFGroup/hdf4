@@ -25,29 +25,11 @@
         - Buffer the compressed element and get times for the buffered element.
         - Make a new linked block element and get benchmark times
         - Buffer the linked block element and get times for the buffered element.
-
-    BUGS/LIMITATIONS
-
-    EXPORTED ROUTINES
-
-    AUTHOR
-        Quincey Koziol
-
-    MODIFICATION HISTORY
-        12/11/98 - Wrote tests
-        12/20/06 - Compute the wallclock time and use the environment
-                   variable or macro HDF4_TESTPREFIX to add prefix to the
-                   testing files names. Also, it allows to specify the number
-                   of elements in buffer at the command line.
-
  */
 
 #define TESTMASTER
 
-#include "hdf.h"
-#ifdef H4_HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
+#include "hdfi.h"
 #include "tutils.h"
 #include "hfile.h"
 
@@ -97,10 +79,8 @@ static long  write_test(int32 aid, intn num_timings);
 static void
 init_buffer(void)
 {
-    intn j;
-
     SEED(time(NULL));
-    for (j = 0; j < elemsize; j++) {
+    for (int j = 0; j < elemsize; j++) {
         out_buf[j] = (uint8)RAND();
     }
 } /* init_buffers() */
@@ -272,7 +252,7 @@ read_test(int32 aid)
         }
 
         /* Clear input buffer */
-        memset(in_buf, 0, elemsize);
+        memset(in_buf, 0, (size_t)elemsize);
 
         /* Increment the total I/O time */
         acc_time += (end_time.tv_sec - start_time.tv_sec) * FACTOR + (end_time.tv_usec - start_time.tv_usec);
@@ -395,7 +375,7 @@ write_test(int32 aid, intn num_timings)
         }
 
         /* Clear input buffer */
-        memset(in_buf, 0, elemsize);
+        memset(in_buf, 0, (size_t)elemsize);
 
         /* Increment the total I/O time */
         acc_time += (end_time.tv_sec - start_time.tv_sec) * FACTOR + (end_time.tv_usec - start_time.tv_usec);
