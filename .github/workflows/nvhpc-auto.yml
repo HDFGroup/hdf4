@@ -31,7 +31,6 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y nvhpc-23-9
           echo "NVHPCSDK=/opt/nvidia/hpc_sdk" >> $GITHUB_ENV
-          echo "OMPI_CXX=/opt/nvidia/hpc_sdk/Linux_x86_64/23.9/compilers/bin/nvc++" >> $GITHUB_ENV
           echo "OMPI_CC=/opt/nvidia/hpc_sdk/Linux_x86_64/23.9/compilers/bin/nvc" >> $GITHUB_ENV
           echo "OMPI_FC=/opt/nvidia/hpc_sdk/Linux_x86_64/23.9/compilers/bin/nvfortran" >> $GITHUB_ENV
           echo "CC=/opt/nvidia/hpc_sdk/Linux_x86_64/23.9/compilers/bin/nvc" >> $GITHUB_ENV
