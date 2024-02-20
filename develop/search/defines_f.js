@@ -21,6 +21,5 @@ var searchData=
   ['pnum_18',['PNUM',['../hdp_8h.html#aaead4ae38598c12a3fbda72ca4cb7eb7',1,'hdp.h']]],
   ['ppnum_19',['PPNUM',['../hdp_8h.html#a1608f3fb1703ea997b9610f1fe3178c0',1,'hdp.h']]],
   ['ppstr_20',['PPSTR',['../hdp_8h.html#aba75e4bd28f2033acea1702011bfa1e3',1,'hdp.h']]],
-  ['printf_21',['Printf',['../hdiff_8h.html#af6961d822fd4f11ae7d6ee0ed5f7c7e0',1,'Printf:&#160;hdiff.h'],['../ncdump_8h.html#af6961d822fd4f11ae7d6ee0ed5f7c7e0',1,'Printf:&#160;ncdump.h']]],
-  ['pstr_22',['PSTR',['../hdp_8h.html#a84573d23fc82018ebebac8a8546008c4',1,'hdp.h']]]
+  ['pstr_21',['PSTR',['../hdp_8h.html#a84573d23fc82018ebebac8a8546008c4',1,'hdp.h']]]
 ];

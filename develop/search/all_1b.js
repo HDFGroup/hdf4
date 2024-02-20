@@ -18,10 +18,9 @@ var searchData=
   ['xdr_5fnc_5fstring_15',['xdr_NC_string',['../local__nc_8h.html#a1b55f241cfd859383b21d59cc64a08bb',1,'xdr_NC_string:&#160;local_nc.h'],['../local__nc_8h.html#a3843104ae3776217ae18a0b9175961d1',1,'xdr_NC_string(XDR *xdrs, NC_string **spp):&#160;local_nc.h']]],
   ['xdr_5fnc_5fvar_16',['xdr_NC_var',['../local__nc_8h.html#a63fa4eaef43e7fc5374876509961a57e',1,'xdr_NC_var:&#160;local_nc.h'],['../local__nc_8h.html#a8f3afecbbdbfcb0d5fdccd99c0ea4f04',1,'xdr_NC_var(XDR *xdrs, NC_var **vpp):&#160;local_nc.h']]],
   ['xdr_5fncvshort_17',['xdr_NCvshort',['../local__nc_8h.html#a23887b1f43808bc71abd2c51676b10fa',1,'xdr_NCvshort:&#160;local_nc.h'],['../local__nc_8h.html#acce4a6ad73f19fb06830115ba6c914e9',1,'xdr_NCvshort(XDR *xdrs, unsigned which, short *values):&#160;local_nc.h']]],
-  ['xdr_5fnotice_2eh_18',['xdr_NOTICE.h',['../xdr___n_o_t_i_c_e_8h.html',1,'']]],
-  ['xdr_5fnumrecs_19',['xdr_numrecs',['../local__nc_8h.html#a60949423dc34a8ae90e72384816e35b7',1,'xdr_numrecs:&#160;local_nc.h'],['../local__nc_8h.html#a1ac721bf37019094ed029521442d01c5',1,'xdr_numrecs(XDR *xdrs, NC *handle):&#160;local_nc.h']]],
-  ['xdr_5fop_20',['xdr_op',['../h4__xdr_8h.html#a3055ce94f85d6aeec3b736d93b93a46a',1,'h4_xdr.h']]],
-  ['xdr_5fshorts_21',['xdr_shorts',['../local__nc_8h.html#a2627d7ff7c96aa8a3b428cb2c1bf0587',1,'xdr_shorts:&#160;local_nc.h'],['../local__nc_8h.html#a69e991f61aeedc8e2e6c1275cd955c2e',1,'xdr_shorts(XDR *xdrs, short *sp, unsigned cnt):&#160;local_nc.h']]],
-  ['xdrs_22',['xdrs',['../struct_n_c.html#a0fec6fa63eddc50de2605a435f4ec72c',1,'NC']]],
-  ['xpos_23',['xpos',['../struct_d_f_g_rrig.html#aa068ded562c4cfea8f3fe8c1b3d9a56a',1,'DFGRrig::xpos'],['../struct_d_f_rrig.html#aa068ded562c4cfea8f3fe8c1b3d9a56a',1,'DFRrig::xpos']]]
+  ['xdr_5fnumrecs_18',['xdr_numrecs',['../local__nc_8h.html#a60949423dc34a8ae90e72384816e35b7',1,'xdr_numrecs:&#160;local_nc.h'],['../local__nc_8h.html#a1ac721bf37019094ed029521442d01c5',1,'xdr_numrecs(XDR *xdrs, NC *handle):&#160;local_nc.h']]],
+  ['xdr_5fop_19',['xdr_op',['../h4__xdr_8h.html#a3055ce94f85d6aeec3b736d93b93a46a',1,'h4_xdr.h']]],
+  ['xdr_5fshorts_20',['xdr_shorts',['../local__nc_8h.html#a2627d7ff7c96aa8a3b428cb2c1bf0587',1,'xdr_shorts:&#160;local_nc.h'],['../local__nc_8h.html#a69e991f61aeedc8e2e6c1275cd955c2e',1,'xdr_shorts(XDR *xdrs, short *sp, unsigned cnt):&#160;local_nc.h']]],
+  ['xdrs_21',['xdrs',['../struct_n_c.html#a0fec6fa63eddc50de2605a435f4ec72c',1,'NC']]],
+  ['xpos_22',['xpos',['../struct_d_f_g_rrig.html#aa068ded562c4cfea8f3fe8c1b3d9a56a',1,'DFGRrig::xpos'],['../struct_d_f_rrig.html#aa068ded562c4cfea8f3fe8c1b3d9a56a',1,'DFRrig::xpos']]]
 ];
