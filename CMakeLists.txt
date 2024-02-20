@@ -571,9 +571,13 @@ add_subdirectory (mfhdf)
 # Option to build HDF4 Java Library
 #-----------------------------------------------------------------------------
 if (EXISTS "${HDF4_SOURCE_DIR}/java" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/java")
-  option (HDF4_BUILD_JAVA  "Build Java HDF Library" OFF)
+  option (HDF4_BUILD_JAVA "Build Java HDF Library" OFF)
   if (HDF4_BUILD_JAVA)
-    add_subdirectory (java)
+    if (NOT BUILD_SHARED_LIBS)
+      message (FATAL_ERROR "\nJava requires shared libraries!\n")
+    else ()
+      add_subdirectory (java)
+    endif ()
   endif ()
 endif ()
 
