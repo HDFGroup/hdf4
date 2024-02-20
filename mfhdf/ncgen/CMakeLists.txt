@@ -20,25 +20,18 @@ set (ncgen_SRCS
     ${HDF4_MFHDF_UTIL_DIR}/h4getopt.c
 )
 
-if (NOT ONLY_SHARED_LIBS)
-  add_executable (ncgen ${ncgen_SRCS})
-  target_include_directories(ncgen PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_MFHDF_UTIL_DIR};${HDF4_BINARY_DIR}")
+add_executable (ncgen ${ncgen_SRCS})
+target_include_directories(ncgen PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_MFHDF_UTIL_DIR};${HDF4_BINARY_DIR}")
+if (HDF4_BUILD_STATIC_TOOLS)
   TARGET_C_PROPERTIES (ncgen STATIC)
   target_link_libraries (ncgen PRIVATE ${HDF4_MF_LIB_TARGET})
-  set_target_properties (ncgen PROPERTIES COMPILE_DEFINITIONS "HDF")
-
-  set (H4_DEP_EXECUTABLES ncgen)
+else ()
+  TARGET_C_PROPERTIES (ncgen SHARED)
+  target_link_libraries (ncgen PRIVATE ${HDF4_MF_LIBSH_TARGET})
 endif ()
+set_target_properties (ncgen PROPERTIES COMPILE_DEFINITIONS "HDF")
 
-if (BUILD_SHARED_LIBS)
-  add_executable (ncgen-shared ${ncgen_SRCS})
-  target_include_directories(ncgen-shared PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_MFHDF_UTIL_DIR};${HDF4_BINARY_DIR}")
-  TARGET_C_PROPERTIES (ncgen-shared SHARED)
-  target_link_libraries (ncgen-shared PRIVATE ${HDF4_MF_LIBSH_TARGET})
-  set_target_properties (ncgen-shared PROPERTIES COMPILE_DEFINITIONS "HDF")
-
-  set (H4_DEP_EXECUTABLES ${H4_DEP_EXECUTABLES} ncgen-shared)
-endif ()
+set (H4_DEP_EXECUTABLES ncgen)
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)

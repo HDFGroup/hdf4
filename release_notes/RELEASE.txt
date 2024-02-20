@@ -39,6 +39,13 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - New option for building and naming tools in CMake
+
+      The following option has been added:
+        HDF4_BUILD_STATIC_TOOLS    "Build Static Tools Not Shared Tools"          OFF
+
+      The default will build shared tools unless BUILD_SHARED_LIBS = OFF.
+
     - XDR changes
 
       We now only support building HDF4 with the XDR implementation packaged

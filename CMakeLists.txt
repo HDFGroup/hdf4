@@ -335,7 +335,9 @@ set (H4_ENABLE_STATIC_LIB NO)
 option (BUILD_SHARED_LIBS "Build Shared Libraries" ON)
 set (H4_ENABLE_SHARED_LIB NO)
 
-# only shared libraries is true if user forces static OFF
+option (HDF4_BUILD_STATIC_TOOLS "Build Static Tools NOT Shared Tools" OFF)
+
+# only shared libraries/tools is true if user forces static OFF
 if (NOT BUILD_STATIC_LIBS)
   set (ONLY_SHARED_LIBS ON CACHE BOOL "Only Build Shared Libraries" FORCE)
 endif ()
@@ -345,6 +347,15 @@ if (ONLY_SHARED_LIBS)
   set (H4_ENABLE_STATIC_LIB NO)
   set (BUILD_SHARED_LIBS ON CACHE BOOL "Build Shared Libraries" FORCE)
   set (BUILD_STATIC_LIBS OFF CACHE BOOL "Build Static Libraries" FORCE)
+  if (HDF4_BUILD_STATIC_TOOLS)
+    message (WARNING "Cannot build static tools without static libraries. Building shared tools.")
+  endif ()
+  set (HDF4_BUILD_STATIC_TOOLS OFF CACHE BOOL "Build Static Tools NOT Shared Tools" FORCE)
+endif ()
+
+if (NOT BUILD_SHARED_LIBS AND NOT HDF4_BUILD_STATIC_TOOLS)
+  message (WARNING "Cannot build shared tools without shared libraries. Building static tools.")
+  set (HDF4_BUILD_STATIC_TOOLS ON CACHE BOOL "Build Static Tools NOT Shared Tools" FORCE)
 endif ()
 
 if (BUILD_STATIC_LIBS)
@@ -355,12 +366,6 @@ if (BUILD_SHARED_LIBS)
 endif ()
 
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-if (NOT BUILD_SHARED_LIBS)
-  set (tgt_file_ext "")
-else ()
-  set (tgt_file_ext "-shared")
-endif ()
 
 add_definitions (-DHAVE_CONFIG_H)
 

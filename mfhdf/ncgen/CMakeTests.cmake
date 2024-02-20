@@ -8,7 +8,7 @@
 if (NOT BUILD_SHARED_LIBS)
   set (tgt_ext "")
 else ()
-  set (tgt_ext "-shared")
+  set (tgt_ext "")
 endif ()
 
 # Remove any output file left over from previous test run

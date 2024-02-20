@@ -16,20 +16,29 @@ set (${HDF4_PACKAGE_NAME}_VALID_COMPONENTS
 #-----------------------------------------------------------------------------
 # User Options
 #-----------------------------------------------------------------------------
-set (${HDF4_PACKAGE_NAME}_BUILD_FORTRAN   @HDF4_BUILD_FORTRAN@)
-set (${HDF4_PACKAGE_NAME}_BUILD_JAVA      @HDF4_BUILD_JAVA@)
-set (${HDF4_PACKAGE_NAME}_BUILD_TOOLS     @HDF4_BUILD_TOOLS@)
-set (${HDF4_PACKAGE_NAME}_BUILD_UTILS     @HDF4_BUILD_UTILS@)
+# Languages:
+#-----------------------------------------------------------------------------
+set (${HDF4_PACKAGE_NAME}_BUILD_FORTRAN           @HDF4_BUILD_FORTRAN@)
+set (${HDF4_PACKAGE_NAME}_BUILD_JAVA              @HDF4_BUILD_JAVA@)
+#-----------------------------------------------------------------------------
+# Features:
+#-----------------------------------------------------------------------------
+set (${HDF4_PACKAGE_NAME}_BUILD_SHARED_LIBS       @H4_ENABLE_SHARED_LIB@)
+set (${HDF4_PACKAGE_NAME}_BUILD_STATIC_LIBS       @H4_ENABLE_STATIC_LIB@)
+#-----------------------------------------------------------------------------
+set (${HDF4_PACKAGE_NAME}_BUILD_TOOLS             @HDF4_BUILD_TOOLS@)
+set (${HDF4_PACKAGE_NAME}_BUILD_UTILS             @HDF4_BUILD_UTILS@)
+set (${HDF4_PACKAGE_NAME}_BUILD_STATIC_TOOLS      @HDF4_BUILD_STATIC_TOOLS@)
+#-----------------------------------------------------------------------------
 set (${HDF4_PACKAGE_NAME}_ENABLE_JPEG_LIB_SUPPORT @HDF4_ENABLE_JPEG_LIB_SUPPORT@)
-set (${HDF4_PACKAGE_NAME}_ENABLE_Z_LIB_SUPPORT @HDF4_ENABLE_Z_LIB_SUPPORT@)
-set (${HDF4_PACKAGE_NAME}_ENABLE_SZIP_SUPPORT  @HDF4_ENABLE_SZIP_SUPPORT@)
-set (${HDF4_PACKAGE_NAME}_ENABLE_SZIP_ENCODING @HDF4_ENABLE_SZIP_ENCODING@)
-set (${HDF4_PACKAGE_NAME}_BUILD_SHARED_LIBS    @H4_ENABLE_SHARED_LIB@)
-set (${HDF4_PACKAGE_NAME}_BUILD_STATIC_LIBS    @H4_ENABLE_STATIC_LIB@)
-set (${HDF4_PACKAGE_NAME}_PACKAGE_EXTLIBS      @HDF4_PACKAGE_EXTLIBS@)
-set (${HDF4_PACKAGE_NAME}_EXPORT_LIBRARIES @HDF4_LIBRARIES_TO_EXPORT@)
-set (${HDF4_PACKAGE_NAME}_ARCHITECTURE        "@CMAKE_GENERATOR_ARCHITECTURE@")
-set (${HDF4_PACKAGE_NAME}_TOOLSET "@CMAKE_GENERATOR_TOOLSET@")
+set (${HDF4_PACKAGE_NAME}_ENABLE_Z_LIB_SUPPORT    @HDF4_ENABLE_Z_LIB_SUPPORT@)
+set (${HDF4_PACKAGE_NAME}_ENABLE_SZIP_SUPPORT     @HDF4_ENABLE_SZIP_SUPPORT@)
+set (${HDF4_PACKAGE_NAME}_ENABLE_SZIP_ENCODING    @HDF4_ENABLE_SZIP_ENCODING@)
+#-----------------------------------------------------------------------------
+set (${HDF4_PACKAGE_NAME}_PACKAGE_EXTLIBS         @HDF4_PACKAGE_EXTLIBS@)
+set (${HDF4_PACKAGE_NAME}_EXPORT_LIBRARIES        @HDF4_LIBRARIES_TO_EXPORT@)
+set (${HDF4_PACKAGE_NAME}_ARCHITECTURE            "@CMAKE_GENERATOR_ARCHITECTURE@")
+set (${HDF4_PACKAGE_NAME}_TOOLSET                 "@CMAKE_GENERATOR_TOOLSET@")
 
 #-----------------------------------------------------------------------------
 # Dependencies

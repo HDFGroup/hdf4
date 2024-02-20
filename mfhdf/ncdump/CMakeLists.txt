@@ -8,25 +8,18 @@ set (ncdump_SRCS
     ${HDF4_MFHDF_UTIL_DIR}/h4getopt.c
 )
 
-if (NOT ONLY_SHARED_LIBS)
-  add_executable (ncdump ${ncdump_SRCS})
-  target_include_directories (ncdump PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_MFHDF_UTIL_DIR};${HDF4_BINARY_DIR}")
+add_executable (ncdump ${ncdump_SRCS})
+target_include_directories (ncdump PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_MFHDF_UTIL_DIR};${HDF4_BINARY_DIR}")
+if (HDF4_BUILD_STATIC_TOOLS)
   TARGET_C_PROPERTIES (ncdump STATIC)
   target_link_libraries (ncdump PRIVATE ${HDF4_MF_LIB_TARGET})
-  set_target_properties (ncdump PROPERTIES COMPILE_DEFINITIONS "HDF")
-
-  set (H4_DEP_EXECUTABLES ncdump)
+else ()
+  TARGET_C_PROPERTIES (ncdump SHARED)
+  target_link_libraries (ncdump PRIVATE ${HDF4_MF_LIBSH_TARGET})
 endif ()
+set_target_properties (ncdump PROPERTIES COMPILE_DEFINITIONS "HDF")
 
-if (BUILD_SHARED_LIBS)
-  add_executable (ncdump-shared ${ncdump_SRCS})
-  target_include_directories (ncdump-shared PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_MFHDF_UTIL_DIR};${HDF4_BINARY_DIR}")
-  TARGET_C_PROPERTIES (ncdump-shared SHARED)
-  target_link_libraries (ncdump-shared PRIVATE ${HDF4_MF_LIBSH_TARGET})
-  set_target_properties (ncdump-shared PROPERTIES COMPILE_DEFINITIONS "HDF")
-
-  set (H4_DEP_EXECUTABLES ${H4_DEP_EXECUTABLES} ncdump-shared)
-endif ()
+set (H4_DEP_EXECUTABLES ncdump)
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)

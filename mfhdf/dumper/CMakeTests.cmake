@@ -143,7 +143,7 @@ add_custom_target(dumper_files ALL COMMENT "Copying files needed by dumper tests
 if (NOT BUILD_SHARED_LIBS)
   set (tgt_ext "")
 else ()
-  set (tgt_ext "-shared")
+  set (tgt_ext "")
 endif ()
 
 macro (ADD_H4_TEST resultfile resultcode)

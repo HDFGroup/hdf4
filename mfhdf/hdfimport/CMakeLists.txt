@@ -9,27 +9,19 @@ set (hdfimport_SRCS
     ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/hdfimport.c
 )
 
-if (NOT ONLY_SHARED_LIBS)
-  add_executable (hdfimport ${hdfimport_SRCS})
-  target_include_directories(hdfimport PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_BINARY_DIR}")
+add_executable (hdfimport ${hdfimport_SRCS})
+target_include_directories(hdfimport PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_BINARY_DIR}")
+if (HDF4_BUILD_STATIC_TOOLS)
   TARGET_C_PROPERTIES (hdfimport STATIC)
   target_link_libraries (hdfimport PRIVATE ${HDF4_MF_LIB_TARGET})
-  set_target_properties (hdfimport PROPERTIES COMPILE_DEFINITIONS "HDF")
-  set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdfimport")
-
-  set (H4_DEP_EXECUTABLES hdfimport)
+else ()
+  TARGET_C_PROPERTIES (hdfimport SHARED)
+  target_link_libraries (hdfimport PRIVATE ${HDF4_MF_LIBSH_TARGET})
 endif ()
+set_target_properties (hdfimport PROPERTIES COMPILE_DEFINITIONS "HDF")
+set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdfimport")
 
-if (BUILD_SHARED_LIBS)
-  add_executable (hdfimport-shared ${hdfimport_SRCS})
-  target_include_directories(hdfimport-shared PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_BINARY_DIR}")
-  TARGET_C_PROPERTIES (hdfimport-shared SHARED)
-  target_link_libraries (hdfimport-shared PRIVATE ${HDF4_MF_LIBSH_TARGET})
-  set_target_properties (hdfimport-shared PROPERTIES COMPILE_DEFINITIONS "HDF")
-  set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdfimport-shared")
-
-  set (H4_DEP_EXECUTABLES ${H4_DEP_EXECUTABLES} hdfimport-shared)
-endif ()
+set (H4_DEP_EXECUTABLES hdfimport)
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)

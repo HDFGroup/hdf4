@@ -34,7 +34,7 @@ endif ()
 if (NOT BUILD_SHARED_LIBS)
   set (tgt_ext "")
 else ()
-  set (tgt_ext "-shared")
+  set (tgt_ext "")
 endif ()
 
 macro (ADD_H4_TEST testname testtype testfile)

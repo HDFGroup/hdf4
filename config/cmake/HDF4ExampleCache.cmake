@@ -48,4 +48,4 @@ endif ()
 message (STATUS "HDF4 Example link libs: ${H4EX_HDF4_LINK_LIBS} Includes: ${H4EX_HDF4_INCLUDE_DIRS}")
 
 set (HDF4_TOOLS_DIR ${CMAKE_TEST_OUTPUT_DIRECTORY} CACHE STRING "HDF4 Directory for all Executables" FORCE)
-set (H4EX_HDF4_DUMP_EXECUTABLE $<TARGET_FILE:hdp${tgt_file_ext}> CACHE STRING "HDF4 hdp target" FORCE)
+set (H4EX_HDF4_DUMP_EXECUTABLE $<TARGET_FILE:hdp> CACHE STRING "HDF4 hdp target" FORCE)
