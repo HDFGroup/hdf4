@@ -4,15 +4,12 @@ on:
   workflow_dispatch:
   push:
   pull_request:
-    branches: [ develop ]
+    branches: [ master ]
     paths-ignore:
-      - '.github/CODEOWNERS'
-      - '.github/FUNDING.yml'
-      - 'doc/**'
-      - 'release_docs/**'
-      - 'ACKNOWLEDGEMENTS'
-      - 'COPYING**'
-      - '**.md'
+    - '.github/CODEOWNERS'
+    - 'release_notes/**'
+    - 'COPYING'
+    - '**.md'
 
 permissions:
   contents: read
