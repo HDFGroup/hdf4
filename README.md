@@ -10,7 +10,7 @@ DOCUMENTATION
 -------------
 Full Documentation and Programming Resources for this release can be found at
 
-   https://portal.hdfgroup.org/display/HDF4
+   https://portal.hdfgroup.org/hdf4/
 
 See the RELEASE.txt file in the release\_notes/ directory for information specific
 to the features and updates included in this release of the library.
