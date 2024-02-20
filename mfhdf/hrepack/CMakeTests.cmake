@@ -32,9 +32,9 @@ else ()
 endif ()
 
 if (NOT BUILD_SHARED_LIBS)
-  set (tgt_ext "${H4_NAME_STATIC_TOOLS}")
+  set (tgt_ext "")
 else ()
-  set (tgt_ext "${H4_NAME_SHARED_TOOLS}")
+  set (tgt_ext "")
 endif ()
 
 macro (ADD_H4_TEST testname testtype testfile)

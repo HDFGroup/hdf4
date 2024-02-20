@@ -57,7 +57,7 @@ set (hdfimporttest_SRCS
 
 add_executable (hdfimporttest ${hdfimporttest_SRCS})
 target_include_directories(hdfimporttest PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_BINARY_DIR}")
-if (BUILD_STATIC_LIBS)
+if (HDF4_BUILD_STATIC_TOOLS)
   TARGET_C_PROPERTIES (hdfimporttest STATIC)
   target_link_libraries (hdfimporttest PRIVATE ${HDF4_MF_LIB_TARGET})
 else ()
@@ -72,7 +72,7 @@ set (gen_sds_floats_SRCS
 
 add_executable (gen_sds_floats ${gen_sds_floats_SRCS})
 target_include_directories(gen_sds_floats PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_BINARY_DIR}")
-if (BUILD_STATIC_LIBS)
+if (HDF4_BUILD_STATIC_TOOLS)
   TARGET_C_PROPERTIES (gen_sds_floats STATIC)
   target_link_libraries (gen_sds_floats PRIVATE ${HDF4_MF_LIB_TARGET})
 else ()
@@ -87,9 +87,9 @@ endif ()
 ##############################################################################
 
 if (NOT BUILD_SHARED_LIBS)
-  set (tgt_ext "${H4_NAME_STATIC_TOOLS}")
+  set (tgt_ext "")
 else ()
-  set (tgt_ext "${H4_NAME_SHARED_TOOLS}")
+  set (tgt_ext "")
 endif ()
 
 macro (ADD_H4_TEST resultfile resultcode testtfile testtype)

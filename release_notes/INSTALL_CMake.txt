@@ -692,12 +692,7 @@ HDF4_BUILD_UTILS           "Build HDF4 Utilities"                     OFF
 HDF4_ENABLE_NETCDF         "Build HDF4 versions of NetCDF-3 APIS"     ON
 HDF4_BUILD_JAVA            "Build Java HDF Library"                   OFF
 HDF4_BUILD_NETCDF_TOOLS    "Build HDF4 versions of ncdump and ncgen"  ON
-ONLY_STATIC_TOOLS          "Only Build Static Tools"                  OFF
-ONLY_SHARED_TOOLS          "Only Build Shared Tools"                  OFF
-HDF4_BUILD_STATIC_TOOLS    "Build Static Tools"                       ON
-HDF4_BUILD_SHARED_TOOLS    "Build Shared Tools"                       ON
-HDF4_EXT_STATIC_TOOLS      "Name Extension for Static Tools (none static)" "none"
-HDF4_EXT_SHARED_TOOLS      "Name Extension for Shared Tools (none shared)" "shared"
+HDF4_BUILD_STATIC_TOOLS    "Build Static Tools Not Shared Tools"      OFF
 
 ---------------- HDF4 Folder Build Options ---------------------
 Defaults relative to $<INSTALL_PREFIX>

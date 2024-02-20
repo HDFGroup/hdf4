@@ -39,18 +39,12 @@ New features and changes
 ========================
     Configuration:
     -------------
-    - New options for building and naming tools in CMake
+    - New option for building and naming tools in CMake
 
-      The following options have been added:
-        ONLY_STATIC_TOOLS          "Only Build Static Tools"                  OFF
-        ONLY_SHARED_TOOLS          "Only Build Shared Tools"                  OFF
-        HDF4_BUILD_STATIC_TOOLS    "Build Static Tools"                       ON
-        HDF4_BUILD_SHARED_TOOLS    "Build Shared Tools"                       ON
-      Also there are variables for adding name extensions to the tool names:
-        HDF4_EXT_STATIC_TOOLS      "Name Extension for Static Tools (none static)" "none"
-        HDF4_EXT_SHARED_TOOLS      "Name Extension for Shared Tools (none shared)" "shared"
+      The following option has been added:
+        HDF4_BUILD_STATIC_TOOLS    "Build Static Tools Not Shared Tools"          OFF
 
-      The defaults will emulate the current naming and builds.
+      The default will build shared tools unless BUILD_SHARED_LIBS = OFF.
 
     - XDR changes
 
