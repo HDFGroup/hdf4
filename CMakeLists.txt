@@ -350,7 +350,12 @@ if (ONLY_SHARED_LIBS)
   if (HDF4_BUILD_STATIC_TOOLS)
     message (WARNING "Cannot build static tools without static libraries. Building shared tools.")
   endif ()
-  set (HDF4_BUILD_STATIC_TOOLS OFF CACHE BOOL "Only Build Static Tools" FORCE)
+  set (HDF4_BUILD_STATIC_TOOLS OFF CACHE BOOL "Build Static Tools NOT Shared Tools" FORCE)
+endif ()
+
+if (NOT BUILD_SHARED_LIBS AND NOT HDF4_BUILD_STATIC_TOOLS)
+  message (WARNING "Cannot build shared tools without shared libraries. Building static tools.")
+  set (HDF4_BUILD_STATIC_TOOLS ON CACHE BOOL "Build Static Tools NOT Shared Tools" FORCE)
 endif ()
 
 if (BUILD_STATIC_LIBS)
