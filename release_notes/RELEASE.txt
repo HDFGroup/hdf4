@@ -124,7 +124,41 @@ New features and changes
 
     C Library:
     ----------
-      hdfi.h is no longer included by hdf.h
+    - Private headers are no longer deployed
+
+      The following private headers are not a part of the public API and
+      will no longer be deployed when installing the library:
+      
+        atom.h
+        bitvect.h
+        cdeflate.h
+        cnbit.h
+        cnone.h
+        crle.h
+        cskphuff.h
+        cszip.h
+        df.h
+        dfan.h
+        dfgr.h
+        dfrig.h
+        dfsd.h
+        dfufp2i.h
+        dynarray.h
+        hchunks.h
+        hcompi.h
+        hconv.h
+        hdfi.h
+        hfile.h
+        hkit.h
+        linklist.h
+        local_nc.h
+        mfan.h
+        mfani.h
+        mfgri.h
+        mstdio.h
+        tbbt.h
+
+    - hdfi.h is no longer included by hdf.h
 
       In the past, hdfi.h (an internal header file) was included in the
       public hdf.h header. This is no longer the case. Anything that

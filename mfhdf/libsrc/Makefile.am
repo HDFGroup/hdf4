@@ -36,10 +36,11 @@ endif
 libmfhdf_la_LIBADD = $(top_builddir)/hdf/src/libdf.la
 
 if HDF_BUILD_NETCDF
-include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h mfhdfi.h mfdatainfo.h
+include_HEADERS = hdf2netcdf.h mfhdf.h netcdf.h mfdatainfo.h \
+				  mfhdfi.h
 else
-include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h hdf4_netcdf.h mfhdfi.h mfdatainfo.h
-# mfdatainfo.h should be added conditionally only; should local_nc.h even be here? -BMR
+include_HEADERS = hdf2netcdf.h mfhdf.h hdf4_netcdf.h mfdatainfo.h \
+				  mfhdfi.h
 endif
 
 # The following is a workaround. Since Fortran is included in this 
