@@ -1,0 +1,67 @@
+name: netCDF dev
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+    - '.github/CODEOWNERS'
+    - 'release_notes/**'
+    - 'COPYING'
+    - '**.md'
+
+permissions:
+  contents: read
+
+# Using concurrency to cancel any in-progress job or run
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref && github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install System dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y libaec-dev zlib1g-dev automake autoconf libcurl4-openssl-dev libjpeg-dev wget curl bzip2 m4 flex bison cmake libzip-dev doxygen openssl libtool libtool-bin
+    - name: Checkout HDF4
+      uses: actions/checkout@v4.1.1
+    - name: Install HDF4
+      run: |
+        ./autogen.sh
+        ./configure --prefix=/usr/local --disable-netcdf --disable-netcdf-tools --enable-shared --with-szlib
+        make -j
+        sudo make install -j
+
+    - name: Checkout HDF5
+      uses: actions/checkout@v4.1.1
+      with:
+        repository: HDFGroup/hdf5
+        path: hdf5
+    - name: Install HDF5
+      run: |
+        cd hdf5
+        ./autogen.sh
+        ./configure --prefix=/usr/local --disable-tests --disable-static --enable-shared --enable-hl --with-szlib
+        make -j
+        sudo make install -j
+
+    - name: Checkout netCDF
+      uses: actions/checkout@v4.1.1
+      with:
+        repository: unidata/netcdf-c
+        path: netcdf-c
+    - name: Test netCDF
+      run: |
+        cd netcdf-c
+        autoreconf -if
+        CFLAGS=${CFLAGS} LDFLAGS=${LDFLAGS} LD_LIBRARY_PATH=${LD_LIBRARY_PATH} ./configure --enable-hdf5 --enable-hdf4 --enable-hdf4-file-tests --enable-dap --disable-dap-remote-tests --enable-external-server-tests
+        cat config.log
+        cat libnetcdf.settings
+        CFLAGS=${CFLAGS} LDFLAGS=${LDFLAGS} LD_LIBRARY_PATH=${LD_LIBRARY_PATH} make -j
+        CFLAGS=${CFLAGS} LDFLAGS=${LDFLAGS} LD_LIBRARY_PATH=${LD_LIBRARY_PATH} make check TESTS="" -j
+        LD_LIBRARY_PATH="/home/runner/work/hdf4/hdf4/netcdf-c/liblib/.libs:/usr/local/lib:${LD_LIBRARY_PATH}"
+        CFLAGS=${CFLAGS} LDFLAGS=${LDFLAGS} LD_LIBRARY_PATH=${LD_LIBRARY_PATH} make check -j
