@@ -1,0 +1,150 @@
+name:  hdf4 autotools aocc
+
+on:
+  workflow_call:
+    inputs:
+      build_mode:
+        description: "release vs. debug build"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  aocc_build_and_test:
+    name: "aocc ${{ inputs.build_mode }}"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      - name: Install System dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y libaec-dev zlib1g-dev automake autoconf libcurl4-openssl-dev libjpeg-dev wget curl bzip2 m4 flex bison cmake libzip-dev doxygen openssl libtool libtool-bin build-essential libncurses-dev libquadmath0 libstdc++6 libxml2
+
+      - name: Install AOCC 4.1.0
+        run: |
+          wget https://download.amd.com/developer/eula/aocc/aocc-4-1/aocc-compiler-4.1.0.tar
+          tar -xvf aocc-compiler-4.1.0.tar
+          cd aocc-compiler-4.1.0
+          bash install.sh
+          source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
+          which clang
+          which flang
+          clang -v
+          echo "CC=/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/bin/clang" >> $GITHUB_ENV
+          echo "FC=/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/bin/flang" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/lib:/usr/local/lib" >> $GITHUB_ENV
+          echo "LD_RUN_PATH=/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/lib:/usr/local/lib" >> $GITHUB_ENV
+          echo "DESTDIR=/tmp" >> $GITHUB_ENV
+
+      - name: Autotools Configure with aocc
+        shell: bash
+        run: |
+          source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
+          export PATH=/usr/local/bin:$PATH
+          sh ./autogen.sh
+          mkdir "${{ runner.workspace }}/build"
+          cd "${{ runner.workspace }}/build"
+          $GITHUB_WORKSPACE/configure \
+            --enable-build-mode=${{ inputs.build_mode }} \
+            --enable-netcdf \
+            --enable-shared \
+            --disable-fortran \
+            LDFLAGS="-L/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/lib"
+
+      # BUILD
+      - name: Autotools Build
+        shell: bash
+        run: |
+          source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
+          export PATH=/usr/local/bin:$PATH
+          make -j3
+        working-directory: ${{ runner.workspace }}/build
+
+      # RUN TESTS
+      # NORMAL
+      - name: Autotools Run Tests
+        run: |
+          source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
+          export PATH=/usr/local/bin:$PATH
+          make check -j2
+        working-directory: ${{ runner.workspace }}/build
+
+      # INSTALL (note that this runs even when we don't run the tests)
+      - name: Autotools Install
+        run: |
+          source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
+          export PATH=/usr/local/bin:$PATH
+          make install
+        working-directory: ${{ runner.workspace }}/build
+
+  aocc_static_build_and_test:
+    name: "aocc static ${{ inputs.build_mode }}"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      - name: Install System dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y libaec-dev zlib1g-dev automake autoconf libcurl4-openssl-dev libjpeg-dev wget curl bzip2 m4 flex bison cmake libzip-dev doxygen openssl libtool libtool-bin build-essential libncurses-dev libquadmath0 libstdc++6 libxml2
+
+      - name: Install AOCC 4.1.0
+        run: |
+          wget https://download.amd.com/developer/eula/aocc/aocc-4-1/aocc-compiler-4.1.0.tar
+          tar -xvf aocc-compiler-4.1.0.tar
+          cd aocc-compiler-4.1.0
+          bash install.sh
+          source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
+          which clang
+          which flang
+          clang -v
+          echo "CC=/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/bin/clang" >> $GITHUB_ENV
+          echo "FC=/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/bin/flang" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/lib:/usr/local/lib" >> $GITHUB_ENV
+          echo "LD_RUN_PATH=/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/lib:/usr/local/lib" >> $GITHUB_ENV
+          echo "DESTDIR=/tmp" >> $GITHUB_ENV
+
+      - name: Autotools Configure with aocc
+        shell: bash
+        run: |
+          source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
+          export PATH=/usr/local/bin:$PATH
+          sh ./autogen.sh
+          mkdir "${{ runner.workspace }}/build"
+          cd "${{ runner.workspace }}/build"
+          $GITHUB_WORKSPACE/configure \
+            --enable-build-mode=${{ inputs.build_mode }} \
+            --enable-netcdf \
+            --disable-shared \
+            --enable-fortran \
+            LDFLAGS="-L/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/lib"
+
+      # BUILD
+      - name: Autotools Build
+        shell: bash
+        run: |
+          source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
+          export PATH=/usr/local/bin:$PATH
+          make -j3
+        working-directory: ${{ runner.workspace }}/build
+
+      # RUN TESTS
+      # NORMAL
+      - name: Autotools Run Tests
+        run: |
+          source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
+          export PATH=/usr/local/bin:$PATH
+          make check -j2
+        working-directory: ${{ runner.workspace }}/build
+
+      # INSTALL (note that this runs even when we don't run the tests)
+      - name: Autotools Install
+        run: |
+          source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
+          export PATH=/usr/local/bin:$PATH
+          make install
+        working-directory: ${{ runner.workspace }}/build
+
