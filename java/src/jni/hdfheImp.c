@@ -20,17 +20,15 @@
  *
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 #include <jni.h>
 
 #include "hdf.h"
-#include "hfile_priv.h"
-
 #include "h4jni.h"
 #include "hdfheImp.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_HEvalue(JNIEnv *env, jclass clss, jint level)

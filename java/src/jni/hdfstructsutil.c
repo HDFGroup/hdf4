@@ -19,14 +19,15 @@
  *
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 #include <jni.h>
+
 #include "hdf.h"
 #include "h4jni.h"
 #include "hdfstructsutil.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 /*
  *  Get information from a Java HDFNewCompInfo object in to a C comp_info

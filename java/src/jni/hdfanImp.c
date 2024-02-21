@@ -20,16 +20,18 @@
  *
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-#include <jni.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <jni.h>
+
 #include "hdf.h"
 #include "h4jni.h"
 #include "hdfanImp.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_ANstart(JNIEnv *env, jclass clss, jlong file_id)

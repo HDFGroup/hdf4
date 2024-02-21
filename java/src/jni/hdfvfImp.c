@@ -20,14 +20,15 @@
  *
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 #include <jni.h>
+
 #include "hdf.h"
 #include "h4jni.h"
 #include "hdfvfImp.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VFfieldesize(JNIEnv *env, jclass clss, jlong vdata_id, int field_index)

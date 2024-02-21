@@ -20,16 +20,18 @@
  *
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-#include <jni.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <jni.h>
+
 #include "hdf.h"
 #include "h4jni.h"
 #include "hdfdfpalImp.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_DFPaddpal(JNIEnv *env, jclass clss, jstring filename, jbyteArray palette)
