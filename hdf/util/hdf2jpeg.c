@@ -12,7 +12,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "hdf.h"
-#include "hfile.h"
+#include "hfile_priv.h"
 
 /* Size of the file buffer to copy through */
 #define MAX_FILE_BUF 16384

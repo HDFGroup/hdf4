@@ -20,15 +20,18 @@
  *
  */
 
+#include <stdlib.h>
+
+#include <jni.h>
+
+#include "hdf.h"
+#include "hfile_priv.h" /* only needed for library version symbols */
+#include "h4jni.h"
+#include "hdfImp.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include <jni.h>
-#include "hdfi.h"
-#include "hfile.h"
-#include "h4jni.h"
-#include "hdfImp.h"
 
 /*
  * Class:     hdf_hdflib_HDFLibrary

@@ -36,8 +36,8 @@ DESIGN
     for finding 1 bits as that is not a use case in the HDF4 library.
  */
 
-#include "hdfi.h"
-#include "bitvect.h"
+#include "hdf_priv.h"
+#include "bitvect_priv.h"
 
 /* Base type of the array used to store the bits */
 typedef uint8 bv_base;

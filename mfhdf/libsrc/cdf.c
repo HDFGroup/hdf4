@@ -14,10 +14,10 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "local_nc.h"
-#include "herr.h"
+#include "nc_priv.h"
+#include "herr_priv.h"
 
-#include "hfile.h"
+#include "hfile_priv.h"
 
 int32 hdf_get_magicnum(const char *filename);
 

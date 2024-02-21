@@ -74,8 +74,8 @@ EXPORTED ROUTINES
 
 ------------------------------------------------------------------------- */
 
-#include "hdfi.h"
-#include "hfile.h"
+#include "hdf_priv.h"
+#include "hfile_priv.h"
 
 /* Directory separator definitions relating to a path.
  * Note this does not provide a universal way to recognize

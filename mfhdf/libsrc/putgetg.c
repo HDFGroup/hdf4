@@ -23,7 +23,7 @@
  *
  */
 
-#include "local_nc.h"
+#include "nc_priv.h"
 
 /*
  * Perform I/O on a generalized hyperslab.  The efficiency of this

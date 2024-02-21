@@ -14,7 +14,7 @@
 /*-----------------------------------------------------------------------------
  * File:     dfr8.c
  * Purpose:  read and write 8-bit Raster Image Groups
- * Invokes:  df.c, dfcomp.c, dfgroup.c, dfrig.h
+ * Invokes:  df.c, dfcomp.c, dfgroup.c, dfrig_priv.h
  * Contents:
  *  DFR8setpalette  : specify palette to be used with subsequent 8-bit images
  *  DFR8setcompress : Set the compression for next image written
@@ -40,8 +40,8 @@
  *          The palette is arranged as RGBRGB...
  *---------------------------------------------------------------------------*/
 
-#include "hdfi.h"
-#include "dfrig.h"
+#include "hdf_priv.h"
+#include "dfrig_priv.h"
 
 /* Private Variables */
 static uint8 *paletteBuf = NULL;

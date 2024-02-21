@@ -14,7 +14,7 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "local_nc.h"
+#include "nc_priv.h"
 
 NC_var *
 NC_new_var(const char *name, nc_type type, int ndims, const int *dims)

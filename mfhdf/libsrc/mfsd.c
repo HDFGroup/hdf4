@@ -83,10 +83,10 @@ NOTE: This file needs to have the comments cleaned up for most of the
 
 ******************************************************************************/
 
-#include "local_nc.h"
+#include "nc_priv.h"
 
 #include "mfhdf.h"
-#include "hfile.h"
+#include "hfile_priv.h"
 
 #ifdef H4_HAVE_LIBSZ /* we have the szip library */
 #include "szlib.h"
@@ -101,7 +101,7 @@ NOTE: This file needs to have the comments cleaned up for most of the
 
 #ifdef MFSD_INTERNAL
 /* Private function prototypes */
-#include "mfprivate.h"
+#include "mf_priv.h"
 #endif
 
 intn SDsetup_szip_parms(int32 id, NC *handle, comp_info *c_info, int32 *cdims);

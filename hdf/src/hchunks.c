@@ -253,13 +253,13 @@ LOCAL ROUTINES
 #define STATISTICS
 */
 
-#include "hdfi.h"
-#include "hfile.h"
-#include "mcache.h"
-#include "hchunks.h"
+#include "hdf_priv.h"
+#include "hfile_priv.h"
+#include "mcache_priv.h"
+#include "hchunks_priv.h"
 
-#include "tbbt.h"
-#include "mcache.h"
+#include "tbbt_priv.h"
+#include "mcache_priv.h"
 #include "hcomp.h"
 
 /* Define class, class version and name(partial) for chunk table i.e. Vdata */
@@ -348,7 +348,7 @@ typedef struct chunkinfo_t {
 /* private functions */
 static int32 HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
                           int16     acc_mode /* IN: access mode */);
-/* tbbt.h helper routines */
+/* tbbt_priv.h helper routines */
 static intn chkcompare(void *k1, /* IN: first key */
                        void *k2, /* IN: second key */
                        intn  cmparg /* IN: not sure? */);

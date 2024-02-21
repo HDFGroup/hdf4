@@ -18,12 +18,9 @@
  *
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 #include <jni.h>
-#include "hdfi.h"
+
+#include "hdf.h"
 #include "h4jni.h"
 #include "hdfexceptionImp.h"
 
@@ -85,6 +82,10 @@ extern "C" {
 /* Local Prototypes */
 /********************/
 static jboolean H4JNIErrorClass(JNIEnv *env, const char *message, const char *className);
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 /*
  * Class:     hdf_hdflib_HDFLibraryException

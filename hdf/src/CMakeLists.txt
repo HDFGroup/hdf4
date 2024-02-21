@@ -77,43 +77,44 @@ set (HDF4_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/hntdefs.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hproto.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/htags.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/mfan.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/mfgr.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/vg.h
 )
 
+# Internal headers end in _priv.h
 set (HDF4_PRIVATE_HDF_SRC_CHDRS
-    ${HDF4_HDF_SRC_SOURCE_DIR}/atom.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/bitvect.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/cdeflate.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/cnbit.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/cnone.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/crle.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/cskphuff.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/cszip.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/df.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfan.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfgr.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfrig.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfsd.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfufp2i.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dynarray.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/glist.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/hchunks.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/hcompi.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/hconv.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/hdfi.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/atom_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/bitvect_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/cdeflate_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/cnbit_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/cnone_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/crle_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/cskphuff_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/cszip_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/df_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/dfan_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/dfgr_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/dfrig_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/dfsd_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/dfufp2i_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/dynarray_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/glist_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hchunks_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hcomp_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hconv_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hdf_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/herr_priv.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/hfile.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/hkit.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/hqueue.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/linklist.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/mcache.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/mfan.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/mfani.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/mfgri.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/mstdio.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/tbbt.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/vgint.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hfile_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hkit_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hqueue_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/linklist_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/mcache_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/mfan_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/mfgr_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/mstdio_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/tbbt_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/vg_priv.h
 )
 
 if (BUILD_STATIC_LIBS)

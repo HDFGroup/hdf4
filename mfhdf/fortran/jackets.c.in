@@ -14,11 +14,12 @@
  *
  */
 
-#include    <ctype.h>
-#include        <string.h>
-#include    <stdlib.h>
-#include    <stdio.h>
-#include        "local_nc.h"
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#include "nc_priv.h"
 
 #if !NC_OLD_FILLVALUES
 

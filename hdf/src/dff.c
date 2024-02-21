@@ -38,8 +38,8 @@
  *  dfiishdf:  call DFishdf to get HDF string
  *---------------------------------------------------------------------------*/
 
-#include "hdfi.h"
-#include "df.h"
+#include "hdf_priv.h"
+#include "df_priv.h"
 #include "hproto_fortran.h"
 
 /*-----------------------------------------------------------------------------

@@ -22,8 +22,8 @@
  *       VHmakegroup  -- makes a vgroup from tag/ref pairs
  */
 
-#include "hdfi.h"
-#include "vgint.h"
+#include "hdf_priv.h"
+#include "vg_priv.h"
 
 /* ------------------------ VHstoredata -------------------------------
    NAME

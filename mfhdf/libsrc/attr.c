@@ -14,7 +14,7 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "local_nc.h"
+#include "nc_priv.h"
 
 NC_attr *
 NC_new_attr(const char *name, nc_type type, unsigned count, const void *values)

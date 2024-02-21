@@ -6,7 +6,7 @@
 #ifndef H4NC_NCGEN_H
 #define H4NC_NCGEN_H
 
-#include "local_nc.h"
+#include "nc_priv.h"
 #include "generic.h" /* defines union generic */
 
 #define H4_MAX_NC_ATTSIZE 2000                /* max size in bytes of an attribute */

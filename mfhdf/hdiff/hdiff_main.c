@@ -19,7 +19,7 @@
 
 #include "h4getopt.h"
 #include "hdf.h"
-#include "hfile.h"
+#include "hfile_priv.h"
 #include "mfhdf.h"
 #include "hdiff.h"
 

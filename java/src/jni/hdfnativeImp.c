@@ -30,14 +30,15 @@
  *         but unavoidable performance hit.
  */
 
+#include <jni.h>
+
+#include "hdf.h"
+#include "h4jni.h"
+#include "hdfnativeImp.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include <jni.h>
-#include "hdfi.h"
-#include "h4jni.h"
-#include "hdfnativeImp.h"
 
 /* returns int [] */
 JNIEXPORT jintArray JNICALL

@@ -15,7 +15,7 @@
 #define DUMPER_HDP_H
 
 #include "hdf.h"
-#include "hfile.h"
+#include "hfile_priv.h"
 
 /* Global Variables */
 extern intn vinit_done;

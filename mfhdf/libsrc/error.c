@@ -22,7 +22,7 @@
 #include <errno.h>
 #include <stdarg.h>
 
-#include "local_nc.h"
+#include "nc_priv.h"
 
 /*
  * Log SYSTEM errors

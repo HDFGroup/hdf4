@@ -17,8 +17,6 @@
  Purpose:
     Routines to support little-endian conversion to and from HDF format
 
- Invokes:
-
  PRIVATE conversion functions:
     DFKsb2b -  Byte swapping for 16 bit integers
     DFKsb4b -  Byte swapping for 32 bit integers
@@ -46,8 +44,8 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include "hdfi.h"
-#include "hconv.h"
+#include "hdf_priv.h"
+#include "hconv_priv.h"
 
 /*****************************************************************************/
 /* NUMBER CONVERSION ROUTINES FOR BYTE SWAPPING                              */

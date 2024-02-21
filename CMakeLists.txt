@@ -232,9 +232,9 @@ set (HDF4_SRC_INCLUDE_DIRS ${HDF4_HDFSOURCE_DIR} ${HDF4_MFHDFSOURCE_DIR})
 set (CMAKE_MODULE_PATH ${HDF_RESOURCES_DIR} ${CMAKE_MODULE_PATH})
 
 #-----------------------------------------------------------------------------
-# parse the full version number from hfile.h and include in H4_VERS_INFO
+# parse the full version number from hfile_priv.h and include in H4_VERS_INFO
 #-----------------------------------------------------------------------------
-file (READ ${HDF4_HDFSOURCE_DIR}/hfile.h _hfile_h_contents)
+file (READ ${HDF4_HDFSOURCE_DIR}/hfile_priv.h _hfile_h_contents)
 string (REGEX REPLACE ".*#define[ \t]+LIBVER_MAJOR[ \t]+([0-9]*).*$"
     "\\1" H4_VERS_MAJOR ${_hfile_h_contents})
 string (REGEX REPLACE ".*#define[ \t]+LIBVER_MINOR[ \t]+([0-9]*).*$"

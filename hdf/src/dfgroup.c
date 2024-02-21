@@ -26,8 +26,8 @@
  *          Each tag/ref combination is called a data identifier (DI).
  *---------------------------------------------------------------------------*/
 
-#include "hdfi.h"
-#include "hfile.h"
+#include "hdf_priv.h"
+#include "hfile_priv.h"
 
 typedef struct DIlist_struct {
     uint8 *DIlist;

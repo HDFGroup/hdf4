@@ -20,14 +20,17 @@
  *
  */
 
+#include <stdlib.h>
+
+#include <jni.h>
+
+#include "hdf.h"
+#include "h4jni.h"
+#include "hdfvsqImp.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include <jni.h>
-#include "hdfi.h"
-#include "h4jni.h"
-#include "hdfvsqImp.h"
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_VSQuerycount(JNIEnv *env, jclass clss, jlong vdata_id, jintArray n_records)

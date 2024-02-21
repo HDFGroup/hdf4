@@ -37,8 +37,8 @@
  *          dimension, compression, color compensation etc.
  *---------------------------------------------------------------------------*/
 
-#include "hdfi.h"
-#include "dfgr.h"
+#include "hdf_priv.h"
+#include "dfgr_priv.h"
 #include "hproto_fortran.h"
 
 #define LUT   0

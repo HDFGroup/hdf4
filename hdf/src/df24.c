@@ -35,8 +35,8 @@
  *          dimension, compression, color compensation etc.
  *---------------------------------------------------------------------------*/
 
-#include "hdfi.h"
-#include "dfgr.h"
+#include "hdf_priv.h"
+#include "dfgr_priv.h"
 
 static intn  Newdata   = 0; /* does Readrig contain fresh data? */
 static intn  dimsset   = 0; /* have dimensions been set? */

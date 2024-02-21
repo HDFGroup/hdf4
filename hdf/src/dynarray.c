@@ -46,8 +46,8 @@ EXPORTED ROUTINES
      DAsize_array    - Get the current dynarray size
 */
 
-#include "hdfi.h"
-#include "dynarray.h"
+#include "hdf_priv.h"
+#include "dynarray_priv.h"
 
 typedef struct dynarray_tag {
     intn   num_elems; /* Number of elements in the array currently */

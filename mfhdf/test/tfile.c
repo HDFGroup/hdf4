@@ -14,7 +14,7 @@
 #include "mfhdf.h"
 
 #include "hdftest.h"
-#include "local_nc.h"
+#include "nc_priv.h"
 
 /********************************************************************
    Name: test_file_inuse() - tests preventing of an in-use file being

@@ -24,7 +24,7 @@
  *    This version assumes that all the values are floating point.
  *--------------------------------------------------------------------------*/
 
-#include "hdfi.h"
+#include "hdf_priv.h"
 
 /*-----------------------------------------------------------------------------
  * Name:    DFfindnextref

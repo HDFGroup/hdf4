@@ -22,8 +22,8 @@ intn have_szip = 1;
 #else
 intn have_szip = 0;
 #endif
-#include "cszip.h"
-#include "local_nc.h" /* to use some definitions */
+#include "cszip_priv.h"
+#include "nc_priv.h" /* to use some definitions */
 
 void
 dumpsds_usage(intn argc, char *argv[])

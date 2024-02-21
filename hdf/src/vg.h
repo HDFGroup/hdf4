@@ -20,7 +20,7 @@
  * defines symbols and structures used in all v*.c files
  *
  * NOTES:
- * This include file depends on the basic HDF *.h files hdfi.h and hdf.h.
+ * This include file depends on the basic HDF *.h file hdf.h.
  * An 'S' in the comment means that that data field is saved in the HDF file.
  *
  ******************************************************************************/

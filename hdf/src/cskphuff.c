@@ -12,15 +12,8 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
-   FILE
-   cskphuff.c
-   HDF "skipping" huffman encoding I/O routines
+   cskphuff.c - HDF "skipping" huffman encoding I/O routines
 
-   REMARKS
-
-   DESIGN
-
-   EXPORTED ROUTINES
    None of these routines are designed to be called by other users except
    for the modeling layer of the compression routines.
  */
@@ -31,10 +24,10 @@
  */
 
 /* General HDF includes */
-#include "hdfi.h"
+#include "hdf_priv.h"
 
 /* HDF compression includes */
-#include "hcompi.h" /* Internal definitions for compression */
+#include "hcomp_priv.h" /* Internal definitions for compression */
 
 /* Internal Defines */
 #define TMP_BUF_SIZE 8192 /* size of throw-away buffer */

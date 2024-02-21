@@ -41,7 +41,7 @@ LOCAL ROUTINES
 
  ******************************************************************************/
 
-#include "local_nc.h"
+#include "nc_priv.h"
 
 #ifndef DATAINFO_MASTER
 #define DATAINFO_MASTER
@@ -58,7 +58,7 @@ LOCAL ROUTINES
 
 #ifdef MFSD_INTERNAL
 /* Local function prototypes */
-#include "mfprivate.h"
+#include "mf_priv.h"
 #endif
 
 static intn get_attr_tag(char *attr_name, uint16 *attr_tag);

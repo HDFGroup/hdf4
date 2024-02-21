@@ -19,7 +19,7 @@
  * to allow the creation of SunOS sharable-libraries.
  */
 
-#include "local_nc.h"
+#include "nc_priv.h"
 
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"

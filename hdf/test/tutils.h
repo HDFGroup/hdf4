@@ -14,7 +14,7 @@
 #ifndef H4_TUTILS_H
 #define H4_TUTILS_H
 
-#include "hdfi.h"
+#include "hdf_priv.h"
 
 /* Define these for use in all the tests */
 #ifndef TESTMASTER

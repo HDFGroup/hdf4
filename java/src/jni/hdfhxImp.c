@@ -20,14 +20,15 @@
  *
  */
 
+#include <jni.h>
+
+#include "hdf.h"
+#include "h4jni.h"
+#include "hdfhxImp.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include <jni.h>
-#include "hdfi.h"
-#include "h4jni.h"
-#include "hdfhxImp.h"
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_HXsetcreatedir(JNIEnv *env, jclass clss, jstring dir)

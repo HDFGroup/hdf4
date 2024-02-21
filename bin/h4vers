@@ -27,7 +27,7 @@ use strict;
 
 ### Purpose
 # Increments the hdf4 version number by changing the value of
-# constants in the hdf/src/hfile.h file.  The new version number is
+# constants in the hdf/src/hfile_priv.h file.  The new version number is
 # printed on the standard output. An alternate source file name can be
 # specified as an argument.  In any case, the original file is saved
 # by appending a tilde `~' to the name.
@@ -61,11 +61,11 @@ use strict;
 # and the annotation string is cleared.
 #
 # If a file is specified then that file is used instead of
-# ./hfile.h or ./hdf/src/hfile.h.
+# ./hfile_priv.h or ./hdf/src/hfile_priv.h.
 #
 # If the version number is changed (either `-s' or `-i' was used on
 # the command line) then the first line of the README.md and
-# release_notes/RELEASE.txt two levels above the hfile.h file are also
+# release_notes/RELEASE.txt two levels above the hfile_priv.h file are also
 # modified so it looks something like: This is hdf4-1.2.3-pre1 currently
 # under development. The AC_INIT macro in configure.in will also change
 # in this case to be something like: AC_INIT([HDF4], [hdf4-1.2.3-pre1],
@@ -128,15 +128,15 @@ Usage: $prog [OPTS] [FILE]
         as \"version 1.1 release 0 (pre1)\" will be printed.
     FILE
         The name of the file that contains version information.  This is
-        seldom necessary since files hfile.h, hdf/src/hfile.h,
-        src/hfile.h, and ../hdf/src/hfile.h are automatically checked.
+        seldom necessary since files hfile_priv.h, hdf/src/hfile_priv.h,
+        src/hfile_priv.h, and ../hdf/src/hfile_priv.h are automatically checked.
 EOF
   exit 1;
 }
 
 # Parse arguments
 my ($verbose, $set, $inc, $file, $rc);
-my (@files) = ("hdf/src/hfile.h", "../hdf/src/hfile.h", "src/hfile.h", "hfile.h");
+my (@files) = ("hdf/src/hfile_priv.h", "../hdf/src/hfile_priv.h", "src/hfile_priv.h", "hfile_priv.h");
 while ($_ = shift) {
   $_ eq "-s" && do {
     die "-s switch needs a version number\n" unless @ARGV;
@@ -168,12 +168,12 @@ die "mutually exclusive options given\n" if $set && $inc;
 #print "file is $file.\n";
 #print "File array is ", @files;
 
-# Determine file to use as hfile.h, README.md,
+# Determine file to use as hfile_priv.h, README.md,
 # release_notes/RELEASE.txt, configure.in,
 # and config/cmake/scripts/HDF4config.cmake.
 # The paths to README.md, release_notes/RELEASE.txt, configure.ac,
 # and config/cmake/scripts/HDF4config.cmake
-# files are always from the directory two levels above hfile.h.
+# files are always from the directory two levels above hfile_priv.h.
 unless ($file) {
   for (@files) {
     ($file=$_,last) if -f $_;

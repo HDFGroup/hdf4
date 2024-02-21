@@ -20,14 +20,17 @@
  *
  */
 
+#include <stdlib.h>
+
+#include <jni.h>
+
+#include "hdf.h"
+#include "h4jni.h"
+#include "hdfvdataImp.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include <jni.h>
-#include "hdfi.h"
-#include "h4jni.h"
-#include "hdfvdataImp.h"
 
 JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_VSattach(JNIEnv *env, jclass clss, jlong fid, jint vdata_ref, jstring accessmode)

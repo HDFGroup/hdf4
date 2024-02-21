@@ -20,14 +20,15 @@
  *
  */
 
+#include <jni.h>
+
+#include "hdf.h"
+#include "h4jni.h"
+#include "hdfr8Imp.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include <jni.h>
-#include "hdfi.h"
-#include "h4jni.h"
-#include "hdfr8Imp.h"
 
 extern jboolean getOldCompInfo(JNIEnv *env, jobject ciobj, comp_info *cinf);
 

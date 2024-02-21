@@ -154,9 +154,8 @@ intn GRIil_convert(const void * inbuf,gr_interlace_t inil,void * outbuf,
     - Copy a pixel buffer from one interlace to another.
  */
 
-#include "hdfi.h"
-#include "hlimits.h"
-#include "mfgri.h"
+#include "hdf_priv.h"
+#include "mfgr_priv.h"
 
 #ifdef H4_HAVE_LIBSZ /* we have the library */
 #include "szlib.h"

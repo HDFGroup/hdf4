@@ -58,8 +58,8 @@ EXPORTED ROUTINES
 
 *************************************************************************/
 
-#include "hdfi.h"
-#include "vgint.h"
+#include "hdf_priv.h"
+#include "vg_priv.h"
 
 /* Private Function Prototypes */
 static intn vunpackvs(VDATA *vs, uint8 buf[], int32 len);

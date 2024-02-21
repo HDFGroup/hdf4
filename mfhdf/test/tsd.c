@@ -18,7 +18,7 @@
 #include "mfhdf.h"
 
 #include "hdftest.h"
-#include "hfile.h"
+#include "hfile_priv.h"
 
 #define FILE_NAME "sdtest.hdf" /* data file to test ID types */
 

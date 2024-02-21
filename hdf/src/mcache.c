@@ -49,9 +49,9 @@
 #define STATISTICS
 */
 
-#include "hdfi.h"
-#include "hqueue.h"
-#include "mcache.h"
+#include "hdf_priv.h"
+#include "hqueue_priv.h"
+#include "mcache_priv.h"
 
 /* Private routines */
 static BKT *mcache_bkt(MCACHE *mp);

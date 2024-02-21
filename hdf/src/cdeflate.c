@@ -12,27 +12,17 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
-   FILE
-   cdeflate.c
-   HDF gzip 'deflate' encoding I/O routines
+   cdeflate.c - HDF gzip 'deflate' encoding I/O routines
 
-   REMARKS
-
-   DESIGN
-
-   EXPORTED ROUTINES
    None of these routines are designed to be called by other users except
    for the modeling layer of the compression routines.
-
-   AUTHOR
-   Quincey Koziol
  */
 
 /* General HDF includes */
-#include "hdfi.h"
+#include "hdf_priv.h"
 
 /* HDF compression includes */
-#include "hcompi.h" /* Internal definitions for compression */
+#include "hcomp_priv.h" /* Internal definitions for compression */
 
 /* Define the [default] size of the buffer to interact with the file */
 #define DEFLATE_BUF_SIZE     4096

@@ -27,7 +27,7 @@
  *  DFPIopen     : open/reopen file
  *---------------------------------------------------------------------------*/
 
-#include "hdfi.h"
+#include "hdf_priv.h"
 
 /* remember that '0' is invalid ref number */
 static uint16 Readref  = 0;

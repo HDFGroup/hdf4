@@ -14,7 +14,7 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "local_nc.h"
+#include "nc_priv.h"
 
 /* you may wish to tune this: big on a cray, small on a PC? */
 #define NC_SHRT_BUFSIZ 8192

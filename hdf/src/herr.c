@@ -26,7 +26,7 @@ EXPORTED ROUTINES
   HEvalue  -- return a error off of the error stack
  */
 
-#include "hdfi.h"
+#include "hdf_priv.h"
 
 /*
  ** Include files for variable argument processing for HEreport

@@ -19,7 +19,7 @@
  *  dfindnr_:       For a given tag, find the next ref after the given ref
  *---------------------------------------------------------------------------*/
 
-#include "hdfi.h"
+#include "hdf_priv.h"
 #include "hproto_fortran.h"
 
 /*-----------------------------------------------------------------------------

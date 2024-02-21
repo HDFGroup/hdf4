@@ -45,8 +45,8 @@ EXPORTED ROUTINES
 
 ------------------------------------------------------------------------- */
 
-#include "hdfi.h"
-#include "hfile.h"
+#include "hdf_priv.h"
+#include "hfile_priv.h"
 
 /* extinfo_t -- external elt information structure */
 

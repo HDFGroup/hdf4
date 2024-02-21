@@ -12,8 +12,9 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "hdp.h"
-#include "local_nc.h"
-#include "vgint.h"
+
+#include "nc_priv.h"
+#include "vg_priv.h"
 
 /********************/
 /* Global Variables */

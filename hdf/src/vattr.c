@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "hdfi.h"
-#include "vgint.h"
+#include "hdf_priv.h"
+#include "vg_priv.h"
 
 /**************************************************************
 *

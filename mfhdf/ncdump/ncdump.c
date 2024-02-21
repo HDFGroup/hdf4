@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "local_nc.h"
+#include "nc_priv.h"
 #include "ncdump.h"
 
 #include "h4getopt.h"

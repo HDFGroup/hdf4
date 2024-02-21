@@ -17,8 +17,9 @@
  *
  */
 
-#include <jni.h>
 #include <string.h>
+
+#include <jni.h>
 
 #ifndef Included_h4jni
 #define Included_h4jni

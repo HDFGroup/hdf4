@@ -12,26 +12,20 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
-   FILE
-   cnone.c
-   HDF none encoding I/O routines
+   cnone.c - HDF none encoding I/O routines
 
-   REMARKS
    These routines are only included for completeness and are not
    actually expected to be used.
 
-   DESIGN
-
-   EXPORTED ROUTINES
    None of these routines are designed to be called by other users except
    for the modeling layer of the compression routines.
  */
 
 /* General HDF includes */
-#include "hdfi.h"
+#include "hdf_priv.h"
 
 /* HDF compression includes */
-#include "hcompi.h" /* Internal definitions for compression */
+#include "hcomp_priv.h" /* Internal definitions for compression */
 
 /* functions to perform run-length encoding */
 funclist_t cnone_funcs = {HCPcnone_stread,

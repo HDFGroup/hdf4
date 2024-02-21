@@ -118,8 +118,8 @@ LOCAL ROUTINES
    HLInewlink  -- write out some data to a linked block
 */
 
-#include "hdfi.h"
-#include "hfile.h"
+#include "hdf_priv.h"
+#include "hfile_priv.h"
 
 /* block_t - record of a linked block. contains the tag and ref of the
    data elt that forms the linked block */

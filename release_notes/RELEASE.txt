@@ -159,7 +159,6 @@ New features and changes
         hkit.h
         linklist.h
         local_nc.h
-        mfan.h
         mfani.h
         mfgri.h
         mstdio.h

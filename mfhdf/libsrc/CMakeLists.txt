@@ -5,7 +5,7 @@ project (HDF4_MFHDF_LIBSRC C)
 # Generate the netcdf.h file containing user settings needed by compilation
 #-----------------------------------------------------------------------------
 if (WIN32)
-  set (H4_WINDOWS_INCLUDE_FILE "#include <hdfi.h>")
+  set (H4_WINDOWS_INCLUDE_FILE "#include <hdf.h>")
   set (NETCDF_EXTERN HDFLIBAPI)
 else ()
   set (NETCDF_EXTERN extern)
@@ -38,15 +38,14 @@ set (HDF4_MFHDF_LIBSRC_INSTALL_CHDRS
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/hdf2netcdf.h
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/mfdatainfo.h
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/mfhdf.h
-    ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/mfhdfi.h
 )
 
 set (HDF4_MFHDF_LIBSRC_CHDRS
     ${HDF4_MFHDF_LIBSRC_INSTALL_CHDRS}
-    ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/error.h
-    ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/h4_xdr.h
-    ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/local_nc.h
-    ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/mfprivate.h
+    ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/error_priv.h
+    ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/h4_xdr_priv.h
+    ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/mf_priv.h
+    ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/nc_priv.h
 )
 
 if (HDF4_ENABLE_NETCDF)

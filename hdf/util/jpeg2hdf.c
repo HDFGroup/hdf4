@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "hdfi.h"
+#include "hdf_priv.h"
 
 /* Size of the file buffer to copy through */
 #define MAX_FILE_BUF 16384

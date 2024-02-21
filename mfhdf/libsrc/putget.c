@@ -14,8 +14,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "local_nc.h"
-#include "hfile.h"
+#include "nc_priv.h"
+#include "hfile_priv.h"
 
 /* Local function prototypes */
 static bool_t nssdc_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint32 count,

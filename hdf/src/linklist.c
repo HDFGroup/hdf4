@@ -28,8 +28,6 @@ DESIGN
     a pointer to a managed object.  The list may be sorted or unsorted, based
     on the comparison function.
 
-BUGS/LIMITATIONS
-
 LOCAL ROUTINES
     HULIget_list_node - Gets a list node
     HULIrelease_list_node - Releases a list node
@@ -44,8 +42,8 @@ EXPORTED ROUTINES
     HULshutdown     - Close down the HUL interface
 */
 
-#include "hdfi.h"
-#include "linklist.h"
+#include "hdf_priv.h"
+#include "linklist_priv.h"
 
 /* Pointer to the list node free list */
 static node_info_t *node_free_list = NULL;

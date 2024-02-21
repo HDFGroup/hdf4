@@ -61,8 +61,8 @@ PRIVATE functions manipulate vsdir and are used only within this file.
 PRIVATE data structures in here pertain to vdata in vsdir only.
  */
 
-#include "hdfi.h"
-#include "vgint.h"
+#include "hdf_priv.h"
+#include "vg_priv.h"
 
 /* These are used to determine whether a vdata had been created by the
    library internally, that is, not created by user's application */

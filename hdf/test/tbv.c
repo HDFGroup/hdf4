@@ -18,7 +18,7 @@
  */
 
 #include "tproto.h"
-#include "bitvect.h"
+#include "bitvect_priv.h"
 
 static void test_1(void);
 static void test_2(void);

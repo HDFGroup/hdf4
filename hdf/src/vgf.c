@@ -31,8 +31,8 @@
  *
  *********************************************************************** */
 
-#include "hdfi.h"
-#include "vgint.h"
+#include "hdf_priv.h"
+#include "vg_priv.h"
 #include "hproto_fortran.h"
 
 /*

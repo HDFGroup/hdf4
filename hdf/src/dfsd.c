@@ -18,7 +18,7 @@
     Routines for input and output of numeric data group
 
  Invokes:
-    df.c dfgroup.c dfkit.c df.h dfsd.h
+    df.c dfgroup.c dfkit.c df_priv.h dfsd_priv.h
 
  Public functions:
     DFSDgetdims      - get rank and dim sizes
@@ -89,10 +89,10 @@ Fortran stub functions:
     This version assumes that all the values are floating point.
  *---------------------------------------------------------------------------*/
 
-#include "hdfi.h"
-#include "dfsd.h"
+#include "hdf_priv.h"
+#include "dfsd_priv.h"
 
-/* MMM: make this definition correct and move to hfile.h, or wherever. */
+/* MMM: make this definition correct and move to hfile_priv.h, or wherever. */
 #define DF_NOFILE 0
 
 #define LABEL    0

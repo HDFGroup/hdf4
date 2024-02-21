@@ -15,7 +15,7 @@
 #include <string.h>
 
 /* Need to pick up H4_HAVE_SYS_STAT_H from mfhdf.h */
-#include "hdfi.h"
+#include "hdf_priv.h"
 #include "mfhdf.h"
 
 #ifdef H4_HAVE_UNISTD_H

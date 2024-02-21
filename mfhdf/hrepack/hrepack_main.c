@@ -12,7 +12,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "hdf.h"
-#include "hfile.h"
+#include "hfile_priv.h"
 #include "mfhdf.h"
 #include "hrepack.h"
 #include "hrepack_parse.h"

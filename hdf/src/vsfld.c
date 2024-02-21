@@ -38,8 +38,8 @@ EXPORTED ROUTINES
 
 #include <stdarg.h>
 
-#include "hdfi.h"
-#include "vgint.h"
+#include "hdf_priv.h"
+#include "vg_priv.h"
 
 /*
  ** ==================================================================

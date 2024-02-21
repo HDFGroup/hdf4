@@ -14,7 +14,7 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "local_nc.h"
+#include "nc_priv.h"
 
 /* values: VAX C doesn't like values[] */
 NC_iarray *

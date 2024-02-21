@@ -33,11 +33,12 @@
  **   You must have enough additional disk space for the compacted file.
  */
 
-#include "hdf.h"
-#include "herr.h"
-#include "hfile.h"
 #include <stdio.h>
 #include <string.h>
+
+#include "hdf.h"
+#include "herr.h"
+#include "hfile_priv.h"
 
 typedef struct mydd_t {
     uint16 tag;

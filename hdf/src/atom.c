@@ -23,7 +23,7 @@ DESIGN
     The groups are stored in an array of pointers to store each group in an
     element. Each "atomic group" node contains a link to a hash table to
     manage the atoms in each group.  The allowed "atomic groups" are stored
-    in an enum (called group_t) in atom.h.
+    in an enum (called group_t) in atom_priv.h.
 
 BUGS/LIMITATIONS
     Can't iterate over the atoms in a group.
@@ -46,8 +46,8 @@ EXPORTED ROUTINES
   HAshutdown        - Terminate various static buffers.
 */
 
-#include "hdfi.h"
-#include "atom.h"
+#include "hdf_priv.h"
+#include "atom_priv.h"
 
 /* # of bits to use for Group ID in each atom (change if MAXGROUP>16) */
 #define GROUP_BITS 4
