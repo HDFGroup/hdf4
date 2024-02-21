@@ -78,4 +78,4 @@ jobs:
           source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
           export PATH=/usr/local/bin:$PATH
           make install
-          make uninstall
+        working-directory: ${{ runner.workspace }}/build
