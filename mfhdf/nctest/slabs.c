@@ -13,7 +13,7 @@
 
 #include "testcdf.h" /* defines in-memory test cdf structure */
 #include "add.h"     /* functions to update in-memory netcdf */
-#include "error.h"
+#include "error_priv.h"
 #include "tests.h"
 #include "emalloc.h"
 

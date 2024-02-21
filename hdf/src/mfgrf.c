@@ -54,7 +54,7 @@
  *                   by palette identifier
  *---------------------------------------------------------------------------*/
 
-#include "hdfi.h"
+#include "hdf_priv.h"
 #include "hproto_fortran.h"
 
 /* Local pre-processor macros */

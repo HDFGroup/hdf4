@@ -34,8 +34,8 @@ EXPORTED ROUTINES
 
 ************************************************************************/
 
-#include "hdfi.h"
-#include "vgint.h"
+#include "hdf_priv.h"
+#include "vg_priv.h"
 
 #ifndef MIN
 #define MIN(a, b) ((a) < (b) ? (a) : (b))

@@ -17,8 +17,6 @@
  Purpose:
     Routines to support "native mode" conversion to and from HDF format
 
- Invokes:
-
  PRIVATE conversion functions:
     DFKnb1b -  Native mode for 8 bit integers
     DFKnb2b -  Native mode for 16 bit integers
@@ -47,8 +45,8 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include "hdfi.h"
-#include "hconv.h"
+#include "hdf_priv.h"
+#include "hconv_priv.h"
 
 /*****************************************************************************/
 /* NATIVE MODE NUMBER "CONVERSION" ROUTINES                                  */

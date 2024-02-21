@@ -101,8 +101,8 @@ EXPORTED ROUTINES
 
 *************************************************************************/
 
-#include "hdfi.h"
-#include "vgint.h"
+#include "hdf_priv.h"
+#include "vg_priv.h"
 
 /* These are used to determine whether a vgroup had been created by the
    library internally, that is, not created by user's application */

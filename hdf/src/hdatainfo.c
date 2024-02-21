@@ -44,12 +44,13 @@ LOW-LEVEL ROUTINES
 
 **********************************************************************/
 
-#include "hdfi.h"
-#include "hlimits.h"
-#include "vgint.h"
-#include "mfani.h"
+#include "hdf_priv.h"
+
 #include "mfan.h"
-#include "mfgri.h"
+
+#include "vg_priv.h"
+#include "mfan_priv.h"
+#include "mfgr_priv.h"
 
 #ifdef H4_HAVE_LIBSZ /* we have the szip library */
 #include "szlib.h"

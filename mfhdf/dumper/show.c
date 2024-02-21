@@ -14,7 +14,8 @@
 /* Modified from vshow.c by Eric Tsui, 12/25/1994. */
 
 #include "hdp.h"
-#include "vgint.h"
+
+#include "vg_priv.h"
 
 #define BUFFER 1000000
 

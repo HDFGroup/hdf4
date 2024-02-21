@@ -78,12 +78,12 @@
  *
  *---------------------------------------------------------------------------*/
 
-#include "hdfi.h"
+#include "hdf_priv.h"
 
-#include "mfani.h"
+#include "mfan_priv.h"
 #include "mfan.h"
-#include "atom.h"
-#include "hfile.h" /* needed for filerec_t */
+#include "atom_priv.h"
+#include "hfile_priv.h" /* needed for filerec_t */
 
 /* Whether we've installed the library termination function yet for this
    interface */

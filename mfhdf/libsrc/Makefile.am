@@ -36,11 +36,9 @@ endif
 libmfhdf_la_LIBADD = $(top_builddir)/hdf/src/libdf.la
 
 if HDF_BUILD_NETCDF
-include_HEADERS = hdf2netcdf.h mfhdf.h netcdf.h mfdatainfo.h \
-				  mfhdfi.h
+include_HEADERS = hdf2netcdf.h mfhdf.h netcdf.h mfdatainfo.h
 else
-include_HEADERS = hdf2netcdf.h mfhdf.h hdf4_netcdf.h mfdatainfo.h \
-				  mfhdfi.h
+include_HEADERS = hdf2netcdf.h mfhdf.h hdf4_netcdf.h mfdatainfo.h
 endif
 
 # The following is a workaround. Since Fortran is included in this 

@@ -16,8 +16,8 @@
 
 #include <errno.h>
 
-#include "local_nc.h"
-#include "herr.h"
+#include "nc_priv.h"
+#include "herr_priv.h"
 
 #if defined H4_HAVE_WIN32_API && !defined __MINGW32__
 typedef int                               pid_t;

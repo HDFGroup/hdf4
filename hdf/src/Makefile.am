@@ -21,7 +21,7 @@ CSOURCES = atom.c bitvect.c cdeflate.c cnbit.c cnone.c crle.c cskphuff.c    \
 	   vgp.c vhi.c vio.c vparse.c vrw.c vsfld.c
 
 CHEADERS = H4api_adpt.h h4config.h hbitio.h hcomp.h hdatainfo.h hdf.h \
-		   herr.h hlimits.h hntdefs.h hproto.h htags.h mfgr.h vg.h
+		   herr.h hlimits.h hntdefs.h hproto.h htags.h mfan.h mfgr.h vg.h
 
 FHEADERS = dffunc.f90 hdf.f90 dffunc.inc hdf.inc
 

@@ -29,14 +29,23 @@
 #include "hdf4_netcdf.h"
 #endif
 
-#include "mfhdfi.h"
-
 #define SD_UNLIMITED        NC_UNLIMITED /* use this as marker for unlimited dimension */
 #define SD_NOFILL           NC_NOFILL
 #define SD_FILL             NC_FILL
 #define SD_DIMVAL_BW_COMP   1
 #define SD_DIMVAL_BW_INCOMP 0
 #define SD_RAGGED           -1 /* marker for ragged dimension */
+
+/* enumerated type used to specify whether a variable is an SDS, coordinate
+ * variable, or its type is unknown because it was created before HDF4.2r2
+ *
+ * NOTE: Formerly in mfhdfi.h
+ */
+typedef enum {
+    IS_SDSVAR = 0, /* variable is an actual SDS */
+    IS_CRDVAR = 1, /* variable is a coordinate variable */
+    UNKNOWN   = 2  /* variable is created before HDF4.2r2, unknown type */
+} hdf_vartype_t;
 
 /* used to indicate the type of the variable at an index */
 typedef struct hdf_varlist {

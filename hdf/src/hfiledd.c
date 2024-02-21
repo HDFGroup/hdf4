@@ -84,8 +84,8 @@ OLD ROUTINES
     HIunregister_tag_ref    - mark a ref as un-used for a tag
 */
 
-#include "hdfi.h"
-#include "hfile.h"
+#include "hdf_priv.h"
+#include "hfile_priv.h"
 
 /* Private routines */
 static intn HTIfind_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref, dd_t **pdd, intn direction);

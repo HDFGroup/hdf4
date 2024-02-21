@@ -25,7 +25,7 @@
 
 #include "tproto.h"
 #include "mfgr.h"
-#include "mfgri.h"
+#include "mfgr_priv.h"
 
 /* Local pre-processor macros */
 #define XDIM         0

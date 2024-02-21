@@ -72,7 +72,7 @@
 
  **************************************************************************/
 
-#include "local_nc.h"
+#include "nc_priv.h"
 
 #define SDG_MAX_INITIAL 100
 

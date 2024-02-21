@@ -110,7 +110,7 @@
  */
 
 #include "tproto.h"
-#include "hchunks.h"
+#include "hchunks_priv.h"
 
 #define TESTFILE_NAME "tchunks.hdf"
 #define BUFSIZE       12288
@@ -174,7 +174,7 @@ test_chunks(void)
     int32 nseek = 0;
 #endif
     int32           ret;
-    HCHUNK_DEF      chunk[1]; /* Chunk definition, see 'hchunks.h' */
+    HCHUNK_DEF      chunk[1]; /* Chunk definition, see 'hchunks_priv.h' */
     int32           dims[5];
     int32           fill_val_len = 1;
     uint8           fill_val_u8  = 0;            /* test 6 */

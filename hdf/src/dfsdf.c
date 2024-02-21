@@ -68,8 +68,8 @@
  * Remarks: no C stubs needed for the put string routines, only Fortran stubs
  *---------------------------------------------------------------------------*/
 
-#include "hdfi.h"
-#include "dfsd.h"
+#include "hdf_priv.h"
+#include "dfsd_priv.h"
 #include "hproto_fortran.h"
 
 /*-----------------------------------------------------------------------------

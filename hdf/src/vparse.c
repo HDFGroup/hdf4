@@ -22,8 +22,8 @@
 
 ************************************************************************/
 
-#include "hdfi.h"
-#include "vgint.h"
+#include "hdf_priv.h"
+#include "vg_priv.h"
 
 #define ISCOMMA(c) ((c == ',') ? 1 : 0)
 

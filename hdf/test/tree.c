@@ -15,25 +15,12 @@
    FILE
    tree.c
    Test HDF Threaded-Balanced-Binary Tree (tbbt) routines.
-
-   REMARKS
-
-   DESIGN
-
-   BUGS/LIMITATIONS
-
-   EXPORTED ROUTINES
-
-   AUTHOR
-   Quincey Koziol
-
-   MODIFICATION HISTORY
-   10/21/93 - Started coding.
  */
 
 #include <time.h>
+
 #include "tproto.h"
-#include "tbbt.h"
+#include "tbbt_priv.h"
 
 #define MAX_TEST_SIZE 31  /* maximum number of elements to insert */
 #define NUM_TEST_RUNS 100 /* number of times to insert & remove each size */

@@ -51,8 +51,8 @@
  *  DFANIgetfann:    - get file annotation
  *---------------------------------------------------------------------------*/
 
-#include "hdfi.h"
-#include "dfan.h"
+#include "hdf_priv.h"
+#include "dfan_priv.h"
 
 static uint16 Lastref        = 0; /* Last ref read/written */
 static uint16 Next_label_ref = 0; /* Next file label ref to read/write */

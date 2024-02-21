@@ -13,14 +13,14 @@
 
 /* General HDF includes */
 
-#include "hdfi.h"
+#include "hdf_priv.h"
 
 #ifdef H4_HAVE_LIBSZ
 #include "szlib.h"
 #endif
 
 /* HDF compression includes */
-#include "hcompi.h" /* Internal definitions for compression */
+#include "hcomp_priv.h" /* Internal definitions for compression */
 
 /* internal defines */
 #define TMP_BUF_SIZE 8192 /* size of throw-away buffer */

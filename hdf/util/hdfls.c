@@ -12,7 +12,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "hdf.h"
-#include "hfile.h"
+#include "hfile_priv.h"
 
 #define MAXBUFF 8192
 

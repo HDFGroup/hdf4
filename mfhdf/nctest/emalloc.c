@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "error.h"
+#include "error_priv.h"
 #include "emalloc.h"
 
 /* Check return from malloc */

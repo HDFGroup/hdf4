@@ -16,7 +16,7 @@
  */
 
 #include "tproto.h"
-#include "hfile.h"
+#include "hfile_priv.h"
 
 /* This value can cause platform-specific problems as the number of files
  * that can be open at one time via fopen() is often capped by the OS.

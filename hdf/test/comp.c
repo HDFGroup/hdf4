@@ -12,27 +12,16 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
-   FILE - comp.c
-       Test HDF compressed data I/O routines
+       comp.c - Test HDF compressed data I/O routines
 
-   DESIGN
        These are written to test all combinations of modeling and
        encoding layers with different number types.
-
-   BUGS/LIMITATIONS
-
-   EXPORTED ROUTINES
-
-   AUTHOR
-       Quincey Koziol
-
-   MODIFICATION HISTORY
-       10/19/93 - Through this header in.
  */
 
 #include <time.h>
+
 #include "tproto.h"
-#include "hfile.h"
+#include "hfile_priv.h"
 
 #define TESTFILE_NAME "tcomp.hdf"
 

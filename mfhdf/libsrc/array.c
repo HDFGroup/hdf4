@@ -14,7 +14,7 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "local_nc.h"
+#include "nc_priv.h"
 
 /*
  * for a netcdf type

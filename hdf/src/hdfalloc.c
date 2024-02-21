@@ -11,7 +11,7 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "hdfi.h"
+#include "hdf_priv.h"
 
 /*
 LOCAL ROUTINES

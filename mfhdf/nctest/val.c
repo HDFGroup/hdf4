@@ -15,7 +15,7 @@
 
 #include "testcdf.h"
 #include "val.h"
-#include "error.h"
+#include "error_priv.h"
 
 /* fill typed value block with values of specified type */
 /* type - netcdf type, NC_BYTE, ..., NC_DOUBLE */

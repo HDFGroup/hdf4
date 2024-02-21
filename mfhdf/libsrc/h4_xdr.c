@@ -36,14 +36,14 @@
  * xdr.
  */
 
-#include "local_nc.h"
+#include "nc_priv.h"
 
 /* Which header files include htonl() ? */
 
 #ifdef H4_HAVE_WIN32_API
 /* Use winsock on Win32 (including MinGW)
  *
- * This is included in hdfi.h to ensure winsock2.h is included before
+ * This is included in hdf_priv.h to ensure winsock2.h is included before
  * windows.h.
  */
 #else
@@ -56,7 +56,7 @@
 #endif
 #endif
 
-#include "h4_xdr.h"
+#include "h4_xdr_priv.h"
 
 /*
  * This is the number of bytes per unit of external data.

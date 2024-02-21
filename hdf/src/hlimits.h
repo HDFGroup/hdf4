@@ -30,7 +30,7 @@
 
 /**************************************************************************
  *  Generally useful macro definitions
- *   (These are copied from hdfi.h and should remain included in both files
+ *   (These are copied from hdf_priv.h and should remain included in both files
  *       because hlimits.h is included from netcdf.h which is used in some
  *       netCDF utilities which don't need or want the rest of the HDF header
  *       files. -QAK - 2/17/99 )
@@ -224,7 +224,7 @@ changing the class name variable declaration much easier - BMR 4/1/02*/
  *  _HDF_ATTRIBUTE  "Attr0.0"  8/1/96 */
 
 /* classes of the Vdatas/Vgroups created by the SD interface,
-   from local_nc.h  */
+   from nc_priv.h  */
 #define _HDF_ATTRIBUTE "Attr0.0"
 /* class of a Vdata containing SD interface attribute */
 #define _HDF_VARIABLE "Var0.0"
@@ -250,7 +250,7 @@ changing the class name variable declaration much easier - BMR 4/1/02*/
 #define ATTR_FIELD_NAME "VALUES"
 
 /* The following vdata class name is reserved by the Chunking interface.
-   originally defined in 'hchunks.h'. The full class name
+   originally defined in 'hchunks_priv.h'. The full class name
    currently is "_HDF_CHK_TBL_0". -GV 9/25/97
 
    Made the vdata class name available to other interfaces since it is needed

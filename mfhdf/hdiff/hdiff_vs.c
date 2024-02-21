@@ -15,7 +15,7 @@
 #include "hdiff_list.h"
 #include "hdiff_mattbl.h"
 
-#include "vgint.h"
+#include "vg_priv.h"
 
 static void   fmt_print(uint8 *x, int32 type);
 static uint32 vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, diff_opt_t *opt);

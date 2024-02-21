@@ -31,7 +31,7 @@
  *  dfr8restart:    Call DFR8restart to reset sequencing to first image
  *---------------------------------------------------------------------------*/
 
-#include "hdfi.h"
+#include "hdf_priv.h"
 #include "hproto_fortran.h"
 
 /*-----------------------------------------------------------------------------

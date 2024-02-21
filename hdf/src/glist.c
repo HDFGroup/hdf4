@@ -17,8 +17,8 @@
           by Keith Pomakis(kppomaki@jeeves.uwaterloo.ca)-Spring, 1994
  ************************************************************************/
 
-#include "hdfi.h"
-#include "glist.h"
+#include "hdf_priv.h"
+#include "glist_priv.h"
 
 /*+
 ****************************************************************************

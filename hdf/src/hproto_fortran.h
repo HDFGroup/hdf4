@@ -15,7 +15,7 @@
 #define H4_H_PROTO_FORTRAN
 
 #include "H4api_adpt.h"
-#include "df.h"
+#include "df_priv.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -536,7 +536,7 @@ HDFFCLIBAPI intf nhinumbr(int32 file_id, uint16 tag);
 
 HDFFCLIBAPI intf nhconfinfc(intf *coder_type, intf *info);
 /*
- ** from dfufp2im.c
+ ** from dfufp2i.c
  */
 #define nduif2i H4_F77_FUNC(duif2i, DUIF2I)
 

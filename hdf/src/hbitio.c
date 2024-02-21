@@ -36,8 +36,8 @@ LOCAL ROUTINES
    HIwrite2read       - switch from writing bits to reading them
 */
 
-#include "hdfi.h"
-#include "hfile.h"
+#include "hdf_priv.h"
+#include "hfile_priv.h"
 
 /* Local Variables */
 

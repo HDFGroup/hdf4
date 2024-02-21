@@ -58,9 +58,9 @@
  *
  *--------------------------------------------------------------------------*/
 
-#include "hdfi.h"
-#include "dfufp2i.h"
-#include "dfsd.h"
+#include "hdf_priv.h"
+#include "dfufp2i_priv.h"
+#include "dfsd_priv.h"
 
 /**********************************************************************
  *

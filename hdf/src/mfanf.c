@@ -47,7 +47,7 @@
  *    aftagatype  - annotation TAG to corresponding annotation type
  *---------------------------------------------------------------------------*/
 
-#include "hdfi.h"
+#include "hdf_priv.h"
 #include "hproto_fortran.h"
 
 /*-----------------------------------------------------------------------------

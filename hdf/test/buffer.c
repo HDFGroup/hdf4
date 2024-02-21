@@ -29,9 +29,9 @@
 
 #define TESTMASTER
 
-#include "hdfi.h"
+#include "hdf_priv.h"
 #include "tutils.h"
-#include "hfile.h"
+#include "hfile_priv.h"
 
 #define TESTFILE_NAME "tbuffer.hdf"
 #define EXTFILE_NAME  "tbuffer.dat"

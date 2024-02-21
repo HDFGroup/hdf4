@@ -20,10 +20,11 @@
 #include <limits.h>
 #include <float.h>
 #include <assert.h>
+
 #include "hdf.h"
 #include "mfhdf.h"
 #include "hdiff.h"
-#include "vgint.h"
+#include "vg_priv.h"
 
 #ifndef ABS
 #define ABS(a) (((a) >= 0) ? (a) : -(a))

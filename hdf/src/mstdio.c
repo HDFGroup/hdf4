@@ -12,9 +12,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
-FILE
-   mstdio.c
-   HDF stdio-like modeling I/O routines
+   mstdio.c - HDF stdio-like modeling I/O routines
 
 REMARKS
    Basically a NOP interface, it just calls the encoding layer.
@@ -39,11 +37,11 @@ EXPORTED ROUTINES
  */
 
 /* General HDF includes */
-#include "hdfi.h"
-#include "hfile.h"
+#include "hdf_priv.h"
+#include "hfile_priv.h"
 
 /* HDF compression includes */
-#include "hcompi.h" /* Internal definitions for compression */
+#include "hcomp_priv.h" /* Internal definitions for compression */
 
 funclist_t mstdio_funcs = {HCPmstdio_stread,
                            HCPmstdio_stwrite,

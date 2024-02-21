@@ -61,8 +61,8 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include "hdfi.h"
-#include "hconv.h"
+#include "hdf_priv.h"
+#include "hconv_priv.h"
 
 /*
  **  Static function prototypes

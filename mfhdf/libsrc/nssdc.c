@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "local_nc.h"
-#include "hfile.h"
+#include "nc_priv.h"
+#include "hfile_priv.h"
 
 /* constants/macros pulled out of the CDF library source */
 #define V2_CDR_OFFSET     8

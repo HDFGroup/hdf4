@@ -26,7 +26,7 @@
 /* This module (dfcomp.c) used to be in charge of the general compression
  * information but hcomp.c now supersedes it
  */
-#include "hdfi.h"
+#include "hdf_priv.h"
 
 #define R8_MAX_BLOCKS 32
 #define R8_MAX_LENGTH 512

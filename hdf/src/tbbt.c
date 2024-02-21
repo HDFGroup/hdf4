@@ -15,8 +15,8 @@
 /* Extended from (added threads to) Knuth 6.2.3, Algorithm A (AVL trees) */
 /* Basic tree structure by Adel'son-Vel'skii and Landis */
 
-#include "hdfi.h"
-#include "tbbt.h"
+#include "hdf_priv.h"
+#include "tbbt_priv.h"
 
 #define PARENT 0
 #define LEFT   1

@@ -28,7 +28,8 @@
  ******************************************************************************/
 
 #include "hdf.h"
-#include "vgint.h"
+
+#include "vg_priv.h"
 
 static int condensed;
 

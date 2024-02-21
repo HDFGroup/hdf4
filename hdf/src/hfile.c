@@ -18,7 +18,7 @@
 
    H-Level Limits
    ==============
-   o MAX_ACC access records open at a single time (#define in hfile.h)
+   o MAX_ACC access records open at a single time (#define in hfile_priv.h)
    o int16 total tags (fixed)
    o int32 max length and offset of an element in an HDF file (fixed)
 
@@ -112,9 +112,9 @@
 
 #include <errno.h>
 
-#include "hdfi.h"
-#include "hfile.h"
-#include "glist.h" /* for double-linked lists, stacks and queues */
+#include "hdf_priv.h"
+#include "hfile_priv.h"
+#include "glist_priv.h" /* for double-linked lists, stacks and queues */
 
 /*--------------------- Locally defined Globals -----------------------------*/
 
@@ -155,7 +155,7 @@ extern funclist_t comp_funcs;
 
 /* Functions for accessing chunked data elements.
    For definition of the chunked data element, see hchunk.c. */
-#include "hchunks.h"
+#include "hchunks_priv.h"
 
 /* Functions for accessing buffered data elements.
    For definition of the buffered data element, see hbuffer.c. */
@@ -2438,7 +2438,7 @@ done:
  RETURNS
     returns SUCCEED (0).
  DESCRIPTION
-    Copies values from #defines in hfile.h to provided buffers. This
+    Copies values from #defines in hfile_priv.h to provided buffers. This
         information is statistically compiled into the HDF library, so
         it is not necessary to have any files open to get this information.
 

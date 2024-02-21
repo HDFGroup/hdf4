@@ -27,9 +27,9 @@
  * Part of the HDF Vset interface.
  */
 
-#include "hdfi.h"
-#include "hfile.h"
-#include "vgint.h"
+#include "hdf_priv.h"
+#include "hfile_priv.h"
+#include "vg_priv.h"
 
 /*
  ** ==================================================================

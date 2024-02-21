@@ -83,12 +83,11 @@ fi
 # TESTING IF FILES EXISTS
 #########################
 
-include_file=(atom.h bitvect.h cdeflate.h cnbit.h cnone.h crle.h cskphuff.h cszip.h dfan.h
-dffunc.f90 dffunc.inc dfgr.h df.h dfrig.h dfsd.h dfufp2i.h dynarray.h H4api_adpt.h
-h4config.h hbitio.h hchunks.h hcomp.h hcompi.h hconv.h hdatainfo.h hdf2netcdf.h hdf.f90
-hdf.h hdfi.h hdf.inc herr.h hfile.h hkit.h hlimits.h hntdefs.h hproto_fortran.h hproto.h
-htags.h linklist.h local_nc.h mfan.h mfani.h mfdatainfo.h mffunc.f90 mffunc.inc mfgr.h
-mfgri.h mfhdf.h mfhdfi.h mstdio.h netcdf.f90 netcdf.h netcdf.inc tbbt.h vg.h)
+include_file=(
+dffunc.f90 dffunc.inc H4api_adpt.h h4config.h hbitio.h hcomp.h hdatainfo.h
+hdf2netcdf.h hdf.f90 hdf.h hdf.inc herr.h hlimits.h hntdefs.h hproto_fortran.h hproto.h
+htags.h mfan.h mfdatainfo.h mffunc.f90 mffunc.inc mfgr.h mfhdf.h netcdf.f90 netcdf.h
+netcdf.inc vg.h)
 
 lib_file=(libdf.a libdf.la libhdf4.settings libjpeg.a libmfhdf.a libmfhdf.la libsz.a libz.a)
 

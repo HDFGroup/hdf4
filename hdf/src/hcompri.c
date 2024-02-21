@@ -44,8 +44,8 @@
 
 ------------------------------------------------------------------------- */
 
-#include "hdfi.h"
-#include "hfile.h"
+#include "hdf_priv.h"
+#include "hfile_priv.h"
 
 /* crinfo_t -- compressed raster information structure */
 

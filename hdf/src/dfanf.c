@@ -39,9 +39,9 @@
  *  daiafid_       : add file id (intermediate routine)
  *---------------------------------------------------------------------------*/
 
-#include "hdfi.h"
-#include "dfan.h"
-#include "df.h"
+#include "hdf_priv.h"
+#include "dfan_priv.h"
+#include "df_priv.h"
 #include "hproto_fortran.h"
 
 /* conventions used in forming names of routines:

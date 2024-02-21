@@ -14,7 +14,7 @@
 /*-----------------------------------------------------------------------------
  * File:     dfgr.c
  * Purpose:  read and write general raster images
- * Invokes:  df.c, dfkit.c, dfcomp.c, dfgroup.c, dfgr.h
+ * Invokes:  df.c, dfkit.c, dfcomp.c, dfgroup.c, dfgr_priv.h
  * Contents:
  *  DFGRgetlutdims  : get dimensions of lookup table
  *  DFGRreqlutil    : use this interlace when returning lookup table
@@ -43,8 +43,8 @@
  *          dimension, compression, color compensation etc.
  *---------------------------------------------------------------------------*/
 
-#include "hdfi.h"
-#include "dfgr.h"
+#include "hdf_priv.h"
+#include "dfgr_priv.h"
 
 static char     *Grlastfile = NULL;
 static uint8    *Grlutdata  = NULL; /* points to lut, if in memory */
