@@ -52,16 +52,13 @@ jobs:
             --enable-netcdf \
             --enable-shared \
             --disable-fortran \
-             LDFLAGS="-L/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/lib
+            LDFLAGS="-L/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/lib"
 
       # BUILD
       - name: Autotools Build
         shell: bash
         run: |
           source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
-          which clang   
-          export LD_LIBRARY_PATH=/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/lib:/usr/local/lib
-          export LD_RUN_PATH=/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/lib:/usr/local/lib
           export PATH=/usr/local/bin:$PATH
           make -j3
         working-directory: ${{ runner.workspace }}/build
