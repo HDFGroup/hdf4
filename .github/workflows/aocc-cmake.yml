@@ -1,4 +1,4 @@
-name:  hdf4 autotools aocc
+name: hdf4 CMake aocc
 
 on:
   workflow_call:
@@ -18,10 +18,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4.1.1
 
-      - name: Install System dependencies
+      - name: Install Linux dependencies
+        shell: bash
         run: |
           sudo apt update
-          sudo apt install -y libaec-dev zlib1g-dev automake autoconf libcurl4-openssl-dev libjpeg-dev wget curl bzip2 m4 flex bison cmake libzip-dev doxygen openssl libtool libtool-bin build-essential libncurses-dev libquadmath0 libstdc++6 libxml2
+          sudo apt-get install ninja-build doxygen graphviz
+          sudo apt install libssl3 libssl-dev libcurl4 libcurl4-openssl-dev
+          sudo apt install -y libaec-dev zlib1g-dev wget curl bzip2 flex bison cmake libzip-dev openssl build-essential
 
       - name: Install AOCC 4.1.0
         run: |
@@ -39,46 +42,36 @@ jobs:
           echo "LD_RUN_PATH=/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/lib:/usr/local/lib" >> $GITHUB_ENV
           echo "DESTDIR=/tmp" >> $GITHUB_ENV
 
-      - name: Autotools Configure with aocc
+      - name: CMake Configure with aocc
         shell: bash
         run: |
           source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
           export PATH=/usr/local/bin:$PATH
-          sh ./autogen.sh
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
-          $GITHUB_WORKSPACE/configure \
-            --enable-build-mode=${{ inputs.build_mode }} \
-            --enable-netcdf \
-            --enable-shared \
-            --disable-fortran \
-             LDFLAGS="-L/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/lib
+          cmake -C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake -G Ninja \
+          -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
+          -DJPEG_USE_LOCALCONTENT=OFF \
+          -DLIBAEC_USE_LOCALCONTENT=OFF \
+          -DZLIB_USE_LOCALCONTENT=OFF \
+          -DHDF4_BUILD_FORTRAN:BOOL=ON \
+          -DHDF4_BUILD_JAVA:BOOL=OFF \
+          $GITHUB_WORKSPACE
 
       # BUILD
-      - name: Autotools Build
+      - name: CMake Build
         shell: bash
         run: |
           source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
-          which clang   
-          export LD_LIBRARY_PATH=/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/lib:/usr/local/lib
-          export LD_RUN_PATH=/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/lib:/usr/local/lib
           export PATH=/usr/local/bin:$PATH
-          make -j3
+          cmake --build . --parallel 3 --config ${{ inputs.build_mode }}
         working-directory: ${{ runner.workspace }}/build
 
       # RUN TESTS
-      # NORMAL
-      - name: Autotools Run Tests
+      - name: CMake Run Tests
+        shell: bash
         run: |
           source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
           export PATH=/usr/local/bin:$PATH
-          make check -j2
+          ctest . --parallel 2 -C ${{ inputs.build_mode }} -V
         working-directory: ${{ runner.workspace }}/build
-
-      # INSTALL (note that this runs even when we don't run the tests)
-      - name: Autotools Install
-        run: |
-          source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
-          export PATH=/usr/local/bin:$PATH
-          make install
-          make uninstall
