@@ -102,6 +102,7 @@ set (HDF4_PRIVATE_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/hcompi.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hconv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hdfi.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/herr_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hfile.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hkit.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hqueue.h

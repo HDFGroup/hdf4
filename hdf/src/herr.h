@@ -11,123 +11,25 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/*+ herr.h
-   ***  header file for using error routines
-   *** to be included by all ".c" files
-   + */
+/*  herr.h
+ *
+ *  Error routines
+ */
 
 #ifndef H4_HERR_H
 #define H4_HERR_H
 
 #include "hdf.h"
 
-/* HERROR macro, used to facilitate error reporting */
-#define HERROR(e) HEpush(e, __func__, __FILE__, __LINE__)
-
-/* HRETURN_ERROR macro, used to facilitate error reporting.  Makes
-   same assumptions as HERROR.  IN ADDITION, this macro causes
-   a return from the calling routine */
-
-#define HRETURN_ERROR(err, ret_val)                                                                          \
-    do {                                                                                                     \
-        HERROR(err);                                                                                         \
-        return (ret_val);                                                                                    \
-    } while (0)
-
-/* HCLOSE_RETURN_ERROR macro, used to facilitate error reporting.  Makes
-   same assumptions as HRETURN_ERROR.  IN ADDITION, this macro causes
-   the file specified by the id "fid" to be closed */
-
-#define HCLOSE_RETURN_ERROR(hfid, err, ret_val)                                                              \
-    do {                                                                                                     \
-        HERROR(err);                                                                                         \
-        Hclose(hfid);                                                                                        \
-        return (ret_val);                                                                                    \
-    } while (0)
-
-/* HGOTO_ERROR macro, used to facilitate error reporting.  Makes
-   same assumptions as HERROR.  IN ADDITION, this macro causes
-   a jump to the label 'done' which should be in every function
-   Also there is an assumption of a variable 'ret_value' */
-
-#define HGOTO_ERROR(err, ret_val)                                                                            \
-    do {                                                                                                     \
-        HERROR(err);                                                                                         \
-        ret_value = ret_val;                                                                                 \
-        goto done;                                                                                           \
-    } while (0)
-
-/* HGOTO_FAIL macro, used to facilitate error reporting.  This one
-   is added in 2019 to tidy the code.  It is similar to HGOTO_ERROR,
-   except it does not call HERROR.  This is to preserve the exact
-   behavior as the original code. */
-
-#define HGOTO_FAIL(ret_val)                                                                                  \
-    do {                                                                                                     \
-        ret_value = ret_val;                                                                                 \
-        goto done;                                                                                           \
-    } while (0)
-
-/* HCLOSE_RETURN_ERROR macro, used to facilitate error reporting.  Makes
-   same assumptions as HRETURN_ERROR.  IN ADDITION, this macro causes
-   the file specified by the id "fid" to be closed
-   Also , this macro causes a jump to the label 'done' which should
-   be in every function. There is an assumption of a variable 'ret_value' */
-
-#define HCLOSE_GOTO_ERROR(hfid, err, ret_val)                                                                \
-    do {                                                                                                     \
-        HERROR(err);                                                                                         \
-        Hclose(hfid);                                                                                        \
-        ret_value = ret_val;                                                                                 \
-        goto done;                                                                                           \
-    } while (0)
-
-/* HGOTO_DONE macro, used to facilitate the new error reporting model.
-   This macro is just a wrapper to set the return value and jump to the 'done'
-   label.  Also assumption of a variable 'ret_value' */
-
-#define HGOTO_DONE(ret_val)                                                                                  \
-    do {                                                                                                     \
-        ret_value = ret_val;                                                                                 \
-        goto done;                                                                                           \
-    } while (0)
-
-/* For further error reporting */
-#define HE_REPORT(msg) HEreport(msg)
-#define HE_REPORT_RETURN(msg, ret_val)                                                                       \
-    do {                                                                                                     \
-        HEreport(msg);                                                                                       \
-        return (ret_val);                                                                                    \
-    } while (0)
-#define HE_CLOSE_REPORT_RETURN(hfid, msg, ret_val)                                                           \
-    do {                                                                                                     \
-        HEreport(msg);                                                                                       \
-        Hclose(hfid);                                                                                        \
-        return (ret_val);                                                                                    \
-    } while (0)
-
-#define HE_REPORT_GOTO(msg, ret_val)                                                                         \
-    do {                                                                                                     \
-        HEreport(msg);                                                                                       \
-        ret_value = ret_val;                                                                                 \
-        goto done;                                                                                           \
-    } while (0)
-#define HE_CLOSE_REPORT_GOTO(hfid, msg, ret_val)                                                             \
-    do {                                                                                                     \
-        HEreport(msg);                                                                                       \
-        Hclose(hfid);                                                                                        \
-        ret_value = ret_val;                                                                                 \
-        goto done;                                                                                           \
-    } while (0)
-
 /*
-   ======================================================================
-   Error codes
-
-   NOTE: Remember to update the error_messages[] structure in herr.c
-   whenever errors are added/deleted from this list.
-   ======================================================================
+ * ======================================================================
+ * Error codes
+ *
+ * NOTE: Remember to update the error_messages[] structure in herr.c
+ * whenever errors are added/deleted from this list.
+ * ======================================================================
  */
+
 /* Declare an enumerated type which holds all the valid HDF error codes */
 typedef enum {
     DFE_NONE = 0,   /* special zero, no error */
