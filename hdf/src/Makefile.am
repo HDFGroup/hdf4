@@ -5,7 +5,7 @@
 include $(top_srcdir)/config/commence.am
 include $(top_srcdir)/config/lt_vers.am
 
-lib_LTLIBRARIES = libdf.la
+lib_LTLIBRARIES=libdf.la
 
 # Add libtool numbers to the HDF4 library (from config/lt_vers.am)
 libdf_la_LDFLAGS= -version-info $(LT_VERS_INTERFACE):$(LT_VERS_REVISION):$(LT_VERS_AGE) $(AM_LDFLAGS)
