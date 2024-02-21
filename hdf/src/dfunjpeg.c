@@ -56,11 +56,11 @@ typedef hdf_source_mgr *hdf_src_ptr;
 
 /* JPEG error handling */
 struct hdf_error_mgr {
-  struct jpeg_error_mgr pub;    /* public fields */
-  jmp_buf setjmp_buffer;        /* for returning to caller */
+    struct jpeg_error_mgr pub;           /* public fields */
+    jmp_buf               setjmp_buffer; /* for returning to caller */
 };
 
-typedef struct hdf_error_mgr * hdf_error_ptr;
+typedef struct hdf_error_mgr *hdf_error_ptr;
 
 #define INPUT_BUF_SIZE 4096 /* size of JPEG input buffer */
 
@@ -85,16 +85,16 @@ void           hdf_error_exit(j_common_ptr cinfo);
  * Remarks: Initializes the JPEG source mgr for further output.
  *---------------------------------------------------------------------------*/
 void
-hdf_error_exit (j_common_ptr cinfo)
+hdf_error_exit(j_common_ptr cinfo)
 {
-  /* cinfo->err points to an hdf_error_mgr struct */
-  hdf_error_ptr hdferr = (hdf_error_ptr) cinfo->err;
+    /* cinfo->err points to an hdf_error_mgr struct */
+    hdf_error_ptr hdferr = (hdf_error_ptr)cinfo->err;
 
-  /* Display the message */
-  (*cinfo->err->output_message) (cinfo);
+    /* Display the message */
+    (*cinfo->err->output_message)(cinfo);
 
-  /* Return control to the setjmp point */
-  longjmp(hdferr->setjmp_buffer, 1);
+    /* Return control to the setjmp point */
+    longjmp(hdferr->setjmp_buffer, 1);
 }
 
 /*-----------------------------------------------------------------------------
@@ -350,7 +350,7 @@ DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, void *image, int32 xdim, int32
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     /* Set up the normal JPEG error routines, then override error_exit */
-    cinfo_ptr->err = jpeg_std_error(&jerr.pub);
+    cinfo_ptr->err      = jpeg_std_error(&jerr.pub);
     jerr.pub.error_exit = hdf_error_exit;
 
     /* Establish the setjmp return context for hdf_error_exit to use */
