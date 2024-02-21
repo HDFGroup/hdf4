@@ -15,7 +15,7 @@
 #endif
 
 #include "testcdf.h" /* defines in-memory test cdf structure */
-#include "error_priv.h"
+#include "error.h"
 #include "tests.h"
 #include "emalloc.h"
 

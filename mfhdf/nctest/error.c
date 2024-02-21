@@ -14,7 +14,7 @@
 #include "hdf4_netcdf.h"
 #endif
 
-#include "error_priv.h"
+#include "error.h"
 
 int error_count = 0;
 
