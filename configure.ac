@@ -551,6 +551,11 @@ AM_CONDITIONAL([BUILD_DOXYGEN_CONDITIONAL], [test "X$HDF4_DOXYGEN" = "Xyes"])
 ## ======================================================================
 ## Libtool initialization
 ## ======================================================================
+
+## ----------------------------------------------------------------------
+## Create libtool.  If shared/static libraries are going to be enabled
+## or disabled, it should happen before these macros.
+LT_PREREQ([2.2])
 ## disable-shared sets the default libtool behavior to disable shared libs
 LT_INIT([disable-shared])
 LT_OUTPUT
