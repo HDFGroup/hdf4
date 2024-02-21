@@ -27,7 +27,7 @@ extern "C" {
 #include <jni.h>
 #include <stdlib.h>
 #include <string.h>
-#include "hdf_priv.h"
+#include "hdf.h"
 #include "h4jni.h"
 #include "hdfdfpalImp.h"
 

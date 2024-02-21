@@ -23,7 +23,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include <jni.h>
-#include "hdf_priv.h"
+#include "hdf.h"
 #include "h4jni.h"
 #include "hdfexceptionImp.h"
 
