@@ -7,7 +7,6 @@
 /* lex specification for tokens for ncgen */
 
 char errstr[100];        /* for short error messages */
-extern long strtol();
 void expand_escapes();
 
 #include <ctype.h>
