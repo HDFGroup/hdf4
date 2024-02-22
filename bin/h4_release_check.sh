@@ -40,12 +40,12 @@ else
    echo "  ... Should be 'Fortran: yes'"
 fi
 
-# CHECKING COMPILATION MODE
-if grep -q "Compilation Mode: production" ./lib/libhdf4.settings; then
-   echo "Checking ./lib/libhdf4.settings -- Compilation Mode  ... $green PASSED$reset"
+# CHECKING CONFIGURE MODE
+if grep -q "Configure mode: production" ./lib/libhdf4.settings; then
+   echo "Checking ./lib/libhdf4.settings -- Configure mode  ... $green PASSED$reset"
 else
-   echo "Checking ./lib/libhdf4.settings -- Compilation Mode  ... $red FAILED$reset"
-   echo "  ... Should be 'Compilation Mode: production'"
+   echo "Checking ./lib/libhdf4.settings -- Configure mode  ... $red FAILED$reset"
+   echo "  ... Should be 'Configure mode: production'"
 fi
 
 # CHECKING OPTIMIZATION
@@ -84,12 +84,12 @@ fi
 #########################
 
 include_file=(
-dffunc.f90 dffunc.inc H4api_adpt.h h4config.h hbitio.h hcomp.h hdatainfo.h
-hdf2netcdf.h hdf.f90 hdf.h hdf.inc herr.h hlimits.h hntdefs.h hproto_fortran.h hproto.h
+dffunc.f90 dffunc.inc H4api_adpt.h df.h h4config.h hbitio.h hcomp.h hdatainfo.h
+hdf2netcdf.h hdf.f90 hdf.h hdf.inc herr.h hfile.h hlimits.h hntdefs.h hproto_fortran.h hproto.h
 htags.h mfan.h mfdatainfo.h mffunc.f90 mffunc.inc mfgr.h mfhdf.h netcdf.f90 netcdf.h
 netcdf.inc vg.h)
 
-lib_file=(libdf.a libdf.la libhdf4.settings libjpeg.a libmfhdf.a libmfhdf.la libsz.a libz.a)
+lib_file=(libdf.a libdf.la libhdf4.settings libmfhdf.a libmfhdf.la)
 
 bin_file=(gif2hdf h4cc h4fc h4redeploy hdf24to8 hdf2gif hdf2jpeg hdf8to24 hdfcomp
 hdfed hdfimport hdfls hdfpack hdftopal hdftor8 hdfunpac hdiff hdp hrepack jpeg2hdf
