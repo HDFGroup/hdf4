@@ -329,24 +329,6 @@
       ]
     },
     {
-      "name": "ci-StdShar-GNUC-deb",
-      "steps": [
-        {"type": "configure", "name": "ci-StdShar-GNUC"},
-        {"type": "build", "name": "ci-StdShar-GNUC"},
-        {"type": "test", "name": "ci-StdShar-GNUC"},
-        {"type": "package", "name": "ci-StdShar-GNUC-deb"}
-      ]
-    },
-    {
-      "name": "ci-StdShar-GNUC-rpm",
-      "steps": [
-        {"type": "configure", "name": "ci-StdShar-GNUC"},
-        {"type": "build", "name": "ci-StdShar-GNUC"},
-        {"type": "test", "name": "ci-StdShar-GNUC"},
-        {"type": "package", "name": "ci-StdShar-GNUC-rpm"}
-      ]
-    },
-    {
       "name": "ci-StdShar-GNUC-Fortran",
       "steps": [
         {"type": "configure", "name": "ci-StdShar-GNUC-Fortran"},
