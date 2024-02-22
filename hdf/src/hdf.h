@@ -184,9 +184,8 @@ typedef intn (*hdf_termfunc_t)(void); /* termination function typedef */
 #include "hcomp.h"
 #include "herr.h"
 #include "hproto.h"
-#include "hdatainfo.h" /* data info header */
-#include "vg.h"        /* Vgroup/Vdata header */
-#include "mfgr.h"      /* GR header */
+#include "vg.h"   /* Vgroup/Vdata header */
+#include "mfgr.h" /* GR header */
 
 /* these may eventually evolve into real-life functions but not yet */
 #define HDFopen(f, a, d) Hopen((f), (a), (d))
