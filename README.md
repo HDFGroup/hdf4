@@ -64,7 +64,7 @@ HDF 4.3.0 (February 2024)
 * We will no longer deploy undocumented, internal header files (the public, documented HDF4 API will not be affected)
 
 The 4.2 maintenance line will be retired when 4.3.0 releases. There are no
-more planned HDF4 4.3.x releases.
+more planned HDF 4.2.x releases.
 
 HDF 4.4.0 (February 2025)
 * We will drop support for FORTRAN 77 and move to modern Fortran (2003 or 2008)

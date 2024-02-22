@@ -67,6 +67,7 @@ set (HDF4_HDF_SRC_CSRCS
 
 set (HDF4_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/H4api_adpt.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/df.h
     #${HDF4_BINARY_DIR}/h4config.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hbitio.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hcomp.h
@@ -93,7 +94,6 @@ set (HDF4_PRIVATE_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/crle_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/cskphuff_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/cszip_priv.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/df_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfan_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfgr_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfrig_priv.h
