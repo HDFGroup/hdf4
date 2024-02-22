@@ -219,7 +219,7 @@ jobs:
           mkdir "${{ runner.workspace }}/build/hdf4"
           cp ${{ runner.workspace }}/hdf4/hdfsrc/COPYING ${{ runner.workspace }}/build/hdf4
           cp ${{ runner.workspace }}/hdf4/hdfsrc/README.md ${{ runner.workspace }}/build/hdf4
-          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-GNUC-deb/*.deb ${{ runner.workspace }}/build/hdf4
+          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-GNUC/*.deb ${{ runner.workspace }}/build/hdf4
           cd "${{ runner.workspace }}/build"
           tar -zcvf ${{ steps.set-file-base.outputs.FILE_BASE }}-ubuntu-2204_gcc.deb hdf4
         shell: bash
@@ -285,7 +285,7 @@ jobs:
           mkdir "${{ runner.workspace }}/build/hdf4"
           cp ${{ runner.workspace }}/hdf4/hdfsrc/COPYING ${{ runner.workspace }}/build/hdf4
           cp ${{ runner.workspace }}/hdf4/hdfsrc/README.md ${{ runner.workspace }}/build/hdf4
-          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-GNUC-rpm/*.rpm ${{ runner.workspace }}/build/hdf4
+          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-GNUC/*.rpm ${{ runner.workspace }}/build/hdf4
           cd "${{ runner.workspace }}/build"
           tar -zcvf ${{ steps.set-file-base.outputs.FILE_BASE }}-ubuntu-2204_gcc.rpm hdf4
         shell: bash
