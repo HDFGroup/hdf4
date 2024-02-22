@@ -171,6 +171,138 @@ jobs:
               path: ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-GNUC/hdf4lib_docs/html
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
+  build_and_test_deb:
+  # Linux DEB (Ubuntu) w/ gcc + CMake
+  #
+    name: "Ubuntu deb gcc CMake"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install CMake Dependencies (Linux)
+        run: sudo apt-get install ninja-build graphviz
+
+      - name: Install Dependencies
+        uses: ssciwr/doxygen-install@v1
+        with:
+          version: "1.10.0"
+
+      - name: Set file base name (Linux)
+        id: set-file-base
+        run: |
+          FILE_NAME_BASE=$(echo "${{ inputs.file_base }}")
+          echo "FILE_BASE=$FILE_NAME_BASE" >> $GITHUB_OUTPUT
+
+      # Get files created by release script
+      - name: Get tgz-tarball (Linux)
+        uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+        with:
+              name: tgz-tarball
+              path: ${{ github.workspace }}
+
+      - name: List files for the space (Linux)
+        run: |
+              ls -l ${{ github.workspace }}
+              ls ${{ runner.workspace }}
+
+      - name: Uncompress source (Linux)
+        run: tar -zxvf ${{ github.workspace }}/${{ steps.set-file-base.outputs.FILE_BASE }}.tar.gz
+
+      - name: Run ctest (Linux)
+        run: |
+          cd "${{ runner.workspace }}/hdf4/hdfsrc"
+          cmake --workflow --preset=${{ inputs.preset_name }}-GNUC-deb --fresh
+        shell: bash
+
+      - name: Publish binary (Linux)
+        id: publish-ctest-binary
+        run: |
+          mkdir "${{ runner.workspace }}/build"
+          mkdir "${{ runner.workspace }}/build/hdf4"
+          cp ${{ runner.workspace }}/hdf4/hdfsrc/COPYING ${{ runner.workspace }}/build/hdf4
+          cp ${{ runner.workspace }}/hdf4/hdfsrc/README.md ${{ runner.workspace }}/build/hdf4
+          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-GNUC-deb/*.deb ${{ runner.workspace }}/build/hdf4
+          cd "${{ runner.workspace }}/build"
+          tar -zcvf ${{ steps.set-file-base.outputs.FILE_BASE }}-ubuntu-2204_gcc.deb hdf4
+        shell: bash
+
+      - name: List files in the space (Linux)
+        run: |
+              ls ${{ github.workspace }}
+              ls -l ${{ runner.workspace }}
+
+      # Save files created by ctest script
+      - name: Save published binary deb (Linux)
+        uses: actions/upload-artifact@v4
+        with:
+              name: deb-ubuntu-2204_gcc-binary
+              path: ${{ runner.workspace }}/build/${{ steps.set-file-base.outputs.FILE_BASE }}-ubuntu-2204_gcc.deb
+              if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+
+  build_and_test_rpm:
+  # Linux rpm (Ubuntu) w/ gcc + CMake
+  #
+    name: "Ubuntu rpm gcc CMake"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install CMake Dependencies (Linux)
+        run: sudo apt-get install ninja-build graphviz
+
+      - name: Install Dependencies
+        uses: ssciwr/doxygen-install@v1
+        with:
+          version: "1.10.0"
+
+      - name: Set file base name (Linux)
+        id: set-file-base
+        run: |
+          FILE_NAME_BASE=$(echo "${{ inputs.file_base }}")
+          echo "FILE_BASE=$FILE_NAME_BASE" >> $GITHUB_OUTPUT
+
+      # Get files created by release script
+      - name: Get tgz-tarball (Linux)
+        uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+        with:
+              name: tgz-tarball
+              path: ${{ github.workspace }}
+
+      - name: List files for the space (Linux)
+        run: |
+              ls -l ${{ github.workspace }}
+              ls ${{ runner.workspace }}
+
+      - name: Uncompress source (Linux)
+        run: tar -zxvf ${{ github.workspace }}/${{ steps.set-file-base.outputs.FILE_BASE }}.tar.gz
+
+      - name: Run ctest (Linux)
+        run: |
+          cd "${{ runner.workspace }}/hdf4/hdfsrc"
+          cmake --workflow --preset=${{ inputs.preset_name }}-GNUC-rpm --fresh
+        shell: bash
+
+      - name: Publish binary (Linux)
+        id: publish-ctest-binary
+        run: |
+          mkdir "${{ runner.workspace }}/build"
+          mkdir "${{ runner.workspace }}/build/hdf4"
+          cp ${{ runner.workspace }}/hdf4/hdfsrc/COPYING ${{ runner.workspace }}/build/hdf4
+          cp ${{ runner.workspace }}/hdf4/hdfsrc/README.md ${{ runner.workspace }}/build/hdf4
+          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-GNUC-rpm/*.rpm ${{ runner.workspace }}/build/hdf4
+          cd "${{ runner.workspace }}/build"
+          tar -zcvf ${{ steps.set-file-base.outputs.FILE_BASE }}-ubuntu-2204_gcc.rpm hdf4
+        shell: bash
+
+      - name: List files in the space (Linux)
+        run: |
+              ls ${{ github.workspace }}
+              ls -l ${{ runner.workspace }}
+
+      # Save files created by ctest script
+      - name: Save published binary rpm (Linux)
+        uses: actions/upload-artifact@v4
+        with:
+              name: rpm-ubuntu-2204_gcc-binary
+              path: ${{ runner.workspace }}/build/${{ steps.set-file-base.outputs.FILE_BASE }}-ubuntu-2204_gcc.rpm
+              if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+
   build_and_test_mac:
   # MacOS w/ Clang + CMake
   #

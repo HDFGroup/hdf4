@@ -256,6 +256,22 @@
       "inherits": "ci-x64-Release-GNUC"
     },
     {
+      "name": "ci-StdShar-GNUC-deb",
+      "configurePreset": "ci-StdShar-GNUC",
+      "inherits": "ci-x64-Release-GNUC",
+      "generators": [
+        "DEB"
+      ]
+    },
+    {
+      "name": "ci-StdShar-GNUC-rpm",
+      "configurePreset": "ci-StdShar-GNUC",
+      "inherits": "ci-x64-Release-GNUC",
+      "generators": [
+        "RPM"
+      ]
+    },
+    {
       "name": "ci-StdShar-GNUC-Fortran",
       "configurePreset": "ci-StdShar-GNUC-Fortran",
       "inherits": "ci-x64-Release-GNUC"
@@ -310,6 +326,24 @@
         {"type": "build", "name": "ci-StdShar-GNUC"},
         {"type": "test", "name": "ci-StdShar-GNUC"},
         {"type": "package", "name": "ci-StdShar-GNUC"}
+      ]
+    },
+    {
+      "name": "ci-StdShar-GNUC-deb",
+      "steps": [
+        {"type": "configure", "name": "ci-StdShar-GNUC"},
+        {"type": "build", "name": "ci-StdShar-GNUC"},
+        {"type": "test", "name": "ci-StdShar-GNUC"},
+        {"type": "package", "name": "ci-StdShar-GNUC-deb"}
+      ]
+    },
+    {
+      "name": "ci-StdShar-GNUC-rpm",
+      "steps": [
+        {"type": "configure", "name": "ci-StdShar-GNUC"},
+        {"type": "build", "name": "ci-StdShar-GNUC"},
+        {"type": "test", "name": "ci-StdShar-GNUC"},
+        {"type": "package", "name": "ci-StdShar-GNUC-rpm"}
       ]
     },
     {
