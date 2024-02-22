@@ -87,6 +87,7 @@ NOTE: This file needs to have the comments cleaned up for most of the
 
 #include "mfhdf.h"
 #include "hfile_priv.h"
+#include "mf_priv.h"
 
 #ifdef H4_HAVE_LIBSZ /* we have the szip library */
 #include "szlib.h"
@@ -95,21 +96,13 @@ NOTE: This file needs to have the comments cleaned up for most of the
 #endif
 #endif
 
-#ifndef MFSD_INTERNAL
-#define MFSD_INTERNAL
-#endif
-
-#ifdef MFSD_INTERNAL
 /* Private function prototypes */
-#include "mf_priv.h"
-#endif
 
 intn SDsetup_szip_parms(int32 id, NC *handle, comp_info *c_info, int32 *cdims);
 
 /* Whether we've installed the library termination function yet for this interface */
 static intn library_terminate = FALSE;
 
-#ifdef MFSD_INTERNAL
 /******************************************************************************
  NAME
     SDIhandle_from_id -- get the handle from this object
@@ -214,7 +207,6 @@ SDIget_dim(NC   *handle, /* IN: the handle for this file */
 done:
     return ret_value;
 } /* SDIget_dim */
-#endif /* MFSD_INTERNAL */
 
 /******************************************************************************
  NAME
@@ -242,8 +234,6 @@ SDIstart(void)
 done:
     return (ret_value);
 } /* end SDIstart() */
-
-#ifdef MFSD_INTERNAL
 
 /******************************************************************************
  NAME
@@ -284,8 +274,6 @@ SDI_can_clobber(const char *name)
     /* no permission to write, don't do the create */
     return (0);
 }
-#endif /* MFSD_INTERNAL */
-
 /******************************************************************************
  NAME
     SDstart -- open a file
@@ -1400,8 +1388,6 @@ done:
     return ret_value;
 } /* SDendaccess */
 
-#ifdef MFSD_INTERNAL
-
 /******************************************************************************
  NAME
     SDIputattr -- put an attribute in an attribute list
@@ -1476,8 +1462,6 @@ done:
     return ret_value;
 } /* SDIputattr */
 
-#endif /* MFSD_INTERNAL */
-
 /******************************************************************************
  NAME
     SDsetrange -- simulate a call to DFSDsetrange
@@ -1544,7 +1528,6 @@ done:
     return ret_value;
 } /* SDsetrange */
 
-#ifdef MFSD_INTERNAL
 /******************************************************************************
  NAME
     SDIapfromid -- get the attribute list
@@ -1620,8 +1603,6 @@ SDIapfromid(int32       id,      /* IN:  object ID */
 done:
     return ret_value;
 } /* SDIapfromid */
-
-#endif /* MFSD_INTERNAL */
 
 /******************************************************************************
  NAME
@@ -2417,7 +2398,6 @@ done:
     return ret_value;
 } /* SDgetcal */
 
-#ifdef MFSD_INTERNAL
 /******************************************************************************
  NAME
     SDgetcoordvar -- get index of coordinate variable
@@ -2538,8 +2518,6 @@ done:
     return ret_value;
 } /* SDIgetcoordvar */
 
-#endif /* MFSD_INTERNAL */
-
 /******************************************************************************
  NAME
     SDsetdimstrs -- set "dimension strings"
@@ -2618,7 +2596,6 @@ done:
     return ret_value;
 } /* SDsetdimstrs */
 
-#ifdef MFSD_INTERNAL
 /******************************************************************************
  NAME
     SDIfreevarAID -- free a variables AID
@@ -2662,7 +2639,6 @@ SDIfreevarAID(NC   *handle, /* IN: file handle */
 done:
     return ret_value;
 } /* SDIfreevarAID */
-#endif /* MFSD_INTERNAL */
 
 /******************************************************************************
  NAME

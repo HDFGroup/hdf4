@@ -43,24 +43,14 @@ LOCAL ROUTINES
 
 #include "nc_priv.h"
 
-#ifndef DATAINFO_MASTER
-#define DATAINFO_MASTER
-#endif
 #include "mfhdf.h"
+#include "mf_priv.h"
 
 #ifdef H4_HAVE_LIBSZ /* we have the szip library */
 #include "szlib.h"
 #endif
 
-#ifndef MFSD_INTERNAL
-#define MFSD_INTERNAL
-#endif
-
-#ifdef MFSD_INTERNAL
 /* Local function prototypes */
-#include "mf_priv.h"
-#endif
-
 static intn get_attr_tag(char *attr_name, uint16 *attr_tag);
 
 /******************************************************************************
