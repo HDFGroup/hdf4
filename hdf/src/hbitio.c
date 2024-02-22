@@ -37,7 +37,13 @@ LOCAL ROUTINES
 */
 
 #include "hdf_priv.h"
+#include "hbitio_priv.h"
 #include "hfile_priv.h"
+
+/* Define the number of elements in the buffered array */
+#define BITBUF_SIZE 4096
+/* Macro to define the number of bits able to be read/written at a time */
+#define DATANUM (sizeof(uint32) * 8)
 
 /* Local Variables */
 

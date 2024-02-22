@@ -164,6 +164,22 @@ New features and changes
         mstdio.h
         tbbt.h
 
+    - Most of hbitio.h moved to hbitio_priv.h
+
+      Still in hbitio.h:
+
+      * BITNUM #define
+      * Hputbit() function-like macro
+
+      These are referenced in older versions of the reference manual, e.g., in
+      the Hendbitaccess() entry.
+
+      Moved to hbitio_priv.h:
+
+      * BITBUF_SIZE, DATANUM #defines
+      * bitrec_t struct
+      * maskc and maskl variable declarations
+
     - hdfi.h is no longer included by hdf.h
 
       In the past, hdfi.h (an internal header file) was included in the

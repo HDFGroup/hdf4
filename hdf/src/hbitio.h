@@ -23,45 +23,10 @@
 
 #include "hdf.h"
 
-/* Define the number of elements in the buffered array */
-#define BITBUF_SIZE 4096
 /* Macro to define the number of bits cached in the 'bits' variable */
 #define BITNUM (sizeof(uint8) * 8)
-/* Macro to define the number of bits able to be read/written at a time */
-#define DATANUM (sizeof(uint32) * 8)
-
-typedef struct bitrec_t {
-    int32 acc_id;       /* Access ID for H layer I/O routines */
-    int32 bit_id;       /* Bitfile ID for internal use */
-                        /* Note that since HDF has signed 32bit offset limit we need to change this to signed
-                           since the get passed to Hxxx calls which take signed 32bit arguments */
-    int32 block_offset; /* offset of the current buffered block in the dataset */
-    int32 max_offset;   /* offset of the last byte written to the dataset */
-    int32 byte_offset;  /* offset of the current byte in the dataset */
-
-    intn   count;    /* bit count to next boundary */
-    intn   buf_read; /* number of bytes read into buffer (necessary for random I/O) */
-    uint8  access;   /* What the access on this file is ('r', 'w', etc..) */
-    uint8  mode;     /* how are we interacting with the data now ('r', 'w', etc) */
-    uint8  bits;     /* extra bit buffer, 0..BITNUM-1 bits */
-    uint8 *bytep;    /* current position in buffer */
-    uint8 *bytez;    /* end of buffer to compare */
-    uint8 *bytea;    /* byte buffer */
-} bitrec_t;
 
 /* Function-like Macros */
 #define Hputbit(bitid, bit) ((Hbitwrite(bitid, 1, (uint32)bit) == FAIL) ? FAIL : SUCCEED)
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-HDFLIBAPI const uint8 maskc[9];
-
-HDFLIBAPI const uint32 maskl[33];
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* H4_HBITIO_H */
