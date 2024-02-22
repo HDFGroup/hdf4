@@ -256,22 +256,6 @@
       "inherits": "ci-x64-Release-GNUC"
     },
     {
-      "name": "ci-StdShar-GNUC-deb",
-      "configurePreset": "ci-StdShar-GNUC",
-      "inherits": "ci-x64-Release-GNUC",
-      "generators": [
-        "DEB"
-      ]
-    },
-    {
-      "name": "ci-StdShar-GNUC-rpm",
-      "configurePreset": "ci-StdShar-GNUC",
-      "inherits": "ci-x64-Release-GNUC",
-      "generators": [
-        "RPM"
-      ]
-    },
-    {
       "name": "ci-StdShar-GNUC-Fortran",
       "configurePreset": "ci-StdShar-GNUC-Fortran",
       "inherits": "ci-x64-Release-GNUC"
