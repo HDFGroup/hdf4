@@ -65,7 +65,7 @@ Contributors:
 3rd-party software included in HDF4: netCDF
 
 The multi-file HDF interface (mfhdf library) and several netCDF tools and
-tests are built using netCDF 2.3.2 under the following license (from
+tests are built using netCDF 2.3.2 code under the following license (from
 the mfhdf/COPYRIGHT file):
 
 Copyright 1993 University Corporation for Atmospheric Research/Unidata
