@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.0-0ab5dab</span>
+   &#160;<span id="projectnumber">4.3.0-1</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -114,6 +114,7 @@ $(function(){initNavTree('hfile__priv_8h.html',''); initResizable(); });
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="hdf__priv_8h.html">hdf_priv.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="hfile_8h.html">hfile.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="tbbt__priv_8h.html">tbbt_priv.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="bitvect__priv_8h.html">bitvect_priv.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="atom__priv_8h.html">atom_priv.h</a>&quot;</code><br />
@@ -159,20 +160,6 @@ Macros</h2></td></tr>
 <tr class="separator:a56f8e75d6ce827dcee2b97f88852f991"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4292387367d272a89bfe9be891b6c9cd" id="r_a4292387367d272a89bfe9be891b6c9cd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4292387367d272a89bfe9be891b6c9cd">INVALID_LENGTH</a>&#160;&#160;&#160;-1</td></tr>
 <tr class="separator:a4292387367d272a89bfe9be891b6c9cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa350cec089db3bc9f81b671f4b1bb8b9" id="r_aa350cec089db3bc9f81b671f4b1bb8b9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa350cec089db3bc9f81b671f4b1bb8b9">LIBVER_MAJOR</a>&#160;&#160;&#160;4</td></tr>
-<tr class="separator:aa350cec089db3bc9f81b671f4b1bb8b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab533264324735233c08e1ceb7f6b9be2" id="r_ab533264324735233c08e1ceb7f6b9be2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab533264324735233c08e1ceb7f6b9be2">LIBVER_MINOR</a>&#160;&#160;&#160;3</td></tr>
-<tr class="separator:ab533264324735233c08e1ceb7f6b9be2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a428870cf9505852eb1cc1830bd721730" id="r_a428870cf9505852eb1cc1830bd721730"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a428870cf9505852eb1cc1830bd721730">LIBVER_RELEASE</a>&#160;&#160;&#160;0</td></tr>
-<tr class="separator:a428870cf9505852eb1cc1830bd721730"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb44067b680bfa81c797d08692ec01be" id="r_acb44067b680bfa81c797d08692ec01be"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acb44067b680bfa81c797d08692ec01be">LIBVER_SUBRELEASE</a>&#160;&#160;&#160;&quot;0ab5dab&quot; /* For pre-releases like snap0 */</td></tr>
-<tr class="separator:acb44067b680bfa81c797d08692ec01be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2366cf7f73f48249ac00c6081c5414d7" id="r_a2366cf7f73f48249ac00c6081c5414d7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2366cf7f73f48249ac00c6081c5414d7">LIBVER_STRING</a>&#160;&#160;&#160;&quot;HDF Version 4.3 Release 0-0ab5dab, February 22, 2024&quot;</td></tr>
-<tr class="separator:a2366cf7f73f48249ac00c6081c5414d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad64cd903af0d63eb99c0aadf491323f2" id="r_ad64cd903af0d63eb99c0aadf491323f2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad64cd903af0d63eb99c0aadf491323f2">LIBVSTR_LEN</a>&#160;&#160;&#160;80 /* Length of version <a class="el" href="hkit__priv_8h.html#a079a99f3e75ab1e576e91c70ea0e35fe">string</a> */</td></tr>
-<tr class="separator:ad64cd903af0d63eb99c0aadf491323f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b0973a3ebe12ea9ff140b5591877703" id="r_a7b0973a3ebe12ea9ff140b5591877703"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b0973a3ebe12ea9ff140b5591877703">LIBVER_LEN</a>&#160;&#160;&#160;92 /* 4+4+4+80 = 92 */</td></tr>
-<tr class="separator:a7b0973a3ebe12ea9ff140b5591877703"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeed893b60201be53236d078dee3e2a20" id="r_aeed893b60201be53236d078dee3e2a20"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeed893b60201be53236d078dee3e2a20">HI_OPEN</a>(p,  a)&#160;&#160;&#160;(((a)&amp;<a class="el" href="hdf_8h.html#a9ad485c46cae9899e1d8a1ebe96b4582">DFACC_WRITE</a>) ? fopen((p), &quot;rb+&quot;) : fopen((p), &quot;rb&quot;))</td></tr>
 <tr class="separator:aeed893b60201be53236d078dee3e2a20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1ca7ea8ab2a17551f625ae0a7a950a4" id="r_ad1ca7ea8ab2a17551f625ae0a7a950a4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad1ca7ea8ab2a17551f625ae0a7a950a4">HI_CREATE</a>(p)&#160;&#160;&#160;(fopen((p), &quot;wb+&quot;))</td></tr>
@@ -814,104 +801,6 @@ Functions</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">#define INVALID_OFFSET&#160;&#160;&#160;-1</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a7b0973a3ebe12ea9ff140b5591877703" name="a7b0973a3ebe12ea9ff140b5591877703"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7b0973a3ebe12ea9ff140b5591877703">&#9670;&#160;</a></span>LIBVER_LEN</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LIBVER_LEN&#160;&#160;&#160;92 /* 4+4+4+80 = 92 */</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aa350cec089db3bc9f81b671f4b1bb8b9" name="aa350cec089db3bc9f81b671f4b1bb8b9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa350cec089db3bc9f81b671f4b1bb8b9">&#9670;&#160;</a></span>LIBVER_MAJOR</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LIBVER_MAJOR&#160;&#160;&#160;4</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ab533264324735233c08e1ceb7f6b9be2" name="ab533264324735233c08e1ceb7f6b9be2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab533264324735233c08e1ceb7f6b9be2">&#9670;&#160;</a></span>LIBVER_MINOR</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LIBVER_MINOR&#160;&#160;&#160;3</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a428870cf9505852eb1cc1830bd721730" name="a428870cf9505852eb1cc1830bd721730"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a428870cf9505852eb1cc1830bd721730">&#9670;&#160;</a></span>LIBVER_RELEASE</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LIBVER_RELEASE&#160;&#160;&#160;0</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a2366cf7f73f48249ac00c6081c5414d7" name="a2366cf7f73f48249ac00c6081c5414d7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2366cf7f73f48249ac00c6081c5414d7">&#9670;&#160;</a></span>LIBVER_STRING</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LIBVER_STRING&#160;&#160;&#160;&quot;HDF Version 4.3 Release 0-0ab5dab, February 22, 2024&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="acb44067b680bfa81c797d08692ec01be" name="acb44067b680bfa81c797d08692ec01be"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acb44067b680bfa81c797d08692ec01be">&#9670;&#160;</a></span>LIBVER_SUBRELEASE</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LIBVER_SUBRELEASE&#160;&#160;&#160;&quot;0ab5dab&quot; /* For pre-releases like snap0 */</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ad64cd903af0d63eb99c0aadf491323f2" name="ad64cd903af0d63eb99c0aadf491323f2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad64cd903af0d63eb99c0aadf491323f2">&#9670;&#160;</a></span>LIBVSTR_LEN</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LIBVSTR_LEN&#160;&#160;&#160;80 /* Length of version <a class="el" href="hkit__priv_8h.html#a079a99f3e75ab1e576e91c70ea0e35fe">string</a> */</td>
         </tr>
       </table>
 </div><div class="memdoc">

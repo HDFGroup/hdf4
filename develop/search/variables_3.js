@@ -47,7 +47,7 @@ var searchData=
   ['dfacc_5fread_44',['DFACC_READ',['../classhdf_1_1hdflib_1_1_h_d_f_constants.html#a9832d396aa75232322863b276f7da3ed',1,'hdf::hdflib::HDFConstants']]],
   ['dfacc_5fserial_45',['DFACC_SERIAL',['../classhdf_1_1hdflib_1_1_h_d_f_constants.html#af5d7b464784f778dcf72c972c991aac3',1,'hdf::hdflib::HDFConstants']]],
   ['dfacc_5fwrite_46',['DFACC_WRITE',['../classhdf_1_1hdflib_1_1_h_d_f_constants.html#a83f59cd2557eb95d7056346be052dde6',1,'hdf::hdflib::HDFConstants']]],
-  ['dferror_47',['DFerror',['../df__priv_8h.html#a834b42f020944f9b2675bf2be7defd5d',1,'df_priv.h']]],
+  ['dferror_47',['DFerror',['../df_8h.html#a834b42f020944f9b2675bf2be7defd5d',1,'df.h']]],
   ['dfil_5fline_48',['DFIL_LINE',['../classhdf_1_1hdflib_1_1_h_d_f_constants.html#a1614df71df14baec5fb987eb8d79113c',1,'hdf::hdflib::HDFConstants']]],
   ['dfil_5fpixel_49',['DFIL_PIXEL',['../classhdf_1_1hdflib_1_1_h_d_f_constants.html#a524a55bf4e89a95dd5866d882c543446',1,'hdf::hdflib::HDFConstants']]],
   ['dfil_5fplane_50',['DFIL_PLANE',['../classhdf_1_1hdflib_1_1_h_d_f_constants.html#acfde5f19b9825baa9e17d1aa78dee85e',1,'hdf::hdflib::HDFConstants']]],
