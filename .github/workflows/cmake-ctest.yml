@@ -150,6 +150,30 @@ jobs:
           tar -zcvf ${{ steps.set-file-base.outputs.FILE_BASE }}-ubuntu-2204_gcc.tar.gz hdf4
         shell: bash
 
+      - name: Publish deb binary (Linux)
+        id: publish-ctest-deb-binary
+        run: |
+          mkdir "${{ runner.workspace }}/builddeb"
+          mkdir "${{ runner.workspace }}/builddeb/hdf4"
+          cp ${{ runner.workspace }}/hdf4/hdfsrc/COPYING ${{ runner.workspace }}/builddeb/hdf4
+          cp ${{ runner.workspace }}/hdf4/hdfsrc/README.md ${{ runner.workspace }}/builddeb/hdf4
+          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-GNUC/*.deb ${{ runner.workspace }}/builddeb/hdf4
+          cd "${{ runner.workspace }}/builddeb"
+          tar -zcvf ${{ steps.set-file-base.outputs.FILE_BASE }}-ubuntu-2204_gcc.deb hdf4
+        shell: bash
+
+      - name: Publish rpm binary (Linux)
+        id: publish-ctest-rpm-binary
+        run: |
+          mkdir "${{ runner.workspace }}/buildrpm"
+          mkdir "${{ runner.workspace }}/buildrpm/hdf4"
+          cp ${{ runner.workspace }}/hdf4/hdfsrc/COPYING ${{ runner.workspace }}/buildrpm/hdf4
+          cp ${{ runner.workspace }}/hdf4/hdfsrc/README.md ${{ runner.workspace }}/buildrpm/hdf4
+          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-GNUC/*.rpm ${{ runner.workspace }}/buildrpm/hdf4
+          cd "${{ runner.workspace }}/buildrpm"
+          tar -zcvf ${{ steps.set-file-base.outputs.FILE_BASE }}-ubuntu-2204_gcc.rpm hdf4
+        shell: bash
+
       - name: List files in the space (Linux)
         run: |
               ls ${{ github.workspace }}
@@ -161,6 +185,22 @@ jobs:
         with:
               name: tgz-ubuntu-2204_gcc-binary
               path: ${{ runner.workspace }}/build/${{ steps.set-file-base.outputs.FILE_BASE }}-ubuntu-2204_gcc.tar.gz
+              if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+
+      # Save files created by ctest script
+      - name: Save published binary deb (Linux)
+        uses: actions/upload-artifact@v4
+        with:
+              name: deb-ubuntu-2204_gcc-binary
+              path: ${{ runner.workspace }}/builddeb/${{ steps.set-file-base.outputs.FILE_BASE }}-ubuntu-2204_gcc.deb
+              if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+
+      # Save files created by ctest script
+      - name: Save published binary rpm (Linux)
+        uses: actions/upload-artifact@v4
+        with:
+              name: rpm-ubuntu-2204_gcc-binary
+              path: ${{ runner.workspace }}/buildrpm/${{ steps.set-file-base.outputs.FILE_BASE }}-ubuntu-2204_gcc.rpm
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
       # Save doxygen files created by ctest script
