@@ -131,6 +131,19 @@ New features and changes
 
     C Library:
     ----------
+    - Version symbols moved from hfile.h to hdf.h
+
+      Since hfile.h is now private, the following symbols have been moved
+      to hdf.h for public consumption:
+
+        LIBVER_MAJOR
+        LIBVER_MINOR
+        LIBVER_RELEASE
+        LIBVER_SUBRELEASE
+        LIBVER_STRING
+        LIBVSTR_LEN
+        LIBVER_LEN
+
     - Private headers are no longer deployed
 
       The following private headers are not a part of the public API and
