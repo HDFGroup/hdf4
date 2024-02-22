@@ -13,7 +13,7 @@ var searchData=
   ['imagecount_10',['ImageCount',['../struct_g_i_f_h_e_a_d.html#aa5e576003b3605417cd63574f56a7ea5',1,'GIFHEAD']]],
   ['imageheight_11',['ImageHeight',['../struct_g_i_f_i_m_a_g_e_d_e_s_c.html#a2b88224cb4ba7ae43abb886fe3fbea9a',1,'GIFIMAGEDESC']]],
   ['imagewidth_12',['ImageWidth',['../struct_g_i_f_i_m_a_g_e_d_e_s_c.html#a6e68645f29697ae22f8293236d5d2822',1,'GIFIMAGEDESC']]],
-  ['imap_13',['imap',['../local__nc_8h.html#aff868343f5dd9fae3b02941336ac4ac1',1,'local_nc.h']]],
+  ['imap_13',['imap',['../nc__priv_8h.html#aff868343f5dd9fae3b02941336ac4ac1',1,'nc_priv.h']]],
   ['img_5faid_14',['img_aid',['../structri__info__t.html#a93b0891f2b66c208e55408ea2234c0ab',1,'ri_info_t']]],
   ['img_5fdim_15',['img_dim',['../structri__info__t.html#acf253eadfd510b1539264cff88ce978d',1,'ri_info_t']]],
   ['img_5fref_16',['img_ref',['../structri__info__t.html#a9503a11e2ac7d571e1a9f3ca1ac4e27a',1,'ri_info_t']]],

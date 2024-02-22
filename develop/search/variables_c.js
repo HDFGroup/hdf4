@@ -45,6 +45,6 @@ var searchData=
   ['modified_42',['modified',['../structversion__t.html#a4225f650ae6361448641a39cb302f6ef',1,'version_t']]],
   ['more_43',['more',['../structvgroup__desc.html#a4426dd8e7304be41c449bf7a00b57562',1,'vgroup_desc::more'],['../structvdata__desc.html#a4426dd8e7304be41c449bf7a00b57562',1,'vdata_desc::more']]],
   ['msize_44',['msize',['../structvgroup__desc.html#a0d20260d0663c8fab44bc7137a02d957',1,'vgroup_desc']]],
-  ['mstdio_5ffuncs_45',['mstdio_funcs',['../mstdio_8h.html#a4daa0375b6600b5b5b668c87eec85327',1,'mstdio.h']]],
+  ['mstdio_5ffuncs_45',['mstdio_funcs',['../mstdio__priv_8h.html#a4daa0375b6600b5b5b668c87eec85327',1,'mstdio_priv.h']]],
   ['myoffset_46',['myoffset',['../structddblock__t.html#a722c9646dbc658b5cd303744e3e492f0',1,'ddblock_t']]]
 ];

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['cdeflate_2eh_0',['cdeflate.h',['../cdeflate_8h.html',1,'']]],
+  ['cdeflate_5fpriv_2eh_0',['cdeflate_priv.h',['../cdeflate__priv_8h.html',1,'']]],
   ['chap1_2edox_1',['chap1.dox',['../chap1_8dox.html',1,'']]],
   ['chap10_2edox_2',['chap10.dox',['../chap10_8dox.html',1,'']]],
   ['chap11_2edox_3',['chap11.dox',['../chap11_8dox.html',1,'']]],
@@ -17,9 +17,9 @@ var searchData=
   ['chap7_2edox_14',['chap7.dox',['../chap7_8dox.html',1,'']]],
   ['chap8_2edox_15',['chap8.dox',['../chap8_8dox.html',1,'']]],
   ['chap9_2edox_16',['chap9.dox',['../chap9_8dox.html',1,'']]],
-  ['cnbit_2eh_17',['cnbit.h',['../cnbit_8h.html',1,'']]],
-  ['cnone_2eh_18',['cnone.h',['../cnone_8h.html',1,'']]],
-  ['crle_2eh_19',['crle.h',['../crle_8h.html',1,'']]],
-  ['cskphuff_2eh_20',['cskphuff.h',['../cskphuff_8h.html',1,'']]],
-  ['cszip_2eh_21',['cszip.h',['../cszip_8h.html',1,'']]]
+  ['cnbit_5fpriv_2eh_17',['cnbit_priv.h',['../cnbit__priv_8h.html',1,'']]],
+  ['cnone_5fpriv_2eh_18',['cnone_priv.h',['../cnone__priv_8h.html',1,'']]],
+  ['crle_5fpriv_2eh_19',['crle_priv.h',['../crle__priv_8h.html',1,'']]],
+  ['cskphuff_5fpriv_2eh_20',['cskphuff_priv.h',['../cskphuff__priv_8h.html',1,'']]],
+  ['cszip_5fpriv_2eh_21',['cszip_priv.h',['../cszip__priv_8h.html',1,'']]]
 ];

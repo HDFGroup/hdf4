@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.0-07cbe19</span>
+   &#160;<span id="projectnumber">4.3.0-0ab5dab</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -110,13 +110,13 @@ $(function(){initNavTree('structfilerec__t.html',''); initResizable(); });
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;hdf/src/hfile.h&gt;</code></p>
+<p><code>#include &lt;hdf/src/hfile_priv.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:a44196e6a5696d10442c29e639437196e" id="r_a44196e6a5696d10442c29e639437196e"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a44196e6a5696d10442c29e639437196e">path</a></td></tr>
 <tr class="separator:a44196e6a5696d10442c29e639437196e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab4e092ccb3e5566b276dfc161399b79" id="r_aab4e092ccb3e5566b276dfc161399b79"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hfile_8h.html#a71c99a30ef63a47e2af24d05254d6110">hdf_file_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab4e092ccb3e5566b276dfc161399b79">file</a></td></tr>
+<tr class="memitem:aab4e092ccb3e5566b276dfc161399b79" id="r_aab4e092ccb3e5566b276dfc161399b79"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hfile__priv_8h.html#a71c99a30ef63a47e2af24d05254d6110">hdf_file_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab4e092ccb3e5566b276dfc161399b79">file</a></td></tr>
 <tr class="separator:aab4e092ccb3e5566b276dfc161399b79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a715fb22463d6e5e9bc25bf5e9ed414" id="r_a8a715fb22463d6e5e9bc25bf5e9ed414"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8a715fb22463d6e5e9bc25bf5e9ed414">maxref</a></td></tr>
 <tr class="separator:a8a715fb22463d6e5e9bc25bf5e9ed414"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -132,7 +132,7 @@ Data Fields</h2></td></tr>
 <tr class="separator:a0a8052c72b7c10557400c8df1e52946e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a31b7f871703597225a7a1bbcde42ac26" id="r_a31b7f871703597225a7a1bbcde42ac26"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a31b7f871703597225a7a1bbcde42ac26">f_cur_off</a></td></tr>
 <tr class="separator:a31b7f871703597225a7a1bbcde42ac26"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada943b4bf730a76e901dd60eb8b04247" id="r_ada943b4bf730a76e901dd60eb8b04247"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hfile_8h.html#afd29fb07b40d838ea8b4a165c3463bcf">fileop_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ada943b4bf730a76e901dd60eb8b04247">last_op</a></td></tr>
+<tr class="memitem:ada943b4bf730a76e901dd60eb8b04247" id="r_ada943b4bf730a76e901dd60eb8b04247"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hfile__priv_8h.html#afd29fb07b40d838ea8b4a165c3463bcf">fileop_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ada943b4bf730a76e901dd60eb8b04247">last_op</a></td></tr>
 <tr class="separator:ada943b4bf730a76e901dd60eb8b04247"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2221212e7ddb9c8309609d9f957756a1" id="r_a2221212e7ddb9c8309609d9f957756a1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2221212e7ddb9c8309609d9f957756a1">cache</a></td></tr>
 <tr class="separator:a2221212e7ddb9c8309609d9f957756a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -331,7 +331,7 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="hfile_8h.html#a71c99a30ef63a47e2af24d05254d6110">hdf_file_t</a> file</td>
+          <td class="memname"><a class="el" href="hfile__priv_8h.html#a71c99a30ef63a47e2af24d05254d6110">hdf_file_t</a> file</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -345,7 +345,7 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="hfile_8h.html#afd29fb07b40d838ea8b4a165c3463bcf">fileop_t</a> last_op</td>
+          <td class="memname"><a class="el" href="hfile__priv_8h.html#afd29fb07b40d838ea8b4a165c3463bcf">fileop_t</a> last_op</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -437,7 +437,7 @@ Data Fields</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>hdf/src/<a class="el" href="hfile_8h.html">hfile.h</a></li>
+<li>hdf/src/<a class="el" href="hfile__priv_8h.html">hfile_priv.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

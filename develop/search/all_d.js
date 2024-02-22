@@ -271,7 +271,7 @@ var searchData=
   ['java_5fhdf_5fhdflib_5fhdfnativedata_5flongtobyte_5f_5fj_268',['Java_hdf_hdflib_HDFNativeData_longToByte__J',['../hdfnative_imp_8h.html#ace1dfdaa669f6e4508450ac47efef80b',1,'hdfnativeImp.h']]],
   ['java_5fhdf_5fhdflib_5fhdfnativedata_5fshorttobyte_5f_5fii_5f3s_269',['Java_hdf_hdflib_HDFNativeData_shortToByte__II_3S',['../hdfnative_imp_8h.html#a67fbc71f36d8f9af41d3c42dbd1d397c',1,'hdfnativeImp.h']]],
   ['java_5fhdf_5fhdflib_5fhdfnativedata_5fshorttobyte_5f_5fs_270',['Java_hdf_hdflib_HDFNativeData_shortToByte__S',['../hdfnative_imp_8h.html#acb2d71de55d83028f227e13fd6e51262',1,'hdfnativeImp.h']]],
-  ['jmemsys_271',['JMEMSYS',['../hdfi_8h.html#a3f5f927e31100b4e2ad0f29936874cfd',1,'hdfi.h']]],
+  ['jmemsys_271',['JMEMSYS',['../hdf__priv_8h.html#a3f5f927e31100b4e2ad0f29936874cfd',1,'hdf_priv.h']]],
   ['jpeg_272',['jpeg',['../unioncomp__info.html#a43682cd8ec59c5e54880f251ea2b2f11',1,'comp_info']]],
   ['jpeg_5ffuzz_273',['JPEG_FUZZ',['../tutils_8h.html#a94b74d1cf1362f5993268b3c0c1391f9',1,'tutils.h']]]
 ];

@@ -6,7 +6,7 @@ var searchData=
   ['dbinary_3',['DBINARY',['../hdp_8h.html#ac073f2c33d644fdb53b4de62ba58c4e2a97dc529c3150808634b129500d5b1a32',1,'hdp.h']]],
   ['dclass_4',['DCLASS',['../hdp_8h.html#a31d0710a76998e6bea728a5c5ea09538a981633927ee3e932112c917f6d9d9ba3',1,'hdp.h']]],
   ['ddata_5',['DDATA',['../hdp_8h.html#a7a677473008f77f9725a398b881f09f0a4df4ec21bc41e8cea29878b28e9abd17',1,'hdp.h']]],
-  ['ddgroup_6',['DDGROUP',['../atom_8h.html#a8ae7d1c5a6c04403ab23a53769c65700a952516ae7897ee289207109eac42badd',1,'atom.h']]],
+  ['ddgroup_6',['DDGROUP',['../atom__priv_8h.html#a8ae7d1c5a6c04403ab23a53769c65700a952516ae7897ee289207109eac42badd',1,'atom_priv.h']]],
   ['dfe_5falropen_7',['DFE_ALROPEN',['../herr_8h.html#a6cbb65cc875b9c5a68d0b43a36e9fabca5fb5895e16c45cd81b8a987c93a389c4',1,'herr.h']]],
   ['dfe_5fanapierror_8',['DFE_ANAPIERROR',['../herr_8h.html#a6cbb65cc875b9c5a68d0b43a36e9fabca5c0a0a9e110b28eb3d5d1d8bf0ab5ffc',1,'herr.h']]],
   ['dfe_5fargs_9',['DFE_ARGS',['../herr_8h.html#a6cbb65cc875b9c5a68d0b43a36e9fabca5cefc918ce2343503784b6bd69f3f59f',1,'herr.h']]],

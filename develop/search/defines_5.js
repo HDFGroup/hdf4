@@ -1,9 +1,9 @@
 var searchData=
 [
   ['ec_5fmode_0',['EC_MODE',['../hrepack_8h.html#a9fcabc351c856a2659495490b16d056d',1,'hrepack.h']]],
-  ['elem_5fread_1',['ELEM_READ',['../mcache_8h.html#a723bbd3c2be247015c3c4bb31b4cdfd7',1,'mcache.h']]],
-  ['elem_5fsync_2',['ELEM_SYNC',['../mcache_8h.html#a7337e209eb49eca5b7d207a5d7481bf4',1,'mcache.h']]],
-  ['elem_5fwritten_3',['ELEM_WRITTEN',['../mcache_8h.html#af9d6cccda16d2abafbac869abcb21497',1,'mcache.h']]],
+  ['elem_5fread_1',['ELEM_READ',['../mcache__priv_8h.html#a723bbd3c2be247015c3c4bb31b4cdfd7',1,'mcache_priv.h']]],
+  ['elem_5fsync_2',['ELEM_SYNC',['../mcache__priv_8h.html#a7337e209eb49eca5b7d207a5d7481bf4',1,'mcache_priv.h']]],
+  ['elem_5fwritten_3',['ELEM_WRITTEN',['../mcache__priv_8h.html#af9d6cccda16d2abafbac869abcb21497',1,'mcache_priv.h']]],
   ['envonly_4',['ENVONLY',['../h4jni_8h.html#a291a4bf8cac2456d6bb0bea009ce4ed3',1,'h4jni.h']]],
   ['envptr_5',['ENVPTR',['../h4jni_8h.html#acfde4ad0007c070e6ebc3967cded4b9f',1,'h4jni.h']]],
   ['err_5freadfail_6',['ERR_READFAIL',['../ncdump_8h.html#a03101236cfeb454d2a3b9cb908963b11',1,'ncdump.h']]],

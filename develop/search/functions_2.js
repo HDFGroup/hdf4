@@ -1,14 +1,14 @@
 var searchData=
 [
   ['catstr_0',['catStr',['../he__proto_8h.html#a8bc078380e57d2cf676d39cf733aa3dc',1,'he_proto.h']]],
-  ['cdf_5funmap_5ftype_1',['cdf_unmap_type',['../local__nc_8h.html#abf83675ac18c9931def3b51860409187',1,'local_nc.h']]],
+  ['cdf_5funmap_5ftype_1',['cdf_unmap_type',['../nc__priv_8h.html#abf83675ac18c9931def3b51860409187',1,'nc_priv.h']]],
   ['cline_2',['cline',['../genlib_8h.html#a6ceeab5cf4b67056cb68396e2d9a38dd',1,'genlib.h']]],
   ['close_5fnetcdf_3',['close_netcdf',['../genlib_8h.html#a352c06d4a9f57532125b1701cda30d8b',1,'genlib.h']]],
   ['closefile_4',['closeFile',['../he__proto_8h.html#a34c6a49bf475a294489998e02183acc3',1,'he_proto.h']]],
   ['cmdloop_5',['cmdLoop',['../he__proto_8h.html#af7b4bdbac3eb53c378850f32214fb8e1',1,'he_proto.h']]],
   ['comp_5fmethod_5ftxt_6',['comp_method_txt',['../hdp_8h.html#af211af45f8b1d54458eef94a86a5a7fa',1,'hdp.h']]],
-  ['compute_5foffsets_7',['compute_offsets',['../dfufp2i_8h.html#a377062b315744efa75483f27ed8acfbf',1,'dfufp2i.h']]],
-  ['convert_5finterp_8',['convert_interp',['../dfufp2i_8h.html#aac22ec7a0d5df6183a6dea936309c15d',1,'dfufp2i.h']]],
+  ['compute_5foffsets_7',['compute_offsets',['../dfufp2i__priv_8h.html#a377062b315744efa75483f27ed8acfbf',1,'dfufp2i_priv.h']]],
+  ['convert_5finterp_8',['convert_interp',['../dfufp2i__priv_8h.html#aac22ec7a0d5df6183a6dea936309c15d',1,'dfufp2i_priv.h']]],
   ['converttemplate_9',['convertTemplate',['../he__proto_8h.html#a6204936c198ebdd9428d2c2f0e5babd5',1,'he_proto.h']]],
   ['copy_5fan_10',['copy_an',['../hrepack__an_8h.html#aa05fd2b8492ba6409f5bdc1cd0fff605',1,'hrepack_an.h']]],
   ['copy_5fan_5fdata_11',['copy_an_data',['../hrepack__an_8h.html#ab8ae76e632a50190a4a26bdb93788ecb',1,'hrepack_an.h']]],
