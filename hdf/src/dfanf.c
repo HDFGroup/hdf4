@@ -41,7 +41,7 @@
 
 #include "hdf_priv.h"
 #include "dfan_priv.h"
-#include "df_priv.h"
+#include "df.h"
 #include "hproto_fortran.h"
 
 /* conventions used in forming names of routines:

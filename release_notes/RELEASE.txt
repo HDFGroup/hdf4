@@ -144,7 +144,6 @@ New features and changes
         crle.h
         cskphuff.h
         cszip.h
-        df.h
         dfan.h
         dfgr.h
         dfrig.h

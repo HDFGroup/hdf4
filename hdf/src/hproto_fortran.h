@@ -15,7 +15,7 @@
 #define H4_H_PROTO_FORTRAN
 
 #include "H4api_adpt.h"
-#include "df_priv.h"
+#include "df.h"
 
 #ifdef __cplusplus
 extern "C" {

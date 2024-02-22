@@ -41,7 +41,7 @@
  */
 
 #include "hdf_priv.h"
-#include "df_priv.h"
+#include "df.h"
 
 #define DFACC_APPEND  8
 #define DFEL_ABSENT   0

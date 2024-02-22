@@ -12,19 +12,15 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*-----------------------------------------------------------------------------
- * File:    df_priv.h
- * Purpose: header file for HDF routines
- * Invokes:
- * Contents:
- *  Structure definitions: DFddh, DFdd, DFdesc, DFdle, DF, DFdi, DFdata
+ * File:    df.h
+ * Purpose: Header file for legacy HDF 3 routines
  *---------------------------------------------------------------------------*/
 
-#ifndef H4_DF_PRIV_H
-#define H4_DF_PRIV_H
+#ifndef H4_DF_H
+#define H4_DF_H
 
 #include "H4api_adpt.h"
 
-/* include DF (internal) header information */
 #include "hdf.h"
 
 #define DFSETERR(error) (DFerror = (DFerror ? DFerror : error))
@@ -162,4 +158,4 @@ HDFLIBAPI int DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype, i
 }
 #endif
 
-#endif /* H4_DF_PRIV_H */
+#endif /* H4_DF_H */
