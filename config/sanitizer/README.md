@@ -1,11 +1,7 @@
 # CMake Scripts <!-- omit in toc -->
 
-[![pipeline status](https://git.stabletec.com/other/cmake-scripts/badges/master/pipeline.svg)](https://git.stabletec.com/other/cmake-scripts/commits/master)
-[![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://git.stabletec.com/other/cmake-scripts/blob/master/LICENSE)
-
 This is a collection of quite useful scripts that expand the possibilities for building software with CMake, by making some things easier and otherwise adding new build types
 
-- [C++ Standards `c++-standards.cmake`](#c-standards-c-standardscmake)
 - [Sanitizer Builds `sanitizers.cmake`](#sanitizer-builds-sanitizerscmake)
 - [Code Coverage `code-coverage.cmake`](#code-coverage-code-coveragecmake)
   - [Added Targets](#added-targets)
@@ -45,12 +41,6 @@ This is a collection of quite useful scripts that expand the possibilities for b
   - [clang-format](#clang-format)
   - [cmake-format](#cmake-format)
 
-## C++ Standards [`c++-standards.cmake`](c++-standards.cmake)
-
-Using the functions `cxx_11()`, `cxx_14()`, `cxx_17()` or `cxx_20()` this adds the appropriate flags for both unix and MSVC compilers, even for those before 3.11 with improper support.
-
-These obviously force the standard to be required, and also disables compiler-specific extensions, ie `--std=gnu++11`. This helps to prevent fragmenting the code base with items not available elsewhere, adhering to the agreed C++ standards only.
-
 ## Sanitizer Builds [`sanitizers.cmake`](sanitizers.cmake)
 
 Sanitizers are tools that perform checks during a program's runtime and return issues, and as such, along with unit testing, code coverage and static analysis, are another tool to add to the programmer's toolbox. And, of course, like the previous tools, they are simple to add to any project using CMake, allowing any project and developer to quickly and easily use them.
@@ -83,9 +73,7 @@ These are used by declaring the `USE_SANITIZER` CMake variable as one of:
 - Undefined;Address
 - Leak
 
-## Code Coverage [`code-coverage.cmake`](code-coverage.cmake)
-
-![Code Coverage Examples](img/code-cov.png)
+## Code Coverage
 
 > In computer science, test coverage is a measure used to describe the degree to which the source code of a program is executed when a particular test suite runs. A program with high test coverage, measured as a percentage, has had more of its source code executed during testing, which suggests it has a lower chance of containing undetected software bugs compared to a program with low test coverage. Many different metrics can be used to calculate test coverage; some of the most basic are the percentage of program subroutines and the percentage of program statements called during execution of the test suite. 
 >
@@ -168,7 +156,7 @@ add_executable(theExe main.cpp non_covered.cpp)
 target_code_coverage(theExe AUTO ALL EXCLUDE non_covered.cpp test/*) # As an executable target, adds to the 'ccov' and ccov-all' targets, and the reports will exclude the non-covered.cpp file, and any files in a test/ folder.
 ```
 
-## Compiler Options [`compiler-options.cmake`](compiler-options.cmake)
+## Compiler Options
 
 Allows for easy use of some pre-made compiler options for the major compilers.
 
@@ -184,10 +172,9 @@ Using `-DENABLE_EFFECTIVE_CXX=ON` adds the `-Weffc++` for both GCC and clang.
 
 Using `-DGENERATE_DEPENDENCY_DATA=ON` generates `.d` files along with regular object files on a per-source file basis on GCC/Clang compilers. These files contains the list of all header files used during compilation of that compilation unit.
 
-## Dependency Graph [`dependency-graph.cmake`](dependency-graph.cmake)
+## Dependency Graph
 
 CMake, with the dot application available, will build a visual representation of the library/executable dependencies, like so:
-![Dependency Graph](img/dp-graph.png)
 
 ### Required Arguments
 
@@ -205,7 +192,7 @@ The name to give the doc target. (Default: doc-${PROJECT_NAME})
 #### OUTPUT_DIR *STR*
 The directory to place the generated output
 
-## Doxygen [`doxygen.cmake`](doxygen.cmake)
+## Doxygen
 
 Builds doxygen documentation with a default 'Doxyfile.in' or with a specified one, and can make the results installable (under the `doc` install target)
 
@@ -234,7 +221,7 @@ The path to install the documenttation under. (if not specified, defaults to 'sh
 #### DOXYFILE_PATH *STR*
 The given doxygen file to use/process. (Defaults to'${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile')
 
-## Prepare the Catch Test Framework [`prepare_catch.cmake`](prepare_catch.cmake)
+## Prepare the Catch Test Framework
 
 The included `prepare_catch` function contained within attempts to add the infrastructure necessary for automatically adding C/C++ tests using the Catch2 library, including either an interface or pre-compiled 'catch' target library.
 
