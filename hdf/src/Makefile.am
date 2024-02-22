@@ -6,22 +6,23 @@ include $(top_srcdir)/config/commence.am
 
 lib_LTLIBRARIES = libdf.la
 
-FSOURCES = df24ff.f dfanf.c dfanff.f dff.c dfff.f dfpf.c dfpff.f dfr8f.c    \
-           dfr8ff.f dfsdf.c dfsdff.f dfufp2iff.f dfutilf.c herrf.c hfilef.c  \
-	   df24f.c dfufp2if.c\
+FSOURCES = df24ff.f dfanf.c dfanff.f dff.c dfff.f dfpf.c dfpff.f dfr8f.c \
+           dfr8ff.f dfsdf.c dfsdff.f dfufp2iff.f dfutilf.c herrf.c hfilef.c \
+           df24f.c dfufp2if.c\
            hfileff.f mfanf.c mfgrf.c mfgrff.f vattrf.c vattrff.f vgf.c vgff.f 
-CSOURCES = atom.c bitvect.c cdeflate.c cnbit.c cnone.c crle.c cskphuff.c    \
-           cszip.c df24.c dfan.c dfcomp.c dfconv.c dfgr.c dfgroup.c         \
-           dfimcomp.c dfjpeg.c dfknat.c       \
-           dfkswap.c dfp.c dfr8.c dfrle.c dfsd.c dfstubs.c         \
-           dfufp2i.c dfunjpeg.c dfutil.c dynarray.c glist.c hbitio.c        \
-           hblocks.c hbuffer.c hchunks.c hcomp.c hcompri.c hdatainfo.c      \
-	   hdfalloc.c herr.c hextelt.c hfile.c hfiledd.c hkit.c linklist.c  \
-	   mcache.c mfan.c mfgr.c mstdio.c tbbt.c vattr.c vconv.c vg.c	    \
-	   vgp.c vhi.c vio.c vparse.c vrw.c vsfld.c
+CSOURCES = atom.c bitvect.c cdeflate.c cnbit.c cnone.c crle.c cskphuff.c \
+           cszip.c df24.c dfan.c dfcomp.c dfconv.c dfgr.c dfgroup.c \
+           dfimcomp.c dfjpeg.c dfknat.c \
+           dfkswap.c dfp.c dfr8.c dfrle.c dfsd.c dfstubs.c \
+           dfufp2i.c dfunjpeg.c dfutil.c dynarray.c glist.c hbitio.c \
+           hblocks.c hbuffer.c hchunks.c hcomp.c hcompri.c hdatainfo.c \
+           hdfalloc.c herr.c hextelt.c hfile.c hfiledd.c hkit.c linklist.c \
+           mcache.c mfan.c mfgr.c mstdio.c tbbt.c vattr.c vconv.c vg.c \
+           vgp.c vhi.c vio.c vparse.c vrw.c vsfld.c
 
 CHEADERS = H4api_adpt.h df.h h4config.h hbitio.h hcomp.h hdatainfo.h hdf.h \
-		   herr.h hlimits.h hntdefs.h hproto.h htags.h mfan.h mfgr.h vg.h
+		   herr.h hfile.h hlimits.h hntdefs.h hproto.h htags.h mfan.h mfgr.h \
+		   vg.h
 
 FHEADERS = dffunc.f90 hdf.f90 dffunc.inc hdf.inc
 

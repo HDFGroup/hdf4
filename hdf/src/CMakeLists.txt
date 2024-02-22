@@ -74,6 +74,7 @@ set (HDF4_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/hdatainfo.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hdf.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/herr.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hfile.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hlimits.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hntdefs.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hproto.h

@@ -179,6 +179,23 @@ New features and changes
       * bitrec_t struct
       * maskc and maskl variable declarations
 
+    - Most of hfile.h moved to hfile_priv.h
+
+      Still in hfile.h:
+
+      LIBVER_MAJOR
+      LIBVER_MINOR
+      LIBVER_RELEASE
+      LIBVER_SUBRELEASE
+      LIBVER_STRING
+      LIBVSTR_LEN
+      LIBVER_LEN
+
+      Everything else has been moved to hfile_priv.h
+
+      NOTE that hfile.h is NOT included via hdf.h and must be included
+      separately, which is the same behavior as HDF 4.2.x.
+
     - hdfi.h is no longer included by hdf.h
 
       In the past, hdfi.h (an internal header file) was included in the
