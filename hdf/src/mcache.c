@@ -502,7 +502,6 @@ mcache_close(MCACHE *mp /* IN: MCACHE cookie */)
 {
     L_ELEM *lp        = NULL;
     BKT    *bp        = NULL; /* bucket element */
-    intn    nelem     = 0;
     intn    ret_value = RET_SUCCESS;
     intn    entry; /* index into hash table */
 
@@ -521,7 +520,6 @@ mcache_close(MCACHE *mp /* IN: MCACHE cookie */)
         while ((lp = mp->lhqh[entry].cqh_first) != (void *)&mp->lhqh[entry]) {
             H4_CIRCLEQ_REMOVE(&mp->lhqh[entry], mp->lhqh[entry].cqh_first, hl);
             free(lp);
-            nelem++;
         }
     } /* end for entry */
 
