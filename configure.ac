@@ -994,6 +994,7 @@ AC_CHECK_FUNCS([fork getrusage system wait])
 ## of being copied depending upon the host.
 case "$host" in
   *-linux*|*-k*bsd*-gnu|*-gnu*)BAR="linux"       ;;
+  *-openbsd*)           BAR="fbsd"        ;;  
   *-freebsd*)           BAR="fbsd"        ;;
   *-ibm-aix*)           BAR="aix"         ;;
   sparc64-*-solaris2*)  BAR="solaris64"   ;;
