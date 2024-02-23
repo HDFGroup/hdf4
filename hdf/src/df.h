@@ -13,7 +13,7 @@
 
 /*-----------------------------------------------------------------------------
  * File:    df.h
- * Purpose: Header file for legacy HDF 3 routines
+ * Purpose: Header file for single-file HDF routines
  *---------------------------------------------------------------------------*/
 
 #ifndef H4_DF_H
