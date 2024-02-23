@@ -96,14 +96,16 @@
 #ifdef H4_HAVE_SYS_FILE_H
 #include <sys/file.h>
 #endif
-#ifdef H4_HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
 #ifdef H4_HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
+
+/* MSDN docs say that sys/types.h has to come before sys/stat */
 #ifdef H4_HAVE_SYS_TYPES_H
 #include <sys/types.h>
+#endif
+#ifdef H4_HAVE_SYS_STAT_H
+#include <sys/stat.h>
 #endif
 
 /* Windows headers */
