@@ -49,7 +49,6 @@ The following headers are no longer installed:
 * crle.h
 * cskphuff.h
 * cszip.h
-* df.h
 * dfan.h
 * dfgr.h
 * dfrig.h
