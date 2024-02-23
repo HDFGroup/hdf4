@@ -115,6 +115,16 @@ main(void)
 
     test_nctypelen();
 
+    for (int i = 0; i < test_g->ndims; i++) {
+        free(test_g->dims[i].name);
+    }
+    for (int i = 0; i < test_g->nvars; i++) {
+        free(test_g->vars[i].name);
+        free(test_g->vars[i].dims);
+    }
+    for (int i = 0; i < test_g->natts; i++) {
+        free(test_g->atts[i].name);
+    }
     free(test_g);
 
     return EXIT_SUCCESS;
