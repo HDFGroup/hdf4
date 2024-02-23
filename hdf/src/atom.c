@@ -68,7 +68,7 @@ EXPORTED ROUTINES
 
 /* Combine a Group number and an atom index into an atom */
 #define MAKE_ATOM(g, i)                                                                                      \
-    ((((atom_t)(g)&GROUP_MASK) << ((sizeof(atom_t) * 8) - GROUP_BITS)) | ((atom_t)(i)&ATOM_MASK))
+    (atom_t)((((uint32)(g)&GROUP_MASK) << ((sizeof(atom_t) * 8) - GROUP_BITS)) | ((uint32)(i)&ATOM_MASK))
 
 /* Atom information structure used */
 typedef struct atom_info_struct_tag {
