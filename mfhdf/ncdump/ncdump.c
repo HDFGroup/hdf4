@@ -17,9 +17,9 @@
 
 static const char *type_name(nc_type type);
 
-char        *progname;
-struct ncdim dims[H4_MAX_NC_DIMS];  /* dimensions */
-long         vdims[H4_MAX_NC_DIMS]; /* dimension sizes for a single variable */
+char         *progname;
+struct ncdim *dims  = NULL; /* dimensions */
+long         *vdims = NULL; /* dimension sizes for a single variable */
 
 static void
 usage()
@@ -141,14 +141,14 @@ pr_att_vals(nc_type type, int len, void *vals)
     char         *sp;
     unsigned char uc;
     char          gps[30]; /* for ascii of a float or double precision */
-    char         *f_fmt = "%#.8g";
-    char         *d_fmt = "%#.16g";
+    const char   *f_fmt = "%#.8g";
+    const char   *d_fmt = "%#.16g";
 
     switch (type) {
         case NC_BYTE:
             gp.cp = (char *)vals;
             for (iel = 0; iel < len; iel++)
-                if (isprint(uc = *gp.cp++ & 0377))
+                if (isprint(uc = (unsigned char)(*gp.cp++ & 0377)))
                     printf("'%c'%s", uc, iel < len - 1 ? ", " : "");
                 else
                     printf("'\\%o'%s", uc, iel < len - 1 ? ", " : "");
@@ -161,7 +161,7 @@ pr_att_vals(nc_type type, int len, void *vals)
             while (*sp-- == '\0' && len > 0)
                 len--;
             for (iel = 0; iel < len; iel++)
-                switch (uc = *gp.cp++ & 0377) {
+                switch (uc = (unsigned char)(*gp.cp++ & 0377)) {
                     case '\b':
                         printf("\\b");
                         break;
@@ -208,7 +208,7 @@ pr_att_vals(nc_type type, int len, void *vals)
         case NC_FLOAT:
             gp.fp = (float *)vals;
             for (iel = 0; iel < len; iel++) {
-                int ll;
+                size_t ll;
                 (void)sprintf(gps, f_fmt, (double)*gp.fp++);
                 /* append a trailing "f" for floating-point attributes */
                 ll          = strlen(gps);
@@ -388,7 +388,7 @@ do_ncdump(char *path, struct fspec *specp)
 
             printf("\t\t%s:%s = ", fixed_var, fixed_att);
             (void)ncattinq(ncid, varid, att.name, &att.type, &att.len);
-            att.val = (void *)malloc((unsigned)att.len * nctypelen(att.type));
+            att.val = (void *)malloc((size_t)(att.len * nctypelen(att.type)));
 
             if (!att.val) {
                 error("Out of memory!");
@@ -525,6 +525,8 @@ do_ncdump(char *path, struct fspec *specp)
         }
     }
 
+    free(vlist);
+
     printf("}\n");
     (void)ncclose(ncid);
 }
@@ -542,7 +544,7 @@ make_lvars(char *arg, struct fspec *fspecp)
         if (*cp == ',')
             nvars++;
 
-    fspecp->lvars = (char **)malloc(nvars * sizeof(char *));
+    fspecp->lvars = (char **)malloc((size_t)nvars * sizeof(char *));
     if (!fspecp->lvars) {
         error("out of memory");
         exit(EXIT_FAILURE);
@@ -574,8 +576,8 @@ set_sigdigs(char *arg)
     char *ptr2       = 0;
     long  flt_digits = 7;  /* default floating-point digits */
     long  dbl_digits = 15; /* default double-precision digits */
-    char  flt_fmt[6];
-    char  dbl_fmt[6];
+    char  flt_fmt[16];
+    char  dbl_fmt[16];
 
     if (arg != 0 && strlen(arg) > 0 && arg[0] != ',')
         flt_digits = strtol(arg, &ptr, 10);
@@ -619,6 +621,14 @@ main(int argc, char *argv[])
 
     if (1 == argc) /* if no arguments given, print help and exit */
         usage();
+
+    dims  = (struct ncdim *)calloc(H4_MAX_NC_DIMS, sizeof(struct ncdim)); /* dimensions */
+    vdims = (long *)calloc(H4_MAX_NC_DIMS, sizeof(long)); /* dimension sizes for a single variable */
+
+    if ((dims == NULL) || (vdims == NULL)) {
+        error("Unable to allocate memory!\n");
+        exit(EXIT_FAILURE);
+    }
 
     while ((c = h4getopt(argc, argv, "b:cf:hul:n:v:d:V")) != EOF)
         switch (c) {
@@ -669,7 +679,7 @@ main(int argc, char *argv[])
                 }
                 break;
             case 'l': /* maximum line length */
-                max_len = strtol(h4optarg, 0, 0);
+                max_len = (int)strtol(h4optarg, 0, 0);
                 if (max_len < 10) {
                     error("unreasonably small line length specified: %d", max_len);
                     exit(EXIT_FAILURE);
@@ -697,6 +707,9 @@ main(int argc, char *argv[])
         if (argc > 0)
             do_ncdump(argv[i], &fspec);
     } while (++i < argc);
+
+    free(dims);
+    free(vdims);
 
     return EXIT_SUCCESS;
 }
