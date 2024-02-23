@@ -97,7 +97,7 @@ These are used by declaring the `USE_SANITIZER` CMake variable as string contain
 - Leak
 - CFI
 
-Multiple values are allowed, e.g. `-DUSE_SANITIZER=Address,Leak` but some sanitizers cannot be combined together, e.g.`-DUSE_SANITIZER=Address,Memory` will result in configuration error. The delimeter character is not required and `-DUSE_SANITIZER=AddressLeak` would work as well.
+Multiple values are allowed, e.g. `-DUSE_SANITIZER=Address,Leak` but some sanitizers cannot be combined together, e.g.`-DUSE_SANITIZER=Address,Memory` will result in configuration error. The delimiter character is not required and `-DUSE_SANITIZER=AddressLeak` would work as well.
 
 ## Code Coverage [`code-coverage.cmake`](code-coverage.cmake)
 
