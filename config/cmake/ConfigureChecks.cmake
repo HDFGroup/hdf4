@@ -65,7 +65,6 @@ endif ()
 
 if (WINDOWS)
   set (CMAKE_REQUIRED_LIBRARIES "ws2_32.lib;wsock32.lib")
-  set (${HDF_PREFIX}_HAVE_LIBM 1)
   set (${HDF_PREFIX}_HAVE_WIN32_API 1)
   set (${HDF_PREFIX}_HAVE_SYSTEM 1)
   if (NOT UNIX AND NOT CYGWIN)
