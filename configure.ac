@@ -973,6 +973,7 @@ esac
 ## Checks for library functions
 ## ======================================================================
 
+AC_CHECK_LIB([m], [ceil])
 AC_CHECK_FUNCS([fork getrusage system wait])
 
 
