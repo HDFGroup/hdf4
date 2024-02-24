@@ -39,6 +39,10 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Removed CMake's HDF_ENABLE_LARGE_FILE option
+
+      We now assume that LFS exists, as in the Autotools.
+
     - New option for building and naming tools in CMake
 
       The following option has been added:

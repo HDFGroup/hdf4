@@ -895,12 +895,8 @@ CPPFLAGS="-D_POSIX_C_SOURCE=200809L $CPPFLAGS"
 ## Checks for headers
 ## ======================================================================
 AC_CHECK_HEADERS([fcntl.h unistd.h])
-
-AC_CHECK_HEADERS([sys/file.h sys/resource.h sys/stat.h sys/time.h sys/wait.h])
-AC_CHECK_HEADERS([sys/types.h])
-
-AC_CHECK_HEADERS([io.h])
 AC_CHECK_HEADERS([arpa/inet.h netinet/in.h])
+AC_CHECK_HEADERS([sys/file.h sys/resource.h sys/stat.h sys/time.h sys/types.h sys/wait.h])
 
 ## Special MinGW checks
 case "`uname`" in
@@ -976,9 +972,6 @@ esac
 ## ======================================================================
 ## Checks for library functions
 ## ======================================================================
-
-AC_MSG_CHECKING([for math library support])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <math.h>]], [[sinh(37.927)]])],[AC_MSG_RESULT([yes])],[AC_MSG_RESULT([no]); LIBS="$LIBS -lm"])
 
 AC_CHECK_FUNCS([fork getrusage system wait])
 
