@@ -473,7 +473,8 @@ test_mult_setexternal()
 
     /* Create data set SDS1 and write data to the external file; the returned
        value is the size of the data had been written for this sds */
-    size_written = make_Ext3D_SDS(sd_id, SDS1, DFNT_INT32, 3, dim_sizes, (void *)written_data, OFFSET, EXTFILE2);
+    size_written =
+        make_Ext3D_SDS(sd_id, SDS1, DFNT_INT32, 3, dim_sizes, (void *)written_data, OFFSET, EXTFILE2);
     CHECK(size_written, FAIL, "make_Ext3D_SDS");
 
     /* Close the file to flush */
