@@ -47,7 +47,7 @@ jobs:
         shell: msys2 {0}
         run: |
           uname -a
-          git clone https://github.com/hyoklee/hdf4.git
+          git clone https://github.com/HDFGroup/hdf4.git
           cd hdf4
           ./autogen.sh
           ./configure LDFLAGS="-lws2_32" --disable-netcdf --disable-netcdf-tools --enable-static-exec
