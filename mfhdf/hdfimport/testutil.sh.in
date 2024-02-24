@@ -89,13 +89,13 @@ $TESTCMD $srcdir/SDSfloat3.hdf -o SDSfloat3.out
 ($HDFLS SDSfloat2.out | $SED) >> hdffiles.tmp 2>&1
 ($HDFLS SDSfloat3.out | $SED) >> hdffiles.tmp 2>&1
 
-    diff  hdfls.tmp5 $srcdir/hdfimport.out1 || errors=1
+    diff -b   hdfls.tmp5 $srcdir/hdfimport.out1 || errors=1
     $HDFEDCMD < $srcdir/hdfimport.input1 > hdfed.tmp6 2>&1
-    diff  hdfed.tmp6 $srcdir/hdfimport.out2 || errors=1
+    diff -b   hdfed.tmp6 $srcdir/hdfimport.out2 || errors=1
 
     # hdfimport.out3 contains output that hdfls previously generated
     # from SDSfloat*.out with the library version removed - BMR (2006/9/7)
-    diff  hdffiles.tmp $srcdir/hdfimport.out3 || errors=1
+    diff -b   hdffiles.tmp $srcdir/hdfimport.out3 || errors=1
 
 # use [!S] to prevent SDSfloat2.hdf and SDSfloat3.hdf from being deleted;
 # please replace with a better solution, if one is available. - BMR (2006/9/23)

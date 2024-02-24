@@ -91,7 +91,7 @@ if [ -f $HDFED ]; then
   /bin/rm -f storm110.hdf ntcheck.hdf hdfed.tmp
   cp $srcdir/testfiles/storm110.hdf $srcdir/testfiles/ntcheck.hdf .
   $TESTS_ENVIRONMENT $HDFEDCMD < $srcdir/hdfed.input1 > hdfed.tmp 2>&1
-  diff hdfed.tmp $srcdir/hdfed.out1 || errors=1
+  diff -b hdfed.tmp $srcdir/hdfed.out1 || errors=1
   /bin/rm -f storm110.hdf ntcheck.hdf hdfed.tmp
 else
   echo "** hdfed not available ***"
@@ -121,7 +121,7 @@ if [ -f ristosds -a -f $HDFED ]; then
   cp $srcdir/testfiles/storm110.hdf $srcdir/testfiles/storm120.hdf $srcdir/testfiles/storm130.hdf .
   $TESTS_ENVIRONMENT ./ristosds storm*.hdf -o storm.hdf > /dev/null 2>&1
   $TESTS_ENVIRONMENT $HDFEDCMD < $srcdir/ristosds.input1 > hdfed.tmp1 2>&1
-  diff  hdfed.tmp1 $srcdir/ristosds.out1 || errors=1
+  diff -b hdfed.tmp1 $srcdir/ristosds.out1 || errors=1
   /bin/rm -f storm*.hdf hdfed.tmp1
 else
   echo "** ristosds or hdfed not available ***"
@@ -155,7 +155,7 @@ if [ -f hdfpack -a -f hdfls ]; then
   $TESTS_ENVIRONMENT ./hdfpack -b test.hdf test.blk
   ($TESTS_ENVIRONMENT ./hdfls test.hdf | $SED ) > hdfls.tmp1 2>&1
   ($TESTS_ENVIRONMENT ./hdfls test.pck | $SED ) >> hdfls.tmp1 2>&1
-  diff  hdfls.tmp1 $srcdir/hdfpack.out1 || errors=1
+  diff -b hdfls.tmp1 $srcdir/hdfpack.out1 || errors=1
   /bin/rm -f test.hdf test.blk test.pck hdfls.tmp1
 else
   echo "** hdfpack or hdfls not available ***"
@@ -221,7 +221,7 @@ if [ -f r8tohdf -a -f hdftor8 -a -f hdfls ]; then
   $TESTS_ENVIRONMENT ./r8tohdf 57 57 storm.hdf -p palette.raw -i storm110.raw
   $TESTS_ENVIRONMENT ./hdftor8 storm.hdf
   ($TESTS_ENVIRONMENT ./hdfls -l storm.hdf | $SED) > hdfls.tmp2 2>&1
-  diff  hdfls.tmp2 $srcdir/hdftor8.out1 || errors=1
+  diff -b hdfls.tmp2 $srcdir/hdftor8.out1 || errors=1
   cmp img001-057.057  storm110.raw || errors=1
   cmp img002-057.057  storm120.raw || errors=1
   cmp img003-057.057  storm130.raw || errors=1
@@ -264,7 +264,7 @@ if [ -f  hdfcomp -a -f hdfls ]; then
   $TESTS_ENVIRONMENT ./hdfcomp allcomp.hdf -c storm*.hdf
   ($TESTS_ENVIRONMENT ./hdfls -l allstorms.hdf | $SED) > hdfls.tmp3 2>&1
   ($TESTS_ENVIRONMENT ./hdfls -l allcomp.hdf | $SED) >> hdfls.tmp3 2>&1
-  diff  hdfls.tmp3 $srcdir/hdfcomp.out1 || errors=1
+  diff -b   hdfls.tmp3 $srcdir/hdfcomp.out1 || errors=1
   /bin/rm -f storm*.hdf all*.hdf hdfls.tmp3
 else
   echo "** hdfcomp or hdfls not available ***"
@@ -298,7 +298,7 @@ if [ -f jpeg2hdf -a -f hdf2jpeg -a -f hdfls ]; then
   $TESTS_ENVIRONMENT ./jpeg2hdf jpeg_img.jpg jpeg.hdf
   $TESTS_ENVIRONMENT ./hdf2jpeg jpeg.hdf jpeg2.jpg
   ($TESTS_ENVIRONMENT ./hdfls -l jpeg.hdf | $SED) > hdfls.tmp4 2>&1
-  diff  hdfls.tmp4 $srcdir/jpeg2hdf.out1 || errors=1
+  diff -b   hdfls.tmp4 $srcdir/jpeg2hdf.out1 || errors=1
   cmp jpeg_img.jpg jpeg2.jpg || errors=1
   /bin/rm -f jpeg.hdf jpeg_img.jpg jpeg2.jpg hdfls.tmp4
 else

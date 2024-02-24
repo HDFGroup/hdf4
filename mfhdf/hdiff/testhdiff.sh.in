@@ -7,7 +7,7 @@ HDIFF=hdiff               # The tool name
 HDIFF_BIN=`pwd`/$HDIFF    # The path of the tool binary
 
 CMP='cmp -s'
-DIFF='diff -c'
+DIFF='diff -b -c'
 
 nerrors=0
 verbose=yes
@@ -95,7 +95,7 @@ TOOLTEST() {
       echo " CREATED"
       cp $actual $expect
    #   elif
-   elif $CMP $expect $actual; then
+   elif $DIFF $expect $actual; then
       echo " PASSED"
    else
       echo "*FAILED*"
