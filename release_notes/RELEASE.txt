@@ -237,6 +237,8 @@ Bugs fixed since HDF 4.2.16
 
       In this release:
 
+      * CMake builds did not expose H4_NO_DEPRECATED_SYMBOLS via
+        h4config.h
       * The mfhdf.h header now hides the SDgetcompress() call behind an
         H4_NO_DEPRECATED_SYMBOLS ifdef (pulled in via h4config.h via hdf.h)
       * The Java wrappers now correctly exclude SDgetcompress() when
