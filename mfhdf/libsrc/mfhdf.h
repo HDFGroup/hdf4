@@ -139,7 +139,9 @@ HDFLIBAPI intn SDsetnbitdataset(int32 id, intn start_bit, intn bit_len, intn sig
 
 HDFLIBAPI intn SDsetcompress(int32 id, comp_coder_t type, comp_info *c_info);
 
+#ifndef H4_NO_DEPRECATED_SYMBOLS
 HDFLIBAPI intn SDgetcompress(int32 id, comp_coder_t *type, comp_info *c_info);
+#endif
 
 HDFLIBAPI intn SDgetcompinfo(int32 id, comp_coder_t *type, comp_info *c_info);
 

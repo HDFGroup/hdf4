@@ -187,8 +187,10 @@ JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_SDsetcompress(JNIEnv *env,
 JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_SDgetcompinfo(JNIEnv *env, jclass clss, jlong sdsid,
                                                                     jobject cinfo);
 
+#ifndef H4_NO_DEPRECATED_SYMBOLS
 JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_SDgetcompress(JNIEnv *env, jclass clss, jlong sdsid,
                                                                     jobject cinfo);
+#endif
 
 JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_SDsetaccesstype(JNIEnv *env, jclass clss, jlong sdsid,
                                                                       jint accesstype);

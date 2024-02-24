@@ -254,7 +254,7 @@ test_compressed_data()
     /*
      * Retrieve and verify the compression info - bug# 307
      */
-#ifndef H4_NO_DEPRECATED_SYMBOLS   /* Jan 9, 2013 */
+#ifndef H4_NO_DEPRECATED_SYMBOLS
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
@@ -610,7 +610,7 @@ test_compressed_data()
     /*
      * Retrieve and verify the compression info - bug# 307
      */
-#ifndef H4_NO_DEPRECATED_SYMBOLS   /* Jan 9, 2013 */
+#ifndef H4_NO_DEPRECATED_SYMBOLS
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
@@ -696,7 +696,7 @@ test_compressed_data()
     /*
      * Retrieve and verify the compression info - bug# 307
      */
-#ifndef H4_NO_DEPRECATED_SYMBOLS   /* Jan 9, 2013 */
+#ifndef H4_NO_DEPRECATED_SYMBOLS
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
@@ -783,7 +783,7 @@ test_compressed_data()
     /*
      * Retrieve and verify the compression info - bug# 307
      */
-#ifndef H4_NO_DEPRECATED_SYMBOLS   /* Jan 9, 2013 */
+#ifndef H4_NO_DEPRECATED_SYMBOLS
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompress(newsds2, &comp_type, &cinfo);

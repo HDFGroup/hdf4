@@ -1419,6 +1419,7 @@ done:
     return JNI_TRUE;
 }
 
+#ifndef H4_NO_DEPRECATED_SYMBOLS
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDgetcompress(JNIEnv *env, jclass clss, jlong sdsid, jobject cinfo)
 {
@@ -1441,6 +1442,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetcompress(JNIEnv *env, jclass clss, jlong sdsid, 
 done:
     return JNI_TRUE;
 }
+#endif /* H4_NO_DEPRECATED_SYMBOLS */
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDsetaccesstype(JNIEnv *env, jclass clss, jlong sdsid, jint accesstype)
