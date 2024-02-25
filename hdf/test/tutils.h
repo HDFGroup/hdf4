@@ -14,6 +14,9 @@
 #ifndef H4_TUTILS_H
 #define H4_TUTILS_H
 
+#include <float.h>
+#include <math.h>
+
 #include "hdf_priv.h"
 
 /* Define these for use in all the tests */
@@ -206,6 +209,20 @@ extern
         puts(" -SKIP-");                                                                                     \
         fflush(stdout);                                                                                      \
     }
+
+/*
+ * Methods to compare the equality of floating-point values:
+ *
+ *    1. H4_XXX_ABS_EQUAL - check if the difference is smaller than the
+ *       Epsilon value.  The Epsilon values, FLT_EPSILON, DBL_EPSILON,
+ *       and LDBL_EPSILON, are defined by compiler in float.h.
+ *
+ *  HDF5 (from whence these macros came) also includes macros that
+ *  use relative error. Those will be brought over only if needed.
+ */
+#define H4_FLT_ABS_EQUAL(X, Y)  (fabsf((X) - (Y)) < FLT_EPSILON)
+#define H4_DBL_ABS_EQUAL(X, Y)  (fabs((X) - (Y)) < DBL_EPSILON)
+#define H4_LDBL_ABS_EQUAL(X, Y) (fabsl((X) - (Y)) < LDBL_EPSILON)
 
 /* Definition for JPEG tests */
 #define JPEG_FUZZ 1

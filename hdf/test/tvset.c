@@ -736,14 +736,14 @@ read_vset_stuff(void)
     CHECK(status, FAIL, "VSsetfields:vs1");
 
     for (i = 0; i < count; i++)
-        fbuf[i] = (float32)0.0;
+        fbuf[i] = 0.0F;
 
     status = VSread(vs1, (unsigned char *)fbuf, count, FULL_INTERLACE);
     CHECK(status, FAIL, "VSread:vs1");
 
     /* verify */
     for (i = 0; i < count; i++) {
-        if (fbuf[i] != (float32)i) {
+        if (!H4_FLT_ABS_EQUAL(fbuf[i], (float32)i)) {
             num_errs++;
             printf(">>> Float value %d was expecting %d got %f\n", (int)i, (int)i, (double)fbuf[i]);
         }
@@ -930,8 +930,8 @@ read_vset_stuff(void)
     /* verify */
     p = gbuf;
     for (i = 0; i < count; i++) {
-        float32 fl = (float32)0.0;
-        int32   in = (int32)0;
+        float32 fl = 0.0F;
+        int32   in = 0;
 
         memcpy(&fl, p, sizeof(float32));
         p += sizeof(float32);
@@ -943,7 +943,7 @@ read_vset_stuff(void)
             printf(">>> Mixed int value %d was expecting %d got %d\n", (int)i, (int)i, (int)in);
         }
 
-        if (fl != (float32)(i * 2)) {
+        if (!H4_FLT_ABS_EQUAL(fl, (float32)(i * 2))) {
             num_errs++;
             printf(">>> Mixed float value %d was expecting %d got %f\n", (int)i, (int)i, (double)fl);
         }
@@ -1015,9 +1015,9 @@ read_vset_stuff(void)
     c_expected  = 'a';
 
     for (i = 0; i < count; i++) {
-        float32 fl = (float32)0.0;
-        int32   in = (int32)0;
-        char8   c  = (char8)0;
+        float32 fl = 0.0F;
+        int32   in = 0;
+        char8   c  = 0;
 
         /* read and verify characters */
         memcpy(&c, p, sizeof(char8));
@@ -1071,12 +1071,12 @@ read_vset_stuff(void)
         memcpy(&fl, p, sizeof(float32));
         p += sizeof(float32);
 
-        if (fl != fl_expected) {
+        if (!H4_FLT_ABS_EQUAL(fl, fl_expected)) {
             num_errs++;
             printf(">>> Multi-order float value %d was expecting %f got %f\n", (int)i, (double)fl_expected,
                    (double)fl);
         }
-        fl_expected += (float32)0.5;
+        fl_expected += 0.5F;
     }
 
     /*
@@ -1203,7 +1203,6 @@ test_vsdelete(void)
     int32 num_of_elements;
     int16 vdata_buf[NUMBER_OF_ROWS * ORDER];
     int32 v_ref;
-    intn  i;
 
     /* Open the HDF file. */
     fid = Hopen(FNAME0, DFACC_RDWR, 0);
@@ -1226,7 +1225,7 @@ test_vsdelete(void)
     CHECK_VOID(status, FAIL, "VSsetfields:vdata_id");
 
     /* Generate the Vset data. */
-    for (i = 0; i < NUMBER_OF_ROWS * ORDER; i += ORDER) {
+    for (int16 i = 0; i < NUMBER_OF_ROWS * ORDER; i += ORDER) {
         vdata_buf[i]     = i;
         vdata_buf[i + 1] = i + 1;
         vdata_buf[i + 2] = i + 2;
@@ -2213,9 +2212,10 @@ test_getvgroups(void)
 } /* test_getvgroups() */
 
 intn
-check_vgs(int32 id, uintn start_vg, uintn n_vgs, char *ident_text, /* just for debugging, remove when done */
-          uintn   resultcount,                                     /* expected number of vgroups */
-          uint16 *resultarray)                                     /* array containing expected values */
+check_vgs(int32 id, uintn start_vg, uintn n_vgs,
+          const char *ident_text,  /* just for debugging, remove when done */
+          uintn       resultcount, /* expected number of vgroups */
+          uint16     *resultarray)     /* array containing expected values */
 {
     uint16 *refarray = NULL;
     uintn   count    = 0, ii;
@@ -2252,10 +2252,11 @@ check_vgs(int32 id, uintn start_vg, uintn n_vgs, char *ident_text, /* just for d
     return ret_value;
 }
 
-intn
-check_vds(int32 id, uintn start_vd, uintn n_vds, char *ident_text, /* just for debugging, remove when done */
-          uintn   resultcount,                                     /* expected number of vdatas */
-          uint16 *resultarray)                                     /* array containing expected values */
+static int
+check_vds(int32 id, uintn start_vd, uintn n_vds,
+          const char *ident_text,  /* just for debugging, remove when done */
+          uintn       resultcount, /* expected number of vdatas */
+          uint16     *resultarray)     /* array containing expected values */
 {
     uint16 *refarray = NULL;
     uintn   count    = 0, ii;
@@ -2636,21 +2637,21 @@ Tables_External_File.
 static void
 test_extfile(void)
 {
-    int32   fid, vdata1_id, vdata_ref = -1; /* ref number of a vdata, set to -1 to create  */
-    int32   vdata1_ref;
-    int32   offset = -1, length = -1;
-    char    hibuf[2]  = "hi";
-    char    byebuf[3] = "bye";
-    char   *extfile_name;
-    void   *columnPtrs[3];
-    int     bufsize;
-    void   *databuf;
-    intn    name_len = 0;
-    intn    status_n; /* returned status for functions returning an intn  */
-    int32   status;   /* returned status for functions returning an int32 */
-    char8   col1buf[NROWS][2] = {{'A', 'B'}, {'B', 'C'}, {'C', 'D'}, {'D', 'E'}, {'E', 'F'}};
-    uint16  col2buf[NROWS]    = {1, 2, 3, 4, 5};
-    float32 col3buf[NROWS][2] = {{.01, .1}, {.02, .2}, {.03, .3}, {.04, .4}, {.05, .5}};
+    int32      fid, vdata1_id, vdata_ref = -1; /* ref number of a vdata, set to -1 to create  */
+    int32      vdata1_ref;
+    int32      offset = -1, length = -1;
+    const char hibuf[2]  = "hi";
+    const char byebuf[3] = "bye";
+    char      *extfile_name;
+    void      *columnPtrs[3];
+    int        bufsize;
+    void      *databuf;
+    intn       name_len = 0;
+    intn       status_n; /* returned status for functions returning an intn  */
+    int32      status;   /* returned status for functions returning an int32 */
+    char8      col1buf[NROWS][2] = {{'A', 'B'}, {'B', 'C'}, {'C', 'D'}, {'D', 'E'}, {'E', 'F'}};
+    uint16     col2buf[NROWS]    = {1, 2, 3, 4, 5};
+    float32    col3buf[NROWS][2] = {{.01F, .1F}, {.02F, .2F}, {.03F, .3F}, {.04F, .4F}, {.05F, .5F}};
 
     /* Create the HDF file for data used in this test routine */
     fid = Hopen(EXTFILE, DFACC_CREATE, 0);

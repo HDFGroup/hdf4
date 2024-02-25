@@ -86,7 +86,7 @@
 static intn
 test_dim1_SDS1(void)
 {
-    float32        sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
+    float32        sds1_data[] = {0.1F, 2.3F, 4.5F, 6.7F, 8.9F};
     float32        out_data[5];
     int32          dimsize[1];
     int32          sds_id, file_id, dim_id;
@@ -229,7 +229,7 @@ test_dim1_SDS1(void)
     CHECK(status, FAIL, "SDreaddata");
 
     for (idx1 = 0; idx1 < dimsize[0]; idx1++)
-        if (out_data[idx1] != sds1_data[idx1]) {
+        if (!H4_FLT_ABS_EQUAL(out_data[idx1], sds1_data[idx1])) {
             fprintf(stderr, "Read value (%f) differs from written (%f) at [%d]\n", (double)out_data[idx1],
                     (double)sds1_data[idx1], idx1);
             num_errs++;
@@ -283,7 +283,7 @@ static intn
 test_dim1_SDS2(void)
 {
     char    sds_name[20];
-    float32 sds2_data[2][3] = {{0.1, 2.3, 4.5}, {4.5, 6.7, 8.9}};
+    float32 sds2_data[2][3] = {{0.1F, 2.3F, 4.5F}, {4.5F, 6.7F, 8.9F}};
     int32   dimsize[1], dimsize2[2];
     int32   sds1_id, sds2_id, file_id, dim_id, index;
     int32   start2[2] = {0, 0}, stride2[2] = {1, 1};
@@ -398,7 +398,7 @@ test_dim1_SDS2(void)
 
     for (idx1 = 0; idx1 < dimsize2[0]; idx1++)
         for (idx2 = 0; idx2 < dimsize2[1]; idx2++) {
-            if (out_data2[idx1][idx2] != sds2_data[idx1][idx2]) {
+            if (!H4_FLT_ABS_EQUAL(out_data2[idx1][idx2], sds2_data[idx1][idx2])) {
                 fprintf(stderr, "Read value (%f) differs from written (%f) at [%d][%d]\n",
                         (double)out_data2[idx1][idx2], (double)sds2_data[idx1][idx2], idx1, idx2);
                 num_errs++;

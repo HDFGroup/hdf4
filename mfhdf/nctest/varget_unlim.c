@@ -108,7 +108,7 @@ test_ncvarget_unlim(char *basefile)
 
     for (i = 0; i < 2; i++) {
         for (j = 0; j < 3; j++) {
-            if (a[i][j] != a_val[i][j]) {
+            if (!H4_FLT_ABS_EQUAL(a[i][j], a_val[i][j])) {
                 nerrs++;
                 printf(" Wrong value of variable a at index %d,%d\n", i, j);
             }

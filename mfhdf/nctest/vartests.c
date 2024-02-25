@@ -342,14 +342,14 @@ test_varputget1(int cdfid)
                     }
                     break;
                 case NC_FLOAT:
-                    if (elm[ie].val.fl != flval) {
+                    if (!H4_FLT_ABS_EQUAL(elm[ie].val.fl, flval)) {
                         error("%s: ncvarget1 returned float %g, expected %g", pname, (double)flval,
                               (double)elm[ie].val.fl);
                         nerrs++;
                     }
                     break;
                 case NC_DOUBLE:
-                    if (elm[ie].val.db != dbval) {
+                    if (!H4_DBL_ABS_EQUAL(elm[ie].val.db, dbval)) {
                         error("%s: ncvarget1 returned double %g, expected %g", pname, dbval, elm[ie].val.db);
                         nerrs++;
                     }

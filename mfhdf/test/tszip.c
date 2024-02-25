@@ -402,16 +402,16 @@ test_szip_SDSfl32bit()
     char      name[H4_MAX_NC_NAME];
     comp_info c_info;
     int32     start[2], edges[2];
-    float32   fill_value = 0; /* Fill value */
+    float32   fill_value = 0.0F; /* Fill value */
     int       i, j;
     int       num_errs = 0; /* number of errors so far */
     float32   out_data[LENGTH][WIDTH];
     float32   in_data[LENGTH][WIDTH] = {
-        {100.0, 100.0, 200.0, 200.0, 300.0, 400.0}, {100.0, 100.0, 200.0, 200.0, 300.0, 400.0},
-        {100.0, 100.0, 200.0, 200.0, 300.0, 400.0}, {300.0, 300.0, 0.0, 400.0, 300.0, 400.0},
-        {300.0, 300.0, 0.0, 400.0, 300.0, 400.0},   {300.0, 300.0, 0.0, 400.0, 300.0, 400.0},
-        {0.0, 0.0, 600.0, 600.0, 300.0, 400.0},     {500.0, 500.0, 600.0, 600.0, 300.0, 400.0},
-        {0.0, 0.0, 600.0, 600.0, 300.0, 400.0}};
+        {100.0F, 100.0F, 200.0F, 200.0F, 300.0F, 400.0F}, {100.0F, 100.0F, 200.0F, 200.0F, 300.0F, 400.0F},
+        {100.0F, 100.0F, 200.0F, 200.0F, 300.0F, 400.0F}, {300.0F, 300.0F, 0.0F, 400.0F, 300.0F, 400.0F},
+        {300.0F, 300.0F, 0.0F, 400.0F, 300.0F, 400.0F},   {300.0F, 300.0F, 0.0F, 400.0F, 300.0F, 400.0F},
+        {0.0F, 0.0F, 600.0F, 600.0F, 300.0F, 400.0F},     {500.0F, 500.0F, 600.0F, 600.0F, 300.0F, 400.0F},
+        {0.0F, 0.0F, 600.0F, 600.0F, 300.0F, 400.0F}};
 
     /********************* End of variable declaration ***********************/
 
@@ -490,7 +490,7 @@ test_szip_SDSfl32bit()
     /* Compare read data against input data */
     for (j = 0; j < LENGTH; j++) {
         for (i = 0; i < WIDTH; i++)
-            if (out_data[j][i] != in_data[j][i]) {
+            if (!H4_FLT_ABS_EQUAL(out_data[j][i], in_data[j][i])) {
                 fprintf(stderr, "Bogus val in loc [%d][%d] in compressed dset, want %ld got %ld\n", j, i,
                         (long)in_data[j][i], (long)out_data[j][i]);
                 num_errs++;
@@ -608,7 +608,7 @@ test_szip_SDSfl64bit()
     /* Compare read data against input data */
     for (j = 0; j < LENGTH; j++) {
         for (i = 0; i < WIDTH; i++)
-            if (out_data[j][i] != in_data[j][i]) {
+            if (!H4_DBL_ABS_EQUAL(out_data[j][i], in_data[j][i])) {
                 fprintf(stderr, "Bogus val in loc [%d][%d] in compressed dset, want %ld got %ld\n", j, i,
                         (long)in_data[j][i], (long)out_data[j][i]);
                 num_errs++;

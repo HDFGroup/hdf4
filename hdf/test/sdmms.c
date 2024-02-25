@@ -15,7 +15,7 @@
 
 static float32 f32[10][10], tf32[10][10];
 static float32 f32scale[10], tf32scale[10];
-static float32 f32max = (float32)40.0, f32min = (float32)0.0;
+static float32 f32max = 40.0F, f32min = 0.0F;
 static float32 tf32max, tf32min;
 
 static int8 i8[10][10], ti8[10][10];
@@ -234,12 +234,12 @@ test_sdmms(void)
     err2 = 0;
     for (i = 0; i < 10; i++) {
         for (j = 0; j < 10; j++)
-            if (f32[i][j] != tf32[i][j])
+            if (!H4_FLT_ABS_EQUAL(f32[i][j], tf32[i][j]))
                 err = 1;
-        if (f32scale[i] != tf32scale[i])
+        if (!H4_FLT_ABS_EQUAL(f32scale[i], tf32scale[i]))
             err2 = 1;
     }
-    if ((f32max != tf32max) || (f32min != tf32min))
+    if (!H4_FLT_ABS_EQUAL(f32max, tf32max) || !H4_FLT_ABS_EQUAL(f32min, tf32min))
         err1 = 1;
 
     num_errs += err + err1 + err2;
@@ -254,7 +254,8 @@ test_sdmms(void)
     MESSAGE(5, if (err1 == 1) printf(">>> Test failed for float32 max/min.\n");
             else printf("Test passed for float32 max/min.\n"););
 
-    if ((cal1 != ical1) || (cal2 != ical2) || (cal3 != ical3) || (cal4 != ical4) || (cal5 != ical5)) {
+    if (!H4_DBL_ABS_EQUAL(cal1, ical1) || !H4_DBL_ABS_EQUAL(cal2, ical2) || !H4_DBL_ABS_EQUAL(cal3, ical3) ||
+        !H4_DBL_ABS_EQUAL(cal4, ical4) || cal5 != ical5) {
         MESSAGE(5, printf(">>> Test failed for float32 calibration.\n"););
         MESSAGE(5, printf(" Is %f %f %f %f %d\n", ical1, ical2, ical3, ical4, (int)ical5););
         MESSAGE(5, printf(" sld be %f %f %f %f %d\n", cal1, cal2, cal3, cal4, (int)cal5););

@@ -40,10 +40,10 @@
 /* Utility routine that selects that named SDS, then calls SDcheckempty
  * and verifies the returned values. */
 static void
-check_empty_SDS(int32 fid,          /* file id */
-                char *sds_name,     /* name of the inquired SDS */
-                int32 verify_value, /* expected value of 'emptySDS' from SDcheckempty */
-                int  *ret_num_errs /* current number of errors */)
+check_empty_SDS(int32       fid,          /* file id */
+                const char *sds_name,     /* name of the inquired SDS */
+                int32       verify_value, /* expected value of 'emptySDS' from SDcheckempty */
+                int        *ret_num_errs /* current number of errors */)
 {
     int32 sds_id, sds_index, status_32;
     intn  status, emptySDS;
@@ -76,10 +76,10 @@ check_empty_SDS(int32 fid,          /* file id */
  * verify the returned values.  The routine also verifies that SDgetchunkinfo
  * did not fail when the file is opened as read-only (bug HDFFR-171) */
 static void
-check_getchunkinfo(int32 fid,          /* file id */
-                   char *sds_name,     /* name of the inquired SDS */
-                   int32 verify_value, /* expected value of 'flags' from SDgetchunkinfo */
-                   int  *ret_num_errs /* current number of errors */)
+check_getchunkinfo(int32       fid,          /* file id */
+                   const char *sds_name,     /* name of the inquired SDS */
+                   int32       verify_value, /* expected value of 'flags' from SDgetchunkinfo */
+                   int        *ret_num_errs /* current number of errors */)
 {
     int32         sds_id, sds_index;
     HDF_CHUNK_DEF c_def_out; /* Chunking definitions */

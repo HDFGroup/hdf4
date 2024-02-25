@@ -142,12 +142,9 @@ static uint8 chunk6[4] = {120, 121, 122, 123};
 
 /* datay layout of arrays in memory */
 /* for comparison in Test 8 */
-static float32 f32_data[2][3][4] = {{{(float32)0.0, (float32)1.0, (float32)2.0, (float32)3.0},
-                                     {(float32)10.0, (float32)11.0, (float32)12.0, (float32)13.0},
-                                     {(float32)20.0, (float32)21.0, (float32)22.0, (float32)23.0}},
-                                    {{(float32)100.0, (float32)101.0, (float32)102.0, (float32)103.0},
-                                     {(float32)110.0, (float32)111.0, (float32)112.0, (float32)113.0},
-                                     {(float32)120.0, (float32)121.0, (float32)122.0, (float32)123.0}}};
+static float32 f32_data[2][3][4] = {
+    {{0.0F, 1.0F, 2.0F, 3.0F}, {10.0F, 11.0F, 12.0F, 13.0F}, {20.0F, 21.0F, 22.0F, 23.0F}},
+    {{100.0F, 101.0F, 102.0F, 103.0F}, {110.0F, 111.0F, 112.0F, 113.0F}, {120.0F, 121.0F, 122.0F, 123.0F}}};
 
 /* for comparison in Test 7 */
 static uint16 u16_data[2][3][4] = {{{0, 1, 2, 3}, {10, 11, 12, 13}, {20, 21, 22, 23}},
@@ -177,9 +174,9 @@ test_chunks(void)
     HCHUNK_DEF      chunk[1]; /* Chunk definition, see 'hchunks_priv.h' */
     int32           dims[5];
     int32           fill_val_len = 1;
-    uint8           fill_val_u8  = 0;            /* test 6 */
-    uint16          fill_val_u16 = 0;            /* test 7 */
-    float32         fill_val_f32 = (float32)0.0; /* test 8 */
+    uint8           fill_val_u8  = 0;    /* test 6 */
+    uint16          fill_val_u16 = 0;    /* test 7 */
+    float32         fill_val_f32 = 0.0F; /* test 8 */
     uint8           inbuf_u8[2][3][4];
     uint16          inbuf_u16[2][3][4]; /* input data buffer */
     float32         inbuf_f32[2][3][4]; /* input data buffer */
@@ -1356,7 +1353,7 @@ test_chunks(void)
     chunk[0].pdims[2].distrib_type = 0; /* NONE */
 
     fill_val_len = 4;
-    fill_val_f32 = (float32)0.0;
+    fill_val_f32 = 0.0F;
 
     /* Open file for writing last odd size chunks now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
@@ -1422,7 +1419,7 @@ test_chunks(void)
     for (i = 0; i < 2; i++) {
         for (j = 0; j < 3; j++) {
             for (k = 0; k < 4; k++) {
-                if (inbuf_f32[i][j][k] != f32_data[i][j][k]) {
+                if (!H4_FLT_ABS_EQUAL(inbuf_f32[i][j][k], f32_data[i][j][k])) {
                     printf("Wrong data at inbuf_f32[%d][%d][%d], out %f in %f\n", i, j, k,
                            (double)f32_data[i][j][k], (double)inbuf_f32[i][j][k]);
                     errors++;

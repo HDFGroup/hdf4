@@ -466,7 +466,7 @@ main(void)
         num_errs++;
     }
 
-    for (int i = 0; i < 50; i++)
+    for (int16 i = 0; i < 50; i++)
         sdata[i] = i;
 
     /* Write data to dataset 'DataSetBeta' in file 'test2.hdf' */
@@ -484,23 +484,23 @@ main(void)
     CHECK(status, FAIL, "SDreaddata");
 
     /* verify the data values retrieved from 'DataSetAlpha' */
-    if (data[0] != -17.5F) {
+    if (!H4_FLT_ABS_EQUAL(data[0], -17.5F)) {
         fprintf(stderr, "Wrong value returned loc 0: %f\n", (double)data[0]);
         num_errs++;
     }
-    if (data[3] != -17.5F) {
+    if (!H4_FLT_ABS_EQUAL(data[3], -17.5F)) {
         fprintf(stderr, "Wrong value returned loc 3: %f\n", (double)data[3]);
         num_errs++;
     }
-    if (data[5] != 1.0F) {
+    if (!H4_FLT_ABS_EQUAL(data[5], 1.0F)) {
         fprintf(stderr, "Wrong value returned loc 5: %f\n", (double)data[5]);
         num_errs++;
     }
-    if (data[6] != -17.5F) {
+    if (!H4_FLT_ABS_EQUAL(data[6], -17.5F)) {
         fprintf(stderr, "Wrong value returned loc 6: %f\n", (double)data[6]);
         num_errs++;
     }
-    if (data[8] != 4.0F) {
+    if (!H4_FLT_ABS_EQUAL(data[8], 4.0F)) {
         fprintf(stderr, "Wrong value returned loc 8: %f\n", (double)data[8]);
         num_errs++;
     }
@@ -544,22 +544,22 @@ main(void)
     CHECK(status, FAIL, "SDgetcal");
 
     /* Verify calibration data for data set 'DataSetGamma' */
-    if (cal != 1.0) {
+    if (!H4_DBL_ABS_EQUAL(cal, 1.0)) {
         fprintf(stderr, "Wrong calibration info\n");
         num_errs++;
     }
 
-    if (cale != 5.0) {
+    if (!H4_DBL_ABS_EQUAL(cale, 5.0)) {
         fprintf(stderr, "Wrong calibration info\n");
         num_errs++;
     }
 
-    if (ioff != 3.0) {
+    if (!H4_DBL_ABS_EQUAL(ioff, 3.0)) {
         fprintf(stderr, "Wrong calibration info\n");
         num_errs++;
     }
 
-    if (ioffe != 2.5) {
+    if (!H4_DBL_ABS_EQUAL(ioffe, 2.5)) {
         fprintf(stderr, "Wrong calibration info\n");
         num_errs++;
     }

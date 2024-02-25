@@ -15,12 +15,12 @@
 
 static float64 f64[10][10], tf64[10][10];
 static float64 f64scale[10], tf64scale[10];
-static float64 f64max = (float64)40.0, f64min = (float64)0.0;
+static float64 f64max = 40.0, f64min = 0.0;
 static float64 tf64max, tf64min;
 
 static float32 f32[10][10], tf32[10][10];
 static float32 f32scale[10], tf32scale[10];
-static float32 f32max = (float32)40.0, f32min = (float32)0.0;
+static float32 f32max = 40.0F, f32min = 0.0F;
 static float32 tf32max, tf32min;
 
 static int8 i8[10][10], ti8[10][10];
@@ -239,12 +239,12 @@ test_sdnmms(void)
     err2 = 0;
     for (i = 0; i < 10; i++) {
         for (j = 0; j < 10; j++)
-            if (f64[i][j] != tf64[i][j])
+            if (!H4_DBL_ABS_EQUAL(f64[i][j], tf64[i][j]))
                 err = 1;
-        if (f64scale[i] != tf64scale[i])
+        if (!H4_DBL_ABS_EQUAL(f64scale[i], tf64scale[i]))
             err2 = 1;
     }
-    if ((f64max != tf64max) || (f64min != tf64min))
+    if (!H4_DBL_ABS_EQUAL(f64max, tf64max) || !H4_DBL_ABS_EQUAL(f64min, tf64min))
         err1 = 1;
 
     num_errs += err + err1 + err2;
@@ -260,12 +260,12 @@ test_sdnmms(void)
     err2 = 0;
     for (i = 0; i < 10; i++) {
         for (j = 0; j < 10; j++)
-            if (f32[i][j] != tf32[i][j])
+            if (!H4_FLT_ABS_EQUAL(f32[i][j], tf32[i][j]))
                 err = 1;
-        if (f32scale[i] != tf32scale[i])
+        if (!H4_FLT_ABS_EQUAL(f32scale[i], tf32scale[i]))
             err2 = 1;
     }
-    if ((f32max != tf32max) || (f32min != tf32min))
+    if (!H4_FLT_ABS_EQUAL(f32max, tf32max) || !H4_FLT_ABS_EQUAL(f32min, tf32min))
         err1 = 1;
 
     num_errs += err + err1 + err2;

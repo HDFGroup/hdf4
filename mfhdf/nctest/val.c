@@ -172,7 +172,7 @@ val_cmp(nc_type type, long len, void *v1, void *v2)
             gp.fp = (float *)v1;
             hp.fp = (float *)v2;
             for (iel = 0; iel < len; iel++) {
-                if (*gp.fp != *hp.fp)
+                if (!H4_FLT_ABS_EQUAL(*gp.fp, *hp.fp))
                     return (iel + 1);
                 gp.fp++;
                 hp.fp++;
@@ -182,7 +182,7 @@ val_cmp(nc_type type, long len, void *v1, void *v2)
             gp.dp = (double *)v1;
             hp.dp = (double *)v2;
             for (iel = 0; iel < len; iel++) {
-                if (*gp.dp != *hp.dp)
+                if (!H4_DBL_ABS_EQUAL(*gp.dp, *hp.dp))
                     return (iel + 1);
                 gp.dp++;
                 hp.dp++;
