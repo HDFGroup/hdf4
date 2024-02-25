@@ -532,7 +532,7 @@ if (BUILD_TESTING)
 endif ()
 
 #-----------------------------------------------------------------------------
-# Option to build Fortran bindings/tests/examples
+# Option to build Fortran bindings/tests
 # Make sure this appears before the CONFIGURE_FILE step
 # so that fortran name mangling is detected before writing H4config.h
 # NOTE:

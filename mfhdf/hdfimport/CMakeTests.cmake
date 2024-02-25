@@ -86,22 +86,16 @@ endif ()
 ##############################################################################
 ##############################################################################
 
-if (NOT BUILD_SHARED_LIBS)
-  set (tgt_ext "")
-else ()
-  set (tgt_ext "")
-endif ()
-
 macro (ADD_H4_TEST resultfile resultcode testtfile testtype)
   if (NOT ${testtype} STREQUAL "")
     if (${testtype} STREQUAL "N")
-      add_test (NAME HIMPORT-${testtfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfimport${tgt_ext}> ${resultfile} -n -o ${testtfile}.hdf)
+      add_test (NAME HIMPORT-${testtfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfimport> ${resultfile} -n -o ${testtfile}.hdf)
     endif ()
     if (${testtype} STREQUAL "R")
-      add_test (NAME HIMPORT-${testtfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfimport${tgt_ext}> ${resultfile} -o ${testtfile}.hdf -raster ${ARGN})
+      add_test (NAME HIMPORT-${testtfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfimport> ${resultfile} -o ${testtfile}.hdf -raster ${ARGN})
     endif ()
   else ()
-    add_test (NAME HIMPORT-${testtfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfimport${tgt_ext}> ${resultfile} -o ${testtfile}.hdf)
+    add_test (NAME HIMPORT-${testtfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfimport> ${resultfile} -o ${testtfile}.hdf)
   endif ()
   if (NOT "${last_test}" STREQUAL "")
     set_tests_properties (HIMPORT-${testtfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
@@ -110,13 +104,13 @@ macro (ADD_H4_TEST resultfile resultcode testtfile testtype)
   endif ()
 
   if (HDF4_ENABLE_USING_MEMCHECKER)
-    add_test (NAME HIMPORTLS-${testtfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfls${tgt_ext}> -l ${testtfile}.hdf)
+    add_test (NAME HIMPORTLS-${testtfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfls> -l ${testtfile}.hdf)
   else ()
     add_test (
         NAME HIMPORTLS-${testtfile}
         COMMAND "${CMAKE_COMMAND}"
             -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
-            -D "TEST_PROGRAM=$<TARGET_FILE:hdfls${tgt_ext}>"
+            -D "TEST_PROGRAM=$<TARGET_FILE:hdfls>"
             -D "TEST_ARGS:STRING=-l;${testtfile}.hdf"
             -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
             -D "TEST_OUTPUT=${testtfile}.tmp"
@@ -131,7 +125,7 @@ macro (ADD_H4_TEST resultfile resultcode testtfile testtype)
 endmacro ()
 
 macro (ADD_H4_TEST_OUT resultfile resultcode)
-  add_test (NAME HIMPORT-OUT-${resultfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfimport${tgt_ext}> ${resultfile}.hdf -o ${resultfile}.out)
+  add_test (NAME HIMPORT-OUT-${resultfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfimport> ${resultfile}.hdf -o ${resultfile}.out)
   if (NOT "${last_test}" STREQUAL "")
     set_tests_properties (HIMPORT-OUT-${resultfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   else ()
@@ -139,13 +133,13 @@ macro (ADD_H4_TEST_OUT resultfile resultcode)
   endif ()
 
   if (HDF4_ENABLE_USING_MEMCHECKER)
-    add_test (NAME HIMPORTLS-OUT-${resultfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfls${tgt_ext}> ${resultfile}.out)
+    add_test (NAME HIMPORTLS-OUT-${resultfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfls> ${resultfile}.out)
   else ()
     add_test (
         NAME HIMPORTLS-OUT-${resultfile}
         COMMAND "${CMAKE_COMMAND}"
             -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
-            -D "TEST_PROGRAM=$<TARGET_FILE:hdfls${tgt_ext}>"
+            -D "TEST_PROGRAM=$<TARGET_FILE:hdfls>"
             -D "TEST_ARGS:STRING=${resultfile}.out"
             -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
             -D "TEST_OUTPUT=${resultfile}.tmp"
@@ -161,13 +155,13 @@ endmacro ()
 
 macro (ADD_H4_TEST_ED testfile resultfile resultcode)
   if (HDF4_ENABLE_USING_MEMCHECKER)
-    add_test (NAME HIMPORT-EDIT COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfed${tgt_ext}> -batch)
+    add_test (NAME HIMPORT-EDIT COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfed> -batch)
   else ()
     add_test (
         NAME HIMPORT-EDIT
         COMMAND "${CMAKE_COMMAND}"
             -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
-            -D "TEST_PROGRAM=$<TARGET_FILE:hdfed${tgt_ext}>"
+            -D "TEST_PROGRAM=$<TARGET_FILE:hdfed>"
             -D "TEST_ARGS:STRING=-batch"
             -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
             -D "TEST_INPUT=${testfile}"

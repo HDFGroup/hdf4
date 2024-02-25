@@ -140,12 +140,6 @@ add_custom_target(dumper_files ALL COMMENT "Copying files needed by dumper tests
 ##############################################################################
 ##############################################################################
 
-if (NOT BUILD_SHARED_LIBS)
-  set (tgt_ext "")
-else ()
-  set (tgt_ext "")
-endif ()
-
 macro (ADD_H4_TEST resultfile resultcode)
   # Remove any output file left over from previous test run
   add_test (
@@ -159,13 +153,13 @@ macro (ADD_H4_TEST resultfile resultcode)
   endif ()
 
   if (HDF4_ENABLE_USING_MEMCHECKER)
-    add_test (NAME HDP-${resultfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdp${tgt_ext}> ${ARGN})
+    add_test (NAME HDP-${resultfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdp> ${ARGN})
   else ()
     add_test (
         NAME HDP-${resultfile}
         COMMAND "${CMAKE_COMMAND}"
             -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
-            -D "TEST_PROGRAM=$<TARGET_FILE:hdp${tgt_ext}>"
+            -D "TEST_PROGRAM=$<TARGET_FILE:hdp>"
             -D "TEST_ARGS:STRING=${ARGN}"
             -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
             -D "TEST_OUTPUT=${resultfile}.tst"
