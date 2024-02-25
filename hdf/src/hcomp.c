@@ -1387,27 +1387,17 @@ HCget_config_info(comp_coder_t coder_type, /* IN: compression type */
 {
 
     *compression_config_info = 0;
+
     switch (coder_type) {
         case COMP_CODE_IMCOMP: /* IMCOMP no longer supported */
             *compression_config_info = 0;
             break;
-        /* This block doesn't look intentional, for there is no "break;"
-           before case COMP_CODE_RLE:, which means *compression_config_info
-           was reassigned to something else even though it is "case
-           COMP_CODE_NONE:"  When I added "break;" for "case COMP_CODE_NONE:",             some tests failed.
-           It needs to be checked out.-BMR, Jul 16, 2012*/
-        case COMP_CODE_NONE: /* "none" (i.e. no) encoding */
-            *compression_config_info = 0;
+        case COMP_CODE_NONE:    /* "none" (i.e. no) encoding (still uses callbacks) */
         case COMP_CODE_RLE:     /* Run-length encoding */
         case COMP_CODE_NBIT:    /* N-bit encoding */
         case COMP_CODE_SKPHUFF: /* Skipping Huffman encoding */
-            *compression_config_info = COMP_DECODER_ENABLED | COMP_ENCODER_ENABLED;
-            break;
-
-        case COMP_CODE_JPEG: /* jpeg may be optional */
-            *compression_config_info = COMP_DECODER_ENABLED | COMP_ENCODER_ENABLED;
-            break;
-        case COMP_CODE_DEFLATE: /* gzip 'deflate' encoding, maybe optional */
+        case COMP_CODE_JPEG:    /* jpeg compression */
+        case COMP_CODE_DEFLATE: /* gzip 'deflate' encoding */
             *compression_config_info = COMP_DECODER_ENABLED | COMP_ENCODER_ENABLED;
             break;
 
