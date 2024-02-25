@@ -228,6 +228,24 @@ Support for new platforms and compilers
 Bugs fixed since HDF 4.2.16
 ===========================
 
+    - Corrected handling of SDgetcompress()
+
+      SDgetcompress() was deprecated in HDF 4.2.9 (2013) and hidden behind
+      ifdefs controlled by the --enable-deprecated-symbols (Autotools) and
+      HDF4_ENABLE_DEPRECATED_SYMBOLS (CMake) options. These ifdefs were
+      incompletely propagated throughout the library.
+
+      In this release:
+
+      * CMake builds did not expose H4_NO_DEPRECATED_SYMBOLS via
+        h4config.h
+      * The mfhdf.h header now hides the SDgetcompress() call behind an
+        H4_NO_DEPRECATED_SYMBOLS ifdef (pulled in via h4config.h via hdf.h)
+      * The Java wrappers now correctly exclude SDgetcompress() when
+        deprecated symbols are disabled
+      * The libhdf4.settings file now indicates whether HDF4 was built
+        with or without deprecated symbols
+
     - Fix --with-szlib with no paths not detecting the encoder
 
       The --with-szlib option in the Autotools has been broken when used
