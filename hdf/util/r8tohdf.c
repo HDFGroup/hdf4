@@ -33,9 +33,10 @@ int imconv(char *outfile, char *imfile, uint16 compress);
 int
 main(int argc, char *argv[])
 {
-    int    i, is_pal = 0, image = 1;
-    char  *outfile;
-    uint16 compress = (uint16)0;
+    int    is_pal   = 0;
+    int    image    = 1;
+    char  *outfile  = NULL;
+    uint16 compress = 0;
 
     if (argc < 5) {
         printf("%s,  version: 1.1   date: July 1, 1992\n", argv[0]);
@@ -64,7 +65,7 @@ main(int argc, char *argv[])
 
     outfile = argv[3];
 
-    for (i = 4; i < argc; i++) {
+    for (int i = 4; i < argc; i++) {
         if (*argv[i] == '-') {
             switch (argv[i][1]) {
                 case 'p': /* palette */
@@ -104,7 +105,7 @@ main(int argc, char *argv[])
             }
         }
     }
-    return (0);
+    return 0;
 }
 
 /*
@@ -115,22 +116,36 @@ int
 palconv(char *palfile)
 {
     uint8  palspace[1024], reds[256], greens[256], blues[256];
-    uint8 *p;
-    FILE  *fp;
-    int    j, ret;
+    uint8 *p    = NULL;
+    FILE  *fp   = NULL;
+    int    ret  = FAIL;
+    size_t fret = 0;
 
     fp = fopen(palfile, "rb");
     if (fp == NULL) {
         printf(" Error opening palette file %s\n", palfile);
         exit(1);
     }
-    fread(reds, 1, 256, fp);
-    fread(greens, 1, 256, fp);
-    fread(blues, 1, 256, fp);
+
+    fret = fread(reds, 1, 256, fp);
+    if (fret != 256) {
+        printf(" Error reading reds\n");
+        exit(1);
+    }
+    fret = fread(greens, 1, 256, fp);
+    if (fret != 256) {
+        printf(" Error reading greens\n");
+        exit(1);
+    }
+    fret = fread(blues, 1, 256, fp);
+    if (fret != 256) {
+        printf(" Error reading blues\n");
+        exit(1);
+    }
     fclose(fp);
 
     p = palspace;
-    for (j = 0; j < 256; j++) {
+    for (int j = 0; j < 256; j++) {
         *p++ = reds[j];
         *p++ = greens[j];
         *p++ = blues[j];
@@ -141,40 +156,39 @@ palconv(char *palfile)
         printf(" Error: %d, in writing palette %s\n", ret, palfile);
         exit(1);
     }
-    return (0);
+    return 0;
 }
 
 int
 imconv(char *outfile, char *imfile, uint16 compress)
 {
-    int   ret;
-    char *space;
-    FILE *fp;
+    char  *space = NULL;
+    FILE  *fp    = NULL;
+    size_t fret  = 0;
 
     if ((fp = fopen(imfile, "rb")) == NULL) {
         printf("Error opening image file\n");
         exit(1);
     }
 
-    if ((space = (char *)malloc((size_t)(xdim * ydim))) == NULL) {
+    if ((space = (char *)calloc((size_t)(xdim * ydim), sizeof(char))) == NULL) {
         printf("Not enough memory to convert image\n");
         exit(1);
     }
 
-    if ((ret = (int)fread(space, (size_t)xdim, (size_t)ydim, fp)) <= 0) {
-        printf("Cannot read image file\n");
+    fret = fread(space, sizeof(uint8), (size_t)(xdim * ydim), fp);
+    if (fret != (size_t)(xdim * ydim)) {
+        printf("Error reading image file\n");
         fclose(fp);
         exit(1);
     }
 
-    ret = DFR8addimage(outfile, space, xdim, ydim, compress);
-
-    if (ret < 0) {
+    if (DFR8addimage(outfile, space, xdim, ydim, compress) < 0) {
         printf(" Error: %d, in writing image %s\n", HEvalue(1), outfile);
         exit(1);
     }
 
     free(space);
     fclose(fp);
-    return (0);
+    return 0;
 }
