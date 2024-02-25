@@ -32,7 +32,10 @@ fi
 # Figure out GNU C compiler flags
 . $srcdir/config/gnu-flags
 
-# Figure out Intel C compiler flags
+# Figure out Intel oneAPI C compiler flags
+. $srcdir/config/oneapi-flags
+
+# Figure out Intel classic C compiler flags
 . $srcdir/config/intel-flags
 
 # The default compiler is 'f77', which should map to gfortran
