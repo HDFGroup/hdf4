@@ -376,10 +376,10 @@ DFR8setpalette(uint8 *pal)
 
     /* Check if paletteBuf buffer has been allocated */
     if (paletteBuf == NULL) {
-        paletteBuf = (uint8 *)malloc(768 * sizeof(uint8));
+        paletteBuf = (uint8 *)calloc(768, sizeof(uint8));
         if (paletteBuf == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    } /* end if */
+    }
 
     if (!pal) {
         Newpalette                   = -1; /* no palette */
@@ -387,11 +387,12 @@ DFR8setpalette(uint8 *pal)
         Writerig.lut.ref             = 0; /* forget tag/ref of previous palette */
         Writerig.desclut.xdim        = 0;
         Writerig.desclut.ncomponents = 0;
-    }      /* end if */
-    else { /* store palette */
+    }
+    else {
+        /* store palette */
         memcpy(paletteBuf, pal, 768);
         Newpalette = 1;
-    } /* end else */
+    }
 
 done:
     return ret_value;
@@ -447,10 +448,10 @@ DFR8Iputimage(const char *filename, const void *image, int32 xdim, int32 ydim, u
 
     /* Check if Palette buffer has been allocated */
     if (paletteBuf == NULL) {
-        paletteBuf = (uint8 *)malloc(768 * sizeof(uint8));
+        paletteBuf = (uint8 *)calloc(768, sizeof(uint8));
         if (paletteBuf == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    } /* end if */
+    }
 
     pal      = (Newpalette >= 0) ? paletteBuf : NULL;
     acc_mode = append ? DFACC_WRITE : DFACC_CREATE;
@@ -922,7 +923,7 @@ DFR8nimages(const char *filename)
     }
 
     /* Get space to store the image offsets */
-    if ((img_off = (int32 *)malloc(nimages * sizeof(int32))) == NULL)
+    if ((img_off = (int32 *)calloc((size_t)nimages, sizeof(int32))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* go through the RIGs looking for 8-bit images */
@@ -1238,6 +1239,7 @@ DFR8Iopen(const char *filename, intn acc_mode)
 
     /* remember filename, so reopen may be used next time if same file */
     strncpy(Lastfile, filename, DF_MAXFNLEN);
+    Lastfile[DF_MAXFNLEN - 1] = '\0';
 
     ret_value = file_id;
 

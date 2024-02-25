@@ -73,7 +73,8 @@ test_GRgetcomptype()
     /* Initialize the raster image array */
     for (row = 0; row < HEIGHT; row++) {
         for (col = 0; col < WIDTH; col++) {
-            raster[row][col] = row * 10 + col;
+            raster[row][col] =
+                (uint8)(row * 10 + col); /* row and col are too small to overflow an 8-bit int */
         }
     }
 

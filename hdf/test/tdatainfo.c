@@ -1056,7 +1056,7 @@ test_dfr8_24()
         currently, the offsets and lengths are obtained from debugging
         and the command od on the file */
     for (ii = 0; ii < n_images; ii++) {
-        uintn info_count = 0;
+        int info_count = FAIL;
 
         riid = GRselect(grid, ii);
         CHECK_VOID(riid, FAIL, "GRselect");

@@ -1320,10 +1320,10 @@ DESCRIPTION
 int32
 Hwrite(int32 access_id, int32 length, const void *data)
 {
-    filerec_t *file_rec;   /* file record */
-    accrec_t  *access_rec; /* access record */
-    int32      data_len;   /* length of the data we are checking */
-    int32      data_off;   /* offset of the data we are checking */
+    filerec_t *file_rec = NULL; /* file record */
+    accrec_t  *access_rec;      /* access record */
+    int32      data_len;        /* length of the data we are checking */
+    int32      data_off;        /* offset of the data we are checking */
     int32      ret_value = SUCCEED;
 
     /* clear error stack and check validity of access id */
@@ -3286,7 +3286,7 @@ HP_write(filerec_t *file_rec, const void *buf, int32 bytes)
         file_rec->last_op = H4_OP_UNKNOWN;
         if (HPseek(file_rec, file_rec->f_cur_off) == FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
-    } /* end if */
+    }
 
     if (HI_WRITE(file_rec->file, buf, bytes) == FAIL)
         HGOTO_ERROR(DFE_WRITEERROR, FAIL);
