@@ -176,6 +176,7 @@ test_setexternal()
     sd_id = SDstart(EXTTST, DFACC_RDWR);
     CHECK(sd_id, FAIL, "SDstart (again)");
 
+    /* Select the named data set, id is checked by callee */
     sds_id = get_SDSbyName(sd_id, WRAPSDS);
 
     /* Read and verify data via the "wrapper" data set */
@@ -310,7 +311,7 @@ test_getexternal()
      * external file information successfully.
      */
 
-    /* Get access to the data set named EXTSDS */
+    /* Get access to the data set named EXTSDS, id is checked by callee */
     sds_id = get_SDSbyName(sd_id, EXTSDS);
 
     /* Call SDgetexternalfile the first time passing in 0 for external
@@ -384,7 +385,7 @@ test_getexternal()
      * external file information successfully.
      */
 
-    /* Get access to the data set named WRAPSDS */
+    /* Get access to the data set named WRAPSDS, id is checked by callee */
     sds_id = get_SDSbyName(sd_id, WRAPSDS);
 
     /* Call SDgetexternalinfo the first time passing in 0 for external
@@ -416,7 +417,7 @@ test_getexternal()
      * no external file information
      */
 
-    /* Get access to the data set named NOEXTSDS */
+    /* Get access to the data set named NOEXTSDS, id is checked by callee */
     noextsds = get_SDSbyName(sd_id, NOEXTSDS);
 
     /* Call SDgetexternalinfo on the SDS that doesn't have external
@@ -456,6 +457,7 @@ test_mult_setexternal()
 {
     int32 sd_id, sds1_id;
     int32 dim_sizes[3];
+    int32 size_written = 0;
     char *extfile_name = NULL;
     intn  name_len     = 0;
     intn  status       = SUCCEED;
@@ -471,7 +473,9 @@ test_mult_setexternal()
 
     /* Create data set SDS1 and write data to the external file; the returned
        value is the size of the data had been written for this sds */
-    make_Ext3D_SDS(sd_id, SDS1, DFNT_INT32, 3, dim_sizes, (void *)written_data, OFFSET, EXTFILE2);
+    size_written =
+        make_Ext3D_SDS(sd_id, SDS1, DFNT_INT32, 3, dim_sizes, (void *)written_data, OFFSET, EXTFILE2);
+    CHECK(size_written, FAIL, "make_Ext3D_SDS");
 
     /* Close the file to flush */
     status = SDend(sd_id);
@@ -565,7 +569,7 @@ test_special_combos()
     int32 sd_id, sds2_id, sds3_id, sds4_id;
     int32 num_sds = 0, num_attrs = 0;
     int32 ap_start[3], ap_edges[3], dim_sizes[3];
-    int32 sds2_size = 0, sds3_size = 0, sds4_size = 0;
+    int32 sds2_size = 0, sds3_size = 0, sds4_size = 0, size_written = 0;
     intn  status = 0;
     int   ii, jj, kk;
     intn  num_errs = 0; /* number of errors in compression test so far */
@@ -607,7 +611,7 @@ test_special_combos()
     /* Append data to the unlimited-dimension data set SDS2.  This should */
     /* produce a linked-block element, because SDS3 had been written */
     sds2_size = append_Data2SDS(sd_id, SDS2, ap_start, ap_edges, (void *)ap_data);
-    CHECK(status, FAIL, "append_Data2SDS");
+    CHECK(sds2_size, FAIL, "append_Data2SDS");
 
     /* Select the named data set, id is checked by callee */
     sds2_id = get_SDSbyName(sd_id, SDS2);
@@ -624,7 +628,8 @@ test_special_combos()
     CHECK(status, FAIL, "SDsetexternalfile");
 
     /* Verify data size */
-    verify_datasize(sds2_id, sds2_size, SDS2);
+    status = verify_datasize(sds2_id, sds2_size, SDS2);
+    CHECK(status, FAIL, "verify_datasize");
 
     /* Move data of an existing contiguous data set to the external file */
 
@@ -635,7 +640,8 @@ test_special_combos()
     /* tests moving an existing unlimited-dimension data set to external file */
     status = SDsetexternalfile(sds3_id, EXTFILE2, 2500); /* random spot */
     CHECK(status, FAIL, "SDsetexternalfile");
-    verify_datasize(sds3_id, sds3_size, SDS3);
+    status = verify_datasize(sds3_id, sds3_size, SDS3);
+    CHECK(status, FAIL, "verify_datasize");
 
     /* Attempt to move a compressed data set to an external file; should fail */
 
@@ -651,9 +657,12 @@ test_special_combos()
     CHECK(status, FAIL, "SDsetexternalfile");
 
     /* Check the data length of each data set */
-    verify_datasize(sds2_id, sds2_size, SDS2);
-    verify_datasize(sds3_id, sds3_size, SDS3);
-    verify_datasize(sds4_id, sds4_size, SDS4);
+    status = verify_datasize(sds2_id, sds2_size, SDS2);
+    CHECK(status, FAIL, "verify_datasize");
+    status = verify_datasize(sds3_id, sds3_size, SDS3);
+    CHECK(status, FAIL, "verify_datasize");
+    status = verify_datasize(sds4_id, sds4_size, SDS4);
+    CHECK(status, FAIL, "verify_datasize");
 
     status = SDendaccess(sds2_id);
     CHECK(status, FAIL, "SDendaccess SDS2");
@@ -999,12 +1008,12 @@ test_external()
     /* Test HDFFR_1609 fix */
     num_errs = num_errs + test_HDFFR_1609();
 
-    if (num_errs == 0) {
+    if (num_errs == 0)
         PASSED();
-    }
-    else {
+    else
         H4_FAILED();
-    }
+
+    /* Return the number of errors that's been kept track of so far */
     return num_errs;
 }
 

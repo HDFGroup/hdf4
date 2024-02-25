@@ -1631,10 +1631,11 @@ test_datainfo()
     /* Test extendable SDSs */
     num_errs = num_errs + test_extend_SDSs();
 
-    if (num_errs == 0) {
+    if (num_errs == 0)
         PASSED();
-    }
     else
         H4_FAILED();
+
+    /* Return the number of errors that's been kept track of so far */
     return num_errs;
 }

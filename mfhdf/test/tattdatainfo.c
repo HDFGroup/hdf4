@@ -952,5 +952,9 @@ test_att_ann_datainfo()
 
     if (num_errs == 0)
         PASSED();
+    else
+        H4_FAILED();
+
+    /* Return the number of errors that's been kept track of so far */
     return num_errs;
 }

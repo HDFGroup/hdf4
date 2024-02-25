@@ -125,7 +125,8 @@ make_sourcepath(char *src_path, unsigned int size)
     unlimited SDS, then close it.
     (Note: should be modified for more different ranks.)
    Return value:
-        Returns the size of the data that had been written successfully.
+        Returns the size of the data that had been written successfully,
+        of FAIL.
 
 *********************************************************************/
 int32
@@ -177,79 +178,12 @@ make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, 
     free(edges);
     free(start);
 
-    return (sds_size);
-
+    /* Return the size of data being written if no error */
+    if (num_errs == 0)
+        return (sds_size);
+    else
+        return FAIL;
 } /* make_SDS */
-
-/********************************************************************
-   Name: make_CompSDS() - Creates and writes 3D compressed SDS.
-   Description:
-    Calls SDcreate, SDsetcompress, SDwritedata, and SDendaccess to
-    create an SDS with SKPHUFF compression, then close it.
-    (Note: should be modified for different ranks.)
-   Return value:
-        Returns the size of the data that had been written successfully.
-
-*********************************************************************/
-int32
-make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, void *written_data)
-{
-    int32        sds_id;
-    int32       *start, *edges;
-    comp_coder_t comp_type; /* Compression flag */
-    comp_info    c_info;    /* Compression structure */
-    int32        sds_size = 0, count = 0;
-    intn         status   = 0, ii;
-    intn         num_errs = 0; /* number of errors in compression test so far */
-
-    start = (int32 *)malloc(sizeof(int32) * rank);
-    CHECK_ALLOC(start, "start", "make_CompSDS");
-    edges = (int32 *)malloc(sizeof(int32) * rank);
-    CHECK_ALLOC(edges, "edges", "make_CompSDS");
-
-    /* Define dimensions of the array to be created */
-    /* dim_sizes[0] = Z_LENGTH;
-   dim_sizes[1] = Y_LENGTH;
-   dim_sizes[2] = X_LENGTH;
-*/
-
-    /* Create the array with the name defined in SDS_NAME */
-    sds_id = SDcreate(sd_id, sds_name, type, rank, dim_sizes);
-    CHECK(status, FAIL, "SDcreate");
-
-    /* Set compression for the data set */
-    comp_type               = COMP_CODE_SKPHUFF;
-    c_info.skphuff.skp_size = 18;
-    status                  = SDsetcompress(sds_id, comp_type, &c_info);
-    CHECK(status, FAIL, "SDsetcompress");
-
-    /* Set the parameters start and edges to write */
-    for (ii = 0; ii < rank; ii++) {
-        start[ii] = 0;
-        edges[ii] = dim_sizes[ii];
-    }
-
-    /* Write the data */
-    status = SDwritedata(sds_id, start, NULL, edges, written_data);
-    CHECK(status, FAIL, "SDwritedata");
-
-    /* Compute the uncompressed data size, just to have makeCompSDS similar
-       to the other create SDS functions; we don't need to verify the data
-       size because we don't move compressed data to external file */
-    for (ii = 0; ii < rank; ii++) {
-        count = count + dim_sizes[ii];
-    }
-    sds_size = count * DFKNTsize(type);
-
-    /* Terminate access to the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
-
-    free(edges);
-    free(start);
-
-    return (sds_size);
-} /* make_CompSDS */
 
 /********************************************************************
    Name: make_Ext3D_SDS() - Creates and writes a 3D SDS with external data.
@@ -309,7 +243,11 @@ make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_s
     free(edges);
     free(start);
 
-    return sds_size;
+    /* Return the size of data being written if no error */
+    if (num_errs == 0)
+        return (sds_size);
+    else
+        return FAIL;
 } /* make_Ext3D_SDS */
 
 /********************************************************************
@@ -317,7 +255,7 @@ make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_s
    Description:
     Calls SDnametoindex and SDselect to open a data set by its name.
    Return value:
-        Returns the SDS' identifier.
+        Returns the SDS' identifier if successful, or FAIL, otherwise.
 
 *********************************************************************/
 int32
@@ -333,7 +271,7 @@ get_SDSbyName(int32 sd_id, const char *sds_name)
     sds_id = SDselect(sd_id, sds_index);
     CHECK(sds_id, FAIL, "SDselect");
 
-    /* Return the data set id */
+    /* Return the data set id or FAIL */
     return (sds_id);
 
 } /* get_SDSbyName */
@@ -345,7 +283,8 @@ get_SDSbyName(int32 sd_id, const char *sds_name)
     data set, then calls SDwritedata to append data, and SDendaccess
     to close it.
    Return value:
-        Returns the size of the data that had been written successfully.
+        Returns the size of the data that had been written successfully,
+        or FAIL.
 
 *********************************************************************/
 int32
@@ -380,8 +319,11 @@ append_Data2SDS(int32 sd_id, char *sds_name, int32 *start, int32 *edges, void *a
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    /* Return the size of data being written */
-    return (sds_size);
+    /* Return the size of data being written if no error */
+    if (num_errs == 0)
+        return (sds_size);
+    else
+        return FAIL;
 
 } /* append_Data2SDS */
 
@@ -391,10 +333,10 @@ append_Data2SDS(int32 sd_id, char *sds_name, int32 *start, int32 *edges, void *a
     Calls SDgetdatasize then verifies the data size against the
     given data_size and reports if they are different.
    Return value:
-        None.
+        SUCCEED or FAIL
 
 *********************************************************************/
-void
+intn
 verify_datasize(int32 sds_id, int32 data_size, char *sds_name)
 {
     int32 comp_size = 0, uncomp_size = 0;
@@ -408,4 +350,8 @@ verify_datasize(int32 sds_id, int32 data_size, char *sds_name)
     sprintf(msg, "%s on data set %s\n", "SDgetdatasize", sds_name);
     VERIFY(data_size, uncomp_size, msg);
 
+    if (num_errs == 0)
+        return SUCCEED;
+    else
+        return FAIL;
 } /* verify_datasize */
