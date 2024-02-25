@@ -134,8 +134,8 @@ HAinit_group(group_t grp,      /* IN: Group to initialize */
     /* Assertion necessary for faster pointer swapping */
     assert(sizeof(hdf_pint_t) == sizeof(void *));
 
-    /* Ensure hash_size is not zero and a power of two */
-    if (hash_size == 0)
+    /* Ensure hash_size is not zero, positive, and a power of two */
+    if (hash_size <= 0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     if (hash_size & (hash_size - 1))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -145,7 +145,7 @@ HAinit_group(group_t grp,      /* IN: Group to initialize */
         if (grp_ptr == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         atom_group_list[grp] = grp_ptr;
-    }    /* end if */
+    }
     else /* Get the pointer to the existing group */
         grp_ptr = atom_group_list[grp];
 
@@ -153,9 +153,9 @@ HAinit_group(group_t grp,      /* IN: Group to initialize */
         grp_ptr->hash_size = hash_size;
         grp_ptr->atoms     = 0;
         grp_ptr->nextid    = 0;
-        if ((grp_ptr->atom_list = (atom_info_t **)calloc(hash_size, sizeof(atom_info_t *))) == NULL)
+        if ((grp_ptr->atom_list = (atom_info_t **)calloc((size_t)hash_size, sizeof(atom_info_t *))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    } /* end if */
+    }
 
     /* Increment the count of the times this group has been initialized */
     grp_ptr->count++;
