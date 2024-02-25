@@ -18,24 +18,24 @@ load_intel_arguments()
     IFS=' ' echo "$*"
 }
 
-# Get the compiler version in a way that works for icc
-# icc unless a compiler version is already known
+# Get the compiler version in a way that works for icx
+# icx unless a compiler version is already known
 #
-#   cc_vendor:    The compiler name: icc
-#   cc_version:   Version number: 8.0
+#   cc_vendor:    The compiler name: icx
+#   cc_version:   Version number: 2023.2.0
 #
 if test X = "X$cc_flags_set"; then
-    cc_version="`$CC $CFLAGS -V 2>&1 |grep 'Version'`"
+    cc_version="`$CC $CFLAGS -V 2>&1 |grep 'oneAPI'`"
     if test X != "X$cc_version"; then
-        cc_vendor=icc
+        cc_vendor=icx
         cc_version=`echo $cc_version |sed 's/.*Version \([-a-z0-9\.\-]*\).*/\1/'`
-        echo "compiler '$CC' is Intel $cc_vendor-$cc_version"
+        echo "compiler '$CC' is Intel oneAPI $cc_vendor-$cc_version"
 
         # Some version numbers
-        # Intel version numbers are of the form: "major.minor"
+        # Intel oneAPI version numbers are of the form: "major.minor.patch"
         cc_vers_major=`echo $cc_version | cut -f1 -d.`
         cc_vers_minor=`echo $cc_version | cut -f2 -d.`
-        #cc_vers_patch=`echo $cc_version | cut -f2 -d.`
+        cc_vers_patch=`echo $cc_version | cut -f2 -d.`
         test -n "$cc_vers_major" || cc_vers_major=0
         test -n "$cc_vers_minor" || cc_vers_minor=0
         test -n "$cc_vers_patch" || cc_vers_patch=0
@@ -44,13 +44,12 @@ if test X = "X$cc_flags_set"; then
 fi
 
 # Common Intel flags for various situations
-if test "X-icc" = "X-$cc_vendor"; then
+if test "X-icx" = "X-$cc_vendor"; then
 
-    # -diag-disable=10441 disables the icc deprecation message
-    CFLAGS="$CFLAGS -std=c99 -Wall -diag-disable=10441"
+    CFLAGS="$CFLAGS -std=c99 -Wall"
     CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
 
-    DEBUG_CFLAGS="-g"
+    DEBUG_CFLAGS="-g -O0"
     DEBUG_CPPFLAGS=
     PROD_CFLAGS="-O3"
     PROD_CPPFLAGS=
@@ -58,21 +57,7 @@ if test "X-icc" = "X-$cc_vendor"; then
     PROFILE_CPPFLAGS=
 
     # Add various general warning flags in intel-warnings.
-    CFLAGS="$CFLAGS $(load_intel_arguments classic/general)"
-
-    #############################
-    # Version-specific warnings #
-    #############################
-
-    # intel >= 15
-    if test $cc_vers_major -ge 15; then
-        CFLAGS="$CFLAGS $(load_intel_arguments classic/15)"
-    fi
-
-    # intel >= 18
-    if test $cc_vers_major -ge 18; then
-        CFLAGS="$CFLAGS $(load_intel_arguments classic/18)"
-    fi
+    CFLAGS="$CFLAGS $(load_intel_arguments oneapi/general)"
 
     #################
     # Flags are set #
