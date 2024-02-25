@@ -13,8 +13,12 @@
  * them in sync.
  */
 
+#include <float.h>
+#include <math.h>
 #include <stdlib.h>
+
 #include "mfhdf.h"
+
 #define ___      0              /* marker for structure place-holder */
 #define BAD_TYPE NC_UNSPECIFIED /* must be distinct from valid types */
 
@@ -56,5 +60,19 @@ struct netcdf {
 
 /* In-memory netcdf structure, kept in sync with disk netcdf */
 extern struct netcdf *test_g;
+
+/*
+ * Methods to compare the equality of floating-point values:
+ *
+ *    1. H4_XXX_ABS_EQUAL - check if the difference is smaller than the
+ *       Epsilon value.  The Epsilon values, FLT_EPSILON, DBL_EPSILON,
+ *       and LDBL_EPSILON, are defined by compiler in float.h.
+ *
+ *  HDF5 (from whence these macros came) also includes macros that
+ *  use relative error. Those will be brought over only if needed.
+ */
+#define H4_FLT_ABS_EQUAL(X, Y)  (fabsf((X) - (Y)) < FLT_EPSILON)
+#define H4_DBL_ABS_EQUAL(X, Y)  (fabs((X) - (Y)) < DBL_EPSILON)
+#define H4_LDBL_ABS_EQUAL(X, Y) (fabsl((X) - (Y)) < LDBL_EPSILON)
 
 #endif /* NCTEST_TESTCDF_H */

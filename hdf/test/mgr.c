@@ -2398,12 +2398,12 @@ test_mgr_image_b2a2bb(int flag)
                 3,
                 printf("Error reading data for new image with user-defined fill-value, sub-setted image\n"););
 
-            MESSAGE(8,
-                    for (i = 0; i < TEST_YDIM; i++) for (j = 0; j < TEST_XDIM;
-                                                         j++) for (k = 0; k < TEST_NCOMP;
-                                                                   k++) if (image[i][j][k] != image0[i][j][k])
-                        printf("Location: [%d][%d][%d] image=%f, image0=%f \n", i, j, k,
-                               (double)image[i][j][k], (double)image0[i][j][k]););
+            MESSAGE(8, for (i = 0; i < TEST_YDIM;
+                            i++) for (j = 0; j < TEST_XDIM;
+                                      j++) for (k = 0; k < TEST_NCOMP;
+                                                k++) if (!H4_FLT_ABS_EQUAL(image[i][j][k], image0[i][j][k]))
+                           printf("Location: [%d][%d][%d] image=%f, image0=%f \n", i, j, k,
+                                  (double)image[i][j][k], (double)image0[i][j][k]););
             num_errs++;
         } /* end if */
 

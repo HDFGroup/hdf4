@@ -14,10 +14,11 @@
 #ifndef HDFTEST_H
 #define HDFTEST_H
 
+#include <float.h>
+#include <math.h>
 #include <stdio.h>
 
-/*
- * The name of the test is printed by saying TESTING("something") which will
+/* The name of the test is printed by saying TESTING("something") which will
  * result in the string `Testing something' being flushed to standard output.
  * If a test passes, fails, or is skipped then the PASSED(), H4_FAILED(), or
  * SKIPPED() macro should be called.  After H4_FAILED(), the caller
@@ -98,6 +99,20 @@
             exit(1);                                                                                         \
         }                                                                                                    \
     }
+
+/*
+ * Methods to compare the equality of floating-point values:
+ *
+ *    1. H4_XXX_ABS_EQUAL - check if the difference is smaller than the
+ *       Epsilon value.  The Epsilon values, FLT_EPSILON, DBL_EPSILON,
+ *       and LDBL_EPSILON, are defined by compiler in float.h.
+ *
+ *  HDF5 (from whence these macros came) also includes macros that
+ *  use relative error. Those will be brought over only if needed.
+ */
+#define H4_FLT_ABS_EQUAL(X, Y)  (fabsf((X) - (Y)) < FLT_EPSILON)
+#define H4_DBL_ABS_EQUAL(X, Y)  (fabs((X) - (Y)) < DBL_EPSILON)
+#define H4_LDBL_ABS_EQUAL(X, Y) (fabsl((X) - (Y)) < LDBL_EPSILON)
 
 /*************************** Utility Functions ***************************/
 
