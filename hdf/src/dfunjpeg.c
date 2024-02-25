@@ -34,6 +34,7 @@
 
 #include "jpeglib.h"
 #include "jerror.h"
+#include "setjmp.h"
 
 /* Expanded data destination object for HDF input */
 
@@ -53,6 +54,14 @@ typedef struct {
 
 typedef hdf_source_mgr *hdf_src_ptr;
 
+/* JPEG error handling */
+struct hdf_error_mgr {
+    struct jpeg_error_mgr pub;           /* public fields */
+    jmp_buf               setjmp_buffer; /* for returning to caller */
+};
+
+typedef struct hdf_error_mgr *hdf_error_ptr;
+
 #define INPUT_BUF_SIZE 4096 /* size of JPEG input buffer */
 
 /* Prototypes */
@@ -63,6 +72,30 @@ extern void    hdf_term_source(struct jpeg_decompress_struct *cinfo_ptr);
 extern intn    jpeg_HDF_src(struct jpeg_decompress_struct *cinfo_ptr, int32 file_id, uint16 tag, uint16 ref,
                             void *image, int32 xdim, int32 ydim, int16 scheme);
 extern intn    jpeg_HDF_src_term(struct jpeg_decompress_struct *cinfo_ptr);
+void           hdf_error_exit(j_common_ptr cinfo);
+
+/*-----------------------------------------------------------------------------
+ * Name:    hdf_error_exit
+ * Purpose: Replace the standard error_exit method
+ * Inputs:
+ *      cinfo - JPEG decompression part structure ptr
+ * Returns: none.
+ * Users:   JPEG library
+ * Invokes: HDF low-level I/O functions
+ * Remarks: Initializes the JPEG source mgr for further output.
+ *---------------------------------------------------------------------------*/
+void
+hdf_error_exit(j_common_ptr cinfo)
+{
+    /* cinfo->err points to an hdf_error_mgr struct */
+    hdf_error_ptr hdferr = (hdf_error_ptr)cinfo->err;
+
+    /* Display the message */
+    (*cinfo->err->output_message)(cinfo);
+
+    /* Return control to the setjmp point */
+    longjmp(hdferr->setjmp_buffer, 1);
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    hdf_init_source
@@ -309,18 +342,24 @@ DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, void *image, int32 xdim, int32
      * calling routine is the best strategy.
      */
     struct jpeg_decompress_struct *cinfo_ptr;
-    struct jpeg_error_mgr         *jerr_ptr;
+    struct hdf_error_mgr           jerr;
     JDIMENSION                     lines_read;
     JSAMPARRAY                     buffer;
 
     if ((cinfo_ptr = calloc(1, sizeof(struct jpeg_decompress_struct))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    if ((jerr_ptr = malloc(sizeof(struct jpeg_error_mgr))) == NULL)
-        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+    /* Set up the normal JPEG error routines, then override error_exit */
+    cinfo_ptr->err      = jpeg_std_error(&jerr.pub);
+    jerr.pub.error_exit = hdf_error_exit;
 
-    /* Initialize the error-handling routines */
-    cinfo_ptr->err = jpeg_std_error(jerr_ptr);
+    /* Establish the setjmp return context for hdf_error_exit to use */
+    if (setjmp(jerr.setjmp_buffer)) {
+        /* If we get here, the JPEG code has signaled an error.
+           We need to clean up the JPEG object and return */
+        jpeg_destroy_decompress(cinfo_ptr);
+        return -1;
+    }
 
     /* Initialize the JPEG compression stuff */
     jpeg_create_decompress(cinfo_ptr);
@@ -331,7 +370,7 @@ DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, void *image, int32 xdim, int32
     /* Read the JPEG header from the datastream */
     jpeg_read_header(cinfo_ptr, TRUE);
 
-    /* OK, get things started */
+    /* Started decompressing */
     jpeg_start_decompress(cinfo_ptr);
 
     /* read the whole image in */
@@ -352,7 +391,6 @@ DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, void *image, int32 xdim, int32
     jpeg_HDF_src_term(cinfo_ptr);
 
     /* Free update memory allocated */
-    free(jerr_ptr);
     free(cinfo_ptr);
 
     return SUCCEED; /* we must be ok... */
