@@ -60,18 +60,13 @@ static int32 HCIcszip_term(compinfo_t *info);
 
  DESCRIPTION
     Common code called by HCIcszip_staccess and HCIcszip_seek
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcszip_init(accrec_t *access_rec)
 {
     compinfo_t             *info;      /* special element information */
     comp_coder_szip_info_t *szip_info; /* ptr to SZIP info */
-    intn                    ret_value = SUCCEED;
+    int                     ret_value = SUCCEED;
 
 #ifdef H4_HAVE_LIBSZ
     /* Sanity check to make certain that we haven't drifted out of date with
@@ -120,11 +115,6 @@ done:
 
  DESCRIPTION
     Common code called to decode SZIP data from the file.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
@@ -182,7 +172,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
             old_way    = 1;
             good_bytes = in_length;
             in_length  = in_length + 5;
-            if ((in_buffer = (uint8 *)malloc(in_length)) == NULL)
+            if ((in_buffer = (uint8 *)malloc((size_t)in_length)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
             cp  = in_buffer;
             *cp = 0;
@@ -192,7 +182,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
         else {
             /*  V4.2r1: in_length is correct */
             old_way = 0;
-            if ((in_buffer = (uint8 *)malloc(in_length)) == NULL)
+            if ((in_buffer = (uint8 *)malloc((size_t)in_length)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
         }
 
@@ -202,7 +192,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
             bytes_per_pixel++;
 
         out_length = szip_info->pixels * bytes_per_pixel;
-        if ((out_buffer = (uint8 *)malloc(out_length)) == NULL)
+        if ((out_buffer = (uint8 *)malloc((size_t)out_length)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
         /* Read the unompressed data */
@@ -241,20 +231,20 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
         if (in_buffer[0] == 1) {
             /* This byte means the data was not compressed -- just copy out */
             szip_info->szip_state = SZIP_RUN;
-            memcpy(out_buffer, in_buffer + 5, good_bytes);
+            memcpy(out_buffer, in_buffer + 5, (size_t)good_bytes);
             szip_info->buffer      = out_buffer;
             szip_info->buffer_pos  = 0;
             szip_info->buffer_size = good_bytes;
             szip_info->offset      = 0;
             if (good_bytes > length) {
                 /* partial read */
-                memcpy(buf, in_buffer + 5, length);
+                memcpy(buf, in_buffer + 5, (size_t)length);
                 szip_info->buffer_pos += length;
                 szip_info->buffer_size -= length;
             }
             else {
                 /* read the whole data block to the user buffer */
-                memcpy(buf, in_buffer + 5, good_bytes);
+                memcpy(buf, in_buffer + 5, (size_t)good_bytes);
                 szip_info->buffer_pos += good_bytes;
                 szip_info->buffer_size -= good_bytes;
             }
@@ -274,9 +264,9 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
         sz_param.bits_per_pixel      = szip_info->bits_per_pixel;
         sz_param.pixels_per_block    = szip_info->pixels_per_block;
         sz_param.pixels_per_scanline = szip_info->pixels_per_scanline;
-        size_out                     = out_length;
-        if (SZ_OK != (status = SZ_BufftoBuffDecompress(out_buffer, &size_out, (in_buffer + 5), good_bytes,
-                                                       &sz_param))) {
+        size_out                     = (size_t)out_length;
+        if (SZ_OK != (status = SZ_BufftoBuffDecompress(out_buffer, &size_out, (in_buffer + 5),
+                                                       (size_t)good_bytes, &sz_param))) {
             free(out_buffer);
             free(in_buffer);
             HRETURN_ERROR(DFE_CDECODE, FAIL);
@@ -304,7 +294,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
         return FAIL;
     }
 
-    memcpy(buf, szip_info->buffer + szip_info->buffer_pos, length);
+    memcpy(buf, szip_info->buffer + szip_info->buffer_pos, (size_t)length);
     szip_info->buffer_pos += length;
     szip_info->buffer_size -= length;
     szip_info->offset = szip_info->buffer_pos;
@@ -341,11 +331,6 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
 
  DESCRIPTION
     Common code called to encode SZIP data into a file.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
@@ -366,7 +351,7 @@ HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
             bytes_per_pixel = 4;
 
         buffer_size = szip_info->pixels * bytes_per_pixel;
-        if ((szip_info->buffer = malloc(buffer_size)) == NULL)
+        if ((szip_info->buffer = malloc((size_t)buffer_size)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
         szip_info->buffer_size = buffer_size;
@@ -375,7 +360,7 @@ HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
     }
 
     /* copy the data into the buffer.  This will be written in 'term' function */
-    memcpy(szip_info->buffer + szip_info->buffer_pos, buf, length);
+    memcpy(szip_info->buffer + szip_info->buffer_pos, buf, (size_t)length);
     szip_info->buffer_pos += length;
     szip_info->buffer_size -= length;
     szip_info->offset     = szip_info->buffer_pos;
@@ -406,11 +391,6 @@ HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
 
  DESCRIPTION
     Common code called to flush SZIP data into a file.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcszip_term(compinfo_t *info)
@@ -481,7 +461,7 @@ HCIcszip_term(compinfo_t *info)
        but there isn't any way to prevent it from getting here */
     if (out_buffer_size < 1024)
         out_buffer_size = 1024;
-    if ((out_buffer = malloc(out_buffer_size)) == NULL)
+    if ((out_buffer = malloc((size_t)out_buffer_size)) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     /* set params */
@@ -489,11 +469,11 @@ HCIcszip_term(compinfo_t *info)
     sz_param.bits_per_pixel      = szip_info->bits_per_pixel;
     sz_param.pixels_per_block    = szip_info->pixels_per_block;
     sz_param.pixels_per_scanline = szip_info->pixels_per_scanline;
-    size_out                     = out_buffer_size - 5;
+    size_out                     = (size_t)out_buffer_size - 5;
 
     *out_buffer = 0;
     if (SZ_OK != (status = SZ_BufftoBuffCompress((out_buffer + 5), &size_out, szip_info->buffer,
-                                                 szip_info->buffer_pos, &sz_param))) {
+                                                 (size_t)szip_info->buffer_pos, &sz_param))) {
         /* Compression Failed.  Analyse several cases, and clean up the mess */
         if ((int32)size_out > out_buffer_size) {
             /* Should never happen */
@@ -507,7 +487,7 @@ HCIcszip_term(compinfo_t *info)
             cp          = out_buffer;
             cp++;
             INT32ENCODE(cp, szip_info->buffer_pos);
-            memcpy((out_buffer + 5), szip_info->buffer, szip_info->buffer_pos);
+            memcpy((out_buffer + 5), szip_info->buffer, (size_t)szip_info->buffer_pos);
             free(out_buffer);
             szip_info->szip_dirty = SZIP_CLEAN;
 
@@ -540,7 +520,7 @@ HCIcszip_term(compinfo_t *info)
         cp          = out_buffer;
         cp++;
         INT32ENCODE(cp, szip_info->buffer_pos);
-        memcpy((out_buffer + 5), szip_info->buffer, szip_info->buffer_pos);
+        memcpy((out_buffer + 5), szip_info->buffer, (size_t)szip_info->buffer_pos);
         Hwrite(info->aid, (szip_info->buffer_pos + 5), out_buffer);
         szip_info->szip_dirty = SZIP_CLEAN;
         free(out_buffer);
@@ -556,7 +536,7 @@ HCIcszip_term(compinfo_t *info)
         /* need to have enough data to overwrite the existing data */
         /* allocate a buffer, fill in the good data. The rest must be
             zeroes */
-        if ((ob = malloc(current_size)) == NULL)
+        if ((ob = malloc((size_t)current_size)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
         *ob = 0; /* data needs to be decompressed */
         cp  = ob;
@@ -579,7 +559,7 @@ HCIcszip_term(compinfo_t *info)
     cp          = out_buffer;
     cp++;
     INT32ENCODE(cp, size_out); /* whole buffer needs to be decompressed */
-    status = Hwrite(info->aid, size_out + 5, out_buffer);
+    status = Hwrite(info->aid, (int32)size_out + 5, out_buffer);
 
     szip_info->szip_dirty = SZIP_CLEAN;
     if (szip_info->buffer_size == 0) {
@@ -612,11 +592,6 @@ HCIcszip_term(compinfo_t *info)
 
  DESCRIPTION
     Common code called by HCIcszip_stread and HCIcszip_stwrite
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcszip_staccess(accrec_t *access_rec, int16 acc_mode)
@@ -634,9 +609,9 @@ HCIcszip_staccess(accrec_t *access_rec, int16 acc_mode)
         info->aid = Hstartaccess(access_rec->file_id, DFTAG_COMPRESSED, info->comp_ref,
                                  DFACC_RDWR | DFACC_APPENDABLE);
     }
-#else  /* H4_HAVE_SZIP_ENCODER */
+#else
         HRETURN_ERROR(DFE_DENIED, FAIL);
-#endif /* H4_HAVE_SZIP_ENCODER */
+#endif
 
     if (info->aid == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
@@ -657,11 +632,6 @@ HCIcszip_staccess(accrec_t *access_rec, int16 acc_mode)
 
  DESCRIPTION
     Start read access on a compressed data element using a simple SZIP scheme.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcszip_stread(accrec_t *access_rec)
@@ -686,11 +656,6 @@ HCPcszip_stread(accrec_t *access_rec)
 
  DESCRIPTION
     Start write access on a compressed data element using a simple SZIP scheme.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcszip_stwrite(accrec_t *access_rec)
@@ -710,7 +675,7 @@ HCPcszip_stwrite(accrec_t *access_rec)
     int32 HCPcszip_seek(access_rec,offset,origin)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 offset;       IN: the offset in bytes from the origin specified
-    intn origin;        IN: the origin to seek from [UNUSED!]
+    int origin;        IN: the origin to seek from [UNUSED!]
 
  RETURNS
     Returns SUCCEED or FAIL
@@ -720,13 +685,6 @@ HCPcszip_stwrite(accrec_t *access_rec)
     calculations have been taken care of at a higher level, it is an
     un-used parameter.  The 'offset' is used as an absolute offset
     because of this.
-
-    COMMENT:
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcszip_seek(accrec_t *access_rec, int32 offset, int origin)
@@ -786,11 +744,6 @@ HCPcszip_seek(accrec_t *access_rec, int32 offset, int origin)
 
  DESCRIPTION
     Read in a number of bytes from a SZIP compressed data element.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcszip_read(accrec_t *access_rec, int32 length, void *data)
@@ -820,11 +773,6 @@ HCPcszip_read(accrec_t *access_rec, int32 length, void *data)
 
  DESCRIPTION
     Write out a number of bytes to a SZIP compressed data element.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcszip_write(accrec_t *access_rec, int32 length, const void *data)
@@ -881,11 +829,6 @@ HCPcszip_write(accrec_t *access_rec, int32 length, const void *data)
  DESCRIPTION
     Inquire information about the access record and data element.
     [Currently a NOP].
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcszip_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
@@ -917,13 +860,8 @@ HCPcszip_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pr
 
  DESCRIPTION
     Close the compressed data element and free encoding info.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 HCPcszip_endaccess(accrec_t *access_rec)
 {
     compinfo_t             *info;      /* special element information */
@@ -950,7 +888,7 @@ HCPcszip_endaccess(accrec_t *access_rec)
     HCPsetup_szip_parms -- Initialize SZIP parameters
 
  USAGE
-    intn HCPsetup_szip_parms( comp_info *c_info, int32 nt, int32 ndims, int32 *dims, int32 *cdims)
+    int HCPsetup_szip_parms( comp_info *c_info, int32 nt, int32 ndims, int32 *dims, int32 *cdims)
     comp_info *c_info;    IN/OUT: the szip compression params
     int32 nt;             IN: the number type of the data
     int32 ncomp;          IN: components in GR, 1 for SD
@@ -969,13 +907,8 @@ HCPcszip_endaccess(accrec_t *access_rec)
        bits_per_pixel
 
     This is called from GRsetup_szip_parms and SDsetup_szip_parms
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 HCPsetup_szip_parms(comp_info *c_info, int32 nt, int32 ncomp, int32 ndims, int32 *dims, int32 *cdims)
 {
 #ifdef H4_HAVE_SZIP_ENCODER
@@ -983,7 +916,7 @@ HCPsetup_szip_parms(comp_info *c_info, int32 nt, int32 ncomp, int32 ndims, int32
     int32 npoints;
     int32 sz;
     int   i;
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     if (ndims <= 0) {
         ret_value = FAIL;
@@ -1064,7 +997,7 @@ done:
     HCPrm_szip_special_bit -- Removes the special bit that signals szip revised format
 
  USAGE
-    intn HCPrm_szip_special_bit(comp_info *c_info)
+    int HCPrm_szip_special_bit(comp_info *c_info)
     comp_info *c_info;    IN/OUT: the szip compression params
 
  RETURNS
@@ -1081,7 +1014,7 @@ done:
     This is used in SDgetcompinfo and GRgetcompinfo.
 
 --------------------------------------------------------------------------*/
-intn
+int
 HCPrm_szip_special_bit(comp_info *c_info)
 {
     int sz_newway = 0; /* indicates the special bit presents in the options_mask */

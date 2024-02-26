@@ -71,21 +71,16 @@ static int32 HCIcnbit_term(compinfo_t *info);
 
  DESCRIPTION
     Common code called by HCIcnbit_staccess and HCIcnbit_seek
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcnbit_init(accrec_t *access_rec)
 {
     compinfo_t             *info;               /* special element information */
     comp_coder_nbit_info_t *nbit_info;          /* ptr to N-bit info */
-    intn                    bits;               /* number of bits in number type */
-    intn                    top_bit, bot_bit;   /* bits around a range of bytes */
-    intn                    mask_top, mask_bot; /* top and bottom bits in mask */
-    intn                    i;                  /* local counting variable */
+    int                     bits;               /* number of bits in number type */
+    int                     top_bit, bot_bit;   /* bits around a range of bytes */
+    int                     mask_top, mask_bot; /* top and bottom bits in mask */
+    int                     i;                  /* local counting variable */
 
     info = (compinfo_t *)access_rec->special_info;
     if (Hbitseek(info->aid, 0, 0) == FAIL) /* seek to beginning of element */
@@ -97,7 +92,7 @@ HCIcnbit_init(accrec_t *access_rec)
     nbit_info->buf_pos = NBIT_BUF_SIZE; /* start at the beginning of the buffer */
     nbit_info->nt_pos  = 0;             /* start at beginning of the NT info */
     nbit_info->offset  = 0;             /* offset into the file */
-    memset(nbit_info->mask_buf, (nbit_info->fill_one == TRUE ? 0xff : 0), nbit_info->nt_size);
+    memset(nbit_info->mask_buf, (nbit_info->fill_one == TRUE ? 0xff : 0), (size_t)nbit_info->nt_size);
 
     bits     = nbit_info->nt_size * 8; /* compute # of bits */
     mask_top = nbit_info->mask_off;    /* compute top and bottom ends of mask */
@@ -169,11 +164,6 @@ HCIcnbit_init(accrec_t *access_rec)
 
  DESCRIPTION
     Common code called to decode n-bit data from the file.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf)
@@ -183,14 +173,14 @@ HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf)
     uint32                  input_bits;  /* bits read from the file */
     uint32                  sign_mask,   /* mask to get the sign bit */
         sign_ext_mask;                   /* mask for sign extension */
-    intn sign_byte,                      /* byte which contains the sign bit */
+    int sign_byte,                       /* byte which contains the sign bit */
         sign_bit = 0;                    /* the sign bit from the n_bit data */
     nbit_mask_info_t *mask_info;         /* ptr to the mask info */
-    intn              copy_length;       /* number of bytes to copy */
-    intn              buf_size,          /* size of the expansion buffer to use */
+    int               copy_length;       /* number of bytes to copy */
+    int               buf_size,          /* size of the expansion buffer to use */
         buf_items;                       /* number of items which will fit into expansion buffer */
     uint8 *rbuf, *rbuf2;                 /* pointer into the n-bit read buffer */
-    intn   i, j;                         /* local counting variable */
+    int    i, j;                         /* local counting variable */
 
     /* get a local ptr to the nbit info for convenience */
     nbit_info = &(info->cinfo.coder_info.nbit_info);
@@ -223,8 +213,8 @@ HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf)
                             *rbuf2 |= (uint8)(mask_info->mask & (uint8)input_bits);
                             if (j == sign_byte) /* check if this is the sign byte */
                                 sign_bit = sign_mask & input_bits ? 1 : 0;
-                        } /* end if */
-                    }     /* end for */
+                        }
+                    }
 
                     /* we only have to sign extend if the sign is not the same */
                     /* as the bit we are filling the n-bit data with */
@@ -234,16 +224,16 @@ HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf)
                             for (j = 0; j < sign_byte; j++, rbuf2++)
                                 *rbuf2 = 0xff;
                             *rbuf2 |= (uint8)sign_ext_mask;
-                        }      /* end if */
+                        }
                         else { /* fill with zeroes */
                             for (j = 0; j < sign_byte; j++, rbuf2++)
                                 *rbuf2 = 0x00;
                             *rbuf2 &= (uint8)~sign_ext_mask;
-                        }                       /* end else */
-                    }                           /* end if */
+                        }
+                    }
                     rbuf += nbit_info->nt_size; /* increment buffer ptr */
-                }                               /* end if */
-                else {                          /* no sign extension */
+                }
+                else { /* no sign extension */
                     for (j = 0; j < nbit_info->nt_size; j++, mask_info++, rbuf++) {
                         if (mask_info->length > 0) { /* check if we need to read bits */
                             if (Hbitread(info->aid, mask_info->length, &input_bits) != mask_info->length)
@@ -251,18 +241,18 @@ HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf)
                             *rbuf |=
                                 (uint8)(mask_info->mask &
                                         (uint8)(input_bits << ((mask_info->offset - mask_info->length) + 1)));
-                        } /* end if */
-                    }     /* end for */
-                }         /* end else */
-            }             /* end for */
+                        }
+                    }
+                }
+            }
 
             nbit_info->buf_pos = 0; /* reset buffer position */
-        }                           /* end if */
+        }
 
         copy_length =
-            (intn)((length > (buf_size - nbit_info->buf_pos)) ? (buf_size - nbit_info->buf_pos) : length);
+            (int)((length > (buf_size - nbit_info->buf_pos)) ? (buf_size - nbit_info->buf_pos) : length);
 
-        memcpy(buf, &(nbit_info->buffer[nbit_info->buf_pos]), copy_length);
+        memcpy(buf, &(nbit_info->buffer[nbit_info->buf_pos]), (size_t)copy_length);
 
         buf += copy_length;
         length -= copy_length;
@@ -288,11 +278,6 @@ HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf)
 
  DESCRIPTION
     Common code called to encode n-bit data into a file.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcnbit_encode(compinfo_t *info, int32 length, const uint8 *buf)
@@ -314,7 +299,7 @@ HCIcnbit_encode(compinfo_t *info, int32 length, const uint8 *buf)
             output_bits =
                 (uint32)(((*buf) & (mask_info->mask)) >> ((mask_info->offset - mask_info->length) + 1));
             Hbitwrite(info->aid, mask_info->length, output_bits);
-        } /* end if */
+        }
 
         /* advance to the next mask position */
         mask_info++;
@@ -342,11 +327,6 @@ HCIcnbit_encode(compinfo_t *info, int32 length, const uint8 *buf)
 
  DESCRIPTION
     Common code called to flush n-bit data into a file.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcnbit_term(compinfo_t *info)
@@ -370,11 +350,6 @@ HCIcnbit_term(compinfo_t *info)
 
  DESCRIPTION
     Common code called by HCIcnbit_stread and HCIcnbit_stwrite
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcnbit_staccess(accrec_t *access_rec, int16 acc_mode)
@@ -408,11 +383,6 @@ HCIcnbit_staccess(accrec_t *access_rec, int16 acc_mode)
 
  DESCRIPTION
     Start read access on a compressed data element using a simple RLE scheme.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcnbit_stread(accrec_t *access_rec)
@@ -437,11 +407,6 @@ HCPcnbit_stread(accrec_t *access_rec)
 
  DESCRIPTION
     Start write access on a compressed data element using a simple RLE scheme.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcnbit_stwrite(accrec_t *access_rec)
@@ -461,7 +426,7 @@ HCPcnbit_stwrite(accrec_t *access_rec)
     int32 HCPcnbit_seek(access_rec,offset,origin)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 offset;       IN: the offset in bytes from the origin specified
-    intn origin;        IN: the origin to seek from [UNUSED!]
+    int  origin;        IN: the origin to seek from [UNUSED!]
 
  RETURNS
     Returns SUCCEED or FAIL
@@ -471,11 +436,6 @@ HCPcnbit_stwrite(accrec_t *access_rec)
     calculations have been taken care of at a higher level, it is an
     un-used parameter.  The 'offset' is used as an absolute offset
     because of this.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcnbit_seek(accrec_t *access_rec, int32 offset, int origin)
@@ -495,7 +455,7 @@ HCPcnbit_seek(accrec_t *access_rec, int32 offset, int origin)
 
     bit_offset = (offset / nbit_info->nt_size) * nbit_info->mask_len;
 
-    if (Hbitseek(info->aid, bit_offset / 8, (intn)(bit_offset % 8)) == FAIL)
+    if (Hbitseek(info->aid, bit_offset / 8, (int)(bit_offset % 8)) == FAIL)
         HRETURN_ERROR(DFE_CSEEK, FAIL);
 
     nbit_info->buf_pos = NBIT_BUF_SIZE; /* force re-read if writing */
@@ -520,11 +480,6 @@ HCPcnbit_seek(accrec_t *access_rec, int32 offset, int origin)
 
  DESCRIPTION
     Read in a number of bytes from a RLE compressed data element.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcnbit_read(accrec_t *access_rec, int32 length, void *data)
@@ -554,11 +509,6 @@ HCPcnbit_read(accrec_t *access_rec, int32 length, void *data)
 
  DESCRIPTION
     Write out a number of bytes to a RLE compressed data element.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcnbit_write(accrec_t *access_rec, int32 length, const void *data)
@@ -596,11 +546,6 @@ HCPcnbit_write(accrec_t *access_rec, int32 length, const void *data)
  DESCRIPTION
     Inquire information about the access record and data element.
     [Currently a NOP].
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcnbit_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
@@ -624,7 +569,7 @@ HCPcnbit_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pr
     HCPcnbit_endaccess -- Close the compressed data element
 
  USAGE
-    intn HCPnbit_endaccess(access_rec)
+    int HCPnbit_endaccess(access_rec)
     accrec_t *access_rec;   IN: the access record of the data element
 
  RETURNS
@@ -632,13 +577,8 @@ HCPcnbit_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pr
 
  DESCRIPTION
     Close the compressed data element and free modelling info.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 HCPcnbit_endaccess(accrec_t *access_rec)
 {
     compinfo_t *info; /* special element information */

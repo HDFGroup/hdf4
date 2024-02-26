@@ -85,15 +85,15 @@ val_diff(nc_type type, void *v, int ii, long val) /* v[ii] != val */
     switch (type) {
         case NC_BYTE:
         case NC_CHAR:
-            return ((char *)v)[ii] != (char)val;
+            return (((char *)v)[ii] != (char)val);
         case NC_SHORT:
-            return ((short *)v)[ii] != (short)val;
+            return (((short *)v)[ii] != (short)val);
         case NC_LONG:
-            return ((nclong *)v)[ii] != (nclong)val;
+            return (((nclong *)v)[ii] != (nclong)val);
         case NC_FLOAT:
-            return H4_FLT_ABS_EQUAL(((float *)v)[ii], (float)val);
+            return (((float *)v)[ii] != (float)val);
         case NC_DOUBLE:
-            return H4_DBL_ABS_EQUAL(((double *)v)[ii], (double)val);
+            return (((double *)v)[ii] != (double)val);
         default:
             error("%s: bad type, test program error", pname);
             return (-1);
