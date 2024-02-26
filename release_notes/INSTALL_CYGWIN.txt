@@ -94,7 +94,7 @@ Build, Test and Install HDF4 on Cygwin
 
    The HDF4 source code can be obtained from:  
 
-      https://portal.hdfgroup.org/display/support/Download+HDF4
+      https://portal.hdfgroup.org/downloads/index.html
 
    Please note that HDF no longer provides precompiled binaries for Cygwin.
 
