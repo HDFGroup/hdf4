@@ -38,6 +38,9 @@ fi
 # Figure out Clang C compiler flags
 . $srcdir/config/clang-flags
 
+# Figure out NVHPC C compiler flags
+. $srcdir/config/nvidia-flags
+
 # Use default Fortran compiler according to what C compiler is used.
 if test "X-$F77" = "X-"; then
   F77=gfortran
@@ -87,6 +90,15 @@ case $CC in
     *gcc*)
         cc_version_info=`$CC $CFLAGS $H4_CFLAGS --version 2>&1 | grep -v 'PathScale' |\
             grep 'GCC' | sed 's/\(.*(GCC) [-a-z0-9\. ]*\).*/\1/'`
+        ;;
+
+    *nvc*)
+        cc_version_info=`$CC $CFLAGS $H4_CFLAGS -V 2>&1 | grep 'nvc'`
+        ;;
+
+    *icx*)
+        cc_version_info=`$CC $CCFLAGS $H4_CCFLAGS -V 2>&1 | grep 'Version' |\
+            sed 's/\(Intel.* Compiler\).*\( Version [a-z0-9\.]*\).*\( Build [0-9]*\)/\1\2\3/'`
         ;;
 
     *icc*)

@@ -1,0 +1,57 @@
+#                                                   -*- shell-script -*-
+#
+# This file is part of the HDF4 build script. It is processed shortly
+# after configure starts and defines, among other things, flags for
+# the various compilation modes.
+
+#
+
+# Get the compiler version in a way that works for nvc
+# unless a compiler version is already known
+#
+#   cc_vendor:    The compiler name: nvc
+#   cc_version:   Version number: 5.0-2, 5.2-2
+#
+if test X = "X$cc_flags_set"; then
+    cc_version="`$CC $CFLAGS -V 2>&1 |grep '^nvc '`"
+    if test X != "X$cc_version"; then
+        cc_vendor=`echo $cc_version |sed 's/\([a-z]*\).*/\1/'`
+        cc_version=`echo $cc_version |sed 's/nvc \([-a-z0-9\.\-]*\).*/\1/'`
+        echo "compiler '$CC' is NVIDIA $cc_vendor-$cc_version"
+
+        # Some version numbers
+        # NVIDIA version numbers are of the form: "major.minor-patch"
+        cc_vers_major=`echo $cc_version | cut -f1 -d.`
+        cc_vers_minor=`echo $cc_version | cut -f2 -d. | cut -f1 -d-`
+        cc_vers_patch=`echo $cc_version | cut -f2 -d. | cut -f2 -d-`
+        test -n "$cc_vers_major" || cc_vers_major=0
+        test -n "$cc_vers_minor" || cc_vers_minor=0
+        test -n "$cc_vers_patch" || cc_vers_patch=0
+        cc_vers_all=`expr $cc_vers_major '*' 1000000 + $cc_vers_minor '*' 1000 + $cc_vers_patch`
+    fi
+fi
+
+# Common NVIDIA flags for various situations
+if test "X-nvc" = "X-$cc_vendor" -o "X-nvcc" = "X-$cc_vendor"; then
+    # Default to C99 standard.
+    CFLAGS="$CFLAGS $arch -c99 -Minform=warn"
+
+    DEBUG_CFLAGS="-g -Mbounds"
+    DEBUG_CPPFLAGS=
+    #PROD_CFLAGS="-fast"
+    PROD_CFLAGS=""           # -fast implies -O2 and -O2+ currently has test failures.
+    PROD_CPPFLAGS=
+    PROFILE_CFLAGS="-Mprof=func,line"
+    PROFILE_CPPFLAGS=
+
+    #################
+    # Flags are set #
+    #################
+    cc_flags_set=yes
+fi
+
+# Clear cc info if no flags set
+if test "X-$cc_flags_set" = "X-"; then
+    cc_vendor=
+    cc_version=
+fi
