@@ -263,21 +263,21 @@ test_count()
     return num_errs;
 }
 
-#define FILE1   "test1.hdf"
-#define FILE2   "test2.hdf"
-#define DSALPHA "DataSetAlpha"
-#define DSBETA  "DataSetBeta"
-#define DSGAMMA "DataSetGamma"
-#define DSBOGUS "BogusDataSet"
-#define MYDIM   "MyDim"
-#define DIMATTRCHAR "DimensionAttribute Char"
+#define FILE1        "test1.hdf"
+#define FILE2        "test2.hdf"
+#define DSALPHA      "DataSetAlpha"
+#define DSBETA       "DataSetBeta"
+#define DSGAMMA      "DataSetGamma"
+#define DSBOGUS      "BogusDataSet"
+#define MYDIM        "MyDim"
+#define DIMATTRCHAR  "DimensionAttribute Char"
 #define DIMATTRFLOAT "DimensionAttribute Float"
-#define DIMATTRINT "DimensionAttribute Integer"
-#define DIMATTRUINT "DimensionAttribute Unsigned Integer"
-#define DIMLABEL "TheLabel"
-#define DIMUNIT "TheUnits"
-#define DIMFORMAT "TheFormat"
-#define DIMCOORD "TheCordsys"
+#define DIMATTRINT   "DimensionAttribute Integer"
+#define DIMATTRUINT  "DimensionAttribute Unsigned Integer"
+#define DIMLABEL     "TheLabel"
+#define DIMUNIT      "TheUnits"
+#define DIMFORMAT    "TheFormat"
+#define DIMCOORD     "TheCordsys"
 
 static intn
 test_attribute_ops()
@@ -412,7 +412,8 @@ test_attribute_ops()
     /* Compare retrieved values for scale */
     for (int i = 0; i < 4; i++) {
         if (idata[i] != scale[i]) {
-            fprintf(stderr, "SDreaddata() returned %ld, not %ld in location %d\n", (long)idata[i], (long)scale[i], i);
+            fprintf(stderr, "SDreaddata() returned %ld, not %ld in location %d\n", (long)idata[i],
+                    (long)scale[i], i);
             num_errs++;
         }
     }
