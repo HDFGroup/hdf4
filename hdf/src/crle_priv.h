@@ -57,12 +57,12 @@
 
 /* RLE [en|de]coding information */
 typedef struct {
-    int32 offset;               /* offset in the file */
-    uint8 buffer[RLE_BUF_SIZE]; /* buffer for storing RLE bytes */
-    intn  buf_length;           /* number of bytes in buffer */
-    intn  buf_pos;              /* offset into the buffer */
-    uintn last_byte,            /* the last byte stored in the buffer */
-        second_byte;            /* the second to last byte stored in the buffer */
+    int32    offset;               /* offset in the file */
+    uint8    buffer[RLE_BUF_SIZE]; /* buffer for storing RLE bytes */
+    int      buf_length;           /* number of bytes in buffer */
+    int      buf_pos;              /* offset into the buffer */
+    unsigned last_byte;            /* the last byte stored in the buffer */
+    unsigned second_byte;          /* the second to last byte stored in the buffer */
     enum {
         RLE_INIT, /* initial state, need to read a byte to
                      determine the next state */
@@ -95,7 +95,7 @@ HDFLIBAPI int32 HCPcrle_read(accrec_t *access_rec, int32 length, void *data);
 
 HDFLIBAPI int32 HCPcrle_write(accrec_t *access_rec, int32 length, const void *data);
 
-HDFLIBAPI intn HCPcrle_endaccess(accrec_t *access_rec);
+HDFLIBAPI int HCPcrle_endaccess(accrec_t *access_rec);
 
 #ifdef __cplusplus
 }

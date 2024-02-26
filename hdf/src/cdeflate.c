@@ -55,11 +55,6 @@ static int32 HCIcdeflate_init(compinfo_t *info);
 
  DESCRIPTION
     Common code called by HCIcdeflate_staccess and HCIcdeflate_seek
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcdeflate_init(compinfo_t *info)
@@ -100,11 +95,6 @@ HCIcdeflate_init(compinfo_t *info)
 
  DESCRIPTION
     Common code called to decode gzip 'deflated' data from the file.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcdeflate_decode(compinfo_t *info, int32 length, uint8 *buf)
@@ -160,28 +150,23 @@ HCIcdeflate_decode(compinfo_t *info, int32 length, uint8 *buf)
     int32 HCIcdeflate_encode(info,length,buf)
     compinfo_t *info;   IN: the info about the compressed element
     int32 length;       IN: number of bytes to store from the buffer
-    uint8 *buf;         OUT: buffer to get the bytes from
+    const void *buf;    IN: buffer to encode
 
  RETURNS
     Returns SUCCEED or FAIL
 
  DESCRIPTION
     Common code called to encode gzip 'deflated' data into a file.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
-HCIcdeflate_encode(compinfo_t *info, int32 length, void *buf)
+HCIcdeflate_encode(compinfo_t *info, int32 length, const void *buf)
 {
     comp_coder_deflate_info_t *deflate_info; /* ptr to skipping Huffman info */
 
     deflate_info = &(info->cinfo.coder_info.deflate_info);
 
     /* Set up the deflation buffers to point to the user's buffer to empty */
-    deflate_info->deflate_context.next_in  = buf;
+    deflate_info->deflate_context.next_in  = (void *)buf;
     deflate_info->deflate_context.avail_in = (uInt)length;
     while (deflate_info->deflate_context.avail_in > 0 || deflate_info->deflate_context.avail_out == 0) {
         /* Write more bytes from the file, if we've filled our buffer */
@@ -198,7 +183,7 @@ HCIcdeflate_encode(compinfo_t *info, int32 length, void *buf)
         if (deflate(&(deflate_info->deflate_context), Z_NO_FLUSH) != Z_OK) {
             HRETURN_ERROR(DFE_CENCODE, FAIL);
         }
-    }                               /* end while */
+    }
     deflate_info->offset += length; /* incr. abs. offset into the file */
 
     return length;
@@ -211,7 +196,7 @@ HCIcdeflate_encode(compinfo_t *info, int32 length, void *buf)
  USAGE
     int32 HCIcdeflate_term(info,acc_mode)
     compinfo_t *info;   IN: the info about the compressed element
-    uint32 acc_mode;    IN: the access mode the data element was opened with
+    int16  acc_mode;    IN: the access mode the data element was opened with
 
  RETURNS
     Returns SUCCEED or FAIL
@@ -225,7 +210,7 @@ HCIcdeflate_encode(compinfo_t *info, int32 length, void *buf)
  REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
-HCIcdeflate_term(compinfo_t *info, uint32 acc_mode)
+HCIcdeflate_term(compinfo_t *info, int16 acc_mode)
 {
     comp_coder_deflate_info_t *deflate_info; /* ptr to deflation info */
 
@@ -288,11 +273,6 @@ HCIcdeflate_term(compinfo_t *info, uint32 acc_mode)
 
  DESCRIPTION
     Common code called by HCIcdeflate_stread and HCIcdeflate_stwrite
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcdeflate_staccess(accrec_t *access_rec, int16 acc_mode)
@@ -345,11 +325,6 @@ HCIcdeflate_staccess(accrec_t *access_rec, int16 acc_mode)
 
  DESCRIPTION
     Common code called by HCIcdeflate_stread and HCIcdeflate_stwrite
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcdeflate_staccess2(accrec_t *access_rec, int16 acc_mode)
@@ -402,11 +377,6 @@ HCIcdeflate_staccess2(accrec_t *access_rec, int16 acc_mode)
 
  DESCRIPTION
     Start read access on a compressed data element using the deflate scheme.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcdeflate_stread(accrec_t *access_rec)
@@ -430,11 +400,6 @@ HCPcdeflate_stread(accrec_t *access_rec)
 
  DESCRIPTION
     Start write access on a compressed data element using the deflate scheme.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcdeflate_stwrite(accrec_t *access_rec)
@@ -463,11 +428,6 @@ HCPcdeflate_stwrite(accrec_t *access_rec)
     calculations have been taken care of at a higher level, it is an
     un-used parameter.  The 'offset' is used as an absolute offset
     because of this.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcdeflate_seek(accrec_t *access_rec, int32 offset, int origin)
@@ -543,11 +503,6 @@ done:
 
  DESCRIPTION
     Read in a number of bytes from the deflate compressed data element.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcdeflate_read(accrec_t *access_rec, int32 length, void *data)
@@ -594,11 +549,6 @@ HCPcdeflate_read(accrec_t *access_rec, int32 length, void *data)
 
  DESCRIPTION
     Write out a number of bytes to the deflate compressed data element.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcdeflate_write(accrec_t *access_rec, int32 length, const void *data)
@@ -630,7 +580,7 @@ HCPcdeflate_write(accrec_t *access_rec, int32 length, const void *data)
             HRETURN_ERROR(DFE_SEEKERROR, FAIL);
     } /* end if */
 
-    if ((length = HCIcdeflate_encode(info, length, (void *)data)) == FAIL)
+    if ((length = HCIcdeflate_encode(info, length, data)) == FAIL)
         HRETURN_ERROR(DFE_CENCODE, FAIL);
 
     return length;
@@ -659,11 +609,6 @@ HCPcdeflate_write(accrec_t *access_rec, int32 length, const void *data)
  DESCRIPTION
     Inquire information about the access record and data element.
     [Currently a NOP].
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcdeflate_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
@@ -695,11 +640,6 @@ HCPcdeflate_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 
 
  DESCRIPTION
     Close the compressed data element and free encoding info.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 intn
 HCPcdeflate_endaccess(accrec_t *access_rec)

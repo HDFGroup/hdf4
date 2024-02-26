@@ -79,10 +79,10 @@ typedef struct atom_info_struct_tag {
 
 /* Atom group structure used */
 typedef struct atom_group_struct_tag {
-    uintn         count;     /* # of times this group has been initialized */
-    intn          hash_size; /* size of the hash table to store the atoms in */
-    uintn         atoms;     /* current number of atoms held */
-    uintn         nextid;    /* atom ID to use for the next atom */
+    unsigned      count;     /* # of times this group has been initialized */
+    int           hash_size; /* size of the hash table to store the atoms in */
+    unsigned      atoms;     /* current number of atoms held */
+    unsigned      nextid;    /* atom ID to use for the next atom */
     atom_info_t **atom_list; /* pointer to an array of ptrs to atoms */
 } atom_group_t;
 
@@ -119,13 +119,13 @@ static void HAIrelease_atom_node(atom_info_t *atm);
     Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
-intn
+int
 HAinit_group(group_t grp,      /* IN: Group to initialize */
-             intn    hash_size /* IN: Minimum hash table size to use for group */
+             int     hash_size /* IN: Minimum hash table size to use for group */
 )
 {
     atom_group_t *grp_ptr   = NULL; /* ptr to the atomic group */
-    intn          ret_value = SUCCEED;
+    int           ret_value = SUCCEED;
 
     HEclear();
     if ((grp <= BADGROUP || grp >= MAXGROUP) && hash_size > 0)
@@ -134,8 +134,8 @@ HAinit_group(group_t grp,      /* IN: Group to initialize */
     /* Assertion necessary for faster pointer swapping */
     assert(sizeof(hdf_pint_t) == sizeof(void *));
 
-    /* Ensure hash_size is not zero and a power of two */
-    if (hash_size == 0)
+    /* Ensure hash_size is not zero, positive, and a power of two */
+    if (hash_size <= 0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     if (hash_size & (hash_size - 1))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -145,7 +145,7 @@ HAinit_group(group_t grp,      /* IN: Group to initialize */
         if (grp_ptr == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         atom_group_list[grp] = grp_ptr;
-    }    /* end if */
+    }
     else /* Get the pointer to the existing group */
         grp_ptr = atom_group_list[grp];
 
@@ -153,9 +153,9 @@ HAinit_group(group_t grp,      /* IN: Group to initialize */
         grp_ptr->hash_size = hash_size;
         grp_ptr->atoms     = 0;
         grp_ptr->nextid    = 0;
-        if ((grp_ptr->atom_list = (atom_info_t **)calloc(hash_size, sizeof(atom_info_t *))) == NULL)
+        if ((grp_ptr->atom_list = (atom_info_t **)calloc((size_t)hash_size, sizeof(atom_info_t *))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    } /* end if */
+    }
 
     /* Increment the count of the times this group has been initialized */
     grp_ptr->count++;
@@ -185,12 +185,12 @@ done:
     Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
-intn
+int
 HAdestroy_group(group_t grp /* IN: Group to destroy */
 )
 {
     atom_group_t *grp_ptr   = NULL; /* ptr to the atomic group */
-    intn          ret_value = SUCCEED;
+    int           ret_value = SUCCEED;
 
     HEclear();
     if (grp <= BADGROUP || grp >= MAXGROUP)
@@ -202,16 +202,16 @@ HAdestroy_group(group_t grp /* IN: Group to destroy */
 
     /* Decrement the number of users of the atomic group */
     if ((--(grp_ptr->count)) == 0) {
-        uintn i;
+        unsigned i;
 
         for (i = 0; i < ATOM_CACHE_SIZE; i++)
             if (ATOM_TO_GROUP(atom_id_cache[i]) == grp) {
                 atom_id_cache[i]  = (-1);
                 atom_obj_cache[i] = NULL;
-            } /* end if */
+            }
         free(grp_ptr->atom_list);
         grp_ptr->atom_list = NULL;
-    } /* end if */
+    }
 
 done:
     return ret_value;
@@ -241,7 +241,7 @@ HAregister_atom(group_t grp,   /* IN: Group to register the object in */
     atom_group_t *grp_ptr = NULL; /* ptr to the atomic group */
     atom_info_t  *atm_ptr = NULL; /* ptr to the new atom */
     atom_t        atm_id;         /* new atom ID */
-    uintn         hash_loc;       /* new item's hash table location */
+    unsigned      hash_loc;       /* new item's hash table location */
     atom_t        ret_value = SUCCEED;
 
     HEclear();
@@ -262,7 +262,7 @@ HAregister_atom(group_t grp,   /* IN: Group to register the object in */
     atm_ptr->next    = NULL;
 
     /* hash bucket already full, prepend to front of chain */
-    hash_loc = grp_ptr->nextid % (uintn)grp_ptr->hash_size;
+    hash_loc = grp_ptr->nextid % (unsigned)grp_ptr->hash_size;
     if (grp_ptr->atom_list[hash_loc] != NULL)
         atm_ptr->next = grp_ptr->atom_list[hash_loc];
 
@@ -350,13 +350,12 @@ void *
 HAremove_atom(atom_t atm /* IN: Atom to remove */
 )
 {
-    atom_group_t *grp_ptr = NULL; /* ptr to the atomic group */
-    atom_info_t  *curr_atm,       /* ptr to the current atom */
-        *last_atm;                /* ptr to the last atom */
-    group_t grp;                  /* atom's atomic group */
-    uintn   hash_loc;             /* atom's hash table location */
-    uintn   i;                    /* local counting variable */
-    void   *ret_value = NULL;
+    atom_group_t *grp_ptr  = NULL; /* ptr to the atomic group */
+    atom_info_t  *curr_atm = NULL; /* ptr to the current atom */
+    atom_info_t  *last_atm = NULL; /* ptr to the last atom */
+    group_t       grp;             /* atom's atomic group */
+    unsigned      hash_loc;        /* atom's hash table location */
+    void         *ret_value = NULL;
 
     HEclear();
     grp = ATOM_TO_GROUP(atm);
@@ -368,7 +367,7 @@ HAremove_atom(atom_t atm /* IN: Atom to remove */
         HGOTO_ERROR(DFE_INTERNAL, NULL);
 
     /* Get the location in which the atom is located */
-    hash_loc = (uintn)ATOM_TO_LOC(atm, grp_ptr->hash_size);
+    hash_loc = (unsigned)ATOM_TO_LOC(atm, grp_ptr->hash_size);
     curr_atm = grp_ptr->atom_list[hash_loc];
     if (curr_atm == NULL)
         HGOTO_ERROR(DFE_INTERNAL, NULL);
@@ -379,7 +378,7 @@ HAremove_atom(atom_t atm /* IN: Atom to remove */
             break;
         last_atm = curr_atm;
         curr_atm = curr_atm->next;
-    } /* end while */
+    }
 
     if (curr_atm != NULL) {
         if (last_atm == NULL) /* atom is the first the chain */
@@ -388,12 +387,12 @@ HAremove_atom(atom_t atm /* IN: Atom to remove */
             last_atm->next = curr_atm->next;
         ret_value = curr_atm->obj_ptr;
         HAIrelease_atom_node(curr_atm);
-    }    /* end if */
+    }
     else /* couldn't find the atom in the proper place */
         HGOTO_ERROR(DFE_INTERNAL, NULL);
 
     /* Delete object from cache */
-    for (i = 0; i < ATOM_CACHE_SIZE; i++)
+    for (int i = 0; i < ATOM_CACHE_SIZE; i++)
         if (atom_id_cache[i] == atm) {
             atom_id_cache[i]  = (-1);
             atom_obj_cache[i] = NULL;
@@ -427,9 +426,8 @@ HAsearch_atom(group_t         grp,  /* IN: Group to search for the object in */
               const void     *key   /* IN: pointer to key to compare against */
 )
 {
-    atom_group_t *grp_ptr = NULL; /* ptr to the atomic group */
-    atom_info_t  *atm_ptr = NULL; /* ptr to the new atom */
-    intn          i;              /* local counting variable */
+    atom_group_t *grp_ptr   = NULL; /* ptr to the atomic group */
+    atom_info_t  *atm_ptr   = NULL; /* ptr to the new atom */
     void         *ret_value = NULL;
 
     HEclear();
@@ -441,14 +439,14 @@ HAsearch_atom(group_t         grp,  /* IN: Group to search for the object in */
         HGOTO_ERROR(DFE_INTERNAL, NULL);
 
     /* Start at the beginning of the array */
-    for (i = 0; i < grp_ptr->hash_size; i++) {
+    for (int i = 0; i < grp_ptr->hash_size; i++) {
         atm_ptr = grp_ptr->atom_list[i];
         while (atm_ptr != NULL) {
             if ((*func)(atm_ptr->obj_ptr, key))
                 HGOTO_DONE(atm_ptr->obj_ptr); /* found the item we are looking for */
             atm_ptr = atm_ptr->next;
-        } /* end while */
-    }     /* end for */
+        }
+    }
 
 done:
     return ret_value;
@@ -472,7 +470,7 @@ HAIfind_atom(atom_t atm /* IN: Atom to retrieve atom for */
     atom_group_t *grp_ptr = NULL; /* ptr to the atomic group */
     atom_info_t  *atm_ptr = NULL; /* ptr to the new atom */
     group_t       grp;            /* atom's atomic group */
-    uintn         hash_loc;       /* atom's hash table location */
+    unsigned      hash_loc;       /* atom's hash table location */
     atom_info_t  *ret_value = NULL;
 
     HEclear();
@@ -485,7 +483,7 @@ HAIfind_atom(atom_t atm /* IN: Atom to retrieve atom for */
         HGOTO_ERROR(DFE_INTERNAL, NULL);
 
     /* Get the location in which the atom is located */
-    hash_loc = (uintn)ATOM_TO_LOC(atm, grp_ptr->hash_size);
+    hash_loc = (unsigned)ATOM_TO_LOC(atm, grp_ptr->hash_size);
     atm_ptr  = grp_ptr->atom_list[hash_loc];
     if (atm_ptr == NULL)
         HGOTO_ERROR(DFE_INTERNAL, NULL);
@@ -494,7 +492,7 @@ HAIfind_atom(atom_t atm /* IN: Atom to retrieve atom for */
         if (atm_ptr->id == atm)
             break;
         atm_ptr = atm_ptr->next;
-    } /* end while */
+    }
 
     if (atm_ptr) {
         /* if found, add it to the end of the cached list */
@@ -529,11 +527,11 @@ HAIget_atom_node(void)
     if (atom_free_list != NULL) {
         ret_value      = atom_free_list;
         atom_free_list = atom_free_list->next;
-    } /* end if */
+    }
     else {
         if ((ret_value = (atom_info_t *)malloc(sizeof(atom_info_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
-    } /* end else */
+    }
 
 done:
     return ret_value;
@@ -564,22 +562,18 @@ HAIrelease_atom_node(atom_info_t *atm)
  PURPOSE
     Terminate various static buffers.
  USAGE
-    intn HAshutdown()
+    int HAshutdown()
  RETURNS
     Returns SUCCEED/FAIL
  DESCRIPTION
     Free various buffers allocated in the HA routines.
- GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
     Should only ever be called by the "atexit" function HDFend
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 HAshutdown(void)
 {
     atom_info_t *curr;
-    intn         i;
 
     /* Release the free-list if it exists */
     if (atom_free_list != NULL) {
@@ -587,14 +581,14 @@ HAshutdown(void)
             curr           = atom_free_list;
             atom_free_list = atom_free_list->next;
             free(curr);
-        } /* end while */
-    }     /* end if */
+        }
+    }
 
-    for (i = 0; i < (intn)MAXGROUP; i++)
+    for (int i = 0; i < (int)MAXGROUP; i++)
         if (atom_group_list[i] != NULL) {
             free(atom_group_list[i]->atom_list);
             free(atom_group_list[i]);
             atom_group_list[i] = NULL;
-        } /* end if */
+        }
     return SUCCEED;
 } /* end HAshutdown() */

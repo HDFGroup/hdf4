@@ -64,11 +64,6 @@ static int32 HCIcrle_term(compinfo_t *info);
 
  DESCRIPTION
     Common code called by HCIcrle_staccess and HCIcrle_seek
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcrle_init(accrec_t *access_rec)
@@ -83,11 +78,11 @@ HCIcrle_init(accrec_t *access_rec)
     rle_info = &(info->cinfo.coder_info.rle_info);
 
     /* Initialize RLE state information */
-    rle_info->rle_state   = RLE_INIT;       /* start in initial state */
-    rle_info->buf_pos     = 0;              /* start at the beginning of the buffer */
-    rle_info->last_byte   = (uintn)RLE_NIL; /* start with no code in the last byte */
-    rle_info->second_byte = (uintn)RLE_NIL; /* start with no code here too */
-    rle_info->offset      = 0;              /* offset into the file */
+    rle_info->rle_state   = RLE_INIT;          /* start in initial state */
+    rle_info->buf_pos     = 0;                 /* start at the beginning of the buffer */
+    rle_info->last_byte   = (unsigned)RLE_NIL; /* start with no code in the last byte */
+    rle_info->second_byte = (unsigned)RLE_NIL; /* start with no code here too */
+    rle_info->offset      = 0;                 /* offset into the file */
 
     return SUCCEED;
 } /* end HCIcrle_init() */
@@ -107,19 +102,14 @@ HCIcrle_init(accrec_t *access_rec)
 
  DESCRIPTION
     Common code called to decode RLE data from the file.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcrle_decode(compinfo_t *info, int32 length, uint8 *buf)
 {
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
     int32                  orig_length; /* original length to read */
-    uintn                  dec_len;     /* length to decode */
-    intn                   c;           /* character to hold a byte read in */
+    unsigned               dec_len;     /* length to decode */
+    int                    c;           /* character to hold a byte read in */
 
     rle_info = &(info->cinfo.coder_info.rle_info);
 
@@ -131,32 +121,32 @@ HCIcrle_decode(compinfo_t *info, int32 length, uint8 *buf)
             if (c & RUN_MASK) {                                        /* run byte */
                 rle_info->rle_state  = RLE_RUN;                        /* set to run state */
                 rle_info->buf_length = (c & COUNT_MASK) + RLE_MIN_RUN; /* run length */
-                if ((rle_info->last_byte = (uintn)HDgetc(info->aid)) == (uintn)FAIL)
+                if ((rle_info->last_byte = (unsigned)HDgetc(info->aid)) == (unsigned)FAIL)
                     HRETURN_ERROR(DFE_READERROR, FAIL);
-            }                                                          /* end if */
+            }
             else {                                                     /* mix byte */
                 rle_info->rle_state  = RLE_MIX;                        /* set to mix state */
                 rle_info->buf_length = (c & COUNT_MASK) + RLE_MIN_MIX; /* mix length */
                 if (Hread(info->aid, rle_info->buf_length, rle_info->buffer) == FAIL)
                     HRETURN_ERROR(DFE_READERROR, FAIL);
                 rle_info->buf_pos = 0;
-            } /* end else */
-        }     /* end if */
+            }
+        }
 
         /* RUN or MIX states */
         if (length > rle_info->buf_length) /* still need more data */
-            dec_len = (uintn)rle_info->buf_length;
+            dec_len = (unsigned)rle_info->buf_length;
         else /* only grab "length" bytes */
-            dec_len = (uintn)length;
+            dec_len = (unsigned)length;
 
         if (rle_info->rle_state == RLE_RUN)
-            memset(buf, rle_info->last_byte, dec_len); /* copy the run */
+            memset(buf, (int)rle_info->last_byte, dec_len); /* copy the run */
         else {
             memcpy(buf, &(rle_info->buffer[rle_info->buf_pos]), dec_len);
-            rle_info->buf_pos += (intn)dec_len;
-        } /* end else */
+            rle_info->buf_pos += (int)dec_len;
+        }
 
-        rle_info->buf_length -= (intn)dec_len;
+        rle_info->buf_length -= (int)dec_len;
         if (rle_info->buf_length <= 0)      /* check for running out of bytes */
             rle_info->rle_state = RLE_INIT; /* get the next status byte */
         length -= (int32)dec_len;           /* decrement the bytes to get */
@@ -182,18 +172,13 @@ HCIcrle_decode(compinfo_t *info, int32 length, uint8 *buf)
 
  DESCRIPTION
     Common code called to encode RLE data into a file.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcrle_encode(compinfo_t *info, int32 length, const uint8 *buf)
 {
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
     int32                  orig_length; /* original length to write */
-    intn                   c;           /* character to hold a byte read in */
+    int                    c;           /* character to hold a byte read in */
 
     rle_info = &(info->cinfo.coder_info.rle_info);
 
@@ -202,7 +187,7 @@ HCIcrle_encode(compinfo_t *info, int32 length, const uint8 *buf)
         switch (rle_info->rle_state) {
             case RLE_INIT:                      /* initial encoding state */
                 rle_info->rle_state  = RLE_MIX; /* shift to MIX state */
-                rle_info->last_byte  = (uintn)(rle_info->buffer[0] = *buf);
+                rle_info->last_byte  = (unsigned)(rle_info->buffer[0] = *buf);
                 rle_info->buf_length = 1;
                 rle_info->buf_pos    = 1;
                 buf++;
@@ -211,17 +196,17 @@ HCIcrle_encode(compinfo_t *info, int32 length, const uint8 *buf)
 
             case RLE_RUN:
                 /* check for end of run */
-                if ((uintn)*buf != rle_info->last_byte) {
+                if ((unsigned)*buf != rle_info->last_byte) {
                     rle_info->rle_state = RLE_MIX;
                     c                   = RUN_MASK | (rle_info->buf_length - RLE_MIN_RUN);
                     if (HDputc((uint8)c, info->aid) == FAIL)
                         HRETURN_ERROR(DFE_WRITEERROR, FAIL);
                     if (HDputc((uint8)rle_info->last_byte, info->aid) == FAIL)
                         HRETURN_ERROR(DFE_WRITEERROR, FAIL);
-                    rle_info->last_byte  = (uintn)(rle_info->buffer[0] = *buf);
+                    rle_info->last_byte  = (unsigned)(rle_info->buffer[0] = *buf);
                     rle_info->buf_length = 1;
                     rle_info->buf_pos    = 1;
-                }      /* end if */
+                }
                 else { /* run is continuing */
                     rle_info->buf_length++;
                     if (rle_info->buf_length >= RLE_MAX_RUN) { /* check for too long */
@@ -231,16 +216,16 @@ HCIcrle_encode(compinfo_t *info, int32 length, const uint8 *buf)
                         if (HDputc((uint8)rle_info->last_byte, info->aid) == FAIL)
                             HRETURN_ERROR(DFE_WRITEERROR, FAIL);
                         rle_info->rle_state   = RLE_INIT;
-                        rle_info->second_byte = rle_info->last_byte = (uintn)RLE_NIL;
-                    } /* end if */
-                }     /* end else */
+                        rle_info->second_byte = rle_info->last_byte = (unsigned)RLE_NIL;
+                    }
+                }
                 buf++;
                 length--;
                 break;
 
             case RLE_MIX: /* mixed bunch of bytes */
                 /* check for run */
-                if ((uintn)*buf == rle_info->last_byte && (uintn)*buf == rle_info->second_byte) {
+                if ((unsigned)*buf == rle_info->last_byte && (unsigned)*buf == rle_info->second_byte) {
                     rle_info->rle_state = RLE_RUN;                  /* shift to RUN state */
                     if (rle_info->buf_length > (RLE_MIN_RUN - 1)) { /* check for mixed data to write */
                         if (HDputc((uint8)((rle_info->buf_length - RLE_MIN_MIX) - (RLE_MIN_RUN - 1)),
@@ -249,12 +234,13 @@ HCIcrle_encode(compinfo_t *info, int32 length, const uint8 *buf)
                         if (Hwrite(info->aid, (rle_info->buf_length - (RLE_MIN_RUN - 1)), rle_info->buffer) ==
                             FAIL)
                             HRETURN_ERROR(DFE_WRITEERROR, FAIL);
-                    } /* end if */
+                    }
                     rle_info->buf_length = RLE_MIN_RUN;
-                }      /* end if */
-                else { /* continue MIX */
+                }
+                else {
+                    /* continue MIX */
                     rle_info->second_byte = rle_info->last_byte;
-                    rle_info->last_byte   = (uintn)(rle_info->buffer[rle_info->buf_pos] = *buf);
+                    rle_info->last_byte   = (unsigned)(rle_info->buffer[rle_info->buf_pos] = *buf);
                     rle_info->buf_length++;
                     rle_info->buf_pos++;
                     if (rle_info->buf_length >= RLE_BUF_SIZE) { /* check for too long */
@@ -263,17 +249,17 @@ HCIcrle_encode(compinfo_t *info, int32 length, const uint8 *buf)
                         if (Hwrite(info->aid, rle_info->buf_length, rle_info->buffer) == FAIL)
                             HRETURN_ERROR(DFE_WRITEERROR, FAIL);
                         rle_info->rle_state   = RLE_INIT;
-                        rle_info->second_byte = rle_info->last_byte = (uintn)RLE_NIL;
-                    } /* end if */
-                }     /* end else */
+                        rle_info->second_byte = rle_info->last_byte = (unsigned)RLE_NIL;
+                    }
+                }
                 buf++;
                 length--;
                 break;
 
             default:
                 HRETURN_ERROR(DFE_INTERNAL, FAIL);
-        } /* end switch */
-    }     /* end while */
+        }
+    }
 
     rle_info->offset += orig_length; /* incr. abs. offset into the file */
     return SUCCEED;
@@ -292,17 +278,12 @@ HCIcrle_encode(compinfo_t *info, int32 length, const uint8 *buf)
 
  DESCRIPTION
     Common code called to flush RLE data into a file.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcrle_term(compinfo_t *info)
 {
     comp_coder_rle_info_t *rle_info; /* ptr to RLE info */
-    intn                   c;        /* character to hold a byte read in */
+    int                    c;        /* character to hold a byte read in */
 
     rle_info = &(info->cinfo.coder_info.rle_info);
 
@@ -324,9 +305,9 @@ HCIcrle_term(compinfo_t *info)
 
         default:
             HRETURN_ERROR(DFE_INTERNAL, FAIL);
-    } /* end switch */
+    }
     rle_info->rle_state   = RLE_INIT;
-    rle_info->second_byte = rle_info->last_byte = (uintn)RLE_NIL;
+    rle_info->second_byte = rle_info->last_byte = (unsigned)RLE_NIL;
 
     return SUCCEED;
 } /* end HCIcrle_term() */
@@ -345,11 +326,6 @@ HCIcrle_term(compinfo_t *info)
 
  DESCRIPTION
     Common code called by HCIcrle_stread and HCIcrle_stwrite
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcrle_staccess(accrec_t *access_rec, int16 acc_mode)
@@ -382,11 +358,6 @@ HCIcrle_staccess(accrec_t *access_rec, int16 acc_mode)
 
  DESCRIPTION
     Start read access on a compressed data element using a simple RLE scheme.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcrle_stread(accrec_t *access_rec)
@@ -411,11 +382,6 @@ HCPcrle_stread(accrec_t *access_rec)
 
  DESCRIPTION
     Start write access on a compressed data element using a simple RLE scheme.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcrle_stwrite(accrec_t *access_rec)
@@ -435,7 +401,7 @@ HCPcrle_stwrite(accrec_t *access_rec)
     int32 HCPcrle_seek(access_rec,offset,origin)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 offset;       IN: the offset in bytes from the origin specified
-    intn origin;        IN: the origin to seek from [UNUSED!]
+    int origin;        IN: the origin to seek from [UNUSED!]
 
  RETURNS
     Returns SUCCEED or FAIL
@@ -445,11 +411,6 @@ HCPcrle_stwrite(accrec_t *access_rec)
     calculations have been taken care of at a higher level, it is an
     un-used parameter.  The 'offset' is used as an absolute offset
     because of this.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcrle_seek(accrec_t *access_rec, int32 offset, int origin)
@@ -478,7 +439,7 @@ HCPcrle_seek(accrec_t *access_rec, int32 offset, int origin)
         if (HCIcrle_decode(info, TMP_BUF_SIZE, tmp_buf) == FAIL) {
             free(tmp_buf);
             HRETURN_ERROR(DFE_CDECODE, FAIL);
-        }                          /* end if */
+        }
     if (rle_info->offset < offset) /* grab the last chunk */
         if (HCIcrle_decode(info, offset - rle_info->offset, tmp_buf) == FAIL) {
             free(tmp_buf);
@@ -504,11 +465,6 @@ HCPcrle_seek(accrec_t *access_rec, int32 offset, int origin)
 
  DESCRIPTION
     Read in a number of bytes from a RLE compressed data element.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcrle_read(accrec_t *access_rec, int32 length, void *data)
@@ -538,11 +494,6 @@ HCPcrle_read(accrec_t *access_rec, int32 length, void *data)
 
  DESCRIPTION
     Write out a number of bytes to a RLE compressed data element.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcrle_write(accrec_t *access_rec, int32 length, const void *data)
@@ -589,11 +540,6 @@ HCPcrle_write(accrec_t *access_rec, int32 length, const void *data)
  DESCRIPTION
     Inquire information about the access record and data element.
     [Currently a NOP].
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcrle_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
@@ -625,13 +571,8 @@ HCPcrle_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pre
 
  DESCRIPTION
     Close the compressed data element and free encoding info.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 HCPcrle_endaccess(accrec_t *access_rec)
 {
     compinfo_t            *info;     /* special element information */

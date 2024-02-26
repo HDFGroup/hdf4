@@ -59,7 +59,7 @@ typedef enum {
 typedef int32 atom_t;
 
 /* Type of the function to compare objects & keys */
-typedef intn (*HAsearch_func_t)(const void *obj, const void *key);
+typedef int (*HAsearch_func_t)(const void *obj, const void *key);
 
 #ifdef __cplusplus
 extern "C" {
@@ -84,8 +84,8 @@ HDFLIBAPI void  *atom_obj_cache[];
     Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
-HDFLIBAPI intn HAinit_group(group_t grp,      /* IN: Group to initialize */
-                            intn    hash_size /* IN: Minimum hash table size to use for group */
+HDFLIBAPI int HAinit_group(group_t grp,      /* IN: Group to initialize */
+                           int     hash_size /* IN: Minimum hash table size to use for group */
 );
 
 /******************************************************************************
@@ -102,7 +102,7 @@ HDFLIBAPI intn HAinit_group(group_t grp,      /* IN: Group to initialize */
     Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
-HDFLIBAPI intn HAdestroy_group(group_t grp /* IN: Group to destroy */
+HDFLIBAPI int HAdestroy_group(group_t grp /* IN: Group to destroy */
 );
 
 /******************************************************************************
@@ -197,7 +197,7 @@ HDFLIBAPI void *HAsearch_atom(group_t         grp,  /* IN: Group to search for t
     Returns SUCCEED/FAIL
 
 *******************************************************************************/
-HDFLIBAPI intn HAshutdown(void);
+HDFLIBAPI int HAshutdown(void);
 
 #ifdef __cplusplus
 }
