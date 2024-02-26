@@ -613,7 +613,7 @@ test_ncattget(char *path)
 /* path1 - name of input netcdf file to open */
 /* path2 - name of output netcdf file to create */
 void
-test_ncattcopy(char *path1, char *path2)
+test_ncattcopy(char *path1, const char *path2)
 {
     int                  nerrs   = 0;
     static char          pname[] = "test_ncattcopy";
