@@ -508,9 +508,17 @@ HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info *m_info, comp_co
 
         case COMP_CODE_SZIP: /* Obtains szip parameters for Szip coding */
         {
-            UINT32DECODE(p, c_info->szip.pixels);
-            UINT32DECODE(p, c_info->szip.pixels_per_scanline);
-            UINT32DECODE(p, c_info->szip.options_mask);
+            uint32 buf; /* Paper over unwise public type choices */
+
+            UINT32DECODE(p, buf);
+            c_info->szip.pixels = (int32)buf;
+
+            UINT32DECODE(p, buf);
+            c_info->szip.pixels_per_scanline = (int32)buf;
+
+            UINT32DECODE(p, buf);
+            c_info->szip.options_mask = (int32)buf;
+
             c_info->szip.bits_per_pixel   = *p++;
             c_info->szip.pixels_per_block = *p++;
         } break;
