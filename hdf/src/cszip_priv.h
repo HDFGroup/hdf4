@@ -26,7 +26,7 @@
 #include "hdf_priv.h"
 
 /* Special parameters for szip compression */
-/* [These are aliases for the similar definitions in ricehdf.h header file] */
+/* (These are aliases for the similar definitions in ricehdf.h header file) */
 #define H4_SZ_ALLOW_K13_OPTION_MASK 1
 #define H4_SZ_CHIP_OPTION_MASK      2
 #define H4_SZ_EC_OPTION_MASK        4
@@ -76,13 +76,7 @@ HDFLIBAPI int32 HCPcszip_read(accrec_t *access_rec, int32 length, void *data);
 
 HDFLIBAPI int32 HCPcszip_write(accrec_t *access_rec, int32 length, const void *data);
 
-HDFLIBAPI intn HCPcszip_endaccess(accrec_t *access_rec);
-
-/*
- * prototype in proto.h
- * HDFLIBAPI intn HCPsetup_szip_parms(comp_info *c_info, int32 nt, int32 ncomp, int32 ndims, int32 *dims,
- *                                   int32 *cdims);
- */
+HDFLIBAPI int HCPcszip_endaccess(accrec_t *access_rec);
 
 #ifdef __cplusplus
 }
