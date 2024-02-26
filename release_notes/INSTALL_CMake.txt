@@ -88,7 +88,7 @@ To build HDF4 with the SZIP, ZLIB and JPEG external libraries you will need to:
 
    4. Edit the platform configuration file, HDF4options.cmake, if you want to change
       the default build environment.
-      (See  https://portal.hdfgroup.org/display/support/How+to+Change+HDF4+CMake+Build+Options)
+      (See USING_HDF4_CMake.txt in the release_notes/ directory in the source tree.)
 
    5. From the "myhdfstuff" directory execute the CTest Script with the
       following options:

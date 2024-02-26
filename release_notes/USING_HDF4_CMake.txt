@@ -229,8 +229,8 @@ command line and the build folder is created as a sub-folder. Windows should
 adjust the forward slash to double backslashes, except for the HDF_DIR
 environment variable.
 
-NOTE: this file is available at the HDF web site:
-    https://portal.hdfgroup.org/display/support/Building+HDF4+with+CMake
+NOTE: this file is available in the HDF4 repository:
+    https://github.com/HDFGroup/hdf4/blob/master/release_notes/USING_HDF4_CMake.txt
 
     HDF4_Examples.cmake
     HDF4_Examples_options.cmake

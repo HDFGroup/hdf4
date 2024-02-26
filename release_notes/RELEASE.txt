@@ -14,7 +14,7 @@ each final release and can be found on the HDF4 support page at:
 
 The official HDF4 releases can be obtained from:
 
-    https://portal.hdfgroup.org/display/support/Download+HDF4
+    https://portal.hdfgroup.org/downloads/index.html
 
 If you have any questions or comments, please send them to the HDF Help Desk:
 
