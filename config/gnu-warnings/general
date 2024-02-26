@@ -19,7 +19,6 @@
 -Wundef
 -Wwrite-strings
 -pedantic
-
 # NOTE: Due to the divergence in the C and C++, we're dropping support for
 # compiling the C library with a C++ compiler and dropping the -Wc++-compat
 # warning.

@@ -53,63 +53,6 @@ if test "X-" = "X-$cc_flags_set"; then
     test -n "$cc_vers_patch" || cc_vers_patch=0
 fi
 
-# C and Fortran Compiler and Preprocessor Flags
-# ---------------------------------------------------
-#
-# - Flags that end with `_CFLAGS' are always passed to the C compiler.
-# - Flags that end with `_FFLAGS' are always passed to the Fortran
-#   compiler.
-# - Flags that end with `_CPPFLAGS' are passed to the C compiler
-#   when compiling but not when linking.
-#
-#   DEBUG_CFLAGS
-#   DEBUG_FFLAGS
-#   DEBUG_CPPFLAGS  - Flags to pass to the compiler to create a
-#                     library suitable for use with debugging
-#                      tools. Usually this list will exclude
-#                     optimization switches (like `-O') and include
-#                     switches that turn on symbolic debugging support
-#                     (like `-g').
-#
-#   PROD_CFLAGS
-#   PROD_FFLAGS
-#   PROD_CPPFLAGS   - Flags to pass to the compiler to create a
-#                     production version of the library. These
-#                     usually exclude symbolic debugging switches (like
-#                     `-g') and include optimization switches (like
-#                     `-O').
-#
-#   PROFILE_CFLAGS
-#   PROFILE_FFLAGS
-#   PROFILE_CPPFLAGS- Flags to pass to the compiler to create a
-#                     library suitable for performance testing (like
-#                     `-pg').  This may or may not include debugging or
-#                     production flags.
-#
-#   FFLAGS
-#   CFLAGS          - Flags can be added to these variable which
-#                     might already be partially initialized. These
-#                     flags will always be passed to the compiler and
-#                     should include switches to turn on full warnings.
-#
-#                     WARNING: flags do not have to be added to the CFLAGS
-#                     or FFLAGS variable if the compiler is the GNU gcc
-#                     and gfortran compiler.
-#
-#                     FFLAGS and CFLAGS should contain *something* or else
-#                     configure will probably add `-g'. For most systems
-#                     this isn't a problem but some systems will disable
-#                     optimizations in favor of the `-g'. The configure
-#                     script will remove the `-g' flag in production mode
-#                     only.
-#
-# These flags should be set according to the compiler being used.
-# There are two ways to check the compiler. You can try using `-v' or
-# `--version' to see if the compiler will print a version string.  You
-# can use the value of $FOO_BASENAME which is the base name of the
-# first word in $FOO, where FOO is either CC or F77 (note that the
-# value of CC may have changed above).
-
 if test "X-gcc" = "X-$cc_vendor"; then
 
     CFLAGS="$CFLAGS -std=c99"
