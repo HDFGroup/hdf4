@@ -903,6 +903,8 @@ case "`uname`" in
     MINGW*)
       # Check for Winsock library
       AC_CHECK_LIB([ws2_32], [htonl])
+      AC_DEFINE([HAVE_WIN32_API], [1], [Define if we export HDF4-built unmangled netCDF 2.3.2 API calls])
+      AC_DEFINE([F77_FUNC(name,NAME)], [name ## _], [Define H4_F77_FUNC as name ##])
       ;;
 esac
 
@@ -990,11 +992,13 @@ case "$host" in
   *-linux*|*-k*bsd*-gnu|*-gnu*)BAR="linux"       ;;
   *-openbsd*)           BAR="fbsd"        ;;  
   *-freebsd*)           BAR="fbsd"        ;;
+  *-openbsd*)           BAR="fbsd"        ;;  
   *-ibm-aix*)           BAR="aix"         ;;
   sparc64-*-solaris2*)  BAR="solaris64"   ;;
   *-*-solaris2*)        BAR="solaris"     ;;
   *-apple*)             BAR="apple"       ;;
   *-pc-cygwin*)         BAR="linux"       ;;
+  *-mingw*)             BAR="linux"       ;;  
   *)                    echo "*** unknown host $host!"; exit 1 ;;
 esac
 src_files=""

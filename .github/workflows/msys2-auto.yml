@@ -1,0 +1,63 @@
+name: msys2 auto
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+      - '.github/CODEOWNERS'
+      - 'doc/**'
+      - 'release_docs/**'
+      - 'ACKNOWLEDGEMENTS'
+      - 'COPYING**'
+      - '**.md'
+
+permissions:
+  contents: read
+
+# Using concurrency to cancel any in-progress job or run
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref && github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        sys:
+          - mingw64
+          - mingw32
+          - ucrt64
+          - clang64
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{matrix.sys}}
+          update: true
+          install: >-
+            git
+            autotools
+          pacboy: >-
+            toolchain:p
+            libjpeg-turbo:p
+
+      - name: Autotools Configure
+        shell: msys2 {0}
+        run: |
+          ./autogen.sh
+          ./configure LDFLAGS="-lws2_32" --disable-netcdf --disable-netcdf-tools --enable-static-exec
+
+      - name: Autotools Build
+        shell: msys2 {0}
+        run: |
+          make
+
+      - name: Autotools Run Tests
+        shell: msys2 {0}
+        run: |
+          make check
