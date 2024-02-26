@@ -32,6 +32,8 @@ jobs:
           - clang64
     runs-on: windows-latest
     steps:
+      - uses: actions/checkout@v4.1.1
+
       - name: Setup MSYS2
         uses: msys2/setup-msys2@v2
         with:
@@ -43,13 +45,19 @@ jobs:
           pacboy: >-
             toolchain:p
             libjpeg-turbo:p
-      - name: Test HDF4
+
+      - name: Autotools Configure
         shell: msys2 {0}
         run: |
-          uname -a
-          git clone https://github.com/HDFGroup/hdf4.git
-          cd hdf4
           ./autogen.sh
           ./configure LDFLAGS="-lws2_32" --disable-netcdf --disable-netcdf-tools --enable-static-exec
+
+      - name: Autotools Build
+        shell: msys2 {0}
+        run: |
           make
+
+      - name: Autotools Run Tests
+        shell: msys2 {0}
+        run: |
           make check
