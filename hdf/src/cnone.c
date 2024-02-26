@@ -14,9 +14,6 @@
 /*
    cnone.c - HDF none encoding I/O routines
 
-   These routines are only included for completeness and are not
-   actually expected to be used.
-
    None of these routines are designed to be called by other users except
    for the modeling layer of the compression routines.
  */
@@ -43,7 +40,7 @@ static int32 HCIcnone_staccess(accrec_t *access_rec, int16 acc_mode);
 
 /*--------------------------------------------------------------------------
  NAME
-    HCIcnone_staccess -- Start accessing a RLE compressed data element.
+    HCIcnone_staccess -- Start accessing an uncompressed data element.
 
  USAGE
     int32 HCIcnone_staccess(access_rec, access)
@@ -55,11 +52,6 @@ static int32 HCIcnone_staccess(accrec_t *access_rec, int16 acc_mode);
 
  DESCRIPTION
     Common code called by HCIcnone_stread and HCIcnone_stwrite
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 HCIcnone_staccess(accrec_t *access_rec, int16 acc_mode)
@@ -93,11 +85,6 @@ HCIcnone_staccess(accrec_t *access_rec, int16 acc_mode)
 
  DESCRIPTION
     Start read access on a compressed data element using no compression.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcnone_stread(accrec_t *access_rec)
@@ -122,11 +109,6 @@ HCPcnone_stread(accrec_t *access_rec)
 
  DESCRIPTION
     Start write access on a compressed data element using no compression.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcnone_stwrite(accrec_t *access_rec)
@@ -156,11 +138,6 @@ HCPcnone_stwrite(accrec_t *access_rec)
     calculations have been taken care of at a higher level, it is an
     un-used parameter.  The 'offset' is used as an absolute offset
     because of this.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcnone_seek(accrec_t *access_rec, int32 offset, int origin)
@@ -189,12 +166,7 @@ HCPcnone_seek(accrec_t *access_rec, int32 offset, int origin)
     Returns the number of bytes read or FAIL
 
  DESCRIPTION
-    Read in a number of bytes from a RLE compressed data element.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
+    Read in a number of bytes from an uncompressed data element.
 --------------------------------------------------------------------------*/
 int32
 HCPcnone_read(accrec_t *access_rec, int32 length, void *data)
@@ -224,11 +196,6 @@ HCPcnone_read(accrec_t *access_rec, int32 length, void *data)
 
  DESCRIPTION
     Write out a number of bytes to a data element (w/ no compression).
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcnone_write(accrec_t *access_rec, int32 length, const void *data)
@@ -266,11 +233,6 @@ HCPcnone_write(accrec_t *access_rec, int32 length, const void *data)
  DESCRIPTION
     Inquire information about the access record and data element.
     [Currently a NOP].
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
 HCPcnone_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
@@ -302,11 +264,6 @@ HCPcnone_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pr
 
  DESCRIPTION
     Close the compressed data element and free modelling info.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 intn
 HCPcnone_endaccess(accrec_t *access_rec)

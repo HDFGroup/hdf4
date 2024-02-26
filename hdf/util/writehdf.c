@@ -17,10 +17,7 @@
 #include <stdlib.h>
 
 int
-         WriteHDF(GifMemoryStruct, HDFName, GIFFileName)
-GIFTOMEM GifMemoryStruct;
-char    *HDFName;
-char    *GIFFileName;
+WriteHDF(GIFTOMEM GifMemoryStruct, char *HDFName, char *GIFFileName)
 {
     GIFHEAD      gifHead;      /* GIF Header structure            */
     GIFIMAGEDESC gifImageDesc; /* Logical Image Descriptor struct */

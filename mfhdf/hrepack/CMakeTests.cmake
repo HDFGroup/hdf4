@@ -31,12 +31,6 @@ else ()
   target_link_libraries (test_hrepack PRIVATE ${HDF4_MF_LIBSH_TARGET} ${LINK_COMP_LIBS})
 endif ()
 
-if (NOT BUILD_SHARED_LIBS)
-  set (tgt_ext "")
-else ()
-  set (tgt_ext "")
-endif ()
-
 macro (ADD_H4_TEST testname testtype testfile)
   if ("${testtype}" STREQUAL "SKIP")
     if (NOT HDF4_ENABLE_USING_MEMCHECKER)
@@ -53,12 +47,12 @@ macro (ADD_H4_TEST testname testtype testfile)
     set_tests_properties (HREPACK-${testname}-clearall-objects PROPERTIES DEPENDS HREPACK-test_hrepack LABELS ${PROJECT_NAME})
     add_test (
         NAME HREPACK-${testname}
-        COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hrepack${tgt_ext}> -v -i ${PROJECT_BINARY_DIR}/${testfile} -o ${PROJECT_BINARY_DIR}/out-${testname}.${testfile} ${ARGN}
+        COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hrepack> -v -i ${PROJECT_BINARY_DIR}/${testfile} -o ${PROJECT_BINARY_DIR}/out-${testname}.${testfile} ${ARGN}
     )
     set_tests_properties (HREPACK-${testname} PROPERTIES DEPENDS HREPACK-${testname}-clearall-objects LABELS ${PROJECT_NAME})
     add_test (
         NAME HREPACK-${testname}_DFF
-        COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdiff${tgt_ext}> ${PROJECT_BINARY_DIR}/${testfile} ${PROJECT_BINARY_DIR}/out-${testname}.${testfile}
+        COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdiff> ${PROJECT_BINARY_DIR}/${testfile} ${PROJECT_BINARY_DIR}/out-${testname}.${testfile}
     )
     set_tests_properties (HREPACK-${testname}_DFF PROPERTIES DEPENDS HREPACK-${testname} LABELS ${PROJECT_NAME})
   endif ()
@@ -85,7 +79,7 @@ if (NOT HDF4_ENABLE_USING_MEMCHECKER)
       NAME HREPACK-hrepack_check
       COMMAND "${CMAKE_COMMAND}"
           -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
-          -D "TEST_PROGRAM=$<TARGET_FILE:hrepack_check${tgt_ext}>"
+          -D "TEST_PROGRAM=$<TARGET_FILE:hrepack_check>"
           -D "TEST_ARGS:STRING=${ARGN}"
           -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
           -D "TEST_OUTPUT=hrepack_check_help.out"
@@ -101,7 +95,7 @@ if (NOT HDF4_ENABLE_USING_MEMCHECKER)
       NAME HREPACK-hrepack_help
       COMMAND "${CMAKE_COMMAND}"
           -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
-          -D "TEST_PROGRAM=$<TARGET_FILE:hrepack${tgt_ext}>"
+          -D "TEST_PROGRAM=$<TARGET_FILE:hrepack>"
           -D "TEST_ARGS:STRING=${ARGN}"
           -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
           -D "TEST_OUTPUT=hrepack_help.out"

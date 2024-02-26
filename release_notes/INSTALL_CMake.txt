@@ -679,12 +679,12 @@ In the options listed below, there are three columns of information:
 Option Name, Option Description, and Option Default.
 The config/cmake/cacheinit.cmake file can override the following values.
 
----------------- General Build Options ---------------------
+---------------- General Build Options -------------------------------------
 BUILD_SHARED_LIBS  "Build Shared Libraries"    ON
 BUILD_STATIC_LIBS  "Build Static Libraries"    ON
 BUILD_TESTING      "Build HDF4 Unit Testing"   ON
 
----------------- HDF4 Build Options ---------------------
+---------------- HDF4 Build Options ----------------------------------------
 HDF4_BUILD_EXAMPLES        "Build HDF4 Library Examples"              OFF
 HDF4_BUILD_FORTRAN         "Build FORTRAN support"                    OFF
 HDF4_BUILD_TOOLS           "Build HDF4 Tools"                         ON
@@ -694,7 +694,7 @@ HDF4_BUILD_JAVA            "Build Java HDF Library"                   OFF
 HDF4_BUILD_NETCDF_TOOLS    "Build HDF4 versions of ncdump and ncgen"  ON
 HDF4_BUILD_STATIC_TOOLS    "Build Static Tools Not Shared Tools"      OFF
 
----------------- HDF4 Folder Build Options ---------------------
+---------------- HDF4 Folder Build Options ---------------------------------
 Defaults relative to $<INSTALL_PREFIX>
 HDF4_INSTALL_BIN_DIR      "bin"
 HDF4_INSTALL_LIB_DIR      "lib"
@@ -707,8 +707,8 @@ else ()
   HDF4_INSTALL_DATA_DIR   "share"
 HDF4_INSTALL_DOC_DIR      "HDF4_INSTALL_DATA_DIR"
 
-HDF4_USE_GNU_DIRS              "TRUE to use GNU Coding Standard install directory variables,
-                                FALSE to use historical settings"                             FALSE
+HDF4_USE_GNU_DIRS              "ON to use GNU Coding Standard install directory variables,
+                                OFF to use historical settings"                             OFF
 Defaults as defined by the `GNU Coding Standards`
 HDF4_INSTALL_BIN_DIR      "bin"
 HDF4_INSTALL_LIB_DIR      "lib"
@@ -717,48 +717,49 @@ HDF4_INSTALL_MODULE_DIR   "HDF4_INSTALL_INCLUDE_DIR/mod"
 HDF4_INSTALL_CMAKE_DIR    "HDF4_INSTALL_LIB_DIR/cmake"
 HDF4_INSTALL_DATA_DIR     "share"
 HDF4_INSTALL_DOC_DIR      "HDF4_INSTALL_DATA_DIR/doc/hdf"
-HDF4_BUILD_DOC            "Build documentation"                                OFF
 
 ---------------- HDF4 Advanced Options ---------------------
-ONLY_SHARED_LIBS               "Only Build Shared Libraries"                                  OFF
-HDF4_DISABLE_COMPILER_WARNINGS "Disable compiler warnings"                                    OFF
-HDF4_ENABLE_COVERAGE           "Enable code coverage for Libraries and Programs"              OFF
-HDF4_ENABLE_DEPRECATED_SYMBOLS "Enable deprecated public API symbols"                         ON
-HDF4_ENABLE_LARGE_FILE         "Enable support for large (64-bit) files on Linux."            ON
-HDF4_NO_PACKAGES               "Do not include CPack Packaging"                               OFF
-HDF4_PACKAGE_EXTLIBS           "CPACK - include external libraries"                           OFF
-HDF4_USE_FOLDERS               "Enable folder grouping of projects in IDEs."                  OFF
-HDF4_MSVC_NAMING_CONVENTION    "Use MSVC Naming conventions for Shared Libraries"             OFF
-HDF4_MINGW_STATIC_GCC_LIBS     "Statically link libgcc/libstdc++"                             OFF
+ONLY_SHARED_LIBS               "Only Build Shared Libraries"                                     OFF
+HDF4_DISABLE_COMPILER_WARNINGS "Disable compiler warnings"                                       OFF
+HDF4_ENABLE_COVERAGE           "Enable code coverage for Libraries and Programs"                 OFF
+HDF4_ENABLE_DEPRECATED_SYMBOLS "Enable deprecated public API symbols"                            ON
+HDF4_ENABLE_LARGE_FILE         "Enable support for large (64-bit) files on Linux."               ON
+HDF4_NO_PACKAGES               "Do not include CPack Packaging"                                  OFF
+HDF4_PACKAGE_EXTLIBS           "CPACK - include external libraries"                              OFF
+HDF4_USE_FOLDERS               "Enable folder grouping of projects in IDEs."                     OFF
+HDF4_MSVC_NAMING_CONVENTION    "Use MSVC Naming conventions for Shared Libraries"                OFF
+HDF4_MINGW_STATIC_GCC_LIBS     "Statically link libgcc/libstdc++"                                OFF
 if (APPLE)
     HDF4_BUILD_WITH_INSTALL_NAME "Build with library install_name set to the installation path"  OFF
 if (WIN32)
-    HDF_LEGACY_NAMING          "Use Legacy Names for Libraries and Programs" OFF
-HDF4_ENABLE_NETCDF             "Build HDF4 versions of NetCDF-3 APIS"        ON
+    HDF_LEGACY_NAMING          "Use Legacy Names for Libraries and Programs"   OFF
+HDF4_ENABLE_NETCDF             "Build HDF4 versions of NetCDF-3 APIS"          ON
+HDF4_BUILD_DOC                 "Build documentation"                           OFF
+HDF4_ENABLE_DOXY_WARNINGS      "Enable fail if doxygen parsing has warnings."  OFF
 
 ---------------- External Library Options ---------------------
-HDF4_ALLOW_EXTERNAL_SUPPORT  "Allow External Library Building"        "NO"
-HDF4_ENABLE_JPEG_LIB_SUPPORT "Enable libjpeg required"                ON
-HDF4_ENABLE_SZIP_SUPPORT     "Use SZip Filter"                        OFF
-HDF4_ENABLE_Z_LIB_SUPPORT    "Enable Zlib Filters"                    ON
+HDF4_ALLOW_EXTERNAL_SUPPORT    "Allow External Library Building"         "NO"
+HDF4_ENABLE_JPEG_LIB_SUPPORT   "Enable libjpeg required"                 ON
+HDF4_ENABLE_SZIP_SUPPORT       "Use SZip Filter"                         OFF
+HDF4_ENABLE_Z_LIB_SUPPORT      "Enable Zlib Filters"                     ON
 
-JPEG_USE_EXTERNAL            "Use External Library Building for JPEG" 0
-JPEG_TGZ_ORIGPATH            "Use JPEG from original location"        "https://www.ijg.org/filesz"
-JPEG_TGZ_NAME                "Use JPEG from original compressed file" "jpegsrc.v9e.tar.gz"
-JPEG_USE_LOCALCONTENT        "Use local file for JPEG FetchContent"   OFF
+JPEG_USE_EXTERNAL              "Use External Library Building for JPEG"  OFF
+JPEG_TGZ_ORIGPATH              "Use JPEG from original location"         "https://www.ijg.org/filesz"
+JPEG_TGZ_NAME                  "Use JPEG from original compressed file"  "jpegsrc.v9e.tar.gz"
+JPEG_USE_LOCALCONTENT          "Use local file for JPEG FetchContent"    OFF
 
-ZLIB_USE_EXTERNAL            "Use External Library Building for ZLIB" 0
-ZLIB_TGZ_ORIGPATH            "Use ZLIB from original location"        "https://github.com/madler/zlib/releases/download/v1.2.13"
-ZLIB_TGZ_NAME                "Use ZLIB from original compressed file" "zlib-1.2.13.tar.gz"
-ZLIB_USE_LOCALCONTENT        "Use local file for ZLIB FetchContent"    OFF
+ZLIB_USE_EXTERNAL              "Use External Library Building for ZLIB"  OFF
+ZLIB_TGZ_ORIGPATH              "Use ZLIB from original location"         "https://github.com/madler/zlib/releases/download/v1.2.13"
+ZLIB_TGZ_NAME                  "Use ZLIB from original compressed file"  "zlib-1.2.13.tar.gz"
+ZLIB_USE_LOCALCONTENT          "Use local file for ZLIB FetchContent"     OFF
 
-SZIP_USE_EXTERNAL            "Use External Library Building for SZIP" 0
+SZIP_USE_EXTERNAL              "Use External Library Building for SZIP"   OFF
 if (HDF4_ENABLE_SZIP_SUPPORT)
-    HDF4_ENABLE_SZIP_ENCODING "Use SZip Encoding"                     OFF
-USE_LIBAEC_STATIC           "Use static AEC library"                    OFF
-LIBAEC_TGZ_ORIGPATH         "Use LIBAEC from original location"        "https://gitlab.dkrz.de/k202009/libaec/-/archive/v1.0.6"
-LIBAEC_TGZ_NAME             "Use LIBAEC from original compressed file" "libaec-v1.0.6.tar.gz"
-LIBAEC_USE_LOCALCONTENT     "Use local file for LIBAEC FetchContent"    OFF
+    HDF4_ENABLE_SZIP_ENCODING  "Use SZip Encoding"                        OFF
+USE_LIBAEC_STATIC              "Use static AEC library"                   OFF
+LIBAEC_TGZ_ORIGPATH            "Use LIBAEC from original location"        "https://gitlab.dkrz.de/k202009/libaec/-/archive/v1.0.6"
+LIBAEC_TGZ_NAME                "Use LIBAEC from original compressed file" "libaec-v1.0.6.tar.gz"
+LIBAEC_USE_LOCALCONTENT        "Use local file for LIBAEC FetchContent"   OFF
 
 NOTE:
   The HDF4_USE_GNU_DIRS option is usually recommended for linux platforms, but may
