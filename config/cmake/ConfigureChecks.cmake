@@ -1,11 +1,6 @@
 #-----------------------------------------------------------------------------
 # Include all the necessary files for macros
 #-----------------------------------------------------------------------------
-set (HDF_PREFIX "H4")
-
-#-----------------------------------------------------------------------------
-# Include all the necessary files for macros
-#-----------------------------------------------------------------------------
 include (CheckFunctionExists)
 include (CheckIncludeFile)
 include (CheckIncludeFiles)
@@ -41,7 +36,7 @@ macro (CHECK_LIBRARY_EXISTS_CONCAT LIBRARY SYMBOL VARIABLE)
 endmacro ()
 
 # ----------------------------------------------------------------------
-# WINDOWS hard-coded values
+# WINDOWS Hard code Values
 # ----------------------------------------------------------------------
 set (WINDOWS)
 
@@ -158,15 +153,11 @@ add_definitions (${HDF_EXTRA_FLAGS})
 macro (HDF_CHECK_TYPE_SIZE type var)
   set (aType ${type})
   set (aVar  ${var})
-  if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.15.0")
-    message (TRACE "Checking size of ${aType} and storing into ${aVar}")
-  endif ()
+  message (TRACE "Checking size of ${aType} and storing into ${aVar}")
   CHECK_TYPE_SIZE (${aType}   ${aVar})
   if (NOT ${aVar})
     set (${aVar} 0 CACHE INTERNAL "SizeOf for ${aType}")
-    if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.15.0")
-      message (TRACE "Size of ${aType} was NOT Found")
-    endif ()
+    message (TRACE "Size of ${aType} was NOT Found")
   endif ()
 endmacro ()
 

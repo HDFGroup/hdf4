@@ -33,10 +33,9 @@ Obtaining HDF4 source code
 
 CMake version
    1. We suggest you obtain the latest CMake from the Kitware web site.
-      The HDF 4.2."X" product requires a minimum CMake version 3.12,
+      The HDF 4.2."X" product requires a minimum CMake version 3.18,
       where "X" is the current HDF4 release version. If you are using
-      VS2019, the minimum version is 3.15. For VS2022, the minimum
-      version is 3.21.
+      VS2022, the minimum version is 3.21.
 
 Note:
    To change the install prefix from the platform defaults initialize
@@ -279,9 +278,8 @@ IV. Further considerations
 ========================================================================
 
    1. We suggest you obtain the latest CMake for windows from the Kitware
-      web site. The HDF 4.2."X" product requires a minimum CMake version 3.12.
-      If you are using VS2019, the CMake minimum is 3.15. If you are
-      using VS2022, the minimum version is 3.21.
+      web site. The HDF 4.2."X" product requires a minimum CMake version 3.18.
+      If you are using VS2022, the CMake minimum version is 3.21.
 
    2. HDF4 requires Zlib and JPEG. Szip is optional:
       A. Download the binary packages and install them in a central location.

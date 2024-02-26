@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.18)
 project (HDF4_HDF_FORTRAN C Fortran)
 
 set (HDF4_HDF_SRC_CSTUB_FSRCS

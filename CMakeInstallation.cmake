@@ -55,13 +55,6 @@ set (HDF4_INCLUDES_BUILD_TIME
 )
 
 #-----------------------------------------------------------------------------
-# Set variables needed for installation
-#-----------------------------------------------------------------------------
-set (HDF4_VERSION_STRING ${HDF4_PACKAGE_VERSION})
-set (HDF4_VERSION_MAJOR  ${HDF4_PACKAGE_VERSION_MAJOR})
-set (HDF4_VERSION_MINOR  ${HDF4_PACKAGE_VERSION_MINOR})
-
-#-----------------------------------------------------------------------------
 # Configure the hdf4-config.cmake file for the build directory
 #-----------------------------------------------------------------------------
 set (INCLUDE_INSTALL_DIR ${HDF4_INSTALL_INCLUDE_DIR})
