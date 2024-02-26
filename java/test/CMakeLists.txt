@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.18)
 project (HDF4_JAVA_TEST Java)
 
 set (CMAKE_VERBOSE_MAKEFILE 1)
@@ -43,7 +43,7 @@ endforeach ()
 
 add_custom_target(${HDF4_JAVA_TEST_LIB_TARGET}_files ALL COMMENT "Copying files needed by ${HDF4_JAVA_TEST_LIB_TARGET} tests" DEPENDS ${${HDF4_JAVA_TEST_LIB_TARGET}_files_list})
 
-if (WIN32 OR MINGW)
+if (WIN32)
   set (CMAKE_JAVA_INCLUDE_FLAG_SEP ";")
 else ()
   set (CMAKE_JAVA_INCLUDE_FLAG_SEP ":")

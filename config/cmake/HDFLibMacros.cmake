@@ -6,9 +6,7 @@ macro (EXTERNAL_ZLIB_LIBRARY compress_type)
         GIT_TAG ${ZLIB_BRANCH}
     )
   elseif (${compress_type} MATCHES "TGZ")
-    if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.15.0")
-      message (VERBOSE "Filter ZLIB file ${ZLIB_URL}")
-    endif ()
+    message (VERBOSE "Filter ZLIB file ${ZLIB_URL}")
     FetchContent_Declare (HDF4_ZLIB
         URL ${ZLIB_URL}
         URL_HASH ""
@@ -43,9 +41,7 @@ macro (EXTERNAL_JPEG_LIBRARY compress_type)
         GIT_TAG ${JPEG_BRANCH}
     )
   elseif (${compress_type} MATCHES "TGZ")
-    if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.15.0")
-      message (VERBOSE "Filter JPEG file ${JPEG_URL}")
-    endif ()
+    message (VERBOSE "Filter JPEG file ${JPEG_URL}")
     FetchContent_Declare (JPEG
         URL ${JPEG_URL}
         URL_HASH ""
@@ -81,9 +77,7 @@ macro (EXTERNAL_SZIP_LIBRARY compress_type encoding)
         GIT_TAG ${SZIP_BRANCH}
     )
   elseif (${compress_type} MATCHES "TGZ")
-    if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.15.0")
-      message (VERBOSE "Filter SZIP file ${SZIP_URL}")
-    endif ()
+    message (VERBOSE "Filter SZIP file ${SZIP_URL}")
     FetchContent_Declare (SZIP
         URL ${SZIP_URL}
         URL_HASH ""

@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.18)
 project (HDF4_JAVA_HDF_HDF4 Java)
 
 set (CMAKE_VERBOSE_MAKEFILE 1)

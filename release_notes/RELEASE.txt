@@ -39,6 +39,16 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Changed minimum CMake version to 3.18
+
+      Requirement for CMake 3.18 allows removal of special checks for message,
+      EOL checks and Visual Studio 2019 version. Visual Studio 2022 requires
+      CMake version 3.21.
+
+    - Added versioning support to CMake builds
+
+      Added config/lt.vers.am file with soversion numbers for each library.
+
     - Removed CMake's HDF_ENABLE_LARGE_FILE option
 
       We now assume that LFS exists, as in the Autotools.

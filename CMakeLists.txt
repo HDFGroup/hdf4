@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.18)
 project (HDF4 C)
 
 if (POLICY CMP0074)
@@ -42,16 +42,6 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
       "        $ cd MY_BUILD\n"
       "        $ cmake [OPTIONS] ..\n"
       )
-endif ()
-
-# CMake version 3.14 added option --ignore-eol to compare files
-#     cmake -E compare_files --ignore-eol file1 file2
-set (CMAKE_IGNORE_EOL "--ignore-eol")
-if (CMAKE_VERSION VERSION_LESS "3.14.0")
-  set (CMAKE_IGNORE_EOL "")
-  if (WIN32)
-    message (FATAL_ERROR "Windows builds require a minimum of CMake 3.14")
-  endif()
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -119,12 +109,12 @@ mark_as_advanced (HDF4_EXTERNAL_LIB_PREFIX)
 #  endif ()
 #
 #   # Add the sub project
-#   add_subdirectory (Utilities/hdf4.2.5)
+#   add_subdirectory (Utilities/hdf4.3.0)
 #   # Add the HDF4 dirs to our include path
 #   set (HDF4_INCLUDE_DIR
-#       ${PROJECT_SOURCE_DIR}/Utilities/hdf4.2.5/hdf/src
-#       ${PROJECT_BINARY_DIR}/Utilities/hdf4.2.5
-#       ${PROJECT_SOURCE_DIR}/Utilities/hdf4.2.5/mfhdf/libsrc
+#       ${PROJECT_SOURCE_DIR}/Utilities/hdf4.3.0/hdf/src
+#       ${PROJECT_BINARY_DIR}/Utilities/hdf4.3.0
+#       ${PROJECT_SOURCE_DIR}/Utilities/hdf4.3.0/mfhdf/libsrc
 #   )
 #
 #-----------------------------------------------------------------------------
