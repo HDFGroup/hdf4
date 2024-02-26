@@ -755,20 +755,19 @@ test_valid_args2()
         The number of errors occurred in this routine.
 
 ****************************************************************************/
-#define FILE1     "test1.hdf"
+#define FILE1 "test1.hdf"
 
 static intn
 test_fillvalue()
 {
-    int32   f1;
-    int32   sdid;
-    int32   dimsize[RANK];              /* dimension sizes */
-    int32   idata[100];
-    int32   rdata[100];
-    int32   fillval = 0, readval = 0;
-    int32   index;
-    int32   start[2], end[2];
-
+    int32 f1;
+    int32 sdid;
+    int32 dimsize[RANK]; /* dimension sizes */
+    int32 idata[100];
+    int32 rdata[100];
+    int32 fillval = 0, readval = 0;
+    int32 index;
+    int32 start[2], end[2];
 
     int32   dim[1], dims2[2], dims3[3], d1start[1], d2start[2], d3start[3];
     int32   d1count[1], d2count[2], d3count[3];
@@ -778,7 +777,6 @@ test_fillvalue()
     int16   data3[D3_X][D3_Y][D3_Z], outdata3[D3_X][D3_Y][D3_Z];
     intn    status;
     intn    num_errs = 0; /* number of errors so far */
-
 
     /* test SDsetfillmode   */
     /* test fixed size SDS   */
@@ -1036,7 +1034,7 @@ test_unlim_fillvalue()
 {
     int32   f1;
     int32   sdid;
-    int32   dimsize[RANK];              /* dimension sizes */
+    int32   dimsize[RANK]; /* dimension sizes */
     int32   idata[100];
     int32   index;
     int32   start[2], end[2];
@@ -1049,7 +1047,6 @@ test_unlim_fillvalue()
     int16   data3[D3_X][D3_Y][D3_Z], outdata3[D3_X][D3_Y][D3_Z];
     intn    status;
     intn    num_errs = 0; /* number of errors so far */
-
 
     /*
      * test UNLIMITED size SDS
