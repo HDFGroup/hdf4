@@ -154,67 +154,13 @@ DFKsb4b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 
     if (fast_processing) {
         if (!in_place) {
-            uint32 n = (num_elm + 7) / 8;
-
-            switch (num_elm % 8) {
-                case 0:
-                    do {
-                        dest[0] = source[3];
-                        dest[1] = source[2];
-                        dest[2] = source[1];
-                        dest[3] = source[0];
-                        dest += 4;
-                        source += 4;
-                        case 7:
-                            dest[0] = source[3];
-                            dest[1] = source[2];
-                            dest[2] = source[1];
-                            dest[3] = source[0];
-                            dest += 4;
-                            source += 4;
-                        case 6:
-                            dest[0] = source[3];
-                            dest[1] = source[2];
-                            dest[2] = source[1];
-                            dest[3] = source[0];
-                            dest += 4;
-                            source += 4;
-                        case 5:
-                            dest[0] = source[3];
-                            dest[1] = source[2];
-                            dest[2] = source[1];
-                            dest[3] = source[0];
-                            dest += 4;
-                            source += 4;
-                        case 4:
-                            dest[0] = source[3];
-                            dest[1] = source[2];
-                            dest[2] = source[1];
-                            dest[3] = source[0];
-                            dest += 4;
-                            source += 4;
-                        case 3:
-                            dest[0] = source[3];
-                            dest[1] = source[2];
-                            dest[2] = source[1];
-                            dest[3] = source[0];
-                            dest += 4;
-                            source += 4;
-                        case 2:
-                            dest[0] = source[3];
-                            dest[1] = source[2];
-                            dest[2] = source[1];
-                            dest[3] = source[0];
-                            dest += 4;
-                            source += 4;
-                        case 1:
-                            dest[0] = source[3];
-                            dest[1] = source[2];
-                            dest[2] = source[1];
-                            dest[3] = source[0];
-                            dest += 4;
-                            source += 4;
-                    } while (--n > 0);
+            for (i = 0; i < num_elm; i++) {
+                dest[0] = source[3];
+                dest[1] = source[2];
+                dest[2] = source[1];
+                dest[3] = source[0];
+                dest += 4;
+                source += 4;
             }
             return 0;
         }
