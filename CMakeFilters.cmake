@@ -50,13 +50,13 @@ if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "GIT" OR HDF4_ALLOW_EXTERNAL_SUPPORT MAT
     if (JPEG_USE_LOCALCONTENT)
       if (NOT EXISTS "${JPEG_URL}")
         set (HDF4_ENABLE_JPEG_LIB_SUPPORT OFF CACHE BOOL "" FORCE)
-        message (VERBOSE "Filter JPEG file ${JPEG_URL} not found")
+        message (FATAL_ERROR "Filter JPEG support in HDF4 is required but file ${JPEG_URL} not found")
       endif ()
     endif ()
     if (ZLIB_USE_LOCALCONTENT)
       if (NOT EXISTS "${ZLIB_URL}")
         set (HDF4_ENABLE_Z_LIB_SUPPORT OFF CACHE BOOL "" FORCE)
-        message (VERBOSE "Filter ZLIB file ${ZLIB_URL} not found")
+        message (FATAL_ERROR "Filter ZLIB support in HDF4 is required but file ${ZLIB_URL} not found")
       endif ()
     endif ()
     if (LIBAEC_USE_LOCALCONTENT)
@@ -78,7 +78,7 @@ endif ()
 #-----------------------------------------------------------------------------
 # Option for LibJpeg support
 #-----------------------------------------------------------------------------
-option (HDF4_ENABLE_JPEG_LIB_SUPPORT "Enable libjpeg required" ON)
+set (HDF4_ENABLE_JPEG_LIB_SUPPORT ON) #Enable libjpeg required
 if (HDF4_ENABLE_JPEG_LIB_SUPPORT)
   if (NOT H4_JPEGLIB_HEADER)
     if (NOT JPEG_USE_EXTERNAL)
@@ -114,13 +114,13 @@ if (HDF4_ENABLE_JPEG_LIB_SUPPORT)
     message (FATAL_ERROR " JPEG support in HDF4 was requested and required but not found")
   endif ()
 else ()
-  message (FATAL_ERROR " JPEG support in HDF4 is required")
+  message (FATAL_ERROR " JPEG support in HDF4 is required but not found")
 endif ()
 
 #-----------------------------------------------------------------------------
 # Option for ZLib support
 #-----------------------------------------------------------------------------
-option (HDF4_ENABLE_Z_LIB_SUPPORT "Enable Zlib Filters" ON)
+set (HDF4_ENABLE_Z_LIB_SUPPORT ON) #Enable libzlib required
 if (HDF4_ENABLE_Z_LIB_SUPPORT)
   if (NOT H4_ZLIB_HEADER)
     if (NOT ZLIB_USE_EXTERNAL)
@@ -156,14 +156,14 @@ if (HDF4_ENABLE_Z_LIB_SUPPORT)
     message (VERBOSE "Filter HDF4_ZLIB is ON")
   else ()
     set (HDF4_ENABLE_Z_LIB_SUPPORT OFF CACHE BOOL "" FORCE)
-    message (FATAL_ERROR " ZLib support in HDF4 was requested but not found")
+    message (FATAL_ERROR " ZLib support in HDF4 is required but not found")
   endif ()
 endif ()
 
 #-----------------------------------------------------------------------------
 # Option for SzLib support
 #-----------------------------------------------------------------------------
-option (HDF4_ENABLE_SZIP_SUPPORT "Use SZip Filter" OFF)
+option (HDF4_ENABLE_SZIP_SUPPORT "Use SZip Filter" OFF) #SZip is optional
 set (SZIP_INFO "disabled")
 if (HDF4_ENABLE_SZIP_SUPPORT)
   option (HDF4_ENABLE_SZIP_ENCODING "Use SZip Encoding" OFF)
