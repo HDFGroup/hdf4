@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.0-62e8ec8</span>
+   &#160;<span id="projectnumber">4.3.0-0fb9134</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -110,7 +110,9 @@ $(function(){initNavTree('hdftest_8h.html',''); initResizable(); });
   <div class="headertitle"><div class="title">hdftest.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;stdio.h&gt;</code><br />
+<div class="textblock"><code>#include &lt;float.h&gt;</code><br />
+<code>#include &lt;math.h&gt;</code><br />
+<code>#include &lt;stdio.h&gt;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
@@ -134,6 +136,12 @@ Macros</h2></td></tr>
 <tr class="separator:a24991242b8731799f6db0b8f492c74af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6484c6ac3c314d53821bdfa81981812c" id="r_a6484c6ac3c314d53821bdfa81981812c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6484c6ac3c314d53821bdfa81981812c">CHECK_ALLOC</a>(<a class="el" href="hproto__fortran_8h.html#a73d29f95cc1f772c77b9d7a41678fa60">buffer</a>,  buf_name,  func_name)</td></tr>
 <tr class="separator:a6484c6ac3c314d53821bdfa81981812c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa48acb888300e9db94083b860e10447c" id="r_aa48acb888300e9db94083b860e10447c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa48acb888300e9db94083b860e10447c">H4_FLT_ABS_EQUAL</a>(X,  Y)&#160;&#160;&#160;(fabsf((X) - (Y)) &lt; FLT_EPSILON)</td></tr>
+<tr class="separator:aa48acb888300e9db94083b860e10447c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae73f3763c0b2c70a94d3e011d15e219" id="r_aae73f3763c0b2c70a94d3e011d15e219"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae73f3763c0b2c70a94d3e011d15e219">H4_DBL_ABS_EQUAL</a>(X,  Y)&#160;&#160;&#160;(fabs((X) - (Y)) &lt; DBL_EPSILON)</td></tr>
+<tr class="separator:aae73f3763c0b2c70a94d3e011d15e219"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01ac99895aa1161b0a9016398d18d6ec" id="r_a01ac99895aa1161b0a9016398d18d6ec"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01ac99895aa1161b0a9016398d18d6ec">H4_LDBL_ABS_EQUAL</a>(X,  Y)&#160;&#160;&#160;(fabsl((X) - (Y)) &lt; LDBL_EPSILON)</td></tr>
+<tr class="separator:a01ac99895aa1161b0a9016398d18d6ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -265,6 +273,27 @@ Functions</h2></td></tr>
 </div><!-- fragment -->
 </div>
 </div>
+<a id="aae73f3763c0b2c70a94d3e011d15e219" name="aae73f3763c0b2c70a94d3e011d15e219"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae73f3763c0b2c70a94d3e011d15e219">&#9670;&#160;</a></span>H4_DBL_ABS_EQUAL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define H4_DBL_ABS_EQUAL</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">X, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">Y</span>&#160;)&#160;&#160;&#160;(fabs((X) - (Y)) &lt; DBL_EPSILON)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ac07a3f204462499d3f099e810888dc3b" name="ac07a3f204462499d3f099e810888dc3b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac07a3f204462499d3f099e810888dc3b">&#9670;&#160;</a></span>H4_FAILED</h2>
 
@@ -284,6 +313,48 @@ Functions</h2></td></tr>
 <div class="line">        fflush(stdout);                                                                                      \</div>
 <div class="line">    } <span class="keywordflow">while</span> (0)</div>
 </div><!-- fragment -->
+</div>
+</div>
+<a id="aa48acb888300e9db94083b860e10447c" name="aa48acb888300e9db94083b860e10447c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa48acb888300e9db94083b860e10447c">&#9670;&#160;</a></span>H4_FLT_ABS_EQUAL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define H4_FLT_ABS_EQUAL</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">X, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">Y</span>&#160;)&#160;&#160;&#160;(fabsf((X) - (Y)) &lt; FLT_EPSILON)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a01ac99895aa1161b0a9016398d18d6ec" name="a01ac99895aa1161b0a9016398d18d6ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01ac99895aa1161b0a9016398d18d6ec">&#9670;&#160;</a></span>H4_LDBL_ABS_EQUAL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define H4_LDBL_ABS_EQUAL</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">X, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">Y</span>&#160;)&#160;&#160;&#160;(fabsl((X) - (Y)) &lt; LDBL_EPSILON)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
 </div>
 </div>
 <a id="a1d31f36672ae1653a65b520d0694c4e6" name="a1d31f36672ae1653a65b520d0694c4e6"></a>

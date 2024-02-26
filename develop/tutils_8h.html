@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.0-62e8ec8</span>
+   &#160;<span id="projectnumber">4.3.0-0fb9134</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -111,7 +111,9 @@ $(function(){initNavTree('tutils_8h.html',''); initResizable(); });
   <div class="headertitle"><div class="title">tutils.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="hdf__priv_8h.html">hdf_priv.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &lt;float.h&gt;</code><br />
+<code>#include &lt;math.h&gt;</code><br />
+<code>#include &quot;<a class="el" href="hdf__priv_8h.html">hdf_priv.h</a>&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
@@ -155,6 +157,12 @@ Macros</h2></td></tr>
 <tr class="separator:a1d31f36672ae1653a65b520d0694c4e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a09bfd8780f2fb62df7f74f254628c60a" id="r_a09bfd8780f2fb62df7f74f254628c60a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a09bfd8780f2fb62df7f74f254628c60a">H4_SKIPPED</a>()</td></tr>
 <tr class="separator:a09bfd8780f2fb62df7f74f254628c60a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa48acb888300e9db94083b860e10447c" id="r_aa48acb888300e9db94083b860e10447c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa48acb888300e9db94083b860e10447c">H4_FLT_ABS_EQUAL</a>(X,  Y)&#160;&#160;&#160;(fabsf((X) - (Y)) &lt; FLT_EPSILON)</td></tr>
+<tr class="separator:aa48acb888300e9db94083b860e10447c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae73f3763c0b2c70a94d3e011d15e219" id="r_aae73f3763c0b2c70a94d3e011d15e219"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae73f3763c0b2c70a94d3e011d15e219">H4_DBL_ABS_EQUAL</a>(X,  Y)&#160;&#160;&#160;(fabs((X) - (Y)) &lt; DBL_EPSILON)</td></tr>
+<tr class="separator:aae73f3763c0b2c70a94d3e011d15e219"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01ac99895aa1161b0a9016398d18d6ec" id="r_a01ac99895aa1161b0a9016398d18d6ec"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01ac99895aa1161b0a9016398d18d6ec">H4_LDBL_ABS_EQUAL</a>(X,  Y)&#160;&#160;&#160;(fabsl((X) - (Y)) &lt; LDBL_EPSILON)</td></tr>
+<tr class="separator:a01ac99895aa1161b0a9016398d18d6ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94b74d1cf1362f5993268b3c0c1391f9" id="r_a94b74d1cf1362f5993268b3c0c1391f9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a94b74d1cf1362f5993268b3c0c1391f9">JPEG_FUZZ</a>&#160;&#160;&#160;1</td></tr>
 <tr class="separator:a94b74d1cf1362f5993268b3c0c1391f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a996f7be338ccb40d1a2a5abc1ad61759" id="r_a996f7be338ccb40d1a2a5abc1ad61759"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a996f7be338ccb40d1a2a5abc1ad61759">ABS</a>(x)&#160;&#160;&#160;((int)(x) &lt; 0 ? (-x) : x)</td></tr>
@@ -233,7 +241,7 @@ Variables</h2></td></tr>
 <div class="line">        }                                                                                                    \</div>
 <div class="line">    } <span class="keywordflow">while</span> (0)</div>
 <div class="ttc" id="amfsdf_8h_html_ac3c6bc6d51a9796c1989c1fd1bd3332d"><div class="ttname"><a href="mfsdf_8h.html#ac3c6bc6d51a9796c1989c1fd1bd3332d">val</a></div><div class="ttdeci">HDFFCLIBAPI intf _fcd val</div><div class="ttdef"><b>Definition</b> mfsdf.h:142</div></div>
-<div class="ttc" id="atutils_8h_html_ab00944552a5ef41ef0c18de744dd8207"><div class="ttname"><a href="#ab00944552a5ef41ef0c18de744dd8207">Verbosity</a></div><div class="ttdeci">int Verbosity</div><div class="ttdef"><b>Definition</b> tutils.h:32</div></div>
+<div class="ttc" id="atutils_8h_html_ab00944552a5ef41ef0c18de744dd8207"><div class="ttname"><a href="#ab00944552a5ef41ef0c18de744dd8207">Verbosity</a></div><div class="ttdeci">int Verbosity</div><div class="ttdef"><b>Definition</b> tutils.h:35</div></div>
 <div class="ttc" id="atutils_8h_html_aed4fdd79a91ca60813c50b229984953c"><div class="ttname"><a href="#aed4fdd79a91ca60813c50b229984953c">num_errs</a></div><div class="ttdeci">int num_errs</div></div>
 </div><!-- fragment -->
 </div>
@@ -402,6 +410,27 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="aae73f3763c0b2c70a94d3e011d15e219" name="aae73f3763c0b2c70a94d3e011d15e219"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae73f3763c0b2c70a94d3e011d15e219">&#9670;&#160;</a></span>H4_DBL_ABS_EQUAL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define H4_DBL_ABS_EQUAL</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">X, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">Y</span>&#160;)&#160;&#160;&#160;(fabs((X) - (Y)) &lt; DBL_EPSILON)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ac07a3f204462499d3f099e810888dc3b" name="ac07a3f204462499d3f099e810888dc3b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac07a3f204462499d3f099e810888dc3b">&#9670;&#160;</a></span>H4_FAILED</h2>
 
@@ -421,6 +450,48 @@ Variables</h2></td></tr>
 <div class="line">        fflush(stdout);                                                                                      \</div>
 <div class="line">    }</div>
 </div><!-- fragment -->
+</div>
+</div>
+<a id="aa48acb888300e9db94083b860e10447c" name="aa48acb888300e9db94083b860e10447c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa48acb888300e9db94083b860e10447c">&#9670;&#160;</a></span>H4_FLT_ABS_EQUAL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define H4_FLT_ABS_EQUAL</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">X, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">Y</span>&#160;)&#160;&#160;&#160;(fabsf((X) - (Y)) &lt; FLT_EPSILON)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a01ac99895aa1161b0a9016398d18d6ec" name="a01ac99895aa1161b0a9016398d18d6ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01ac99895aa1161b0a9016398d18d6ec">&#9670;&#160;</a></span>H4_LDBL_ABS_EQUAL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define H4_LDBL_ABS_EQUAL</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">X, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">Y</span>&#160;)&#160;&#160;&#160;(fabsl((X) - (Y)) &lt; LDBL_EPSILON)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
 </div>
 </div>
 <a id="a540c3543cc753d3afc7a18c2f9a557af" name="a540c3543cc753d3afc7a18c2f9a557af"></a>

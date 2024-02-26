@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.0-62e8ec8</span>
+   &#160;<span id="projectnumber">4.3.0-0fb9134</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -111,7 +111,9 @@ $(function(){initNavTree('testcdf_8h.html',''); initResizable(); });
   <div class="headertitle"><div class="title">testcdf.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;stdlib.h&gt;</code><br />
+<div class="textblock"><code>#include &lt;float.h&gt;</code><br />
+<code>#include &lt;math.h&gt;</code><br />
+<code>#include &lt;stdlib.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="mfhdf_8h.html">mfhdf.h</a>&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
@@ -137,6 +139,12 @@ Macros</h2></td></tr>
 <tr class="separator:a2337d34516e98936cb4c7a45e1ecd571"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1d3fe1437baf54732f523a903f103da5" id="r_a1d3fe1437baf54732f523a903f103da5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1d3fe1437baf54732f523a903f103da5">MAX_TEST_ATTS</a>&#160;&#160;&#160;32</td></tr>
 <tr class="separator:a1d3fe1437baf54732f523a903f103da5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa48acb888300e9db94083b860e10447c" id="r_aa48acb888300e9db94083b860e10447c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa48acb888300e9db94083b860e10447c">H4_FLT_ABS_EQUAL</a>(X,  Y)&#160;&#160;&#160;(fabsf((X) - (Y)) &lt; FLT_EPSILON)</td></tr>
+<tr class="separator:aa48acb888300e9db94083b860e10447c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae73f3763c0b2c70a94d3e011d15e219" id="r_aae73f3763c0b2c70a94d3e011d15e219"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae73f3763c0b2c70a94d3e011d15e219">H4_DBL_ABS_EQUAL</a>(X,  Y)&#160;&#160;&#160;(fabs((X) - (Y)) &lt; DBL_EPSILON)</td></tr>
+<tr class="separator:aae73f3763c0b2c70a94d3e011d15e219"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01ac99895aa1161b0a9016398d18d6ec" id="r_a01ac99895aa1161b0a9016398d18d6ec"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01ac99895aa1161b0a9016398d18d6ec">H4_LDBL_ABS_EQUAL</a>(X,  Y)&#160;&#160;&#160;(fabsl((X) - (Y)) &lt; LDBL_EPSILON)</td></tr>
+<tr class="separator:a01ac99895aa1161b0a9016398d18d6ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -166,6 +174,69 @@ Variables</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">#define BAD_TYPE&#160;&#160;&#160;NC_UNSPECIFIED /* must be distinct from valid types */</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aae73f3763c0b2c70a94d3e011d15e219" name="aae73f3763c0b2c70a94d3e011d15e219"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae73f3763c0b2c70a94d3e011d15e219">&#9670;&#160;</a></span>H4_DBL_ABS_EQUAL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define H4_DBL_ABS_EQUAL</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">X, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">Y</span>&#160;)&#160;&#160;&#160;(fabs((X) - (Y)) &lt; DBL_EPSILON)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa48acb888300e9db94083b860e10447c" name="aa48acb888300e9db94083b860e10447c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa48acb888300e9db94083b860e10447c">&#9670;&#160;</a></span>H4_FLT_ABS_EQUAL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define H4_FLT_ABS_EQUAL</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">X, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">Y</span>&#160;)&#160;&#160;&#160;(fabsf((X) - (Y)) &lt; FLT_EPSILON)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a01ac99895aa1161b0a9016398d18d6ec" name="a01ac99895aa1161b0a9016398d18d6ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01ac99895aa1161b0a9016398d18d6ec">&#9670;&#160;</a></span>H4_LDBL_ABS_EQUAL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define H4_LDBL_ABS_EQUAL</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">X, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">Y</span>&#160;)&#160;&#160;&#160;(fabsl((X) - (Y)) &lt; LDBL_EPSILON)</td>
         </tr>
       </table>
 </div><div class="memdoc">
