@@ -755,20 +755,20 @@ test_valid_args2()
         The number of errors occurred in this routine.
 
 ****************************************************************************/
-#define FILE1     "test1.hdf"
+#define FILE1 "test1.hdf"
 
 static intn
 test_fillvalue()
 {
-    int32   f1;
-    int32   sdid;
-    int32   dimsize[RANK];              /* dimension sizes */
-    int32   idata[100];
-    int32   fillval = 0, readval = 0;
-    int32   index;
-    int32   start[2], end[2];
-    intn    status;
-    intn    num_errs = 0; /* number of errors so far */
+    int32 f1;
+    int32 sdid;
+    int32 dimsize[RANK]; /* dimension sizes */
+    int32 idata[100];
+    int32 fillval = 0, readval = 0;
+    int32 index;
+    int32 start[2], end[2];
+    intn  status;
+    intn  num_errs = 0; /* number of errors so far */
 
     /* test SDsetfillmode   */
     /* test fixed size SDS   */
@@ -1024,15 +1024,15 @@ test_fillvalue()
 static intn
 test_unlim_fillvalue()
 {
-    int32   f1;
-    int32   sdid;
-    int32   dimsize[RANK];              /* dimension sizes */
-    int32   idata[100];
-    int32   index;
-    int32   start[2], end[2];
-    int32   fillval = 0;
-    intn    status;
-    intn    num_errs = 0; /* number of errors so far */
+    int32 f1;
+    int32 sdid;
+    int32 dimsize[RANK]; /* dimension sizes */
+    int32 idata[100];
+    int32 index;
+    int32 start[2], end[2];
+    int32 fillval = 0;
+    intn  status;
+    intn  num_errs = 0; /* number of errors so far */
 
     /*
      * test UNLIMITED size SDS

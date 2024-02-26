@@ -440,7 +440,7 @@ test_fileformat()
 
 *********************************************************************/
 
-#define UFOFILE   "file.UFO" /* non-existing file */
+#define UFOFILE "file.UFO" /* non-existing file */
 
 static intn
 test_invalid_opening()

@@ -765,28 +765,28 @@ test_dim_strs()
 
 *********************************************************************/
 
-#define FILE1   "tdim_bwcomp.hdf"
-#define FIRST_DSET  "dimval_non_compat"
+#define FILE1      "tdim_bwcomp.hdf"
+#define FIRST_DSET "dimval_non_compat"
 
 static intn
 test_dim_bw_incomp()
 {
 
-    int32    fid;
-    int32    nt;                       /* Number type */
-    int32    ndg_saved_ref; /* used to save a ref of an SDS in one of the test */
-    int32    sds_id;
-    int32    dim_id, dim_id1;
-    int32    dimsize[10];              /* dimension sizes */
-    int32    rank;   /* rank of SDS */
-    intn     status; /* status flag */
-    intn     nattrs; /* Number of attributes again? */
-    char     name[90];
-    int32    start[10], end[10]; /* start, end arrays */
-    int32    scale[10];
-    int32    index;
-    int32    idata[100];
-    int    num_errs = 0; /* number of errors so far */
+    int32 fid;
+    int32 nt;            /* Number type */
+    int32 ndg_saved_ref; /* used to save a ref of an SDS in one of the test */
+    int32 sds_id;
+    int32 dim_id, dim_id1;
+    int32 dimsize[10]; /* dimension sizes */
+    int32 rank;        /* rank of SDS */
+    intn  status;      /* status flag */
+    intn  nattrs;      /* Number of attributes again? */
+    char  name[90];
+    int32 start[10], end[10]; /* start, end arrays */
+    int32 scale[10];
+    int32 index;
+    int32 idata[100];
+    int   num_errs = 0; /* number of errors so far */
 
     /* Open file 'test1.hdf' */
     fid = SDstart(FILE1, DFACC_CREATE);
@@ -796,7 +796,7 @@ test_dim_bw_incomp()
        Create data set FIRST_DSET */
     dimsize[0] = SD_UNLIMITED;
     dimsize[1] = 6;
-    sds_id       = SDcreate(fid, FIRST_DSET, DFNT_INT32, 2, dimsize);
+    sds_id     = SDcreate(fid, FIRST_DSET, DFNT_INT32, 2, dimsize);
     CHECK(sds_id, FAIL, "SDcreate:Failed to create data set FIRST_DSET in file 'test1.hdf'");
 
     /* save the ref number for the first dataset --- will check at very end */
@@ -943,8 +943,7 @@ test_dim_bw_incomp()
 
     /* Get index of data set FIRST_DSET */
     index = SDnametoindex(fid, FIRST_DSET);
-    CHECK(index, FAIL,
-          "SDnametoindex: failed to get index for data set FIRST_DSET");
+    CHECK(index, FAIL, "SDnametoindex: failed to get index for data set FIRST_DSET");
 
     /* Select data set FIRST_DSET based on its index in file */
     sds_id = SDselect(fid, index);

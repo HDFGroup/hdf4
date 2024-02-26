@@ -18,7 +18,7 @@
 
 #include "hdftest.h"
 
-#define NBITFILE  "nbit.hdf"
+#define NBITFILE "nbit.hdf"
 
 /* Which tests to run? */
 #define EXTERNAL_TEST
@@ -51,19 +51,18 @@ extern int test_datainfo();
 extern int test_external();
 extern int test_att_ann_datainfo();
 
-
 static int
 test_nbit()
 {
-    int32    fnbit;            /* File handle */
-    int32    nt;                       /* Number type */
-    int32    dimsize[10];              /* dimension sizes */
-    int32    newsds, newsds2; /* SDS handles */
-    intn     status; /* status flag */
+    int32    fnbit;              /* File handle */
+    int32    nt;                 /* Number type */
+    int32    dimsize[10];        /* dimension sizes */
+    int32    newsds, newsds2;    /* SDS handles */
+    intn     status;             /* status flag */
     int32    start[10], end[10]; /* start, end arrays */
     int32    idata[100];
     int32    rdata[100];
-    float32 *data = NULL;
+    float32 *data     = NULL;
     int      num_errs = 0; /* number of errors so far */
 
     ncopts = NC_VERBOSE;
@@ -149,7 +148,7 @@ test_nbit()
 int
 main(void)
 {
-    int      num_errs = 0; /* number of errors so far */
+    int num_errs = 0; /* number of errors so far */
 
 #ifdef NBIT_TEST
     /* Test nbits functions */
