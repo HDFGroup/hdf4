@@ -26,7 +26,7 @@ static int32 start_dims[3] = {0, 0, 0}; /* starting dims  */
 static int32 d_dims[3]     = {2, 3, 4};
 static int32 cdims[3]      = {1, 2, 3}; /* chunk lengths */
 
-/* Chunk teseting - arrays for chunk writes */
+/* Chunk setting - arrays for chunk writes */
 
 /* uint16 chunk arrays used in example 1 */
 static uint16 chunk1_2u16[6] = {11, 21, 12, 22, 13, 23};

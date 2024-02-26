@@ -426,6 +426,50 @@ test_fileformat()
     return num_errs;
 }
 
+/********************************************************************
+   Name: test_invalid_opening() - tests that SDstart behaves correctly
+            in various scenarios.
+
+   Description:
+    The following attempts are made in this test:
+    - opening a non-existing file with RDONLY access
+    - opening a non-existing file with RDWR access
+
+   Return value:
+    The number of errors occurred in this routine.
+
+*********************************************************************/
+
+#define UFOFILE   "file.UFO" /* non-existing file */
+
+static intn
+test_invalid_opening()
+{
+    int32 fid;          /* file id */
+    intn  num_errs = 0; /* number of errors */
+
+    /* Try opening a non-existing file with RDONLY and RDWR. Both should fail. */
+
+    fid = SDstart(UFOFILE, DFACC_RDONLY);
+    if (fid != FAIL) {
+        fprintf(stderr, "SDstart(..., RDONLY) should fail\n");
+        num_errs++;
+        SDend(fid);
+    }
+
+    fid = SDstart(UFOFILE, DFACC_RDWR);
+    if (fid != FAIL) {
+        fprintf(stderr, "SDstart(..., RDWR) should fail\n");
+        num_errs++;
+        SDend(fid);
+    }
+
+    if (num_errs == 0)
+        return SUCCEED;
+    else
+        return num_errs;
+}
+
 /* Test driver for testing miscellaneous file related APIs. */
 extern int
 test_files()
@@ -446,6 +490,9 @@ test_files()
 
     /* Test determining of file format */
     num_errs = num_errs + test_fileformat();
+
+    /* Test SDstart on various scenarios */
+    num_errs = num_errs + test_invalid_opening();
 
     if (num_errs == 0)
         PASSED();
