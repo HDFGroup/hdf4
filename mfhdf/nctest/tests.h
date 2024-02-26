@@ -39,7 +39,7 @@ extern void test_ncvarrename(char *);
 extern void test_ncattput(char *);
 extern void test_ncattinq(char *);
 extern void test_ncattget(char *);
-extern void test_ncattcopy(char *, char *);
+extern void test_ncattcopy(char *, const char *);
 extern void test_ncattname(char *);
 extern void test_ncattrename(char *);
 extern void test_ncattdel(char *);
