@@ -5,12 +5,6 @@
 ##############################################################################
 ##############################################################################
 
-if (NOT BUILD_SHARED_LIBS)
-  set (tgt_ext "")
-else ()
-  set (tgt_ext "")
-endif ()
-
 # Remove any output file left over from previous test run
 add_test (
     NAME NCGEN-clearall-objects
@@ -37,7 +31,7 @@ add_custom_target(ncgen_files ALL COMMENT "Copying files needed by ncgen tests" 
 #-- Adding test for ncgen
 add_test (
     NAME NCGEN-test0.nc
-    COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:ncgen${tgt_ext}> -b -o test0.nc test0.cdl
+    COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:ncgen> -b -o test0.nc test0.cdl
 )
 set_tests_properties (NCGEN-test0.nc PROPERTIES DEPENDS "NCGEN-clearall-objects" LABELS ${PROJECT_NAME})
 
@@ -45,7 +39,7 @@ add_test (
     NAME NCGEN-test1.cdl
     COMMAND "${CMAKE_COMMAND}"
         -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
-        -D "TEST_PROGRAM=$<TARGET_FILE:ncdump${tgt_ext}>"
+        -D "TEST_PROGRAM=$<TARGET_FILE:ncdump>"
         -D "TEST_ARGS:STRING=-n;test1;test0.nc"
         -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
         -D "TEST_OUTPUT=test1.cdl"
@@ -57,7 +51,7 @@ set_tests_properties (NCGEN-test1.cdl PROPERTIES DEPENDS "NCGEN-test0.nc" LABELS
 
 add_test (
     NAME NCGEN-test1.nc
-    COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:ncgen${tgt_ext}> -b test1.cdl
+    COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:ncgen> -b test1.cdl
 )
 set_tests_properties (NCGEN-test1.nc PROPERTIES DEPENDS "NCGEN-test1.cdl" LABELS ${PROJECT_NAME})
 
@@ -65,7 +59,7 @@ add_test (
     NAME NCGEN-test2.cdl
     COMMAND "${CMAKE_COMMAND}"
         -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
-        -D "TEST_PROGRAM=$<TARGET_FILE:ncdump${tgt_ext}>"
+        -D "TEST_PROGRAM=$<TARGET_FILE:ncdump>"
         -D "TEST_ARGS:STRING=test1.nc"
         -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
         -D "TEST_OUTPUT=test2.cdl"
@@ -85,7 +79,7 @@ add_test (
     NAME NCGEN-ctest0
     COMMAND "${CMAKE_COMMAND}"
         -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
-        -D "TEST_PROGRAM=$<TARGET_FILE:ncgen${tgt_ext}>"
+        -D "TEST_PROGRAM=$<TARGET_FILE:ncgen>"
         -D "TEST_ARGS:STRING=-c;-o;ctest0.nc;test0.cdl"
         -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
         -D "TEST_OUTPUT=test0.c"
@@ -114,7 +108,7 @@ add_test (
     NAME NCGEN-ftest0
     COMMAND "${CMAKE_COMMAND}"
         -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
-        -D "TEST_PROGRAM=$<TARGET_FILE:ncgen${tgt_ext}>"
+        -D "TEST_PROGRAM=$<TARGET_FILE:ncgen>"
         -D "TEST_ARGS:STRING=-f;-o;ftest0.nc;test0.cdl"
         -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
         -D "TEST_OUTPUT=test0.f"

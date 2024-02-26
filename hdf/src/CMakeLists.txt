@@ -1,6 +1,11 @@
 cmake_minimum_required (VERSION 3.12)
 project (HDF4_HDF_SRC C)
 
+if (POLICY CMP0087)
+  # To evaluate generator expressions for install(CODE) and install(SCRIPT).
+  cmake_policy (SET CMP0087 NEW)
+endif ()
+
 LINK_DIRECTORIES (
     ${HDF4_HDF_BINARY_DIR}
     ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
@@ -140,11 +145,11 @@ if (BUILD_STATIC_LIBS)
       INTERFACE_INCLUDE_DIRECTORIES "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
   )
   set (install_targets ${HDF4_SRC_LIB_TARGET})
-#
-#  add_custom_command(TARGET ${HDF4_SRC_LIB_TARGET}
-#       COMMAND ${CMAKE_COMMAND} -E create_symlink $<TARGET_FILE_NAME:HDF4_SRC_LIB_TARGET> $<TARGET_FILE_NAME:HDF4_SRC_LIB_SYM_TARGET>
-#       DEPENDS $<TARGET_FILE_NAME:HDF4_SRC_LIB_TARGET>
+#  add_custom_command(OUTPUT ${HDF4_SRC_LIB_TARGET} POST_BUILD
+#       COMMAND ${CMAKE_COMMAND} -E create_symlink $<TARGET_FILE:${HDF4_SRC_LIB_TARGET}> $<TARGET_FILE_DIR:${HDF4_SRC_LIB_TARGET}>/$<TARGET_FILE_NAME:${HDF4_SRC_LIB_SYM_TARGET}>
+#       DEPENDS ${HDF4_SRC_LIB_TARGET}
 #  )
+#  install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink $<TARGET_FILE:${HDF4_SRC_LIB_TARGET}> $<TARGET_FILE_DIR:${HDF4_SRC_LIB_TARGET}>/lib${HDF4_SRC_LIB_SYM_NAME}.a)" COMPONENT libraries)
 #  set (install_targets ${install_targets} ${HDF4_SRC_LIB_SYM_TARGET})
 endif ()
 
