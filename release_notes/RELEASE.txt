@@ -239,7 +239,7 @@ Support for new platforms and compilers
 =======================================
 
 
-Bugs fixed since HDF 4.2.16
+Bugs fixed since HDF 4.2.16-2
 ===========================
 
     - Corrected handling of SDgetcompress()
@@ -270,15 +270,6 @@ Bugs fixed since HDF 4.2.16
 
       This has been fixed and szip encoding will now be detected normally.
 
-    - Fixed an external file bug introduced in 4.2.16
-
-      Fixing HDFFR-1607 introduced a bug where the flag that indicates whether
-      the external file directory has been changed from the previous location
-      was not reset properly.
-      Reset the flag after building a filename path for an external element.
-
-      Fixes HDFFR-1609
-
     - Build fortran with -fallow-argument-mismatch w/ gcc 10+
 
       The gfortran configuration checks checked the version via a variable that
@@ -298,6 +289,39 @@ Bugs fixed since HDF 4.2.16
       PIN_FLOAT_ARRAY_CRITICAL to PIN_DOUBLE_ARRAY.
 
       Github issue #355
+
+    - Vstart/Vinitialize did not fail as expected
+
+      User simulated a failure in Vstart while using hrepack, but the
+      function did not fail as expected.
+
+      This is now fixed.
+
+      Github issue #354
+
+    - DF24getimage caused a segfault when reading corrupted file
+
+      When jpeg_start_decompress failed to decompress a corrupted file, the
+      JPEG library exit with failure, causing a segfault in user's application.
+
+      The library now overrides the JPEG routine error_exit to return an
+      error code instead.
+
+      Github issue #295
+
+    - SDgetcompinfo returned incorrect option masks for szip compression
+
+      A special bit, SZ_H4_REV_2, was used to indicate that the szip info
+      was stored in a new way.  This bit was set in the options mask field
+      of the szip info struct.  As a result, the value of options mask
+      became incorrect.  For example, an option mask value was 132 but with
+      the special bit set, it was returned as 65668.
+
+      In this release, the special bit is removed from the option mask before
+      it is returned to the application.  This change does not affect the data
+      format in the file.
+
+      JIRA issue HDFFR-82
 
 
 Documentation
@@ -418,10 +442,6 @@ o  CMake fails to set the full path to the install location on Windows:
 o  CMake "make install" fails installing the tools:
     Use CPack to create an install package.
    ADB - 2014/02/03
-
-o  CMake does not install these man pages:
-    hdf.1, ncdump.1, ncgen.1
-   AKC/BMR - 2014/02/02
 
 o  On IBM PowerPC 64, hdftest fails when gcc 4.4.6 is used with -O3 optimization
    level.
