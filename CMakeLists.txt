@@ -92,19 +92,19 @@ mark_as_advanced (HDF4_EXTERNAL_LIB_PREFIX)
 #   # Export configuration to this export variable
 #   set (HDF4_EXPORTED_TARGETS "project-targets")
 #
-#   # Setup all necessary overrides for zlib so that HDF4 uses our
-#   # internally compiled zlib rather than any other version
-#   if (HDF4_ENABLE_Z_LIB_SUPPORT)
-#    # We must tell the main HDF4 library that it depends on our zlib
-#     set (HDF4_LIB_DEPENDENCIES prjzlib)
-#     # Override the zlib header file
-#     if (PRJ_USE_SYSTEM_ZLIB)
-#       set (H4_ZLIB_HEADER "zlib.h")
+#   # Setup all necessary overrides for szip so that HDF4 uses our
+#   # internally compiled szip rather than any other version
+#   if (HDF4_ENABLE_SZIP_SUPPORT)
+#    # We must tell the main HDF4 library that it depends on our szip
+#     set (HDF4_LIB_DEPENDENCIES prjszip)
+#     # Override the szip header file
+#     if (PRJ_USE_SYSTEM_SZIP)
+#       set (H4_SZIP_HEADER "szip.h")
 #     else ()
-#      set (H4_ZLIB_HEADER "prj_zlib.h")
-#       # Set vars that FindZlib would have set if used in sub project
-#       set (ZLIB_INCLUDE_DIRS "${PRJ_ZLIB_INCLUDE_DIRS}")
-#       set (ZLIB_LIBRARIES prjzlib)
+#      set (H4_SZIP_HEADER "prj_szip.h")
+#       # Set vars that FindSZIP would have set if used in sub project
+#       set (SZIP_INCLUDE_DIRS "${PRJ_SZIP_INCLUDE_DIRS}")
+#       set (SZIP_LIBRARIES prjszip)
 #     endif ()
 #  endif ()
 #

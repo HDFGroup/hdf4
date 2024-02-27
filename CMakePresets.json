@@ -34,8 +34,6 @@
       "inherits": ["ci-base-tgz", "ci-CompressionVars"],
       "cacheVariables": {
         "HDF4_PACKAGE_EXTLIBS": "ON",
-        "HDF4_ENABLE_JPEG_LIB_SUPPORT": "ON",
-        "HDF4_ENABLE_Z_LIB_SUPPORT": "ON",
         "HDF4_ENABLE_SZIP_SUPPORT": "ON",
         "HDF4_ENABLE_SZIP_ENCODING": "ON",
         "JPEG_USE_LOCALCONTENT": "OFF",
