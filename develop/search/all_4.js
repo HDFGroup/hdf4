@@ -9,7 +9,7 @@ var searchData=
   ['abs_6',['ABS',['../tutils_8h.html#a996f7be338ccb40d1a2a5abc1ad61759',1,'tutils.h']]],
   ['acc_5fid_7',['acc_id',['../structbitrec__t.html#a0b9dce439515fc6b93c8c240abab1e4f',1,'bitrec_t']]],
   ['acc_5fimg_8',['acc_img',['../structri__info__t.html#a911d833ff5bd638f607e3938938182d8',1,'ri_info_t']]],
-  ['acc_5finit_9',['acc_init',['../structcomp__coder__deflate__info__t.html#afd05bce8110589b5cf7cb435f366841a',1,'comp_coder_deflate_info_t']]],
+  ['acc_5finit_9',['acc_init',['../structcomp__coder__deflate__info__t.html#a94277d013b8d2e6136267a939bb02bc8',1,'comp_coder_deflate_info_t']]],
   ['acc_5fmode_10',['acc_mode',['../structcomp__coder__deflate__info__t.html#a10e5a9039243a8a0b9ca936f9ec4be5f',1,'comp_coder_deflate_info_t::acc_mode'],['../hproto__fortran_8h.html#ae529993af76e251e35cb96ede9408691',1,'acc_mode:&#160;hproto_fortran.h']]],
   ['acc_5fperm_11',['acc_perm',['../structri__info__t.html#a682392805fd7127b33a4b090c0c6a4c4',1,'ri_info_t']]],
   ['acc_5ftype_12',['acc_type',['../structri__info__t.html#a1885a68b5d57e8f045f082970000321f',1,'ri_info_t']]],
