@@ -58,7 +58,6 @@ Preconditions:
     The following libraries are required to build HDF4:
     
         libjpeg-devel   : JPEG library (either 6b or 8b)
-        tirpc           : RPC library
         zlib            : Zlib compression library
 
     HDF4 may be configured to use the SZIP compression library.
