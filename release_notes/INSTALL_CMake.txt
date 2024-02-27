@@ -83,7 +83,7 @@ To build HDF4 with the SZIP, ZLIB and JPEG external libraries you will need to:
    1. Change to the development directory "myhdfstuff".
 
    2. Download/copy the individual files mentioned above to "myhdfstuff".
-      Uncompress the file.
+      Do not uncompress the tar.gz files.
 
    3. Change to the source directory "hdf-4.3.x".
       CTestScript.cmake file should not be modified.
