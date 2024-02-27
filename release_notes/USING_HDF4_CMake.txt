@@ -86,9 +86,6 @@ Go through these steps to build HDF4 applications with CMake.
    4. Test HDF4 Applications
 
 These steps are described in more detail below.
-
-
-
    1. Run CMake
 
       The visual CMake executable is named "cmake-gui.exe" on Windows and should be
@@ -112,12 +109,13 @@ These steps are described in more detail below.
             * MinGW Makefiles
             * NMake Makefiles
             * Unix Makefiles
-            * Visual Studio 14 2015
-            * Visual Studio 14 2015 Win64
             * Visual Studio 15 2017
             * Visual Studio 15 2017 Win64
             * Visual Studio 16 2019
             * ... in addition VS2019 will need to set the "-A" option,
+            * ... [Win32, x64, ARM, ARM64]
+            * Visual Studio 17 2022
+            * ... in addition VS2022 will need to set the "-A" option,
             * ... [Win32, x64, ARM, ARM64]
 
         <options> is:
@@ -128,7 +126,7 @@ These steps are described in more detail below.
 
       2.1  Visual CMake users, click the Configure button. If this is the first time you are
            running cmake-gui in this directory, you will be prompted for the
-           generator you wish to use (for example on Windows, Visual Studio 14 2015 Win64).
+           generator you wish to use (for example on Windows, Visual Studio 16 2019).
            CMake will read in the CMakeLists.txt files from the source directory and
            display options for the HDF4 project. After the first configure you
            can adjust the cache settings and/or specify locations of other programs.
@@ -146,7 +144,7 @@ These steps are described in more detail below.
 
       2.2  Alternative command line example on Windows in c:\MyHDFstuff\hdf4\build directory:
 
-           cmake -G "Visual Studio 14 2015 Win64" -DBUILD_TESTING:BOOL=ON ..
+           cmake -G "Visual Studio 16 2019" -A "x64" -DBUILD_TESTING:BOOL=ON ..
 
    3. Build HDF4 Applications
 
@@ -229,11 +227,10 @@ command line and the build folder is created as a sub-folder. Windows should
 adjust the forward slash to double backslashes, except for the HDF_DIR
 environment variable.
 
-NOTE: this file is available in the HDF4 repository:
-    https://github.com/HDFGroup/hdf4/blob/master/release_notes/USING_HDF4_CMake.txt
+NOTE: this file is available in the HDF4 repository, for more information see:
+    https://github.com/HDFGroup/hdf4/blob/master/release_notes/USING_CMake_Examples.txt
 
-    HDF4_Examples.cmake
-    HDF4_Examples_options.cmake
+           ctest -S HDF4_Examples.cmake -C Release -V -O test.log
 
 Also available at the HDF web site is a CMake application framework template.
 You can quickly add files to the framework and execute the script to compile
