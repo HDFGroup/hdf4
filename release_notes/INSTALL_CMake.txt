@@ -56,10 +56,10 @@ HDF Group recommends using the ctest script mode to build HDF4.
 -------------------------------------------------------------------------
 Individual files needed as mentioned in this document
 -------------------------------------------------------------------------
-CMake build script from https://github.com/byrnHDF/hdf4/tree/master/config/cmake/scripts:
+CMake build script from https://github.com/HDFGroup/hdf4/tree/master/config/cmake/scripts:
     CTestScript.cmake
 
-Configuration files from https://github.com/byrnHDF/hdf4/tree/master/config/cmake/scripts:
+Configuration files from https://github.com/HDFGroup/hdf4/tree/master/config/cmake/scripts:
     HDF4config.cmake
     HDF4options.cmake
 
