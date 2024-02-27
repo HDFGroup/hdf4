@@ -43,7 +43,7 @@ jobs:
             mkdir "build"
             cd "build"
             ../configure \
-                --enable-build-mode=production \
+                --enable-production \
                 --enable-netcdf \
                 --disable-fortran \
                 --disable-java \

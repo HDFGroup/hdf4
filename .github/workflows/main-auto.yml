@@ -8,6 +8,10 @@ on:
         description: "release vs. debug build"
         required: true
         type: string
+      build_option:
+        description: "--enable-production or --disable-production"
+        required: true
+        type: string
       shared:
         description: "shared enable/disable"
         required: true
@@ -59,7 +63,7 @@ jobs:
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
           $GITHUB_WORKSPACE/configure \
-            --enable-build-mode=${{ inputs.build_mode }} \
+            ${{ inputs.build_option }} \
             --${{ inputs.netcdf }}-netcdf \
             --disable-fortran \
             --${{ inputs.shared }}-java \
