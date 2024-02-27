@@ -177,7 +177,7 @@ extern
 
 #define MESSAGE(v, a)                                                                                        \
     {                                                                                                        \
-        if (Verbosity > v) {                                                                                 \
+        if (Verbosity >= v) {                                                                                \
             a                                                                                                \
         }                                                                                                    \
     }
