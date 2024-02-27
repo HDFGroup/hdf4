@@ -25,6 +25,10 @@
 /* The library always uses UNIXBUFIO */
 #define FILELIB UNIXBUFIO
 
+/* Common library headers */
+#include "hdf.h"
+#include "herr_priv.h"
+
 /*--------------------------------------------------------------------------*/
 /*                              MT/NT constants                             */
 /*  Four MT nibbles represent double, float, int, uchar (from most          */
@@ -67,10 +71,6 @@
 #else
 #define DF_MT DFMT_LE
 #endif
-
-/* Common library headers */
-#include "hdf.h"
-#include "herr_priv.h"
 
 /* Standard C library headers */
 #include <assert.h>
