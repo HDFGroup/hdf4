@@ -441,7 +441,7 @@ DFKgetPNSC(int32 numbertype, int32 machinetype)
     HEclear();
 
     /* Since the information is provided only for the 4 */
-    /* classes of char, int, float, double and is indenpend */
+    /* classes of char, int, float, double and is independent */
     /* of whether it is stored native or little-endian in file, */
     /* we will use only the standard HDF format information */
     switch (numbertype & DFNT_MASK) {
