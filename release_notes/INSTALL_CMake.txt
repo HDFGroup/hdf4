@@ -289,10 +289,13 @@ IV. Further considerations
          packages there. Add the following CMake options:
             -DJPEG_LIBRARY:FILEPATH=some_location/lib/jpeg.lib
             -DJPEG_INCLUDE_DIR:PATH=some_location/include
+            -DJPEG_USE_EXTERNAL:BOOL=OFF
             -DZLIB_LIBRARY:FILEPATH=some_location/lib/zlib.lib
             -DZLIB_INCLUDE_DIR:PATH=some_location/include
+            -DZLIB_USE_EXTERNAL:BOOL=OFF
             -DSZIP_LIBRARY:FILEPATH=some_location/lib/szlib.lib
             -DSZIP_INCLUDE_DIR:PATH=some_location/include
+            -DSZIP_USE_EXTERNAL:BOOL=OFF
          where "some_location" is the full path to the extlibs folder.
          Also the appropriate environment variable must be set;
             set(ENV{JPEG_ROOT} "some_location")
@@ -303,9 +306,13 @@ IV. Further considerations
          options:
             HDF4_ALLOW_EXTERNAL_SUPPORT:STRING="GIT"
             JPEG_GIT_URL:STRING="https://some_location/jpeg"
+            JPEG_GIT_BRANCH="some_branch"
             ZLIB_GIT_URL:STRING="https://some_location/zlib"
+            ZLIB_GIT_BRANCH="some_branch"
             SZIP_GIT_URL:STRING="https://some_location/szip"
-         where "some_location" is the URL to the GIT repository. Also set
+            SZIP_GIT_BRANCH="some_branch"
+         where "some_location" is the URL to the GIT repository and "some_branch" is
+         a branch in the repository, usually the default. Also set
          CMAKE_BUILD_TYPE to the configuration type.
 
       C. Use source packages from a compressed file by adding the following
@@ -332,8 +339,11 @@ IV. Further considerations
             ZLIB_TGZ_ORIGPATH:STRING="some_location"
 
             HDF4_ALLOW_EXTERNAL_SUPPORT:STRING="TGZ"
-         where "some_location" is the URL or full path to the compressed
-         file and ext is the type of compression file.
+         where "some_location" is the URL and by setting
+            JPEG_USE_LOCALCONTENT:BOOL=ON
+            ZLIB_USE_LOCALCONTENT:BOOL=OFF
+            LIBAEC_USE_LOCALCONTENT:BOOL=OFF
+         or full path to the compressed file and ext is the type of compression file.
          Also set CMAKE_BUILD_TYPE to the configuration type during configuration.
          See the settings in the config/cmake/cacheinit.cmake file HDF uses for testing.
 
@@ -392,7 +402,7 @@ IV. Further considerations
       See the CMake help for more information on using toolchain files.
 
       To use a toolchain file with the supplied cmake scripts, see the
-      HDF4options.cmake file under the scripts section.
+      HDF4options.cmake file under the toolchain section.
 
 Notes: CMake and HDF4
 
