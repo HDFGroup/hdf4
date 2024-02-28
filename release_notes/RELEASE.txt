@@ -4,7 +4,7 @@ HDF version 4.3.0-1 currently under development
 INTRODUCTION
 
 This document describes the differences between this release and the
-HDF 4.2.16 release.  It is written for people who are familiar with
+HDF 4.2.16-2 release.  It is written for people who are familiar with
 previous releases of HDF and wish to migrate to this version of HDF.
 
 Note that the HDF4 documentation will be updated at the time of
@@ -25,7 +25,7 @@ CONTENTS
 - New features and changes
   -- Configuration
   -- C Library
-- Bugs fixed since HDF 4.2.16
+- Bugs fixed since HDF 4.2.16-2
   -- Configuration
   -- Library
   -- Utilities
@@ -376,7 +376,11 @@ This version has been tested in the following platforms:
                                       pgcc and pgf90 17.10-0 64-bit target
                                          on x86-64 Linux -tp nehalem
 
+    macOS Sonoma 14                  Apple clang version 15.0.7
+    Darwin 23.2.0 arm64              Clang 17.0.0
+
     macOS Ventura 13.6.4             Apple clang version 15.0.0
+    Darwin 22.6.0 x86_64
 
     macOS Monterey 12                Apple clang version 14.0.0
     Darwin 21.6.0 x86_64             gfortran GNU Fortran (Homebrew GCC 13.2.0) 13.2.0
