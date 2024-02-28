@@ -1,6 +1,6 @@
-#line 1 "mfhdf/ncgen/ncgenyy.c"
+#line 2 "mfhdf/ncgen/ncgenyy.c"
 
-#line 3 "mfhdf/ncgen/ncgenyy.c"
+#line 4 "mfhdf/ncgen/ncgenyy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -644,12 +644,13 @@ char *yytext;
 char errstr[100];        /* for short error messages */
 void expand_escapes();
 
-#include <string.h>
 #include <ctype.h>
 #include <limits.h>
+#include <stdlib.h>
+#include <string.h>
 #include "ncgentab.h"
-#line 652 "mfhdf/ncgen/ncgenyy.c"
 #line 653 "mfhdf/ncgen/ncgenyy.c"
+#line 654 "mfhdf/ncgen/ncgenyy.c"
 
 #define INITIAL 0
 
@@ -860,7 +861,7 @@ YY_DECL
 	{
 #line 22 "mfhdf/ncgen/ncgen.l"
 
-#line 864 "mfhdf/ncgen/ncgenyy.c"
+#line 865 "mfhdf/ncgen/ncgenyy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1099,7 +1100,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 126 "mfhdf/ncgen/ncgen.l"
+#line 122 "mfhdf/ncgen/ncgen.l"
 {
         long dd;
         if (sscanf((char*)yytext, "%li", &dd) != 1) {
@@ -1113,7 +1114,7 @@ YY_RULE_SETUP
 case 23:
 /* rule 23 can match eol */
 YY_RULE_SETUP
-#line 135 "mfhdf/ncgen/ncgen.l"
+#line 131 "mfhdf/ncgen/ncgen.l"
 {
             (void) sscanf((char*)&yytext[1],"%c",&byte_val);
         return (BYTE_CONST);
@@ -1121,7 +1122,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 139 "mfhdf/ncgen/ncgen.l"
+#line 135 "mfhdf/ncgen/ncgen.l"
 {
         byte_val = strtol((char*)&yytext[2], (char **) 0, 8);
         return (BYTE_CONST);
@@ -1129,7 +1130,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 143 "mfhdf/ncgen/ncgen.l"
+#line 139 "mfhdf/ncgen/ncgen.l"
 {
         byte_val = strtol((char*)&yytext[2], (char **) 0, 16);
         return (BYTE_CONST);
@@ -1137,7 +1138,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 147 "mfhdf/ncgen/ncgen.l"
+#line 143 "mfhdf/ncgen/ncgen.l"
 {
         switch ((char)yytext[2]) {
             case 'a': byte_val = '\007'; break; /* not everyone under-
@@ -1158,21 +1159,21 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 165 "mfhdf/ncgen/ncgen.l"
+#line 161 "mfhdf/ncgen/ncgen.l"
 {/* whitespace */ ;
         }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 167 "mfhdf/ncgen/ncgen.l"
+#line 163 "mfhdf/ncgen/ncgen.l"
 return (yytext[0]) ;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 168 "mfhdf/ncgen/ncgen.l"
+#line 164 "mfhdf/ncgen/ncgen.l"
 ECHO;
 	YY_BREAK
-#line 1180 "mfhdf/ncgen/ncgenyy.c"
+#line 1177 "mfhdf/ncgen/ncgenyy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2177,4 +2178,4 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 168 "mfhdf/ncgen/ncgen.l"
+#line 164 "mfhdf/ncgen/ncgen.l"
