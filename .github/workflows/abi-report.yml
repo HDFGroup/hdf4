@@ -142,11 +142,21 @@ jobs:
           ls -l compat_reports
           ls -l *.html
 
+      - name: Publish ABI reports
+        id: publish-abi-reports
+        run: |
+          mkdir "${{ runner.workspace }}/buildabi"
+          mkdir "${{ runner.workspace }}/buildabi/hdf4"
+          cp ${{ inputs.file_base }}-hdf_compat_report.html ${{ runner.workspace }}/buildabi/hdf4
+          cp ${{ inputs.file_base }}-hdf_compat_report.html ${{ runner.workspace }}/buildabi/hdf4
+          cp ${{ inputs.file_base }}-java_compat_report.html ${{ runner.workspace }}/buildabi/hdf4
+          cd "${{ runner.workspace }}/buildabi"
+          tar -zcvf ${{ inputs.file_base }}.html.abi.reports hdf4
+        shell: bash
+
       - name: Save output as artifact
         uses: actions/upload-artifact@v4
         with:
           name: abi-reports
           path: |
-            ${{ inputs.file_base }}-hdf_compat_report.html
-            ${{ inputs.file_base }}-mfhdf_compat_report.html
-            ${{ inputs.file_base }}-java_compat_report.html
+            ${{ inputs.file_base }}.html.abi.reports
