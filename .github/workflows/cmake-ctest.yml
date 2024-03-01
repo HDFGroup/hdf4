@@ -45,7 +45,7 @@ jobs:
 
       # Get files created by release script
       - name: Get zip-tarball (Windows)
-        uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+        uses: actions/download-artifact@87c55149d96e628cc2ef7e6fc2aab372015aec85 # v4.1.3
         with:
               name: zip-tarball
               path: ${{ github.workspace }}
@@ -119,7 +119,7 @@ jobs:
 
       # Get files created by release script
       - name: Get tgz-tarball (Linux)
-        uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+        uses: actions/download-artifact@87c55149d96e628cc2ef7e6fc2aab372015aec85 # v4.1.3
         with:
               name: tgz-tarball
               path: ${{ github.workspace }}
@@ -233,7 +233,7 @@ jobs:
 
       # Get files created by release script
       - name: Get tgz-tarball (MacOS)
-        uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+        uses: actions/download-artifact@87c55149d96e628cc2ef7e6fc2aab372015aec85 # v4.1.3
         with:
               name: tgz-tarball
               path: ${{ github.workspace }}
@@ -315,7 +315,7 @@ jobs:
 
       # Get files created by release script
       - name: Get zip-tarball (Windows_intel)
-        uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+        uses: actions/download-artifact@87c55149d96e628cc2ef7e6fc2aab372015aec85 # v4.1.3
         with:
               name: zip-tarball
               path: ${{ github.workspace }}
@@ -395,7 +395,7 @@ jobs:
 
       # Get files created by release script
       - name: Get tgz-tarball (Linux_intel)
-        uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+        uses: actions/download-artifact@87c55149d96e628cc2ef7e6fc2aab372015aec85 # v4.1.3
         with:
               name: tgz-tarball
               path: ${{ github.workspace }}
