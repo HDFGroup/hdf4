@@ -73,7 +73,7 @@ jobs:
         run: |
           HDF4DIR=${{ github.workspace }}/hdf4/HDF_Group/HDF/
           FILE_NAME_HDF4=$(ls ${{ github.workspace }}/hdf4/HDF_Group/HDF)
-          FILE_VERS=$(echo "$FILE_NAME_HDF4" | sed -r "s/([0-9]+\.[0-9]+\.[0-9]+)\..*/\1/")
+          FILE_VERS=$(echo "$FILE_NAME_HDF4" | sed -r "s/([0-9]+\.[0-9]+\.[0-9]+)(\-[0-9]+)\..*/\1/")
           echo "HDF4_ROOT=$HDF4DIR$FILE_NAME_HDF4" >> $GITHUB_OUTPUT
           echo "HDF4_VERS=$FILE_VERS" >> $GITHUB_OUTPUT
 
@@ -113,7 +113,7 @@ jobs:
 
       - name: Run Java API report
         run: |
-          japi-compliance-checker ${{ steps.set-hdf4lib-refname.outputs.HDF5R_ROOT }}/lib/jarhdf-${{ steps.convert-hdf4lib-refname.outputs.HDF4R_DOTS }}.jar ${{ steps.set-hdf4lib-name.outputs.HDF4_ROOT }}/lib/jarhdf-${{ steps.set-hdf4lib-name.outputs.HDF4_VERS }}.jar
+          japi-compliance-checker ${{ steps.set-hdf4lib-refname.outputs.HDF4R_ROOT }}/lib/jarhdf-${{ steps.convert-hdf4lib-refname.outputs.HDF4R_DOTS }}.jar ${{ steps.set-hdf4lib-name.outputs.HDF4_ROOT }}/lib/jarhdf-${{ steps.set-hdf4lib-name.outputs.HDF4_VERS }}.jar
 
       - name: Run hdf ABI report
         run: |
@@ -131,7 +131,7 @@ jobs:
 
       - name: Copy ABI reports
         run: |
-          cp compat_reports/jarhdf4-/${{ steps.set-hdf4lib-refname.outputs.HDF5R_VERS }}_to_${{ steps.set-hdf4lib-name.outputs.HDF4_VERS }}/compat_report.html ${{ inputs.file_base }}-java_compat_report.html
+          cp compat_reports/jarhdf4-/${{ steps.set-hdf4lib-refname.outputs.HDF4R_VERS }}_to_${{ steps.set-hdf4lib-name.outputs.HDF4_VERS }}/compat_report.html ${{ inputs.file_base }}-java_compat_report.html
           ls -l compat_reports/${{ inputs.file_base }}-hdf/X_to_Y
           cp compat_reports/${{ inputs.file_base }}-hdf/X_to_Y/compat_report.html ${{ inputs.file_base }}-hdf_compat_report.html
           ls -l compat_reports/${{ inputs.file_base }}-mfhdf/X_to_Y
