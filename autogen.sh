@@ -24,12 +24,6 @@ echo "NOTE: You can ignore the warning about adding -I m4."
 echo "      We already do this in an included file."
 echo
 
-echo
-echo "NOTE: You can ignore the warning about adding subdir-objects."
-echo "      This currently causes failures on older systems. It will"
-echo "      be added once we fix the problem."
-echo
-
 # The "obsolete" warnings category flags our Java macros as obsolete.
 # Since there is no clear way to upgrade them (Java support in the Autotools
 # is not great) and they work well enough for now, we suppress those warnings.
