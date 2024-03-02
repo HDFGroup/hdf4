@@ -53,7 +53,6 @@ set (HDF4_HDF_SRC_CSRCS
     ${HDF4_HDF_SRC_SOURCE_DIR}/hfile.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hfiledd.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hkit.c
-    ${HDF4_HDF_SRC_SOURCE_DIR}/linklist.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/mcache.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/mfan.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/mfgr.c
@@ -115,7 +114,6 @@ set (HDF4_PRIVATE_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/hfile_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hkit_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hqueue_priv.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/linklist_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/mcache_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/mfan_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/mfgr_priv.h

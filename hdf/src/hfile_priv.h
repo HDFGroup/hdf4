@@ -25,7 +25,6 @@
 #include "tbbt_priv.h"
 #include "bitvect_priv.h"
 #include "atom_priv.h"
-#include "linklist_priv.h"
 #include "dynarray_priv.h"
 
 /* Magic cookie for HDF data files */
