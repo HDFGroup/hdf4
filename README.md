@@ -91,18 +91,20 @@ Development code is available at our Github location:
 Source Distribution Layout
 --------------------------
 
- The top level of the source code distribution contains the following 
+ The top level of the source code distribution contains the following
  subdirectories:
 
    bin    -- Scripts for maintenance.
 
    config -- Configuration files to be used by configure script.
 
-   hdf    -- The source code for the HDF 'base library', the multi-file 
-             annotation interface, the multi-file raster image interface, 
-             HDF command line utilities, and a test suite. 
-             Please see the README in each directory for further 
-             information on each package. 
+   doc    -- HDF 4.2 to 4.3 Migration Guide
+
+   hdf    -- The source code for the HDF 'base library', the multi-file
+             annotation interface, the multi-file raster image interface,
+             HDF command line utilities, and a test suite.
+             Please see the README in each directory for further
+             information on each package.
 
    java   -- The Java HDF JNI library
 
@@ -111,18 +113,18 @@ Source Distribution Layout
    mfhdf  -- The netCDF(mfhdf) part of the HDF/mfhdf distribution and
              additional HDF utilities, such as hdp, hrepack, hdfimport, etc.
 
-   release\_notes -- 
+   release\_notes --
              Installation instructions for UNIX and Windows.
              Descriptions of new features and bug fixes in this release.
-             Files in this sub-directory can be used as supplemental 
-             documentation for HDF. 
+             Files in this sub-directory can be used as supplemental
+             documentation for HDF.
 
 
 Third Party Software Requirements
 ---------------------------------
   * JPEG distribution release 6b or later.
 
-  * ZLIB 1.1.4(libz.a) or later. 
+  * ZLIB 1.1.4(libz.a) or later.
 
 
 System Requirements
