@@ -50,7 +50,7 @@ jobs:
         shell: msys2 {0}
         run: |
           ./autogen.sh
-          ./configure LDFLAGS="-lws2_32" --disable-netcdf --disable-netcdf-tools --enable-static-exec
+          ./configure LDFLAGS="-lws2_32" --disable-netcdf --enable-static-exec
 
       - name: Autotools Build
         shell: msys2 {0}
