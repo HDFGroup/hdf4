@@ -57,20 +57,20 @@ are tentative.
 
 | Release | New Features |
 | ------- | ------------ |
-| 4.3.0 | Remove XDR, Stop deploying internal header files |
-| 4.4.0 | Drop FORTRAN 77 support, Unified library, Drop netCDF 2.3.2 API + tools |
-
-HDF 4.3.0 (February 2024)
-* Minimum XDR functionality will be built into the library, so linking to TI-RPC, etc. will not be necessary
-* We will no longer deploy undocumented, internal header files (the public, documented HDF4 API will not be affected)
-
-The 4.2 maintenance line will be retired when 4.3.0 releases. There are no
-more planned HDF 4.2.x releases.
+| 4.4.0 | Drop FORTRAN 77 support, Drop netCDF 2.3.2 API + tools, Unified library (maybe) |
 
 HDF 4.4.0 (February 2025)
 * We will drop support for FORTRAN 77 and move to modern Fortran (2003 or 2008)
-* libdf and libmfhdf will be merged into a single libhdf4 library, Fortran will be built as a separate library
-* HDF4 includes an ancient netCDF 2.3.2 API along with the ncdump and ncgen tools. It would be nice to drop this and just have people get their netCDF API from the actual netCDF library.
+* HDF4 includes an ancient netCDF 2.3.2 API along with HDF4-built ncdump and ncgen tools.
+* (maybe) libdf and libmfhdf will be merged into a single libhdf4 library, Fortran will be built as a separate library
+
+The goal of the HDF 4.4.0 release is to address long-standing deficiencies
+and bring HDF4 in line with HDF5's build practices. This should allow HDF4
+to work better with modern systems and compilers and be more easily
+maintained.
+
+The 4.3 maintenance line will be retired when 4.4.0 releases. There are no
+more planned HDF 4.3.x releases.
 
 
 SNAPSHOTS, PREVIOUS RELEASES AND SOURCE CODE
