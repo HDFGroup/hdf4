@@ -93,7 +93,7 @@ lib_file=(libdf.a libdf.la libhdf4.settings libmfhdf.a libmfhdf.la)
 
 bin_file=(gif2hdf h4cc h4fc h4redeploy hdf24to8 hdf2gif hdf2jpeg hdf8to24 hdfcomp
 hdfed hdfimport hdfls hdfpack hdftopal hdftor8 hdfunpac hdiff hdp hrepack jpeg2hdf
-ncdump ncgen paltohdf r8tohdf ristosds vmake vshow)
+paltohdf r8tohdf ristosds vmake vshow)
 
 # TEST TO MAKE SURE THE DIRECTORIES EXISTS
 

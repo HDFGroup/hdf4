@@ -18,7 +18,7 @@ AM_CPPFLAGS=$(nctest_INCLUDES) $(DEFINES)
 TEST_PROG = nctest
 check_PROGRAMS = nctest
 
-# Information for building the "ncgen" program
+# Information for building the "nctest" program
 nctest_SOURCES = add.c atttests.c cdftests.c dimtests.c driver.c emalloc.c  \
                  error.c misctest.c rec.c slabs.c val.c varget_unlim.c      \
                  varget.c vargetg.c varput.c varputg.c vardef.c vartests.c  \

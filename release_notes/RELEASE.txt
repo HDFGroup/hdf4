@@ -38,7 +38,17 @@ New features and changes
 ========================
     Configuration:
     -------------
-    -
+    - The HDF4-build ncgen and ncdump tools have been removed
+
+      We no longer provide these tools through HDF4. They were wildly
+      out-of-date (circa 1993) and we find no value in maintaining ancient
+      versions of tools that are better obtained elsewhere.
+
+      If you need ncdump or ncgen, you should get them from a netCDF
+      distribution. The official version of these tools can be found
+      on GitHub or via your favorite package manager.
+
+        https://github.com/Unidata/netcdf-c
  
     C Library:
     ----------
