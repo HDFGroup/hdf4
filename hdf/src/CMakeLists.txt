@@ -39,7 +39,6 @@ set (HDF4_HDF_SRC_CSRCS
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfunjpeg.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfutil.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dynarray.c
-    ${HDF4_HDF_SRC_SOURCE_DIR}/glist.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hbitio.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hblocks.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hbuffer.c
@@ -105,7 +104,6 @@ set (HDF4_PRIVATE_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfsd_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfufp2i_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/dynarray_priv.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/glist_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hbitio_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hchunks_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hcomp_priv.h
