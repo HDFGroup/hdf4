@@ -16,10 +16,11 @@
 
 List of the HDF4 releases
 
-4.2.16         February 2023
-4.2.15         February 2020
-4.2.14         June 2018
-4.2.13         June 2017
+4.3.0          February  2024
+4.2.16         February  2023
+4.2.15         February  2020
+4.2.14         June      2018
+4.2.13         June      2017
 4.2.12         June      2016  /* delayed dues to 1.10 and 1.8.17 releases */
 4.2.11         February  2015
 4.2.10         February  2014
@@ -48,6 +49,503 @@ List of the HDF4 releases
 
 
 ==========================================================================
+
+%%%4.3.0%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HDF version 4.3.0 released on 2024-02-29
+====================================================
+
+INTRODUCTION
+
+This document describes the differences between this release and the
+HDF 4.2.16-2 release.  It is written for people who are familiar with
+previous releases of HDF and wish to migrate to this version of HDF.
+
+Note that the HDF4 documentation will be updated at the time of
+each final release and can be found on the HDF4 support page at:
+
+    https://portal.hdfgroup.org/display/HDF4/HDF4
+
+The official HDF4 releases can be obtained from:
+
+    https://portal.hdfgroup.org/downloads/index.html
+
+If you have any questions or comments, please send them to the HDF Help Desk:
+
+     help@hdfgroup.org
+
+CONTENTS
+
+- New features and changes
+  -- Configuration
+  -- C Library
+- Bugs fixed since HDF 4.2.16-2
+  -- Configuration
+  -- Library
+  -- Utilities
+- Documentation
+- Platforms Tested
+- Known problems
+
+
+New features and changes
+========================
+    Configuration:
+    -------------
+    - Changed minimum CMake version to 3.18
+
+      Requirement for CMake 3.18 allows removal of special checks for message,
+      EOL checks and Visual Studio 2019 version. Visual Studio 2022 requires
+      CMake version 3.21.
+
+    - Added versioning support to CMake builds
+
+      Added config/lt.vers.am file with soversion numbers for each library.
+
+    - Removed CMake's HDF_ENABLE_LARGE_FILE option
+
+      We now assume that LFS exists, as in the Autotools.
+
+    - New option for building and naming tools in CMake
+
+      The following option has been added:
+        HDF4_BUILD_STATIC_TOOLS    "Build Static Tools Not Shared Tools"          OFF
+
+      The default will build shared tools unless BUILD_SHARED_LIBS = OFF.
+
+    - XDR changes
+
+      We now only support building HDF4 with the XDR implementation packaged
+      with the HDF4 source, which is always built with the mfhdf library.
+
+      The following options have been removed:
+
+        Autotools:  --enable-hdf4-xdr
+        CMake:      HDF4_BUILD_XDR_LIB
+
+      The following header files are no longer deployed:
+
+        types.h, xdr.h
+
+      The XDR functionality has been incorporated into the mfhdf library,
+      so a separate XDR library is no longer distributed with either build
+      system.
+
+    - Man pages were removed
+
+      The few man pages in the HDF4 library are woefully incomplete and/or
+      outdated.  We have no resources to properly update those and to add the
+      missing ones. Instead, we will try to create better man pages from Doxygen.
+
+    - Incorporated HDF4 examples repository into HDF4 library.
+
+      The HDF4Examples folder is equivalent to the repository hdf4-examples.
+      As such it can build and test the examples during library build or after
+      the library is installed. Previously, the hdf4-repository archives were
+      downloaded for packaging with the library. Now the examples can be built
+      and tested without a packaged install of the library.
+
+      However to maintain the ability to use the HDF4Examples with an installed
+      library, it is necessary to translate or synch the option names from those
+      used by the library to those used by the examples. The typical pattern is:
+            <example option> = <library option>
+            HDF_BUILD_JAVA = ${HDF4_BUILD_JAVA}
+
+    - Autotools and CMake target added to produce doxygen generated documentation
+
+      The default is OFF or disabled.
+      Autoconf option is '--enable-doxygen'
+        autotools make target is 'doxygen' and will build all doxygen targets
+      CMake configure option is 'HDF4_BUILD_DOC'.
+        CMake target is 'doxygen' for all available doxygen targets
+        CMake target is 'hdf4lib_doc' for the src subdirectory
+
+    - Added support for CMake presets file.
+
+      CMake supports two main files, CMakePresets.json and CMakeUserPresets.json,
+      that allow users to specify common configure options and share them with others.
+      HDF added a CMakePresets.json file of a typical configuration and support
+      file, config/cmake-presets/hidden-presets.json. 
+      Also added a section to INSTALL_CMake.txt with very basic explanation of the
+      process to use CMakePresets.
+
+    - Private headers are no longer deployed
+
+      * dfi.h - Declared private, unused, undocumented in UG/RM/DG, has been
+                removed from the library entirely.
+
+    - Dropped support for MacFS I/O
+
+      MacFS was an obscure I/O system from the late 90s used to access HFS
+      volumes on MacOS 9 and earlier (publication CMU-CS-98-145 can be
+      found via an internet search).
+
+      HDF4 allows a library builder to manually specify the FILELIB symbol
+      found in hdfi.h to use C standard library buffered I/O (fopen, etc.),
+      POSIX unbuffered I/O (open, etc.), or MacFS I/O (mopen, etc.). The
+      library default is to use C buffered I/O and there is no obvious
+      build-time or run-time option to change that. The FILELIB value is
+      then used to map HI_OPEN, etc. to appropriate I/O calls.
+
+      The "alternative" I/O schemes (POSIX unbuffered and MacFS) are not
+      tested. Due to its age and obscurity, MacFS support is being dropped.
+      The POSIX unbuffered I/O scheme will remain in place for now since it
+      might be interesting to profile that vs C stdio.h calls.
+
+      This change will have *NO IMPACT* on modern Macs. Files created using
+      MacFS in the 90s and early 2000s can be accessed using C standard
+      library I/O.
+
+    C Library:
+    ----------
+    - Private headers are no longer deployed
+
+      The following private headers are not a part of the public API and
+      will no longer be deployed when installing the library:
+      
+        atom.h
+        bitvect.h
+        cdeflate.h
+        cnbit.h
+        cnone.h
+        crle.h
+        cskphuff.h
+        cszip.h
+        dfan.h
+        dfgr.h
+        dfrig.h
+        dfsd.h
+        dfufp2i.h
+        dynarray.h
+        hchunks.h
+        hcompi.h
+        hconv.h
+        hdfi.h
+        hfile.h
+        hkit.h
+        linklist.h
+        local_nc.h
+        mfani.h
+        mfgri.h
+        mstdio.h
+        tbbt.h
+
+    - Most of hbitio.h moved to hbitio_priv.h
+
+      Still in hbitio.h:
+
+      * BITNUM #define
+      * Hputbit() function-like macro
+
+      These are referenced in older versions of the reference manual, e.g., in
+      the Hendbitaccess() entry.
+
+      Moved to hbitio_priv.h:
+
+      * BITBUF_SIZE, DATANUM #defines
+      * bitrec_t struct
+      * maskc and maskl variable declarations
+
+    - Most of hfile.h moved to hfile_priv.h
+
+      Still in hfile.h:
+
+      LIBVER_MAJOR
+      LIBVER_MINOR
+      LIBVER_RELEASE
+      LIBVER_SUBRELEASE
+      LIBVER_STRING
+      LIBVSTR_LEN
+      LIBVER_LEN
+
+      Everything else has been moved to hfile_priv.h
+
+      NOTE that hfile.h is NOT included via hdf.h and must be included
+      separately, which is the same behavior as HDF 4.2.x.
+
+    - hdfi.h is no longer included by hdf.h
+
+      In the past, hdfi.h (an internal header file) was included in the
+      public hdf.h header. This is no longer the case. Anything that
+      should be public has been moved from hdfi.h to hdf.h, including:
+
+        * The C99-like types (e.g., float32)
+        * The archaic VOID/VOIDP macros
+        * The intf Fortran integer type
+        * The HD library macros (e.g., HDmalloc)
+
+      All of these things are considered obsolete and we only maintain
+      them in the public header so that old code does not have to be
+      modified. It is unwise to use them in new code.
+
+      NOTE: hdfi.h included many POSIX, Windows, and C standard library
+            headers.
+
+        *** THESE WILL NO LONGER BE BROUGHT IN BY INCLUDING HDF.H!!! ***
+
+            If you have been relying on hdf.h to bring in headers like
+            stdlib.h, windows.h, or unistd.h, you will need to update your
+            code when you move to HDF 4.3.0.
+
+
+Bugs fixed since HDF 4.2.16-2
+===========================
+
+    - Corrected handling of SDgetcompress()
+
+      SDgetcompress() was deprecated in HDF 4.2.9 (2013) and hidden behind
+      ifdefs controlled by the --enable-deprecated-symbols (Autotools) and
+      HDF4_ENABLE_DEPRECATED_SYMBOLS (CMake) options. These ifdefs were
+      incompletely propagated throughout the library.
+
+      In this release:
+
+      * CMake builds did not expose H4_NO_DEPRECATED_SYMBOLS via
+        h4config.h
+      * The mfhdf.h header now hides the SDgetcompress() call behind an
+        H4_NO_DEPRECATED_SYMBOLS ifdef (pulled in via h4config.h via hdf.h)
+      * The Java wrappers now correctly exclude SDgetcompress() when
+        deprecated symbols are disabled
+      * The libhdf4.settings file now indicates whether HDF4 was built
+        with or without deprecated symbols
+
+    - Fix --with-szlib with no paths not detecting the encoder
+
+      The --with-szlib option in the Autotools has been broken when used
+      without include/library paths for the past decade (git blame says 11
+      years ago). A misnamed variable and a missing setting would skip
+      the encoder check, so the library could only be added in decode-only
+      mode.
+
+      This has been fixed and szip encoding will now be detected normally.
+
+    - Build fortran with -fallow-argument-mismatch w/ gcc 10+
+
+      The gfortran configuration checks checked the version via a variable that
+      was never set, preventing -fallow-argument-mismatch from being set w/
+      gcc 10+, which would prevent building the fortran interface.
+
+      Fixes HDFFR-1582
+
+    - JNI SDSreaddata functions for float and double used mismatched buffer macros
+
+      The SDreaddata_double and SDreaddata_float function created data buffers with
+      PIN_DOUBLE_ARRAY_CRITICAL and PIN_FLOAT_ARRAY_CRITICAL macros then tried to
+      free the buffers with UNPIN_DOUBLE_ARRAY and UNPIN_FLOAT_ARRAY macros. This caused
+      free() call to use an invalid pointer.
+
+      Change the macros PIN_DOUBLE_ARRAY_CRITICAL to PIN_DOUBLE_ARRAY and
+      PIN_FLOAT_ARRAY_CRITICAL to PIN_DOUBLE_ARRAY.
+
+      Github issue #355
+
+    - Vstart/Vinitialize did not fail as expected
+
+      User simulated a failure in Vstart while using hrepack, but the
+      function did not fail as expected.
+
+      This is now fixed.
+
+      Github issue #354
+
+    - DF24getimage caused a segfault when reading corrupted file
+
+      When jpeg_start_decompress failed to decompress a corrupted file, the
+      JPEG library exit with failure, causing a segfault in user's application.
+
+      The library now overrides the JPEG routine error_exit to return an
+      error code instead.
+
+      Github issue #295
+
+    - SDgetcompinfo returned incorrect option masks for szip compression
+
+      A special bit, SZ_H4_REV_2, was used to indicate that the szip info
+      was stored in a new way.  This bit was set in the options mask field
+      of the szip info struct.  As a result, the value of options mask
+      became incorrect.  For example, an option mask value was 132 but with
+      the special bit set, it was returned as 65668.
+
+      In this release, the special bit is removed from the option mask before
+      it is returned to the application.  This change does not affect the data
+      format in the file.
+
+      JIRA issue HDFFR-82
+
+
+Documentation
+=============
+
+
+Platforms Tested
+================
+This version has been tested in the following platforms:
+
+(Format:
+   uname -s, uname -r
+   uname -v, uname -p, uname -m)
+
+    Linux 6.7.4                      GNU gcc (GCC) 13.2.1
+    Fedora 39                        Clang version 17.0.6
+                                     
+    Linux 5.15.0                     GNU gcc (GCC) 11.3.0, 11.4.0, 12
+    Ubuntu SMP x86_64 GNU/Linux      GNU Fortran (GCC) 11.3.0, 12
+    Ubuntu 22.04                     Clang version 14.0.0
+                                     Intel OneApi 2023.1.0, 2023.2.0, 2024.0
+                                     Nvidia nvc 23.9
+                                     AOCC 4.1.0, Clang 16.0.3
+                                     Mingw, GNU GCC 10.0.0
+                                     (cmake and autotools)
+
+    Linux 5.13.0                     GNU gcc (GCC) 9.4.0
+    Ubuntu SMP x86_64 GNU/Linux      GNU Fortran (GCC) 9.4.0
+    Ubuntu 20.04                     Clang version 10.0.0
+                                     Intel OneApi 2023.1.0
+                                     (cmake and autotools)
+
+    Linux 4.18.0-348.7.1.el8_5       gcc (GCC) 8.5.0 20210514 (Red Hat 8.5.0-4)
+    #1 SMP x86_64 GNU/Linux          GNU Fortran (GCC) 8.5.0 20210514 (Red Hat 8.5.0-4)
+    CentOS8                          clang version 12.0.1 (Red Hat 12.0.1)
+                                     Intel OneApi 2023.1.0
+                                     (cmake and autotools)
+
+    Linux 3.10.0-1160.36.2.el7.ppc64 gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-39)
+    #1 SMP ppc64 GNU/Linux           g++ (GCC) 4.8.5 20150623 (Red Hat 4.8.5-39)
+    (echidna)                        GNU Fortran (GCC) 4.8.5 20150623 (Red Hat 4.8.5-39)
+                                     IBM XL C/C++ V13.1
+                                     IBM XL Fortran V15.1f
+ 
+    Linux 3.10.0-327.18.2.el7.x86_64 GNU C (gcc) and Fortran (gfortran) compilers:
+    #1 SMP x86_64, GNU/Linux             Version 4.8.5 20150623 (Red Hat 4.8.5-4)
+    (jelly/moohan)                       Version 5.3.0, 6.3.0, 7.2.0, 8.3.0, 9.1.0, 10.2.0
+                                     Intel(R) C (icc) and Fortran (ifort) compilers:
+                                        Version 17.0.0.098 Build 20160721
+                                     pgcc and pgf90 17.10-0 64-bit target
+                                         on x86-64 Linux -tp haswell
+
+    Linux 2.6.32-754.11.1.el6.x86_64  gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
+    #1 SMP, x86_64                    GNU Fortran (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
+    (platypus)                        icc (ICC) 17.0.0.098 Build 20160721
+                                      ifort (IFORT) 17.0.0.098 Build 20160721
+                                      pgcc and pgf90 17.10-0 64-bit target
+                                         on x86-64 Linux -tp nehalem
+
+    macOS Sonoma 14                  Apple clang version 15.0.7
+    Darwin 23.2.0 arm64              Clang 17.0.0
+
+    macOS Ventura 13.6.4             Apple clang version 15.0.0
+    Darwin 22.6.0 x86_64
+
+    macOS Monterey 12                Apple clang version 14.0.0
+    Darwin 21.6.0 x86_64             gfortran GNU Fortran (Homebrew GCC 13.2.0) 13.2.0
+    (philo)                          Intel icc/icpc/ifort version 2021.10.0 20230609
+
+    macOS Apple M1 11.7.3            Apple clang version 13.0.0 (clang-1300.0.29.30)
+    Darwin 20.6.0 arm64              gfortran GNU Fortran (Homebrew GCC 12.2.0) 12.2.0
+    (macmini-m1)                     Intel icc/icpc/ifort version 2021.8.0 20221120
+
+    macOS Big Sur 11.7.3             Apple clang version 12.0.5 (clang-1205.0.22.9)
+    Darwin 20.4.0 x86_64             gfortran GNU Fortran (Homebrew GCC 12.2.0) 12.2.0
+    (bigsur-1)                       Intel icc/icpc/ifort version 2021.7.1 20221019
+
+    Windows 10 x64                  Visual Studio 2019 w/ clang 12.0.0
+                                        with MSVC-like command-line (C/C++ only - cmake)
+                                    Visual Studio 2019 w/ Intel C/C++/Fortran oneAPI 2024 (cmake)
+                                    Visual Studio 2022 w/ clang 17.0.1
+                                        with MSVC-like command-line (C/C++ only - cmake)
+                                    Visual Studio 2022 w/ Intel C/C++/Fortran oneAPI 2024 (cmake)
+
+Known problems
+==============
+o  The Fortran interface does not work on 64-bit systems as it stores addresses
+   in memory as Fortran INTEGER values, which are typically 32-bit. The
+   Fortran interface is currently disabled by default due to this. It should
+   only be enabled on 32-bit systems.
+
+o  Builds with the autotools option --enable-hdf4-xdr fail on Solaris and
+   on IBM ppc64 with the xlc compiler.  The option should not be used on
+   those platforms.
+
+o  A number of tools and tests fail to free small amounts of memory if they
+   are just going to exit anyway.  This doesn't appear to be a memory leak
+   in the core library.  We're planning to fix these leaks in future releases,
+   likely by modifying these tools to have a single point of return, where
+   resource cleanup will be carried out. 
+
+o  CMake files do not behave correctly with paths containing spaces.
+   Do not use spaces in paths because the required escaping for handling spaces
+   results in very complex and fragile build files.
+   ADB - 2019/05/07
+
+o  Several Fortran examples print "^@" when displaying strings (for example,
+   names of the attributes). This happens because Fortran application
+   doesn't know the length of the strings passed from the C library.
+   EIP - 2015-01-11, HDFFR-1477
+
+o  CMake fails to set the full path to the install location on Windows:
+    The configuration file for examples, HDF4_Examples.cmake, must be updated
+    with the correct value by editing the file or using the INSTALLDIR option.
+    This issue is because of spaces in the path.
+   ADB - 2014/02/03
+
+o  CMake "make install" fails installing the tools:
+    Use CPack to create an install package.
+   ADB - 2014/02/03
+
+o  On IBM PowerPC 64, hdftest fails when gcc 4.4.6 is used with -O3 optimization
+   level.
+
+o  When building on Linux/UNIX platforms, the szip shared library files must
+   be in the system library path.  This can be done by adding a link to
+   the libsz.* files in the /usr/lib folder or by adding the library
+   location to the LD_LIBRARY_PATH environment variable.
+      Ex. export LD_LIBRARY_PATH=path_to_szip_lib:$LD_LIBRARY_PATH
+   Optionally, one can use the static szip library files by adding '-static'
+   to the CFLAGS environment variable.
+
+o  Existing data written by an HDF4 Library prior to HDF 4.2r2:
+   When a one-dimensional SDS and a dimension scale have
+   the same name, subsequent accesses to the dimension scale or to the
+   SDS might produce undesired results because the libraries could not
+   distinguish between the two objects.  In the case of writing, data
+   might even be corrupted.  For example, SDS data might be written to a
+   dimension variable or vice versa. (bugzilla #624)
+
+   HDF4 Library Releases 4.2r2 and later make a distinction between an SDS
+   and a dimension variable.  However, as with older versions, these recent
+   versions are unable to detect such conflicts in files created by earlier
+   releases.  It is therefore STRONGLY recommended to check for such name
+   duplication before working with data created with a pre-4.2r2 library.
+
+   The functions SDgetnumvars_byname and SDnametoindices are provided
+   to help detect such name conflicts and select the correct object to
+   access, respectively; see the HDF Reference Manual entries for
+   further details.
+   FB - 2009/01/26
+   BMR - revised 2011/06/24
+
+o  N-bit compression is not supported with Fortran APIs.
+
+o  Using both fill-value and compression on SD datasets does not work.
+
+o  When using PGI compilers, make sure that the JPEG library is also compiled
+   with a PGI C compiler; linking with a JPEG library built with gcc causes
+   JPEG library tests to fail.  To bypass the problem:
+
+       x Set LIBS flag to $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
+         where $PGI_JPEG_INSTALL_DIR points to the installation directory
+         for the PGI-compiled JPEG library:
+
+         setenv LIBS $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
+
+       x Use the --with-jpeg=$PGI_JPEG_INSTALL_DIR configure flag to
+         configure with the PGI-compiled JPEG library:
+
+         ./configure --with-jpeg=$PGI_JPEG_INSTALL_DIR --with-zlib....
+
+o  In order for the API SDgetdatasize to get the correct compressed size
+   of the data, the dataset needs to be closed (SDendaccess) or read
+   (SDreaddata) after being written and before SDgetdatasize is called.
+   BMR - 2008/11/22
 
 %%%4.2.16%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 HDF version 4.2.16 released on 2023-03-06
