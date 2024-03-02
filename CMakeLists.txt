@@ -558,7 +558,6 @@ include (CMakeFilters.cmake)
 # Options to build tools
 #-----------------------------------------------------------------------------
 option (HDF4_BUILD_TOOLS  "Build HDF4 Tools" ON)
-option (HDF4_BUILD_NETCDF_TOOLS "Build HDF4 versions of ncdump and ncgen" ON)
 
 #-----------------------------------------------------------------------------
 # Option to Build HDF4 versions of NetCDF-3 APIS

@@ -1,7 +1,6 @@
 /*********************************************************************
  *   Copyright 1993, UCAR/Unidata
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
- *   /hdf/src/master/mfhdf/ncdump/ncdump.h,v 1.1 1993/04/21 21:51:19 chouck Exp
  *********************************************************************/
 
 #ifndef HDIFF_H
