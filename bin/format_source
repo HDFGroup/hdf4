@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Recursively format all C & C++ sources and header files, except those in the
-# 'config' directory
+# 'config' directory and generated files, such as ncgenyy.c, etc.
 #
 # Note that any files or directories that are excluded here should also be
 # added to the 'exclude' list in .github/workflows/clang-format-check.yml
@@ -21,7 +21,10 @@ echo "installed version of clang-format to be used."
 echo ""
 
 find . \( -type d -path ./config -prune -and -not -path ./config \) \
-    -and \( -iname *.h -or -iname *.c -or -iname *.java \) \) \
+    -or \( \( \! \( \
+        -name ncgenyy.c \
+        \) \) \
+    -and \( -iname *.h -or -iname *.c -or -iname *.cpp -or -iname *.hpp -or -iname *.java \) \) \
     | xargs -P0 -n1 ${COMMAND} -style=file -i -fallback-style=none
 
 exit 0
