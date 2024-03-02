@@ -114,7 +114,6 @@
 
 #include "hdf_priv.h"
 #include "hfile_priv.h"
-#include "glist_priv.h" /* for double-linked lists, stacks and queues */
 
 /*--------------------- Locally defined Globals -----------------------------*/
 
@@ -122,11 +121,38 @@
 static intn default_cache = TRUE;
 
 /* Whether we've installed the library termination function yet for this interface */
-static intn          library_terminate = FALSE;
-static Generic_list *cleanup_list      = NULL;
+static intn library_terminate = FALSE;
+
+/**************************/
+/* atexit() functionality */
+/**************************/
+
+/* HDF4 allows external registration of atexit() functions via the
+ * HPregister_term_func() call. Several internal source files will also
+ * register their own shutdown handlers via this mechanism.
+ *
+ * Since any numbrer of shutdown handlers can be called, they must
+ * be stored in a dynamic structure. The library currently registers
+ * 7 handlers.
+ */
+
+/* The initial size of the handler array, in number of exit functions,
+ * and the size by which the array is incremented when full. It is assumed
+ * that there will not be a lot of error handlers.
+ */
+#define AT_EXIT_FUNCTIONS_INCR 16
+
+/* The array of exit functions */
+static hdf_termfunc_t *atexit_functions = NULL;
+
+/* The number of exit functions registered */
+static int n_atexit_functions = -1;
+
+/* The allocated size of the exit function array */
+static int max_atexit_functions = -1;
 
 /* Whether to install the atexit routine */
-static intn install_atexit = TRUE;
+static int install_atexit = TRUE;
 
 /* Pointer to the access record node free list */
 static accrec_t *accrec_free_list = NULL;
@@ -2029,12 +2055,9 @@ done:
         In order to be effective, this routine _must_ be called before any other
     HDF function calls, and must be called each time the library is loaded/
     linked into the application. (the first time and after it's been un-loaded)
- GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
     If this routine is used, certain memory buffers will not be de-allocated,
     although in theory a user could call HPend on their own...
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 intn
 HDdont_atexit(void)
@@ -2064,10 +2087,6 @@ Internal Routines
     Returns SUCCEED/FAIL
  DESCRIPTION
     Register the global shut-down routine (HPend) for call with atexit
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static intn
 HIstart(void)
@@ -2095,14 +2114,12 @@ HIstart(void)
     if (HAinit_group(AIDGROUP, 256) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-    if (cleanup_list == NULL) {
-        /* allocate list to hold terminateion fcns */
-        if ((cleanup_list = malloc(sizeof(Generic_list))) == NULL)
+    if (atexit_functions == NULL) {
+        if ((atexit_functions = (hdf_termfunc_t *)calloc(AT_EXIT_FUNCTIONS_INCR, sizeof(hdf_termfunc_t))) ==
+            NULL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
-
-        /* initialize list */
-        if (HDGLinitialize_list(cleanup_list) == FAIL)
-            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+        n_atexit_functions   = 0;
+        max_atexit_functions = AT_EXIT_FUNCTIONS_INCR;
     }
 
 done:
@@ -2123,11 +2140,8 @@ done:
  DESCRIPTION
     Adds routines to the linked-list of routines to call when terminating the
     library.
- GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
     Should only ever be called by the "atexit" function, or real power-users.
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 intn
 HPregister_term_func(hdf_termfunc_t term_func)
@@ -2137,8 +2151,17 @@ HPregister_term_func(hdf_termfunc_t term_func)
         if (HIstart() == FAIL)
             HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
-    if (HDGLadd_to_list(*cleanup_list, (void *)term_func) == FAIL)
-        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    if (n_atexit_functions == max_atexit_functions) {
+        size_t new_size = (size_t)(max_atexit_functions + AT_EXIT_FUNCTIONS_INCR) * sizeof(hdf_termfunc_t);
+        hdf_termfunc_t *temp = (hdf_termfunc_t *)realloc(atexit_functions, new_size);
+
+        if (NULL == temp)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+        atexit_functions = temp;
+        max_atexit_functions += AT_EXIT_FUNCTIONS_INCR;
+    }
+    atexit_functions[n_atexit_functions] = term_func;
+    n_atexit_functions += 1;
 
 done:
     return ret_value;
@@ -2156,35 +2179,26 @@ done:
  DESCRIPTION
     Walk through the shutdown routines for the various interfaces and
     terminate them all.
- GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
     Should only ever be called by the "atexit" function, or real power-users.
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 void
 HPend(void)
 {
-    hdf_termfunc_t term_func; /* pointer to a termination routine for an interface */
-
     /* Shutdown the file ID atom group */
     HAdestroy_group(FIDGROUP);
 
     /* Shutdown the access ID atom group */
     HAdestroy_group(AIDGROUP);
 
-    if ((term_func = (hdf_termfunc_t)HDGLfirst_in_list(*cleanup_list)) != NULL) {
-        do {
-            (*term_func)();
-        } while ((term_func = (hdf_termfunc_t)HDGLnext_in_list(*cleanup_list)) != NULL);
-    } /* end if */
-
-    /* can't issue errors if you're free'ing the error stack. */
-    HDGLdestroy_list(cleanup_list); /* clear the list of interface cleanup routines */
-    /* free allocated list struct */
-    free(cleanup_list);
-    /* re-initialize */
-    cleanup_list = NULL;
+    /* Invoke any atexit() handlers */
+    for (int i = 0; i < n_atexit_functions; i++) {
+        atexit_functions[i]();
+    }
+    free(atexit_functions);
+    atexit_functions     = NULL;
+    n_atexit_functions   = -1;
+    max_atexit_functions = -1;
 
     HPbitshutdown();
     HXPshutdown();
@@ -2829,16 +2843,13 @@ HIrelease_accrec_node(accrec_t *acc)
  GLOBAL VARIABLES
     Resets modified field of version field of appropriate file_records[]
     entry.
-
 --------------------------------------------------------------------------*/
 static int
 HIupdate_version(int32 file_id)
 {
-    /* uint32 lmajorv, lminorv, lrelease; */
-    uint8 /*lstring[81], */ lversion[LIBVER_LEN];
-    filerec_t              *file_rec;
-    int                     i;
-    int                     ret_value = SUCCEED;
+    uint8      lversion[LIBVER_LEN];
+    filerec_t *file_rec;
+    int        ret_value = SUCCEED;
 
     HEclear();
 
@@ -2852,6 +2863,7 @@ HIupdate_version(int32 file_id)
                    file_rec->version.string);
 
     {
+        size_t len;
         uint8 *p;
 
         p = lversion;
@@ -2859,8 +2871,8 @@ HIupdate_version(int32 file_id)
         UINT32ENCODE(p, file_rec->version.minorv);
         UINT32ENCODE(p, file_rec->version.release);
         HIstrncpy((char *)p, file_rec->version.string, LIBVSTR_LEN);
-        i = (int)strlen((char *)p);
-        memset(&p[i], 0, LIBVSTR_LEN - i);
+        len = strlen((char *)p);
+        memset(&p[len], 0, LIBVSTR_LEN - len);
     }
 
     if (Hputelement(file_id, (uint16)DFTAG_VERSION, (uint16)1, lversion, (int32)LIBVER_LEN) == FAIL)
@@ -3329,7 +3341,9 @@ HPread_drec(int32 file_id, atom_t data_id, uint8 **drec_buf)
     if (HTPinquire(data_id, &drec_tag, &drec_ref, NULL, &drec_len) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-    if ((*drec_buf = (uint8 *)malloc(drec_len)) == NULL)
+    if (drec_len < 0)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    if ((*drec_buf = (uint8 *)malloc((size_t)drec_len)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* get the special info header */
