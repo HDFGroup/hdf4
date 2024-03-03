@@ -12,7 +12,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
-FILE
      vg.c
      HDF vdata routines and some vgroup routines
 
@@ -1058,10 +1057,6 @@ DESCRIPTION
 
 RETURNS
    Returns SUCCEED/FAIL
-
-MODIFICATION
-   BMR - added in June 2001 to fix bug# 267
-
 ---------------------------------------------------------------------*/
 intn
 VSsetblocksize(int32 vkey,       /* IN: vdata key */
