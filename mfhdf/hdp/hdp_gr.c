@@ -739,7 +739,7 @@ printGR_ASCII(int32 gr_id, dump_info_t *dumpgr_opts, int32 ndsets, /* number of 
     /* temp. name for curr input file name for ease of use */
     strcpy(curr_file_name, dumpgr_opts->ifile_name);
 
-    /* when there are no images specified, dumper dumps all images */
+    /* when there are no images specified, hdp dumps all images */
     if (num_ri_chosen == NO_SPECIFIC) /* NO_SPECIFIC = -1 */
         dumpall = TRUE;
     else
@@ -897,7 +897,7 @@ printGR_BINARY(int32 gr_id, dump_info_t *dumpgr_opts, int32 num_ri_chosen, /* # 
        no header info will be printed in binary format */
     dumpgr_opts->contents = DDATA;
 
-    /* when there are no images specified, dumper dumps all images */
+    /* when there are no images specified, hdp dumps all images */
     if (num_ri_chosen == (NO_SPECIFIC))
         dumpall = TRUE;
     else

@@ -1,17 +1,17 @@
 cmake_minimum_required (VERSION 3.18)
-project (HDF4_MFHDF_DUMPER C)
+project (HDF4_MFHDF_HDP C)
 
 set (hdp_SRCS
-    ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/hdp.c
-    ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/hdp_dump.c
-    ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/hdp_gr.c
-    ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/hdp_list.c
-    ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/hdp_rig.c
-    ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/hdp_sds.c
-    ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/hdp_util.c
-    ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/hdp_vd.c
-    ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/hdp_vg.c
-    ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/show.c
+    ${HDF4_MFHDF_HDP_SOURCE_DIR}/hdp.c
+    ${HDF4_MFHDF_HDP_SOURCE_DIR}/hdp_dump.c
+    ${HDF4_MFHDF_HDP_SOURCE_DIR}/hdp_gr.c
+    ${HDF4_MFHDF_HDP_SOURCE_DIR}/hdp_list.c
+    ${HDF4_MFHDF_HDP_SOURCE_DIR}/hdp_rig.c
+    ${HDF4_MFHDF_HDP_SOURCE_DIR}/hdp_sds.c
+    ${HDF4_MFHDF_HDP_SOURCE_DIR}/hdp_util.c
+    ${HDF4_MFHDF_HDP_SOURCE_DIR}/hdp_vd.c
+    ${HDF4_MFHDF_HDP_SOURCE_DIR}/hdp_vg.c
+    ${HDF4_MFHDF_HDP_SOURCE_DIR}/show.c
 )
 
 add_executable (hdp ${hdp_SRCS})

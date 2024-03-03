@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef DUMPER_HDP_H
-#define DUMPER_HDP_H
+#ifndef HDP_H
+#define HDP_H
 
 #include "hdf.h"
 #include "hfile_priv.h"
@@ -580,4 +580,4 @@ extern void alloc_index_list(int32 **index_list, int32 num_chosen);
     }
 /***************** end remove when done ******************/
 
-#endif /* DUMPER_HDP_H */
+#endif /* HDP_H */

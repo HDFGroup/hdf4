@@ -584,7 +584,7 @@ sort(int32 *chosen, int32 choices)
 
 /* resetBuff frees the passed-in pointer and resets it to NULL,
    if it is not NULL.  Its purpose is to make cleaning up simpler
-   throughout the entire dumper */
+   throughout the hdp code */
 void
 resetBuff(void **ptr)
 {
