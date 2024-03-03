@@ -74,7 +74,7 @@ HDFLIBAPI int hfile_atexit_add(hfile_atexit_t *ha, hdf_termfunc_t func);
  * \return SUCCEED/FAIL
  *
  * \details Executing the functions does not modify the context (i.e., the
- *          fuctions are not removed when executed. They are executed in
+ *          functions are not removed when executed. They are executed in
  *          the same order in which they were added.
  */
 HDFLIBAPI int hfile_atexit_execute_all(hfile_atexit_t *ha);
