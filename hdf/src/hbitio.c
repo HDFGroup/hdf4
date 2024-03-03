@@ -302,10 +302,9 @@ Hbitwrite(int32 bitid, intn count, uint32 data)
 
     /* cache the bitfile_record since this routine gets called so many times */
     if (bitid != last_bit_id) {
-        /* This needs a mutex semaphore when we go to a multi-threaded version of the library -QAK */
         bitfile_rec = HAatom_object(bitid);
         last_bit_id = bitid;
-    } /* end if */
+    }
 
     if (bitfile_rec == NULL)
         HRETURN_ERROR(DFE_ARGS, FAIL);
@@ -436,10 +435,9 @@ Hbitread(int32 bitid, intn count, uint32 *data)
 
     /* cache the bitfile_record since this routine gets called so many times */
     if (bitid != last_bit_id) {
-        /* This needs a mutex semaphore when we go to a multi-threaded version of the library -QAK */
         bitfile_rec = HAatom_object(bitid);
         last_bit_id = bitid;
-    } /* end if */
+    }
 
     if (bitfile_rec == NULL)
         HRETURN_ERROR(DFE_ARGS, FAIL);
