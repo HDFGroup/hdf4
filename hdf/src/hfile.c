@@ -114,6 +114,7 @@
 
 #include "hdf_priv.h"
 #include "hfile_priv.h"
+#include "hfile_atexit_priv.h"
 
 /*--------------------- Locally defined Globals -----------------------------*/
 
@@ -127,29 +128,8 @@ static intn library_terminate = FALSE;
 /* atexit() functionality */
 /**************************/
 
-/* HDF4 allows external registration of atexit() functions via the
- * HPregister_term_func() call. Several internal source files will also
- * register their own shutdown handlers via this mechanism.
- *
- * Since any numbrer of shutdown handlers can be called, they must
- * be stored in a dynamic structure. The library currently registers
- * 7 handlers.
- */
-
-/* The initial size of the handler array, in number of exit functions,
- * and the size by which the array is incremented when full. It is assumed
- * that there will not be a lot of error handlers.
- */
-#define AT_EXIT_FUNCTIONS_INCR 16
-
-/* The array of exit functions */
-static hdf_termfunc_t *atexit_functions = NULL;
-
-/* The number of exit functions registered */
-static int n_atexit_functions = -1;
-
-/* The allocated size of the exit function array */
-static int max_atexit_functions = -1;
+/* Functions to execute as the library shuts down */
+static hfile_atexit_t *atexit_functions = NULL;
 
 /* Whether to install the atexit routine */
 static int install_atexit = TRUE;
@@ -2096,17 +2076,10 @@ HIstart(void)
     /* Don't call this routine again... */
     library_terminate = TRUE;
 
-    /* Install atexit() library cleanup routine
-     *
-     * In the past, this had problems with Solaris + gcc
-     *
-     * XXX: Check to see if this is true with modern Solaris
-     */
-#if !(defined(__sun) && defined(__GNUC__))
+    /* Install atexit() library cleanup routine */
     if (install_atexit == TRUE)
         if (atexit(&HPend) != 0)
             HGOTO_ERROR(DFE_CANTINIT, FAIL);
-#endif
 
     /* Create the file ID and access ID groups */
     if (HAinit_group(FIDGROUP, 64) == FAIL)
@@ -2114,13 +2087,9 @@ HIstart(void)
     if (HAinit_group(AIDGROUP, 256) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-    if (atexit_functions == NULL) {
-        if ((atexit_functions = (hdf_termfunc_t *)calloc(AT_EXIT_FUNCTIONS_INCR, sizeof(hdf_termfunc_t))) ==
-            NULL)
-            HGOTO_ERROR(DFE_INTERNAL, FAIL);
-        n_atexit_functions   = 0;
-        max_atexit_functions = AT_EXIT_FUNCTIONS_INCR;
-    }
+    /* Set up atexit() functions */
+    if (hfile_atexit_create(&atexit_functions) < 0)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
     return ret_value;
@@ -2147,21 +2116,13 @@ intn
 HPregister_term_func(hdf_termfunc_t term_func)
 {
     intn ret_value = SUCCEED;
+
     if (library_terminate == FALSE)
         if (HIstart() == FAIL)
             HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
-    if (n_atexit_functions == max_atexit_functions) {
-        size_t new_size = (size_t)(max_atexit_functions + AT_EXIT_FUNCTIONS_INCR) * sizeof(hdf_termfunc_t);
-        hdf_termfunc_t *temp = (hdf_termfunc_t *)realloc(atexit_functions, new_size);
-
-        if (NULL == temp)
-            HGOTO_ERROR(DFE_CANTINIT, FAIL);
-        atexit_functions = temp;
-        max_atexit_functions += AT_EXIT_FUNCTIONS_INCR;
-    }
-    atexit_functions[n_atexit_functions] = term_func;
-    n_atexit_functions += 1;
+    if (hfile_atexit_add(atexit_functions, term_func) < 0)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
     return ret_value;
@@ -2192,13 +2153,8 @@ HPend(void)
     HAdestroy_group(AIDGROUP);
 
     /* Invoke any atexit() handlers */
-    for (int i = 0; i < n_atexit_functions; i++) {
-        atexit_functions[i]();
-    }
-    free(atexit_functions);
-    atexit_functions     = NULL;
-    n_atexit_functions   = -1;
-    max_atexit_functions = -1;
+    hfile_atexit_execute_all(atexit_functions);
+    hfile_atexit_destroy(&atexit_functions);
 
     HPbitshutdown();
     HXPshutdown();

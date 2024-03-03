@@ -50,6 +50,7 @@ set (HDF4_HDF_SRC_CSRCS
     ${HDF4_HDF_SRC_SOURCE_DIR}/herr.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hextelt.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hfile.c
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hfile_atexit.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hfiledd.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hkit.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/mcache.c
@@ -110,6 +111,7 @@ set (HDF4_PRIVATE_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/hdf_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/herr_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hfile_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hfile_atexit_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hkit_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hqueue_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/mcache_priv.h

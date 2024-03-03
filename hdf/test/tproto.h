@@ -25,6 +25,7 @@ void test_hblocks(void);
 void test_hextelt(void);
 void test_hfile(void);
 void test_hfile1(void);
+void test_hfile_atexit(void);
 void test_r24(void);
 void test_GR(void);
 void test_r8(void);
