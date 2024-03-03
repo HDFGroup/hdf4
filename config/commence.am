@@ -22,13 +22,13 @@ CP = cp
 
 # Libraries to link to while building
 LIBHDF = $(top_builddir)/hdf/src/libdf.la
-LIBMFHDF = $(top_builddir)/mfhdf/libsrc/libmfhdf.la
+LIBMFHDF = $(top_builddir)/mfhdf/src/libmfhdf.la
 
 H4CC = ${DESTDIR}$(bindir)/h4cc
 H4FC = ${DESTDIR}$(bindir)/h4fc
 
 if HDF_BUILD_SHARED
-    AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs
+    AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/src/.libs -R$(abs_top_builddir)/hdf/src/.libs
 endif
 
 ACLOCAL_AMFLAGS = "-I m4"

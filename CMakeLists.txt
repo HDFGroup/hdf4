@@ -114,7 +114,7 @@ mark_as_advanced (HDF4_EXTERNAL_LIB_PREFIX)
 #   set (HDF4_INCLUDE_DIR
 #       ${PROJECT_SOURCE_DIR}/Utilities/hdf4.3.0/hdf/src
 #       ${PROJECT_BINARY_DIR}/Utilities/hdf4.3.0
-#       ${PROJECT_SOURCE_DIR}/Utilities/hdf4.3.0/mfhdf/libsrc
+#       ${PROJECT_SOURCE_DIR}/Utilities/hdf4.3.0/mfhdf/src
 #   )
 #
 #-----------------------------------------------------------------------------
@@ -204,7 +204,7 @@ set (HDF_CONFIG_DIR           ${HDF4_SOURCE_DIR}/config)
 set (HDF_RESOURCES_DIR        ${HDF4_SOURCE_DIR}/config/cmake)
 set (HDF4_HDFSOURCE_DIR       ${HDF4_SOURCE_DIR}/hdf/src)
 set (HDF4_HDF_TESTSOURCE_DIR  ${HDF4_SOURCE_DIR}/hdf/test)
-set (HDF4_MFHDFSOURCE_DIR     ${HDF4_SOURCE_DIR}/mfhdf/libsrc)
+set (HDF4_MFHDFSOURCE_DIR     ${HDF4_SOURCE_DIR}/mfhdf/src)
 set (HDF4_MFHDF_TEST_DIR      ${HDF4_SOURCE_DIR}/mfhdf/test)
 set (HDF4_MFHDF_UTIL_DIR      ${HDF4_SOURCE_DIR}/mfhdf/util)
 set (HDF4_MFHDF_FORTRAN_DIR   ${HDF4_SOURCE_DIR}/mfhdf/fortran)
@@ -572,7 +572,7 @@ endif ()
 # Add the HDF4 Library Target to the build
 #-----------------------------------------------------------------------------
 add_subdirectory (hdf/src)
-add_subdirectory (mfhdf/libsrc)
+add_subdirectory (mfhdf/src)
 
 #-----------------------------------------------------------------------------
 # Option to build documentation

@@ -23,6 +23,7 @@ set (testhdf_SRCS
     ${HDF4_HDF_TEST_SOURCE_DIR}/conv.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/extelt.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/file.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/file_atexit.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/file_limits.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/litend.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/macros.c

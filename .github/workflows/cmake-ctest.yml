@@ -77,7 +77,7 @@ jobs:
           mkdir "${{ runner.workspace }}/build"
           mkdir "${{ runner.workspace }}/build/hdf4"
           Copy-Item -Path ${{ runner.workspace }}/hdf4/hdfsrc/COPYING -Destination ${{ runner.workspace }}/build/hdf4/
-          Copy-Item -Path ${{ runner.workspace }}/hdf4/hdfsrc/README.md -Destination ${{ runner.workspace }}/build/hdf4/
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-MSVC/README.txt -Destination ${{ runner.workspace }}/build/hdf4/
           Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-MSVC/* -Destination ${{ runner.workspace }}/build/hdf4/ -Include *.zip
           cd "${{ runner.workspace }}/build"
           7z a -tzip ${{ steps.set-file-base.outputs.FILE_BASE }}-win-vs2022_cl.zip hdf4
@@ -144,7 +144,7 @@ jobs:
           mkdir "${{ runner.workspace }}/build"
           mkdir "${{ runner.workspace }}/build/hdf4"
           cp ${{ runner.workspace }}/hdf4/hdfsrc/COPYING ${{ runner.workspace }}/build/hdf4
-          cp ${{ runner.workspace }}/hdf4/hdfsrc/README.md ${{ runner.workspace }}/build/hdf4
+          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-GNUC/README.txt ${{ runner.workspace }}/build/hdf4
           cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-GNUC/*.tar.gz ${{ runner.workspace }}/build/hdf4
           cd "${{ runner.workspace }}/build"
           tar -zcvf ${{ steps.set-file-base.outputs.FILE_BASE }}-ubuntu-2204_gcc.tar.gz hdf4
@@ -156,7 +156,7 @@ jobs:
           mkdir "${{ runner.workspace }}/builddeb"
           mkdir "${{ runner.workspace }}/builddeb/hdf4"
           cp ${{ runner.workspace }}/hdf4/hdfsrc/COPYING ${{ runner.workspace }}/builddeb/hdf4
-          cp ${{ runner.workspace }}/hdf4/hdfsrc/README.md ${{ runner.workspace }}/builddeb/hdf4
+          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-GNUC/README.txt ${{ runner.workspace }}/builddeb/hdf4
           cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-GNUC/*.deb ${{ runner.workspace }}/builddeb/hdf4
           cd "${{ runner.workspace }}/builddeb"
           tar -zcvf ${{ steps.set-file-base.outputs.FILE_BASE }}-ubuntu-2204_gcc.deb hdf4
@@ -168,7 +168,7 @@ jobs:
           mkdir "${{ runner.workspace }}/buildrpm"
           mkdir "${{ runner.workspace }}/buildrpm/hdf4"
           cp ${{ runner.workspace }}/hdf4/hdfsrc/COPYING ${{ runner.workspace }}/buildrpm/hdf4
-          cp ${{ runner.workspace }}/hdf4/hdfsrc/README.md ${{ runner.workspace }}/buildrpm/hdf4
+          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-GNUC/README.txt ${{ runner.workspace }}/buildrpm/hdf4
           cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-GNUC/*.rpm ${{ runner.workspace }}/buildrpm/hdf4
           cd "${{ runner.workspace }}/buildrpm"
           tar -zcvf ${{ steps.set-file-base.outputs.FILE_BASE }}-ubuntu-2204_gcc.rpm hdf4
@@ -267,7 +267,7 @@ jobs:
           mkdir "${{ runner.workspace }}/build"
           mkdir "${{ runner.workspace }}/build/hdf4"
           cp ${{ runner.workspace }}/hdf4/hdfsrc/COPYING ${{ runner.workspace }}/build/hdf4
-          cp ${{ runner.workspace }}/hdf4/hdfsrc/README.md ${{ runner.workspace }}/build/hdf4
+          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Clang/README.txt ${{ runner.workspace }}/build/hdf4
           cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Clang/*.tar.gz ${{ runner.workspace }}/build/hdf4
           cd "${{ runner.workspace }}/build"
           tar -zcvf ${{ steps.set-file-base.outputs.FILE_BASE }}-osx12.tar.gz hdf4
@@ -351,7 +351,7 @@ jobs:
           mkdir "${{ runner.workspace }}/build"
           mkdir "${{ runner.workspace }}/build/hdf4"
           Copy-Item -Path ${{ runner.workspace }}/hdf4/hdfsrc/COPYING -Destination ${{ runner.workspace }}/build/hdf4/
-          Copy-Item -Path ${{ runner.workspace }}/hdf4/hdfsrc/README.md -Destination ${{ runner.workspace }}/build/hdf4/
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/README.txt -Destination ${{ runner.workspace }}/build/hdf4/
           Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/* -Destination ${{ runner.workspace }}/build/hdf4/ -Include *.zip
           cd "${{ runner.workspace }}/build"
           7z a -tzip ${{ steps.set-file-base.outputs.FILE_BASE }}-win-vs2022_intel.zip hdf4
@@ -424,7 +424,7 @@ jobs:
           mkdir "${{ runner.workspace }}/build"
           mkdir "${{ runner.workspace }}/build/hdf4"
           cp ${{ runner.workspace }}/hdf4/hdfsrc/COPYING ${{ runner.workspace }}/build/hdf4
-          cp ${{ runner.workspace }}/hdf4/hdfsrc/README.md ${{ runner.workspace }}/build/hdf4
+          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/README.txt ${{ runner.workspace }}/build/hdf4
           cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/*.tar.gz ${{ runner.workspace }}/build/hdf4
           cd "${{ runner.workspace }}/build"
           tar -zcvf ${{ steps.set-file-base.outputs.FILE_BASE }}-ubuntu-2204_intel.tar.gz hdf4

@@ -54,7 +54,7 @@ test -d $BLDLIBDIR || mkdir -p $BLDLIBDIR
 # --------------------------------------------------------------------
 LIST_LIBRARY_FILES="
 $top_builddir/hdf/src/.libs/libdf.*
-$top_builddir/mfhdf/libsrc/.libs/libmfhdf.*
+$top_builddir/mfhdf/src/.libs/libmfhdf.*
 $top_builddir/java/src/jni/.libs/libhdf_java.*
 "
 LIST_JAR_TESTFILES="

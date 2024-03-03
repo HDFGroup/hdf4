@@ -48,19 +48,18 @@ jobs:
       #use_environ: snapshots
     if: ${{ needs.call-workflow-tarball.outputs.has_changes == 'true' }}
 
-#  call-workflow-abi:
-#    needs: [call-workflow-tarball, call-workflow-ctest]
-#    uses: ./.github/workflows/abi-report.yml
-#    with:
-#      file_ref: '4_3_0-1'
-#      file_base: ${{ needs.call-workflow-tarball.outputs.file_base }}
-#      use_tag: snapshot
-#      use_environ: snapshots
-#    if: ${{ needs.call-workflow-tarball.outputs.has_changes == 'true' }}
+  call-workflow-abi:
+    needs: [call-workflow-tarball, call-workflow-ctest]
+    uses: ./.github/workflows/abi-report.yml
+    with:
+      file_ref: '4.3.0'
+      file_base: ${{ needs.call-workflow-tarball.outputs.file_base }}
+      use_tag: snapshot
+      use_environ: snapshots
+    if: ${{ needs.call-workflow-tarball.outputs.has_changes == 'true' }}
 
   call-workflow-release:
-#    needs: [call-workflow-tarball, call-workflow-ctest, call-workflow-abi]
-    needs: [call-workflow-tarball, call-workflow-ctest]
+    needs: [call-workflow-tarball, call-workflow-ctest, call-workflow-abi]
     permissions:
       contents: write # In order to allow tag creation
     uses: ./.github/workflows/release-files.yml
@@ -73,8 +72,7 @@ jobs:
     if: ${{ needs.call-workflow-tarball.outputs.has_changes == 'true' }}
 
   call-workflow-remove:
-#    needs: [get-old-names, call-workflow-tarball, call-workflow-ctest, call-workflow-abi, call-workflow-release]
-    needs: [get-old-names, call-workflow-tarball, call-workflow-ctest, call-workflow-release]
+    needs: [get-old-names, call-workflow-tarball, call-workflow-ctest, call-workflow-abi, call-workflow-release]
     permissions:
       contents: write # In order to allow file deletion
     uses: ./.github/workflows/remove-files.yml
