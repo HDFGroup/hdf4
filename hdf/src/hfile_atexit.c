@@ -14,6 +14,19 @@
 #include "hdf_priv.h"
 #include "hfile_atexit_priv.h"
 
+/**
+ * \internal
+ * \brief Resizes an atexit context so it can hold more functions
+ *
+ * \param[in] ha    The atexit context
+ *
+ * \return SUCCEED/FAIL
+ *
+ * \details Resizes the functions array by ATEXIT_ARRAY_INCR. Does not
+ *          modify the array if the resize fails.
+ */
+static int hfile_atexit_resize(hfile_atexit_t *ha);
+
 int
 hfile_atexit_create(hfile_atexit_t **ha)
 {
@@ -45,6 +58,27 @@ done:
     return ret_value;
 }
 
+static int
+hfile_atexit_resize(hfile_atexit_t *ha)
+{
+    size_t          new_size  = 0;
+    hdf_termfunc_t *temp      = NULL;
+    int             ret_value = SUCCEED;
+
+    new_size = (ha->max_functions + ATEXIT_ARRAY_INCR) * sizeof(hdf_termfunc_t);
+
+    temp = (hdf_termfunc_t *)realloc(ha->functions, new_size);
+    if (NULL == temp)
+        HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
+    ha->functions = temp;
+    ha->max_functions += ATEXIT_ARRAY_INCR;
+
+    return ret_value;
+done:
+    return ret_value;
+}
+
 int
 hfile_atexit_add(hfile_atexit_t *ha, hdf_termfunc_t func)
 {
@@ -53,21 +87,10 @@ hfile_atexit_add(hfile_atexit_t *ha, hdf_termfunc_t func)
     if (ha == NULL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-    /* Check if we need to resize */
-    if (ha->n_functions == ha->max_functions) {
-
-        size_t          new_size = 0;
-        hdf_termfunc_t *temp     = NULL;
-
-        new_size = (ha->max_functions + ATEXIT_ARRAY_INCR) * sizeof(hdf_termfunc_t);
-
-        temp = (hdf_termfunc_t *)realloc(ha->functions, new_size);
-        if (NULL == temp)
-            HGOTO_ERROR(DFE_CANTINIT, FAIL);
-
-        ha->functions = temp;
-        ha->max_functions += ATEXIT_ARRAY_INCR;
-    }
+    /* Resize, if necessary */
+    if (ha->n_functions == ha->max_functions)
+        if (hfile_atexit_resize(ha) < 0)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     ha->functions[ha->n_functions] = func;
     ha->n_functions += 1;
