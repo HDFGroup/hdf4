@@ -12,30 +12,14 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
-   FILE
-   gentest.c
-   Generate files for HDF testing.
-
-   REMARKS
-   This may be a bit of a kludge in some cases, because it's hard
-   to determine correct output if you don't know if the routine
-   you are generating the test is working yet.
-
-   DESIGN
-   Each test should have a separate function which creates the datafiles
-   necessary for testing it.
-
-   BUGS/LIMITATIONS
-
-   EXPORTED ROUTINES
-   none
-
-   AUTHOR
-   Quincey Koziol
-
-   MODIFICATION HISTORY
-   10/27/93 - Started coding.
-   1/20/94 - Added N-bit test generation.
+ * Generate files for HDF testing
+ *
+ * This may be a bit of a kludge in some cases, because it's hard
+ * to determine correct output if you don't know if the routine
+ * you are generating the test is working yet.
+ *
+ * Each test should have a separate function which creates the datafiles
+ * necessary for testing it.
  */
 
 #include "hdf.h"

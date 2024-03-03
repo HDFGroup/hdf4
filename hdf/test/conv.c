@@ -12,23 +12,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
-   FILE
-   conv.c
-   Test HDF Number-Type conversion routines
-
-   REMARKS
-
-   DESIGN
-
-   BUGS/LIMITATIONS
-
-   EXPORTED ROUTINES
-
-   AUTHOR
-   Quincey Koziol
-
-   MODIFICATION HISTORY
-   10/27/93 - Started coding.
+ * Test HDF Number-Type conversion routines
  */
 
 #include "tproto.h"
