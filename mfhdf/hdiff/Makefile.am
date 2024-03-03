@@ -6,9 +6,9 @@ include $(top_srcdir)/config/commence.am
 
 ## Setup the different includes and preprocessor #defines we need.
 hdiff_INCLUDES=-I$(top_srcdir)/hdf/src   \
-         -I$(top_srcdir)/mfhdf/libsrc    \
+         -I$(top_srcdir)/mfhdf/src       \
          -I$(top_srcdir)/mfhdf/util      \
-         -I$(top_builddir)/mfhdf/libsrc
+         -I$(top_builddir)/mfhdf/src
 DEFINES=-DHDF
 AM_CPPFLAGS=$(hdiff_INCLUDES) $(DEFINES)
 
