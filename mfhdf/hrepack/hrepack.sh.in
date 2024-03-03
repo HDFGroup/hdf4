@@ -18,7 +18,7 @@ HREPACK_BIN="${TESTS_ENVIRONMENT} "`pwd`/$HREPACK    # The path of the tool bina
 HDIFF='../hdiff/hdiff'         # The hdiff tool name 
 HDIFF_BIN="${TESTS_ENVIRONMENT} "`pwd`/$HDIFF        # The path of the hdiff tool binary
 
-HDP='../dumper/hdp'               # The dumper tool name
+HDP='../hdp/hdp'               # The hdp tool name
 HDP_BIN="${TESTS_ENVIRONMENT} "`pwd`/$HDP        # The path of the tool binary
 
 RM='rm -f'
@@ -27,8 +27,8 @@ CMP='cmp -s'
 nerrors=0       # number of errors (0)
 quitonerr=0     # quit on error (not)
 noclean=0       # no cleaning temp. files (yes)
-only=""         # dumper sub-command to test only
-except=""       # dumper sub-command to test not
+only=""         # hdp sub-command to test only
+except=""       # hdp sub-command to test not
 
 # Print a $* message left justified in a field of 70 characters
 #

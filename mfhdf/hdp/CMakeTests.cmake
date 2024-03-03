@@ -130,9 +130,9 @@ set (HDF4_REFERENCE_FILES
 )
 
 foreach (h4_file ${HDF4_REFERENCE_TEST_FILES} ${HDF4_REFERENCE_FILES})
-  HDFTEST_COPY_FILE("${HDF4_MFHDF_DUMPER_SOURCE_DIR}/testfiles/${h4_file}" "${PROJECT_BINARY_DIR}/${h4_file}" "dumper_files")
+  HDFTEST_COPY_FILE("${HDF4_MFHDF_HDP_SOURCE_DIR}/testfiles/${h4_file}" "${PROJECT_BINARY_DIR}/${h4_file}" "hdp_files")
 endforeach ()
-add_custom_target(dumper_files ALL COMMENT "Copying files needed by dumper tests" DEPENDS ${dumper_files_list})
+add_custom_target(hdp_files ALL COMMENT "Copying files needed by hdp tests" DEPENDS ${hdp_files_list})
 
 ##############################################################################
 ##############################################################################

@@ -1194,8 +1194,8 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/fortran/netcdf.inc
                  mfhdf/src/netcdf.h
                  mfhdf/Makefile
-                 mfhdf/dumper/Makefile
-                 mfhdf/dumper/testhdp.sh
+                 mfhdf/hdp/Makefile
+                 mfhdf/hdp/testhdp.sh
                  mfhdf/fortran/Makefile
                  mfhdf/fortran/testfortran.sh
                  mfhdf/hdfimport/Makefile

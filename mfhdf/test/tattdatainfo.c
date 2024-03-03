@@ -761,10 +761,10 @@ test_dfsdattrs()
 
     /* Note: Setting attribute to a dimension with DFSD API doesn't make the
         dimension become a coordinate variable, only setting dimension scale
-        does.  Thus, when no setting scale is done, the dumper will not show
+        does.  Thus, when no setting scale is done, hdp will not show
         the dimension variables.  However, the dimension attributes are there
         and SDgetoldattdatainfo will still find them.  For a demo, the two
-        calls to DFSDsetdimscale can be uncommented, then dumper will show
+        calls to DFSDsetdimscale can be uncommented, then hdp will show
         the dimension variables and their attributes. -BMR, Mar 13, 2011 */
 
     /* Set dimension scales */
