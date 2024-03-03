@@ -132,6 +132,7 @@ main(int argc, char *argv[])
     InitTest("vers", test_vers, "VERSION OF LIBRARY");
     InitTest("hfile", test_hfile, "HFILE");
     InitTest("hfile1", test_hfile1, "HFILE LIMITS");
+    InitTest("hfile_atexit", test_hfile_atexit, "HFILE ATEXIT");
     InitTest("hblocks", test_hblocks, "HBLOCKS");
     InitTest("extelt", test_hextelt, "EXTERNAL ELEMENTS");
     InitTest("comp", test_comp, "COMPRESSED ELEMENTS");
