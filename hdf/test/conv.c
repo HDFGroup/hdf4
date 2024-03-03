@@ -15,8 +15,9 @@
  * Test HDF Number-Type conversion routines
  */
 
-#include "tproto.h"
 #include <time.h>
+
+#include "testhdf.h"
 
 /* last ditch attempt do define this value... */
 #ifndef UINT_MAX

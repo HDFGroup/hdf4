@@ -11,7 +11,7 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "tproto.h"
+#include "testhdf.h"
 
 static float64 f64[10][10], tf64[10][10];
 static float64 f64scale[10], tf64scale[10];

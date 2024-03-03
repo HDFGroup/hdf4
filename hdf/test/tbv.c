@@ -17,7 +17,7 @@
    Test HDF bit-vector (bv) routines.
  */
 
-#include "tproto.h"
+#include "testhdf.h"
 #include "bitvect_priv.h"
 
 static void test_1(void);

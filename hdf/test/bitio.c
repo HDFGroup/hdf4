@@ -16,8 +16,9 @@
    Test HDF bit-level I/O routines
  */
 
-#include "tproto.h"
 #include <time.h>
+
+#include "testhdf.h"
 
 #define TESTFILE_NAME "tbitio.hdf"
 #define DATAFILE_NAME "test_files/bitio.dat"

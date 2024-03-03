@@ -9,7 +9,7 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "tproto.h"
+#include "testhdf.h"
 #include "hfile_atexit_priv.h"
 
 /* Tests the functionality of the hfile_atexit.c code. This is used to

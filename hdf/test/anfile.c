@@ -11,7 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "tproto.h"
+#include "testhdf.h"
+
 #define TESTFILE "tdfan.hdf"
 
 #define ISFIRST     (int)1

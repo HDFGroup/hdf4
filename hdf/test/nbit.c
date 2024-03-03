@@ -18,7 +18,8 @@
  * the SD layer.
  */
 
-#include "tproto.h"
+#include "testhdf.h"
+
 #define TESTFILE_NAME "tnbit.hdf"
 #define DATAFILE_NAME "test_files/nbit.dat"
 

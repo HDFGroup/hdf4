@@ -11,7 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "tproto.h"
+#include "testhdf.h"
+
 #define TESTFILE_NAME "tblocks.hdf"
 
 #define BUFSIZE 4096

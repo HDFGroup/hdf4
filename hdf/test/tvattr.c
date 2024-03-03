@@ -29,10 +29,11 @@
  *	subsequent read of an attribute failed. - BMR - Dec, 2005.
  *
  **************************************************************/
-#include "hdf.h"
-#include "tproto.h"
-#include "vg.h"
 #include <math.h>
+
+#include "hdf.h"
+#include "testhdf.h"
+#include "vg.h"
 
 #define FILENAME             "tvattr.hdf"
 #define VGNAME0              "vgname0"

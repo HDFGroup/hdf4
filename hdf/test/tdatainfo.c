@@ -27,7 +27,7 @@
 
 #include "hdf.h"
 #include "tdatainfo.h"
-#include "tproto.h"
+#include "testhdf.h"
 
 static void test_simple_vs();
 static void test_append_vs();

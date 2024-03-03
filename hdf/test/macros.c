@@ -13,7 +13,7 @@
 
 #include <stdint.h>
 
-#include "tproto.h"
+#include "testhdf.h"
 
 extern int Verbocity;
 
