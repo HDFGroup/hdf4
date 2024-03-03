@@ -84,15 +84,12 @@ var searchData=
   ['sdstart_81',['SDstart',['../classhdf_1_1hdflib_1_1_h_d_f_library.html#a99c1442c98486d811e8f477be3fb9426',1,'hdf.hdflib.HDFLibrary.SDstart()'],['../mfhdf_8h.html#ab496604cad056d9ea8217e09943d04fb',1,'SDstart():&#160;mfhdf.h']]],
   ['sdwritechunk_82',['SDwritechunk',['../classhdf_1_1hdflib_1_1_h_d_f_library.html#a5b517ac2419df3e5ba1d547120a93629',1,'hdf.hdflib.HDFLibrary.SDwritechunk(long sdsid, int[] origin, byte[] data)'],['../classhdf_1_1hdflib_1_1_h_d_f_library.html#abb7ab5cf8e3d2f0c1bfa72c49cc0288c',1,'hdf.hdflib.HDFLibrary.SDwritechunk(long sdsid, int[] origin, Object theData)'],['../mfhdf_8h.html#aa175e811e19f07f10f6e94404aee2ece',1,'SDwritechunk():&#160;mfhdf.h']]],
   ['sdwritedata_83',['SDwritedata',['../classhdf_1_1hdflib_1_1_h_d_f_library.html#a2c174b3d9a13451ace85b02e90e17273',1,'hdf.hdflib.HDFLibrary.SDwritedata(long sdsid, int[] start, int[] stride, int[] count, byte[] data)'],['../classhdf_1_1hdflib_1_1_h_d_f_library.html#a829faa4fd147c0f89aaa7eba5636835d',1,'hdf.hdflib.HDFLibrary.SDwritedata(long sdsid, int[] start, int[] stride, int[] count, Object theData)'],['../mfhdf_8h.html#a2d54f93b307be609f6b3aad93759321e',1,'SDwritedata(int32 sdsid, int32 *start, int32 *stride, int32 *end, void *data):&#160;mfhdf.h']]],
-  ['set_5fformats_84',['set_formats',['../dumplib_8h.html#a46078d87f246b21f23e28c63c7b505df',1,'dumplib.h']]],
-  ['set_5findent_85',['set_indent',['../dumplib_8h.html#a322fa2d8ad9d877ddf9629a6ea3cd169',1,'dumplib.h']]],
-  ['set_5fmax_5flen_86',['set_max_len',['../dumplib_8h.html#a73d081f3b9012f92246a325db8ed5400',1,'dumplib.h']]],
-  ['set_5fszip_87',['set_szip',['../hrepack__utils_8h.html#a87b4782c44438aad4f85b0552208fb3c',1,'hrepack_utils.h']]],
-  ['setalias_88',['setAlias',['../he__proto_8h.html#aa30f629df7c34b0844f36806003ae3a5',1,'he_proto.h']]],
-  ['setnewcompinfo_89',['setNewCompInfo',['../hdfstructsutil_8h.html#a68bc66fb83c29e8b53f58c9c0ec19d05',1,'hdfstructsutil.h']]],
-  ['setpal_90',['setPal',['../he__proto_8h.html#ad9ec6dac4697e045cad869a43538c462',1,'he_proto.h']]],
-  ['shorttobyte_91',['shortToByte',['../classhdf_1_1hdflib_1_1_h_d_f_native_data.html#ad7ac1ec5f2e9feda63438651ed4925f0',1,'hdf.hdflib.HDFNativeData.shortToByte(int start, int len, short[] data)'],['../classhdf_1_1hdflib_1_1_h_d_f_native_data.html#aa5ff411b22732ce57318f00e76d62b07',1,'hdf.hdflib.HDFNativeData.shortToByte(short data)'],['../classhdf_1_1hdflib_1_1_h_d_f_native_data.html#ad04c15a1d1f0291d0a64989dbb74d65f',1,'hdf.hdflib.HDFNativeData.shortToByte(Short data)']]],
-  ['sort_92',['sort',['../hdp_8h.html#a1215139259884d0cfd138cd6f6a8600e',1,'hdp.h']]],
-  ['sort_5fobj_5flist_93',['sort_obj_list',['../hdp_8h.html#a16b5adf47bf0bb55dda7fd5cf3163852',1,'hdp.h']]],
-  ['sort_5fobj_5flist_5fby_5ftag_94',['sort_obj_list_by_tag',['../hdp_8h.html#af5db8e1665ce6ac8052f5d25905b09c9',1,'hdp.h']]]
+  ['set_5fszip_84',['set_szip',['../hrepack__utils_8h.html#a87b4782c44438aad4f85b0552208fb3c',1,'hrepack_utils.h']]],
+  ['setalias_85',['setAlias',['../he__proto_8h.html#aa30f629df7c34b0844f36806003ae3a5',1,'he_proto.h']]],
+  ['setnewcompinfo_86',['setNewCompInfo',['../hdfstructsutil_8h.html#a68bc66fb83c29e8b53f58c9c0ec19d05',1,'hdfstructsutil.h']]],
+  ['setpal_87',['setPal',['../he__proto_8h.html#ad9ec6dac4697e045cad869a43538c462',1,'he_proto.h']]],
+  ['shorttobyte_88',['shortToByte',['../classhdf_1_1hdflib_1_1_h_d_f_native_data.html#ad7ac1ec5f2e9feda63438651ed4925f0',1,'hdf.hdflib.HDFNativeData.shortToByte(int start, int len, short[] data)'],['../classhdf_1_1hdflib_1_1_h_d_f_native_data.html#aa5ff411b22732ce57318f00e76d62b07',1,'hdf.hdflib.HDFNativeData.shortToByte(short data)'],['../classhdf_1_1hdflib_1_1_h_d_f_native_data.html#ad04c15a1d1f0291d0a64989dbb74d65f',1,'hdf.hdflib.HDFNativeData.shortToByte(Short data)']]],
+  ['sort_89',['sort',['../hdp_8h.html#a1215139259884d0cfd138cd6f6a8600e',1,'hdp.h']]],
+  ['sort_5fobj_5flist_90',['sort_obj_list',['../hdp_8h.html#a16b5adf47bf0bb55dda7fd5cf3163852',1,'hdp.h']]],
+  ['sort_5fobj_5flist_5fby_5ftag_91',['sort_obj_list_by_tag',['../hdp_8h.html#af5db8e1665ce6ac8052f5d25905b09c9',1,'hdp.h']]]
 ];

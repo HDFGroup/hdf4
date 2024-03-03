@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.1-c476f87</span>
+   &#160;<span id="projectnumber">4.3.1-2b3c791</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -110,26 +110,24 @@ $(function(){initNavTree('structncdim.html',''); initResizable(); });
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;mfhdf/ncdump/ncdump.h&gt;</code></p>
+<p><code>#include &lt;mfhdf/hdiff/hdiff.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:ad1d4d43eda8ac63a9aff390897e4420e" id="r_ad1d4d43eda8ac63a9aff390897e4420e"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad1d4d43eda8ac63a9aff390897e4420e">name</a> [<a class="el" href="hlimits_8h.html#a49f787049308fe5eccbfe9d03395a18a">H4_MAX_NC_NAME</a>]</td></tr>
-<tr class="separator:ad1d4d43eda8ac63a9aff390897e4420e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0263fe5cfa893cf64660e63f23795ae2" id="r_a0263fe5cfa893cf64660e63f23795ae2"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0263fe5cfa893cf64660e63f23795ae2">name</a> [<a class="el" href="hlimits_8h.html#a49f787049308fe5eccbfe9d03395a18a">H4_MAX_NC_NAME</a>]</td></tr>
+<tr class="separator:a0263fe5cfa893cf64660e63f23795ae2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1728750481b853c3246037c1ba1c68b" id="r_aa1728750481b853c3246037c1ba1c68b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa1728750481b853c3246037c1ba1c68b">size</a></td></tr>
 <tr class="separator:aa1728750481b853c3246037c1ba1c68b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37363161b41c4165b98cba7abc7a9d95" id="r_a37363161b41c4165b98cba7abc7a9d95"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a37363161b41c4165b98cba7abc7a9d95">size</a></td></tr>
-<tr class="separator:a37363161b41c4165b98cba7abc7a9d95"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Field Documentation</h2>
-<a id="ad1d4d43eda8ac63a9aff390897e4420e" name="ad1d4d43eda8ac63a9aff390897e4420e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad1d4d43eda8ac63a9aff390897e4420e">&#9670;&#160;</a></span>name</h2>
+<a id="a0263fe5cfa893cf64660e63f23795ae2" name="a0263fe5cfa893cf64660e63f23795ae2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0263fe5cfa893cf64660e63f23795ae2">&#9670;&#160;</a></span>name</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">char name</td>
+          <td class="memname">char name[<a class="el" href="hlimits_8h.html#a49f787049308fe5eccbfe9d03395a18a">H4_MAX_NC_NAME</a>]</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -137,7 +135,7 @@ Data Fields</h2></td></tr>
 </div>
 </div>
 <a id="aa1728750481b853c3246037c1ba1c68b" name="aa1728750481b853c3246037c1ba1c68b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa1728750481b853c3246037c1ba1c68b">&#9670;&#160;</a></span>size <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa1728750481b853c3246037c1ba1c68b">&#9670;&#160;</a></span>size</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -150,23 +148,8 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="a37363161b41c4165b98cba7abc7a9d95" name="a37363161b41c4165b98cba7abc7a9d95"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a37363161b41c4165b98cba7abc7a9d95">&#9670;&#160;</a></span>size <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">long size</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<hr/>The documentation for this struct was generated from the following files:<ul>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>mfhdf/hdiff/<a class="el" href="hdiff_8h.html">hdiff.h</a></li>
-<li>mfhdf/ncdump/<a class="el" href="ncdump_8h.html">ncdump.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

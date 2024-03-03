@@ -25,11 +25,10 @@ var searchData=
   ['dim_5finfo_5ft_22',['dim_info_t',['../structdim__info__t.html',1,'']]],
   ['dim_5fname_5ft_23',['dim_name_t',['../structdim__name__t.html',1,'']]],
   ['dim_5ftable_5ft_24',['dim_table_t',['../structdim__table__t.html',1,'']]],
-  ['dims_25',['dims',['../structdims.html',1,'']]],
-  ['dobj_5finfo_5ft_26',['dobj_info_t',['../structdobj__info__t.html',1,'']]],
-  ['dtable_5ft_27',['dtable_t',['../structdtable__t.html',1,'']]],
-  ['dump_5finfo_5ft_28',['dump_info_t',['../structdump__info__t.html',1,'']]],
-  ['dump_5fopt_5ft_29',['dump_opt_t',['../structdump__opt__t.html',1,'']]],
-  ['dyn_5fvreadlist_30',['DYN_VREADLIST',['../struct_d_y_n___v_r_e_a_d_l_i_s_t.html',1,'']]],
-  ['dyn_5fvwritelist_31',['DYN_VWRITELIST',['../struct_d_y_n___v_w_r_i_t_e_l_i_s_t.html',1,'']]]
+  ['dobj_5finfo_5ft_25',['dobj_info_t',['../structdobj__info__t.html',1,'']]],
+  ['dtable_5ft_26',['dtable_t',['../structdtable__t.html',1,'']]],
+  ['dump_5finfo_5ft_27',['dump_info_t',['../structdump__info__t.html',1,'']]],
+  ['dump_5fopt_5ft_28',['dump_opt_t',['../structdump__opt__t.html',1,'']]],
+  ['dyn_5fvreadlist_29',['DYN_VREADLIST',['../struct_d_y_n___v_r_e_a_d_l_i_s_t.html',1,'']]],
+  ['dyn_5fvwritelist_30',['DYN_VWRITELIST',['../struct_d_y_n___v_w_r_i_t_e_l_i_s_t.html',1,'']]]
 ];

@@ -3,19 +3,5 @@ var searchData=
   ['yd_0',['yd',['../struct_r8dim.html#a07a6988330185a55fe3f234cd72942d7',1,'R8dim']]],
   ['ydim_1',['ydim',['../struct_d_f_g_rdr.html#a7630f8102af7888911d4ee3b791b4610',1,'DFGRdr::ydim'],['../struct_d_f_rdr.html#a7630f8102af7888911d4ee3b791b4610',1,'DFRdr::ydim'],['../structdim__info__t.html#a7630f8102af7888911d4ee3b791b4610',1,'dim_info_t::ydim'],['../hproto__fortran_8h.html#a805dd3eabcd3234818b0b07a350e1da4',1,'ydim:&#160;hproto_fortran.h']]],
   ['yes_2',['YES',['../he_8h.html#a7ebc9a785e5ab85457c98595aac81589',1,'he.h']]],
-  ['ypos_3',['ypos',['../struct_d_f_g_rrig.html#ad0ff26e81096260ee1f848bcd566cdf7',1,'DFGRrig::ypos'],['../struct_d_f_rrig.html#ad0ff26e81096260ee1f848bcd566cdf7',1,'DFRrig::ypos']]],
-  ['yydebug_4',['YYDEBUG',['../ncgentab_8h.html#a853b3bfad6d2b2ff693dce81182e0c2e',1,'ncgentab.h']]],
-  ['yyempty_5',['YYEMPTY',['../ncgentab_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a57461e8aaccf36b978588119b3b3f8a8',1,'ncgentab.h']]],
-  ['yyeof_6',['YYEOF',['../ncgentab_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a0f7ebf23689b7a8b9ddc4744ac536f8b',1,'ncgentab.h']]],
-  ['yyerror_7',['yyerror',['../genlib_8h.html#a877954319adae05b7f955da3598d9674',1,'genlib.h']]],
-  ['yyerror_8',['YYerror',['../ncgentab_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a4e41d3d470b85118f9cf141761d7b05e',1,'ncgentab.h']]],
-  ['yylval_9',['yylval',['../ncgentab_8h.html#a539b86ee4bb46824a194f22eb69903d9',1,'ncgentab.h']]],
-  ['yyparse_10',['yyparse',['../genlib_8h.html#a847a2de5c1c28c9d7055a2b89ed7dad7',1,'yyparse(void):&#160;genlib.h'],['../ncgentab_8h.html#a847a2de5c1c28c9d7055a2b89ed7dad7',1,'yyparse(void):&#160;ncgentab.h']]],
-  ['yystype_11',['YYSTYPE',['../ncgentab_8h.html#a2af2fd0824f967ec31ce1773894931e1',1,'ncgentab.h']]],
-  ['yystype_5fis_5fdeclared_12',['YYSTYPE_IS_DECLARED',['../ncgentab_8h.html#af0232d21120b2cfc5e5f82f0fbadab3c',1,'ncgentab.h']]],
-  ['yystype_5fis_5ftrivial_13',['YYSTYPE_IS_TRIVIAL',['../ncgentab_8h.html#a2e3dbf169c5ee24cf6af37c61cf3995d',1,'ncgentab.h']]],
-  ['yytoken_5fkind_5ft_14',['yytoken_kind_t',['../ncgentab_8h.html#acf1bb827670472d9223423aaf6361c36',1,'ncgentab.h']]],
-  ['yytokentype_15',['YYTOKENTYPE',['../ncgentab_8h.html#a69ca0fbcc6d7aa5e8f47b11fc0048208',1,'ncgentab.h']]],
-  ['yytokentype_16',['yytokentype',['../ncgentab_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9',1,'ncgentab.h']]],
-  ['yyundef_17',['YYUNDEF',['../ncgentab_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a903fe594d5954ab68a1e3eb37405f115',1,'ncgentab.h']]]
+  ['ypos_3',['ypos',['../struct_d_f_g_rrig.html#ad0ff26e81096260ee1f848bcd566cdf7',1,'DFGRrig::ypos'],['../struct_d_f_rrig.html#ad0ff26e81096260ee1f848bcd566cdf7',1,'DFRrig::ypos']]]
 ];

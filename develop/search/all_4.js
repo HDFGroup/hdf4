@@ -133,6 +133,6 @@ var searchData=
   ['attrnm_130',['attrnm',['../hproto__fortran_8h.html#a3c75f0abf58d4c5cb766c53aa83af977',1,'hproto_fortran.h']]],
   ['attrnmlen_131',['attrnmlen',['../hproto__fortran_8h.html#a54cd8cd65fdb8a1476a0fa1d3950bb2b',1,'hproto_fortran.h']]],
   ['attrs_132',['attrs',['../struct_n_c.html#a94ae5c04468e4076a04f262ec62dd57a',1,'NC::attrs'],['../struct_n_c__var.html#a94ae5c04468e4076a04f262ec62dd57a',1,'NC_var::attrs']]],
-  ['atts_133',['atts',['../structatts.html',1,'atts'],['../structnetcdf.html#af95ae2eed99aa0f418b817b83a90d655',1,'netcdf::atts'],['../ncgen_8h.html#a436640e7e921674a4dc287d11e3dd560',1,'atts:&#160;ncgen.h']]],
+  ['atts_133',['atts',['../structnetcdf.html#af95ae2eed99aa0f418b817b83a90d655',1,'netcdf']]],
   ['atype_134',['atype',['../hproto__fortran_8h.html#a1c87551e246127db38fdd23fd5b03ae5',1,'hproto_fortran.h']]]
 ];
