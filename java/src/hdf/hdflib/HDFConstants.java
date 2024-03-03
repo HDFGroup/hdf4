@@ -54,7 +54,7 @@ public class HDFConstants {
     public static final int DFREF_WILDCARD = 0;
     /** */
     public static final int DFTAG_WILDCARD = 0;
-    /** used by mfhdf/libsrc/putget.c */
+    /** used by mfhdf/src/putget.c */
     public static final int DFREF_NONE = 0;
 
     // tags and refs

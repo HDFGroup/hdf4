@@ -6,8 +6,8 @@ include $(top_srcdir)/config/commence.am
 
 fort_INCLUDES=-I$(top_srcdir)/hdf/src     \
          -I$(top_srcdir)/hdf/test         \
-         -I$(top_srcdir)/mfhdf/libsrc     \
-         -I$(top_builddir)/mfhdf/libsrc
+         -I$(top_srcdir)/mfhdf/src        \
+         -I$(top_builddir)/mfhdf/src
 DEFINES=-DHDF
 AM_CPPFLAGS=$(fort_INCLUDES) $(DEFINES)
 

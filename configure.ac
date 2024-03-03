@@ -1192,7 +1192,7 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/fortran/ftest.f
                  mfhdf/fortran/jackets.c
                  mfhdf/fortran/netcdf.inc
-                 mfhdf/libsrc/netcdf.h
+                 mfhdf/src/netcdf.h
                  mfhdf/Makefile
                  mfhdf/hdp/Makefile
                  mfhdf/hdp/testhdp.sh
@@ -1205,7 +1205,7 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/hrepack/Makefile
                  mfhdf/hrepack/hrepack.sh
                  mfhdf/hrepack/hrepack_all.sh
-                 mfhdf/libsrc/Makefile
+                 mfhdf/src/Makefile
                  mfhdf/nctest/Makefile
                  mfhdf/test/Makefile
                  mfhdf/test/srcdir_str.h
@@ -1223,12 +1223,12 @@ AC_OUTPUT
 
 ## A temporary patch. These code were after where it did
 ## cp config/netcdf-XXX.h netcdf.h before.
-## Moved it here after AC_CONFIG_FILES(... mfhdf/libsrc/netcdf.h ).
+## Moved it here after AC_CONFIG_FILES(... mfhdf/src/netcdf.h ).
 ## Need a better and correct solution.
 ##
 if test "X$BUILD_NETCDF" != "Xyes"; then
-    echo "Renaming \"mfhdf/libsrc/netcdf.h\" to \"mfhdf/libsrc/hdf4_netcdf.h\" ."
-    mv mfhdf/libsrc/netcdf.h mfhdf/libsrc/hdf4_netcdf.h
+    echo "Renaming \"mfhdf/src/netcdf.h\" to \"mfhdf/src/hdf4_netcdf.h\" ."
+    mv mfhdf/src/netcdf.h mfhdf/src/hdf4_netcdf.h
 fi
 
 chmod 755 hdf/util/h4cc hdf/util/h4redeploy

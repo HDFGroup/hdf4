@@ -25,7 +25,7 @@
 #define DFREF_WILDCARD 0
 #define DFTAG_WILDCARD 0
 
-#define DFREF_NONE 0 /* used by mfhdf/libsrc/putget.c */
+#define DFREF_NONE 0 /* used by mfhdf/src/putget.c */
 /* tags and refs */
 #define DFTAG_NULL         1
 #define DFTAG_LINKED       20 /* linked-block special element */

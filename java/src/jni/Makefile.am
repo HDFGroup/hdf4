@@ -10,8 +10,8 @@ AM_CFLAGS=-fPIC
 
 # Include src directory and JNI flags
 AM_CPPFLAGS=-I$(top_srcdir)/hdf/src        \
-         -I$(top_srcdir)/mfhdf/libsrc      \
-         -I$(top_builddir)/mfhdf/libsrc    \
+         -I$(top_srcdir)/mfhdf/src         \
+         -I$(top_builddir)/mfhdf/src       \
          -I$(top_srcdir)/java/src/jni      \
           $(JNIFLAGS)
 
@@ -28,8 +28,8 @@ libhdf_java_la_SOURCES=hdfanImp.c hdfdfpalImp.c \
 libhdf_java_la_LIBADD=$(LIBMFHDF) $(LIBHDF) @LIBS@
 libhdf_java_la_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 libhdf_java_la_INCLUDES=-I$(top_srcdir)/hdf/src        \
-         -I$(top_srcdir)/mfhdf/libsrc                  \
-         -I$(top_builddir)/mfhdf/libsrc                \
+         -I$(top_srcdir)/mfhdf/src                     \
+         -I$(top_builddir)/mfhdf/src                   \
          -I$(top_srcdir)/java/src/jni                  \
           $(JNIFLAGS)
 
