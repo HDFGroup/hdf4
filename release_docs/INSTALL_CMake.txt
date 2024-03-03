@@ -870,7 +870,7 @@ Then you can change or add options for your specific case.
 ========================================================================
 III. Autotools Configuration and Build
 ========================================================================
-See RELEASE.txt in the release_notes/ directory for the list of platforms 
+See RELEASE.txt in the release_docs/ directory for the list of platforms 
 tested for this release.
 
 Instructions for building and testing HDF4 using autotools can be found in the

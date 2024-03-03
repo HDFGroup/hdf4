@@ -36,7 +36,7 @@ Obtaining HDF4 source code
 II. Unix and Mac OSX Configuration and Build
 ========================================================================
 
-See RELEASE.txt in the release_notes/ directory for the list of platforms
+See RELEASE.txt in the release_docs/ directory for the list of platforms
 tested for this release.
 
 Before You Start:
@@ -131,7 +131,7 @@ III. Using HDF/MFHDF Libraries with the netCDF Library
 ========================================================================
 IV. Windows Configuration and Build
 ========================================================================
-See RELEASE.txt in the release_notes/ directory for the list of platforms
+See RELEASE.txt in the release_docs/ directory for the list of platforms
 tested for this release.
 
 We now recommend that users build, test, and install HDF4 using CMake.

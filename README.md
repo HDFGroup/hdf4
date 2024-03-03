@@ -132,4 +132,4 @@ System Requirements
  To build the HDF library from source, you need:
 
    * C and Fortran compilers. For a list of the supported compilers,
-     see release_notes/RELEASE.txt file.
+     see release_docs/RELEASE.txt file.

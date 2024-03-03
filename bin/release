@@ -441,9 +441,9 @@ ln -s `pwd` $tmpdir/$HDF4_IN_VERS || exit 1
 test -f Makefile && mv Makefile $tmpdir/Makefile.x
 cp -p Makefile.dist Makefile
 
-# Update README.md and release_notes/RELEASE.txt with release information in
+# Update README.md and release_docs/RELEASE.txt with release information in
 # line 1.
-for f in README.md release_notes/RELEASE.txt; do
+for f in README.md release_docs/RELEASE.txt; do
     echo "HDF version $VERS released on $release_date" >$f.x
     sed -e 1d $f >>$f.x
     mv $f.x $f
@@ -503,7 +503,7 @@ if [ "${MAINT_MODE_ENABLED}" != "" ]; then
 fi
 
 # Copy the RELEASE.txt to the release area.
-cp release_notes/RELEASE.txt $DEST/$HDF4_VERS-RELEASE.txt
+cp release_docs/RELEASE.txt $DEST/$HDF4_VERS-RELEASE.txt
 
 # Remove distributed Makefile and restore previous Makefile if existed.
 rm -f Makefile
