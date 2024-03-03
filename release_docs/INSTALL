@@ -46,8 +46,8 @@ CONTENTS
         https://github.com/HDFGroup/hdf4/releases
 
 5. Build and Install HDF4 on Unix and Mac OSX Platforms with autotools
-        see the release_notes/INSTALL_Autotools.txt file.
+        see the release_docs/INSTALL_Autotools.txt file.
 
 6. Build and Install HDF4 C and Fortran Libraries and tools with CMake
-        see the release_notes/INSTALL_CMake.txt file.
+        see the release_docs/INSTALL_CMake.txt file.
 

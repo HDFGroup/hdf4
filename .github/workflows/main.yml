@@ -9,7 +9,7 @@ on:
     paths-ignore:
     - '.github/CODEOWNERS'
     - 'doc/**'
-    - 'release_notes/**'
+    - 'release_docs/**'
     - 'COPYING'
     - '**.md'
 
