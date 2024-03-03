@@ -83,7 +83,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
               name: NEWSLETTER
-              path: ./hdfsrc/release_notes/NEWSLETTER.txt
+              path: ./hdfsrc/release_docs/NEWSLETTER.txt
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
   call-workflow-ctest:
