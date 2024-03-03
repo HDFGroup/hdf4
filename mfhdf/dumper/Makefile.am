@@ -5,8 +5,8 @@
 include $(top_srcdir)/config/commence.am
 
 hdp_INCLUDES=-I$(top_srcdir)/hdf/src        \
-         -I$(top_srcdir)/mfhdf/libsrc   \
-         -I$(top_builddir)/mfhdf/libsrc
+         -I$(top_srcdir)/mfhdf/src          \
+         -I$(top_builddir)/mfhdf/src
 DEFINES=-DHDF
 AM_CPPFLAGS=$(hdp_INCLUDES) $(DEFINES)
 
