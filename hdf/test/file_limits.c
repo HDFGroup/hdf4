@@ -31,11 +31,11 @@
 static int32 files[BIG];
 static int32 accs[BIG];
 
-static void test_file_limits(void);
+static void test_open_limits(void);
 static void test_ref_limits(void);
 
 static void
-test_file_limits(void)
+test_open_limits(void)
 {
     int   i;
     int32 ret;
@@ -111,7 +111,7 @@ test_file_limits(void)
 
     ret = Hclose(files[0]);
     CHECK_VOID(ret, FAIL, "Hclose");
-} /* end test_file_limits() */
+} /* end test_open_limits() */
 
 #define TAG1 ((uint16)1000)
 #define TAG2 ((uint16)1001)
@@ -226,8 +226,8 @@ test_ref_limits(void)
 } /* end test_ref_limits() */
 
 void
-test_hfile1(void)
+test_hfile_limits(void)
 {
-    test_file_limits();
+    test_open_limits();
     test_ref_limits();
 }
