@@ -26,7 +26,7 @@
    below.  Functions which depend on other functionality should
    be placed below the InitTest() call for the base functionality
    testing.
-   Each test module should include tproto.h and define a unique
+   Each test module should include testhdf.h and define a unique
    set of names for test files they create.
 
    BUGS/LIMITATIONS
@@ -42,8 +42,8 @@
 /* Internal Variables */
 static int Index = 0;
 
-/* ANY new test needs to have a prototype in tproto.h */
-#include "tproto.h"
+/* ANY new test needs to have a prototype in testhdf.h */
+#include "testhdf.h"
 
 struct TestStruct {
     int  NumErrors;

@@ -16,7 +16,7 @@
  */
 #include "hdf.h"
 #include "hfile_priv.h"
-#include "tproto.h"
+#include "testhdf.h"
 #include "tutils.h"
 
 #define LONGNAMES    "tlongnames.hdf"

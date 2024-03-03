@@ -15,7 +15,7 @@
    test opening files and access elements until limits are reached
  */
 
-#include "tproto.h"
+#include "testhdf.h"
 #include "hfile_priv.h"
 
 /* This value can cause platform-specific problems as the number of files

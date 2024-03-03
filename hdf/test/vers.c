@@ -18,7 +18,7 @@
  */
 
 #include <stdio.h>
-#include "tproto.h"
+#include "testhdf.h"
 
 void
 test_vers(void)

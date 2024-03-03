@@ -20,7 +20,7 @@
 **
 ****************************************************************/
 
-#include "tproto.h"
+#include "testhdf.h"
 
 static int number_failed = 0;
 

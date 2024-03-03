@@ -31,8 +31,9 @@
    10/27/93 - Started coding.
  */
 
-#include "tproto.h"
 #include <time.h>
+
+#include "testhdf.h"
 
 /* last ditch attempt do define this value... */
 #ifndef UINT_MAX

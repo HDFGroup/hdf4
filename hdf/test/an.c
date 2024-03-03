@@ -20,9 +20,9 @@
  *
  *************************************************************/
 
-#define TESTFILE "tdfan.hdf"
+#include "testhdf.h"
 
-#include "tproto.h"
+#define TESTFILE "tdfan.hdf"
 
 #define ISFIRST     (int)1
 #define NOTFIRST    (int)0

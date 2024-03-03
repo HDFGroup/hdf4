@@ -19,7 +19,7 @@
 
 #include <time.h>
 
-#include "tproto.h"
+#include "testhdf.h"
 #include "tbbt_priv.h"
 
 #define MAX_TEST_SIZE 31  /* maximum number of elements to insert */

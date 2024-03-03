@@ -19,7 +19,7 @@
  ***************************************************************************/
 /* slabwin & slabwuin do not work for all machines */
 
-#include "tproto.h"
+#include "testhdf.h"
 
 /* Internal variables */
 static int32 rank = 3;

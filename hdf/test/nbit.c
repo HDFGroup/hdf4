@@ -33,7 +33,8 @@
    1/19/94 - Started coding
  */
 
-#include "tproto.h"
+#include "testhdf.h"
+
 #define TESTFILE_NAME "tnbit.hdf"
 #define DATAFILE_NAME "test_files/nbit.dat"
 
