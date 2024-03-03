@@ -8,7 +8,7 @@ This directory contains the binary (release) distribution of
 It was built with the following options:
     -- @LIB_TYPE@ C/Fortran libraries
     -- SZIP (encoder enabled), ZLIB, and JPEG
-    -- @LIB_TYPE@ HDF4 tools
+    -- HDF4 tools
     -- Java @Java_VERSION@
 
 The contents of this directory are:
@@ -16,23 +16,23 @@ The contents of this directory are:
     COPYING                 - Copyright notice
     README.txt              - This file
     @HDF4_PACKAGE_NAME@-@HDF4_PACKAGE_VERSION@-@BINARY_SYSTEM_NAME@.@BINARY_INSTALL_ENDING@    - HDF4 Install Utility
+    OR
+    @HDF4_PACKAGE_NAME@-@HDF4_PACKAGE_VERSION@-@BINARY_SYSTEM_NAME@.@BINARY_COMPRESS_ENDING@    - HDF4 Install Utility
 
-This binary was built with the ZLIB and SZIP/Libaec external libraries and are
+This binary was built with the ZLIB, JPEG, and SZIP/Libaec external libraries and are
 included for convenience.  Libaec is an unrestricted open-source replacement for SZIP
 (Encoder ENABLED).
-
-The official ZLIB and SZIP/Libaec pages are at:
-
-    ZLIB: https://git.savannah.gnu.org/cgit/gzip.git/
-        https://git.savannah.gnu.org/cgit/gzip.git/tree/COPYING
-    SZIP/Libaec: https://gitlab.dkrz.de/k202009/libaec
-        https://gitlab.dkrz.de/k202009/libaec/-/blob/master/Copyright.txt
 
 
 Installation
 ===========================================================================
 1. Execute @HDF4_PACKAGE_NAME@-@HDF4_PACKAGE_VERSION@-@BINARY_SYSTEM_NAME@.@BINARY_INSTALL_ENDING@
 2. Follow prompts
+===========================================================================
+
+Uncompress
+===========================================================================
+1. Extract @HDF4_PACKAGE_NAME@-@HDF4_PACKAGE_VERSION@-@BINARY_SYSTEM_NAME@.@BINARY_COMPRESS_ENDING@
 ===========================================================================
 
 After Installation
