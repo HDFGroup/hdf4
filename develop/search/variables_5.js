@@ -51,5 +51,6 @@ var searchData=
   ['frec_48',['frec',['../structddblock__t.html#adb1a106d7efb1dd0bbd717d4795250f9',1,'ddblock_t']]],
   ['full_5finterlace_49',['FULL_INTERLACE',['../classhdf_1_1hdflib_1_1_h_d_f_constants.html#a7cb52d4f25781d46ac4354bd0c964a10',1,'hdf::hdflib::HDFConstants']]],
   ['func_50',['func',['../struct_h_e___c_m_d.html#ada2fbdba67e29f50b2fa530edf6ee832',1,'HE_CMD']]],
-  ['funit_51',['funit',['../hproto__fortran_8h.html#a376f9bf0acc5b642240046be6fc07430',1,'hproto_fortran.h']]]
+  ['functions_51',['functions',['../structhfile__atexit__t.html#a7b6310694f89c9a22f91a8c8e6e4d3d6',1,'hfile_atexit_t']]],
+  ['funit_52',['funit',['../hproto__fortran_8h.html#a376f9bf0acc5b642240046be6fc07430',1,'hproto_fortran.h']]]
 ];

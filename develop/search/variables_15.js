@@ -7,7 +7,7 @@ var searchData=
   ['var_5flist_4',['var_list',['../mfsdf_8h.html#ab68231816833e508aa1184f55e1fa9d0',1,'mfsdf.h']]],
   ['var_5ftype_5',['var_type',['../structhdf__varlist__t.html#ace3f871b241291f98d2d19a17ed95ed5',1,'hdf_varlist_t::var_type'],['../struct_n_c__var.html#ace3f871b241291f98d2d19a17ed95ed5',1,'NC_var::var_type']]],
   ['varid_6',['varid',['../nc__priv_8h.html#abe5664f2c6a9181abcc9ae688c6aeb83',1,'nc_priv.h']]],
-  ['vars_7',['vars',['../struct_n_c.html#a7e9cfba2a016adfaba9a9c3464b48e12',1,'NC::vars'],['../structnetcdf.html#ac0133e2ddef39755ec4c48075ab586a4',1,'netcdf::vars']]],
+  ['vars_7',['vars',['../structnetcdf.html#ac0133e2ddef39755ec4c48075ab586a4',1,'netcdf::vars'],['../struct_n_c.html#a7e9cfba2a016adfaba9a9c3464b48e12',1,'NC::vars']]],
   ['vd_8',['vd',['../structdiff__opt__t.html#af7070d3ba9c0bc6487b14e082bdf656f',1,'diff_opt_t']]],
   ['vd_5fcount_9',['vd_count',['../hproto__fortran_8h.html#a5ee712b1c878379f88b6f6cfa5a2bdaa',1,'hproto_fortran.h']]],
   ['vdata_10',['VDATA',['../classhdf_1_1hdflib_1_1_h_d_f_constants.html#a06c239fde56aa1d5d573de3e3e690be2',1,'hdf::hdflib::HDFConstants']]],

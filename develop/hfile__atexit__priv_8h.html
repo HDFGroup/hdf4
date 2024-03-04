@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>HDF: mfhdf/nctest/val.h File Reference</title>
+<title>HDF: hdf/src/hfile_atexit_priv.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -78,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search/",'.html');
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(function(){initNavTree('val_8h.html',''); initResizable(); });
+$(function(){initNavTree('hfile__atexit__priv_8h.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -105,25 +105,53 @@ $(function(){initNavTree('val_8h.html',''); initResizable(); });
 
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a>  </div>
-  <div class="headertitle"><div class="title">val.h File Reference</div></div>
+  <div class="headertitle"><div class="title">hfile_atexit_priv.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<table class="memberdecls">
+<div class="textblock"><code>#include &quot;<a class="el" href="hdf_8h.html">hdf.h</a>&quot;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structhfile__atexit__t.html">hfile_atexit_t</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:aca20ad269477f06fa31c33732177bb1b" id="r_aca20ad269477f06fa31c33732177bb1b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca20ad269477f06fa31c33732177bb1b">ATEXIT_ARRAY_INCR</a>&#160;&#160;&#160;16</td></tr>
+<tr class="separator:aca20ad269477f06fa31c33732177bb1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a46f4e7031f347571f7c46fded65811c8" id="r_a46f4e7031f347571f7c46fded65811c8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a46f4e7031f347571f7c46fded65811c8">val_fill</a> (nc_type, long, void *)</td></tr>
-<tr class="separator:a46f4e7031f347571f7c46fded65811c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b3a6ce759bd4a173ffe17fd596a89f4" id="r_a5b3a6ce759bd4a173ffe17fd596a89f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5b3a6ce759bd4a173ffe17fd596a89f4">val_fill_zero</a> (nc_type, long, void *)</td></tr>
-<tr class="separator:a5b3a6ce759bd4a173ffe17fd596a89f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9104d9ccaa1f0d4f6a3759555fce42a" id="r_ac9104d9ccaa1f0d4f6a3759555fce42a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac9104d9ccaa1f0d4f6a3759555fce42a">val_cmp</a> (nc_type, long, void *, void *)</td></tr>
-<tr class="separator:ac9104d9ccaa1f0d4f6a3759555fce42a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a17f6577e5769875d35fd8b78ae2cc251" id="r_a17f6577e5769875d35fd8b78ae2cc251"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a17f6577e5769875d35fd8b78ae2cc251">val_out</a> (nc_type, long, void *)</td></tr>
-<tr class="separator:a17f6577e5769875d35fd8b78ae2cc251"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf595123ef9e09348a91215bdfa9cc75" id="r_aaf595123ef9e09348a91215bdfa9cc75"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaf595123ef9e09348a91215bdfa9cc75">hfile_atexit_create</a> (<a class="el" href="structhfile__atexit__t.html">hfile_atexit_t</a> **ha)</td></tr>
+<tr class="separator:aaf595123ef9e09348a91215bdfa9cc75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec19189db56a640410c2530a6a6b18c2" id="r_aec19189db56a640410c2530a6a6b18c2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aec19189db56a640410c2530a6a6b18c2">hfile_atexit_add</a> (<a class="el" href="structhfile__atexit__t.html">hfile_atexit_t</a> *ha, <a class="el" href="hdf_8h.html#a23c72e6fa7078f2f9769f22423bdad46">hdf_termfunc_t</a> func)</td></tr>
+<tr class="separator:aec19189db56a640410c2530a6a6b18c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af709bcd14d52efae9a998f4f8375da9a" id="r_af709bcd14d52efae9a998f4f8375da9a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af709bcd14d52efae9a998f4f8375da9a">hfile_atexit_execute_all</a> (<a class="el" href="structhfile__atexit__t.html">hfile_atexit_t</a> *ha)</td></tr>
+<tr class="separator:af709bcd14d52efae9a998f4f8375da9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc43f28472e40ed97a1e5af48c190177" id="r_abc43f28472e40ed97a1e5af48c190177"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abc43f28472e40ed97a1e5af48c190177">hfile_atexit_destroy</a> (<a class="el" href="structhfile__atexit__t.html">hfile_atexit_t</a> **ha)</td></tr>
+<tr class="separator:abc43f28472e40ed97a1e5af48c190177"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="aca20ad269477f06fa31c33732177bb1b" name="aca20ad269477f06fa31c33732177bb1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca20ad269477f06fa31c33732177bb1b">&#9670;&#160;</a></span>ATEXIT_ARRAY_INCR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ATEXIT_ARRAY_INCR&#160;&#160;&#160;16</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ac9104d9ccaa1f0d4f6a3759555fce42a" name="ac9104d9ccaa1f0d4f6a3759555fce42a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac9104d9ccaa1f0d4f6a3759555fce42a">&#9670;&#160;</a></span>val_cmp()</h2>
+<a id="aec19189db56a640410c2530a6a6b18c2" name="aec19189db56a640410c2530a6a6b18c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec19189db56a640410c2530a6a6b18c2">&#9670;&#160;</a></span>hfile_atexit_add()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -132,24 +160,14 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int val_cmp </td>
+          <td class="memname">int hfile_atexit_add </td>
           <td>(</td>
-          <td class="paramtype">nc_type</td>          <td class="paramname"><span class="paramname">, </span></td>
+          <td class="paramtype"><a class="el" href="structhfile__atexit__t.html">hfile_atexit_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ha</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long</td>          <td class="paramname"><span class="paramname">, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname">, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#a23c72e6fa7078f2f9769f22423bdad46">hdf_termfunc_t</a></td>          <td class="paramname"><span class="paramname"><em>func</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -161,8 +179,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a46f4e7031f347571f7c46fded65811c8" name="a46f4e7031f347571f7c46fded65811c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a46f4e7031f347571f7c46fded65811c8">&#9670;&#160;</a></span>val_fill()</h2>
+<a id="aaf595123ef9e09348a91215bdfa9cc75" name="aaf595123ef9e09348a91215bdfa9cc75"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf595123ef9e09348a91215bdfa9cc75">&#9670;&#160;</a></span>hfile_atexit_create()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -171,19 +189,10 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void val_fill </td>
+          <td class="memname">int hfile_atexit_create </td>
           <td>(</td>
-          <td class="paramtype">nc_type</td>          <td class="paramname"><span class="paramname">, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype"><a class="el" href="structhfile__atexit__t.html">hfile_atexit_t</a> **</td>          <td class="paramname"><span class="paramname"><em>ha</em></span></td><td>)</td>
           <td></td>
-          <td class="paramtype">long</td>          <td class="paramname"><span class="paramname">, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -195,8 +204,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a5b3a6ce759bd4a173ffe17fd596a89f4" name="a5b3a6ce759bd4a173ffe17fd596a89f4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5b3a6ce759bd4a173ffe17fd596a89f4">&#9670;&#160;</a></span>val_fill_zero()</h2>
+<a id="abc43f28472e40ed97a1e5af48c190177" name="abc43f28472e40ed97a1e5af48c190177"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc43f28472e40ed97a1e5af48c190177">&#9670;&#160;</a></span>hfile_atexit_destroy()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -205,19 +214,10 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void val_fill_zero </td>
+          <td class="memname">int hfile_atexit_destroy </td>
           <td>(</td>
-          <td class="paramtype">nc_type</td>          <td class="paramname"><span class="paramname">, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype"><a class="el" href="structhfile__atexit__t.html">hfile_atexit_t</a> **</td>          <td class="paramname"><span class="paramname"><em>ha</em></span></td><td>)</td>
           <td></td>
-          <td class="paramtype">long</td>          <td class="paramname"><span class="paramname">, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -229,8 +229,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a17f6577e5769875d35fd8b78ae2cc251" name="a17f6577e5769875d35fd8b78ae2cc251"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a17f6577e5769875d35fd8b78ae2cc251">&#9670;&#160;</a></span>val_out()</h2>
+<a id="af709bcd14d52efae9a998f4f8375da9a" name="af709bcd14d52efae9a998f4f8375da9a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af709bcd14d52efae9a998f4f8375da9a">&#9670;&#160;</a></span>hfile_atexit_execute_all()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -239,19 +239,10 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void val_out </td>
+          <td class="memname">int hfile_atexit_execute_all </td>
           <td>(</td>
-          <td class="paramtype">nc_type</td>          <td class="paramname"><span class="paramname">, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype"><a class="el" href="structhfile__atexit__t.html">hfile_atexit_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ha</em></span></td><td>)</td>
           <td></td>
-          <td class="paramtype">long</td>          <td class="paramname"><span class="paramname">, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -268,7 +259,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_f545b189cddce3b0abafdf59c7b0c4d3.html">mfhdf</a></li><li class="navelem"><a class="el" href="dir_f9bbad7ee30488d73f5f5fc5491924cb.html">nctest</a></li><li class="navelem"><a class="el" href="val_8h.html">val.h</a></li>
+    <li class="navelem"><a class="el" href="dir_d627fa0b4cbfc752560480c73c370f25.html">hdf</a></li><li class="navelem"><a class="el" href="dir_730c60e644772408c285f88ec6e72615.html">src</a></li><li class="navelem"><a class="el" href="hfile__atexit__priv_8h.html">hfile_atexit_priv.h</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.10.0 </li>

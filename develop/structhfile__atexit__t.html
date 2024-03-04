@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>HDF: mfhdf/dumper Directory Reference</title>
+<title>HDF: hfile_atexit_t Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.1-2b3c791</span>
+   &#160;<span id="projectnumber">4.3.1-0a0e6dc</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -78,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search/",'.html');
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(function(){initNavTree('dir_d17097cf6f42cf6bc81fbb9fde624dff.html',''); initResizable(); });
+$(function(){initNavTree('structhfile__atexit__t.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -104,21 +104,77 @@ $(function(){initNavTree('dir_d17097cf6f42cf6bc81fbb9fde624dff.html',''); initRe
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">dumper Directory Reference</div></div>
+  <div class="summary">
+<a href="#pub-attribs">Data Fields</a>  </div>
+  <div class="headertitle"><div class="title">hfile_atexit_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;hdf/src/hfile_atexit_priv.h&gt;</code></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="files" name="files"></a>
-Files</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><span class="icondoc"></span>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hdp_8h.html">hdp.h</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Data Fields</h2></td></tr>
+<tr class="memitem:a7b6310694f89c9a22f91a8c8e6e4d3d6" id="r_a7b6310694f89c9a22f91a8c8e6e4d3d6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#a23c72e6fa7078f2f9769f22423bdad46">hdf_termfunc_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b6310694f89c9a22f91a8c8e6e4d3d6">functions</a></td></tr>
+<tr class="separator:a7b6310694f89c9a22f91a8c8e6e4d3d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f3817997eb8fa37db60586153a125dd" id="r_a0f3817997eb8fa37db60586153a125dd"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0f3817997eb8fa37db60586153a125dd">n_functions</a></td></tr>
+<tr class="separator:a0f3817997eb8fa37db60586153a125dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ba5952ef7af12d6dedbb91d43690549" id="r_a8ba5952ef7af12d6dedbb91d43690549"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ba5952ef7af12d6dedbb91d43690549">max_functions</a></td></tr>
+<tr class="separator:a8ba5952ef7af12d6dedbb91d43690549"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="a7b6310694f89c9a22f91a8c8e6e4d3d6" name="a7b6310694f89c9a22f91a8c8e6e4d3d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b6310694f89c9a22f91a8c8e6e4d3d6">&#9670;&#160;</a></span>functions</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="hdf_8h.html#a23c72e6fa7078f2f9769f22423bdad46">hdf_termfunc_t</a>* functions</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8ba5952ef7af12d6dedbb91d43690549" name="a8ba5952ef7af12d6dedbb91d43690549"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ba5952ef7af12d6dedbb91d43690549">&#9670;&#160;</a></span>max_functions</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t max_functions</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Number of exit functions registered </p>
+
+</div>
+</div>
+<a id="a0f3817997eb8fa37db60586153a125dd" name="a0f3817997eb8fa37db60586153a125dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f3817997eb8fa37db60586153a125dd">&#9670;&#160;</a></span>n_functions</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t n_functions</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Array of exit functions </p>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
+<li>hdf/src/<a class="el" href="hfile__atexit__priv_8h.html">hfile_atexit_priv.h</a></li>
+</ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_f545b189cddce3b0abafdf59c7b0c4d3.html">mfhdf</a></li><li class="navelem"><a class="el" href="dir_d17097cf6f42cf6bc81fbb9fde624dff.html">dumper</a></li>
+    <li class="navelem"><a class="el" href="structhfile__atexit__t.html">hfile_atexit_t</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.10.0 </li>
