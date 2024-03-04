@@ -51,6 +51,7 @@ macro (ADD_H4_TEST resultfile resultcode)
     else ()
       set_tests_properties (HDIFF-${resultfile} PROPERTIES LABELS ${PROJECT_NAME})
     endif ()
+    set_tests_properties (HDIFF-${resultfile} PROPERTIES WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/testfiles)
   else ()
     add_test (
         NAME HDIFF-${resultfile}
