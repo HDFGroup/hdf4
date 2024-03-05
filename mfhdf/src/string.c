@@ -136,7 +136,7 @@ xdr_NC_string(XDR *xdrs, NC_string **spp)
                 *spp = NULL;
                 return (TRUE);
             } /* else */
-            (*spp) = NC_new_string((unsigned)count, (const char *)NULL);
+            (*spp) = NC_new_string((unsigned)count, NULL);
             if ((*spp) == NULL)
                 return (FALSE);
             (*spp)->values[count] = 0;

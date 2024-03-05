@@ -80,7 +80,7 @@ xdr_NC_iarray(XDR *xdrs, NC_iarray **ipp)
             if (!h4_xdr_u_int(xdrs, &count)) {
                 return (FALSE);
             }
-            (*ipp) = NC_new_iarray((unsigned)count, (int *)NULL);
+            (*ipp) = NC_new_iarray((unsigned)count, NULL);
             if ((*ipp) == NULL)
                 return (FALSE);
             /* then deal with the array */

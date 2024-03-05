@@ -246,7 +246,7 @@ ncvardef(int cdfid, const char *name, nc_type type, int ndims, const int dims[])
         var[0] = NC_new_var(name, type, ndims, dims);
         if (var[0] == NULL)
             return (-1);
-        handle->vars = NC_new_array(NC_VARIABLE, (unsigned)1, (Void *)var);
+        handle->vars = NC_new_array(NC_VARIABLE, (unsigned)1, (void *)var);
         if (handle->vars == NULL)
             return (-1);
     }
@@ -267,7 +267,7 @@ ncvardef(int cdfid, const char *name, nc_type type, int ndims, const int dims[])
         var[0] = NC_new_var(name, type, ndims, dims);
         if (var[0] == NULL)
             return (-1);
-        if (NC_incr_array(handle->vars, (Void *)var) == NULL)
+        if (NC_incr_array(handle->vars, (void *)var) == NULL)
             return (-1);
     }
     (*var)->cdf = handle; /* for NC_var_shape */

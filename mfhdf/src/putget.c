@@ -437,7 +437,7 @@ xdr_NCvshort(XDR *xdrs, unsigned which, short *values)
  * xdr a single datum of type 'type' at 'where'
  */
 static bool_t
-xdr_NCv1data(XDR *xdrs, unsigned long where, nc_type type, Void *values)
+xdr_NCv1data(XDR *xdrs, unsigned long where, nc_type type, void *values)
 {
     unsigned long rem = 0;
 
@@ -1350,7 +1350,7 @@ nssdc_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uin
 } /* nssdc_xdr_NCvdata */
 
 static int
-NCvar1io(NC *handle, int varid, const long *coords, Void *value)
+NCvar1io(NC *handle, int varid, const long *coords, void *value)
 {
     NC_var       *vp;
     unsigned long offset;
@@ -1430,14 +1430,14 @@ ncvarget1(int cdfid, int varid, const long *coords, ncvoid *value)
 
     handle->xdrs->x_op = XDR_DECODE;
 
-    return (NCvar1io(handle, varid, coords, (Void *)value));
+    return (NCvar1io(handle, varid, coords, (void *)value));
 }
 
 /*
  * xdr 'count' items of contiguous data of type 'type' at 'where'
  */
 static bool_t
-xdr_NCvdata(XDR *xdrs, unsigned long where, nc_type type, unsigned count, Void *values)
+xdr_NCvdata(XDR *xdrs, unsigned long where, nc_type type, unsigned count, void *values)
 {
     unsigned long rem = 0;
     bool_t (*xdr_NC_fnct)();
@@ -1566,7 +1566,7 @@ NCvcmaxcontig(NC *handle, NC_var *vp, const long *origin, const long *edges)
 }
 
 static int
-NCsimplerecio(NC *handle, NC_var *vp, const long *start, const long *edges, Void *values)
+NCsimplerecio(NC *handle, NC_var *vp, const long *start, const long *edges, void *values)
 {
     long offset = -1;
     long newrecs;
@@ -1872,7 +1872,7 @@ ncvarget(int cdfid, int varid, const long *start, const long *edges, ncvoid *val
 
     handle->xdrs->x_op = XDR_DECODE;
 
-    return (NCvario(handle, varid, start, edges, (Void *)values));
+    return (NCvario(handle, varid, start, edges, (void *)values));
 }
 
 /* This is the original ncvarget.  Keep for a while just in case. -BMR
@@ -1973,7 +1973,7 @@ ncrecinq(int cdfid, int *nrecvars, int *recvarids, long *recsizes)
 }
 
 static int
-NCrecio(NC *handle, long recnum, Void **datap)
+NCrecio(NC *handle, long recnum, void **datap)
 {
     int           nrvars;
     NC_var       *rvp[H4_MAX_NC_VARS];
@@ -1982,7 +1982,7 @@ NCrecio(NC *handle, long recnum, Void **datap)
     unsigned long offset;
     unsigned      iocount;
 
-    nrvars = NCnumrecvars(handle, rvp, (int *)NULL);
+    nrvars = NCnumrecvars(handle, rvp, NULL);
     if (nrvars == -1)
         return -1; /* TODO: what error message ?*/
 
@@ -2063,7 +2063,7 @@ ncrecput(int cdfid, long recnum, ncvoid **datap)
 
     handle->xdrs->x_op = XDR_ENCODE;
 
-    return (NCrecio(handle, recnum, (Void **)datap));
+    return (NCrecio(handle, recnum, (void **)datap));
 }
 
 /*
@@ -2085,5 +2085,5 @@ ncrecget(int cdfid, long recnum, ncvoid **datap)
 
     handle->xdrs->x_op = XDR_DECODE;
 
-    return (NCrecio(handle, recnum, (Void **)datap));
+    return (NCrecio(handle, recnum, (void **)datap));
 }

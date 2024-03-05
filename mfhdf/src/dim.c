@@ -98,7 +98,7 @@ ncdimdef(int cdfid, const char *name, long size)
         dim[0] = NC_new_dim(name, size);
         if (dim[0] == NULL)
             return (-1);
-        handle->dims = NC_new_array(NC_DIMENSION, (unsigned)1, (Void *)dim);
+        handle->dims = NC_new_array(NC_DIMENSION, (unsigned)1, (void *)dim);
         if (handle->dims == NULL)
             return (-1);
     }
@@ -125,7 +125,7 @@ ncdimdef(int cdfid, const char *name, long size)
         dim[0] = NC_new_dim(name, size);
         if (dim[0] == NULL)
             return (-1);
-        if (NC_incr_array(handle->dims, (Void *)dim) == NULL)
+        if (NC_incr_array(handle->dims, (void *)dim) == NULL)
             return (-1);
     }
     return (handle->dims->count - 1);

@@ -189,7 +189,7 @@ NC_aput(int cdfid, NC_array **ap, const char *name, nc_type datatype, unsigned c
         attr[0] = NC_new_attr(name, datatype, count, values);
         if (attr[0] == NULL)
             return (-1);
-        *ap = NC_new_array(NC_ATTRIBUTE, (unsigned)1, (Void *)attr);
+        *ap = NC_new_array(NC_ATTRIBUTE, (unsigned)1, (void *)attr);
         if (*ap == NULL)
             return (-1);
         return ((*ap)->count - 1);
@@ -234,7 +234,7 @@ NC_aput(int cdfid, NC_array **ap, const char *name, nc_type datatype, unsigned c
         attr[0] = NC_new_attr(name, datatype, count, values);
         if (attr[0] == NULL)
             return (-1);
-        if (NC_incr_array((*ap), (Void *)attr) == NULL)
+        if (NC_incr_array((*ap), (void *)attr) == NULL)
             return (-1);
         return ((*ap)->count - 1);
     }

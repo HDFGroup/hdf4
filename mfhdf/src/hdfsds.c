@@ -676,7 +676,7 @@ hdf_luf_to_attrs(char *labelstr, char *unitstr, char *formatstr, NC_attr **tmp_a
     /* label => "long_name"  */
     if (labelstr && (labelstr[0] != '\0') > 0) {
         *tmp_attr =
-            (NC_attr *)NC_new_attr(_HDF_LongName, NC_CHAR, strlen((char *)labelstr), (Void *)labelstr);
+            (NC_attr *)NC_new_attr(_HDF_LongName, NC_CHAR, strlen((char *)labelstr), (void *)labelstr);
 
         if (NULL == *tmp_attr) {
             HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
@@ -690,7 +690,7 @@ hdf_luf_to_attrs(char *labelstr, char *unitstr, char *formatstr, NC_attr **tmp_a
 
     /* Units => 'units' */
     if (unitstr && (unitstr[0] != '\0') > 0) {
-        *tmp_attr = (NC_attr *)NC_new_attr(_HDF_Units, NC_CHAR, strlen((char *)unitstr), (Void *)unitstr);
+        *tmp_attr = (NC_attr *)NC_new_attr(_HDF_Units, NC_CHAR, strlen((char *)unitstr), (void *)unitstr);
 
         if (NULL == *tmp_attr) {
             HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
@@ -705,7 +705,7 @@ hdf_luf_to_attrs(char *labelstr, char *unitstr, char *formatstr, NC_attr **tmp_a
     /* Format => 'format' */
     if (formatstr && (formatstr[0] != '\0') > 0) {
         *tmp_attr =
-            (NC_attr *)NC_new_attr(_HDF_Format, NC_CHAR, strlen((char *)formatstr), (Void *)formatstr);
+            (NC_attr *)NC_new_attr(_HDF_Format, NC_CHAR, strlen((char *)formatstr), (void *)formatstr);
 
         if (NULL == *tmp_attr) {
             HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
@@ -749,7 +749,7 @@ hdf_get_rangeinfo(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_
     }
 
     /* _HDF_ValidMax */
-    *tmp_attr = (NC_attr *)NC_new_attr(_HDF_ValidMax, nctype, 1, (Void *)tBuf);
+    *tmp_attr = (NC_attr *)NC_new_attr(_HDF_ValidMax, nctype, 1, (void *)tBuf);
 
     if (NULL == *tmp_attr) {
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -762,7 +762,7 @@ hdf_get_rangeinfo(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_
 
     /* _HDF_ValidMin */
     idx       = DFKNTsize(hdftype | DFNT_NATIVE);
-    *tmp_attr = (NC_attr *)NC_new_attr(_HDF_ValidMin, nctype, 1, (Void *)&(tBuf[idx]));
+    *tmp_attr = (NC_attr *)NC_new_attr(_HDF_ValidMin, nctype, 1, (void *)&(tBuf[idx]));
 
     if (NULL == *tmp_attr) {
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -817,7 +817,7 @@ hdf_get_cal(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
     }
 
     /* _HDF_ScaleFactor */
-    *tmp_attr = (NC_attr *)NC_new_attr(_HDF_ScaleFactor, nctype, 1, (Void *)&(tBuf[idx]));
+    *tmp_attr = (NC_attr *)NC_new_attr(_HDF_ScaleFactor, nctype, 1, (void *)&(tBuf[idx]));
 
     if (NULL == *tmp_attr) {
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -830,7 +830,7 @@ hdf_get_cal(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
 
     /* _HDF_ScaleFactorErr */
     idx       = idx + incr;
-    *tmp_attr = (NC_attr *)NC_new_attr(_HDF_ScaleFactorErr, nctype, 1, (Void *)&(tBuf[idx]));
+    *tmp_attr = (NC_attr *)NC_new_attr(_HDF_ScaleFactorErr, nctype, 1, (void *)&(tBuf[idx]));
 
     if (NULL == *tmp_attr) {
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -843,7 +843,7 @@ hdf_get_cal(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
 
     /* _HDF_AddOffset */
     idx       = idx + incr;
-    *tmp_attr = (NC_attr *)NC_new_attr(_HDF_AddOffset, nctype, 1, (Void *)&(tBuf[idx]));
+    *tmp_attr = (NC_attr *)NC_new_attr(_HDF_AddOffset, nctype, 1, (void *)&(tBuf[idx]));
 
     if (NULL == *tmp_attr) {
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -856,7 +856,7 @@ hdf_get_cal(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
 
     /* _HDF_AddOffsetErr */
     idx       = idx + incr;
-    *tmp_attr = (NC_attr *)NC_new_attr(_HDF_AddOffsetErr, nctype, 1, (Void *)&(tBuf[idx]));
+    *tmp_attr = (NC_attr *)NC_new_attr(_HDF_AddOffsetErr, nctype, 1, (void *)&(tBuf[idx]));
 
     if (NULL == *tmp_attr) {
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -872,7 +872,7 @@ hdf_get_cal(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
         HGOTO_ERROR(DFE_BADCONV, FAIL);
     }
 
-    *tmp_attr = (NC_attr *)NC_new_attr(_HDF_CalibratedNt, nt_nctype, 1, (Void *)&(tBuf[0]));
+    *tmp_attr = (NC_attr *)NC_new_attr(_HDF_CalibratedNt, nt_nctype, 1, (void *)&(tBuf[0]));
 
     if (NULL == *tmp_attr) {
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -1384,7 +1384,7 @@ hdf_read_ndgs(NC *handle)
                      * Add the attributes to the variable
                      */
                     if (dimattrcnt) {
-                        vars[current_var]->attrs = NC_new_array(NC_ATTRIBUTE, dimattrcnt, (Void *)dimattrs);
+                        vars[current_var]->attrs = NC_new_array(NC_ATTRIBUTE, dimattrcnt, (void *)dimattrs);
                         if (NULL == vars[current_var]->attrs) {
                             HGOTO_ERROR(DFE_INTERNAL, FAIL);
                         }
@@ -1496,7 +1496,7 @@ hdf_read_ndgs(NC *handle)
              * Add the attributes to the variable
              */
             if (current_attr) {
-                vars[current_var]->attrs = NC_new_array(NC_ATTRIBUTE, current_attr, (Void *)attrs);
+                vars[current_var]->attrs = NC_new_array(NC_ATTRIBUTE, current_attr, (void *)attrs);
 
                 if (NULL == vars[current_var]->attrs) {
                     HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -1550,7 +1550,7 @@ hdf_read_ndgs(NC *handle)
      * Set up the structures in the proper form
      */
     if (current_dim) {
-        handle->dims = NC_new_array(NC_DIMENSION, current_dim, (Void *)dims);
+        handle->dims = NC_new_array(NC_DIMENSION, current_dim, (void *)dims);
         if (NULL == handle->dims) {
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
         }
@@ -1559,7 +1559,7 @@ hdf_read_ndgs(NC *handle)
         handle->dims = NULL;
 
     if (current_var) {
-        handle->vars = NC_new_array(NC_VARIABLE, current_var, (Void *)vars);
+        handle->vars = NC_new_array(NC_VARIABLE, current_var, (void *)vars);
         if (NULL == handle->vars) {
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
         }

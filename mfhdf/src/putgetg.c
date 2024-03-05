@@ -110,7 +110,7 @@ NCgenio(NC *handle, int varid, const long *start, const long *count, const long 
          * Perform I/O.  Exit when done.
          */
         for (;;) {
-            int iostat = NCvario(handle, varid, mystart, iocount, (Void *)valp);
+            int iostat = NCvario(handle, varid, mystart, iocount, (void *)valp);
 
             if (iostat != 0)
                 return iostat;
@@ -176,7 +176,7 @@ ncvargetg(int cdfid, int varid, const long *start, const long *count, const long
 
     handle->xdrs->x_op = XDR_DECODE;
 
-    return NCgenio(handle, varid, start, count, stride, imap, (Void *)values);
+    return NCgenio(handle, varid, start, count, stride, imap, (void *)values);
 }
 
 /*
@@ -218,5 +218,5 @@ ncvargets(int cdfid, int varid, const long *start, const long *count, const long
 
     handle->xdrs->x_op = XDR_DECODE;
 
-    return NCgenio(handle, varid, start, count, stride, (long *)0, (Void *)values);
+    return NCgenio(handle, varid, start, count, stride, (long *)0, (void *)values);
 }
