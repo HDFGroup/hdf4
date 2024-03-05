@@ -42,4 +42,5 @@ m4/lt~obsolete.m4
 /config*.sh
 /redeploy*.sh
 /CMakeUserPresets.json
+HDF4Examples/CMakeUserPresets.json
 /log.txt
