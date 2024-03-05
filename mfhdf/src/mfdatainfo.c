@@ -683,7 +683,7 @@ SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32 *offsetarra
 {
     int32  file_id   = FAIL; /* file */
     int32  an_id     = FAIL; /* AN API */
-    int32  ann_id    = FAIL; /* annotaion ID */
+    int32  ann_id    = FAIL; /* annotation ID */
     NC    *handle    = NULL; /* file structure */
     int32 *dannots   = NULL; /* list of data annotation IDs */
     int32  n_flabels = 0;    /* number of file labels */
