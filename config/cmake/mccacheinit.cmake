@@ -20,7 +20,7 @@ set (HDF4_ENABLE_SZIP_SUPPORT OFF CACHE BOOL "Use SZip Filter" FORCE)
 
 set (HDF4_ENABLE_SZIP_ENCODING OFF CACHE BOOL "Use SZip Encoding" FORCE)
 
-set (HDF4_ENABLE_USING_MEMCHECKER ON CACHE BOOL "Indicate that a memory checker is used" FORCE)
+set (HDF4_USING_ANALYSIS_TOOL ON CACHE BOOL "Indicate that an analysis checker is used" FORCE)
 
 set (HDF4_DISABLE_COMPILER_WARNINGS OFF CACHE BOOL "Disable compiler warnings" FORCE)
 
