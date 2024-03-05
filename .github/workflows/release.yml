@@ -27,7 +27,6 @@ jobs:
         TAG: ${{ inputs.use_tag }}
       run: echo "RELEASE_TAG=$TAG" >> $GITHUB_OUTPUT
 
- tarball.yml will be used for releases when pre-tag actions are implemented
   call-workflow-tarball:
     needs: log-the-inputs
     uses: ./.github/workflows/tarball.yml
