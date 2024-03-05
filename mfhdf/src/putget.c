@@ -19,14 +19,14 @@
 
 /* Local function prototypes */
 static bool_t nssdc_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint32 count,
-                                void *values);
+                                uint8_t *values);
 
-static intn hdf_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint32 count,
-                            void *values);
+static int hdf_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint32 count,
+                           uint8_t *values);
 
-static intn hdf_xdr_NCv1data(NC *handle, NC_var *vp, unsigned long where, nc_type type, void *values);
+static int hdf_xdr_NCv1data(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint8_t *values);
 
-static intn SDIresizebuf(void **buf, int32 *buf_size, int32 size_wanted);
+static int SDIresizebuf(void **buf, int32 *buf_size, int32 size_wanted);
 
 static const long *NCvcmaxcontig(NC *, NC_var *, const long *, const long *);
 
@@ -528,10 +528,10 @@ SDPfreebuf(void)
 /*
     Resize a temporary buffer to the proper size
 */
-static intn
+static int
 SDIresizebuf(void **buf, int32 *buf_size, int32 size_wanted)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     if (*buf_size < size_wanted) {
         free(*buf);
@@ -776,8 +776,8 @@ done:
  *
  * The calling routine is responsible for calling DFKsetNT() as required.
  */
-static intn
-hdf_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint32 count, void *values)
+static int
+hdf_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint32 count, uint8_t *values)
 {
     NC_attr **attr = NULL; /* pointer to the fill-value attribute */
     int32     status;
@@ -1297,8 +1297,8 @@ done:
  *  similar name
  * Return TRUE if everything worked, else FALSE
  */
-static intn
-hdf_xdr_NCv1data(NC *handle, NC_var *vp, unsigned long where, nc_type type, void *values)
+static int
+hdf_xdr_NCv1data(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint8_t *values)
 {
 
     intn ret_value = SUCCEED;
@@ -1325,7 +1325,7 @@ done:
  *       it 100 percent -GV
  */
 static bool_t
-nssdc_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint32 count, void *values)
+nssdc_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint32 count, uint8_t *values)
 {
     int32 status;
     int32 byte_count;
@@ -1435,7 +1435,7 @@ ncvarget1(int cdfid, int varid, const long *coords, ncvoid *value)
  * xdr 'count' items of contiguous data of type 'type' at 'where'
  */
 static bool_t
-xdr_NCvdata(XDR *xdrs, unsigned long where, nc_type type, unsigned count, void *values)
+xdr_NCvdata(XDR *xdrs, unsigned long where, nc_type type, unsigned count, uint8_t *values)
 {
     unsigned long rem = 0;
     bool_t (*xdr_NC_fnct)();
