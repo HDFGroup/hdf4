@@ -40,6 +40,7 @@ jobs:
     with:
       file_base: ${{ needs.call-workflow-tarball.outputs.file_base }}
       preset_name: ci-StdShar
+      use_environ: release
 
   call-workflow-abi:
     needs: [log-the-inputs, call-workflow-tarball, call-workflow-ctest]
