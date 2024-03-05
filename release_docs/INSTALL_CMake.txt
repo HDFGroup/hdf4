@@ -739,6 +739,7 @@ if (WIN32)
 HDF4_ENABLE_NETCDF             "Build HDF4 versions of NetCDF-3 APIS"          ON
 HDF4_BUILD_DOC                 "Build documentation"                           OFF
 HDF4_ENABLE_DOXY_WARNINGS      "Enable fail if doxygen parsing has warnings."  OFF
+HDF4_USING_ANALYSIS_TOOL       "Indicate that an analysis checker is used"     ON
 
 ---------------- External Library Options ---------------------
 HDF4_ALLOW_EXTERNAL_SUPPORT    "Allow External Library Building"         "NO"

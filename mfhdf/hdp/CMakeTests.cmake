@@ -152,7 +152,7 @@ macro (ADD_H4_TEST resultfile resultcode)
     set_tests_properties (HDP-${resultfile}-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
   endif ()
 
-  if (HDF4_ENABLE_USING_MEMCHECKER)
+  if (HDF4_USING_ANALYSIS_TOOL)
     add_test (NAME HDP-${resultfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdp> ${ARGN})
   else ()
     add_test (
