@@ -45,7 +45,7 @@
 #define clock() (0)
 #endif
 
-extern int Verbocity;
+extern int Verbosity;
 
 /* Local variables */
 static int32       test_type[] = {0, DFNT_LITEND, DFNT_NATIVE};

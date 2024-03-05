@@ -15,7 +15,7 @@
 
 #include "testhdf.h"
 
-extern int Verbocity;
+extern int Verbosity;
 
 void
 test_macros(void)
