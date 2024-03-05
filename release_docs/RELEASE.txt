@@ -38,6 +38,13 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Renamed HDF4_ENABLE_USING_MEMCHECKER to HDF4_USING_ANALYSIS_TOOL
+
+      The HDF4_USING_ANALYSIS_TOOL is used to indicate to test macros that
+      an analysis tool is being used and that the tests should not use
+      the runTest.cmake macros and it's variations. The analysis tools,
+      like valgrind, test the macro code instead of the program under test.
+
     - The HDF4-build ncgen and ncdump tools have been removed
 
       We no longer provide these tools through HDF4. They were wildly
@@ -53,11 +60,11 @@ New features and changes
     C Library:
     ----------
     -
- 
+
 Bugs fixed since HDF 4.3.0
 ===========================
     -
- 
+
 Documentation
 =============
 
