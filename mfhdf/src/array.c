@@ -28,28 +28,28 @@ NC_xtypelen(nc_type type)
     switch (type) {
         case NC_BYTE:
         case NC_CHAR:
-            return (NC_CHAR_SIZE);
+            return NC_CHAR_SIZE;
         case NC_SHORT:
-            return (NC_SHORT_SIZE);
+            return NC_SHORT_SIZE;
         case NC_LONG:
         case NC_FLOAT:
-            return (NC_LONG_SIZE);
+            return NC_LONG_SIZE;
         case NC_DOUBLE:
-            return (NC_DOUBLE_SIZE);
+            return NC_DOUBLE_SIZE;
             /* private types */
         case NC_UNSPECIFIED:
-            return (NC_UNSPECIFIED_SIZE);
+            return NC_UNSPECIFIED_SIZE;
         case NC_STRING:
-            return (NC_xlen_string((NC_string *)NULL));
+            return NC_xlen_string((NC_string *)NULL);
         case NC_DIMENSION:
-            return (NC_xlen_dim((NC_dim **)&nada));
+            return NC_xlen_dim((NC_dim **)&nada);
         case NC_VARIABLE:
-            return (NC_xlen_var((NC_var **)&nada));
+            return NC_xlen_var((NC_var **)&nada);
         case NC_ATTRIBUTE:
-            return (NC_xlen_attr((NC_attr **)&nada));
+            return NC_xlen_attr((NC_attr **)&nada);
         default:
             NCadvise(NC_EBADTYPE, "NC_xtypelen: Unknown type %d", type);
-            return (-1);
+            return -1;
     }
 }
 
@@ -62,26 +62,26 @@ NC_typelen(nc_type type)
     switch (type) {
         case NC_BYTE:
         case NC_CHAR:
-            return (sizeof(char));
+            return sizeof(char);
         case NC_SHORT:
-            return (sizeof(short));
+            return sizeof(short);
         case NC_LONG:
-            return (sizeof(nclong));
+            return sizeof(nclong);
         case NC_FLOAT:
-            return (sizeof(float));
+            return sizeof(float);
         case NC_DOUBLE:
-            return (sizeof(double));
+            return sizeof(double);
             /* private types */
         case NC_STRING:
-            return (sizeof(NC_string *));
+            return sizeof(NC_string *);
         case NC_DIMENSION:
-            return (sizeof(NC_dim *));
+            return sizeof(NC_dim *);
         case NC_VARIABLE:
-            return (sizeof(NC_var *));
+            return sizeof(NC_var *);
         case NC_ATTRIBUTE:
-            return (sizeof(NC_attr *));
+            return sizeof(NC_attr *);
         default:
-            return (0);
+            return 0;
     }
 }
 
@@ -99,18 +99,18 @@ nctypelen(nc_type type)
     switch (type) {
         case NC_BYTE:
         case NC_CHAR:
-            return (sizeof(char));
+            return sizeof(char);
         case NC_SHORT:
-            return (sizeof(short));
+            return sizeof(short);
         case NC_LONG:
-            return (sizeof(nclong));
+            return sizeof(nclong);
         case NC_FLOAT:
-            return (sizeof(float));
+            return sizeof(float);
         case NC_DOUBLE:
-            return (sizeof(double));
+            return sizeof(double);
         default:
             NCadvise(NC_EBADTYPE, "Unknown type %d", type);
-            return (-1);
+            return -1;
     }
 }
 
@@ -216,7 +216,7 @@ NC_new_array(nc_type type, unsigned count, const void *values)
     ret->szof  = NC_typelen(type);
     ret->count = count;
     memlen     = count * ret->szof;
-    ret->len   = count * NC_xtypelen(type);
+    ret->len   = count * (unsigned)NC_xtypelen(type);
     if (count != 0) {
         ret->values = malloc(memlen);
         if (ret->values == NULL)
@@ -233,10 +233,10 @@ NC_new_array(nc_type type, unsigned count, const void *values)
         ret->values = NULL;
     }
 
-    return (ret);
+    return ret;
 alloc_err:
     nc_serror("NC_new_array");
-    return (NULL);
+    return NULL;
 }
 
 /*
@@ -253,7 +253,7 @@ NC_re_array(NC_array *old, nc_type type, unsigned count, const void *values)
     szof   = NC_typelen(type);
     memlen = count * szof;
     if (memlen > old->count * old->szof)
-        return (NULL); /* punt */
+        return NULL; /* punt */
     old->count = count;
     old->type  = type;
     old->szof  = szof;
@@ -267,7 +267,7 @@ NC_re_array(NC_array *old, nc_type type, unsigned count, const void *values)
         }
     }
 
-    return (old);
+    return old;
 }
 
 /*
@@ -356,29 +356,28 @@ NC_xlen_array(NC_array *array)
     int len = 8;
     int rem;
     int (*xlen_funct)() = NULL;
-    Void    *vp;
-    unsigned ii;
+    Void *vp;
 
     if (array != NULL) {
         switch (array->type) {
             case NC_BYTE:
             case NC_CHAR:
-                len += array->count * NC_CHAR_SIZE;
+                len += (int)array->count * NC_CHAR_SIZE;
                 if ((rem = len % 4) != 0)
                     len += 4 - rem;
-                return (len);
+                return len;
             case NC_SHORT:
-                len += array->count * NC_SHORT_SIZE;
+                len += (int)array->count * NC_SHORT_SIZE;
                 if ((rem = len % 4) != 0)
                     len += 4 - rem;
-                return (len);
+                return len;
             case NC_LONG:
             case NC_FLOAT:
-                len += array->count * NC_LONG_SIZE;
-                return (len);
+                len += (int)array->count * NC_LONG_SIZE;
+                return len;
             case NC_DOUBLE:
-                len += array->count * NC_DOUBLE_SIZE;
-                return (len);
+                len += (int)array->count * NC_DOUBLE_SIZE;
+                return len;
             case NC_STRING:
                 xlen_funct = NC_xlen_string;
                 break;
@@ -395,12 +394,12 @@ NC_xlen_array(NC_array *array)
                 break;
         }
         vp = array->values;
-        for (ii = 0; ii < array->count; ii++) {
+        for (unsigned ii = 0; ii < array->count; ii++) {
             len += (*xlen_funct)(vp);
             vp += array->szof;
         }
     }
-    return (len);
+    return len;
 }
 
 /*
@@ -413,18 +412,18 @@ NC_incr_array(NC_array *array, Void *tail)
 
     if (array == NULL) {
         NCadvise(NC_EINVAL, "increment: NULL array");
-        return (NULL);
+        return NULL;
     }
 
     array->values = realloc(array->values, (array->count + 1) * array->szof);
     if (array->values == NULL) {
         nc_serror("extend_array");
-        return (NULL);
+        return NULL;
     }
     ap = array->values + array->szof * array->count;
     (void)memcpy(ap, tail, array->szof);
     array->count++;
-    return (array->values);
+    return array->values;
 }
 
 /*
@@ -453,13 +452,13 @@ xdr_NC_array(XDR *xdrs, NC_array **app)
     switch (xdrs->x_op) {
         case XDR_FREE:
             NC_free_array((*app));
-            return (TRUE);
+            return TRUE;
         case XDR_ENCODE:
             if (*app == NULL) {
                 (*app) = NC_new_array(NC_UNSPECIFIED, (unsigned)0, (Void *)NULL);
                 if (*app == NULL) {
                     NCadvise(NC_EXDR, "xdr_NC_array:NC_new_array");
-                    return (FALSE);
+                    return FALSE;
                 }
             }
             count  = (*app)->count;
@@ -473,24 +472,24 @@ xdr_NC_array(XDR *xdrs, NC_array **app)
 
     if (!h4_xdr_int(xdrs, &type)) {
         NCadvise(NC_EXDR, "xdr_NC_array:h4_xdr_int (enum)");
-        return (FALSE);
+        return FALSE;
     }
 
     if (!h4_xdr_u_int(xdrs, &temp_count)) {
         NCadvise(NC_EXDR, "xdr_NC_array:h4_xdr_u_int");
-        return (FALSE);
+        return FALSE;
     }
     *countp = temp_count;
 
     if (xdrs->x_op == XDR_DECODE) {
         if (type == NC_UNSPECIFIED && *countp == 0) {
             *app = NULL;
-            return (TRUE);
+            return TRUE;
         }
         (*app) = NC_new_array(type, (unsigned)*countp, (Void *)NULL);
         if ((*app) == NULL) {
             NCadvise(NC_EXDR, "xdr_NC_array:NC_new_array  (second call)");
-            return (FALSE);
+            return FALSE;
         }
     }
 
@@ -529,7 +528,7 @@ xdr_NC_array(XDR *xdrs, NC_array **app)
             goto loop;
         default: {
             NCadvise(NC_EBADTYPE, "xdr_NC_array: unknown type %d", type);
-            return (FALSE);
+            return FALSE;
         }
     }
 loop:
@@ -540,11 +539,11 @@ loop:
     if (!stat)
         NCadvise(NC_EXDR, "xdr_NC_array: loop");
 
-    return (stat);
+    return stat;
 func:
 
     stat = (*xdr_NC_fnct)(xdrs, vp, *countp);
     if (!stat)
         NCadvise(NC_EXDR, "xdr_NC_array: func");
-    return (stat);
+    return stat;
 }

@@ -38,7 +38,7 @@ compute_hash(unsigned count, const char *str)
         memcpy(&temp, str, count);
         ret += temp;
     } /* end if */
-    return (ret);
+    return ret;
 } /* end compute_hash() */
 
 NC_string *
@@ -101,7 +101,7 @@ NC_re_string(NC_string *old, unsigned count, const char *str)
     if (old->count < count) /* punt */
     {
         NCadvise(NC_ENOTINDEFINE, "Must be in define mode to increase name length %d", old->count);
-        return (NULL);
+        return NULL;
     }
 
     if (str == NULL)
@@ -114,7 +114,7 @@ NC_re_string(NC_string *old, unsigned count, const char *str)
     old->len  = count;
     old->hash = compute_hash(count, str);
 
-    return (old);
+    return old;
 }
 
 bool_t
@@ -126,40 +126,40 @@ xdr_NC_string(XDR *xdrs, NC_string **spp)
     switch (xdrs->x_op) {
         case XDR_FREE:
             NC_free_string((*spp));
-            return (TRUE);
+            return TRUE;
         case XDR_DECODE:
             /* need the length to pass to new */
             if (!h4_xdr_u_int(xdrs, &count)) {
-                return (FALSE);
+                return FALSE;
             }
             if (count == 0) {
                 *spp = NULL;
-                return (TRUE);
+                return TRUE;
             } /* else */
             (*spp) = NC_new_string((unsigned)count, (const char *)NULL);
             if ((*spp) == NULL)
-                return (FALSE);
+                return FALSE;
             (*spp)->values[count] = 0;
             /* then deal with the characters */
             status = h4_xdr_opaque(xdrs, (*spp)->values, (*spp)->count);
 
             /* might be padded */
             (*spp)->len = strlen((*spp)->values);
-            return (status);
+            return status;
         case XDR_ENCODE:
             /* first deal with the length */
             if (*spp == NULL) {
                 count = 0;
-                return (h4_xdr_u_int(xdrs, &count));
+                return h4_xdr_u_int(xdrs, &count);
             } /* else */
             count = (*spp)->count;
             if (!h4_xdr_u_int(xdrs, &count)) {
-                return (FALSE);
+                return FALSE;
             }
             /* then deal with the characters */
-            return (h4_xdr_opaque(xdrs, (*spp)->values, (*spp)->count));
+            return h4_xdr_opaque(xdrs, (*spp)->values, (*spp)->count);
     }
-    return (FALSE);
+    return FALSE;
 }
 
 /*
