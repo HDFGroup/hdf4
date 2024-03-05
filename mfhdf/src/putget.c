@@ -53,18 +53,16 @@ nc_API(const char *caller)
 static bool_t
 NCfillrecord(XDR *xdrs, NC_var **vpp, unsigned numvars)
 {
-    unsigned ii;
-
-    for (ii = 0; ii < numvars; ii++, vpp++) {
+    for (unsigned ii = 0; ii < numvars; ii++, vpp++) {
         if (!IS_RECVAR(*vpp)) {
             continue; /* skip non-record variables */
         }
 
         /* compute sub size */
         if (!xdr_NC_fill(xdrs, *vpp))
-            return (FALSE);
+            return FALSE;
     }
-    return (TRUE);
+    return TRUE;
 }
 
 /*
@@ -164,7 +162,7 @@ NCcoordck(NC *handle, NC_var *vp, const long *coords)
         if ((handle->flags & NC_NOFILL) == 0) {
             /* make sure we can write to this variable */
             if (vp->aid == FAIL && hdf_get_vp_aid(handle, vp) == FAIL)
-                return (FALSE);
+                return FALSE;
 
             /* strg and strg1 are to hold fill value and its conversion */
             len   = (vp->len / vp->HDFsize) * vp->szof;
@@ -216,7 +214,7 @@ NCcoordck(NC *handle, NC_var *vp, const long *coords)
             handle->flags |= NC_NDIRTY;
         }
 
-        return (TRUE);
+        return TRUE;
     }
 
     /**********************************************/
@@ -238,27 +236,27 @@ NCcoordck(NC *handle, NC_var *vp, const long *coords)
             /* fill out new records */
             if (!xdr_NCsetpos(handle->xdrs, handle->begin_rec + handle->recsize * handle->numrecs)) {
                 nc_serror("NCcoordck seek, var %s", vp->name->values);
-                return (FALSE);
+                return FALSE;
             }
             for (; unfilled >= 0; unfilled--, handle->numrecs++) {
                 if (!NCfillrecord(handle->xdrs, (NC_var **)handle->vars->values, handle->vars->count)) {
                     nc_serror("NCcoordck fill, var %s, rec %ld", vp->name->values, handle->numrecs);
-                    return (FALSE);
+                    return FALSE;
                 }
             }
         }
         if (handle->flags & NC_NSYNC) /* write out header->numrecs NOW */
         {
             if (!xdr_numrecs(handle->xdrs, handle))
-                return (FALSE);
+                return FALSE;
             handle->flags &= ~NC_NDIRTY;
         }
     }
 
-    return (TRUE);
+    return TRUE;
 bad:
     NCadvise(NC_EINVALCOORDS, "%s: Invalid Coordinates", vp->name->values);
-    return (FALSE);
+    return FALSE;
 }
 
 /*
@@ -275,7 +273,7 @@ NC_varoffset(NC *handle, NC_var *vp, const long *coords)
     intn           i;
 
     if (vp->assoc->count == 0) /* 'scaler' variable */
-        return (vp->begin);
+        return vp->begin;
 
     if (IS_RECVAR(vp))
         boundary = coords + 1;
@@ -290,22 +288,22 @@ NC_varoffset(NC *handle, NC_var *vp, const long *coords)
     if (IS_RECVAR(vp)) {
         switch (handle->file_type) {
             case HDF_FILE:
-                return (vp->dsizes[0] * *coords + offset);
+                return vp->dsizes[0] * *coords + offset;
             case netCDF_FILE:
-                return (vp->begin + handle->recsize * *coords + offset);
+                return vp->begin + handle->recsize * *coords + offset;
             case CDF_FILE:
-                return (0);
+                return 0;
         }
     }
     else {
         switch (handle->file_type) {
             case HDF_FILE:
-                return (offset);
+                return offset;
             case netCDF_FILE:
-                return (vp->begin + offset);
+                return vp->begin + offset;
             case CDF_FILE:
                 if ((vix = vp->vixHead) == NULL)
-                    return (-1);
+                    return -1;
 
                 /*
                  * Record data is stored in chunks.  the firstRec and lastRec
@@ -321,7 +319,7 @@ NC_varoffset(NC *handle, NC_var *vp, const long *coords)
                     for (i = 0; i < vix->nUsed; i++) {
                         if ((vix->firstRec[i] <= *coords) && (vix->lastRec[i] >= *coords)) {
                             /* found the record we want */
-                            return (offset + vix->offset[i] - vix->firstRec[i] * vp->dsizes[0] + 8);
+                            return offset + vix->offset[i] - vix->firstRec[i] * vp->dsizes[0] + 8;
                         }
                     } /* loop over user entries in current vix record */
                     vix = vix->next;
@@ -331,7 +329,7 @@ NC_varoffset(NC *handle, NC_var *vp, const long *coords)
     }
 
     /* should never get to here */
-    return (0);
+    return 0;
 
 } /* NC_varoffset */
 
@@ -377,12 +375,12 @@ xdr_NCvbyte(XDR *xdrs, unsigned rem, unsigned count, char *values)
 
     if (x_op == XDR_ENCODE) {
         if (!h4_xdr_setpos(xdrs, origin))
-            return (FALSE);
+            return FALSE;
         if (!h4_xdr_opaque(xdrs, buf, 4))
-            return (FALSE);
+            return FALSE;
     }
 
-    return (TRUE);
+    return TRUE;
 }
 
 /*
@@ -419,9 +417,9 @@ xdr_NCvshort(XDR *xdrs, unsigned which, short *values)
         buf[which]     = (*values >> 8);
 
         if (!h4_xdr_setpos(xdrs, origin))
-            return (FALSE);
+            return FALSE;
         if (!h4_xdr_opaque(xdrs, (char *)buf, 4))
-            return (FALSE);
+            return FALSE;
     }
     else {
         *values = ((buf[which] & 0x7f) << 8) + buf[which + 1];
@@ -430,7 +428,7 @@ xdr_NCvshort(XDR *xdrs, unsigned which, short *values)
             *values -= 0x8000;
         }
     }
-    return (TRUE);
+    return TRUE;
 }
 
 /*
@@ -452,25 +450,25 @@ xdr_NCv1data(XDR *xdrs, unsigned long where, nc_type type, void *values)
             break;
     }
     if (!xdr_NCsetpos(xdrs, where))
-        return (FALSE);
+        return FALSE;
 
     switch (type) {
         case NC_BYTE:
         case NC_CHAR:
-            return (xdr_NCvbyte(xdrs, (unsigned)rem, (unsigned)1, (char *)values));
+            return xdr_NCvbyte(xdrs, (unsigned)rem, (unsigned)1, (char *)values);
         case NC_SHORT:
-            return (xdr_NCvshort(xdrs, (unsigned)rem / 2, (short *)values));
+            return xdr_NCvshort(xdrs, (unsigned)rem / 2, (short *)values);
         case NC_LONG:
             /* nclong is defined to a 32-bit integer type in netcdf.h */
-            return (h4_xdr_int(xdrs, (nclong *)values));
+            return h4_xdr_int(xdrs, (nclong *)values);
         case NC_FLOAT:
-            return (h4_xdr_float(xdrs, (float *)values));
+            return h4_xdr_float(xdrs, (float *)values);
         case NC_DOUBLE:
-            return (h4_xdr_double(xdrs, (double *)values));
+            return h4_xdr_double(xdrs, (double *)values);
         default:
             break;
     }
-    return (FALSE);
+    return FALSE;
 }
 
 /*****************************************************************************
@@ -714,7 +712,7 @@ hdf_get_data(NC *handle, NC_var *vp)
     ret_value = vsid;
 
 done:
-    if (ret_value == DFREF_NONE) { /* Failure cleanup */
+    if (ret_value == DFREF_NONE) {
         if (vg != FAIL) {
             Vdetach(vg); /* no point in catch error here if we fail */
         }
@@ -1338,14 +1336,14 @@ nssdc_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uin
     /* position ourselves correctly */
     status = HI_SEEK((hdf_file_t)handle->cdf_fp, where);
     if (status == FAIL)
-        return (FALSE);
+        return FALSE;
 
     /* make sure our tmp buffer is big enough to hold everything */
     byte_count = count * vp->HDFsize;
     if (SDIresizebuf((void **)&tBuf, &tBuf_size, byte_count) == FAIL)
-        return (FALSE);
+        return FALSE;
 
-    return (TRUE);
+    return TRUE;
 
 } /* nssdc_xdr_NCvdata */
 
@@ -1356,13 +1354,13 @@ NCvar1io(NC *handle, int varid, const long *coords, void *value)
     unsigned long offset;
 
     if (handle->flags & NC_INDEF)
-        return (-1);
+        return -1;
     if (handle->vars == NULL)
-        return (-1);
+        return -1;
 
     vp = NC_hlookupvar(handle, varid);
     if (vp == NULL)
-        return (-1);
+        return -1;
 
     if (vp->assoc->count == 0) /* 'scaler' variable */
     {
@@ -1379,22 +1377,22 @@ NCvar1io(NC *handle, int varid, const long *coords, void *value)
     }
 
     if (!NCcoordck(handle, vp, coords))
-        return (-1);
+        return -1;
 
     offset = NC_varoffset(handle, vp, coords);
 
     switch (handle->file_type) {
         case HDF_FILE:
             if (FAIL == hdf_xdr_NCv1data(handle, vp, offset, vp->type, value))
-                return (-1);
+                return -1;
             break;
         case netCDF_FILE:
             if (!xdr_NCv1data(handle->xdrs, offset, vp->type, value))
-                return (-1);
+                return -1;
             break;
     }
 
-    return (0);
+    return 0;
 }
 
 int
@@ -1406,15 +1404,15 @@ ncvarput1(int cdfid, int varid, const long *coords, const ncvoid *value)
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
 
     if (!(handle->flags & NC_RDWR)) {
         NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path);
-        return (-1);
+        return -1;
     }
     handle->xdrs->x_op = XDR_ENCODE;
 
-    return (NCvar1io(handle, varid, coords, value));
+    return NCvar1io(handle, varid, coords, value);
 }
 
 int
@@ -1426,11 +1424,11 @@ ncvarget1(int cdfid, int varid, const long *coords, ncvoid *value)
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
 
     handle->xdrs->x_op = XDR_DECODE;
 
-    return (NCvar1io(handle, varid, coords, (void *)value));
+    return NCvar1io(handle, varid, coords, (void *)value);
 }
 
 /*
@@ -1455,7 +1453,7 @@ xdr_NCvdata(XDR *xdrs, unsigned long where, nc_type type, unsigned count, void *
             break;
     }
     if (!xdr_NCsetpos(xdrs, where))
-        return (FALSE);
+        return FALSE;
 
     switch (type) {
         case NC_BYTE:
@@ -1463,7 +1461,7 @@ xdr_NCvdata(XDR *xdrs, unsigned long where, nc_type type, unsigned count, void *
             if (rem != 0) {
                 unsigned vcount = MIN(count, 4 - rem);
                 if (!xdr_NCvbyte(xdrs, (unsigned)rem, vcount, values))
-                    return (FALSE);
+                    return FALSE;
                 values += vcount;
                 count -= vcount;
             }
@@ -1471,31 +1469,31 @@ xdr_NCvdata(XDR *xdrs, unsigned long where, nc_type type, unsigned count, void *
             rem = count % 4; /* tail remainder */
             count -= rem;
             if (!h4_xdr_opaque(xdrs, values, count))
-                return (FALSE);
+                return FALSE;
 
             if (rem != 0) {
                 values += count;
                 if (!xdr_NCvbyte(xdrs, (unsigned)0, (unsigned)rem, values))
-                    return (FALSE);
-                return (TRUE);
+                    return FALSE;
+                return TRUE;
             } /* else */
-            return (TRUE);
+            return TRUE;
         case NC_SHORT:
             if (rem != 0) {
                 if (!xdr_NCvshort(xdrs, (unsigned)1, (short *)values))
-                    return (FALSE);
+                    return FALSE;
                 values += sizeof(short);
                 count -= 1;
             }
             rem = count % 2; /* tail remainder */
             count -= rem;
             if (!xdr_shorts(xdrs, (short *)values, count))
-                return (FALSE);
+                return FALSE;
             if (rem != 0) {
                 values += (count * sizeof(short));
-                return (xdr_NCvshort(xdrs, (unsigned)0, (short *)values));
-            } /* else */
-            return (TRUE);
+                return xdr_NCvshort(xdrs, (unsigned)0, (short *)values);
+            }
+            return TRUE;
         case NC_LONG:
             xdr_NC_fnct = h4_xdr_int;
             szof        = sizeof(nclong);
@@ -1509,13 +1507,13 @@ xdr_NCvdata(XDR *xdrs, unsigned long where, nc_type type, unsigned count, void *
             szof        = sizeof(double);
             break;
         default:
-            return (FALSE);
+            return FALSE;
     }
     for (stat = TRUE; stat && (count > 0); count--) {
         stat = (*xdr_NC_fnct)(xdrs, values);
         values += szof;
     }
-    return (stat);
+    return stat;
 }
 
 /*
@@ -1530,7 +1528,7 @@ NCvcmaxcontig(NC *handle, NC_var *vp, const long *origin, const long *edges)
     if (IS_RECVAR(vp)) {
         /*     one dimensional   &&  the only 'record' variable  */
         if (vp->assoc->count == 1 && handle->recsize <= vp->len) {
-            return (edges);
+            return edges;
         } /* else */
         boundary = vp->shape + 1;
     }
@@ -1547,7 +1545,7 @@ NCvcmaxcontig(NC *handle, NC_var *vp, const long *origin, const long *edges)
     for (; shp >= boundary; shp--, edp--, orp--) {
         if (*edp > *shp - *orp || *edp < 0) {
             NCadvise(NC_EINVAL, "Invalid edge length %d", *edp);
-            return (NULL);
+            return NULL;
         }
         if (*edp < *shp) {
             break;
@@ -1562,7 +1560,7 @@ NCvcmaxcontig(NC *handle, NC_var *vp, const long *origin, const long *edges)
         edp++;
 
     /* shp, edp reference last index s.t. shape[ii] == edge[ii] */
-    return (edp);
+    return edp;
 }
 
 static int
@@ -1600,16 +1598,16 @@ NCsimplerecio(NC *handle, NC_var *vp, const long *start, const long *edges, void
         case HDF_FILE:
             DFKsetNT(vp->HDFtype);
             if (FAIL == hdf_xdr_NCvdata(handle, vp, offset, vp->type, (uint32)*edges, values))
-                return (-1);
+                return -1;
             break;
         case CDF_FILE:
             DFKsetNT(vp->HDFtype);
             if (!nssdc_xdr_NCvdata(handle, vp, offset, vp->type, (uint32)*edges, values))
-                return (-1);
+                return -1;
             break;
         case netCDF_FILE:
             if (!xdr_NCvdata(handle->xdrs, offset, vp->type, (unsigned)*edges, values))
-                return (-1);
+                return -1;
             break;
     }
 
@@ -1622,11 +1620,11 @@ NCsimplerecio(NC *handle, NC_var *vp, const long *start, const long *edges, void
         if (handle->flags & NC_NSYNC) /* write out header->numrecs NOW */
         {
             if (!xdr_numrecs(handle->xdrs, handle))
-                return (-1);
+                return -1;
             handle->flags &= ~NC_NDIRTY;
         }
     }
-    return (0);
+    return 0;
 }
 
 /*
@@ -1641,14 +1639,14 @@ NCvario(NC *handle, int varid, const long *start, const long *edges, void *value
     unsigned long iocount;
 
     if (handle->flags & NC_INDEF)
-        return (-1);
+        return -1;
 
     /* find the variable */
     if (handle->vars == NULL)
-        return (-1);
+        return -1;
     vp = NC_hlookupvar(handle, varid);
     if (vp == NULL)
-        return (-1);
+        return -1;
 
     if (handle->file_type != netCDF_FILE) {
         if (FAIL == DFKsetNT(vp->HDFtype))
@@ -1669,17 +1667,17 @@ NCvario(NC *handle, int varid, const long *start, const long *edges, void *value
     }
 
     if (!NCcoordck(handle, vp, start))
-        return (-1);
+        return -1;
 
     if (IS_RECVAR(vp) && vp->assoc->count == 1 && handle->recsize <= vp->len) {
         /* one dimensional   &&  the only 'record' variable  */
-        return (NCsimplerecio(handle, vp, start, edges, values));
+        return NCsimplerecio(handle, vp, start, edges, values);
     }
 
     /* find max contiguous, check sanity of edges */
     edp0 = NCvcmaxcontig(handle, vp, start, edges);
     if (edp0 == NULL)
-        return (-1);
+        return -1;
 
     /* now accumulate max count for a single io operation */
     edp     = edges + vp->assoc->count - 1; /* count is > 0 at this point */
@@ -1716,22 +1714,22 @@ NCvario(NC *handle, int varid, const long *start, const long *edges, void *value
                 if (edp0 == edges || mm == &upper[edp0 - edges - 1]) {
                     /* doit */
                     if (!NCcoordck(handle, vp, coords))
-                        return (-1);
+                        return -1;
                     offset = NC_varoffset(handle, vp, coords);
 
                     switch (handle->file_type) {
                         case HDF_FILE:
                             if (FAIL ==
                                 hdf_xdr_NCvdata(handle, vp, offset, vp->type, (uint32)iocount, values))
-                                return (-1);
+                                return -1;
                             break;
                         case CDF_FILE:
                             if (!nssdc_xdr_NCvdata(handle, vp, offset, vp->type, (uint32)iocount, values))
-                                return (-1);
+                                return -1;
                             break;
                         case netCDF_FILE:
                             if (!xdr_NCvdata(handle->xdrs, offset, vp->type, (unsigned)iocount, values))
-                                return (-1);
+                                return -1;
                             break;
                     }
 
@@ -1769,7 +1767,7 @@ NCvario(NC *handle, int varid, const long *start, const long *edges, void *value
         handle->numrecs = vp->numrecs;
 #endif
 
-    return (0);
+    return 0;
 }
 
 int
@@ -1781,15 +1779,15 @@ ncvarput(int cdfid, int varid, const long *start, const long *edges, ncvoid *val
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
 
     if (!(handle->flags & NC_RDWR)) {
         NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path);
-        return (-1);
+        return -1;
     }
     handle->xdrs->x_op = XDR_ENCODE;
 
-    return (NCvario(handle, varid, start, edges, values));
+    return NCvario(handle, varid, start, edges, values);
 }
 
 /* --------------------------- NC_fill_buffer ---------------------------- */
@@ -1862,40 +1860,18 @@ ncvarget(int cdfid, int varid, const long *start, const long *edges, ncvoid *val
     /* Get the file handle */
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
 
     /* Fill the buffer with fill-values before passing it into NCvario to
     read the requested data */
     status = NC_fill_buffer(handle, varid, edges, values);
     if (status == FAIL)
-        return (-1);
+        return -1;
 
     handle->xdrs->x_op = XDR_DECODE;
 
-    return (NCvario(handle, varid, start, edges, (void *)values));
+    return NCvario(handle, varid, start, edges, (void *)values);
 }
-
-/* This is the original ncvarget.  Keep for a while just in case. -BMR
-int ncvarget(cdfid, varid, start, edges, values)
-int cdfid ;
-int varid ;
-const long *start ;
-const long *edges ;
-ncvoid *values ;
-{
-    NC *handle ;
-
-    cdf_routine_name = "ncvarget" ;
-
-    handle = NC_check_id(cdfid) ;
-    if(handle == NULL)
-        return(-1) ;
-
-    handle->xdrs->x_op = XDR_DECODE ;
-
-    return( NCvario(handle, varid, start, edges, (Void *)values) ) ;
-}
- */
 
 /* Begin recio */
 
@@ -1909,14 +1885,13 @@ static int
 NCnumrecvars(NC *handle, NC_var **vpp, int *recvarids)
 {
     NC_var **dp;
-    int      ii;
     int      nrecvars = 0;
 
     if (handle->vars == NULL)
         return -1;
 
     dp = (NC_var **)handle->vars->values;
-    for (ii = 0; ii < handle->vars->count; ii++, dp++) {
+    for (int ii = 0; ii < handle->vars->count; ii++, dp++) {
         if (IS_RECVAR((*dp))) {
             if (vpp != NULL)
                 vpp[nrecvars] = *dp;
@@ -1932,9 +1907,10 @@ static long
 NCelemsPerRec(NC_var *vp)
 {
     long nelems = 1;
-    int  jj;
-    for (jj = 1; jj < vp->assoc->count; jj++)
+
+    for (int jj = 1; jj < vp->assoc->count; jj++)
         nelems *= vp->shape[jj];
+
     return nelems;
 }
 
@@ -1954,7 +1930,7 @@ ncrecinq(int cdfid, int *nrecvars, int *recvarids, long *recsizes)
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
 
     nrvars = NCnumrecvars(handle, rvp, recvarids);
     if (nrvars == -1)
@@ -1964,8 +1940,7 @@ ncrecinq(int cdfid, int *nrecvars, int *recvarids, long *recsizes)
         *nrecvars = nrvars;
 
     if (recsizes != NULL) {
-        int ii;
-        for (ii = 0; ii < nrvars; ii++) {
+        for (int ii = 0; ii < nrvars; ii++) {
             recsizes[ii] = nctypelen(rvp[ii]->type) * NCelemsPerRec(rvp[ii]);
         }
     }
@@ -1977,21 +1952,20 @@ NCrecio(NC *handle, long recnum, void **datap)
 {
     int           nrvars;
     NC_var       *rvp[H4_MAX_NC_VARS];
-    int           ii;
     long          coords[H4_MAX_VAR_DIMS];
     unsigned long offset;
     unsigned      iocount;
 
     nrvars = NCnumrecvars(handle, rvp, NULL);
     if (nrvars == -1)
-        return -1; /* TODO: what error message ?*/
+        return -1;
 
     memset(coords, 0, sizeof(coords));
     coords[0] = recnum;
-    for (ii = 0; ii < nrvars; ii++) {
+    for (int ii = 0; ii < nrvars; ii++) {
         if (datap[ii] == NULL)
             continue;
-        /* else */
+
         offset  = NC_varoffset(handle, rvp[ii], coords);
         iocount = NCelemsPerRec(rvp[ii]);
 
@@ -2000,16 +1974,16 @@ NCrecio(NC *handle, long recnum, void **datap)
                 DFKsetNT(rvp[ii]->HDFtype);
                 if (FAIL ==
                     hdf_xdr_NCvdata(handle, rvp[ii], offset, rvp[ii]->type, (uint32)iocount, datap[ii]))
-                    return (-1);
+                    return -1;
                 break;
             case CDF_FILE:
                 DFKsetNT(rvp[ii]->HDFtype);
                 if (!nssdc_xdr_NCvdata(handle, rvp[ii], offset, rvp[ii]->type, (uint32)iocount, datap[ii]))
-                    return (-1);
+                    return -1;
                 break;
             case netCDF_FILE:
                 if (!xdr_NCvdata(handle->xdrs, offset, rvp[ii]->type, iocount, datap[ii]))
-                    return (-1);
+                    return -1;
                 break;
         }
     }
@@ -2030,9 +2004,9 @@ ncrecput(int cdfid, long recnum, ncvoid **datap)
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
     if (handle->flags & NC_INDEF)
-        return (-1);
+        return -1;
 
     if ((unfilled = recnum - handle->numrecs) >= 0) {
         handle->flags |= NC_NDIRTY;
@@ -2044,26 +2018,26 @@ ncrecput(int cdfid, long recnum, ncvoid **datap)
             /* fill out new records */
             if (!xdr_NCsetpos(handle->xdrs, handle->begin_rec + handle->recsize * handle->numrecs)) {
                 nc_serror("seek, rec %ld", handle->numrecs);
-                return (FALSE);
+                return FALSE;
             }
             for (; unfilled >= 0; unfilled--, handle->numrecs++) {
                 if (!NCfillrecord(handle->xdrs, (NC_var **)handle->vars->values, handle->vars->count)) {
                     nc_serror("NCfillrec, rec %ld", handle->numrecs);
-                    return (FALSE);
+                    return FALSE;
                 }
             }
         }
         if (handle->flags & NC_NSYNC) /* write out header->numrecs NOW */
         {
             if (!xdr_numrecs(handle->xdrs, handle))
-                return (FALSE);
+                return FALSE;
             handle->flags &= ~NC_NDIRTY;
         }
     }
 
     handle->xdrs->x_op = XDR_ENCODE;
 
-    return (NCrecio(handle, recnum, (void **)datap));
+    return NCrecio(handle, recnum, (void **)datap);
 }
 
 /*
@@ -2079,11 +2053,11 @@ ncrecget(int cdfid, long recnum, ncvoid **datap)
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
     if (handle->flags & NC_INDEF)
-        return (-1);
+        return -1;
 
     handle->xdrs->x_op = XDR_DECODE;
 
-    return (NCrecio(handle, recnum, (void **)datap));
+    return NCrecio(handle, recnum, (void **)datap);
 }

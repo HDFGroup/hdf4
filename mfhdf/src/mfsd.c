@@ -232,7 +232,7 @@ SDIstart(void)
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* end SDIstart() */
 
 /******************************************************************************
@@ -260,7 +260,7 @@ SDI_can_clobber(const char *name)
 
     if (res < 0) {
         /* no such file, OK to try to create it */
-        return (1);
+        return 1;
     }
 
     ff = HI_OPEN(name, DFACC_RDWR);
@@ -268,11 +268,11 @@ SDI_can_clobber(const char *name)
     if (ff != NULL) {
         /* OK to open for write, so OK to clobber it */
         HI_CLOSE(ff);
-        return (1);
+        return 1;
     }
 
     /* no permission to write, don't do the create */
-    return (0);
+    return 0;
 }
 /******************************************************************************
  NAME
@@ -783,8 +783,7 @@ int32
 SDnametoindex(int32       fid, /* IN: file ID */
               const char *name /* IN: name of dataset to search for */)
 {
-    unsigned ii;
-    intn     len;
+    size_t   len;
     NC      *handle    = NULL;
     NC_var **dp        = NULL;
     int32    ret_value = FAIL;
@@ -801,7 +800,7 @@ SDnametoindex(int32       fid, /* IN: file ID */
 
     len = strlen(name);
     dp  = (NC_var **)handle->vars->values;
-    for (ii = 0; ii < handle->vars->count; ii++, dp++) {
+    for (unsigned ii = 0; ii < handle->vars->count; ii++, dp++) {
         if (len == (*dp)->name->len && strncmp(name, (*dp)->name->values, strlen(name)) == 0) {
             HGOTO_DONE((int32)ii);
         }
@@ -833,8 +832,7 @@ SDgetnumvars_byname(int32       fid,  /* IN: file ID */
                     const char *name, /* IN: name of dataset to search for */
                     int32      *n_vars)
 {
-    unsigned ii;
-    intn     len;
+    size_t   len;
     int32    count     = 0;
     NC      *handle    = NULL;
     NC_var **dp        = NULL;
@@ -855,7 +853,7 @@ SDgetnumvars_byname(int32       fid,  /* IN: file ID */
 
     len = strlen(name);
     dp  = (NC_var **)handle->vars->values;
-    for (ii = 0; ii < handle->vars->count; ii++, dp++) {
+    for (unsigned ii = 0; ii < handle->vars->count; ii++, dp++) {
         if (len == (*dp)->name->len && strncmp(name, (*dp)->name->values, strlen(name)) == 0)
             count++;
     }
@@ -890,8 +888,7 @@ SDnametoindices(int32          fid,  /* IN: file ID */
                 const char    *name, /* IN: name of dataset to search for */
                 hdf_varlist_t *var_list)
 {
-    unsigned       ii;
-    intn           len;
+    size_t         len;
     NC            *handle = NULL;
     NC_var       **dp     = NULL;
     hdf_varlist_t *varlistp;
@@ -913,7 +910,7 @@ SDnametoindices(int32          fid,  /* IN: file ID */
     len      = strlen(name);
     dp       = (NC_var **)handle->vars->values;
     varlistp = var_list;
-    for (ii = 0; ii < handle->vars->count; ii++, dp++) {
+    for (unsigned ii = 0; ii < handle->vars->count; ii++, dp++) {
         if (len == (*dp)->name->len && strncmp(name, (*dp)->name->values, strlen(name)) == 0) {
             varlistp->var_index = (int32)ii;
             varlistp->var_type  = (*dp)->var_type;
@@ -1298,8 +1295,7 @@ SDsetdimname(int32       id, /* IN: dataset ID */
     NC_string *new    = NULL;
     NC_array **ap     = NULL;
     size_t     len;
-    unsigned   ii;
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -1319,7 +1315,7 @@ SDsetdimname(int32       id, /* IN: dataset ID */
     /* check for name in use */
     len = strlen(name);
     dp  = (NC_dim **)handle->dims->values;
-    for (ii = 0; ii < handle->dims->count; ii++, dp++) {
+    for (unsigned ii = 0; ii < handle->dims->count; ii++, dp++) {
         if (len == (*dp)->name->len && strncmp(name, (*dp)->name->values, strlen(name)) == 0) {
             if (dim != (*dp)) {
                 /* a dimension with this name already exists */
@@ -2422,10 +2418,9 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
                int32   id,     /* IN: dimension ID */
                int32   nt /* IN: number type to use if new variable*/)
 {
-    unsigned   ii;
     unsigned   len;
     nc_type    nctype;
-    intn       dimindex;
+    int        dimindex;
     NC_string *name      = NULL;
     NC_var   **dp        = NULL;
     NC_var    *var       = NULL;
@@ -2435,7 +2430,7 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
     name = dim->name;
     len  = dim->name->len;
     dp   = (NC_var **)handle->vars->values;
-    for (ii = 0; ii < handle->vars->count; ii++, dp++) {
+    for (unsigned ii = 0; ii < handle->vars->count; ii++, dp++) {
         /* eliminate vars with rank > 1, coord vars only have rank 1 */
         if ((*dp)->assoc->count == 1)
             if (len == (*dp)->name->len && strncmp(name->values, (*dp)->name->values, (size_t)len) == 0)
@@ -2830,8 +2825,7 @@ SDdiminfo(int32  id,   /* IN:  dimension ID */
     NC      *handle = NULL;
     NC_dim  *dim    = NULL;
     NC_var **dp     = NULL;
-    intn     ii;
-    intn     len;
+    int      len;
     int      ret_value = SUCCEED;
 
     /* clear error stack */
@@ -2879,7 +2873,7 @@ SDdiminfo(int32  id,   /* IN:  dimension ID */
     if (handle->vars) {
         len = dim->name->len;
         dp  = (NC_var **)handle->vars->values;
-        for (ii = 0; ii < handle->vars->count; ii++, dp++) {
+        for (int ii = 0; ii < handle->vars->count; ii++, dp++) {
             /* eliminate vars with rank > 1, coord vars only have rank 1 */
             if ((*dp)->assoc->count == 1) {
                 /* check if this variable matches the searched name */
@@ -3286,7 +3280,7 @@ SDgetexternalinfo(int32  id,           /* IN: dataset ID */
     else /* SDS doesn't exist */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
+    if (ret_value == FAIL) {
         /* End access to the aid if necessary */
         if (aid != FAIL)
             Hendaccess(aid);
@@ -4078,9 +4072,8 @@ int32
 SDreftoindex(int32 fid, /* IN: file ID */
              int32 ref /* IN: reference number */)
 {
-    NC      *handle = NULL;
-    NC_var **dp     = NULL;
-    intn     ii;
+    NC      *handle    = NULL;
+    NC_var **dp        = NULL;
     int32    ret_value = FAIL;
 
     /* clear error stack */
@@ -4096,7 +4089,7 @@ SDreftoindex(int32 fid, /* IN: file ID */
     }
 
     dp = (NC_var **)handle->vars->values;
-    for (ii = 0; ii < handle->vars->count; ii++, dp++) {
+    for (int ii = 0; ii < handle->vars->count; ii++, dp++) {
         if ((*dp)->ndg_ref == ref) {
             HGOTO_ERROR(DFE_ARGS, ii);
         }
@@ -4396,7 +4389,7 @@ SDgetblocksize(int32  sdsid, /* IN: dataset ID */
     if (var->aid == FAIL && temp_aid != FAIL)
         Hendaccess(temp_aid);
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
+    if (ret_value == FAIL) {
         if (var && var->aid == FAIL && temp_aid != FAIL)
             Hendaccess(temp_aid);
     }
@@ -5169,7 +5162,7 @@ SDgetchunkinfo(int32          sdsid,     /* IN: sds access id */
     var->aid = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
+    if (ret_value == FAIL) {
         /* End access to the aid if necessary */
         if (var && var->aid != FAIL) {
             Hendaccess(var->aid);
@@ -5540,7 +5533,7 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
     var->aid = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
+    if (ret_value == FAIL) {
         /* End access to the aid if necessary */
         if (var && var->aid != FAIL) {
             Hendaccess(var->aid);

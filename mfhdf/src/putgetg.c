@@ -41,7 +41,7 @@ NCgenio(NC *handle, int varid, const long *start, const long *count, const long 
     NC_var *vp = NC_hlookupvar(handle, varid);
 
     if (vp == NULL)
-        return (-1);
+        return -1;
 
     maxidim = vp->assoc->count - 1;
 
@@ -72,7 +72,7 @@ NCgenio(NC *handle, int varid, const long *start, const long *count, const long 
         for (idim = 0; idim <= maxidim; ++idim) {
             if (stride != NULL && stride[idim] < 1) {
                 NCadvise(NC_EINVAL, "Non-positive stride");
-                return (-1);
+                return -1;
             }
         }
 
@@ -148,11 +148,11 @@ ncvarputg(int cdfid, int varid, const long *start, const long *count, const long
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
 
     if (!(handle->flags & NC_RDWR)) {
         NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path);
-        return (-1);
+        return -1;
     }
     handle->xdrs->x_op = XDR_ENCODE;
 
@@ -172,7 +172,7 @@ ncvargetg(int cdfid, int varid, const long *start, const long *count, const long
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
 
     handle->xdrs->x_op = XDR_DECODE;
 
@@ -191,11 +191,11 @@ ncvarputs(int cdfid, int varid, const long *start, const long *count, const long
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
 
     if (!(handle->flags & NC_RDWR)) {
         NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path);
-        return (-1);
+        return -1;
     }
     handle->xdrs->x_op = XDR_ENCODE;
 
@@ -214,7 +214,7 @@ ncvargets(int cdfid, int varid, const long *start, const long *count, const long
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
 
     handle->xdrs->x_op = XDR_DECODE;
 

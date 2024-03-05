@@ -56,10 +56,10 @@ NC_new_var(const char *name, nc_type type, int ndims, const int *dims)
     ret->created     = FALSE; /* This is set in SDcreate() if it's a new SDS */
     ret->set_length  = FALSE; /* This is set in SDwritedata() if the data needs its length set */
 
-    return (ret);
+    return ret;
 alloc_err:
     nc_serror("NC_new_var");
-    return (NULL);
+    return NULL;
 }
 
 /*
@@ -126,7 +126,7 @@ NC_var_shape(NC_var *var, NC_array *dims)
     shape = malloc(ii * sizeof(unsigned long));
     if (shape == NULL) {
         nc_serror("NC_var_shape");
-        return (-1);
+        return -1;
     }
 
     /*
@@ -137,7 +137,7 @@ NC_var_shape(NC_var *var, NC_array *dims)
         if (*ip < 0 || *ip >= ((dims != NULL) ? dims->count : 1)) {
             NCadvise(NC_EBADDIM, "Bad dimension id %d", *ip);
             free(shape);
-            return (-1);
+            return -1;
         }
         dp  = (NC_dim **)dims->values + *ip;
         *op = (*dp)->size;
@@ -145,7 +145,7 @@ NC_var_shape(NC_var *var, NC_array *dims)
             NCadvise(NC_EUNLIMPOS, "NC_UNLIMITED size applied to index other than 0 %d",
                      var->assoc->count - ii);
             free(shape);
-            return (-1);
+            return -1;
         }
         op++;
         ip++;
@@ -164,7 +164,7 @@ NC_var_shape(NC_var *var, NC_array *dims)
         free(shape);
         var->shape = NULL;
         nc_serror("NC_var_shape");
-        return (-1);
+        return -1;
     }
 
     /* Free memory if this var already has dsizes previously allocated */
@@ -203,7 +203,7 @@ out:
                 break;
         }
 
-    return (var->assoc->count);
+    return var->assoc->count;
 }
 
 int
@@ -212,32 +212,31 @@ ncvardef(int cdfid, const char *name, nc_type type, int ndims, const int dims[])
     NC      *handle;
     NC_var  *var[1];
     NC_var **dp;
-    int      ii;
     int      len;
 
     cdf_routine_name = "ncvardef";
 
     if (!NC_indefine(cdfid, TRUE))
-        return (-1);
+        return -1;
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
 
     if (!NCcktype(type))
-        return (-1);
+        return -1;
 
     if (ndims < 0) /* 0 => scalar */
     {
         NCadvise(NC_EINVAL, "Number of dimensions %d < 0", ndims);
-        return (-1);
+        return -1;
     }
 
     if (ndims > 0) {
         if (handle->dims == NULL || ndims > handle->dims->count) {
             NCadvise(NC_EINVAL, "Invalid number of dimensions %d > %d", ndims,
                      (handle->dims != NULL) ? handle->dims->count : 0);
-            return (-1);
+            return -1;
         }
     }
 
@@ -245,40 +244,40 @@ ncvardef(int cdfid, const char *name, nc_type type, int ndims, const int dims[])
     {
         var[0] = NC_new_var(name, type, ndims, dims);
         if (var[0] == NULL)
-            return (-1);
-        handle->vars = NC_new_array(NC_VARIABLE, (unsigned)1, (void *)var);
+            return -1;
+        handle->vars = NC_new_array(NC_VARIABLE, 1, (void *)var);
         if (handle->vars == NULL)
-            return (-1);
+            return -1;
     }
     else if (handle->vars->count >= H4_MAX_NC_VARS) {
         NCadvise(NC_EMAXVARS, "maximum number of variables %d exceeded", handle->vars->count);
-        return (-1);
+        return -1;
     }
     else {
         /* check for name in use */
         len = strlen(name);
         dp  = (NC_var **)handle->vars->values;
-        for (ii = 0; ii < handle->vars->count; ii++, dp++) {
+        for (int ii = 0; ii < handle->vars->count; ii++, dp++) {
             if (len == (*dp)->name->len && strncmp(name, (*dp)->name->values, len) == 0) {
                 NCadvise(NC_ENAMEINUSE, "variable \"%s\" in use with index %d", (*dp)->name->values, ii);
-                return (-1);
+                return -1;
             }
         }
         var[0] = NC_new_var(name, type, ndims, dims);
         if (var[0] == NULL)
-            return (-1);
+            return -1;
         if (NC_incr_array(handle->vars, (void *)var) == NULL)
-            return (-1);
+            return -1;
     }
     (*var)->cdf = handle; /* for NC_var_shape */
     if (NC_var_shape(*var, handle->dims) != -1) {
         (*var)->ndg_ref = Hnewref(handle->hdf_file);
-        return (handle->vars->count - 1);
+        return handle->vars->count - 1;
     }
     /* unwind */
     handle->vars->count--;
     NC_free_var(var[0]);
-    return (-1);
+    return -1;
 }
 
 /*
@@ -296,13 +295,13 @@ NC_computeshapes(NC *handle)
     handle->recsize   = 0;
 
     if (handle->vars == NULL)
-        return (0);
+        return 0;
     vbase = (NC_var **)handle->vars->values;
     for (vpp = vbase; vpp < &vbase[handle->vars->count]; vpp++) {
         (*vpp)->cdf = handle;
 
         if (NC_var_shape(*vpp, handle->dims) == -1)
-            return (-1);
+            return -1;
         if (IS_RECVAR(*vpp)) {
             if (first == NULL)
                 first = *vpp;
@@ -317,7 +316,7 @@ NC_computeshapes(NC *handle)
         if (handle->recsize == first->len)
             handle->recsize = *first->dsizes;
     }
-    return (handle->vars->count);
+    return handle->vars->count;
 }
 
 int
@@ -325,25 +324,24 @@ ncvarid(int cdfid, const char *name)
 {
     NC      *handle;
     NC_var **dp;
-    int      ii;
     int      len;
 
     cdf_routine_name = "ncvarid";
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
     if (handle->vars == NULL)
-        return (-1);
+        return -1;
     len = strlen(name);
     dp  = (NC_var **)handle->vars->values;
-    for (ii = 0; ii < handle->vars->count; ii++, dp++) {
+    for (int ii = 0; ii < handle->vars->count; ii++, dp++) {
         if (len == (*dp)->name->len && strncmp(name, (*dp)->name->values, len) == 0) {
-            return (ii);
+            return ii;
         }
     }
     NCadvise(NC_ENOTVAR, "variable \"%s\" not found", name);
-    return (-1);
+    return -1;
 }
 
 /*
@@ -357,7 +355,7 @@ NC_hlookupvar(NC *handle, int varid)
 
     if (varid == NC_GLOBAL) /* Global is error in this context */
     {
-        return (NULL);
+        return NULL;
     }
     else if (handle->vars != NULL && varid >= 0 && varid < handle->vars->count) {
         ap = (NC_array **)handle->vars->values;
@@ -365,9 +363,9 @@ NC_hlookupvar(NC *handle, int varid)
     }
     else {
         NCadvise(NC_ENOTVAR, "%d is not a valid variable id", varid);
-        return (NULL);
+        return NULL;
     }
-    return ((NC_var *)*ap);
+    return (NC_var *)*ap;
 }
 
 /*
@@ -381,22 +379,21 @@ NC_lookupvar(int cdfid, int varid)
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (NULL);
+        return NULL;
 
-    return (NC_hlookupvar(handle, varid));
+    return NC_hlookupvar(handle, varid);
 }
 
 int
 ncvarinq(int cdfid, int varid, char *name, nc_type *typep, int *ndimsp, int dims[], int *nattrsp)
 {
     NC_var *vp;
-    int     ii;
 
     cdf_routine_name = "ncvarinq";
 
     vp = NC_lookupvar(cdfid, varid);
     if (vp == NULL)
-        return (-1);
+        return -1;
 
     if (name != NULL) {
         (void)memcpy(name, vp->name->values, vp->name->len);
@@ -409,7 +406,7 @@ ncvarinq(int cdfid, int varid, char *name, nc_type *typep, int *ndimsp, int dims
         *ndimsp = vp->assoc->count;
     }
     if (dims != NULL) {
-        for (ii = 0; ii < vp->assoc->count; ii++) {
+        for (int ii = 0; ii < vp->assoc->count; ii++) {
             dims[ii] = vp->assoc->values[ii];
         }
     }
@@ -422,7 +419,7 @@ ncvarinq(int cdfid, int varid, char *name, nc_type *typep, int *ndimsp, int dims
         }
     }
 
-    return (varid);
+    return varid;
 }
 
 int
@@ -430,7 +427,6 @@ ncvarrename(int cdfid, int varid, const char *newname)
 {
     NC        *handle;
     NC_var   **vpp;
-    int        ii;
     int        len;
     NC_string *old, *new;
 
@@ -438,24 +434,24 @@ ncvarrename(int cdfid, int varid, const char *newname)
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
     if (!(handle->flags & NC_RDWR))
-        return (-1);
+        return -1;
 
     /* check for name in use */
     len = strlen(newname);
     vpp = (NC_var **)handle->vars->values;
-    for (ii = 0; ii < handle->vars->count; ii++, vpp++) {
+    for (int ii = 0; ii < handle->vars->count; ii++, vpp++) {
         if (len == (*vpp)->name->len && strncmp(newname, (*vpp)->name->values, len) == 0) {
             NCadvise(NC_ENAMEINUSE, "variable name \"%s\" in use with index %d", (*vpp)->name->values, ii);
-            return (-1);
+            return -1;
         }
     }
 
     if (varid == NC_GLOBAL) /* Global is error in this context */
     {
         NCadvise(NC_EGLOBAL, "action prohibited on NC_GLOBAL varid");
-        return (-1);
+        return -1;
     }
     else if (handle->vars != NULL && varid >= 0 && varid < handle->vars->count) {
         vpp = (NC_var **)handle->vars->values;
@@ -463,30 +459,30 @@ ncvarrename(int cdfid, int varid, const char *newname)
     }
     else {
         NCadvise(NC_ENOTVAR, "%d is not a valid variable id", varid);
-        return (-1);
+        return -1;
     }
 
     old = (*vpp)->name;
     if (NC_indefine(cdfid, TRUE)) {
         new = NC_new_string((unsigned)strlen(newname), newname);
         if (new == NULL)
-            return (-1);
+            return -1;
         (*vpp)->name = new;
         NC_free_string(old);
-        return (varid);
-    } /* else */
+        return varid;
+    }
     new = NC_re_string(old, (unsigned)strlen(newname), newname);
     if (new == NULL)
-        return (-1);
+        return -1;
     if (handle->flags & NC_HSYNC) {
         handle->xdrs->x_op = XDR_ENCODE;
         if (!xdr_cdf(handle->xdrs, &handle))
-            return (-1);
+            return -1;
         handle->flags &= ~(NC_NDIRTY | NC_HDIRTY);
     }
     else
         handle->flags |= NC_HDIRTY;
-    return (varid);
+    return varid;
 }
 
 bool_t
@@ -498,31 +494,31 @@ xdr_NC_var(XDR *xdrs, NC_var **vpp)
 
     if (xdrs->x_op == XDR_FREE) {
         NC_free_var((*vpp));
-        return (TRUE);
+        return TRUE;
     }
 
     if (xdrs->x_op == XDR_DECODE) {
         *vpp = calloc(1, sizeof(NC_var));
         if (*vpp == NULL) {
             nc_serror("xdr_NC_var");
-            return (FALSE);
+            return FALSE;
         }
     }
 
     if (!xdr_NC_string(xdrs, &((*vpp)->name)))
-        return (FALSE);
+        return FALSE;
     if (!xdr_NC_iarray(xdrs, &((*vpp)->assoc)))
-        return (FALSE);
+        return FALSE;
     if (!xdr_NC_array(xdrs, &((*vpp)->attrs)))
-        return (FALSE);
+        return FALSE;
 
     if (!h4_xdr_int(xdrs, &temp_type)) {
-        return (FALSE);
+        return FALSE;
     }
     (*vpp)->type = (nc_type)temp_type;
 
     if (!h4_xdr_u_int(xdrs, &temp_len)) {
-        return (FALSE);
+        return FALSE;
     }
     (*vpp)->len = (unsigned long)temp_len;
 
@@ -532,7 +528,7 @@ xdr_NC_var(XDR *xdrs, NC_var **vpp)
     if (xdrs->x_op == XDR_ENCODE)
         begin = (*vpp)->begin;
     if (!h4_xdr_u_int(xdrs, &begin))
-        return (FALSE);
+        return FALSE;
     if (xdrs->x_op == XDR_DECODE)
         (*vpp)->begin = begin;
 
@@ -544,7 +540,7 @@ xdr_NC_var(XDR *xdrs, NC_var **vpp)
         (*vpp)->is_ragged = FALSE;
     }
 
-    return (TRUE);
+    return TRUE;
 }
 
 /*
@@ -557,12 +553,12 @@ NC_xlen_var(NC_var **vpp)
     int len;
 
     if (*vpp == NULL)
-        return (4);
+        return 4;
 
     len = NC_xlen_string((*vpp)->name);
     len += NC_xlen_iarray((*vpp)->assoc);
     len += NC_xlen_array((*vpp)->attrs);
     len += 12;
 
-    return (len);
+    return len;
 }

@@ -171,7 +171,7 @@ done:
 intn
 NC_get_maxopenfiles(void)
 {
-    return (max_NC_open);
+    return max_NC_open;
 } /* NC_get_maxopenfiles */
 
 /*
@@ -180,7 +180,7 @@ NC_get_maxopenfiles(void)
 intn
 NC_get_systemlimit(void)
 {
-    return (MAX_AVAIL_OPENFILES);
+    return MAX_AVAIL_OPENFILES;
 } /* NC_get_systemlimit */
 
 /*
@@ -189,7 +189,7 @@ NC_get_systemlimit(void)
 int
 NC_get_numopencdfs(void)
 {
-    return (_curr_opened);
+    return _curr_opened;
 } /* NC_get_numopencdfs */
 
 /*
@@ -204,9 +204,9 @@ NC_check_id(int cdfid)
     handle = (cdfid >= 0 && cdfid < _ncdf) ? _cdfs[cdfid] : NULL;
     if (handle == NULL) {
         NCadvise(NC_EBADID, "%d is not a valid cdfid", cdfid);
-        return (NULL);
+        return NULL;
     }
-    return (handle);
+    return handle;
 }
 
 /*
@@ -224,7 +224,7 @@ NC_indefine(int cdfid, bool_t iserr) /* Should be a Macro ? */
         else
             NCadvise(NC_ENOTINDEFINE, "%s Not in define mode", _cdfs[cdfid]->path);
     }
-    return (ret);
+    return ret;
 }
 
 /*
@@ -242,7 +242,7 @@ NC_open(const char *path, int mode)
     if (_cdfs == NULL) {
         if (FAIL == (cdfs_size = NC_reset_maxopenfiles(0))) {
             NCadvise(NC_ENFILE, "Could not reset max open files limit");
-            return (-1);
+            return -1;
         }
     }
 
@@ -259,12 +259,12 @@ NC_open(const char *path, int mode)
         if (max_NC_open == MAX_AVAIL_OPENFILES) {
             NCadvise(NC_ENFILE, "maximum number of open cdfs allowed already reaches system limit %d",
                      MAX_AVAIL_OPENFILES);
-            return (-1);
+            return -1;
         }
         /* otherwise, increase the current max to the system limit */
         if (FAIL == NC_reset_maxopenfiles(MAX_AVAIL_OPENFILES)) {
             NCadvise(NC_ENFILE, "Could not reset max open files limit");
-            return (-1);
+            return -1;
         }
     }
 
@@ -273,7 +273,7 @@ NC_open(const char *path, int mode)
         /* if the failure was due to "too many open files," simply return */
         if (errno == EMFILE) {
             nc_serror("maximum number of open files allowed has been reached\"%s\"", path);
-            return (-1);
+            return -1;
         }
 
         if ((mode & 0x0f) == NC_CLOBBER) {
@@ -283,7 +283,7 @@ NC_open(const char *path, int mode)
                 if (remove(path) != 0)
                     nc_serror("couldn't remove filename \"%s\"", path);
         }
-        return (-1);
+        return -1;
     }
 
     (void)strncpy(handle->path, path, FILENAME_MAX);
@@ -291,7 +291,7 @@ NC_open(const char *path, int mode)
     if (cdfid == _ncdf)
         _ncdf++;
     _curr_opened++;
-    return (cdfid);
+    return cdfid;
 } /* NC_open */
 
 int
@@ -301,10 +301,10 @@ nccreate(const char *path, int cmode)
     cdf_routine_name = "nccreate";
 
     if (cmode & NC_CREAT) {
-        return (NC_open(path, cmode));
+        return NC_open(path, cmode);
     }
     NCadvise(NC_EINVAL, "Bad Flag");
-    return (-1);
+    return -1;
 }
 
 int
@@ -314,9 +314,9 @@ ncopen(const char *path, int mode)
     cdf_routine_name = "ncopen";
     if (mode & NC_CREAT) {
         NCadvise(NC_EINVAL, "Bad Flag");
-        return (-1);
+        return -1;
     }
-    return (NC_open(path, mode));
+    return NC_open(path, mode);
 }
 
 int
@@ -328,23 +328,23 @@ ncsync(int cdfid)
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
 
     if (handle->flags & NC_INDEF) {
         NCadvise(NC_EINDEFINE, "Unfinished definition");
-        return (-1);
+        return -1;
     }
 
     if (handle->flags & NC_RDWR) {
         handle->xdrs->x_op = XDR_ENCODE;
         if (handle->flags & NC_HDIRTY) {
             if (!xdr_cdf(handle->xdrs, &handle))
-                return (-1);
+                return -1;
             handle->flags &= ~(NC_NDIRTY | NC_HDIRTY);
         }
         else if (handle->flags & NC_NDIRTY) {
             if (!xdr_numrecs(handle->xdrs, handle))
-                return (-1);
+                return -1;
             if (handle->file_type != HDF_FILE)
                 handle->flags &= ~(NC_NDIRTY);
         }
@@ -361,15 +361,15 @@ ncsync(int cdfid)
             nc_serror("xdr_cdf");
             NC_free_cdf(handle); /* ?? what should we do now? */
 
-            return (-1);
+            return -1;
         }
         if (NC_computeshapes(handle) == -1)
-            return (-1);
+            return -1;
     }
 
     (void)NCxdrfile_sync(handle->xdrs);
 
-    return (0);
+    return 0;
 }
 
 /*
@@ -389,7 +389,7 @@ ncabort(int cdfid)
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
 
     flags = handle->flags; /* need to save past free_cdf */
 
@@ -415,11 +415,11 @@ ncabort(int cdfid)
         handle->xdrs->x_op = XDR_ENCODE;
         if (handle->flags & NC_HDIRTY) {
             if (!xdr_cdf(handle->xdrs, &handle))
-                return (-1);
+                return -1;
         }
         else if (handle->flags & NC_NDIRTY) {
             if (!xdr_numrecs(handle->xdrs, handle))
-                return (-1);
+                return -1;
         }
     }
 
@@ -452,7 +452,7 @@ ncabort(int cdfid)
     if (_ncdf == 0)
         ncreset_cdflist();
 
-    return (0);
+    return 0;
 } /* ncabort */
 
 /*
@@ -467,9 +467,9 @@ ncnobuf(int cdfid)
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
     /* NOOP */
-    return (0);
+    return 0;
 }
 
 /*
@@ -552,23 +552,23 @@ ncredef(int cdfid)
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
     if (handle->flags & NC_INDEF) /* in define mode already */
     {
         NC *stash = STASH(cdfid);
         if (stash)
             NCadvise(NC_EINDEFINE, "%s: in define mode already", stash->path);
-        return (-1);
+        return -1;
     }
     if (!(handle->flags & NC_RDWR)) {
         NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path);
-        return (-1);
+        return -1;
     }
 
     if (handle->file_type == HDF_FILE) {
         handle->flags |= NC_INDEF;
         handle->redefid = TRUE;
-        return (0);
+        return 0;
     }
 
     /* find first available id */
@@ -579,7 +579,7 @@ ncredef(int cdfid)
     if (id == _ncdf && _ncdf >= max_NC_open) /* will need a new one */
     {
         NCadvise(NC_ENFILE, "maximum number of open cdfs %d exceeded", _ncdf);
-        return (-1);
+        return -1;
     }
 
     if (ncopts & NC_NOFILL) {
@@ -587,7 +587,7 @@ ncredef(int cdfid)
         handle->xdrs->x_op = XDR_ENCODE;
         if (handle->flags & NC_NDIRTY) {
             if (!xdr_numrecs(handle->xdrs, handle))
-                return (-1);
+                return -1;
             handle->flags &= ~(NC_NDIRTY);
         }
     }
@@ -596,7 +596,7 @@ ncredef(int cdfid)
 
     new = NC_dup_cdf(scratchfile, NC_NOCLOBBER, handle);
     if (new == NULL) {
-        return (-1);
+        return -1;
     }
 
     handle->flags |= NC_INDEF;
@@ -613,7 +613,7 @@ ncredef(int cdfid)
 
     new->redefid = id;
 
-    return (0);
+    return 0;
 }
 
 /*
@@ -622,7 +622,6 @@ ncredef(int cdfid)
 static void
 NC_begins(NC *handle)
 {
-    unsigned      ii;
     unsigned long index = 0;
     NC_var      **vpp;
     NC_var       *last = NULL;
@@ -634,7 +633,7 @@ NC_begins(NC *handle)
 
     /* loop thru vars, first pass is for the 'non-record' vars */
     vpp = (NC_var **)handle->vars->values;
-    for (ii = 0; ii < handle->vars->count; ii++, vpp++) {
+    for (unsigned ii = 0; ii < handle->vars->count; ii++, vpp++) {
         if (IS_RECVAR(*vpp)) {
             continue; /* skip record variables on this pass */
         }
@@ -648,7 +647,7 @@ NC_begins(NC *handle)
 
     /* loop thru vars, second pass is for the 'non-record' vars */
     vpp = (NC_var **)handle->vars->values;
-    for (ii = 0; ii < handle->vars->count; ii++, vpp++) {
+    for (unsigned ii = 0; ii < handle->vars->count; ii++, vpp++) {
         if (!IS_RECVAR(*vpp)) {
             continue; /* skip non-record variables on this pass */
         }
@@ -690,10 +689,10 @@ NC_dcpy(XDR *target, XDR *source, long nbytes)
         goto err;
     if (!h4_xdr_putbytes(target, buf, nbytes))
         goto err;
-    return (TRUE);
+    return TRUE;
 err:
     NCadvise(NC_EXDR, "NC_dcpy");
-    return (FALSE);
+    return FALSE;
 }
 
 /*
@@ -708,10 +707,10 @@ NC_vcpy(XDR *target, NC *old, int varid)
 
     if (!h4_xdr_setpos(old->xdrs, (*vpp)->begin)) {
         NCadvise(NC_EXDR, "NC_vcpy: h4_xdr_setpos");
-        return (FALSE);
+        return FALSE;
     }
 
-    return (NC_dcpy(target, old->xdrs, (*vpp)->len));
+    return NC_dcpy(target, old->xdrs, (*vpp)->len);
 }
 
 /*
@@ -726,10 +725,10 @@ NC_reccpy(XDR *target, NC *old, int varid, int recnum)
 
     if (!h4_xdr_setpos(old->xdrs, (*vpp)->begin + old->recsize * recnum)) {
         NCadvise(NC_EXDR, "NC_reccpy: h4_xdr_setpos");
-        return (FALSE);
+        return FALSE;
     }
 
-    return (NC_dcpy(target, old->xdrs, (*vpp)->len));
+    return NC_dcpy(target, old->xdrs, (*vpp)->len);
 }
 
 /*
@@ -752,7 +751,7 @@ NC_endef(int cdfid, NC *handle)
 
     if (!xdr_cdf(xdrs, &handle)) {
         nc_serror("xdr_cdf");
-        return (-1);
+        return -1;
     }
 
     /* Get rid of the temporary buffer allocated for I/O */
@@ -760,7 +759,7 @@ NC_endef(int cdfid, NC *handle)
 
     if (handle->file_type == HDF_FILE) {
         handle->flags &= ~(NC_CREAT | NC_INDEF | NC_NDIRTY | NC_HDIRTY);
-        return (0);
+        return 0;
     }
 
     if (handle->vars == NULL)
@@ -776,13 +775,13 @@ NC_endef(int cdfid, NC *handle)
         if (!(handle->flags & NC_CREAT) && stash->vars != NULL && ii < stash->vars->count) {
             /* copy data */
             if (!NC_vcpy(xdrs, stash, ii))
-                return (-1);
+                return -1;
             continue;
         } /* else */
 
         if (!(handle->flags & NC_NOFILL))
             if (!xdr_NC_fill(xdrs, *vpp))
-                return (-1);
+                return -1;
     }
 
     if (!(handle->flags & NC_CREAT)) /* after redefinition */
@@ -796,17 +795,17 @@ NC_endef(int cdfid, NC *handle)
                 if (stash->vars != NULL && ii < stash->vars->count) {
                     /* copy data */
                     if (!NC_reccpy(xdrs, stash, ii, jj))
-                        return (-1);
+                        return -1;
                     continue;
                 } /* else */
                 if (!(handle->flags & NC_NOFILL))
                     if (!xdr_NC_fill(xdrs, *vpp))
-                        return (-1);
+                        return -1;
             }
         }
         handle->numrecs = stash->numrecs;
         if (!xdr_numrecs(handle->xdrs, handle))
-            return (-1);
+            return -1;
     }
 
     if (!(handle->flags & NC_CREAT)) /* redefine */
@@ -835,7 +834,7 @@ NC_endef(int cdfid, NC *handle)
             if (_ncdf == 0)
                 ncreset_cdflist();
 
-            return (-1);
+            return -1;
         }
         (void)strncpy(handle->path, realpath, FILENAME_MAX);
 #ifdef H4_HAVE_WIN32_API
@@ -856,7 +855,7 @@ NC_endef(int cdfid, NC *handle)
 
 done:
     handle->flags &= ~(NC_CREAT | NC_INDEF | NC_NDIRTY | NC_HDIRTY);
-    return (0);
+    return 0;
 }
 
 int
@@ -868,10 +867,10 @@ ncendef(int cdfid)
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
     if (!NC_indefine(cdfid, TRUE))
-        return (-1);
-    return (NC_endef(cdfid, handle));
+        return -1;
+    return NC_endef(cdfid, handle);
 }
 
 /*
@@ -886,22 +885,22 @@ ncclose(int cdfid)
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
 
     if (handle->flags & NC_INDEF) {
         if (NC_endef(cdfid, handle) == -1) {
-            return (ncabort(cdfid));
+            return ncabort(cdfid);
         }
     }
     else if (handle->flags & NC_RDWR) {
         handle->xdrs->x_op = XDR_ENCODE;
         if (handle->flags & NC_HDIRTY) {
             if (!xdr_cdf(handle->xdrs, &handle))
-                return (-1);
+                return -1;
         }
         else if (handle->flags & NC_NDIRTY) {
             if (!xdr_numrecs(handle->xdrs, handle))
-                return (-1);
+                return -1;
         }
     }
 
@@ -919,7 +918,7 @@ ncclose(int cdfid)
     /* if the _cdf list is empty, deallocate and reset it to NULL */
     if (_ncdf == 0)
         ncreset_cdflist();
-    return (0);
+    return 0;
 }
 
 int
@@ -932,7 +931,7 @@ ncsetfill(int id, int fillmode)
 
     handle = NC_check_id(id);
     if (handle == NULL)
-        return (-1);
+        return -1;
 
     if (!(handle->flags & NC_RDWR)) {
         /* file isn't writable */
@@ -957,12 +956,12 @@ ncsetfill(int id, int fillmode)
                 handle->xdrs->x_op = XDR_ENCODE; /*  to the file */
             if (handle->flags & NC_HDIRTY) {
                 if (!xdr_cdf(handle->xdrs, &handle))
-                    return (-1);
+                    return -1;
                 handle->flags &= ~(NC_NDIRTY | NC_HDIRTY);
             }
             else if (handle->flags & NC_NDIRTY) {
                 if (!xdr_numrecs(handle->xdrs, handle))
-                    return (-1);
+                    return -1;
                 if (handle->file_type != HDF_FILE)
                     handle->flags &= ~(NC_NDIRTY);
             }

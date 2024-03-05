@@ -185,13 +185,13 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
      * Only handle single file implementations for now
      */
     if (!bitset(flags, CDF_FORMAT_BIT)) {
-        return (FALSE);
+        return FALSE;
     }
 
     /* Check the encoding */
     if ((encoding != NETWORK_ENCODING) && (encoding != SUN_ENCODING) && (encoding != SGi_ENCODING) &&
         (encoding != IBMRS_ENCODING) && (encoding != HP_ENCODING)) {
-        return (FALSE);
+        return FALSE;
     }
 
     /*
@@ -478,7 +478,7 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
         /* define the variable */
         var = vars[current_var] = NC_new_var((char *)name, nctype, (int)rank, dims);
         if (var == NULL)
-            return (FALSE);
+            return FALSE;
 
         /* if it is unsigned at least set the HDFtype to reflect it */
         switch (nt) {
@@ -634,7 +634,7 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
 
             /* make sure we got a valid attribute */
             if (attr[0] == NULL)
-                return (FALSE);
+                return FALSE;
 
             /* find the appropriate attribute list */
             if (scope == 1) {
@@ -651,11 +651,11 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
                 /* first time */
                 (*ap) = NC_new_array(NC_ATTRIBUTE, (unsigned)1, (void *)attr);
                 if ((*ap) == NULL)
-                    return (FALSE);
+                    return FALSE;
             }
             else {
                 if (NC_incr_array((*ap), (void *)attr) == NULL)
-                    return (FALSE);
+                    return FALSE;
             }
         } /* AEDR loop */
 
@@ -711,7 +711,7 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
 
             /* make sure we got a valid attribute */
             if (attr[0] == NULL)
-                return (FALSE);
+                return FALSE;
 
             /* find the appropriate attribute list */
             if (scope == 1) {
@@ -728,11 +728,11 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
                 /* first time */
                 (*ap) = NC_new_array(NC_ATTRIBUTE, (unsigned)1, (void *)attr);
                 if ((*ap) == NULL)
-                    return (FALSE);
+                    return FALSE;
             }
             else {
                 if (NC_incr_array((*ap), (void *)attr) == NULL)
-                    return (FALSE);
+                    return FALSE;
             }
         } /* AEDZ loop */
 
@@ -754,7 +754,7 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
     else
         handle->vars = NULL;
 
-    return (TRUE);
+    return TRUE;
 
 } /* nssdc_read_cdf */
 
@@ -768,7 +768,7 @@ nssdc_write_cdf(XDR *xdrs, NC **handlep)
     (void)xdrs;
     (void)handlep;
 
-    return (FALSE);
+    return FALSE;
 
 } /* nssdc_write_cdf */
 
@@ -798,6 +798,6 @@ nssdc_xdr_cdf(XDR *xdrs, NC **handlep)
             status = TRUE;
     }
 
-    return (status);
+    return status;
 
 } /* nssdc_xdr_cdf */

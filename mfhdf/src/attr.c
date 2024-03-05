@@ -33,10 +33,10 @@ NC_new_attr(const char *name, nc_type type, unsigned count, const void *values)
     if (ret->data == NULL)
         goto alloc_err;
     ret->HDFtype = hdf_map_type(type);
-    return (ret);
+    return ret;
 alloc_err:
     nc_serror("NC_new_attr");
-    return (NULL);
+    return NULL;
 }
 
 /*
@@ -81,12 +81,12 @@ NCcktype(nc_type datatype)
         case NC_LONG:
         case NC_FLOAT:
         case NC_DOUBLE:
-            return (TRUE);
+            return TRUE;
         default:
             break;
     }
     NCadvise(NC_EBADTYPE, "Unknown type %d", datatype);
-    return (FALSE);
+    return FALSE;
 }
 
 /*
@@ -101,7 +101,7 @@ NC_attrarray(int cdfid, int varid)
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (NULL);
+        return NULL;
 
     if (varid == NC_GLOBAL) /* Global attribute, attach to cdf */
     {
@@ -116,7 +116,7 @@ NC_attrarray(int cdfid, int varid)
         NCadvise(NC_EINVAL, "%d is not a valid variable id", varid);
         ap = NULL;
     }
-    return (ap);
+    return ap;
 }
 
 /*
@@ -131,7 +131,7 @@ NC_findattr(NC_array **ap, const char *name)
     size_t    len;
 
     if (*ap == NULL)
-        return (NULL);
+        return NULL;
 
     attr = (NC_attr **)(*ap)->values;
 
@@ -139,10 +139,10 @@ NC_findattr(NC_array **ap, const char *name)
 
     for (attrid = 0; attrid < (*ap)->count; attrid++, attr++) {
         if (len == (*attr)->name->len && strncmp(name, (*attr)->name->values, len) == 0) {
-            return (attr); /* Normal return */
+            return attr; /* Normal return */
         }
     }
-    return (NULL);
+    return NULL;
 }
 
 /*
@@ -157,12 +157,12 @@ NC_lookupattr(int cdfid, int varid, const char *name, bool_t verbose)
 
     ap = NC_attrarray(cdfid, varid);
     if (ap == NULL)
-        return (NULL);
+        return NULL;
 
     attr = NC_findattr(ap, name);
     if (verbose && attr == NULL)
         NCadvise(NC_ENOTATT, "attribute \"%s\" not found", name);
-    return (attr);
+    return attr;
 }
 
 /*
@@ -177,24 +177,24 @@ NC_aput(int cdfid, NC_array **ap, const char *name, nc_type datatype, unsigned c
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
     if (!(handle->flags & NC_RDWR))
-        return (-1);
+        return -1;
 
     if (*ap == NULL) /* first time */
     {
         if (!NC_indefine(cdfid, TRUE))
-            return (-1);
+            return -1;
 
         attr[0] = NC_new_attr(name, datatype, count, values);
         if (attr[0] == NULL)
-            return (-1);
-        *ap = NC_new_array(NC_ATTRIBUTE, (unsigned)1, (void *)attr);
+            return -1;
+        *ap = NC_new_array(NC_ATTRIBUTE, 1, (void *)attr);
         if (*ap == NULL)
-            return (-1);
-        return ((*ap)->count - 1);
+            return -1;
+        return (int)(*ap)->count - 1;
     }
-    /* else */
+
     if ((atp = NC_findattr(ap, name)) != NULL) /* name in use */
     {
         if (NC_indefine(cdfid, FALSE)) {
@@ -202,44 +202,44 @@ NC_aput(int cdfid, NC_array **ap, const char *name, nc_type datatype, unsigned c
             *atp = NC_new_attr(name, datatype, count, values);
             if (*atp == NULL) {
                 *atp = old;
-                return (-1);
+                return -1;
             }
             NC_free_attr(old);
-            return ((*ap)->count - 1);
+            return (int)(*ap)->count - 1;
         }
-        /* else */
+
         if (NC_re_array((*atp)->data, datatype, count, values) == NULL) {
             NCadvise(NC_ENOTINDEFINE, "Can't increase size unless in define mode");
-            return (-1);
+            return -1;
         }
-        /* else */
+
         (*atp)->HDFtype = hdf_map_type(datatype);
         if (handle->flags & NC_HSYNC) {
             handle->xdrs->x_op = XDR_ENCODE;
             if (!xdr_cdf(handle->xdrs, &handle))
-                return (-1);
+                return -1;
             handle->flags &= ~(NC_NDIRTY | NC_HDIRTY);
         }
         else
             handle->flags |= NC_HDIRTY;
-        return ((*ap)->count - 1);
+        return (int)(*ap)->count - 1;
     }
-    /* else */
+
     if ((*ap)->count >= H4_MAX_NC_ATTRS) {
         NCadvise(NC_EMAXATTS, "maximum number of attributes %d exceeded", (*ap)->count);
-        return (-1);
+        return -1;
     }
-    /* else */
+
     if (NC_indefine(cdfid, TRUE)) {
         attr[0] = NC_new_attr(name, datatype, count, values);
         if (attr[0] == NULL)
-            return (-1);
+            return -1;
         if (NC_incr_array((*ap), (void *)attr) == NULL)
-            return (-1);
-        return ((*ap)->count - 1);
+            return -1;
+        return (int)(*ap)->count - 1;
     }
-    /* else */
-    return (-1);
+
+    return -1;
 }
 
 int
@@ -251,17 +251,17 @@ ncattput(int cdfid, int varid, const char *name, nc_type datatype, int count, co
 
     ap = NC_attrarray(cdfid, varid);
     if (ap == NULL)
-        return (-1);
+        return -1;
 
     if (count < 0) {
         NCadvise(NC_EINVAL, "Invalid length %d", count);
-        return (-1);
+        return -1;
     }
 
     if (!NCcktype(datatype))
-        return (-1);
+        return -1;
 
-    return (NC_aput(cdfid, ap, name, datatype, (unsigned)count, values));
+    return NC_aput(cdfid, ap, name, datatype, (unsigned)count, values);
 }
 
 int
@@ -274,11 +274,11 @@ ncattname(int cdfid, int varid, int attnum, char *name)
 
     ap = NC_attrarray(cdfid, varid);
     if (ap == NULL || *ap == NULL)
-        return (-1);
+        return -1;
 
-    if (attnum < 0 || attnum >= (*ap)->count) {
+    if (attnum < 0 || attnum >= (int)(*ap)->count) {
         NCadvise(NC_ENOTATT, "%d is not a valid attribute id", attnum);
-        return (-1);
+        return -1;
     }
 
     attr = (NC_attr **)(*ap)->values;
@@ -286,7 +286,7 @@ ncattname(int cdfid, int varid, int attnum, char *name)
     (void)memcpy(name, (*attr)->name->values, (*attr)->name->len);
     name[(*attr)->name->len] = 0;
 
-    return (attnum);
+    return attnum;
 }
 
 int
@@ -299,13 +299,13 @@ ncattinq(int cdfid, int varid, const char *name, nc_type *datatypep, int *countp
 
     attr = NC_lookupattr(cdfid, varid, name, TRUE);
     if (attr == NULL)
-        return (-1);
+        return -1;
 
     if (datatypep != 0)
         *datatypep = (*attr)->data->type;
     if (countp != 0)
-        *countp = (*attr)->data->count;
-    return (1);
+        *countp = (int)(*attr)->data->count;
+    return 1;
 }
 
 int
@@ -319,39 +319,39 @@ ncattrename(int cdfid, int varid, const char *name, const char *newname)
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
     if (!(handle->flags & NC_RDWR))
-        return (-1);
+        return -1;
 
     attr = NC_lookupattr(cdfid, varid, name, TRUE);
     if (attr == NULL)
-        return (-1);
+        return -1;
 
     if (NC_lookupattr(cdfid, varid, newname, FALSE) != NULL) /* name in use */
-        return (-1);
+        return -1;
 
     old = (*attr)->name;
     if (NC_indefine(cdfid, FALSE)) {
         new = NC_new_string((unsigned)strlen(newname), newname);
         if (new == NULL)
-            return (-1);
+            return -1;
         (*attr)->name = new;
         NC_free_string(old);
-        return (1);
+        return 1;
     } /* else */
     new = NC_re_string(old, (unsigned)strlen(newname), newname);
     if (new == NULL)
-        return (-1);
+        return -1;
     (*attr)->name = new;
     if (handle->flags & NC_HSYNC) {
         handle->xdrs->x_op = XDR_ENCODE;
         if (!xdr_cdf(handle->xdrs, &handle))
-            return (-1);
+            return -1;
         handle->flags &= ~(NC_NDIRTY | NC_HDIRTY);
     }
     else
         handle->flags |= NC_HDIRTY;
-    return (1);
+    return 1;
 }
 
 int
@@ -364,13 +364,13 @@ ncattcopy(int incdf, int invar, const char *name, int outcdf, int outname)
 
     attr = NC_lookupattr(incdf, invar, name, TRUE);
     if (attr == NULL)
-        return (-1);
+        return -1;
 
     ap = NC_attrarray(outcdf, outname);
     if (ap == NULL)
-        return (-1);
+        return -1;
 
-    return (NC_aput(outcdf, ap, name, (*attr)->data->type, (*attr)->data->count, (*attr)->data->values));
+    return NC_aput(outcdf, ap, name, (*attr)->data->type, (*attr)->data->count, (*attr)->data->values);
 }
 
 int
@@ -385,11 +385,11 @@ ncattdel(int cdfid, int varid, const char *name)
     cdf_routine_name = "ncattdel";
 
     if (!NC_indefine(cdfid, TRUE))
-        return (-1);
+        return -1;
 
     ap = NC_attrarray(cdfid, varid);
     if (ap == NULL || *ap == NULL)
-        return (-1);
+        return -1;
 
     attr = (NC_attr **)(*ap)->values;
 
@@ -402,7 +402,7 @@ ncattdel(int cdfid, int varid, const char *name)
     }
     if (attrid == (*ap)->count) {
         NCadvise(NC_ENOTATT, "attribute \"%s\" not found", name);
-        return (-1);
+        return -1;
     }
     /* shuffle down */
     for (attrid++; attrid < (*ap)->count; attrid++) {
@@ -414,7 +414,7 @@ ncattdel(int cdfid, int varid, const char *name)
 
     NC_free_attr(old);
 
-    return (1);
+    return 1;
 }
 
 int
@@ -426,11 +426,11 @@ ncattget(int cdfid, int varid, const char *name, ncvoid *values)
 
     attr = NC_lookupattr(cdfid, varid, name, TRUE);
     if (attr == NULL)
-        return (-1);
+        return -1;
 
     NC_copy_arrayvals((char *)values, (*attr)->data);
 
-    return (1);
+    return 1;
 }
 
 bool_t
@@ -440,19 +440,19 @@ xdr_NC_attr(XDR *xdrs, NC_attr **app)
 
     if (xdrs->x_op == XDR_FREE) {
         NC_free_attr((*app));
-        return (TRUE);
+        return TRUE;
     }
 
     if (xdrs->x_op == XDR_DECODE) {
         *app = malloc(sizeof(NC_attr));
         if (*app == NULL) {
             nc_serror("xdr_NC_attr");
-            return (FALSE);
+            return FALSE;
         }
     }
 
     if (!xdr_NC_string(xdrs, &((*app)->name)))
-        return (FALSE);
+        return FALSE;
     ret_value       = xdr_NC_array(xdrs, &((*app)->data));
     (*app)->HDFtype = hdf_map_type(((*app)->data)->type);
     return ret_value;
@@ -467,10 +467,10 @@ NC_xlen_attr(NC_attr **app)
     int len;
 
     if (*app == NULL)
-        return (4);
+        return 4;
 
     len = NC_xlen_string((*app)->name);
     len += NC_xlen_array((*app)->data);
 
-    return (len);
+    return len;
 }
