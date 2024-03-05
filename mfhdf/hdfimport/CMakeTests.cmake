@@ -154,9 +154,7 @@ macro (ADD_H4_TEST_OUT resultfile resultcode)
 endmacro ()
 
 macro (ADD_H4_TEST_ED testfile resultfile resultcode)
-  if (HDF4_ENABLE_USING_MEMCHECKER)
-    add_test (NAME HIMPORT-EDIT COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfed> -batch)
-  else ()
+  if (NOT HDF4_ENABLE_USING_MEMCHECKER)
     add_test (
         NAME HIMPORT-EDIT
         COMMAND "${CMAKE_COMMAND}"
