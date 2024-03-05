@@ -742,9 +742,9 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
 
     /* Call the readg routines if a stride is given */
     if (stride == NULL)
-        status = NCvario(handle, varid, Start, End, (Void *)data);
+        status = NCvario(handle, varid, Start, End, (uint8_t *)data);
     else
-        status = NCgenio(handle, varid, Start, End, Stride, NULL, (Void *)data);
+        status = NCgenio(handle, varid, Start, End, Stride, NULL, (uint8_t *)data);
 
     if (status == -1)
         ret_value = FAIL;
@@ -1107,13 +1107,13 @@ SDcreate(int32       fid,  /* IN: file ID */
         }
 
         if (handle->dims == NULL) { /* first time */
-            handle->dims = NC_new_array(NC_DIMENSION, (unsigned)1, (Void *)&newdim);
+            handle->dims = NC_new_array(NC_DIMENSION, (unsigned)1, (uint8_t *)&newdim);
             if (handle->dims == NULL) {
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
         }
         else {
-            if (NC_incr_array(handle->dims, (Void *)&newdim) == NULL) {
+            if (NC_incr_array(handle->dims, (uint8_t *)&newdim) == NULL) {
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
         }
@@ -1161,7 +1161,7 @@ SDcreate(int32       fid,  /* IN: file ID */
 
     /* add it to the handle */
     if (handle->vars == NULL) { /* first time */
-        handle->vars = NC_new_array(NC_VARIABLE, (unsigned)1, (Void *)&var);
+        handle->vars = NC_new_array(NC_VARIABLE, (unsigned)1, (uint8_t *)&var);
         if (handle->vars == NULL) {
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
         }
@@ -1171,7 +1171,7 @@ SDcreate(int32       fid,  /* IN: file ID */
             HGOTO_ERROR(DFE_EXCEEDMAX, FAIL);
         }
         else {
-            if (NC_incr_array(handle->vars, (Void *)&var) == NULL) {
+            if (NC_incr_array(handle->vars, (uint8_t *)&var) == NULL) {
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
         }
@@ -1420,7 +1420,7 @@ SDIputattr(NC_array  **ap,    /* IN/OUT: attribute list */
         }
 
         attr->HDFtype = nt; /* Add HDFtype  */
-        *ap           = NC_new_array(NC_ATTRIBUTE, (unsigned)1, (Void *)&attr);
+        *ap           = NC_new_array(NC_ATTRIBUTE, (unsigned)1, (uint8_t *)&attr);
         if (*ap == NULL) {
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
         }
@@ -1448,7 +1448,7 @@ SDIputattr(NC_array  **ap,    /* IN/OUT: attribute list */
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
 
-            if (NC_incr_array((*ap), (Void *)&attr) == NULL) {
+            if (NC_incr_array((*ap), (uint8_t *)&attr) == NULL) {
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
         }
@@ -1952,7 +1952,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
 
     /* call the writeg routines if a stride is given */
     if (stride == NULL || no_strides == 1)
-        status = NCvario(handle, varid, Start, End, (Void *)data);
+        status = NCvario(handle, varid, Start, End, (uint8_t *)data);
     else
         status = NCgenio(handle, varid, Start, End, Stride, NULL, data);
 
@@ -2503,7 +2503,7 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
-    if (NC_incr_array(handle->vars, (Void *)&var) == NULL) {
+    if (NC_incr_array(handle->vars, (uint8_t *)&var) == NULL) {
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
@@ -2695,7 +2695,7 @@ SDsetdimscale(int32 id,    /* IN: dimension ID */
     handle->xdrs->x_op = XDR_ENCODE;
     start[0]           = 0;
     end[0]             = count;
-    status             = NCvario(handle, varid, start, end, (Void *)data);
+    status             = NCvario(handle, varid, start, end, (uint8_t *)data);
     if (status == FAIL) {
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
@@ -2785,7 +2785,7 @@ SDgetdimscale(int32 id, /* IN:  dimension ID */
         }
     }
 
-    status = NCvario(handle, varid, start, end, (Void *)data);
+    status = NCvario(handle, varid, start, end, (uint8_t *)data);
     if (status == FAIL) {
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }

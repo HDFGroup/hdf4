@@ -356,7 +356,7 @@ NC_xlen_array(NC_array *array)
     int len = 8;
     int rem;
     int (*xlen_funct)() = NULL;
-    Void *vp;
+    uint8_t *vp;
 
     if (array != NULL) {
         switch (array->type) {
@@ -405,8 +405,8 @@ NC_xlen_array(NC_array *array)
 /*
  * Add a new handle on the end of and array of handles
  */
-Void *
-NC_incr_array(NC_array *array, Void *tail)
+uint8_t *
+NC_incr_array(NC_array *array, uint8_t *tail)
 {
     char *ap;
 
@@ -447,7 +447,7 @@ xdr_NC_array(XDR *xdrs, NC_array **app)
     unsigned  temp_count = 0;
     nc_type   type       = NC_UNSPECIFIED;
     bool_t    stat;
-    Void     *vp = NULL;
+    uint8_t  *vp = NULL;
 
     switch (xdrs->x_op) {
         case XDR_FREE:
@@ -455,7 +455,7 @@ xdr_NC_array(XDR *xdrs, NC_array **app)
             return TRUE;
         case XDR_ENCODE:
             if (*app == NULL) {
-                (*app) = NC_new_array(NC_UNSPECIFIED, (unsigned)0, (Void *)NULL);
+                (*app) = NC_new_array(NC_UNSPECIFIED, (unsigned)0, (uint8_t *)NULL);
                 if (*app == NULL) {
                     NCadvise(NC_EXDR, "xdr_NC_array:NC_new_array");
                     return FALSE;
@@ -486,7 +486,7 @@ xdr_NC_array(XDR *xdrs, NC_array **app)
             *app = NULL;
             return TRUE;
         }
-        (*app) = NC_new_array(type, (unsigned)*countp, (Void *)NULL);
+        (*app) = NC_new_array(type, (unsigned)*countp, (uint8_t *)NULL);
         if ((*app) == NULL) {
             NCadvise(NC_EXDR, "xdr_NC_array:NC_new_array  (second call)");
             return FALSE;

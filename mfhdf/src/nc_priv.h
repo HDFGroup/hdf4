@@ -45,9 +45,6 @@
 #define NC_DOUBLE_SIZE      8
 #define NC_UNSPECIFIED_SIZE 0
 
-/* ptr argument type in internal functions */
-#define Void char
-
 /*
  * Include HDF stuff
  */
@@ -89,7 +86,7 @@ typedef struct {
     size_t   len;    /* the total length originally allocated */
     size_t   szof;   /* sizeof each value */
     unsigned count;  /* length of the array */
-    Void    *values; /* the actual data */
+    uint8_t *values; /* the actual data */
 } NC_array;
 
 /* Counted string for names and such */
@@ -415,7 +412,7 @@ HDFLIBAPI int  NC_free_iarray(NC_iarray *iarray);
 HDFLIBAPI int  NC_free_string(NC_string *cdfstr);
 HDFLIBAPI int  NC_free_var(NC_var *var);
 
-HDFLIBAPI Void *NC_incr_array(NC_array *array, Void *tail);
+HDFLIBAPI uint8_t *NC_incr_array(NC_array *array, uint8_t *tail);
 
 HDFLIBAPI int    NC_dimid(NC *handle, char *name);
 HDFLIBAPI bool_t NCcktype(nc_type datatype);
@@ -454,7 +451,7 @@ HDFLIBAPI int        NCxdrfile_sync(XDR *xdrs);
 
 HDFLIBAPI int NCxdrfile_create(XDR *xdrs, const char *path, int ncmode);
 
-HDFLIBAPI intn hdf_fill_array(Void *storage, int32 len, Void *value, int32 type);
+HDFLIBAPI intn hdf_fill_array(uint8_t *storage, int32 len, uint8_t *value, int32 type);
 
 HDFLIBAPI intn hdf_get_data(NC *handle, NC_var *vp);
 

@@ -638,7 +638,7 @@ hdf_get_ref(NC *handle, int i)
 {
     NC_array *tmp  = NULL;
     NC_dim  **d    = NULL;
-    Void     *dims = NULL;
+    uint8_t  *dims = NULL;
 
     tmp  = handle->dims;
     dims = handle->dims->values;
@@ -750,12 +750,12 @@ done:
 int
 hdf_write_attr(XDR *xdrs, NC *handle, NC_attr **attr)
 {
-    char *name   = NULL;
-    Void *values = NULL;
-    int   size;
-    int   type;
-    int   order;
-    int   ret_value = SUCCEED;
+    char    *name   = NULL;
+    uint8_t *values = NULL;
+    int      size;
+    int      type;
+    int      order;
+    int      ret_value = SUCCEED;
 
     (void)xdrs;
 
@@ -853,7 +853,7 @@ hdf_write_var(XDR *xdrs, NC *handle, NC_var **var)
     uint8     *bufp      = NULL;
     int32      ret_value = SUCCEED;
     unsigned   i, count;
-    Void      *attribute = NULL;
+    uint8_t   *attribute = NULL;
 
     count = 0;
     assoc = (*var)->assoc;
@@ -1050,8 +1050,8 @@ hdf_write_xdr_cdf(XDR *xdrs, NC **handlep)
     uint32   *dim_hash_array = NULL;
     uint32   *thashptr       = NULL;
     uint32    thash;
-    Void     *vars      = NULL;
-    Void     *attrs     = NULL;
+    uint8_t  *vars      = NULL;
+    uint8_t  *attrs     = NULL;
     intn      ret_value = SUCCEED;
 
     /* Convert old scales into coordinate var values before writing
@@ -1398,7 +1398,7 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
     }
 
     if (count) {
-        handle->dims = NC_new_array(NC_DIMENSION, count, (Void *)dimension);
+        handle->dims = NC_new_array(NC_DIMENSION, count, (uint8_t *)dimension);
         if (handle->dims == NULL)
             HGOTO_FAIL(FAIL);
     }
@@ -1575,7 +1575,7 @@ hdf_read_attrs(XDR *xdrs, NC *handle, int32 vg)
 
     /* create array of attributes */
     if (count)
-        Array = NC_new_array(NC_ATTRIBUTE, count, (Void *)attributes);
+        Array = NC_new_array(NC_ATTRIBUTE, count, (uint8_t *)attributes);
 
     ret_value = Array; /* return array of attributes */
 
@@ -1895,7 +1895,7 @@ bad_number_type: /* ? */
 
     /* create array of variables */
     if (count) {
-        handle->vars = NC_new_array(NC_VARIABLE, count, (Void *)variables);
+        handle->vars = NC_new_array(NC_VARIABLE, count, (uint8_t *)variables);
         if (NULL == handle->vars)
             HGOTO_FAIL(FAIL);
     }
@@ -2192,7 +2192,7 @@ hdf_close(NC *handle)
 {
     NC_array *tmp  = NULL;
     NC_var  **vp   = NULL;
-    Void     *vars = NULL;
+    uint8_t  *vars = NULL;
     int       i;
     int       id, sub_id;
     int32     vg, dim;
@@ -2372,7 +2372,7 @@ xdr_NC_fill(XDR *xdrs, NC_var *vp)
      * set up fill value
      */
     /* start with the default */
-    NC_arrayfill((Void *)fillp, (size_t)2 * sizeof(double), vp->type);
+    NC_arrayfill((uint8_t *)fillp, (size_t)2 * sizeof(double), vp->type);
 
     /*
      * if there is a valid user defined value, use it instead

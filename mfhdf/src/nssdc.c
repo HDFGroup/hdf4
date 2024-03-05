@@ -649,12 +649,12 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
             /* add the attribute to the list */
             if (*ap == NULL) {
                 /* first time */
-                (*ap) = NC_new_array(NC_ATTRIBUTE, (unsigned)1, (Void *)attr);
+                (*ap) = NC_new_array(NC_ATTRIBUTE, 1, (uint8_t *)attr);
                 if ((*ap) == NULL)
                     return FALSE;
             }
             else {
-                if (NC_incr_array((*ap), (Void *)attr) == NULL)
+                if (NC_incr_array((*ap), (uint8_t *)attr) == NULL)
                     return FALSE;
             }
         } /* AEDR loop */
@@ -726,12 +726,12 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
             /* add the attribute to the list */
             if (*ap == NULL) {
                 /* first time */
-                (*ap) = NC_new_array(NC_ATTRIBUTE, (unsigned)1, (Void *)attr);
+                (*ap) = NC_new_array(NC_ATTRIBUTE, 1, (uint8_t *)attr);
                 if ((*ap) == NULL)
                     return FALSE;
             }
             else {
-                if (NC_incr_array((*ap), (Void *)attr) == NULL)
+                if (NC_incr_array((*ap), (uint8_t *)attr) == NULL)
                     return FALSE;
             }
         } /* AEDZ loop */
@@ -742,7 +742,7 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
      * Set up the dimension list
      */
     if (current_dim)
-        handle->dims = NC_new_array(NC_DIMENSION, current_dim, (Void *)dim_rec);
+        handle->dims = NC_new_array(NC_DIMENSION, current_dim, (uint8_t *)dim_rec);
     else
         handle->dims = NULL;
 
@@ -750,7 +750,7 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
      * Set up the variable list define the variables
      */
     if (current_var)
-        handle->vars = NC_new_array(NC_VARIABLE, current_var, (Void *)vars);
+        handle->vars = NC_new_array(NC_VARIABLE, current_var, (uint8_t *)vars);
     else
         handle->vars = NULL;
 
