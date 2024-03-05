@@ -349,9 +349,12 @@ NC_new_cdf(const char *name, int mode)
     ret_value = cdf;
 
 done:
-    if (ret_value == NULL) {   /* Failure cleanup */
-        if (cdf != NULL) {     /* handles case other than one for NC_free_cdf().
-                                  These routines only free up allocated memory. */
+    if (ret_value == NULL) {
+
+        /* Handles case other than one for NC_free_cdf().
+         * These routines only free up allocated memory.
+         */
+        if (cdf != NULL) {
             NC_free_xcdf(cdf); /* no point in catching error here */
             if (cdf->xdrs != NULL) {
                 h4_xdr_destroy(cdf->xdrs);
@@ -409,8 +412,8 @@ NC_dup_cdf(const char *name, int mode, NC *old)
     ret_value = cdf;
 
 done:
-    if (ret_value == NULL) { /* Failure cleanup */
-        if (cdf != NULL) {   /* free up allocated structures */
+    if (ret_value == NULL) {
+        if (cdf != NULL) { /* free up allocated structures */
             free(cdf->xdrs);
 
             NC_free_xcdf(cdf); /* don't catch error here */
@@ -430,7 +433,7 @@ ncinquire(int cdfid, int *ndimsp, int *nvarsp, int *nattrsp, int *xtendimp)
 
     handle = NC_check_id(cdfid);
     if (handle == NULL)
-        return (-1);
+        return -1;
 
     if (nvarsp != NULL)
         *nvarsp = (handle->vars != NULL) ? handle->vars->count : 0;
@@ -438,7 +441,6 @@ ncinquire(int cdfid, int *ndimsp, int *nvarsp, int *nattrsp, int *xtendimp)
         *nattrsp = (handle->attrs != NULL) ? handle->attrs->count : 0;
     if (handle->dims != NULL) {
         NC_dim **dp;
-        unsigned ii;
 
         if (ndimsp != NULL)
             *ndimsp = handle->dims->count;
@@ -446,7 +448,7 @@ ncinquire(int cdfid, int *ndimsp, int *nvarsp, int *nattrsp, int *xtendimp)
             *xtendimp = -1;
 
             dp = (NC_dim **)handle->dims->values;
-            for (ii = 0; ii < handle->dims->count; ii++, dp++) {
+            for (unsigned ii = 0; ii < handle->dims->count; ii++, dp++) {
                 if ((*dp)->size == NC_UNLIMITED) {
                     *xtendimp = ii;
                 }
@@ -460,7 +462,7 @@ ncinquire(int cdfid, int *ndimsp, int *nvarsp, int *nattrsp, int *xtendimp)
             *xtendimp = -1;
     }
 
-    return (cdfid);
+    return cdfid;
 }
 
 bool_t
@@ -494,13 +496,13 @@ NC_xdr_cdf(XDR *xdrs, NC **handlep)
 
     if (xdrs->x_op == XDR_FREE) {
         NC_free_xcdf(*handlep);
-        return (TRUE);
+        return TRUE;
     }
 
     if (h4_xdr_getpos(xdrs) != 0) {
         if (!h4_xdr_setpos(xdrs, 0)) {
             nc_serror("Can't set position to begin");
-            return (FALSE);
+            return FALSE;
         }
     }
 
@@ -513,35 +515,35 @@ NC_xdr_cdf(XDR *xdrs, NC **handlep)
             /* write error */
             nc_serror("xdr_cdf: h4_xdr_u_int");
         }
-        return (FALSE);
+        return FALSE;
     }
 
     if (xdrs->x_op == XDR_DECODE && magic != NCMAGIC) {
         if (magic == NCLINKMAGIC) {
             NCadvise(NC_NOERR, "link file not handled yet");
-            return (FALSE);
-        } /* else */
+            return FALSE;
+        }
         NCadvise(NC_ENOTNC, "Not a netcdf file");
-        return (FALSE);
+        return FALSE;
     }
 
     if (!xdr_numrecs(xdrs, *handlep)) {
         NCadvise(NC_EXDR, "xdr_numrecs");
-        return (FALSE);
+        return FALSE;
     }
     if (!xdr_NC_array(xdrs, &((*handlep)->dims))) {
         NCadvise(NC_EXDR, "xdr_cdf:dims");
-        return (FALSE);
+        return FALSE;
     }
     if (!xdr_NC_array(xdrs, &((*handlep)->attrs))) {
         NCadvise(NC_EXDR, "xdr_cdf:attrs");
-        return (FALSE);
+        return FALSE;
     }
     if (!xdr_NC_array(xdrs, &((*handlep)->vars))) {
         NCadvise(NC_EXDR, "xdr_cdf:vars");
-        return (FALSE);
+        return FALSE;
     }
-    return (TRUE);
+    return TRUE;
 }
 
 /*****************************************************************************
@@ -1404,7 +1406,7 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
         handle->dims = NULL;
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
+    if (ret_value == FAIL) {
         if (handle->dims != NULL) {
             NC_free_array(handle->dims);
             handle->dims = NULL;
@@ -1578,7 +1580,7 @@ hdf_read_attrs(XDR *xdrs, NC *handle, int32 vg)
     ret_value = Array; /* return array of attributes */
 
 done:
-    if (ret_value == NULL) { /* Failure cleanup */
+    if (ret_value == NULL) {
         if (Array != NULL)
             NC_free_array(Array);
     }
@@ -1901,7 +1903,7 @@ bad_number_type: /* ? */
         handle->vars = NULL;
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
+    if (ret_value == FAIL) {
         if (handle->vars != NULL)
             NC_free_array(handle->vars);
     }
@@ -1954,7 +1956,7 @@ hdf_read_xdr_cdf(XDR *xdrs, NC **handlep)
         HGOTO_FAIL(FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
+    if (ret_value == FAIL) {
         if (cdf_vg != FAIL)
             Vdetach(cdf_vg);
     }
@@ -2311,13 +2313,13 @@ NC_xlen_cdf(NC *cdf)
     int len = 8;
 
     if (cdf == NULL)
-        return (0);
+        return 0;
 
     len += NC_xlen_array(cdf->dims);
     len += NC_xlen_array(cdf->attrs);
     len += NC_xlen_array(cdf->vars);
 
-    return (len);
+    return len;
 }
 
 #define RECPOS 4L /* seek index of numrecs value */
@@ -2413,7 +2415,7 @@ xdr_NC_fill(XDR *xdrs, NC_var *vp)
             break;
         default:
             NCadvise(NC_EBADTYPE, "bad type %d", vp->type);
-            return (FALSE);
+            return FALSE;
     }
 
     /* write out fill values */
@@ -2423,8 +2425,8 @@ xdr_NC_fill(XDR *xdrs, NC_var *vp)
 
     if (!stat) {
         NCadvise(NC_EXDR, "xdr_NC_fill");
-        return (FALSE);
+        return FALSE;
     }
 
-    return (TRUE);
+    return TRUE;
 }

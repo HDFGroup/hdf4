@@ -29,7 +29,7 @@
 
 /* If using the real netCDF library and API (use --disable-netcdf configure flag))
    need to mangle the HDF versions of netCDF API function names
-   to not conflict w/ oriinal netCDF ones */
+   to not conflict w/ original netCDF ones */
 #ifndef H4_HAVE_NETCDF
 #define ncerr       HNAME(ncerr)
 #define ncopts      HNAME(ncopts)

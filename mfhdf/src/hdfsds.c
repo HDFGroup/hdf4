@@ -196,7 +196,7 @@ hdf_check_nt(uint8 *ntstring, int32 *type)
         } /* machine type */
     }     /* Little Endian */
 
-    return (ret_value);
+    return ret_value;
 } /* hdf_check_nt */
 
 /******************************************************************************
@@ -240,12 +240,12 @@ hdf_read_rank(int32 acc_id, int16 *rank)
     }
 
 done:
-    if (ret_value != DFE_NONE) { /* Failure cleanup */
+    if (ret_value != DFE_NONE) {
         free(local_buf);
     }
 
     /* return DFE_NONE or error code */
-    return (ret_value);
+    return ret_value;
 } /* hdf_read_rank */
 
 /******************************************************************************
@@ -289,12 +289,12 @@ hdf_read_dimsizes(int32 acc_id, int16 rank, int32 *dimsizes)
     free(local_buf);
 
 done:
-    if (ret_value != DFE_NONE) { /* Failure cleanup */
+    if (ret_value != DFE_NONE) {
         free(local_buf);
     }
 
     /* return DFE_NONE or error code */
-    return (ret_value);
+    return ret_value;
 } /* hdf_read_dimsizes */
 
 /******************************************************************************
@@ -336,12 +336,12 @@ hdf_read_NT(int32 acc_id, NC *handle, uint8 *ntstring_buf)
     free(local_buf);
 
 done:
-    if (ret_value != DFE_NONE) { /* Failure cleanup */
+    if (ret_value != DFE_NONE) {
         free(local_buf);
     }
 
     /* return DFE_NONE or error code */
-    return (ret_value);
+    return ret_value;
 } /* hdf_read_NT */
 
 /******************************************************************************
@@ -391,7 +391,7 @@ hdf_get_sdc(NC *handle, uint16 tmpRef, NC_attr **tmp_attr, intn *curr_attr)
     }
     free(coordbuf);
 done:
-    if (ret_value != DFE_NONE) { /* Failure cleanup */
+    if (ret_value != DFE_NONE) {
         if (coordbuf != NULL)
             free(coordbuf);
     }
@@ -445,12 +445,12 @@ hdf_get_pred_str_attr(NC *handle, uint16 stratt_tag, uint16 satt_ref, int null_c
     ret_value = tmpbuf;
 
 done:
-    if (ret_value == NULL) { /* Failure cleanup */
+    if (ret_value == NULL) {
         free(tmpbuf);
     }
 
     /* return the string attribute */
-    return (ret_value);
+    return ret_value;
 
 } /* hdf_get_pred_str_attr */
 
@@ -543,16 +543,13 @@ hdf_get_desc_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr,
     } /* end if descs */
 
 done:
-    if (ret_value == DFE_NONE) { /* Failure cleanup */
+    if (ret_value == DFE_NONE) {
         free(ddescs);
         if (an_handle != FAIL)
             ANend(an_handle);
     }
-    /* cleanup */
 
-    /* return the status */
-    return (ret_value);
-    /* end annotation description conversion */
+    return ret_value;
 } /* hdf_get_desc_annot */
 
 /******************************************************************************
@@ -644,16 +641,13 @@ hdf_get_label_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr
     } /* end if labels */
 
 done:
-    if (ret_value == DFE_NONE) { /* Failure cleanup */
+    if (ret_value == DFE_NONE) {
         free(dlabels);
         if (an_handle != FAIL)
             ANend(an_handle);
     }
-    /* cleanup */
-    /* return the status */
-    return (ret_value);
 
-    /* end annotation label processing */
+    return ret_value;
 } /* hdf_get_label_annot */
 
 /******************************************************************************
@@ -718,11 +712,7 @@ hdf_luf_to_attrs(char *labelstr, char *unitstr, char *formatstr, NC_attr **tmp_a
     }
 
 done:
-    if (ret_value == DFE_NONE) { /* Failure cleanup */
-    }
-    /* cleanup */
-    /* return the status */
-    return (ret_value);
+    return ret_value;
 
 } /* hdf_luf_to_attrs */
 
@@ -774,11 +764,7 @@ hdf_get_rangeinfo(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_
     }
 
 done:
-    if (ret_value == DFE_NONE) { /* Failure cleanup */
-    }
-    /* cleanup */
-    /* return the status */
-    return (ret_value);
+    return ret_value;
 
 } /* hdf_get_rangeinfo */
 
@@ -883,11 +869,7 @@ hdf_get_cal(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
         (*curr_attr)++;
     }
 done:
-    if (ret_value == DFE_NONE) { /* Failure cleanup */
-    }
-    /* cleanup */
-    /* return the status */
-    return (ret_value);
+    return ret_value;
 
 } /* hdf_get_cal */
 
@@ -1568,7 +1550,7 @@ hdf_read_ndgs(NC *handle)
         handle->vars = NULL;
 
 done:
-    if (ret_value == FAIL) { /* FAIL cleanup? */
+    if (ret_value == FAIL) {
         free(labelbuf);
         free(scalebuf);
         free(unitbuf);

@@ -83,7 +83,7 @@ typedef struct vix_t_def {
     struct vix_t_def *next;                      /* next one in line */
 } vix_t;
 
-/* like, a discriminated union in the sense of xdr */
+/* netCDF array type */
 typedef struct {
     nc_type  type;   /* the discriminant */
     size_t   len;    /* the total length originally allocated */
@@ -228,7 +228,7 @@ extern "C" {
 
 /* If using the real netCDF library and API (when --disable-netcdf configure flag is used)
  * need to mangle the HDF versions of netCDF API function names
- * to not conflict w/ oriinal netCDF ones
+ * to not conflict w/ original netCDF ones
  */
 #ifndef H4_HAVE_NETCDF
 #define nc_serror         HNAME(nc_serror)

@@ -198,9 +198,8 @@ SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
         vsname[H4_MAX_NC_CLASS]   = ""; /* vs name to see if it's the inquired attr's name*/
     int32 ntype                   = 0,  /* need these because SDattrinfo doesn't... */
         count                     = 0;  /* ...take NULL pointers for not needed arguments */
-    int  ii;
-    intn status, /* returned value */
-        found,   /* TRUE when attribute is found */
+    intn status,                        /* returned value */
+        found,                          /* TRUE when attribute is found */
         ret_value = SUCCEED;
 
     /* Clear error stack */
@@ -314,7 +313,7 @@ SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
        matches, use VSgetdatainfo to get offset and length of the attribute's
        data, then set flag to terminate the search */
     found = FALSE;
-    for (ii = 0; ii < n_elements && !found; ii++) {
+    for (int ii = 0; ii < n_elements && !found; ii++) {
         int32 elem_tag, elem_ref;
 
         /* get current tag/ref */
@@ -364,7 +363,7 @@ SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
+    if (ret_value == FAIL) {
         if (vs_id != -1)
             if (VSdetach(vs_id) == FAIL)
                 HGOTO_ERROR(DFE_CANTDETACH, FAIL);
@@ -486,7 +485,6 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char *attr_name, int32 *offset, i
     uint16  att_tag, att_ref;
     intn    dimidx_infile = 0, dimidx_invar = 0;
     intn    isdim = 0;
-    int     ii;
     intn    status, /* returned value */
         ret_value = 0;
 
@@ -591,13 +589,13 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char *attr_name, int32 *offset, i
             /* The dimidx_infile is the index of the dimension relative to the
            file.  We need to find the index of dim within the variable */
             dimidx_invar = -1;
-            for (ii = 0; ii < var->assoc->count && dimidx_invar != ii; ii++)
+            for (int ii = 0; ii < var->assoc->count && dimidx_invar != ii; ii++)
                 if (var->assoc->values[ii] == dimidx_infile)
                     dimidx_invar = ii;
 
             /* Walk through each dimension to find requested luf */
             offp = 0; /* offset pointer */
-            for (ii = 0; ii <= dimidx_invar; ii++) {
+            for (int ii = 0; ii <= dimidx_invar; ii++) {
                 /* NOTE: Should make tests for all cases to make sure all
                      empty attributes are covered -BMR */
 
@@ -642,7 +640,7 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char *attr_name, int32 *offset, i
     free(lufbuf);
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
+    if (ret_value == FAIL) {
         free(lufbuf);
     }
 
@@ -683,17 +681,19 @@ done:
 intn
 SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32 *offsetarray, int32 *lengtharray)
 {
-    int32 file_id = FAIL, /* file, AN API, annotation IDs */
-        an_id = FAIL, ann_id = FAIL;
-    NC    *handle  = NULL;     /* file structure */
-    int32 *dannots = NULL,     /* list of data annotation IDs */
-        n_flabels  = 0,        /* number of file labels */
-        n_fdescs   = 0,        /* number of file descriptions */
-        n_dlabels  = 0,        /* number of object labels */
-        n_ddescs   = 0;        /* number of file descriptions */
-    uint16 elem_tag, elem_ref; /* tag/ref of dataset's NDG */
-    intn   num_annots = -1,    /* number of annotation of requested type */
-        ii, ret_value = 0;
+    int32  file_id   = FAIL; /* file */
+    int32  an_id     = FAIL; /* AN API */
+    int32  ann_id    = FAIL; /* annotation ID */
+    NC    *handle    = NULL; /* file structure */
+    int32 *dannots   = NULL; /* list of data annotation IDs */
+    int32  n_flabels = 0;    /* number of file labels */
+    int32  n_fdescs  = 0;    /* number of file descriptions */
+    int32  n_dlabels = 0;    /* number of object labels */
+    int32  n_ddescs  = 0;    /* number of file descriptions */
+    uint16 elem_tag;
+    uint16 elem_ref;        /* tag/ref of dataset's NDG */
+    int    num_annots = -1; /* number of annotation of requested type */
+    int    ret_value  = 0;
 
     /* Clear error stack */
     HEclear();
@@ -743,8 +743,8 @@ SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32 *offsetarra
             num_annots = size;
 
         /* Get offset/length of each annotation of the specified type */
-        for (ii = 0; ii < num_annots; ii++) {
-            intn status;
+        for (int ii = 0; ii < num_annots; ii++) {
+            int status;
 
             /* Get access to an annotation of the specified type */
             ann_id = ANselect(an_id, ii, annot_type);
@@ -819,7 +819,7 @@ SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32 *offsetarra
     I'm not sure.  MFAN needs to take care of them if not. -BMR */
 
             /* Loop through the annotation list and get their offsets/lengths */
-            for (ii = 0; ii < num_annots; ii++) {
+            for (int ii = 0; ii < num_annots; ii++) {
                 /* Get annotation's offset and length */
                 ret_value = ANgetdatainfo(dannots[ii], &offsetarray[ii], &lengtharray[ii]);
                 if (ret_value == FAIL)
