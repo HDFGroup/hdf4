@@ -89,7 +89,7 @@ var searchData=
   ['nc_5fget_5fsystemlimit_86',['NC_get_systemlimit',['../nc__priv_8h.html#a2a143f347d12ae04ee554a590db5cdc0',1,'nc_priv.h']]],
   ['nc_5fhlookupvar_87',['NC_hlookupvar',['../nc__priv_8h.html#a8954066d2fc1caa46eac03e9465fc67d',1,'NC_hlookupvar:&#160;nc_priv.h'],['../nc__priv_8h.html#a5acb3646f4688a27ec3ba2bd31bf8403',1,'NC_hlookupvar(NC *handle, int varid):&#160;nc_priv.h']]],
   ['nc_5fiarray_88',['NC_iarray',['../struct_n_c__iarray.html',1,'']]],
-  ['nc_5fincr_5farray_89',['NC_incr_array',['../nc__priv_8h.html#a4ea5ddc0e4539944b5b113e2b76f0baa',1,'NC_incr_array:&#160;nc_priv.h'],['../nc__priv_8h.html#acdb4f4a1c9120aed26477ec3a279f763',1,'NC_incr_array(NC_array *array, char *tail):&#160;nc_priv.h']]],
+  ['nc_5fincr_5farray_89',['NC_incr_array',['../nc__priv_8h.html#a4ea5ddc0e4539944b5b113e2b76f0baa',1,'NC_incr_array:&#160;nc_priv.h'],['../nc__priv_8h.html#a44844a3ad2adff0846ad64896575dc63',1,'NC_incr_array(NC_array *array, uint8_t *tail):&#160;nc_priv.h']]],
   ['nc_5findefine_90',['NC_indefine',['../nc__priv_8h.html#a3d5b0097797609709280aa75a8ead73b',1,'NC_indefine:&#160;nc_priv.h'],['../nc__priv_8h.html#ae5864767ec715dbcf84ca868b8a75957',1,'NC_indefine(int cdfid, bool_t iserr):&#160;nc_priv.h']]],
   ['nc_5flong_5fsize_91',['NC_LONG_SIZE',['../nc__priv_8h.html#aa4eb8daff650a06ec5d483fc6c5f32d0',1,'nc_priv.h']]],
   ['nc_5fnew_5farray_92',['NC_new_array',['../nc__priv_8h.html#ae5b24e40d899b84b44d8f7ad6a008e3a',1,'NC_new_array:&#160;nc_priv.h'],['../nc__priv_8h.html#af555271321b1e065046bfaa024e7f2d2',1,'NC_new_array(nc_type type, unsigned count, const void *values):&#160;nc_priv.h']]],
