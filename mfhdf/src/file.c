@@ -44,8 +44,8 @@ struct rlimit rlim;
 #define MAX_AVAIL_OPENFILES                                                                                  \
     (((MAX_SYS_OPENFILES - 3) > H4_MAX_AVAIL_OPENFILES) ? H4_MAX_AVAIL_OPENFILES : (MAX_SYS_OPENFILES - 3))
 
-static int _curr_opened = 0; /* the number of files currently opened */
-static int  _ncdf = 0; /*  high water mark on open cdf's */
+static int  _curr_opened = 0; /* the number of files currently opened */
+static int  _ncdf        = 0; /*  high water mark on open cdf's */
 static NC **_cdfs;
 
 #define HNDLE(id) (((id) >= 0 && (id) < _ncdf) ? _cdfs[(id)] : NULL)
