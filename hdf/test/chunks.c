@@ -109,7 +109,7 @@
  *   HMCreadChunk()
  */
 
-#include "tproto.h"
+#include "testhdf.h"
 #include "hchunks_priv.h"
 
 #define TESTFILE_NAME "tchunks.hdf"

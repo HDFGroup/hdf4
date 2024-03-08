@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.18)
 project (HDF4_JAVA C Java)
 
 set(CMAKE_DIRECTORY_LABELS “JAVA”)

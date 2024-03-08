@@ -190,7 +190,7 @@ EOF
 #==========
 #==========
 cat > $cfgfile <<'EOF'
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.18)
 ########################################################
 # This dashboard is maintained by The HDF Group
 # For any comments please contact cdashhelp@hdfgroup.org
@@ -212,7 +212,7 @@ set (SITE_BUILDNAME_SUFFIX "cmakehdf4")
 
 # -- URL set for internal check, default is to not update
 set (LOCAL_SKIP_UPDATE TRUE)
-set (REPOSITORY_URL "http://svn.hdfgroup.uiuc.edu/hdf4/trunk")
+set (REPOSITORY_URL "https://github.com/HDFGroup/hdf4")
 # -- Standard build options
 set (ADD_BUILD_OPTIONS "-DCMAKE_INSTALL_PREFIX:PATH=${CTEST_BINARY_DIRECTORY} -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING=\"SVN\" -DHDF4_PACKAGE_EXTLIBS:BOOL=ON")
 

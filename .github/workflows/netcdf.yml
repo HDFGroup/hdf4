@@ -7,7 +7,8 @@ on:
     branches: [ master ]
     paths-ignore:
     - '.github/CODEOWNERS'
-    - 'release_notes/**'
+    - 'doc/**'
+    - 'release_docs/**'
     - 'COPYING'
     - '**.md'
 
@@ -32,7 +33,7 @@ jobs:
     - name: Install HDF4
       run: |
         ./autogen.sh
-        ./configure --prefix=/usr/local --disable-netcdf --disable-netcdf-tools --enable-shared --with-szlib
+        ./configure --prefix=/usr/local --disable-netcdf --enable-shared --with-szlib
         make -j
         sudo make install -j
 

@@ -18,6 +18,7 @@ jobs:
             netcdf: enable
             shared: enable
             build_mode: "debug"
+            build_option: "--disable-production"
 
     call-release-netcdf-autotools:
       name: "Autotools Release NetCDF Workflows"
@@ -26,6 +27,7 @@ jobs:
             netcdf: enable
             shared: enable
             build_mode: "production"
+            build_option: "--enable-production"
 
     call-debug-static-autotools:
       name: "Autotools Debug Static Workflows"
@@ -34,6 +36,7 @@ jobs:
             netcdf: disable
             shared: disable
             build_mode: "debug"
+            build_option: "--disable-production"
 
     call-release-static-autotools:
       name: "Autotools Release Static Workflows"
@@ -42,21 +45,26 @@ jobs:
             netcdf: disable
             shared: disable
             build_mode: "production"
+            build_option: "--enable-production"
 
     call-release-auto-intel:
       name: "Autotools Intel Workflows"
       uses: ./.github/workflows/intel-auto.yml
       with:
             build_mode: "production"
+            build_option: "--enable-production"
 
     call-release-auto-nvhpc:
       name: "Autotools nvhpc Workflows"
       uses: ./.github/workflows/nvhpc-auto.yml
       with:
             build_mode: "production"
+            build_option: "--enable-production"
 
     call-release-auto-aocc:
       name: "Autotools aocc Workflows"
       uses: ./.github/workflows/aocc-auto.yml
       with:
             build_mode: "production"
+            build_option: "--enable-production"
+

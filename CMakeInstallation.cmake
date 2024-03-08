@@ -55,13 +55,6 @@ set (HDF4_INCLUDES_BUILD_TIME
 )
 
 #-----------------------------------------------------------------------------
-# Set variables needed for installation
-#-----------------------------------------------------------------------------
-set (HDF4_VERSION_STRING ${HDF4_PACKAGE_VERSION})
-set (HDF4_VERSION_MAJOR  ${HDF4_PACKAGE_VERSION_MAJOR})
-set (HDF4_VERSION_MINOR  ${HDF4_PACKAGE_VERSION_MINOR})
-
-#-----------------------------------------------------------------------------
 # Configure the hdf4-config.cmake file for the build directory
 #-----------------------------------------------------------------------------
 set (INCLUDE_INSTALL_DIR ${HDF4_INSTALL_INCLUDE_DIR})
@@ -156,7 +149,7 @@ if (HDF4_PACK_EXAMPLES)
   )
   install (
       FILES
-          ${HDF4_SOURCE_DIR}/release_notes/USING_CMake_Examples.txt
+          ${HDF4_SOURCE_DIR}/release_docs/USING_CMake_Examples.txt
       DESTINATION ${HDF4_INSTALL_DATA_DIR}
       COMPONENT hdfdocuments
   )
@@ -195,34 +188,34 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
       DESTINATION ${HDF4_INSTALL_DATA_DIR}
       COMPONENT hdfdocuments
   )
-  if (EXISTS "${HDF4_SOURCE_DIR}/release_notes" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/release_notes")
+  if (EXISTS "${HDF4_SOURCE_DIR}/release_docs" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/release_docs")
     set (release_files
-        ${HDF4_SOURCE_DIR}/release_notes/USING_HDF4_CMake.txt
-        ${HDF4_SOURCE_DIR}/release_notes/RELEASE.txt
+        ${HDF4_SOURCE_DIR}/release_docs/USING_HDF4_CMake.txt
+        ${HDF4_SOURCE_DIR}/release_docs/RELEASE.txt
     )
     if (WIN32)
       set (release_files
           ${release_files}
-          ${HDF4_SOURCE_DIR}/release_notes/USING_HDF4_VS.txt
+          ${HDF4_SOURCE_DIR}/release_docs/USING_HDF4_VS.txt
       )
     endif ()
     if (HDF4_PACK_INSTALL_DOCS)
       set (release_files
           ${release_files}
-          ${HDF4_SOURCE_DIR}/release_notes/INSTALL_CMake.txt
-          ${HDF4_SOURCE_DIR}/release_notes/HISTORY.txt
-          ${HDF4_SOURCE_DIR}/release_notes/INSTALL
+          ${HDF4_SOURCE_DIR}/release_docs/INSTALL_CMake.txt
+          ${HDF4_SOURCE_DIR}/release_docs/HISTORY.txt
+          ${HDF4_SOURCE_DIR}/release_docs/INSTALL
       )
       if (WIN32)
         set (release_files
             ${release_files}
-            ${HDF4_SOURCE_DIR}/release_notes/INSTALL_Windows.txt
+            ${HDF4_SOURCE_DIR}/release_docs/INSTALL_Windows.txt
         )
       endif ()
       if (CYGWIN)
         set (release_files
             ${release_files}
-            ${HDF4_SOURCE_DIR}/release_notes/INSTALL_Cygwin.txt
+            ${HDF4_SOURCE_DIR}/release_docs/INSTALL_Cygwin.txt
         )
       endif ()
     endif ()
@@ -249,9 +242,9 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   set (CPACK_PACKAGE_VERSION_MINOR "${HDF4_PACKAGE_VERSION_MINOR}")
   set (CPACK_PACKAGE_VERSION_PATCH "")
   set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-  if (EXISTS "${HDF4_SOURCE_DIR}/release_notes")
-    set (CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/release_notes/RELEASE.txt")
-    set (CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/release_notes/RELEASE.txt")
+  if (EXISTS "${HDF4_SOURCE_DIR}/release_docs")
+    set (CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/release_docs/RELEASE.txt")
+    set (CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/release_docs/RELEASE.txt")
   endif ()
   set (CPACK_PACKAGE_RELOCATABLE TRUE)
   if (OVERRIDE_INSTALL_VERSION)

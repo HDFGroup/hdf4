@@ -1227,8 +1227,7 @@ c
 C        This routine reads varaibales and global attributes from
 C        the REAL NetCDF file test_nc.nc. The file was created by NetCDF v3.5 
 C        from the file test_nc.cdl that can be found in the mfhdf/fortran
-C        directory. Please do not generate test_nc.nc file from the test_nc.cdl
-C        using HDF4 ncgen. HDF4 ncgen generated HDF4 file!
+C        directory.
 
          subroutine tread_netcdf()
          include 'netcdf.inc'

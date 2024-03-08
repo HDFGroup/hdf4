@@ -34,11 +34,7 @@ AC_CONFIG_MACRO_DIR([m4])
 
 ## AM_INIT_AUTOMAKE takes a list of options that should be applied to
 ## every Makefile.am when automake is run.
-##
-## NOTE: Don't add subdir-objects here just yet. Modern Automake will
-##       complain that it's missing, but adding it causes failures on
-##       older systems.
-AM_INIT_AUTOMAKE([foreign])
+AM_INIT_AUTOMAKE([foreign subdir-objects])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])]) # use silent rules where available - automake 1.11
 
 ## AM_MAINTAINER_MODE determines the behavior of "rebuild rules" that contain
@@ -251,8 +247,7 @@ AC_ARG_ENABLE([netcdf],
                               [HDF4 builds replacement netCDF 2.3.2 API calls that are exported (e.g., ncopen()).
                                Enabling this option uses the original netCDF names when building these functions.
                                Disable prefixes them with 'sd_' to avoid name clashes.
-                               This does NOT affect building the HDF4-built netCDF tools ncdump and ncgen,
-                               nor does it disable any HDF4 functionality - this option only affects
+                               This does NOT disable any HDF4 functionality - this option only affects
                                API call names.
                                Disabling this option disables building the netCDF Fortran wrappers (they
                                will not be built with either the original or sd_ prefixed names).
@@ -271,25 +266,6 @@ case "$enableval" in
 esac
 AM_CONDITIONAL([HDF_BUILD_NETCDF], [test "X$BUILD_NETCDF" = "Xyes"])
 AC_SUBST([BUILD_NETCDF])
-
-# It is also possible to disable building the netCDF tools ncdump and ncgen.
-# Some users may want to do this since our tools will conflict with netCDF's
-# if they are installed. This will also disable building nctest.
-AC_ARG_ENABLE([netcdf-tools],
-              [AS_HELP_STRING([--enable-netcdf-tools],
-                              [Build HDF4 versions of NetCDF tools (ncgen, ncdump) [default=yes]])],,
-              [enableval="yes"])
-
-case "$enableval" in
-  yes)
-    BUILD_NETCDF_TOOLS="yes"
-    ;;
-  no)
-    BUILD_NETCDF_TOOLS="no"
-    ;;
-esac
-AM_CONDITIONAL([HDF_BUILD_NETCDF_TOOLS], [test "X$BUILD_NETCDF_TOOLS" = "Xyes"])
-AC_SUBST([BUILD_NETCDF_TOOLS])
 
 ## ======================================================================
 ## Checks for programs
@@ -903,6 +879,8 @@ case "`uname`" in
     MINGW*)
       # Check for Winsock library
       AC_CHECK_LIB([ws2_32], [htonl])
+      AC_DEFINE([HAVE_WIN32_API], [1], [Define if we export HDF4-built unmangled netCDF 2.3.2 API calls])
+      AC_DEFINE([F77_FUNC(name,NAME)], [name ## _], [Define H4_F77_FUNC as name ##])
       ;;
 esac
 
@@ -990,11 +968,13 @@ case "$host" in
   *-linux*|*-k*bsd*-gnu|*-gnu*)BAR="linux"       ;;
   *-openbsd*)           BAR="fbsd"        ;;  
   *-freebsd*)           BAR="fbsd"        ;;
+  *-openbsd*)           BAR="fbsd"        ;;  
   *-ibm-aix*)           BAR="aix"         ;;
   sparc64-*-solaris2*)  BAR="solaris64"   ;;
   *-*-solaris2*)        BAR="solaris"     ;;
   *-apple*)             BAR="apple"       ;;
   *-pc-cygwin*)         BAR="linux"       ;;
+  *-mingw*)             BAR="linux"       ;;  
   *)                    echo "*** unknown host $host!"; exit 1 ;;
 esac
 src_files=""
@@ -1212,10 +1192,10 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/fortran/ftest.f
                  mfhdf/fortran/jackets.c
                  mfhdf/fortran/netcdf.inc
-                 mfhdf/libsrc/netcdf.h
+                 mfhdf/src/netcdf.h
                  mfhdf/Makefile
-                 mfhdf/dumper/Makefile
-                 mfhdf/dumper/testhdp.sh
+                 mfhdf/hdp/Makefile
+                 mfhdf/hdp/testhdp.sh
                  mfhdf/fortran/Makefile
                  mfhdf/fortran/testfortran.sh
                  mfhdf/hdfimport/Makefile
@@ -1225,11 +1205,7 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/hrepack/Makefile
                  mfhdf/hrepack/hrepack.sh
                  mfhdf/hrepack/hrepack_all.sh
-                 mfhdf/libsrc/Makefile
-                 mfhdf/ncdump/Makefile
-                 mfhdf/ncdump/testncdump.sh
-                 mfhdf/ncgen/Makefile
-                 mfhdf/ncgen/testncgen.sh
+                 mfhdf/src/Makefile
                  mfhdf/nctest/Makefile
                  mfhdf/test/Makefile
                  mfhdf/test/srcdir_str.h
@@ -1247,12 +1223,12 @@ AC_OUTPUT
 
 ## A temporary patch. These code were after where it did
 ## cp config/netcdf-XXX.h netcdf.h before.
-## Moved it here after AC_CONFIG_FILES(... mfhdf/libsrc/netcdf.h ).
+## Moved it here after AC_CONFIG_FILES(... mfhdf/src/netcdf.h ).
 ## Need a better and correct solution.
 ##
 if test "X$BUILD_NETCDF" != "Xyes"; then
-    echo "Renaming \"mfhdf/libsrc/netcdf.h\" to \"mfhdf/libsrc/hdf4_netcdf.h\" ."
-    mv mfhdf/libsrc/netcdf.h mfhdf/libsrc/hdf4_netcdf.h
+    echo "Renaming \"mfhdf/src/netcdf.h\" to \"mfhdf/src/hdf4_netcdf.h\" ."
+    mv mfhdf/src/netcdf.h mfhdf/src/hdf4_netcdf.h
 fi
 
 chmod 755 hdf/util/h4cc hdf/util/h4redeploy

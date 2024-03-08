@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.18)
 project (HDF4 C)
 
 if (POLICY CMP0074)
@@ -42,16 +42,6 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
       "        $ cd MY_BUILD\n"
       "        $ cmake [OPTIONS] ..\n"
       )
-endif ()
-
-# CMake version 3.14 added option --ignore-eol to compare files
-#     cmake -E compare_files --ignore-eol file1 file2
-set (CMAKE_IGNORE_EOL "--ignore-eol")
-if (CMAKE_VERSION VERSION_LESS "3.14.0")
-  set (CMAKE_IGNORE_EOL "")
-  if (WIN32)
-    message (FATAL_ERROR "Windows builds require a minimum of CMake 3.14")
-  endif()
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -102,29 +92,29 @@ mark_as_advanced (HDF4_EXTERNAL_LIB_PREFIX)
 #   # Export configuration to this export variable
 #   set (HDF4_EXPORTED_TARGETS "project-targets")
 #
-#   # Setup all necessary overrides for zlib so that HDF4 uses our
-#   # internally compiled zlib rather than any other version
-#   if (HDF4_ENABLE_Z_LIB_SUPPORT)
-#    # We must tell the main HDF4 library that it depends on our zlib
-#     set (HDF4_LIB_DEPENDENCIES prjzlib)
-#     # Override the zlib header file
-#     if (PRJ_USE_SYSTEM_ZLIB)
-#       set (H4_ZLIB_HEADER "zlib.h")
+#   # Setup all necessary overrides for szip so that HDF4 uses our
+#   # internally compiled szip rather than any other version
+#   if (HDF4_ENABLE_SZIP_SUPPORT)
+#    # We must tell the main HDF4 library that it depends on our szip
+#     set (HDF4_LIB_DEPENDENCIES prjszip)
+#     # Override the szip header file
+#     if (PRJ_USE_SYSTEM_SZIP)
+#       set (H4_SZIP_HEADER "szip.h")
 #     else ()
-#      set (H4_ZLIB_HEADER "prj_zlib.h")
-#       # Set vars that FindZlib would have set if used in sub project
-#       set (ZLIB_INCLUDE_DIRS "${PRJ_ZLIB_INCLUDE_DIRS}")
-#       set (ZLIB_LIBRARIES prjzlib)
+#      set (H4_SZIP_HEADER "prj_szip.h")
+#       # Set vars that FindSZIP would have set if used in sub project
+#       set (SZIP_INCLUDE_DIRS "${PRJ_SZIP_INCLUDE_DIRS}")
+#       set (SZIP_LIBRARIES prjszip)
 #     endif ()
 #  endif ()
 #
 #   # Add the sub project
-#   add_subdirectory (Utilities/hdf4.2.5)
+#   add_subdirectory (Utilities/hdf4.3.0)
 #   # Add the HDF4 dirs to our include path
 #   set (HDF4_INCLUDE_DIR
-#       ${PROJECT_SOURCE_DIR}/Utilities/hdf4.2.5/hdf/src
-#       ${PROJECT_BINARY_DIR}/Utilities/hdf4.2.5
-#       ${PROJECT_SOURCE_DIR}/Utilities/hdf4.2.5/mfhdf/libsrc
+#       ${PROJECT_SOURCE_DIR}/Utilities/hdf4.3.0/hdf/src
+#       ${PROJECT_BINARY_DIR}/Utilities/hdf4.3.0
+#       ${PROJECT_SOURCE_DIR}/Utilities/hdf4.3.0/mfhdf/src
 #   )
 #
 #-----------------------------------------------------------------------------
@@ -214,7 +204,7 @@ set (HDF_CONFIG_DIR           ${HDF4_SOURCE_DIR}/config)
 set (HDF_RESOURCES_DIR        ${HDF4_SOURCE_DIR}/config/cmake)
 set (HDF4_HDFSOURCE_DIR       ${HDF4_SOURCE_DIR}/hdf/src)
 set (HDF4_HDF_TESTSOURCE_DIR  ${HDF4_SOURCE_DIR}/hdf/test)
-set (HDF4_MFHDFSOURCE_DIR     ${HDF4_SOURCE_DIR}/mfhdf/libsrc)
+set (HDF4_MFHDFSOURCE_DIR     ${HDF4_SOURCE_DIR}/mfhdf/src)
 set (HDF4_MFHDF_TEST_DIR      ${HDF4_SOURCE_DIR}/mfhdf/test)
 set (HDF4_MFHDF_UTIL_DIR      ${HDF4_SOURCE_DIR}/mfhdf/util)
 set (HDF4_MFHDF_FORTRAN_DIR   ${HDF4_SOURCE_DIR}/mfhdf/fortran)
@@ -568,7 +558,6 @@ include (CMakeFilters.cmake)
 # Options to build tools
 #-----------------------------------------------------------------------------
 option (HDF4_BUILD_TOOLS  "Build HDF4 Tools" ON)
-option (HDF4_BUILD_NETCDF_TOOLS "Build HDF4 versions of ncdump and ncgen" ON)
 
 #-----------------------------------------------------------------------------
 # Option to Build HDF4 versions of NetCDF-3 APIS
@@ -583,7 +572,7 @@ endif ()
 # Add the HDF4 Library Target to the build
 #-----------------------------------------------------------------------------
 add_subdirectory (hdf/src)
-add_subdirectory (mfhdf/libsrc)
+add_subdirectory (mfhdf/src)
 
 #-----------------------------------------------------------------------------
 # Option to build documentation

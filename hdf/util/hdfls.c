@@ -292,7 +292,7 @@ printfilever(int32 file_id)
 void
 usage(char *argv[])
 {
-    printf("%s,  version: 2.0   date: March 1, 1994\n", argv[0]);
+    printf("%s,  %s\n\n", argv[0], LIBVER_STRING);
 #ifdef DISKBLOCK_DEBUG
     printf("%s [-o] [-l] [-d] [-v] [-g] [-s] [-h] [-x] [-t #] fn ....\n", argv[0]);
 #else  /* DISKBLOCK_DEBUG */

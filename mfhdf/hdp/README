@@ -1,0 +1,21 @@
+		README for the HDF hdp directory
+
+This directory contains source and data files for hdp, an HDF dumper.
+File hdp.txt explains hdp commands and command options. Hdp will be
+automatically compiled and installed when you run 'make' and
+'make install' from the top level.
+
+A file named testhdf.sh and a group of .hdf files are included for 
+testing.   Run the test with the command "make test".
+
+Please send your bug reports, comments and suggestions to 
+hdfhelp@hdfgroup.org
+
+----------------- History of data files ------------------
+
+Below is a list describing how some of the hdf files in this directory
+were generated.
+
+sds_compressed.hdf: by test_various_comps() in mfhdf/src/tcomp.c
+sds_szipped.hdf: by gen_sds_szipped.c
+

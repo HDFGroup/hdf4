@@ -12,27 +12,12 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
-   FILE
-   conv.c
-   Test HDF Number-Type conversion routines
-
-   REMARKS
-
-   DESIGN
-
-   BUGS/LIMITATIONS
-
-   EXPORTED ROUTINES
-
-   AUTHOR
-   Quincey Koziol
-
-   MODIFICATION HISTORY
-   10/27/93 - Started coding.
+ * Test HDF Number-Type conversion routines
  */
 
-#include "tproto.h"
 #include <time.h>
+
+#include "testhdf.h"
 
 /* last ditch attempt do define this value... */
 #ifndef UINT_MAX
@@ -60,7 +45,7 @@
 #define clock() (0)
 #endif
 
-extern int Verbocity;
+extern int Verbosity;
 
 /* Local variables */
 static int32       test_type[] = {0, DFNT_LITEND, DFNT_NATIVE};

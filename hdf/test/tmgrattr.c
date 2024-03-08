@@ -19,11 +19,12 @@
  *
  ****************************************************************************/
 
-#include "hdf.h"
 #include <stdio.h>
-#include "tutils.h"
 
-#include "tproto.h"
+#include "hdf.h"
+#include "tutils.h"
+#include "testhdf.h"
+
 #define TESTFILE "tmgratt.hdf"
 
 #define F_ATT1_VAL       "Contents of First FILE Attribute"

@@ -15,7 +15,7 @@
  *************************************************************************/
 
 #include "hdf.h"
-#include "tproto.h" /* for utility macros */
+#include "testhdf.h"
 
 /************************************************************************
    Name: test_GRgetcomptype() - test GRgetcomptype for hmap project

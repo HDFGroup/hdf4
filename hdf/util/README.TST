@@ -402,11 +402,11 @@ fp2hdf -- converts floating point 2D/3D datasets into hdf SDS or RIS.
    
        For an SDS:
 
-        ../../mfhdf/dumper/hdp dumpsds <hdf filename>
+        ../../mfhdf/hdp/hdp dumpsds <hdf filename>
 
        For a raster image:
   
-        ../../mfhdf/dumper/hdp dumprig <hdf filename>
+        ../../mfhdf/hdp/hdp dumprig <hdf filename>
 
       Collage can also be used to display the *.hdf files.
       Display the spreadsheet and compare the values to those

@@ -33,12 +33,12 @@ endif ()
 
 macro (ADD_H4_TEST testname testtype testfile)
   if ("${testtype}" STREQUAL "SKIP")
-    if (NOT HDF4_ENABLE_USING_MEMCHECKER)
+    if (NOT HDF4_USING_ANALYSIS_TOOL)
       add_test (
           NAME HREPACK-${testname}-SKIPPED
           COMMAND ${CMAKE_COMMAND} -E echo "SKIP  -v -i ${PROJECT_BINARY_DIR}/${testfile} -o ${PROJECT_BINARY_DIR}/out-${testname}.${testfile} ${ARGN}"
       )
-    endif (NOT HDF4_ENABLE_USING_MEMCHECKER)
+    endif (NOT HDF4_USING_ANALYSIS_TOOL)
   else ()
     add_test (
         NAME HREPACK-${testname}-clearall-objects
@@ -74,7 +74,7 @@ add_test (
         hrepacktst3.hdf
 )
 
-if (NOT HDF4_ENABLE_USING_MEMCHECKER)
+if (NOT HDF4_USING_ANALYSIS_TOOL)
   add_test (
       NAME HREPACK-hrepack_check
       COMMAND "${CMAKE_COMMAND}"
@@ -90,7 +90,7 @@ if (NOT HDF4_ENABLE_USING_MEMCHECKER)
   set_tests_properties (HREPACK-hrepack_check PROPERTIES DEPENDS HREPACK-hrepack-clearall-objects LABELS ${PROJECT_NAME})
 endif ()
 
-if (NOT HDF4_ENABLE_USING_MEMCHECKER)
+if (NOT HDF4_USING_ANALYSIS_TOOL)
   add_test (
       NAME HREPACK-hrepack_help
       COMMAND "${CMAKE_COMMAND}"

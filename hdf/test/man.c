@@ -36,8 +36,7 @@
  *
  *************************************************************/
 
-/* includes */
-#include "tproto.h"
+#include "testhdf.h"
 
 #define TESTFILE "tman.hdf" /* testfile to write annotations to */
 #define ROWS     10         /* row size of dataset/image */

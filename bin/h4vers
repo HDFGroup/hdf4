@@ -65,7 +65,7 @@ use strict;
 #
 # If the version number is changed (either `-s' or `-i' was used on
 # the command line) then the first line of the README.md and
-# release_notes/RELEASE.txt two levels above the hfile.h file are also
+# release_docs/RELEASE.txt two levels above the hfile.h file are also
 # modified so it looks something like: This is hdf4-1.2.3-pre1 currently
 # under development. The AC_INIT macro in configure.in will also change
 # in this case to be something like: AC_INIT([HDF4], [hdf4-1.2.3-pre1],
@@ -169,9 +169,9 @@ die "mutually exclusive options given\n" if $set && $inc;
 #print "File array is ", @files;
 
 # Determine file to use as hfile.h, README.md,
-# release_notes/RELEASE.txt, configure.in,
+# release_docs/RELEASE.txt, configure.in,
 # and config/cmake/scripts/HDF4config.cmake.
-# The paths to README.md, release_notes/RELEASE.txt, configure.ac,
+# The paths to README.md, release_docs/RELEASE.txt, configure.ac,
 # and config/cmake/scripts/HDF4config.cmake
 # files are always from the directory two levels above hfile.h.
 unless ($file) {
@@ -203,9 +203,9 @@ die "unable to read file: $H4_TESTJAVA\n" unless -r $file;
 my $README = $file;
 $README =~ s/[^\/]*$/..\/..\/README.md/;
 die "unable to read file: $README\n" unless -r $file;
-# release_notes/RELEASE.txt
+# release_docs/RELEASE.txt
 my $RELEASE = $file;
-$RELEASE =~ s/[^\/]*$/..\/..\/release_notes\/RELEASE.txt/;
+$RELEASE =~ s/[^\/]*$/..\/..\/release_docs\/RELEASE.txt/;
 die "unable to read file: $RELEASE\n" unless -r $file;
 #print $RELEASE, "\n";
 # man/hdf.1
@@ -332,7 +332,7 @@ if ($README) {
   close FILE;
 }
 
-# Update the release_notes/RELEASE.txt file
+# Update the release_docs/RELEASE.txt file
 if ($RELEASE) {
   open FILE, $RELEASE or die "$RELEASE: $!\n";
   my @contents = <FILE>;
@@ -353,7 +353,7 @@ if ($HDF4CONFIGCMAKE) {
   my $sub_rel_ver_str = (
      $newver[3] eq ""
      ? sprintf("\"%s\"", "")
-     : sprintf("\"%s\"", "-".$newver[3].", currently under development")
+     : sprintf("\"%s\"", "-".$newver[3])
      );
   my $version_string = sprintf("\"%d.%d.%d\"", @newver[0,1,2]);
 

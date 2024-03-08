@@ -1,4 +1,4 @@
-HDF version 4.3.0-1 currently under development
+HDF version 4.3.1-1 currently under development
 
 ![HDF Logo](doc/img/HDF4.png)
 
@@ -57,20 +57,20 @@ are tentative.
 
 | Release | New Features |
 | ------- | ------------ |
-| 4.3.0 | Remove XDR, Stop deploying internal header files |
-| 4.4.0 | Drop FORTRAN 77 support, Unified library, Drop netCDF 2.3.2 API + tools |
-
-HDF 4.3.0 (February 2024)
-* Minimum XDR functionality will be built into the library, so linking to TI-RPC, etc. will not be necessary
-* We will no longer deploy undocumented, internal header files (the public, documented HDF4 API will not be affected)
-
-The 4.2 maintenance line will be retired when 4.3.0 releases. There are no
-more planned HDF 4.2.x releases.
+| 4.4.0 | Drop FORTRAN 77 support, Drop netCDF 2.3.2 API + tools, Unified library (maybe) |
 
 HDF 4.4.0 (February 2025)
 * We will drop support for FORTRAN 77 and move to modern Fortran (2003 or 2008)
-* libdf and libmfhdf will be merged into a single libhdf4 library, Fortran will be built as a separate library
-* HDF4 includes an ancient netCDF 2.3.2 API along with the ncdump and ncgen tools. It would be nice to drop this and just have people get their netCDF API from the actual netCDF library.
+* HDF4 includes an ancient netCDF 2.3.2 API along with HDF4-built ncdump and ncgen tools. Support for these will be dropped in 4.4.0. netCDF APIs and tools should be obtained from Unidata.
+* (maybe) libdf and libmfhdf will be merged into a single libhdf4 library, Fortran will be built as a separate library
+
+The goal of the HDF 4.4.0 release is to address long-standing deficiencies
+and bring HDF4 in line with HDF5's build practices. This should allow HDF4
+to work better with modern systems and compilers and be more easily
+maintained.
+
+The 4.3 maintenance line will be retired when 4.4.0 releases. There are no
+more planned HDF 4.3.x releases.
 
 
 SNAPSHOTS, PREVIOUS RELEASES AND SOURCE CODE
@@ -91,18 +91,20 @@ Development code is available at our Github location:
 Source Distribution Layout
 --------------------------
 
- The top level of the source code distribution contains the following 
+ The top level of the source code distribution contains the following
  subdirectories:
 
    bin    -- Scripts for maintenance.
 
    config -- Configuration files to be used by configure script.
 
-   hdf    -- The source code for the HDF 'base library', the multi-file 
-             annotation interface, the multi-file raster image interface, 
-             HDF command line utilities, and a test suite. 
-             Please see the README in each directory for further 
-             information on each package. 
+   doc    -- HDF 4.2 to 4.3 Migration Guide
+
+   hdf    -- The source code for the HDF 'base library', the multi-file
+             annotation interface, the multi-file raster image interface,
+             HDF command line utilities, and a test suite.
+             Please see the README in each directory for further
+             information on each package.
 
    java   -- The Java HDF JNI library
 
@@ -111,18 +113,18 @@ Source Distribution Layout
    mfhdf  -- The netCDF(mfhdf) part of the HDF/mfhdf distribution and
              additional HDF utilities, such as hdp, hrepack, hdfimport, etc.
 
-   release\_notes -- 
+   release\_notes --
              Installation instructions for UNIX and Windows.
              Descriptions of new features and bug fixes in this release.
-             Files in this sub-directory can be used as supplemental 
-             documentation for HDF. 
+             Files in this sub-directory can be used as supplemental
+             documentation for HDF.
 
 
 Third Party Software Requirements
 ---------------------------------
   * JPEG distribution release 6b or later.
 
-  * ZLIB 1.1.4(libz.a) or later. 
+  * ZLIB 1.1.4(libz.a) or later.
 
 
 System Requirements
@@ -130,4 +132,4 @@ System Requirements
  To build the HDF library from source, you need:
 
    * C and Fortran compilers. For a list of the supported compilers,
-     see release_notes/RELEASE.txt file.
+     see release_docs/RELEASE.txt file.

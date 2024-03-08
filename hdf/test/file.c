@@ -43,7 +43,7 @@
 
  */
 
-#include "tproto.h"
+#include "testhdf.h"
 #define TESTFILE_NAME "t.hdf"
 #define BUF_SIZE      4096
 

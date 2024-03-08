@@ -13,8 +13,10 @@
 
 #include <stdio.h>
 #include <math.h>
+
 #include "vg.h"
-#include "tproto.h"
+#include "testhdf.h"
+
 #define NRECORDS 5
 #define EPS      0.00001
 

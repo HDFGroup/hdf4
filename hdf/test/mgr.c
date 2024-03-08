@@ -23,7 +23,7 @@
 #define TESTFILE2 "tmgrchk.hdf"
 #define DATAFILE  "test_files/tmgr.dat"
 
-#include "tproto.h"
+#include "testhdf.h"
 #include "mfgr.h"
 #include "mfgr_priv.h"
 

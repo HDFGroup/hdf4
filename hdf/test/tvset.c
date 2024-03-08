@@ -23,7 +23,7 @@
  */
 #include "hdf.h"
 #include "hfile_priv.h"
-#include "tproto.h"
+#include "testhdf.h"
 
 #define VDATA_COUNT 256 /* make this many Vdatas to check for memory leaks */
 

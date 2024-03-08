@@ -11,17 +11,11 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "tproto.h"
+#include <stdint.h>
 
-#define INT16MAX 32767 /* 0x7fff */
+#include "testhdf.h"
 
-#define UINT16MAX 65535 /* 0xffff */
-
-#define INT32MAX 2147483647 /* 0x7fffffff */
-
-#define UINT32MAX 4294967295UL /* 0xffffffff */
-
-extern int Verbocity;
+extern int Verbosity;
 
 void
 test_macros(void)
@@ -35,14 +29,15 @@ test_macros(void)
     int      errors1, errors2, errors3, errors4;
     int      errors = 0;
 
-    uint16 data1[10] = {0, 1, 2, 3, 4, UINT16MAX - 4, UINT16MAX - 3, UINT16MAX - 2, UINT16MAX - 1, UINT16MAX};
+    uint16 data1[10] = {0,         1, 2, 3, 4, UINT16_MAX - 4, UINT16_MAX - 3, UINT16_MAX - 2, UINT16_MAX - 1,
+                        UINT16_MAX};
 
-    int16 data2[20] = {-INT16MAX - 1,
-                       -INT16MAX,
-                       -INT16MAX + 1,
-                       -INT16MAX + 2,
-                       -INT16MAX + 3,
-                       -INT16MAX + 4,
+    int16 data2[20] = {-INT16_MAX - 1,
+                       -INT16_MAX,
+                       -INT16_MAX + 1,
+                       -INT16_MAX + 2,
+                       -INT16_MAX + 3,
+                       -INT16_MAX + 4,
                        -4,
                        -3,
                        -2,
@@ -52,20 +47,21 @@ test_macros(void)
                        2,
                        3,
                        4,
-                       INT16MAX - 4,
-                       INT16MAX - 3,
-                       INT16MAX - 2,
-                       INT16MAX - 1,
-                       INT16MAX};
+                       INT16_MAX - 4,
+                       INT16_MAX - 3,
+                       INT16_MAX - 2,
+                       INT16_MAX - 1,
+                       INT16_MAX};
 
-    uint32 data3[10] = {0, 1, 2, 3, 4, UINT32MAX - 4, UINT32MAX - 3, UINT32MAX - 2, UINT32MAX - 1, UINT32MAX};
+    uint32 data3[10] = {0,         1, 2, 3, 4, UINT32_MAX - 4, UINT32_MAX - 3, UINT32_MAX - 2, UINT32_MAX - 1,
+                        UINT32_MAX};
 
-    int32 data4[20] = {-INT32MAX - 1,
-                       -INT32MAX,
-                       -INT32MAX + 1,
-                       -INT32MAX + 2,
-                       -INT32MAX + 3,
-                       -INT32MAX + 4,
+    int32 data4[20] = {-INT32_MAX - 1,
+                       -INT32_MAX,
+                       -INT32_MAX + 1,
+                       -INT32_MAX + 2,
+                       -INT32_MAX + 3,
+                       -INT32_MAX + 4,
                        -4,
                        -3,
                        -2,
@@ -75,11 +71,11 @@ test_macros(void)
                        2,
                        3,
                        4,
-                       INT32MAX - 4,
-                       INT32MAX - 3,
-                       INT32MAX - 2,
-                       INT32MAX - 1,
-                       INT32MAX};
+                       INT32_MAX - 4,
+                       INT32_MAX - 3,
+                       INT32_MAX - 2,
+                       INT32_MAX - 1,
+                       INT32_MAX};
 
     if (Verbosity > 5)
         printf("\n");

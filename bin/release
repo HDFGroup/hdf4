@@ -441,9 +441,9 @@ ln -s `pwd` $tmpdir/$HDF4_IN_VERS || exit 1
 test -f Makefile && mv Makefile $tmpdir/Makefile.x
 cp -p Makefile.dist Makefile
 
-# Update README.md and release_notes/RELEASE.txt with release information in
+# Update README.md and release_docs/RELEASE.txt with release information in
 # line 1.
-for f in README.md release_notes/RELEASE.txt; do
+for f in README.md release_docs/RELEASE.txt; do
     echo "HDF version $VERS released on $release_date" >$f.x
     sed -e 1d $f >>$f.x
     mv $f.x $f
@@ -453,7 +453,7 @@ done
 
 # Create the tar file
 test "$verbose" && echo "   Running tar..." 1>&2
-(cd "$tmpdir" && exec tar -ch --exclude-vcs -f "$HDF4_VERS.tar" "./$HDF4_IN_VERS" || exit 1 )
+(cd "$tmpdir" && exec tar -ch --exclude-vcs --exclude=.clang-format --exclude=.git* -f "$HDF4_VERS.tar" "./$HDF4_IN_VERS" || exit 1 )
 
 # Compress
 SHA256=$HDF4_VERS.sha256
@@ -503,7 +503,7 @@ if [ "${MAINT_MODE_ENABLED}" != "" ]; then
 fi
 
 # Copy the RELEASE.txt to the release area.
-cp release_notes/RELEASE.txt $DEST/$HDF4_VERS-RELEASE.txt
+cp release_docs/RELEASE.txt $DEST/$HDF4_VERS-RELEASE.txt
 
 # Remove distributed Makefile and restore previous Makefile if existed.
 rm -f Makefile

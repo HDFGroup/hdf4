@@ -15,7 +15,7 @@
  * These is a first pass at rewriting how these tests for exteranl
  * elements were done -GV
  */
-#include "tproto.h"
+#include "testhdf.h"
 #define TESTFILE_NAME  "t.hdf"                  /* file for first 4 series of tests */
 #define TESTFILE_NAME1 "tx.hdf"                 /* file for last test */
 #define STRING         "element 1000 2"         /* 14 bytes */

@@ -13,7 +13,7 @@
 
 /*
  *  For details of the HDF libraries, see the HDF Documentation at:
- *    https://portal.hdfgroup.org/display/HDF4/HDF4
+ *    https://portal.hdfgroup.org/hdf4/
  *
  */
 

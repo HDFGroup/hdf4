@@ -8,7 +8,8 @@ on:
     branches: [ master ]
     paths-ignore:
     - '.github/CODEOWNERS'
-    - 'release_notes/**'
+    - 'doc/**'
+    - 'release_docs/**'
     - 'COPYING'
     - '**.md'
 

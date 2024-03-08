@@ -20,7 +20,7 @@
 
 #include <time.h>
 
-#include "tproto.h"
+#include "testhdf.h"
 #include "hfile_priv.h"
 
 #define TESTFILE_NAME "tcomp.hdf"

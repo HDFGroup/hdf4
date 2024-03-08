@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.18)
 project (HDF4_HDF_TEST C)
 
 #-----------------------------------------------------------------------------
@@ -23,7 +23,8 @@ set (testhdf_SRCS
     ${HDF4_HDF_TEST_SOURCE_DIR}/conv.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/extelt.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/file.c
-    ${HDF4_HDF_TEST_SOURCE_DIR}/file1.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/file_atexit.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/file_limits.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/litend.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/macros.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/man.c

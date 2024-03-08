@@ -103,7 +103,7 @@ macro (ADD_H4_TEST resultfile resultcode testtfile testtype)
     set_tests_properties (HIMPORT-${testtfile} PROPERTIES LABELS ${PROJECT_NAME})
   endif ()
 
-  if (HDF4_ENABLE_USING_MEMCHECKER)
+  if (HDF4_USING_ANALYSIS_TOOL)
     add_test (NAME HIMPORTLS-${testtfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfls> -l ${testtfile}.hdf)
   else ()
     add_test (
@@ -132,7 +132,7 @@ macro (ADD_H4_TEST_OUT resultfile resultcode)
     set_tests_properties (HIMPORT-OUT-${resultfile} PROPERTIES LABELS ${PROJECT_NAME})
   endif ()
 
-  if (HDF4_ENABLE_USING_MEMCHECKER)
+  if (HDF4_USING_ANALYSIS_TOOL)
     add_test (NAME HIMPORTLS-OUT-${resultfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfls> ${resultfile}.out)
   else ()
     add_test (
@@ -154,9 +154,7 @@ macro (ADD_H4_TEST_OUT resultfile resultcode)
 endmacro ()
 
 macro (ADD_H4_TEST_ED testfile resultfile resultcode)
-  if (HDF4_ENABLE_USING_MEMCHECKER)
-    add_test (NAME HIMPORT-EDIT COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfed> -batch)
-  else ()
+  if (NOT HDF4_USING_ANALYSIS_TOOL)
     add_test (
         NAME HIMPORT-EDIT
         COMMAND "${CMAKE_COMMAND}"
@@ -170,13 +168,13 @@ macro (ADD_H4_TEST_ED testfile resultfile resultcode)
             -D "TEST_REFERENCE=${resultfile}"
             -P "${HDF_RESOURCES_DIR}/runTest.cmake"
     )
+    if (NOT "${last_test}" STREQUAL "")
+      set_tests_properties (HIMPORT-EDIT PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+    else ()
+      set_tests_properties (HIMPORT-EDIT PROPERTIES LABELS ${PROJECT_NAME})
+    endif ()
+    set (last_test "HIMPORT-EDIT")
   endif ()
-  if (NOT "${last_test}" STREQUAL "")
-    set_tests_properties (HIMPORT-EDIT PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-  else ()
-    set_tests_properties (HIMPORT-EDIT PROPERTIES LABELS ${PROJECT_NAME})
-  endif ()
-  set (last_test "HIMPORT-EDIT")
 endmacro ()
 
 ##############################################################################

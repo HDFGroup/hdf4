@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.18)
 project (HDF4_HDF_SRC C)
 
 if (POLICY CMP0087)
@@ -39,7 +39,6 @@ set (HDF4_HDF_SRC_CSRCS
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfunjpeg.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfutil.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dynarray.c
-    ${HDF4_HDF_SRC_SOURCE_DIR}/glist.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hbitio.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hblocks.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hbuffer.c
@@ -51,9 +50,9 @@ set (HDF4_HDF_SRC_CSRCS
     ${HDF4_HDF_SRC_SOURCE_DIR}/herr.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hextelt.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hfile.c
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hfile_atexit.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hfiledd.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hkit.c
-    ${HDF4_HDF_SRC_SOURCE_DIR}/linklist.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/mcache.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/mfan.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/mfgr.c
@@ -105,7 +104,6 @@ set (HDF4_PRIVATE_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfsd_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfufp2i_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/dynarray_priv.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/glist_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hbitio_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hchunks_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hcomp_priv.h
@@ -113,9 +111,9 @@ set (HDF4_PRIVATE_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/hdf_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/herr_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hfile_priv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hfile_atexit_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hkit_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hqueue_priv.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/linklist_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/mcache_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/mfan_priv.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/mfgr_priv.h

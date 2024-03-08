@@ -12,28 +12,14 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
-   FILE
-   nbit.c
-   Test HDF N-Bit dataset I/O routines
-
-   REMARKS
-   These tests depend on the bitio layer, the compression layer and
-   the SD layer...
-
-   DESIGN
-
-   BUGS/LIMITATIONS
-
-   EXPORTED ROUTINES
-
-   AUTHOR
-   Quincey Koziol
-
-   MODIFICATION HISTORY
-   1/19/94 - Started coding
+ * Test HDF N-Bit dataset I/O routines
+ *
+ * These tests depend on the bitio layer, the compression layer and
+ * the SD layer.
  */
 
-#include "tproto.h"
+#include "testhdf.h"
+
 #define TESTFILE_NAME "tnbit.hdf"
 #define DATAFILE_NAME "test_files/nbit.dat"
 

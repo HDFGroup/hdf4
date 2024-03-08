@@ -44,13 +44,14 @@ if (HDF4_BUILD_GENERATORS AND NOT ONLY_SHARED_LIBS)
 endif ()
 
 macro (ADD_H4_TEST resultfile resultcode)
-  if (HDF4_ENABLE_USING_MEMCHECKER)
+  if (HDF4_USING_ANALYSIS_TOOL)
     add_test (NAME HDIFF-${resultfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdiff> ${ARGN})
     if (NOT ${resultcode} STREQUAL "0")
       set_tests_properties (HDIFF-${resultfile} PROPERTIES LABELS ${PROJECT_NAME} WILL_FAIL "true")
     else ()
       set_tests_properties (HDIFF-${resultfile} PROPERTIES LABELS ${PROJECT_NAME})
     endif ()
+    set_tests_properties (HDIFF-${resultfile} PROPERTIES WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/testfiles)
   else ()
     add_test (
         NAME HDIFF-${resultfile}

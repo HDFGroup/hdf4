@@ -6,16 +6,10 @@ else
 FORTRAN_DIR =
 endif
 
-if HDF_BUILD_NETCDF_TOOLS
-NETCDF_DIRS = ncdump ncgen nctest
-else
-NETCDF_DIRS = nctest
-endif
-
 # src folder in root Makefile, build other folders now
-SUBDIRS = libsrc $(FORTRAN_DIR) test $(NETCDF_DIRS) dumper hdfimport hdiff hrepack
+SUBDIRS = src $(FORTRAN_DIR) test nctest hdp hdfimport hdiff hrepack
 
-DIST_SUBDIRS = libsrc fortran test $(NETCDF_DIRS) dumper hdfimport hdiff hrepack
+DIST_SUBDIRS = src fortran test nctest hdp hdfimport hdiff hrepack
 
 # 'make install-all'
 install-all:

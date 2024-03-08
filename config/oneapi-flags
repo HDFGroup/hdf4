@@ -20,7 +20,6 @@ load_intel_arguments()
 
 # Get the compiler version in a way that works for icx
 # icx unless a compiler version is already known
-#
 #   cc_vendor:    The compiler name: icx
 #   cc_version:   Version number: 2023.2.0
 #
