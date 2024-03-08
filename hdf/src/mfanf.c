@@ -208,7 +208,7 @@ nafannlist(intf *an_id, intf *atype, intf *etag, intf *eref, intf alist[])
     intf   ret;
     int32 *tempanlist;
     intf   nanns;
-    intn   i;
+    int    i;
 
     /* Get number of annotations that match tag/ref pair */
     nanns = ANnumann((int32)*an_id, (ann_type)*atype, (uint16)*etag, (uint16)*eref);
@@ -265,7 +265,7 @@ nafwriteann(intf *ann_id, _fcd ann, intf *annlen)
     intf  status;
 
     /* Convert fortran string to C-String */
-    iann = HDf2cstring(ann, (intn)*annlen);
+    iann = HDf2cstring(ann, (int)*annlen);
     if (!iann)
         return FAIL;
 
@@ -290,7 +290,7 @@ intf
 nafreadann(intf *ann_id, _fcd ann, intf *maxlen)
 {
     char *iann = NULL;
-    intn  status;
+    int   status;
 
     /* Allocate space for fortran string */
     if (*maxlen)
@@ -302,7 +302,7 @@ nafreadann(intf *ann_id, _fcd ann, intf *maxlen)
     status = ANreadann((int32)*ann_id, iann, (int32)*maxlen);
 
     /* C-String to Fortran String */
-    HDpackFstring(iann, _fcdtocp(ann), (intn)*maxlen);
+    HDpackFstring(iann, _fcdtocp(ann), (int)*maxlen);
 
     free(iann);
 

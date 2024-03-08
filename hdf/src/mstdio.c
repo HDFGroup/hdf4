@@ -131,7 +131,7 @@ HCPmstdio_stwrite(accrec_t *access_rec)
     int32 HCPmstdio_seek(access_rec,offset,origin)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 offset;       IN: the offset in bytes from the origin specified
-    intn origin;        IN: the origin to seek from [UNUSED!]
+    int origin;        IN: the origin to seek from [UNUSED!]
 
  RETURNS
     Returns SUCCEED or FAIL
@@ -287,7 +287,7 @@ HCPmstdio_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *p
     HCPmstdio_endaccess -- Close the compressed data element
 
  USAGE
-    intn HCPendaccess(access_rec)
+    int HCPendaccess(access_rec)
     accrec_t *access_rec;   IN: the access record of the data element
 
  RETURNS
@@ -301,11 +301,11 @@ HCPmstdio_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *p
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 HCPmstdio_endaccess(accrec_t *access_rec)
 {
     compinfo_t *info; /* information on the special element */
-    intn        ret;
+    int         ret;
 
     info = (compinfo_t *)access_rec->special_info;
     if ((ret = (*(info->cinfo.coder_funcs.endaccess))(access_rec)) == FAIL)

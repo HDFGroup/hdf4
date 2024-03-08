@@ -170,14 +170,14 @@ vicheckcompat(HFILEID f)
 int32
 vimakecompat(HFILEID f)
 {
-    VGROUP *vg;
-    VDATA  *vs;
-    uint8  *buf       = NULL; /* to store an old vdata or vgroup descriptor  */
-    int32   old_bsize = 0, bsize = 0;
-    int32   aid;
-    int32   ret;
-    uintn   u;
-    uint16  tag = DFTAG_NULL, ref = DFTAG_NULL;
+    VGROUP  *vg;
+    VDATA   *vs;
+    uint8   *buf       = NULL; /* to store an old vdata or vgroup descriptor  */
+    int32    old_bsize = 0, bsize = 0;
+    int32    aid;
+    int32    ret;
+    unsigned u;
+    uint16   tag = DFTAG_NULL, ref = DFTAG_NULL;
 
     /* =============================================  */
     /* --- read all vgs and convert each --- */
@@ -210,7 +210,7 @@ vimakecompat(HFILEID f)
         vg->version = 2; /* version 2 */
         vg->more    = 0;
         /* inside each vgroup, change the old tags to new */
-        for (u = 0; u < (uintn)vg->nvelt; u++)
+        for (u = 0; u < (unsigned)vg->nvelt; u++)
             if (vg->tag[u] == OLD_VGDESCTAG)
                 vg->tag[u] = NEW_VGDESCTAG;
             else if (vg->tag[u] == OLD_VSDESCTAG)
@@ -346,9 +346,9 @@ vmakecompat(char *fs)
 static void
 oldunpackvg(VGROUP *vg, uint8 buf[], int32 *size)
 {
-    uint8 *bb;
-    int16  int16var;
-    uintn  i;
+    uint8   *bb;
+    int16    int16var;
+    unsigned i;
 
     *size = *size; /* dummy, so that compiler thinks it is used  */
 
@@ -359,11 +359,11 @@ oldunpackvg(VGROUP *vg, uint8 buf[], int32 *size)
     vg->nvelt = (uint16)int16var;
 
     /* retrieve the tags */
-    for (i = 0; i < (uintn)vg->nvelt; i++)
+    for (i = 0; i < (unsigned)vg->nvelt; i++)
         UINT16DECODE(bb, vg->tag[i]);
 
     /* retrieve the refs */
-    for (i = 0; i < (uintn)vg->nvelt; i++)
+    for (i = 0; i < (unsigned)vg->nvelt; i++)
         UINT16DECODE(bb, vg->ref[i]);
 
     /* retrieve vgname */
@@ -377,7 +377,7 @@ oldunpackvs(VDATA *vs, uint8 buf[], int32 *size)
 {
     uint8 *bb;
     int16  int16var;
-    intn   i;
+    int    i;
 
     *size = *size; /* dummy */
 
@@ -390,7 +390,7 @@ oldunpackvs(VDATA *vs, uint8 buf[], int32 *size)
     UINT16DECODE(bb, vs->wlist.ivsize);
 
     INT16DECODE(bb, int16var);
-    vs->wlist.n = (intn)int16var;
+    vs->wlist.n = (int)int16var;
 
     for (i = 0; i < vs->wlist.n; i++) /* retrieve the type */
         INT16DECODE(bb, vs->wlist.type[i]);
@@ -423,7 +423,7 @@ oldunpackvs(VDATA *vs, uint8 buf[], int32 *size)
    Convert an old type (i.e. LOCAL_INT) to DFNT_ based types
  */
 int16
-map_from_old_types(intn type)
+map_from_old_types(int type)
 {
     switch (type) {
         case LOCAL_CHARTYPE:

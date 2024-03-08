@@ -128,7 +128,7 @@ HCPcnone_stwrite(accrec_t *access_rec)
     int32 HCPcnone_seek(access_rec,offset,origin)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 offset;       IN: the offset in bytes from the origin specified
-    intn origin;        IN: the origin to seek from [UNUSED!]
+    int origin;        IN: the origin to seek from [UNUSED!]
 
  RETURNS
     Returns SUCCEED or FAIL
@@ -265,7 +265,7 @@ HCPcnone_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pr
  DESCRIPTION
     Close the compressed data element and free modelling info.
 --------------------------------------------------------------------------*/
-intn
+int
 HCPcnone_endaccess(accrec_t *access_rec)
 {
     compinfo_t *info; /* special element information */

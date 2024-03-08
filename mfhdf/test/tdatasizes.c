@@ -48,7 +48,7 @@ check_datasizes(int32       fid,               /* file id */
                 int        *ret_num_errs /* current number of errors */)
 {
     int32 sds_id, sds_index;
-    intn  status;
+    int   status;
     int   num_errs = 0;
     char  mesg[80];
     int32 uncomp_size = 0, comp_size = 0;
@@ -80,13 +80,13 @@ check_datasizes(int32       fid,               /* file id */
 /* Test non-special SDSs.  This routine creates non-special SDSs, writes
  * data to one of the SDSs, and checks the sizes returned by SDgetdatasize
  */
-static intn
+static int
 test_nonspecial_SDSs(int32 fid)
 {
     int32 sds_id;
     int32 dimsize[2], start[2], edges[2];
     int32 data[Y_LENGTH][X_LENGTH];
-    intn  status;
+    int   status;
     int   i, j;
     int   num_errs = 0; /* number of errors so far */
 
@@ -139,7 +139,7 @@ test_nonspecial_SDSs(int32 fid)
  * and writes to "CompressedData" and "Non-CompressedData" SDSs.  It will then
  * check the sizes returned from SDgetdatasize calls.
  */
-static intn
+static int
 test_compressed_SDSs(int32 fid)
 {
     int32        sds_id, esds_id, usds_id;
@@ -147,7 +147,7 @@ test_compressed_SDSs(int32 fid)
     comp_coder_t comp_type; /* Compression flag */
     comp_info    c_info;    /* Compression structure */
     int32        data[Y_LENGTH][X_LENGTH];
-    intn         status;
+    int          status;
     int          i, j;
     int          num_errs = 0; /* number of errors so far */
 
@@ -225,14 +225,14 @@ test_compressed_SDSs(int32 fid)
 #define CHK_X     3
 #define CHK_Y     2
 
-static intn
+static int
 test_empty_SDSs(int32 fid)
 {
     int32         ch_sds_id, chcp_sds_id;
     int32         dim_sizes[RANK];
     HDF_CHUNK_DEF c_def; /* Chunking definitions */
     int32         flag;
-    intn          status;
+    int           status;
     int           num_errs = 0; /* number of errors so far */
 
     c_def.chunk_lengths[0] = CHK_X;
@@ -279,7 +279,7 @@ test_empty_SDSs(int32 fid)
  * "Chunked Not Empty" SDS and writes some chunks but not all to it.  It will
  * then call SDgetdatasize to verify the sizes.
  */
-static intn
+static int
 test_chunked_partial(int32 fid)
 {
     int32         sds_id;
@@ -287,7 +287,7 @@ test_chunked_partial(int32 fid)
     HDF_CHUNK_DEF c_def;          /* Chunking definitions */
     int32         flag;           /* Chunking flag */
     int16         fill_value = 0; /* Fill value */
-    intn          status;
+    int           status;
     int           num_errs = 0; /* number of errors so far */
 
     /* Declare chunks data type and initialize some of them. */
@@ -347,7 +347,7 @@ test_chunked_partial(int32 fid)
  * "ChunkedDeflateData" and "ChunkedNoDeflateData" SDSs and writes the same
  * data to both.  It will then use SDgetdatasize to verify the sizes.
  */
-static intn
+static int
 test_chkcmp_SDSs(int32 fid)
 {
     int32         sds_id, sds_index;
@@ -358,7 +358,7 @@ test_chkcmp_SDSs(int32 fid)
     int32         fill_value = 0; /* Fill value */
     int32         comp_size1 = 0, uncomp_size1 = 0;
     int32         comp_size2 = 0, uncomp_size2 = 0;
-    intn          status;
+    int           status;
     int           num_errs = 0; /* number of errors so far */
 
     /* Declare chunks data type and initialize some of them. */
@@ -517,7 +517,7 @@ test_chkcmp_SDSs(int32 fid)
    unlimited dimensions, writes data to it, and checks the sizes returned
    by SDgetdatasize
  */
-static intn
+static int
 test_extend_SDSs(int32 fid)
 {
     int32 sds_id     = -1;
@@ -529,7 +529,7 @@ test_extend_SDSs(int32 fid)
     int32 data[Y_LENGTH][X_LENGTH];
     float fdata[Y_LENGTH];
     int32 output[Y_LENGTH][X_LENGTH];
-    intn  status = -1;
+    int   status = -1;
     int   i, j;
     int   num_errs = 0; /* number of errors so far */
 
@@ -603,7 +603,7 @@ extern int
 test_datasizes()
 {
     int32 fid      = -1;
-    intn  status   = -1;
+    int   status   = -1;
     int   num_errs = 0;
 
     /* Output message about test being performed */

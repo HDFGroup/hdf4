@@ -1058,7 +1058,7 @@ insert_gr_attrs(int32 ri_id, int32 nattrs)
  */
 
 int
-insert_vs_attrs(int32 in, int32 findex, intn attrindex)
+insert_vs_attrs(int32 in, int32 findex, int attrindex)
 {
     char  attr_name[H4_MAX_NC_NAME];
     int32 n_values, attr_size, attr_type;

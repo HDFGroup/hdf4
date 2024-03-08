@@ -60,7 +60,7 @@ gen_bitio_test(void)
 {
     int32  fid;      /* file ID of bitio HDF file */
     uint8 *bit_data; /* pointer to the data to store in the datafile */
-    intn   i;        /* local counting variable */
+    int    i;        /* local counting variable */
 
     if ((fid = Hopen(BITIO_NAME, DFACC_CREATE, 0)) == FAIL)
         return FAIL;
@@ -106,13 +106,13 @@ gen_bitio_test(void)
 static int
 gen_nbit_test(void)
 {
-    int32  fid;        /* file ID of n-bit HDF file */
-    uint8 *nbit_data;  /* pointer to the initial data */
-    uint8 *out_data;   /* pointer to the data to store in the datafile */
-    uint32 store;      /* temporary storage for outgoing bits */
-    intn   store_bits; /* number of bits stored */
-    uintn  out_num;    /* number of bytes to output */
-    intn   i;          /* local counting variable */
+    int32    fid;        /* file ID of n-bit HDF file */
+    uint8   *nbit_data;  /* pointer to the initial data */
+    uint8   *out_data;   /* pointer to the data to store in the datafile */
+    uint32   store;      /* temporary storage for outgoing bits */
+    int      store_bits; /* number of bits stored */
+    unsigned out_num;    /* number of bytes to output */
+    int      i;          /* local counting variable */
 
     if ((fid = Hopen(NBIT_NAME, DFACC_CREATE, 0)) == FAIL)
         return FAIL;
@@ -138,15 +138,15 @@ gen_nbit_test(void)
         store <<= NBIT_BITS1;
         store |= (uint32)nbit_data[i] & (uint32)maskc[NBIT_BITS1];
         store_bits += NBIT_BITS1;
-        if (store_bits >= (intn)BITNUM) { /* have at least a full byte */
-            out_data[out_num] = (uint8)((store >> (store_bits - (intn)BITNUM)) & (uint32)maskc[8]);
+        if (store_bits >= (int)BITNUM) { /* have at least a full byte */
+            out_data[out_num] = (uint8)((store >> (store_bits - (int)BITNUM)) & (uint32)maskc[8]);
             out_num++;
-            store_bits -= (intn)BITNUM;
+            store_bits -= (int)BITNUM;
             store >>= BITNUM;
         }                 /* end if */
     }                     /* end for */
     if (store_bits > 0) { /* push over any leftover bits to the left */
-        out_data[out_num] = (uint8)(store << ((intn)BITNUM - store_bits));
+        out_data[out_num] = (uint8)(store << ((int)BITNUM - store_bits));
         out_num++;
     } /* end if */
 

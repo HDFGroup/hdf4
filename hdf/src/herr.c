@@ -44,8 +44,8 @@ typedef struct error_t {
     hdf_err_code_t error_code;                   /* Error number */
     char           function_name[FUNC_NAME_LEN]; /* function where error occur */
     const char    *file_name;                    /* file where error occur */
-    intn           line;                         /* line in file where error occurs */
-    intn           system;                       /* for system or HDF error */
+    int            line;                         /* line in file where error occurs */
+    int            system;                       /* for system or HDF error */
     char          *desc;                         /* optional supplied description */
 } error_t;
 
@@ -326,9 +326,9 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 void
-HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_name, intn line)
+HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_name, int line)
 {
-    intn i;
+    int i;
 
     /* if the stack is not allocated, then do it */
     if (!error_stack) {
@@ -459,7 +459,7 @@ HEvalue(int32 level)
  PURPOSE
     Terminate various static buffers.
  USAGE
-    intn HEshutdown()
+    int HEshutdown()
  RETURNS
     Returns SUCCEED/FAIL
  DESCRIPTION
@@ -470,7 +470,7 @@ HEvalue(int32 level)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 HEshutdown(void)
 {
     if (error_stack != NULL) {

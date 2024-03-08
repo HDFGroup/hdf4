@@ -58,10 +58,10 @@ File/Interface Functions:
 int32 GRstart(int32 hdf_file_id)
     - Initializes the GR interface for a particular file. Returns a 'grid' to
         specify the GR group to operate on.
-intn GRfileinfo(int32 grid, int32 *n_datasets, int32 *n_attrs)
+int GRfileinfo(int32 grid, int32 *n_datasets, int32 *n_attrs)
     - Returns information about the datasets and "global" attributes for the
         GR interface.
-intn GRend(int32 grid)
+int GRend(int32 grid)
     - Terminates multi-file GR access for a file.
 
 Image I/O Functions:
@@ -72,23 +72,23 @@ int32 GRselect(int32 grid,int32 index)
     - Selects an existing RI to operate on.
 int32 GRnametoindex(int32 grid,char *name)
     - Maps a RI name to an index which is returned.
-intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,int32 dimsizes[2],int32 *n_attr)
+int GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,int32 dimsizes[2],int32 *n_attr)
     - Gets information about an RI which has been selected/created.
-intn GRgetnluts(int32 riid)
+int GRgetnluts(int32 riid)
     - Get the number of palettes (LUTs) for an image
-intn GRwriteimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],void * data)
+int GRwriteimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],void * data)
     - Writes image data to an RI.  Partial dataset writing and subsampling is
         allowed, but only with the dimensions of the dataset (ie. no UNLIMITED
         dimension support)
-intn GRreadimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],void * data)
+int GRreadimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],void * data)
     - Read image data from an RI.  Partial reads and subsampling are allowed.
-intn GRendaccess(int32 riid)
+int GRendaccess(int32 riid)
     - End access to an RI.
 
 Dimension Functions:
 int32 GRgetdimid(int32 riid,int32 index)
     - Get a dimension id ('dimid') for an RI to assign attributes to. [Later]
-intn GRsetdimname(int32 dimid,char *name)
+int GRsetdimname(int32 dimid,char *name)
     - Set the name of a dimension. [Later]
 int32 GRdiminfo(int32 dimid,char *name,int32 *size,int32 *n_attr)
     - Get information about the dimensions attributes and size. [Later]
@@ -101,9 +101,9 @@ int32 GRreftoindex(int32 hdf_file_id,uint16 ref)
         GRselect.
 
 Interlace Request Functions:
-intn GRreqlutil(int32 riid,intn il)
+int GRreqlutil(int32 riid,int il)
     - Request that the next LUT read from an RI have a particular interlace.
-intn GRreqimageil(int32 riid,intn il)
+int GRreqimageil(int32 riid,int il)
     - Request that the image read from an RI have a particular interlace.
 
 LUT/Palette I/O Functions:
@@ -111,32 +111,32 @@ int32 GRgetlutid(int32 riid,int32 index)
     - Get a palette id ('palid') for an RI.
 uint16 GRluttoref(int32 lutid)
     - Maps a lutid to a reference # for annotating of including in a Vgroup.
-intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
+int GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
     - Gets information about a palette.
-intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,void * data)
+int GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,void * data)
     - Writes out a palette for an RI.
-intn GRreadlut(int32 palid,void * data)
+int GRreadlut(int32 palid,void * data)
     - Reads a palette from an RI.
 
 Special Element Functions:
 int32 GRsetexternalfile(int32 riid,char *filename,int32 offset)
     - Makes the image data of an RI into an external element special element.
-intn GRsetaccesstype(int32 riid,uintn accesstype)
+int GRsetaccesstype(int32 riid,unsigned accesstype)
     - Sets the access for an RI to be either serial or parallel I/O.
-intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
+int GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
     - Makes the image data of an RI into a compressed special element.
-intn GRgetcompress(int32 riid,comp_coder_t* comp_type,comp_info *cinfo)
+int GRgetcompress(int32 riid,comp_coder_t* comp_type,comp_info *cinfo)
     - Retrieves the compression information of a raster image's data.
-intn GRgetcompinfo(int32 riid,comp_coder_t* comp_type,comp_info *cinfo)
+int GRgetcompinfo(int32 riid,comp_coder_t* comp_type,comp_info *cinfo)
     - Retrieves the compression information of a raster image's data.
       Will replace GRgetcompress in the future.
 
 Attribute Functions:
-intn GRsetattr(int32 dimid|riid|grid,char *name,int32 attr_nt,int32 count,void * data)
+int GRsetattr(int32 dimid|riid|grid,char *name,int32 attr_nt,int32 count,void * data)
     - Write an attribute for an object.
 int32 GRattrinfo(int32 dimid|riid|grid,int32 index,char *name,int32 *attr_nt,int32 *count)
     - Get attribute information for an object.
-intn GRgetattr(int32 dimid|riid|grid,int32 index,void * data)
+int GRgetattr(int32 dimid|riid|grid,int32 index,void * data)
     - Read an attribute for an object.
 int32 GRfindattr(int32 dimid|riid|grid,char *name)
     - Get the index of an attribute with a given name for an object.
@@ -149,7 +149,7 @@ Chunking Functions:
      GRsetchunkcache -- maximum number of chunks to cache
 
 LOCAL ROUTINES
-intn GRIil_convert(const void * inbuf,gr_interlace_t inil,void * outbuf,
+int GRIil_convert(const void * inbuf,gr_interlace_t inil,void * outbuf,
         gr_interlace_t outil,int32 dims[2],int32 ncomp,int32 nt);
     - Copy a pixel buffer from one interlace to another.
  */
@@ -173,7 +173,7 @@ intn GRIil_convert(const void * inbuf,gr_interlace_t inil,void * outbuf,
 static TBBT_TREE *gr_tree = NULL;
 
 /* Whether we've installed the library termination function yet for this interface */
-static intn library_terminate = FALSE;
+static int library_terminate = FALSE;
 
 typedef struct image_info_struct {
     uint16 grp_tag, grp_ref; /* tag/ref of the group the image is in */
@@ -182,22 +182,22 @@ typedef struct image_info_struct {
     int32  offset;           /* offset of the image data */
 } imginfo_t;
 
-static intn GRIupdatemeta(int32 hdf_file_id, ri_info_t *img_ptr);
+static int GRIupdatemeta(int32 hdf_file_id, ri_info_t *img_ptr);
 
-static intn GRIupdateRIG(int32 hdf_file_id, ri_info_t *img_ptr);
+static int GRIupdateRIG(int32 hdf_file_id, ri_info_t *img_ptr);
 
-static intn GRIupdateRI(int32 hdf_file_id, ri_info_t *img_ptr);
+static int GRIupdateRI(int32 hdf_file_id, ri_info_t *img_ptr);
 
-static intn GRIup_attr_data(int32 hdf_file_id, at_info_t *attr_ptr);
+static int GRIup_attr_data(int32 hdf_file_id, at_info_t *attr_ptr);
 
-static intn GRIstart(void);
+static int GRIstart(void);
 
-static intn GRIgetaid(ri_info_t *img_ptr, intn acc_perm);
+static int GRIgetaid(ri_info_t *img_ptr, int acc_perm);
 
-static intn GRIisspecial_type(int32 file_id, uint16 tag, uint16 ref);
+static int GRIisspecial_type(int32 file_id, uint16 tag, uint16 ref);
 
 #ifdef H4_HAVE_LIBSZ /* we have the library */
-static intn GRsetup_szip_parms(ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims);
+static int GRsetup_szip_parms(ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims);
 #endif
 
 /*--------------------------------------------------------------------------
@@ -206,9 +206,9 @@ static intn GRsetup_szip_parms(ri_info_t *ri_ptr, comp_info *c_info, int32 *cdim
  PURPOSE
     Compare two B-tree keys for equality.
  USAGE
-    intn rigcompare(k1, k2, cmparg)
+    int rigcompare(k1, k2, cmparg)
         void * k1, k2;               IN: ptrs to the keys for the tree elements
-        intn cmparg;                IN/OUT: unused
+        int cmparg;                IN/OUT: unused
  RETURNS
     Returns negative for k2>k1, positive for k2<k1 and 0 for k2=k1
  DESCRIPTION
@@ -222,12 +222,12 @@ static intn GRsetup_szip_parms(ri_info_t *ri_ptr, comp_info *c_info, int32 *cdim
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
-rigcompare(void *k1, void *k2, intn cmparg)
+int
+rigcompare(void *k1, void *k2, int cmparg)
 {
     (void)cmparg;
 
-    return (intn)((*(int32 *)k1) - (*(int32 *)k2)); /* valid for integer keys */
+    return (int)((*(int32 *)k1) - (*(int32 *)k2)); /* valid for integer keys */
 } /* rigcompare */
 
 /* ---------------------------- GRIgrdestroynode ------------------------- */
@@ -335,7 +335,7 @@ Get_grfile(HFILEID f)
  PURPOSE
     Returns the special type if the given element is special.
  USAGE
-    intn GRIisspecial_type(file_id, tag, ref)
+    int GRIisspecial_type(file_id, tag, ref)
         int32 file_id;    IN: file id
         uint16 tag;    IN: tag of the element
         uint16 ref;    IN: ref of the element
@@ -360,12 +360,12 @@ Get_grfile(HFILEID f)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-static intn
+static int
 GRIisspecial_type(int32 file_id, uint16 tag, uint16 ref)
 {
     accrec_t *access_rec = NULL; /* access element record */
     int32     aid;
-    intn      ret_value = 0;
+    int       ret_value = 0;
 
     /* clear error stack */
     HEclear();
@@ -454,12 +454,12 @@ Store_imginfo(imginfo_t *imginfo, uint16 grp_tag, uint16 grp_ref, uint16 img_tag
 
    Added to refactor repeated code. -BMR, Jul 13, 2015
  */
-static intn
+static int
 Get_oldimgs(int32 file_id, imginfo_t *img_info, uint16 searched_tag)
 {
     uint16     find_tag, find_ref;
     int32      find_off, find_len;
-    intn       num_imgs = 0;
+    int        num_imgs = 0;
     imginfo_t *ptr      = img_info;
 
     find_tag = find_ref = 0;
@@ -530,7 +530,7 @@ Decode_diminfo(uint8 *p, dim_info_t *dim_info)
  PURPOSE
     Find all the unique raster images in the file
  USAGE
-    intn GRIget_image_list(hdf_file_id,gr_info)
+    int GRIget_image_list(hdf_file_id,gr_info)
         int32 hdf_file_id;          IN: file ID from Hopen
         gr_info_t *gr_info;         IN: # of unique images found
  RETURNS
@@ -551,19 +551,19 @@ Decode_diminfo(uint8 *p, dim_info_t *dim_info)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-static intn
+static int
 GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
 {
     uint16     gr_ref;                          /* ref # of the Vgroup containing new-style RIs */
-    intn       curr_image;                      /* current image gathering information about */
-    intn       nimages;                         /* total number of potential images */
-    intn       noldimages;                      /* count of old imgs returned by Get_oldimgs */
+    int        curr_image;                      /* current image gathering information about */
+    int        nimages;                         /* total number of potential images */
+    int        noldimages;                      /* count of old imgs returned by Get_oldimgs */
     int32      nri, nci, nri8, nci8, nii8, nvg; /* number of RIs, CIs, RI8s, CI8s & II8s & Vgroups */
     uint16     find_tag, find_ref;              /* storage for tag/ref pairs found */
     int32      find_off, find_len;              /* storage for offset/lengths of tag/refs found */
     imginfo_t *img_info;                        /* image info list */
-    intn       i, j;                            /* local counting variable */
-    intn       ret_value = SUCCEED;
+    int        i, j;                            /* local counting variable */
+    int        ret_value = SUCCEED;
 
     HEclear();
 
@@ -588,7 +588,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
     nvg = Hnumber(file_id, RI_TAG);
     if (nvg == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
-    nimages = (intn)(nri + nci + nri8 + nci8 + nii8 + nvg);
+    nimages = (int)(nri + nci + nri8 + nci8 + nii8 + nvg);
 
     /* if there are no images just close the file and get out */
     if (nimages == 0) {
@@ -773,7 +773,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                            linked block or chunked images to go into the if
                            statement below in order for the duplicate image be
                            eliminated - bug #814, BMR Feb, 2005 */
-                        intn special_type =
+                        int special_type =
                             GRIisspecial_type(file_id, img_info[i].img_tag, img_info[i].img_ref);
 
                         if (((img_info[i].offset != INVALID_OFFSET && img_info[i].offset != 0) &&
@@ -1280,7 +1280,7 @@ done:
  PURPOSE
     Convert a buffer from one interlace to another.
  USAGE
-    intn GRIil_convert(inbuf,inil,outbuf,outil,dims,ncomp,nt)
+    int GRIil_convert(inbuf,inil,outbuf,outil,dims,ncomp,nt)
         const void * inbuf;          IN: input buffer
         gr_interlace_t inil;        IN: input buffer's interlace scheme
         void * outbuf;               IN: output buffer
@@ -1305,20 +1305,20 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 GRIil_convert(const void *inbuf, gr_interlace_t inil, void *outbuf, gr_interlace_t outil, int32 dims[2],
               int32 ncomp, int32 nt)
 {
-    intn         ret_value     = SUCCEED;
-    uintn        pixel_size    = (uintn)DFKNTsize((nt | DFNT_NATIVE) & (~DFNT_LITEND)) * (uintn)ncomp;
-    uintn        comp_size     = (uintn)DFKNTsize((nt | DFNT_NATIVE) & (~DFNT_LITEND));
+    int          ret_value     = SUCCEED;
+    unsigned     pixel_size    = (unsigned)DFKNTsize((nt | DFNT_NATIVE) & (~DFNT_LITEND)) * (unsigned)ncomp;
+    unsigned     comp_size     = (unsigned)DFKNTsize((nt | DFNT_NATIVE) & (~DFNT_LITEND));
     const void **in_comp_ptr   = NULL; /* an array of pointers to each input component */
     void       **out_comp_ptr  = NULL; /* an array of pointers to each output component */
     int32       *in_pixel_add  = NULL; /* an array of increments for each input pixel moved */
     int32       *out_pixel_add = NULL; /* an array of increments for each output pixel moved */
     int32       *in_line_add   = NULL; /* an array of increments for each input line moved */
     int32       *out_line_add  = NULL; /* an array of increments for each output line moved */
-    intn         i, j, k;              /* local counting variables */
+    int          i, j, k;              /* local counting variables */
 
     if (inil == outil) /* check for trivial input=output 'conversion' */
         memcpy(outbuf, inbuf, (size_t)dims[XDIM] * (size_t)dims[YDIM] * (size_t)pixel_size);
@@ -1529,7 +1529,7 @@ done:
  PURPOSE
     Report high-level information about the GR*() interface for a given file.
  USAGE
-    intn GRfileinfo(grid, n_datasets, n_attrs)
+    int GRfileinfo(grid, n_datasets, n_attrs)
         int32 grid;                 IN: GR ID to get information about
         int32 *n_datasets;          OUT: the # of GR datasets in a file
         int32 *n_attrs;             OUT: the # of "global" GR attributes
@@ -1544,11 +1544,11 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 GRfileinfo(int32 grid, int32 *n_datasets, int32 *n_attrs)
 {
     gr_info_t *gr_ptr; /* ptr to the GR information for a file */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
     HEclear();
@@ -1577,7 +1577,7 @@ done:
  PURPOSE
     Internal routine to update the meta-data for an image
  USAGE
-    intn GRIupdatemeta(hdf_file_id,img_ptr)
+    int GRIupdatemeta(hdf_file_id,img_ptr)
         int32 hdf_file_id;          IN: the file ID for the HDF file.
         ri_info_t *img_ptr;         IN: pointer to the image info for the
                                         image to write.
@@ -1593,13 +1593,13 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-static intn
+static int
 GRIupdatemeta(int32 hdf_file_id, ri_info_t *img_ptr)
 {
     uint8  GRtbuf[64];  /* local buffer for reading RIG info */
     uint8  ntstring[4]; /* temporary storage for the number type information */
     uint8 *p;           /* temporary pointer into buffer */
-    intn   ret_value = SUCCEED;
+    int    ret_value = SUCCEED;
 
     HEclear();
     if (!HDvalidfid(hdf_file_id) || img_ptr == NULL)
@@ -1684,7 +1684,7 @@ done:
  PURPOSE
     Internal routine to update the RIG for an image
  USAGE
-    intn GRIupdateRIG(hdf_file_id,img_ptr)
+    int GRIupdateRIG(hdf_file_id,img_ptr)
         int32 hdf_file_id;          IN: the file ID for the HDF file.
         ri_info_t *img_ptr;         IN: pointer to the image info for the
                                         image to write.
@@ -1699,11 +1699,11 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-static intn
+static int
 GRIupdateRIG(int32 hdf_file_id, ri_info_t *img_ptr)
 {
     int32 GroupID; /* RIG id for group interface */
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     HEclear();
     if (!HDvalidfid(hdf_file_id) || img_ptr == NULL)
@@ -1760,7 +1760,7 @@ done:
  PURPOSE
     Internal routine to update the RI Vgroup for an image
  USAGE
-    intn GRIupdateRI(hdf_file_id,img_ptr)
+    int GRIupdateRI(hdf_file_id,img_ptr)
         int32 hdf_file_id;          IN: the file ID for the HDF file.
         ri_info_t *img_ptr;         IN: pointer to the image info for the
                                         image to write.
@@ -1775,11 +1775,11 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-static intn
+static int
 GRIupdateRI(int32 hdf_file_id, ri_info_t *img_ptr)
 {
     int32 GroupID; /* RI vgroup id */
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
     int32 temp_ref; /* used to hold the returned value from a function
                             that may return a ref or a FAIL - BMR */
 
@@ -1865,7 +1865,7 @@ done:
  PURPOSE
     Internal routine to update/create the attribute data
  USAGE
-    intn GRIup_attr_data(hdf_file_id,attr_ptr)
+    int GRIup_attr_data(hdf_file_id,attr_ptr)
         int32 hdf_file_id;          IN: the file ID for the HDF file.
         at_info_t *attr_ptr;        IN: pointer to the attribute info for the
                                         attr. to write.
@@ -1880,10 +1880,10 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-static intn
+static int
 GRIup_attr_data(int32 hdf_file_id, at_info_t *attr_ptr)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     HEclear();
     if (!HDvalidfid(hdf_file_id) || attr_ptr == NULL)
@@ -1925,7 +1925,7 @@ done:
  PURPOSE
     Terminate the GR*() interface for a given HDF file.
  USAGE
-    intn GRend(grid)
+    int GRend(grid)
         int32 grid;          IN: GR ID from GRstart
  RETURNS
     SUCCEED/FAIL
@@ -1938,7 +1938,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 GRend(int32 grid)
 {
     int32      hdf_file_id; /* HDF file ID */
@@ -1946,7 +1946,7 @@ GRend(int32 grid)
     gr_info_t *gr_ptr;      /* ptr to the GR information for this grid */
     filerec_t *file_rec;    /* File record */
     void     **t1;
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
     int32      temp_ref; /* used to hold the returned value from a function
                                  that may return a ref or a FAIL - BMR */
 
@@ -2379,7 +2379,7 @@ done:
     Gets information about a raster image.
 
  USAGE
-    intn GRgetiminfo(riid,name,ncomp,nt,il,dimsizes,n_attr)
+    int GRgetiminfo(riid,name,ncomp,nt,il,dimsizes,n_attr)
         int32 riid;         IN: RI ID from GRselect/GRcreate
         char *name;         OUT: name of raster image
         int32 *ncomp;       OUT: number of components in image
@@ -2401,11 +2401,11 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 GRgetiminfo(int32 riid, char *name, int32 *ncomp, int32 *nt, int32 *il, int32 dimsizes[2], int32 *n_attr)
 {
     ri_info_t *ri_ptr; /* ptr to the image to work with */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -2450,7 +2450,7 @@ done:
     Get the number of palettes (LUTs) for an image
 
  USAGE
-    intn GRgetnluts(riid)
+    int GRgetnluts(riid)
         int32 riid;         IN: RI ID from GRselect/GRcreate
 
  RETURNS
@@ -2466,11 +2466,11 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 GRgetnluts(int32 riid)
 {
     ri_info_t *ri_ptr; /* ptr to the image to work with */
-    intn       ret_value = FAIL;
+    int        ret_value = FAIL;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -2500,7 +2500,7 @@ done:
     Writes raster data to an image
 
  USAGE
-    intn GRwriteimage(riid,start,stride,edge,data)
+    int GRwriteimage(riid,start,stride,edge,data)
         int32 riid;         IN: RI ID from GRselect/GRcreate
         int32 start[2];     IN: array containing the offset in the image of the
                                 image data to write out
@@ -2528,27 +2528,27 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], void *data)
 {
     int32      stride[2];           /* pointer to the stride array */
     gr_info_t *gr_ptr;              /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;              /* ptr to the image to work with */
-    intn       solid_block = FALSE; /* whether the image data is a solid block of data */
-    intn       whole_image = FALSE; /* whether we are writing out the whole image */
+    int        solid_block = FALSE; /* whether the image data is a solid block of data */
+    int        whole_image = FALSE; /* whether we are writing out the whole image */
     void     **img_data;            /* pointer to the converted image data to write */
-    uintn      pixel_mem_size,      /* size of a pixel in memory */
+    unsigned   pixel_mem_size,      /* size of a pixel in memory */
         pixel_disk_size;            /* size of a pixel on disk */
     uint16       scheme;            /* compression scheme used for JPEG images */
     uint32       comp_config;
     comp_coder_t comp_type;
     comp_info    cinfo;
-    intn         status  = FAIL;
-    intn         convert = FALSE;          /* true if machine NT != NT to be written */
+    int          status  = FAIL;
+    int          convert = FALSE;          /* true if machine NT != NT to be written */
     uint8        platnumsubclass;          /* class of this NT for this platform */
-    intn         new_image        = FALSE; /* whether we are writing a new image out */
-    intn         switch_interlace = FALSE; /* whether the memory interlace needs to be switched around */
-    intn         ret_value        = SUCCEED;
+    int          new_image        = FALSE; /* whether we are writing a new image out */
+    int          switch_interlace = FALSE; /* whether the memory interlace needs to be switched around */
+    int          ret_value        = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -2623,8 +2623,8 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
 
     /* Get the size of the pixels in memory and on disk */
     pixel_mem_size =
-        (uintn)(ri_ptr->img_dim.ncomps * DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
-    pixel_disk_size = (uintn)(ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt));
+        (unsigned)(ri_ptr->img_dim.ncomps * DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
+    pixel_disk_size = (unsigned)(ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt));
 
     /* Get number-type and conversion information */
     platnumsubclass = (uint8)DFKgetPNSC(ri_ptr->img_dim.nt & (~DFNT_LITEND), DF_MT);
@@ -2685,7 +2685,7 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
     else {                          /* write only part of the image out */
         int32 img_offset;           /* current offset in the image data */
         void *tmp_data;             /* temp. pointer to the image data to write */
-        intn  fill_image   = FALSE; /* whether to create fill values, etc. */
+        int   fill_image   = FALSE; /* whether to create fill values, etc. */
         void *fill_line    = NULL;  /* array containing the fill pixels for an entire line of the image */
         int32 fill_lo_size = 0,     /* number of bytes in the "low" block */
             fill_hi_size   = 0,     /* number of bytes in the "high" block */
@@ -2751,7 +2751,7 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
         tmp_data = img_data;
         if (solid_block == TRUE) { /* write out runs of data in the image */
             int32 pix_len;         /* length of current row's pixel run */
-            intn  i;               /* temporary loop variable */
+            int   i;               /* temporary loop variable */
 
             pix_len = (int32)pixel_disk_size * count[XDIM];
 
@@ -2807,9 +2807,9 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
             }                               /* end else */
         }                                   /* end if */
         else {                              /* sub-sampling, seek to each data element and write it out */
-            intn  i, j, k;                  /* temporary loop variables */
+            int   i, j, k;                  /* temporary loop variables */
             int32 fill_stride_size = 0;     /* # of pixels in the stride block */
-            intn  fill_xdim        = FALSE, /* whether to fill in the X dimension */
+            int   fill_xdim        = FALSE, /* whether to fill in the X dimension */
                 fill_ydim          = FALSE; /* whether to fill in the Y dimension */
 
             /* check if we need to insert fill pixels between strides */
@@ -2920,7 +2920,7 @@ done:
     Read raster data for an image
 
  USAGE
-    intn GRreadimage(riid,start,stride,edge,data)
+    int GRreadimage(riid,start,stride,edge,data)
         int32 riid;         IN: RI ID from GRselect/GRcreate
         int32 start[2];     IN: array containing the offset in the image of the
                                 image data to read in
@@ -2947,27 +2947,27 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 GRreadimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], void *data)
 {
     int32        hdf_file_id;         /* HDF file ID */
     gr_info_t   *gr_ptr;              /* ptr to the GR information for this grid */
     ri_info_t   *ri_ptr;              /* ptr to the image to work with */
     int32        stride[2];           /* pointer to the stride array */
-    intn         solid_block = FALSE; /* whether the image data is a solid block of data */
-    intn         whole_image = FALSE; /* whether we are reading in the whole image */
-    intn         image_data  = FALSE; /* whether there is actual image data or not */
+    int          solid_block = FALSE; /* whether the image data is a solid block of data */
+    int          whole_image = FALSE; /* whether we are reading in the whole image */
+    int          image_data  = FALSE; /* whether there is actual image data or not */
     void       **img_data;            /* pointer to the converted image data to write */
-    uintn        pixel_disk_size;     /* size of a pixel on disk */
-    uintn        pixel_mem_size;      /* size of a pixel in memory */
-    intn         convert;             /* true if machine NT != NT to be written */
+    unsigned     pixel_disk_size;     /* size of a pixel on disk */
+    unsigned     pixel_mem_size;      /* size of a pixel in memory */
+    int          convert;             /* true if machine NT != NT to be written */
     uint8        platnumsubclass;     /* class of this NT for this platform */
     uint16       scheme;              /* compression scheme used for JPEG images */
     uint32       comp_config;
     comp_coder_t comp_type;
     comp_info    cinfo;
-    intn         status    = FAIL;
-    intn         ret_value = SUCCEED;
+    int          status    = FAIL;
+    int          ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -3038,9 +3038,9 @@ GRreadimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], void
         solid_block = FALSE;
 
     /* Get the size of the pixels in memory and on disk */
-    pixel_disk_size = (uintn)(ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt));
+    pixel_disk_size = (unsigned)(ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt));
     pixel_mem_size =
-        (uintn)(ri_ptr->img_dim.ncomps * DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
+        (unsigned)(ri_ptr->img_dim.ncomps * DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
 
     /* Get number-type and conversion information */
     platnumsubclass = (uint8)DFKgetPNSC(ri_ptr->img_dim.nt & (~DFNT_LITEND), DF_MT);
@@ -3112,7 +3112,7 @@ GRreadimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], void
             tmp_data = img_data;
             if (solid_block == TRUE) { /* read in runs of data in the image */
                 int32 pix_len;         /* length of current row's pixel run */
-                intn  i;               /* temporary loop variable */
+                int   i;               /* temporary loop variable */
 
                 pix_len = (int32)pixel_disk_size * count[XDIM];
 
@@ -3127,7 +3127,7 @@ GRreadimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], void
                 }                 /* end for */
             }                     /* end if */
             else {                /* sub-sampling, seek to each data element and read it in */
-                intn  i, j;       /* temporary loop variables */
+                int   i, j;       /* temporary loop variables */
                 int32 stride_add; /* amount to add for stride amount */
 
                 stride_add = (int32)pixel_disk_size * stride[XDIM];
@@ -3188,7 +3188,7 @@ done:
     End access to an RI.
 
  USAGE
-    intn GRendaccess(riid)
+    int GRendaccess(riid)
         int32 riid;         IN: RI ID from GRselect/GRcreate
 
  RETURNS
@@ -3203,11 +3203,11 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 GRendaccess(int32 riid)
 {
     ri_info_t *ri_ptr; /* ptr to the image to work with */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -3374,9 +3374,9 @@ done:
     Request that the next LUT read from an RI have a particular interlace.
 
  USAGE
-    intn GRreqlutil(riid,il)
+    int GRreqlutil(riid,il)
         int32 riid;         IN: RI ID from GRselect/GRcreate
-        intn il;            IN: interlace for next LUT.  From the following
+        int il;            IN: interlace for next LUT.  From the following
                                 values (found in mfgr.h):
                       MFGR_INTERLACE_PIXEL      - pixel interlacing
                       MFGR_INTERLACE_LINE       - line interlacing
@@ -3393,18 +3393,18 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
-GRreqlutil(int32 riid, intn il)
+int
+GRreqlutil(int32 riid, int il)
 {
     ri_info_t *ri_ptr; /* ptr to the image to work with */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
 
     /* check the validity of the RI ID */
-    if (HAatom_group(riid) != RIIDGROUP || il < (intn)MFGR_INTERLACE_PIXEL ||
-        il > (intn)MFGR_INTERLACE_COMPONENT)
+    if (HAatom_group(riid) != RIIDGROUP || il < (int)MFGR_INTERLACE_PIXEL ||
+        il > (int)MFGR_INTERLACE_COMPONENT)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate RI's object in hash table */
@@ -3426,9 +3426,9 @@ done:
     Request that the image read from an RI have a particular interlace.
 
  USAGE
-    intn GRreqimageil(riid,il)
+    int GRreqimageil(riid,il)
         int32 riid;         IN: RI ID from GRselect/GRcreate
-        intn il;            IN: interlace for next RI.  From the following
+        int il;            IN: interlace for next RI.  From the following
                                 values (found in mfgr.h):
                       MFGR_INTERLACE_PIXEL      - pixel interlacing
                       MFGR_INTERLACE_LINE       - line interlacing
@@ -3445,18 +3445,18 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
-GRreqimageil(int32 riid, intn il)
+int
+GRreqimageil(int32 riid, int il)
 {
     ri_info_t *ri_ptr; /* ptr to the image to work with */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
 
     /* check the validity of the RI ID */
-    if (HAatom_group(riid) != RIIDGROUP || il < (intn)MFGR_INTERLACE_PIXEL ||
-        il > (intn)MFGR_INTERLACE_COMPONENT)
+    if (HAatom_group(riid) != RIIDGROUP || il < (int)MFGR_INTERLACE_PIXEL ||
+        il > (int)MFGR_INTERLACE_COMPONENT)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate RI's object in hash table */
@@ -3568,7 +3568,7 @@ done:
     Gets information about a LUT.
 
  USAGE
-    intn GRgetlutinfo(lutid,ncomp,nt,il,nentries)
+    int GRgetlutinfo(lutid,ncomp,nt,il,nentries)
         int32 lutid;        IN: LUT ID from GRgetlutid
         int32 *ncomp;       OUT: number of components in LUT
         int32 *nt;          OUT: number type of components
@@ -3586,11 +3586,11 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 GRgetlutinfo(int32 lutid, int32 *ncomp, int32 *nt, int32 *il, int32 *nentries)
 {
     ri_info_t *ri_ptr; /* ptr to the image to work with */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -3637,7 +3637,7 @@ done:
     Writes out a LUT for an RI.
 
  USAGE
-    intn GRwritelut(riid,ncomps,nt,il,nentries,data)
+    int GRwritelut(riid,ncomps,nt,il,nentries,data)
         int32 lutid;        IN: LUT ID from GRgetlutid
         int32 ncomp;        IN: number of components in LUT
         int32 nt;           IN: number type of components
@@ -3656,12 +3656,12 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 GRwritelut(int32 lutid, int32 ncomps, int32 nt, int32 il, int32 nentries, void *data)
 {
     int32      hdf_file_id; /* file ID from Hopen */
     ri_info_t *ri_ptr;      /* ptr to the image to work with */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -3723,7 +3723,7 @@ done:
     Reads a LUT from an RI.
 
  USAGE
-    intn GRreadlut(lutid,data)
+    int GRreadlut(lutid,data)
         int32 lutid;        IN: LUT ID from GRgetlutid
         void * data;         IN: buffer for LUT data read in
 
@@ -3738,12 +3738,12 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 GRreadlut(int32 lutid, void *data)
 {
     int32      hdf_file_id; /* file ID from Hopen */
     ri_info_t *ri_ptr;      /* ptr to the image to work with */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -3764,12 +3764,12 @@ GRreadlut(int32 lutid, void *data)
 
     /* Re-format the palette into the user's requested interlacing */
     if (ri_ptr->lut_il != MFGR_INTERLACE_PIXEL) {
-        uintn pixel_mem_size; /* size of a pixel in memory */
-        void *pixel_buf;      /* buffer for the pixel interlaced data */
-        int32 count[2];       /* "dimension" info */
+        unsigned pixel_mem_size; /* size of a pixel in memory */
+        void    *pixel_buf;      /* buffer for the pixel interlaced data */
+        int32    count[2];       /* "dimension" info */
 
-        pixel_mem_size =
-            (uintn)(ri_ptr->lut_dim.ncomps * DFKNTsize((ri_ptr->lut_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
+        pixel_mem_size = (unsigned)(ri_ptr->lut_dim.ncomps *
+                                    DFKNTsize((ri_ptr->lut_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
 
         /* Allocate space for the conversion buffer */
         if ((pixel_buf = malloc(pixel_mem_size * (size_t)ri_ptr->lut_dim.xdim)) == NULL)
@@ -3797,7 +3797,7 @@ done:
     Makes the image data of an RI into an external element special element.
 
  USAGE
-    intn GRsetexternalfile(riid,filename,offset)
+    int GRsetexternalfile(riid,filename,offset)
         int32 riid;         IN: RI ID from GRselect/GRcreate
         char *filename;     IN: name of the external file
         int32 offset;       IN: offset in the external file to store the image
@@ -3813,12 +3813,12 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 GRsetexternalfile(int32 riid, const char *filename, int32 offset)
 {
     ri_info_t *ri_ptr;  /* ptr to the image to work with */
     int32      tmp_aid; /* AID returned from HXcreate() */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -3871,9 +3871,9 @@ done:
     Sets the access for an RI to be either serial or parallel I/O.
 
  USAGE
-    intn GRsetaccesstype(riid,accesstype)
+    int GRsetaccesstype(riid,accesstype)
         int32 riid;         IN: RI ID from GRselect/GRcreate
-        uintn accesstype;   IN: access type for image data, from the following
+        unsigned accesstype;   IN: access type for image data, from the following
            values:
         DFACC_SERIAL - for serial access
         DFACC_PARALLEL - for parallel access
@@ -3889,11 +3889,11 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
-GRsetaccesstype(int32 riid, uintn accesstype)
+int
+GRsetaccesstype(int32 riid, unsigned accesstype)
 {
     ri_info_t *ri_ptr; /* ptr to the image to work with */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -3925,7 +3925,7 @@ done:
     Set up the szip parameters
 
  USAGE
-    intn GRsetaccesstype( ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims)
+    int GRsetaccesstype( ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims)
     ri_info_t *ri_ptr;  IN: the RI object
     comp_info *c_info;  IN/OUT: the compression info (szip)
     int32 *cdims;       IN: chunk dims if chunked, else NULL
@@ -3936,7 +3936,7 @@ done:
  DESCRIPTION
     Sets the computed szip parameters before calling HCcreate.
 --------------------------------------------------------------------------*/
-intn
+int
 GRsetup_szip_parms(ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims)
 {
     int32 nt;
@@ -3963,7 +3963,7 @@ GRsetup_szip_parms(ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims)
     Compressed the image data of an RI.
 
  USAGE
-    intn GRsetcompress(riid,comp_type,cinfo)
+    int GRsetcompress(riid,comp_type,cinfo)
         int32 riid;             IN: RI ID from GRselect/GRcreate
         comp_coder_t comp_type; IN: type of compression
         comp_info *cinfo;       IN: compression specific information
@@ -3980,13 +3980,13 @@ GRsetup_szip_parms(ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 GRsetcompress(int32 riid, comp_coder_t comp_type, comp_info *cinfo)
 {
     ri_info_t *ri_ptr; /* ptr to the image to work with */
     comp_info  cinfo_x;
     uint32     comp_config;
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -4072,7 +4072,7 @@ done:
     Get the compression information of a raster image's data.
 
  USAGE
-    intn GRgetcompress(riid,comp_type,cinfo)
+    int GRgetcompress(riid,comp_type,cinfo)
         int32 riid;       IN: RI ID from GRselect/GRcreate
         comp_coder_t* comp_type;   OUT: type of compression
         comp_info* cinfo;     OUT: retrieved compression information
@@ -4093,10 +4093,10 @@ done:
     type will be returned; cinfo will only contain 0s.
 
 --------------------------------------------------------------------------*/
-intn
+int
 GRgetcompress(int32 riid, comp_coder_t *comp_type, comp_info *cinfo)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     ret_value = GRgetcompinfo(riid, comp_type, cinfo);
     if (ret_value == FAIL)
@@ -4114,7 +4114,7 @@ done:
     Get the compression type of a raster image's data.
 
  USAGE
-    intn GRgetcomptype(riid, comp_type)
+    int GRgetcomptype(riid, comp_type)
         int32 riid;     IN: RI ID from GRselect/GRcreate
         comp_coder_t* comp_type;  OUT: type of compression, including obsolete ones
 
@@ -4162,13 +4162,13 @@ done:
  REVISION LOG
 
 --------------------------------------------------------------------------*/
-intn
+int
 GRgetcomptype(int32 riid, comp_coder_t *comp_type)
 {
     ri_info_t *ri_ptr; /* ptr to the image to work with */
     int32      file_id;
     uint16     scheme; /* compression scheme used for old images */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error */
     HEclear();
@@ -4218,7 +4218,7 @@ done:
     Get the compression information of a raster image's data.
 
  USAGE
-    intn GRgetcompinfo(riid,comp_type,cinfo)
+    int GRgetcompinfo(riid,comp_type,cinfo)
         int32 riid;       IN: RI ID from GRselect/GRcreate
         comp_coder_t* comp_type;   OUT: type of compression
         comp_info* cinfo;     OUT: retrieved compression information
@@ -4239,13 +4239,13 @@ done:
     type will be returned; cinfo will only contain 0s.
 
 --------------------------------------------------------------------------*/
-intn
+int
 GRgetcompinfo(int32 riid, comp_coder_t *comp_type, comp_info *cinfo)
 {
     ri_info_t *ri_ptr; /* ptr to the image to work with */
     int32      file_id;
     uint16     scheme; /* compression scheme used for JPEG images */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -4305,7 +4305,7 @@ done:
     Write an attribute for an object.
 
  USAGE
-    intn GRsetattr(dimid|riid|grid,name,attr_nt,count,data)
+    int GRsetattr(dimid|riid|grid,name,attr_nt,count,data)
         int32 dimid|riid|grid;  IN: DIM|RI|GR ID
         char *name;             IN: name of attribute
         int32 attr_nt;          IN: number-type of attribute
@@ -4325,7 +4325,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 GRsetattr(int32 id, const char *name, int32 attr_nt, int32 count, const void *data)
 {
     int32      hdf_file_id;       /* HDF file ID from Hopen */
@@ -4336,10 +4336,10 @@ GRsetattr(int32 id, const char *name, int32 attr_nt, int32 count, const void *da
     at_info_t *at_ptr = NULL;     /* ptr to the attribute to work with */
     int32      at_size;           /* size in bytes of the attribute data */
     int32     *update_count;      /* pointer to the count of attributes in a tree */
-    uintn     *update_flag;       /* pointer to the flag to indicate an attribute tree is changed */
-    uintn      found     = FALSE; /* boolean for indicating the attribute exists already */
-    intn       is_riid   = FALSE; /* whether we had a RIID */
-    intn       ret_value = SUCCEED;
+    unsigned  *update_flag;       /* pointer to the flag to indicate an attribute tree is changed */
+    unsigned   found     = FALSE; /* boolean for indicating the attribute exists already */
+    int        is_riid   = FALSE; /* whether we had a RIID */
+    int        ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -4508,7 +4508,7 @@ done:
     Get attribute information for an object.
 
  USAGE
-    intn GRattrinfo(dimid|riid|grid,index,name,attr_nt,count)
+    int GRattrinfo(dimid|riid|grid,index,name,attr_nt,count)
         int32 dimid|riid|grid;  IN: DIM|RI|GR ID
         int32 index;            IN: index of the attribute for info
         char *name;             OUT: name of attribute
@@ -4526,7 +4526,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 GRattrinfo(int32 id, int32 index, char *name, int32 *attr_nt, int32 *count)
 {
     gr_info_t *gr_ptr;      /* ptr to the GR information for this grid */
@@ -4534,7 +4534,7 @@ GRattrinfo(int32 id, int32 index, char *name, int32 *attr_nt, int32 *count)
     void     **t;           /* temp. ptr to the image found */
     TBBT_TREE *search_tree; /* attribute tree to search through */
     at_info_t *at_ptr;      /* ptr to the attribute to work with */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -4588,7 +4588,7 @@ done:
     Read an attribute for an object.
 
  USAGE
-    intn GRgetattr(dimid|riid|grid,index,data)
+    int GRgetattr(dimid|riid|grid,index,data)
         int32 dimid|riid|grid;  IN: DIM|RI|GR ID
         int32 index;            IN: index of the attribute for info
         void * data;             OUT: data read for attribute
@@ -4604,7 +4604,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 GRgetattr(int32 id, int32 index, void *data)
 {
     int32      hdf_file_id; /* HDF file ID from Hopen */
@@ -4614,7 +4614,7 @@ GRgetattr(int32 id, int32 index, void *data)
     TBBT_TREE *search_tree; /* attribute tree to search through */
     at_info_t *at_ptr;      /* ptr to the attribute to work with */
     int32      at_size;     /* size in bytes of the attribute data */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -4765,7 +4765,7 @@ done:
  PURPOSE
     GR-level initialization routine
  USAGE
-    intn GRIstart()
+    int GRIstart()
  RETURNS
     Returns SUCCEED/FAIL
  DESCRIPTION
@@ -4775,10 +4775,10 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-static intn
+static int
 GRIstart(void)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* Don't call this routine again... */
     library_terminate = TRUE;
@@ -4797,10 +4797,10 @@ done:
  PURPOSE
     Internal routine to make certain an image has an AID attached to it.
  USAGE
-    intn GRIgetaid(img_ptr, acc_perm)
+    int GRIgetaid(img_ptr, acc_perm)
         ri_info_t *img_ptr;         IN: pointer to the image info for the
                                         image to access.
-        intn acc_perm;              IN: method of access desired.
+        int acc_perm;              IN: method of access desired.
  RETURNS
     SUCCEED/FAIL
 
@@ -4815,13 +4815,13 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-static intn
-GRIgetaid(ri_info_t *ri_ptr, intn acc_perm)
+static int
+GRIgetaid(ri_info_t *ri_ptr, int acc_perm)
 {
     int32      hdf_file_id; /* HDF file ID */
     gr_info_t *gr_ptr;      /* ptr to the file GR information for this image */
     model_info minfo;       /* Dummy modeling information structure */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     HEclear();
     if (ri_ptr == NULL)
@@ -4863,9 +4863,9 @@ GRIgetaid(ri_info_t *ri_ptr, intn acc_perm)
         }                              /* end if */
         else {                         /* Check for old-style compressed raster or just open normally */
             if (ri_ptr->use_cr_drvr) { /* Use compressed raster driver */
-                uintn pixel_size;      /* size of a pixel on disk */
+                unsigned pixel_size;   /* size of a pixel on disk */
 
-                pixel_size = (uintn)(ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt));
+                pixel_size = (unsigned)(ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt));
 
                 /* Wraps an existing compressed raster image with the special element*/
                 if ((ri_ptr->img_aid = HRPconvert(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref,
@@ -4901,7 +4901,7 @@ done:
  PURPOSE
     Terminate various static buffers.
  USAGE
-    intn GRPshutdown()
+    int GRPshutdown()
  RETURNS
     Returns SUCCEED/FAIL
  DESCRIPTION
@@ -4912,7 +4912,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 GRPshutdown(void)
 {
     if (gr_tree != NULL) {
@@ -5040,7 +5040,7 @@ GRPshutdown(void)
  AUTHOR
         -GeorgeV
 ******************************************************************************/
-intn
+int
 GRsetchunk(int32         riid,      /* IN: raster access id */
            HDF_CHUNK_DEF chunk_def, /* IN: chunk definition */
            int32         flags /* IN: flags */)
@@ -5051,17 +5051,17 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
     model_info     minfo;             /* dummy model info struct */
     comp_info      cinfo;             /* compression info - NBIT */
     int32         *cdims = NULL;      /* array of chunk lengths */
-    uintn          pixel_mem_size;    /* size of a pixel in memory */
-    uintn          pixel_disk_size;   /* size of a pixel on disk */
+    unsigned       pixel_mem_size;    /* size of a pixel in memory */
+    unsigned       pixel_disk_size;   /* size of a pixel on disk */
     void          *fill_pixel = NULL; /* converted value for the filled pixel */
     int32          at_index;          /* attribute index for the fill value */
     uint32         comp_config;
     int32          ndims   = 0;         /* # dimensions i.e. rank */
     uint8          nlevels = 1;         /* default # levels is 1 */
-    intn           i;                   /* loop variable */
+    int            i;                   /* loop variable */
     int32          hdf_file_id;         /* HDF file ID */
     gr_info_t     *gr_ptr;              /* ptr to the file GR information for this image */
-    intn           ret_value = SUCCEED; /* return value */
+    int            ret_value = SUCCEED; /* return value */
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -5196,8 +5196,8 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
 
     /* Get the size of the pixels in memory and on disk */
     pixel_mem_size =
-        (uintn)(ri_ptr->img_dim.ncomps * DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
-    pixel_disk_size = (uintn)(ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt));
+        (unsigned)(ri_ptr->img_dim.ncomps * DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
+    pixel_disk_size = (unsigned)(ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt));
 
     /* Set number type size i.e. size of data type
        number of components times the number type */
@@ -5292,7 +5292,7 @@ done:
  AUTHOR
         -GeorgeV
 ******************************************************************************/
-intn
+int
 GRgetchunkinfo(int32          riid,      /* IN: sds access id */
                HDF_CHUNK_DEF *chunk_def, /* IN/OUT: chunk definition */
                int32         *flags /* IN/OUT: flags */)
@@ -5300,8 +5300,8 @@ GRgetchunkinfo(int32          riid,      /* IN: sds access id */
     ri_info_t      *ri_ptr = NULL;       /* ptr to the image to work with */
     sp_info_block_t info_block;          /* special info block */
     int16           special;             /* Special code */
-    intn            i;                   /* loop variable */
-    intn            ret_value = SUCCEED; /* return value */
+    int             i;                   /* loop variable */
+    int             ret_value = SUCCEED; /* return value */
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -5394,28 +5394,28 @@ done:
  AUTHOR
        -GeorgeV
 ******************************************************************************/
-intn
+int
 GRwritechunk(int32       riid,   /* IN: access aid to GR */
              int32      *origin, /* IN: origin of chunk to write */
              const void *datap /* IN: buffer for data */)
 {
     ri_info_t *ri_ptr = NULL;        /* ptr to the image to work with */
-    uintn      pixel_mem_size,       /* size of a pixel in memory */
+    unsigned   pixel_mem_size,       /* size of a pixel in memory */
         pixel_disk_size;             /* size of a pixel on disk */
     void           *img_data = NULL; /* buffer used for conversion */
     int16           special;         /* Special code */
     int32           csize;           /* physical chunk size */
     sp_info_block_t info_block;      /* special info block */
     int8            platnumsubclass; /* the machine type of the current platform */
-    uintn           convert;         /* whether to convert or not */
-    intn            i;
+    unsigned        convert;         /* whether to convert or not */
+    int             i;
     uint16          scheme; /* compression scheme used for JPEG images */
     uint32          comp_config;
     comp_coder_t    comp_type;
     comp_info       cinfo;
-    intn            status           = FAIL;
-    intn            switch_interlace = FALSE; /* whether the memory interlace needs to be switched around */
-    intn            ret_value        = SUCCEED;
+    int             status           = FAIL;
+    int             switch_interlace = FALSE; /* whether the memory interlace needs to be switched around */
+    int             ret_value        = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -5489,9 +5489,9 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
                     csize *= info_block.cdims[i];
 
                 /* Get the size of the pixels in memory and on disk */
-                pixel_mem_size  = (uintn)(ri_ptr->img_dim.ncomps *
-                                         DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
-                pixel_disk_size = (uintn)(ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt));
+                pixel_mem_size  = (unsigned)(ri_ptr->img_dim.ncomps *
+                                            DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
+                pixel_disk_size = (unsigned)(ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt));
 
                 /* figure out if data needs to be converted */
                 /* Get number-type and conversion information */
@@ -5587,27 +5587,27 @@ done:
  AUTHOR
        -GeorgeV
 ******************************************************************************/
-intn
+int
 GRreadchunk(int32  riid,   /* IN: access aid to GR */
             int32 *origin, /* IN: origin of chunk to write */
             void  *datap /* IN/OUT: buffer for data */)
 {
     ri_info_t      *ri_ptr = NULL;   /* ptr to the image to work with */
-    uintn           pixel_mem_size;  /* size of a pixel in memory */
-    uintn           pixel_disk_size; /* size of a pixel on disk */
+    unsigned        pixel_mem_size;  /* size of a pixel in memory */
+    unsigned        pixel_disk_size; /* size of a pixel on disk */
     void           *img_data = NULL; /* buffer used for conversion */
     int16           special;         /* Special code */
     int32           csize;           /* physical chunk size */
     sp_info_block_t info_block;      /* special info block */
     int8            platnumsubclass; /* the machine type of the current platform */
-    uintn           convert;         /* whether to convert or not */
-    intn            i;
+    unsigned        convert;         /* whether to convert or not */
+    int             i;
     uint16          scheme; /* compression scheme used for JPEG images */
     uint32          comp_config;
     comp_coder_t    comp_type;
     comp_info       cinfo;
-    intn            status    = FAIL;
-    intn            ret_value = SUCCEED;
+    int             status    = FAIL;
+    int             ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -5685,9 +5685,9 @@ GRreadchunk(int32  riid,   /* IN: access aid to GR */
                     csize *= info_block.cdims[i];
 
                 /* Get the size of the pixels in memory and on disk */
-                pixel_mem_size  = (uintn)(ri_ptr->img_dim.ncomps *
-                                         DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
-                pixel_disk_size = (uintn)(ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt));
+                pixel_mem_size  = (unsigned)(ri_ptr->img_dim.ncomps *
+                                            DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
+                pixel_disk_size = (unsigned)(ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt));
 
                 /* figure out if data needs to be converted */
                 /* Get number-type and conversion information */
@@ -5804,14 +5804,14 @@ RETURNS
 AUTHOR
       -GeorgeV
 ******************************************************************************/
-intn
+int
 GRsetchunkcache(int32 riid,     /* IN: access aid to mess with */
                 int32 maxcache, /* IN: max number of chunks to cache */
                 int32 flags /* IN: flags = 0, HDF_CACHEALL */)
 {
     ri_info_t *ri_ptr = NULL; /* ptr to the image to work with */
     int16      special;       /* Special code */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -5862,10 +5862,10 @@ NAME
    GRmapped - Checks whether an RI is to be mapped (hmap project)
 
 USAGE
-    intn GRmapped(riid, *tobe_mapped, *created_byGR)
+    int GRmapped(riid, *tobe_mapped, *created_byGR)
         int32 riid;     IN: raster image ID
-        intn *tobe_mapped;  IN: TRUE if the image should be mapped
-  intn *created_byGR;  IN: TRUE if the image was created by GR API
+        int *tobe_mapped;  IN: TRUE if the image should be mapped
+  int *created_byGR;  IN: TRUE if the image was created by GR API
 DESCRIPTION
    GRmapped checks if the given RI satisfies the following conditions:
    + being an 8-bit RI
@@ -5887,20 +5887,20 @@ RETURNS
 
 MODIFICATION
    Mar 17, 2011: Changed the function from
-  intn GR2bmapped(int32 riid), returning TRUE/FALSE/FAIL, to
-  intn GR2bmapped(int32 riid, intn *tobe_mapped, intn *name_generated),
+  int GR2bmapped(int32 riid), returning TRUE/FALSE/FAIL, to
+  int GR2bmapped(int32 riid, int *tobe_mapped, int *name_generated),
   returning SUCCEED/FAIL
 ----------------------------------------------------------------*/
-intn
-GR2bmapped(int32 riid, intn *tobe_mapped, intn *name_generated)
+int
+GR2bmapped(int32 riid, int *tobe_mapped, int *name_generated)
 {
     ri_info_t *ri_ptr;             /* ptr to the image to work with */
-    intn       should_map = FALSE; /* TRUE if the image should be mapped */
+    int        should_map = FALSE; /* TRUE if the image should be mapped */
     uint16     img_tag, img_ref;   /* shortcuts image's tag/ref */
     int32      ritype;             /* image's type */
-    intn       special_type = 0;   /* specialness of the image data */
+    int        special_type = 0;   /* specialness of the image data */
     int32      file_id;            /* shortcut file id */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();

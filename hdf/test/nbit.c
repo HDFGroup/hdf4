@@ -130,7 +130,7 @@ test_nbit1(int32 fid)
     uint16     ref1;
     int        i;
     int32      ret;
-    intn       errors = 0;
+    int        errors = 0;
     model_info m_info;
     comp_info  c_info;
     uint8     *outbuf, *inbuf;
@@ -191,7 +191,7 @@ test_nbit2(int32 fid)
     uint16     ref1;
     int        i;
     int32      ret;
-    intn       errors = 0;
+    int        errors = 0;
     model_info m_info;
     comp_info  c_info;
     int8      *outbuf, *inbuf;
@@ -250,7 +250,7 @@ test_nbit3(int32 fid)
     uint16     ref1;
     int        i;
     int32      ret;
-    intn       errors = 0;
+    int        errors = 0;
     model_info m_info;
     comp_info  c_info;
     uint16    *outbuf, *inbuf;
@@ -325,7 +325,7 @@ test_nbit4(int32 fid)
     uint16     ref1;
     int        i;
     int32      ret;
-    intn       errors = 0;
+    int        errors = 0;
     model_info m_info;
     comp_info  c_info;
     int16     *outbuf, *inbuf;
@@ -403,7 +403,7 @@ test_nbit5(int32 fid)
     uint16     ref1;
     int        i;
     int32      ret;
-    intn       errors = 0;
+    int        errors = 0;
     model_info m_info;
     comp_info  c_info;
     uint32    *outbuf, *inbuf;
@@ -458,7 +458,7 @@ test_nbit5(int32 fid)
 
     for (i = 0; i < NBIT_SIZE5; i++) {
         test_out = outbuf[i] & NBIT_MASK5A;
-        test_in  = (uintn)inbuf[i] & (uintn)NBIT_MASK5B;
+        test_in  = (unsigned)inbuf[i] & (unsigned)NBIT_MASK5B;
 #ifndef TESTING
         if ((uint32)test_in != (uint32)test_out) {
             printf("test_nbit5: Wrong data at %d, out (%lu)%lu in (%lu)%lu\n", i, (unsigned long)outbuf[i],
@@ -482,7 +482,7 @@ test_nbit6(int32 fid)
     uint16     ref1;
     int        i;
     int32      ret;
-    intn       errors = 0;
+    int        errors = 0;
     model_info m_info;
     comp_info  c_info;
     int32     *outbuf, *inbuf;
@@ -536,8 +536,8 @@ test_nbit6(int32 fid)
     CHECK_VOID(ret, FAIL, "DFKconvert");
 
     for (i = 0; i < NBIT_SIZE6; i++) {
-        test_out = (int32)((uintn)outbuf[i] & (uintn)NBIT_MASK6A);
-        test_in  = (int32)((uintn)inbuf[i] & (uintn)NBIT_MASK6B);
+        test_out = (int32)((unsigned)outbuf[i] & (unsigned)NBIT_MASK6A);
+        test_in  = (int32)((unsigned)inbuf[i] & (unsigned)NBIT_MASK6B);
 #ifndef TESTING
         if ((int32)test_in != (int32)test_out) {
             printf("test_nbit6: Wrong data at %d, out (%ld)%ld in (%ld)%ld\n", i, (long)outbuf[i],
@@ -561,7 +561,7 @@ test_nbit7(int32 fid)
     uint16     ref1;
     int        i;
     int32      ret;
-    intn       errors = 0;
+    int        errors = 0;
     model_info m_info;
     comp_info  c_info;
     uint8     *outbuf, *inbuf;
@@ -622,7 +622,7 @@ test_nbit8(int32 fid)
     uint16     ref1;
     int        i;
     int32      ret;
-    intn       errors = 0;
+    int        errors = 0;
     model_info m_info;
     comp_info  c_info;
     int8      *outbuf, *inbuf;
@@ -684,7 +684,7 @@ test_nbit9(int32 fid)
     uint16     ref1;
     int        i;
     int32      ret;
-    intn       errors = 0;
+    int        errors = 0;
     model_info m_info;
     comp_info  c_info;
     uint16    *outbuf, *inbuf;
@@ -763,7 +763,7 @@ test_nbit10(int32 fid)
     uint16     ref1;
     int        i;
     int32      ret;
-    intn       errors = 0;
+    int        errors = 0;
     model_info m_info;
     comp_info  c_info;
     int16     *outbuf, *inbuf;
@@ -857,7 +857,7 @@ test_nbit11(int32 fid)
     uint16     ref1;
     int        i;
     int32      ret;
-    intn       errors = 0;
+    int        errors = 0;
     model_info m_info;
     comp_info  c_info;
     uint32    *outbuf, *inbuf;
@@ -911,8 +911,8 @@ test_nbit11(int32 fid)
     CHECK_VOID(ret, FAIL, "DFKconvert");
 
     for (i = 0; i < NBIT_SIZE11; i++) {
-        test_out = (outbuf[i] | (uintn)NBIT_MASK11A) & (uintn)NBIT_MASK11B;
-        test_in  = inbuf[i] & (uintn)NBIT_MASK11B;
+        test_out = (outbuf[i] | (unsigned)NBIT_MASK11A) & (unsigned)NBIT_MASK11B;
+        test_in  = inbuf[i] & (unsigned)NBIT_MASK11B;
 #ifndef TESTING
         if ((uint32)test_in != (uint32)test_out) {
             printf("test_nbit11: Wrong data at %d, out (%lu)%lu in (%lu)%lu\n", i, (unsigned long)outbuf[i],
@@ -936,7 +936,7 @@ test_nbit12(int32 fid)
     uint16     ref1;
     int        i;
     int32      ret;
-    intn       errors = 0;
+    int        errors = 0;
     model_info m_info;
     comp_info  c_info;
     int32     *outbuf, *inbuf;
@@ -991,8 +991,8 @@ test_nbit12(int32 fid)
     CHECK_VOID(ret, FAIL, "DFKconvert");
 
     for (i = 0; i < NBIT_SIZE12; i++) {
-        test_out = (int32)(((uintn)outbuf[i] | (uintn)NBIT_MASK12A) & (uintn)NBIT_MASK12B);
-        test_in  = (int32)((uintn)inbuf[i] & (uintn)NBIT_MASK12B);
+        test_out = (int32)(((unsigned)outbuf[i] | (unsigned)NBIT_MASK12A) & (unsigned)NBIT_MASK12B);
+        test_in  = (int32)((unsigned)inbuf[i] & (unsigned)NBIT_MASK12B);
 #ifndef TESTING
         if ((int32)test_in != (int32)test_out) {
             printf("test_nbit12: Wrong data at %d, out (%ld)%ld in (%ld)%ld\n", i, (long)outbuf[i],

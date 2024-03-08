@@ -55,7 +55,7 @@ typedef struct symdef_struct {
 } SYMDEF;
 
 typedef struct write_struct {
-    intn   n;      /* S actual # fields in element */
+    int    n;      /* S actual # fields in element */
     uint16 ivsize; /* S size of element as stored in vdata */
 
     char name[VSFIELDMAX][FIELDNAMELENMAX + 1]; /* S name of each field */
@@ -69,7 +69,7 @@ typedef struct write_struct {
 } VWRITELIST;
 
 typedef struct dyn_write_struct {
-    intn    n;      /* S actual # fields in element */
+    int     n;      /* S actual # fields in element */
     uint16  ivsize; /* S size of element as stored in vdata */
     char  **name;   /* S name of each field */
     uint16 *bptr;   /* Pointer to hold the beginning of the buffer */
@@ -94,8 +94,8 @@ typedef struct dyn_vgattr_struct {
 } vg_attr_t;
 
 typedef struct dyn_read_struct {
-    intn  n;    /* # fields to read */
-    intn *item; /* index into vftable_struct */
+    int  n;    /* # fields to read */
+    int *item; /* index into vftable_struct */
 } DYN_VREADLIST;
 
 /*
@@ -108,15 +108,15 @@ struct vgroup_desc {
     uint16  otag, oref;                /* tag-ref of this vgroup */
     HFILEID f;                         /* HDF file id  */
     uint16  nvelt;                     /* S no of objects */
-    intn    access;                    /* 'r' or 'w' */
+    int     access;                    /* 'r' or 'w' */
     uint16 *tag;                       /* S tag of objects */
     uint16 *ref;                       /* S ref of objects */
     char   *vgname;                    /* S name of this vgroup */
     char   *vgclass;                   /* S class name of this vgroup */
-    intn    marked;                    /* =1 if new info has been added to vgroup */
-    intn    new_vg;                    /* =1 if this is a new Vgroup */
+    int     marked;                    /* =1 if new info has been added to vgroup */
+    int     new_vg;                    /* =1 if this is a new Vgroup */
     uint16  extag, exref;              /* expansion tag-ref */
-    intn    msize;                     /* max size of storage arrays */
+    int     msize;                     /* max size of storage arrays */
     uint32  flags;                     /* indicate which version of VG should
                                           be written to the file */
     int32      nattrs;                 /* number of attributes */
@@ -142,7 +142,7 @@ struct vgroup_desc {
 struct vdata_desc {
     uint16         otag, oref;                /* tag,ref of this vdata */
     HFILEID        f;                         /* HDF file id */
-    intn           access;                    /* 'r' or 'w' */
+    int            access;                    /* 'r' or 'w' */
     char           vsname[VSNAMELENMAX + 1];  /* S name of this vdata */
     char           vsclass[VSNAMELENMAX + 1]; /* S class name of this vdata */
     int16          interlace;                 /* S  interlace as in file */
@@ -151,16 +151,16 @@ struct vdata_desc {
     DYN_VREADLIST  rlist;
     int16          nusym;
     SYMDEF        *usym;
-    intn           marked;   /* =1 if new info has been added to vdata */
-    intn           new_h_sz; /* =1 if VH size changed, due to new attrs etc. */
-    intn           islinked; /* =1 if vdata is a linked-block in file */
+    int            marked;   /* =1 if new info has been added to vdata */
+    int            new_h_sz; /* =1 if VH size changed, due to new attrs etc. */
+    int            islinked; /* =1 if vdata is a linked-block in file */
 
     uint16 extag, exref; /* expansion tag-ref */
     uint32 flags;        /* bit 0 -- has attr
                             bit 1 -- "large field"
                             bit 2 -- "interlaced data is appendable"
                             bit 3-15  -- unused.   */
-    intn                       nattrs;
+    int                        nattrs;
     vs_attr_t                 *alist;         /* attribute list */
     int16                      version, more; /* version and "more" field */
     int32                      aid;           /* access id - for LINKED blocks */
@@ -184,9 +184,9 @@ struct vdata_desc {
 typedef struct vg_instance_struct {
     int32 key; /* key to look up with the B-tree routines */
     /* needs to be first in the structure */
-    uintn ref; /* ref # of this vgroup in the file */
+    unsigned ref; /* ref # of this vgroup in the file */
     /* needs to be second in the structure */
-    intn                       nattach;  /* # of current attaches to this vgroup */
+    int                        nattach;  /* # of current attaches to this vgroup */
     int32                      nentries; /* # of entries in that vgroup initially */
     VGROUP                    *vg;       /* points to the vg when it is attached */
     struct vg_instance_struct *next;     /* pointer to next node (for free list only) */
@@ -196,9 +196,9 @@ typedef struct vg_instance_struct {
 typedef struct vs_instance_struct {
     int32 key; /* key to look up with the B-tree routines */
     /* needs to be first in the structure */
-    uintn ref; /* ref # of this vdata in the file */
+    unsigned ref; /* ref # of this vdata in the file */
     /* needs to be second in the structure */
-    intn                       nattach;   /* # of current attaches to this vdata */
+    int                        nattach;   /* # of current attaches to this vdata */
     int32                      nvertices; /* # of elements in that vdata initially */
     VDATA                     *vs;        /* points to the vdata when it is attached */
     struct vs_instance_struct *next;      /* pointer to next node (for free list only) */
@@ -214,7 +214,7 @@ typedef struct vfiledir_struct {
 
     int32      vstabn; /* # of vs entries in vstab so far */
     TBBT_TREE *vstree; /* Root of VSet B-Tree */
-    intn       access; /* the number of active pointers to this file's Vstuff */
+    int        access; /* the number of active pointers to this file's Vstuff */
 } vfile_t;
 
 /* .................................................................. */
@@ -230,7 +230,8 @@ VDATA *VSIget_vdata_node(void);
 
 void VSIrelease_vdata_node(VDATA *v);
 
-intn VSIgetvdatas(int32 id, const char *vsclass, const uintn start_vd, const uintn n_vds, uint16 *refarray);
+int VSIgetvdatas(int32 id, const char *vsclass, const unsigned start_vd, const unsigned n_vds,
+                 uint16 *refarray);
 
 HDFLIBAPI vsinstance_t *VSIget_vsinstance_node(void);
 
@@ -244,7 +245,7 @@ HDFLIBAPI vginstance_t *VIget_vginstance_node(void);
 
 HDFLIBAPI void VIrelease_vginstance_node(vginstance_t *vg);
 
-HDFLIBAPI intn VPparse_shutdown(void);
+HDFLIBAPI int VPparse_shutdown(void);
 
 HDFLIBAPI vfile_t *Get_vfile(HFILEID f);
 
@@ -254,17 +255,17 @@ HDFLIBAPI vginstance_t *vginst(HFILEID f, uint16 vgid);
 
 HDFLIBAPI DYN_VWRITELIST *vswritelist(int32 vskey);
 
-HDFLIBAPI intn vpackvg(VGROUP *vg, uint8 buf[], int32 *size);
+HDFLIBAPI int vpackvg(VGROUP *vg, uint8 buf[], int32 *size);
 
 HDFLIBAPI int32 vinsertpair(VGROUP *vg, uint16 tag, uint16 ref);
 
-HDFLIBAPI intn vpackvs(VDATA *vs, uint8 buf[], int32 *size);
+HDFLIBAPI int vpackvs(VDATA *vs, uint8 buf[], int32 *size);
 
 HDFLIBAPI VGROUP *VPgetinfo(HFILEID f, uint16 ref);
 
 HDFLIBAPI VDATA *VSPgetinfo(HFILEID f, uint16 ref);
 
-HDFLIBAPI int16 map_from_old_types(intn type);
+HDFLIBAPI int16 map_from_old_types(int type);
 
 HDFLIBAPI void trimendblanks(char *ss);
 

@@ -220,7 +220,7 @@ HCIcdeflate_term(compinfo_t *info, int16 acc_mode)
 
     if (deflate_info->acc_init != 0) {
         if (acc_mode & DFACC_WRITE) { /* flush the "deflated" data to the file */
-            intn status;
+            int status;
 
             do {
                 /* Write more bytes from the file, if we've filled our buffer */
@@ -418,7 +418,7 @@ HCPcdeflate_stwrite(accrec_t *access_rec)
     int32 HCPcdeflate_seek(access_rec,offset,origin)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 offset;       IN: the offset in bytes from the origin specified
-    intn origin;        IN: the origin to seek from [UNUSED!]
+    int origin;        IN: the origin to seek from [UNUSED!]
 
  RETURNS
     Returns SUCCEED or FAIL
@@ -641,7 +641,7 @@ HCPcdeflate_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 
  DESCRIPTION
     Close the compressed data element and free encoding info.
 --------------------------------------------------------------------------*/
-intn
+int
 HCPcdeflate_endaccess(accrec_t *access_rec)
 {
     compinfo_t                *info;         /* special element information */

@@ -36,7 +36,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_DFR8getdims(JNIEnv *env, jclass clss, jstring filename, jintArray argv,
                                        jbooleanArray isp)
 {
-    intn        rval = FAIL;
+    int         rval = FAIL;
     const char *fstr = NULL;
     int         ispal;
     jint       *theArgs = NULL;
@@ -66,7 +66,7 @@ Java_hdf_hdflib_HDFLibrary_DFR8getdims(JNIEnv *env, jclass clss, jstring filenam
 
     theB[0] = JNI_FALSE;
     /* get image dimension information */
-    if ((rval = DFR8getdims(fstr, (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]), (intn *)&ispal)) == FAIL)
+    if ((rval = DFR8getdims(fstr, (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]), (int *)&ispal)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
     if (ispal)
@@ -89,7 +89,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_DFR8getimage(JNIEnv *env, jclass clss, jstring filename, jbyteArray image,
                                         jint width, jint height, jbyteArray palette)
 {
-    intn        rval = FAIL;
+    int         rval = FAIL;
     const char *fstr = NULL;
     jbyte      *dat  = NULL;
     jbyte      *pal  = NULL;
@@ -198,7 +198,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_DFR8addimage(JNIEnv *env, jclass clss, jstring filename, jbyteArray image,
                                         jint width, jint height, jshort compress)
 {
-    intn        rval = FAIL;
+    int         rval = FAIL;
     const char *fstr = NULL;
     jbyte      *dat  = NULL;
     jboolean    isCopy;
@@ -231,7 +231,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_DFR8putimage(JNIEnv *env, jclass clss, jstring filename, jbyteArray image,
                                         jint width, jint height, jint compress)
 {
-    intn        rval = FAIL;
+    int         rval = FAIL;
     const char *fstr = NULL;
     jbyte      *dat  = NULL;
     jboolean    isCopy;
@@ -263,7 +263,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_DFR8setcompress(JNIEnv *env, jclass clss, jint type, jobject cinfo)
 {
-    intn      rval = FAIL;
+    int       rval = FAIL;
     comp_info cinf;
 
     UNUSED(clss);

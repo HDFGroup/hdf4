@@ -68,10 +68,10 @@ alloc_err:
  * NOTE: Changed return value to return 'int'
  *       If successful returns SUCCEED else FAIL -GV 9/19/97
  */
-intn
+int
 NC_free_var(NC_var *var)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     if (var != NULL) {
         if (NC_free_string(var->name) == FAIL) {

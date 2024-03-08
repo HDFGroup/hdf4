@@ -65,7 +65,7 @@ static NC **_cdfs;
 #define SEP '/' /* default, unix */
 #endif
 
-static intn max_NC_open = H4_MAX_NC_OPEN; /* current netCDF default */
+static int max_NC_open = H4_MAX_NC_OPEN; /* current netCDF default */
 
 /*
  * Resets _cdfs
@@ -84,13 +84,13 @@ ncreset_cdflist(void)
  *  otherwise return FAIL(-1).
  */
 /* req_max - requested max to allocate */
-intn
-NC_reset_maxopenfiles(intn req_max)
+int
+NC_reset_maxopenfiles(int req_max)
 {
-    intn sys_limit = MAX_AVAIL_OPENFILES;
-    intn alloc_size;
+    int  sys_limit = MAX_AVAIL_OPENFILES;
+    int  alloc_size;
     NC **newlist;
-    intn i;
+    int  i;
     int  ret_value = SUCCEED;
 
     /* Verify arguments */
@@ -168,7 +168,7 @@ done:
 /*
  *  Returns the current # of open files allowed
  */
-intn
+int
 NC_get_maxopenfiles(void)
 {
     return max_NC_open;
@@ -177,7 +177,7 @@ NC_get_maxopenfiles(void)
 /*
  *  Returns the maximum number of open files the system allows.
  */
-intn
+int
 NC_get_systemlimit(void)
 {
     return MAX_AVAIL_OPENFILES;
@@ -234,9 +234,9 @@ NC_indefine(int cdfid, bool_t iserr) /* Should be a Macro ? */
 static int
 NC_open(const char *path, int mode)
 {
-    NC  *handle    = NULL;
-    int  cdfid     = -1;
-    intn cdfs_size = -1;
+    NC *handle    = NULL;
+    int cdfid     = -1;
+    int cdfs_size = -1;
 
     /* Allocate _cdfs, if it is already allocated, nothing will be done */
     if (_cdfs == NULL) {
@@ -383,7 +383,7 @@ ncabort(int cdfid)
     NC      *handle;
     char     path[FILENAME_MAX + 1];
     unsigned flags;
-    intn     file_type;
+    int      file_type;
 
     cdf_routine_name = "ncabort";
 

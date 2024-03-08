@@ -79,7 +79,7 @@ int insert_an(int32 file_id, int32 ref_in, int32 tag_in, char *path);
 
 int insert_vs_an(int32 file_id, int32 vdata_id, char *path);
 
-int insert_vs_attrs(int32 in, int32 findex, intn attrindex);
+int insert_vs_attrs(int32 in, int32 findex, int attrindex);
 
 #ifdef __cplusplus
 }

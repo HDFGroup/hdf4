@@ -31,7 +31,7 @@ test_1(void)
 {
     bv_ptr b;
     int32  size;
-    intn   ret;
+    int    ret;
 
     MESSAGE(6, printf("Testing basic bit-vector creation & deletion\n"););
 
@@ -62,7 +62,7 @@ test_2(void)
 {
     bv_ptr b;
     int32  size;
-    intn   ret;
+    int    ret;
 
     MESSAGE(6, printf("Testing basic bit-vector set & get\n"););
 
@@ -138,7 +138,7 @@ test_3(void)
     bv_ptr b;
     int32  size;
     int32  bit_num;
-    intn   ret;
+    int    ret;
 
     MESSAGE(6, printf("Testing basic bit-vector set & get\n"););
 
@@ -217,7 +217,7 @@ test_4(void)
     int32  size;
     int32  bit_num;
     int    i;
-    intn   ret;
+    int    ret;
 
     MESSAGE(6, printf("Testing pathologic bit-vector set & get\n"););
 

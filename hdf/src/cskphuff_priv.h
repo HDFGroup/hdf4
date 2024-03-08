@@ -36,11 +36,11 @@
 
 /* Skipping huffman [en|de]coding information */
 typedef struct {
-    intn    skip_size; /* number of bytes in each element */
-    uintn **left,      /* define the left and right pointer arrays */
+    int        skip_size; /* number of bytes in each element */
+    unsigned **left,      /* define the left and right pointer arrays */
         **right;
     uint8 **up;       /* define the up pointer array */
-    intn    skip_pos; /* current byte to read or write */
+    int     skip_pos; /* current byte to read or write */
     int32   offset;   /* offset in the de-compressed array */
 } comp_coder_skphuff_info_t;
 
@@ -68,7 +68,7 @@ HDFLIBAPI int32 HCPcskphuff_read(accrec_t *access_rec, int32 length, void *data)
 
 HDFLIBAPI int32 HCPcskphuff_write(accrec_t *access_rec, int32 length, const void *data);
 
-HDFLIBAPI intn HCPcskphuff_endaccess(accrec_t *access_rec);
+HDFLIBAPI int HCPcskphuff_endaccess(accrec_t *access_rec);
 
 #ifdef __cplusplus
 }

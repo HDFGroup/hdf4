@@ -27,7 +27,7 @@
 
 /* "none" [en|de]coding information */
 typedef struct {
-    intn space_holder; /* merely a space holder so compilers don't barf */
+    int space_holder; /* merely a space holder so compilers don't barf */
 } comp_coder_none_info_t;
 
 #ifdef __cplusplus
@@ -54,7 +54,7 @@ HDFLIBAPI int32 HCPcnone_read(accrec_t *access_rec, int32 length, void *data);
 
 HDFLIBAPI int32 HCPcnone_write(accrec_t *access_rec, int32 length, const void *data);
 
-HDFLIBAPI intn HCPcnone_endaccess(accrec_t *access_rec);
+HDFLIBAPI int HCPcnone_endaccess(accrec_t *access_rec);
 
 #ifdef __cplusplus
 }

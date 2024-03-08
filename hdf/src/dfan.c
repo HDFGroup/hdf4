@@ -67,14 +67,14 @@ static DFANdirhead *DFANdir[2] = {
 };
 
 /* Whether we've installed the library termination function yet for this interface */
-static intn library_terminate = FALSE;
+static int library_terminate = FALSE;
 
 /*
  ** Prototypes for local functions
  */
 
-static int32 DFANIopen(const char *filename, intn acc_mode);
-static intn  DFANIstart(void);
+static int32 DFANIopen(const char *filename, int acc_mode);
+static int   DFANIstart(void);
 
 /*-----------------------------------------------------------------------------
  * HDF object (i.e. tag/ref) label and description input routines
@@ -132,10 +132,10 @@ DFANgetlablen(const char *filename, uint16 tag, uint16 ref)
  EXAMPLES
  REVISION LOG
  *---------------------------------------------------------------------------*/
-intn
+int
 DFANgetlabel(const char *filename, uint16 tag, uint16 ref, char *label, int32 maxlen)
 {
-    intn ret_value;
+    int ret_value;
 
     ret_value = (DFANIgetann(filename, tag, ref, (uint8 *)label, maxlen, DFAN_LABEL, 0));
 
@@ -195,10 +195,10 @@ DFANgetdesclen(const char *filename, uint16 tag, uint16 ref)
  REVISION LOG
  *------------------------------------------------------------------------*/
 
-intn
+int
 DFANgetdesc(const char *filename, uint16 tag, uint16 ref, char *desc, int32 maxlen)
 {
-    intn ret_value;
+    int ret_value;
 
     ret_value = (DFANIgetann(filename, tag, ref, (uint8 *)desc, maxlen, DFAN_DESC, 0));
 
@@ -263,7 +263,7 @@ DFANgetfidlen(int32 file_id, int isfirst)
  REVISION LOG
  *---------------------------------------------------------------------------*/
 int32
-DFANgetfid(int32 file_id, char *label, int32 maxlen, intn isfirst)
+DFANgetfid(int32 file_id, char *label, int32 maxlen, int isfirst)
 {
     int32 ret_value;
 
@@ -295,7 +295,7 @@ DFANgetfid(int32 file_id, char *label, int32 maxlen, intn isfirst)
  REVISION LOG
  *------------------------------------------------------------------------*/
 int32
-DFANgetfdslen(int32 file_id, intn isfirst)
+DFANgetfdslen(int32 file_id, int isfirst)
 {
     int32 ret_value;
 
@@ -326,7 +326,7 @@ DFANgetfdslen(int32 file_id, intn isfirst)
  REVISION LOG
  *---------------------------------------------------------------------------*/
 int32
-DFANgetfds(int32 file_id, char *desc, int32 maxlen, intn isfirst)
+DFANgetfds(int32 file_id, char *desc, int32 maxlen, int isfirst)
 {
     int32 ret_value;
 
@@ -359,10 +359,10 @@ DFANgetfds(int32 file_id, char *desc, int32 maxlen, intn isfirst)
  EXAMPLES
  REVISION LOG
  *------------------------------------------------------------------------*/
-intn
+int
 DFANputlabel(const char *filename, uint16 tag, uint16 ref, char *label)
 {
-    intn ret_value;
+    int ret_value;
 
     ret_value = (DFANIputann(filename, tag, ref, (uint8 *)label, (int32)strlen(label), DFAN_LABEL));
 
@@ -392,10 +392,10 @@ DFANputlabel(const char *filename, uint16 tag, uint16 ref, char *label)
  EXAMPLES
  REVISION LOG
  *------------------------------------------------------------------------*/
-intn
+int
 DFANputdesc(const char *filename, uint16 tag, uint16 ref, char *desc, int32 desclen)
 {
-    intn ret_value;
+    int ret_value;
 
     ret_value = (DFANIputann(filename, tag, ref, (uint8 *)desc, desclen, DFAN_DESC));
 
@@ -422,10 +422,10 @@ DFANputdesc(const char *filename, uint16 tag, uint16 ref, char *desc, int32 desc
  EXAMPLES
  REVISION LOG
  *------------------------------------------------------------------------*/
-intn
+int
 DFANaddfid(int32 file_id, char *id)
 {
-    intn ret_value;
+    int ret_value;
 
     ret_value = (DFANIaddfann(file_id, id, (int32)strlen(id), DFAN_LABEL));
 
@@ -451,10 +451,10 @@ DFANaddfid(int32 file_id, char *id)
  EXAMPLES
  REVISION LOG
  *------------------------------------------------------------------------*/
-intn
+int
 DFANaddfds(int32 file_id, char *desc, int32 desclen)
 {
-    intn ret_value;
+    int ret_value;
 
     ret_value = (DFANIaddfann(file_id, desc, desclen, DFAN_DESC));
 
@@ -520,11 +520,11 @@ DFANlastref(void)
  REVISION LOG
        Revised 04/17/90.  (See DESCRIPTION.)
  *------------------------------------------------------------------------*/
-intn
-DFANlablist(const char *filename, uint16 tag, uint16 reflist[], char *labellist, intn listsize, intn maxlen,
-            intn startpos)
+int
+DFANlablist(const char *filename, uint16 tag, uint16 reflist[], char *labellist, int listsize, int maxlen,
+            int startpos)
 {
-    intn ret_value;
+    int ret_value;
 
     ret_value = (DFANIlablist(filename, tag, reflist, (uint8 *)labellist, listsize, maxlen, startpos, 0));
     return ret_value;
@@ -534,7 +534,7 @@ DFANlablist(const char *filename, uint16 tag, uint16 reflist[], char *labellist,
  Name
         DFANclear --  Clear DFAN interface
  Usage
-        intn DFANclear()
+        int DFANclear()
  Returns
         SUCCEED if ok; FAIL otherwise.
  DESCRIPTION
@@ -547,10 +547,10 @@ DFANlablist(const char *filename, uint16 tag, uint16 reflist[], char *labellist,
  EXAMPLES
  REVISION LOG
  *------------------------------------------------------------------*/
-intn
+int
 DFANclear(void)
 {
-    intn ret_value;
+    int ret_value;
 
     ret_value = DFANIclear();
 
@@ -566,7 +566,7 @@ DFANclear(void)
        DFANIclear -- Clear label/desc entries and directories
           Reset DFANdir[i] and Lastref
  USAGE
-       intn DFANIclear()
+       int DFANIclear()
  Returns
        SUCCEED if ok; FAIL otherwise.
  DESCRIPTION
@@ -579,11 +579,11 @@ DFANclear(void)
  REVISION LOG
 
  *-------------------------------------------------------------------------*/
-intn
+int
 DFANIclear(void)
 {
     DFANdirhead *p, *q;
-    intn         ret_value = SUCCEED;
+    int          ret_value = SUCCEED;
 
     HEclear();
 
@@ -622,7 +622,7 @@ done:
  USAGE
        static int32 DFANIopen(filename, acc_mode)
        char *filename;  IN: name of file to open
-       intn acc_mode;     IN: access mode
+       int acc_mode;     IN: access mode
  RETURNS
        File identifier if successful and NULL on failure.
  DESCRIPTION
@@ -636,7 +636,7 @@ done:
 
  *------------------------------------------------------------------------*/
 static int32
-DFANIopen(const char *filename, intn acc_mode)
+DFANIopen(const char *filename, int acc_mode)
 {
     int32        file_id;
     DFANdirhead *p, *q;
@@ -939,7 +939,7 @@ done:
  NAME
        DFANIgetann -- get annotation of tag/ref
  USAGE
-       intn DFANIgetann(filename, tag, ref, ann, maxlen, type)
+       int DFANIgetann(filename, tag, ref, ann, maxlen, type)
        char *filename;   IN: name of HDF file
        uint16 tag, ref;  IN: tag/ref of item of which we want annotation
        uint8 *ann;       OUT: space to return annotation in
@@ -959,14 +959,14 @@ done:
  EXAMPLES
  REVISION LOG
  *------------------------------------------------------------------------*/
-intn
+int
 DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann, int32 maxlen, int type, int isfortran)
 {
     int32  file_id, aid;
     int32  annlen;
     uint16 anntag, annref;
     uint8  datadi[4]; /* to read in and discard data/ref! */
-    intn   ret_value = SUCCEED;
+    int    ret_value = SUCCEED;
 
     HEclear();
 
@@ -1046,7 +1046,7 @@ done:
  NAME
        DFANIputann -- put annotation of tag/ref into file
  USAGE
-       intn DFANIputann(filename, tag, ref, ann, annlen, type)
+       int DFANIputann(filename, tag, ref, ann, annlen, type)
        char *filename;   IN: name of HDF file
        uint16 tag, ref;  IN: tag/ref of item of which this is the annotation
        uint8 *ann;       IN: space to return annotation in
@@ -1066,7 +1066,7 @@ done:
  EXAMPLES
  REVISION LOG
  *------------------------------------------------------------------------*/
-intn
+int
 DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann, int32 annlen, int type)
 {
     int32  file_id, aid;
@@ -1074,7 +1074,7 @@ DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann, int32 annl
     uint16 anntag, annref;
     uint8  datadi[4]; /* to hold data tag/ref for writing */
     uint8 *ptr;
-    intn   ret_value = SUCCEED;
+    int    ret_value = SUCCEED;
 
     HEclear();
 
@@ -1182,7 +1182,7 @@ done:
  REVISION LOG
        Revised 04/17/90.  (See DESCRIPTION.)
  *------------------------------------------------------------------------*/
-intn
+int
 DFANIlablist(const char *filename, uint16 tag, uint16 reflist[], uint8 *labellist, int listsize, int maxlen,
              int startpos, int isfortran)
 {
@@ -1192,9 +1192,9 @@ DFANIlablist(const char *filename, uint16 tag, uint16 reflist[], uint8 *labellis
     uint16       ref = 0;
     DFANdirhead *p;
     uint8       *lp; /* pointer to label */
-    intn         nrefs, nlabs;
+    int          nrefs, nlabs;
     uint8        labeldi[4]; /* to read in and discard data/ref */
-    intn         ret_value = SUCCEED;
+    int          ret_value = SUCCEED;
 
     HEclear();
 
@@ -1219,7 +1219,7 @@ DFANIlablist(const char *filename, uint16 tag, uint16 reflist[], uint8 *labellis
         memset(labellist, '\0', (uint32)maxlen * (uint32)listsize);
 
     /* find all refs for this tag; store them in reflist */
-    nrefs = (intn)Hnumber(file_id, tag); /* how many times is tag in file? */
+    nrefs = (int)Hnumber(file_id, tag); /* how many times is tag in file? */
     if (nrefs == FAIL)
         HCLOSE_GOTO_ERROR(file_id, DFE_NOMATCH, FAIL);
 
@@ -1241,7 +1241,7 @@ DFANIlablist(const char *filename, uint16 tag, uint16 reflist[], uint8 *labellis
 
     /* get directory of all labels */
 
-    nlabs = (intn)Hnumber(file_id, DFTAG_DIL);
+    nlabs = (int)Hnumber(file_id, DFTAG_DIL);
     if (nlabs != 0) {
         if (DFANdir[DFAN_LABEL] == NULL) { /* if no dir info create dir */
             if (0 == DFANIlocate(file_id, DFAN_LABEL, 0, 0)) {
@@ -1425,7 +1425,7 @@ done:
  NAME
        DFANIgetfann -- get next file annotation (file ID or file description)
  USAGE
-       intn DFANIgetfann(filename, tag, ref, ann, maxlen, type)
+       int DFANIgetfann(filename, tag, ref, ann, maxlen, type)
        int32 file_id;    IN: id of HDF file
        uint8 *ann;       OUT: space to return annotation in
        int32 annlen;     IN: size of space to return annotation in
@@ -1529,7 +1529,7 @@ done:
  PURPOSE
     DFAN-level initialization routine
  USAGE
-    intn DFANIstart()
+    int DFANIstart()
  RETURNS
     Returns SUCCEED/FAIL
  DESCRIPTION
@@ -1539,10 +1539,10 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-static intn
+static int
 DFANIstart(void)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* Don't call this routine again... */
     library_terminate = TRUE;
@@ -1561,7 +1561,7 @@ done:
  PURPOSE
     Terminate various static buffers.
  USAGE
-    intn DFANPshutdown()
+    int DFANPshutdown()
  RETURNS
     Returns SUCCEED/FAIL
  DESCRIPTION
@@ -1572,7 +1572,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DFANPshutdown(void)
 {
     DFANIclear(); /* frees the directory lists */

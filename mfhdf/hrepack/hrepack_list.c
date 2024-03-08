@@ -102,7 +102,7 @@ list_main(const char *infname, const char *outfname, options_t *options)
         gr_out             = FAIL,                      /* GR interface identifier */
         infile_id = FAIL, outfile_id = FAIL, n_rimages, /* number of raster images in the file */
         n_file_attrs;                                   /* number of file attributes */
-    intn has_GRelems = 0;                               /* set to 1 when there are GR images or */
+    int has_GRelems = 0;                                /* set to 1 when there are GR images or */
                                                         /* attributes in the file (HDFFR-1428) */
     int         i;
     const char *err;
@@ -1261,7 +1261,7 @@ int
 list_pal(const char *infname, const char *outfname, list_table_t *list_tbl, options_t *options)
 {
     uint8  palette_data[256 * 3];
-    intn   nPals, j;
+    int    nPals, j;
     uint16 ref;
 
     if (options->trip == 0) {

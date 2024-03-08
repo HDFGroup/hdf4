@@ -54,12 +54,12 @@
 
 #include "hdftest.h"
 
-static intn test_nonspecial_SDSs();
-static intn test_compressed_SDSs();
-static intn test_empty_SDSs();
-static intn test_chunked_partial();
-static intn test_chkcmp_SDSs();
-static intn test_extend_SDSs();
+static int test_nonspecial_SDSs();
+static int test_compressed_SDSs();
+static int test_empty_SDSs();
+static int test_chunked_partial();
+static int test_chkcmp_SDSs();
+static int test_extend_SDSs();
 
 #define SIMPLE_FILE "datainfo_simple.hdf" /* data file */
 #define X_LENGTH    10
@@ -154,7 +154,7 @@ comp_n_values(int32 rank, int32 *dimsizes)
 #define LENGTH2_Y 8
 #define LENGTH3_X 21
 
-static intn
+static int
 test_nonspecial_SDSs()
 {
     int32            sd_id, sds_id;
@@ -163,9 +163,9 @@ test_nonspecial_SDSs()
     float            data2[LENGTH2_X][LENGTH2_Y];
     char             data3[LENGTH3_X];
     t_hdf_datainfo_t sds1_info, sds2_info, sds3_info;
-    uintn            info_count = 0;
-    intn             status;
-    intn             num_errs = 0; /* number of errors so far */
+    unsigned         info_count = 0;
+    int              status;
+    int              num_errs = 0; /* number of errors so far */
 
     /* Create the file and initialize the SD interface */
     sd_id = SDstart(SIMPLE_FILE, DFACC_CREATE);
@@ -502,7 +502,7 @@ test_nonspecial_SDSs()
  BMR - Jul 2010
  ****************************************************************************/
 #define COMP_FILE "datainfo_cmp.hdf" /* data file */
-static intn
+static int
 test_compressed_SDSs()
 {
     int32            sd_id, sds_id;
@@ -514,8 +514,8 @@ test_compressed_SDSs()
     char             data3[LENGTH3_X];
     t_hdf_datainfo_t sds1_info, sds2_info, sds3_info;
     int32            pixels_per_scanline;
-    uintn            info_count = 0;
-    intn             status;
+    unsigned         info_count = 0;
+    int              status;
     int              ii, jj;
     int              num_errs = 0; /* number of errors so far */
 
@@ -834,16 +834,16 @@ test_compressed_SDSs()
 #define NUM_SDS     3
 #define NODATA_FILE "datainfo_nodata.hdf" /* data file */
 
-static intn
+static int
 test_empty_SDSs()
 {
     int32        sd_id, sds_id;
     int32        dimsizes[RANK];
-    uintn        info_count = 0;
+    unsigned     info_count = 0;
     comp_coder_t comp_type; /* Compression flag */
     comp_info    c_info;    /* Compression structure */
     int          ii;
-    intn         status;
+    int          status;
     int          num_errs = 0; /* number of errors so far */
 
     /* Use the same file as in test_compressed_SDSs */
@@ -946,19 +946,19 @@ test_empty_SDSs()
  BMR - Jul 2010
  ****************************************************************************/
 #define CHK_FILE "datainfo_chk.hdf" /* data file */
-static intn
+static int
 test_chunked_partial()
 {
     int32            sd_id, sds_id, sds_index;
     int32            dimsizes[RANK], origin[RANK], starts[RANK], rank = 0, edges[RANK];
     HDF_CHUNK_DEF    c_def; /* Chunking definitions */
-    uintn            info_count = 0;
+    unsigned         info_count = 0;
     t_hdf_datainfo_t sds_info;
     int32            data[Y_LENGTH][X_LENGTH];
     int              fd; /* for open */
     int              chk_num;
     int              num_errs = 0; /* number of errors so far */
-    intn             status;
+    int              status;
 
     /* Declare chunks data type and initialize some of them. */
     int32 chunk_1dim[10] = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
@@ -1133,7 +1133,7 @@ test_chunked_partial()
  * data blocks.
  */
 #define CHKCMP_FILE "datainfo_chkcmp.hdf" /* data file */
-static intn
+static int
 test_chkcmp_SDSs()
 {
     int32            sd_id, sds_id, sds_index;
@@ -1144,8 +1144,8 @@ test_chkcmp_SDSs()
     t_hdf_datainfo_t sds_info, cmpsds_info;
     int32            fill_value = 0; /* Fill value */
     int32            chk_coord[2];
-    uintn            info_count = 0;
-    intn             status;
+    unsigned         info_count = 0;
+    int              status;
     int              num_errs = 0; /* number of errors so far */
 
     /* Declare chunks data type and initialize some of them. */
@@ -1351,7 +1351,7 @@ test_chkcmp_SDSs()
  */
 #define EXTEND_FILE "datainfo_extend.hdf" /* data file */
 #define BLOCK_SIZE  400
-static intn
+static int
 test_extend_SDSs()
 {
     int32            sd_id, sds_id, sds_index;
@@ -1362,10 +1362,10 @@ test_extend_SDSs()
     int32            data3[Y_LENGTH][X_LENGTH];
     float            fdata[Y_LENGTH];
     int32            output[Y_LENGTH * 3][X_LENGTH];
-    uintn            info_count = 0;
+    unsigned         info_count = 0;
     t_hdf_datainfo_t sds_info;
     int32            block_size = 0;
-    intn             status;
+    int              status;
     int              i, j, kk;
     int              num_errs = 0; /* number of errors so far */
 

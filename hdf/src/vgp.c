@@ -112,13 +112,13 @@ const char *HDF_INTERNAL_VGS[] = {_HDF_VARIABLE, _HDF_DIMENSION, _HDF_UDIMENSION
 /* Prototypes */
 extern void vprint(void *k1);
 
-static intn Load_vfile(HFILEID f);
+static int Load_vfile(HFILEID f);
 
-static intn Remove_vfile(HFILEID f);
+static int Remove_vfile(HFILEID f);
 
-static intn vunpackvg(VGROUP *vg, uint8 buf[], intn len);
+static int vunpackvg(VGROUP *vg, uint8 buf[], int len);
 
-static intn VIstart(void);
+static int VIstart(void);
 
 /*
  * --------------------------------------------------------------------
@@ -136,7 +136,7 @@ static intn VIstart(void);
 TBBT_TREE *vtree = NULL;
 
 /* Whether we've installed the library termination function yet for this interface */
-static intn library_terminate = FALSE;
+static int library_terminate = FALSE;
 
 /* Temporary buffer for I/O */
 static uint32 Vgbufsize = 0;
@@ -325,7 +325,7 @@ RETURNS
    RETURNS SUCCEED if ok.
 
 *******************************************************************************/
-static intn
+static int
 Load_vfile(HFILEID f /* IN: file handle */)
 {
     vfile_t      *vf = NULL;
@@ -335,7 +335,7 @@ Load_vfile(HFILEID f /* IN: file handle */)
     int32         ret;
     uint16        tag       = DFTAG_NULL;
     uint16        ref       = DFTAG_NULL;
-    intn          ret_value = SUCCEED;
+    int           ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -384,7 +384,7 @@ Load_vfile(HFILEID f /* IN: file handle */)
         vf->vgtabn++; /* increment number of vgroups found in file */
 
         v->key = (int32)ref; /* set the key for the node */
-        v->ref = (uintn)ref;
+        v->ref = (unsigned)ref;
 
         /* get the header information */
         v->vg = VPgetinfo(f, ref);
@@ -428,7 +428,7 @@ Load_vfile(HFILEID f /* IN: file handle */)
         vf->vstabn++; /* increment number of vdatas found in file */
 
         w->key = (int32)ref; /* set the key for the node */
-        w->ref = (uintn)ref;
+        w->ref = (unsigned)ref;
 
         /* get the header information */
         w->vs = VSPgetinfo(f, ref);
@@ -476,12 +476,12 @@ DESCRIPTION
 RETURNS
 
 *******************************************************************************/
-static intn
+static int
 Remove_vfile(HFILEID f /* IN: file handle */)
 {
     void   **t         = NULL;
     vfile_t *vf        = NULL;
-    intn     ret_value = SUCCEED;
+    int      ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -527,14 +527,14 @@ DESCRIPTION
 RETURNS
 
 *******************************************************************************/
-intn
+int
 vcompare(void *k1, /* IN: first key to compare*/
          void *k2, /* IN: second key to compare */
-         intn  cmparg /* IN: not used */)
+         int   cmparg /* IN: not used */)
 {
     (void)cmparg;
 
-    return (intn)((*(int32 *)k1) - (*(int32 *)k2)); /* valid for integer keys */
+    return (int)((*(int32 *)k1) - (*(int32 *)k2)); /* valid for integer keys */
 } /* vcompare */
 
 /******************************************************************************
@@ -637,10 +637,10 @@ RETURNS
     SUCCEED / FAIL
 
 *******************************************************************************/
-intn
+int
 Vinitialize(HFILEID f /* IN: file handle */)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -674,10 +674,10 @@ RETURNS
    SUCCEED / FAIL
 
 *******************************************************************************/
-intn
+int
 Vfinish(HFILEID f /* IN: file handle */)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -791,16 +791,16 @@ RETURNS
    NO RETURN VALUES.
 
 *******************************************************************************/
-intn
+int
 vpackvg(VGROUP *vg,    /* IN: */
         uint8   buf[], /* IN/OUT: */
         int32  *size /* IN/OUT: */)
 {
-    uintn  i;
-    size_t slen      = 0;
-    uint16 temp_len  = 0;
-    uint8 *bb        = NULL;
-    int32  ret_value = SUCCEED;
+    unsigned i;
+    size_t   slen      = 0;
+    uint16   temp_len  = 0;
+    uint8   *bb        = NULL;
+    int32    ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -811,11 +811,11 @@ vpackvg(VGROUP *vg,    /* IN: */
     UINT16ENCODE(bb, vg->nvelt);
 
     /* save all tags */
-    for (i = 0; i < (uintn)vg->nvelt; i++)
+    for (i = 0; i < (unsigned)vg->nvelt; i++)
         UINT16ENCODE(bb, vg->tag[i]);
 
     /* save all refs */
-    for (i = 0; i < (uintn)vg->nvelt; i++)
+    for (i = 0; i < (unsigned)vg->nvelt; i++)
         UINT16ENCODE(bb, vg->ref[i]);
 
     /* save the vgnamelen and vgname - omit the null */
@@ -852,7 +852,7 @@ vpackvg(VGROUP *vg,    /* IN: */
         if (vg->flags & VG_ATTR_SET) { /* save the attrs */
             INT32ENCODE(bb, vg->nattrs);
 
-            for (i = 0; i < (uintn)vg->nattrs; i++) {
+            for (i = 0; i < (unsigned)vg->nattrs; i++) {
                 UINT16ENCODE(bb, vg->alist[i].atag);
                 UINT16ENCODE(bb, vg->alist[i].aref);
             }
@@ -889,16 +889,16 @@ RETURNS
    NO RETURN VALUES
 
 *******************************************************************************/
-static intn
+static int
 vunpackvg(VGROUP *vg,    /* IN/OUT: */
           uint8   buf[], /* IN: */
-          intn    len /* IN: */)
+          int     len /* IN: */)
 {
-    uint8 *bb = NULL;
-    uintn  u;
-    uint16 uint16var;
-    intn   i;
-    int32  ret_value = SUCCEED;
+    uint8   *bb = NULL;
+    unsigned u;
+    uint16   uint16var;
+    int      i;
+    int32    ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -921,7 +921,7 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
     if (vg->version <= 4) { /* current Vset version number */
         UINT16DECODE(bb, vg->nvelt);
 
-        vg->msize = ((uintn)vg->nvelt > (uintn)MAXNVELT ? vg->nvelt : MAXNVELT);
+        vg->msize = ((unsigned)vg->nvelt > (unsigned)MAXNVELT ? vg->nvelt : MAXNVELT);
         vg->tag   = (uint16 *)malloc(vg->msize * sizeof(uint16));
         vg->ref   = (uint16 *)malloc(vg->msize * sizeof(uint16));
 
@@ -929,11 +929,11 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         /* retrieve the tags */
-        for (u = 0; u < (uintn)vg->nvelt; u++)
+        for (u = 0; u < (unsigned)vg->nvelt; u++)
             UINT16DECODE(bb, vg->tag[u]);
 
         /* retrieve the refs */
-        for (u = 0; u < (uintn)vg->nvelt; u++)
+        for (u = 0; u < (unsigned)vg->nvelt; u++)
             UINT16DECODE(bb, vg->ref[u]);
 
         /* retrieve vgname (and its len)  */
@@ -942,7 +942,7 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
             vg->vgname = NULL;
         else {
             vg->vgname = (char *)malloc(uint16var + 1);
-            HIstrncpy(vg->vgname, (char *)bb, (intn)uint16var + 1);
+            HIstrncpy(vg->vgname, (char *)bb, (int)uint16var + 1);
             bb += (size_t)uint16var;
         }
 
@@ -952,7 +952,7 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
             vg->vgclass = NULL;
         else {
             vg->vgclass = (char *)malloc(uint16var + 1);
-            HIstrncpy(vg->vgclass, (char *)bb, (intn)uint16var + 1);
+            HIstrncpy(vg->vgclass, (char *)bb, (int)uint16var + 1);
             bb += (size_t)uint16var;
         }
 
@@ -997,7 +997,7 @@ VPgetinfo(HFILEID f, /* IN: file handle */
           uint16  ref /* IN: ref of vgroup */)
 {
     VGROUP *vg = NULL;
-    /*  intn          len;    intn mismatches Vgbufsize type -- uint32 */
+    /*  int          len;    int mismatches Vgbufsize type -- uint32 */
     size_t  len;
     VGROUP *ret_value = NULL; /* FAIL */
 
@@ -1129,7 +1129,7 @@ Vattach(HFILEID     f,    /* IN: file handle */
         if (vg->oref == 0)
             HGOTO_ERROR(DFE_NOREF, FAIL);
 
-        vg->access = (intn)acc_mode;
+        vg->access = (int)acc_mode;
 
         vg->marked = 1;
 
@@ -1148,7 +1148,7 @@ Vattach(HFILEID     f,    /* IN: file handle */
 
         vf->vgtabn++;
         v->key     = (int32)vg->oref; /* set the key for the node */
-        v->ref     = (uintn)vg->oref;
+        v->ref     = (unsigned)vg->oref;
         v->vg      = vg;
         v->nattach = 1;
         tbbtdins(vf->vgtree, (void *)v, NULL); /* insert the vg instance in B-tree */
@@ -1167,7 +1167,7 @@ Vattach(HFILEID     f,    /* IN: file handle */
         }
         else {
             vg         = v->vg;
-            vg->access = (intn)acc_mode;
+            vg->access = (int)acc_mode;
             vg->marked = 0;
 
             /* number of old-style attributes and list of their refs, these
@@ -1325,7 +1325,7 @@ Vinsert(int32 vkey, /* IN: vgroup key */
     uint16        newtag = 0;
     uint16        newref = 0;
     int32         newfid;
-    uintn         u;
+    unsigned      u;
     int32         ret_value = SUCCEED;
 
     /* clear error stack */
@@ -1386,7 +1386,7 @@ Vinsert(int32 vkey, /* IN: vgroup key */
         HGOTO_ERROR(DFE_DIFFFILES, FAIL);
 
     /* check and prevent duplicate links */
-    for (u = 0; u < (uintn)vg->nvelt; u++) {
+    for (u = 0; u < (unsigned)vg->nvelt; u++) {
         if ((vg->ref[u] == newref) && (vg->tag[u] == newtag))
             HGOTO_ERROR(DFE_DUPDD, FAIL);
     }
@@ -1417,7 +1417,7 @@ int32
 Vflocate(int32 vkey, /* IN: vdata key */
          char *field /* IN: field to locate */)
 {
-    uintn         u;
+    unsigned      u;
     vginstance_t *v  = NULL;
     VGROUP       *vg = NULL;
     int32         vskey;
@@ -1439,8 +1439,8 @@ Vflocate(int32 vkey, /* IN: vdata key */
     if (vg == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    for (u = 0; u < (uintn)vg->nvelt; u++) {
-        intn s;
+    for (u = 0; u < (unsigned)vg->nvelt; u++) {
+        int s;
 
         if (vg->tag[u] != VSDESCTAG)
             continue;
@@ -1476,17 +1476,17 @@ RETURNS
     RETURNS FALSE if not.
 
 *******************************************************************************/
-intn
+int
 Vinqtagref(int32 vkey, /* IN: vgroup key */
            int32 tag,  /* IN: tag to check in vgroup */
            int32 ref /* IN: ref to check in vgroup */)
 {
-    uintn         u;
+    unsigned      u;
     uint16        ttag;
     uint16        rref;
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
-    intn          ret_value = FALSE;
+    int           ret_value = FALSE;
 
     /* clear error stack */
     HEclear();
@@ -1507,7 +1507,7 @@ Vinqtagref(int32 vkey, /* IN: vgroup key */
     ttag = (uint16)tag;
     rref = (uint16)ref;
 
-    for (u = 0; u < (uintn)vg->nvelt; u++) {
+    for (u = 0; u < (unsigned)vg->nvelt; u++) {
         if ((ttag == vg->tag[u]) && (rref == vg->ref[u]))
             HGOTO_DONE(TRUE);
     }
@@ -1531,17 +1531,17 @@ done:
 
  Author -GeorgeV 10/10/97
 *******************************************************************************/
-intn
+int
 Vdeletetagref(int32 vkey, /* IN: vgroup key */
               int32 tag,  /* IN: tag to delete in vgroup */
               int32 ref /* IN: ref to delete in vgroup */)
 {
-    uintn         i, j;             /* loop indices */
+    unsigned      i, j;             /* loop indices */
     uint16        ttag;             /* tag for comparison */
     uint16        rref;             /* ref for comparison */
     vginstance_t *v         = NULL; /* vgroup instance struct */
     VGROUP       *vg        = NULL; /* in-memory vgroup struct */
-    intn          ret_value = SUCCEED;
+    int           ret_value = SUCCEED;
 
     /* NOTE: Move the following comments to the DESCRIPTION of the
              fcn when the issue with duplicate tag/refs is decided.
@@ -1571,7 +1571,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
     rref = (uint16)ref;
 
     /* look through elements in vgroup */
-    for (i = 0; i < (uintn)vg->nvelt; i++) { /* see if element tag/ref matches search tag/ref */
+    for (i = 0; i < (unsigned)vg->nvelt; i++) { /* see if element tag/ref matches search tag/ref */
         if ((ttag == vg->tag[i]) &&
             (rref == vg->ref[i])) { /* found tag/ref pair to delete.
                                        If duplicate tag/ref pairs exist, then it deletes
@@ -1580,11 +1580,11 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
                                        are more occurrences and then delete them.*/
 
             /* check if element found is last one in vgroup */
-            if (i != ((uintn)vg->nvelt - 1)) { /* Basically shifts the contents of the array down by one.
+            if (i != ((unsigned)vg->nvelt - 1)) { /* Basically shifts the contents of the array down by one.
                                                   This method will preserve the order without using
                                                   extra memory for storage etc. If speed/performance
                                                   is an issue you can use memmove()/memcpy(). */
-                for (j = i; j < (uintn)vg->nvelt - 1; j++) {
+                for (j = i; j < (unsigned)vg->nvelt - 1; j++) {
                     vg->tag[j] = vg->tag[j + 1];
                     vg->ref[j] = vg->ref[j + 1];
                 }
@@ -1593,8 +1593,8 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
                number of elements to be decrementd. */
 
             /* reset last ones, just to be sure  */
-            vg->tag[(uintn)vg->nvelt - 1] = DFTAG_NULL;
-            vg->ref[(uintn)vg->nvelt - 1] = 0; /* invalid ref */
+            vg->tag[(unsigned)vg->nvelt - 1] = DFTAG_NULL;
+            vg->ref[(unsigned)vg->nvelt - 1] = 0; /* invalid ref */
 
             vg->nvelt--;       /* decrement number of elements in vgroup */
             vg->marked = TRUE; /* mark vgroup as changed.
@@ -1672,7 +1672,7 @@ Vnrefs(int32 vkey, /* IN: vgroup key */
     vginstance_t *v    = NULL;
     VGROUP       *vg   = NULL;
     uint16        ttag = (uint16)tag; /* alias for faster comparison */
-    uintn         u;                  /* local counting variable */
+    unsigned      u;                  /* local counting variable */
     int32         ret_value = 0;      /* zero refs to start */
 
     /* clear error stack */
@@ -1691,7 +1691,7 @@ Vnrefs(int32 vkey, /* IN: vgroup key */
     if (vg == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    for (u = 0; u < (uintn)vg->nvelt; u++) {
+    for (u = 0; u < (unsigned)vg->nvelt; u++) {
         if (ttag == vg->tag[u])
             ret_value++;
     }
@@ -1771,7 +1771,7 @@ RETURNS
    RETURNS SUCCEED if error.
 
 *******************************************************************************/
-intn
+int
 Vgettagref(int32  vkey,  /* IN: vgroup key */
            int32  which, /* IN: hmm */
            int32 *tag,   /* IN/OUT: tag to return */
@@ -1779,7 +1779,7 @@ Vgettagref(int32  vkey,  /* IN: vgroup key */
 {
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
-    intn          ret_value = SUCCEED;
+    int           ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -1911,7 +1911,7 @@ Vaddtagref(int32 vkey, /* IN: vgroup key */
     vginstance_t *v  = NULL;
     VGROUP       *vg = NULL;
 #ifdef NO_DUPLICATES
-    uintn i;
+    unsigned i;
 #endif /* NO_DUPLICATES */
     int32 ret_value = SUCCEED;
 
@@ -1968,7 +1968,7 @@ vinsertpair(VGROUP *vg,  /* IN: vgroup struct */
     /* clear error stack */
     HEclear();
 
-    if ((intn)vg->nvelt >= vg->msize) {
+    if ((int)vg->nvelt >= vg->msize) {
         vg->msize *= 2;
 
         vg->tag = (uint16 *)realloc((void *)vg->tag, vg->msize * sizeof(uint16));
@@ -1978,8 +1978,8 @@ vinsertpair(VGROUP *vg,  /* IN: vgroup struct */
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
     }
 
-    vg->tag[(uintn)vg->nvelt] = tag;
-    vg->ref[(uintn)vg->nvelt] = ref;
+    vg->tag[(unsigned)vg->nvelt] = tag;
+    vg->ref[(unsigned)vg->nvelt] = ref;
     vg->nvelt++;
 
     vg->marked = TRUE;
@@ -2168,15 +2168,15 @@ RETURNS
     RETURNS FALSE if not, or if error
 
 *******************************************************************************/
-intn
+int
 Visvg(int32 vkey, /* IN: vgroup key */
       int32 id /* IN: id of entry in vgroup */)
 {
-    uintn         u;
+    unsigned      u;
     uint16        ID;
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
-    intn          ret_value = FALSE; /* initialize to FALSE */
+    int           ret_value = FALSE; /* initialize to FALSE */
 
     /* clear error stack */
     HEclear();
@@ -2196,7 +2196,7 @@ Visvg(int32 vkey, /* IN: vgroup key */
 
     ID = (uint16)id; /* cast 32bit ID to 16bit id */
 
-    for (u = 0; u < (uintn)vg->nvelt; u++) {
+    for (u = 0; u < (unsigned)vg->nvelt; u++) {
         if (vg->ref[u] == ID &&     /* if the ids match, */
             vg->tag[u] == DFTAG_VG) /* and it is a vgroup */
         {
@@ -2220,14 +2220,14 @@ RETURNS
    RETURNS 0 if not, or if error.
 
 *******************************************************************************/
-intn
+int
 Visvs(int32 vkey, /* IN: vgroup key */
       int32 id /* IN: id of entry in vgroup */)
 {
-    intn          i;
+    int           i;
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
-    intn          ret_value = FALSE; /* initialize to false */
+    int           ret_value = FALSE; /* initialize to false */
 
     /* clear error stack */
     HEclear();
@@ -2245,7 +2245,7 @@ Visvs(int32 vkey, /* IN: vgroup key */
     if (vg == NULL)
         HGOTO_ERROR(DFE_BADPTR, FALSE);
 
-    i = (intn)vg->nvelt;
+    i = (int)vg->nvelt;
     while (i) {
         if (vg->ref[--i] == (uint16)id && vg->tag[i] == VSDESCTAG)
             HGOTO_DONE(TRUE);
@@ -2348,7 +2348,7 @@ int32
 Vgetnext(int32 vkey, /* IN: vgroup key */
          int32 id /* IN: id of entry in vgroup */)
 {
-    uintn         u;
+    unsigned      u;
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     int32         ret_value = FAIL;
@@ -2381,10 +2381,10 @@ Vgetnext(int32 vkey, /* IN: vgroup key */
     }                                      /* end if */
 
     /* look in vgroup for 'id' */
-    for (u = 0; u < (uintn)vg->nvelt; u++) { /* only look for vgroups? */
+    for (u = 0; u < (unsigned)vg->nvelt; u++) { /* only look for vgroups? */
         if ((vg->tag[u] == DFTAG_VG) || (vg->tag[u] == VSDESCTAG)) {
             if (vg->ref[u] == (uint16)id) {
-                if (u == (uintn)(vg->nvelt - 1)) {
+                if (u == (unsigned)(vg->nvelt - 1)) {
                     HGOTO_DONE(FAIL);
                 } /* end if */
                 else {
@@ -2624,14 +2624,14 @@ RETURNS
    RETURNS SUCCEED if ok
 
 *******************************************************************************/
-intn
+int
 Vinquire(int32  vkey,     /* IN: vgroup key */
          int32 *nentries, /* IN/OUT: number of entries in vgroup */
          char  *vgname /* IN/OUT: vgroup name */)
 {
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
-    intn          ret_value = SUCCEED;
+    int           ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -2689,7 +2689,7 @@ RETURNS
 *******************************************************************************/
 HFILEID
 Vopen(char *path,     /* IN: file name */
-      intn  acc_mode, /* IN: type of file access */
+      int   acc_mode, /* IN: type of file access */
       int16 ndds /* IN: number of DD in a block */)
 {
     HFILEID ret_value = SUCCEED;
@@ -2723,13 +2723,13 @@ DESCRIPTION
    See also Vopen().
 
 RETURNS
-   RETURN VALUE:  intn status - result of Hopen().
+   RETURN VALUE:  int status - result of Hopen().
 
 *******************************************************************************/
-intn
+int
 Vclose(HFILEID f /* IN: file handle */)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     if (Vfinish(f) == FAIL)
         ret_value = FAIL;
@@ -2814,10 +2814,10 @@ done:
  RETURNS
     Returns SUCCEED/FAIL
 *******************************************************************************/
-static intn
+static int
 VIstart(void)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* Don't call this routine again... */
     library_terminate = TRUE;
@@ -2845,12 +2845,12 @@ done:
     Returns SUCCEED/FAIL
 
 *******************************************************************************/
-intn
+int
 VPshutdown(void)
 {
     VGROUP       *v         = NULL;
     vginstance_t *vg        = NULL;
-    intn          ret_value = SUCCEED;
+    int           ret_value = SUCCEED;
 
     /* Release the vdata free-list if it exists */
     if (vgroup_free_list != NULL) {
@@ -2913,13 +2913,13 @@ done:
     can happen, yet there is at least one test file generated during that
     period, grtdfui83.hdf.
 *******************************************************************************/
-intn
+int
 Vgisinternal(int32 vkey /* vgroup's identifier */)
 {
     vginstance_t *v           = NULL;
     VGROUP       *vg          = NULL;
-    intn          is_internal = FALSE;
-    intn          ret_value   = FALSE;
+    int           is_internal = FALSE;
+    int           ret_value   = FALSE;
 
     /* clear error stack */
     HEclear();
@@ -2978,11 +2978,11 @@ done:
     Checks the given name against the list of internal vgroup class names,
     HDF_INTERNAL_VGS.
 *******************************************************************************/
-intn
+int
 Visinternal(const char *classname /* vgroup's class name */)
 {
-    int  i;
-    intn ret_value = FALSE;
+    int i;
+    int ret_value = FALSE;
 
     /* Check if this class name is one of the internal class name and return
         TRUE, otherwise, return FALSE */
@@ -3026,17 +3026,17 @@ DESCRIPTION
 
     BMR - 2010/07/03
 *******************************************************************************/
-intn
-Vgetvgroups(int32   id,       /* IN: file id or vgroup id */
-            uintn   start_vg, /* IN: reference number to start retrieving */
-            uintn   n_vgs,    /* IN: number of user-created vgs to return */
-            uint16 *refarray /* IN/OUT: ref array to fill */)
+int
+Vgetvgroups(int32    id,       /* IN: file id or vgroup id */
+            unsigned start_vg, /* IN: reference number to start retrieving */
+            unsigned n_vgs,    /* IN: number of user-created vgs to return */
+            uint16  *refarray /* IN/OUT: ref array to fill */)
 {
     vginstance_t *vg_inst = NULL;
     int32         vg_ref;
-    intn          nactual_vgs, user_vgs, ii;
+    int           nactual_vgs, user_vgs, ii;
     VGROUP       *vg        = NULL;
-    intn          ret_value = SUCCEED;
+    int           ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -3172,7 +3172,7 @@ Vgetvgroups(int32   id,       /* IN: file id or vgroup id */
            number of user-created vgroups, otherwise, return the number of
            vgroups that are actually stored in refarray */
         if (refarray == NULL)
-            ret_value = user_vgs - (intn)start_vg;
+            ret_value = user_vgs - (int)start_vg;
         else
             ret_value = nactual_vgs;
     } /* vgroup id is given */

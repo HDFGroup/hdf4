@@ -72,14 +72,14 @@ char    attr3[6] = {'m', 'N', 'p', 'S', 't', '\0'}, iattr3[6];
 float32 attr4[2] = {(float32)32.001, (float32)-34.002}, iattr4[2];
 float64 attr5[2] = {64.12345, -64.12345}, iattr5[2];
 
-static intn create_vset_stuff(void);
-static intn write_vattrs(void);
-static intn read_vattrs(void);
+static int  create_vset_stuff(void);
+static int  write_vattrs(void);
+static int  read_vattrs(void);
 static void test_readattrtwice(void);
 
 /* create vdatas and vgroups */
 
-static intn
+static int
 create_vset_stuff(void)
 {
     int32 fid, vgid, vsid;
@@ -163,13 +163,13 @@ create_vset_stuff(void)
 } /* create_vset_stuff */
 
 /* test attribute routines */
-static intn
+static int
 write_vattrs(void)
 {
     int32 fid, vgid, vsid;
     int32 vsref, vgref;
     int32 fldindex, vsversion;
-    intn  n_flds;
+    int   n_flds;
 
     /* add attrs to the 1 vg */
     if (FAIL == (fid = Hopen(FILENAME, DFACC_RDWR, -1))) {
@@ -460,12 +460,12 @@ write_vattrs(void)
 } /* write_vattr */
 
 /*  Test reading routines */
-static intn
+static int
 read_vattrs(void)
 {
     int32 fid, vgid, vsid, vgref, vsref;
-    intn  n_vgattrs, n_vsattrs, n_fldattrs;
-    intn  iattrindex, ret;
+    int   n_vgattrs, n_vsattrs, n_fldattrs;
+    int   iattrindex, ret;
     int32 i_type, i_count, i_size, iversion;
     char  iattrname[FIELDNAMELENMAX + 1];
 
@@ -735,7 +735,7 @@ test_readattrtwice(void)
     char  name[MAX_HDF4_NAME_LENGTH + 1];
     char *buffer;
     int   k;
-    intn  ret;
+    int   ret;
 
     file_id = Hopen(FILENAME, DFACC_READ, 0);
     CHECK_VOID(file_id, FAIL, "Hopen:FILENAME");

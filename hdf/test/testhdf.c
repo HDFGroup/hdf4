@@ -77,7 +77,7 @@ InitTest(const char *TheName, void (*TheCall)(void), const char *TheDescr)
 static void
 usage(void)
 {
-    intn i;
+    int i;
 
     printf("Usage: testhdf [-v[erbose] (l[ow]|m[edium]|h[igh]|0-10)] \n");
     printf("               [-[e]x[clude] name+] \n");

@@ -198,7 +198,7 @@ typedef struct version_t {
 
 /* record of a block of data descriptors, mirrors structure of a HDF file.  */
 typedef struct ddblock_t {
-    uintn             dirty;      /* boolean: should this DD block be flushed? */
+    unsigned          dirty;      /* boolean: should this DD block be flushed? */
     int32             myoffset;   /* offset of this DD block in the file */
     int16             ndds;       /* number of dd's in this block */
     int32             nextoffset; /* offset to the next ddblock in the file */
@@ -229,10 +229,10 @@ typedef struct filerec_t {
     char      *path;        /* name of file */
     hdf_file_t file;        /* either file descriptor or pointer */
     uint16     maxref;      /* highest ref in this file */
-    intn       access;      /* access mode */
-    intn       refcount;    /* reference count / times opened */
-    intn       attach;      /* number of access elts attached */
-    intn       version_set; /* version tag stuff */
+    int        access;      /* access mode */
+    int        refcount;    /* reference count / times opened */
+    int        attach;      /* number of access elts attached */
+    int        version_set; /* version tag stuff */
     version_t  version;     /* file version info */
 
     /* Seek caching info */
@@ -240,8 +240,8 @@ typedef struct filerec_t {
     fileop_t last_op;   /* the last file operation performed */
 
     /* DD block caching info */
-    intn  cache;     /* boolean: whether caching is on */
-    intn  dirty;     /* boolean: if dd list needs to be flushed */
+    int   cache;     /* boolean: whether caching is on */
+    int   dirty;     /* boolean: if dd list needs to be flushed */
     int32 f_end_off; /* offset of the end of the file */
 
     /* DD list pointers */
@@ -256,7 +256,7 @@ typedef struct filerec_t {
     TBBT_TREE *tag_tree; /* TBBT of the tags in the file */
 
     /* annotation stuff for file */
-    intn       an_num[4];  /* Holds number of annotations found of each type */
+    int        an_num[4];  /* Holds number of annotations found of each type */
     TBBT_TREE *an_tree[4]; /* tbbt trees for each type of annotation in file
                             * i.e. file/data labels and descriptions.
                             * This is done for faster searching of annotations
@@ -273,13 +273,13 @@ typedef struct filerec_t {
    index into the ddlist of that ddblock. */
 typedef struct accrec_t {
     /* Flags for this access record */
-    intn               appendable;   /* whether appends to the data are allowed */
-    intn               special;      /* special element ? */
-    intn               new_elem;     /* is a new element (i.e. no length set yet) */
+    int                appendable;   /* whether appends to the data are allowed */
+    int                special;      /* special element ? */
+    int                new_elem;     /* is a new element (i.e. no length set yet) */
     int32              block_size;   /* size of the blocks for linked-block element*/
     int32              num_blocks;   /* number blocks in the linked-block element */
     uint32             access;       /* access codes */
-    uintn              access_type;  /* I/O access type: serial/parallel/... */
+    unsigned           access_type;  /* I/O access type: serial/parallel/... */
     int32              file_id;      /* id of attached file */
     atom_t             ddid;         /* DD id for the DD attached to */
     int32              posn;         /* seek position with respect to start of element */
@@ -331,12 +331,12 @@ typedef struct sp_info_block_t {
 typedef struct funclist_t {
     int32 (*stread)(accrec_t *rec);
     int32 (*stwrite)(accrec_t *rec);
-    int32 (*seek)(accrec_t *access_rec, int32 offset, intn origin);
+    int32 (*seek)(accrec_t *access_rec, int32 offset, int origin);
     int32 (*inquire)(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
                      int32 *poffset, int32 *pposn, int16 *paccess, int16 *pspecial);
     int32 (*read)(accrec_t *access_rec, int32 length, void *data);
     int32 (*write)(accrec_t *access_rec, int32 length, const void *data);
-    intn (*endaccess)(accrec_t *access_rec);
+    int (*endaccess)(accrec_t *access_rec);
     int32 (*info)(accrec_t *access_rec, sp_info_block_t *info);
     int32 (*reset)(accrec_t *access_rec, sp_info_block_t *info);
 } funclist_t;
@@ -416,31 +416,31 @@ HDFLIBAPI void HIrelease_accrec_node(accrec_t *acc);
 
 HDFLIBAPI void *HIgetspinfo(accrec_t *access_rec);
 
-HDFLIBAPI intn HPcompare_filerec_path(const void *obj, const void *key);
+HDFLIBAPI int HPcompare_filerec_path(const void *obj, const void *key);
 
-HDFLIBAPI intn HPcompare_accrec_tagref(const void *rec1, const void *rec2);
+HDFLIBAPI int HPcompare_accrec_tagref(const void *rec1, const void *rec2);
 
-HDFLIBAPI int32 HPgetdiskblock(filerec_t *file_rec, int32 block_size, intn moveto);
+HDFLIBAPI int32 HPgetdiskblock(filerec_t *file_rec, int32 block_size, int moveto);
 
-HDFLIBAPI intn HPfreediskblock(filerec_t *file_rec, int32 block_offset, int32 block_size);
+HDFLIBAPI int HPfreediskblock(filerec_t *file_rec, int32 block_offset, int32 block_size);
 
-HDFLIBAPI intn HPisfile_in_use(const char *path);
+HDFLIBAPI int HPisfile_in_use(const char *path);
 
-HDFLIBAPI int32 HDcheck_empty(int32 file_id, uint16 tag, uint16 ref, intn *emptySDS);
+HDFLIBAPI int32 HDcheck_empty(int32 file_id, uint16 tag, uint16 ref, int *emptySDS);
 
 HDFLIBAPI int32 HDget_special_info(int32 access_id, sp_info_block_t *info_block);
 
 HDFLIBAPI int32 HDset_special_info(int32 access_id, sp_info_block_t *info_block);
 
-HDFLIBAPI intn HP_read(filerec_t *file_rec, void *buf, int32 bytes);
+HDFLIBAPI int HP_read(filerec_t *file_rec, void *buf, int32 bytes);
 
-HDFLIBAPI intn HPseek(filerec_t *file_rec, int32 offset);
+HDFLIBAPI int HPseek(filerec_t *file_rec, int32 offset);
 
-HDFLIBAPI intn HP_write(filerec_t *file_rec, const void *buf, int32 bytes);
+HDFLIBAPI int HP_write(filerec_t *file_rec, const void *buf, int32 bytes);
 
 HDFLIBAPI int32 HPread_drec(int32 file_id, atom_t data_id, uint8 **drec_buf);
 
-HDFLIBAPI intn tagcompare(void *k1, void *k2, intn cmparg);
+HDFLIBAPI int tagcompare(void *k1, void *k2, int cmparg);
 
 HDFLIBAPI void tagdestroynode(void *n);
 
@@ -460,7 +460,7 @@ HDFLIBAPI int32 HLPwrite(accrec_t *access_rec, int32 length, const void *data);
 HDFLIBAPI int32 HLPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
                            int32 *poffset, int32 *pposn, int16 *paccess, int16 *pspecial);
 
-HDFLIBAPI intn HLPendaccess(accrec_t *access_rec);
+HDFLIBAPI int HLPendaccess(accrec_t *access_rec);
 
 HDFLIBAPI int32 HLPcloseAID(accrec_t *access_rec);
 
@@ -482,7 +482,7 @@ HDFLIBAPI int32 HXPwrite(accrec_t *access_rec, int32 length, const void *data);
 HDFLIBAPI int32 HXPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
                            int32 *poffset, int32 *pposn, int16 *paccess, int16 *pspecial);
 
-HDFLIBAPI intn HXPendaccess(accrec_t *access_rec);
+HDFLIBAPI int HXPendaccess(accrec_t *access_rec);
 
 HDFLIBAPI int32 HXPcloseAID(accrec_t *access_rec);
 
@@ -490,9 +490,9 @@ HDFLIBAPI int32 HXPinfo(accrec_t *access_rec, sp_info_block_t *info_block);
 
 HDFLIBAPI int32 HXPreset(accrec_t *access_rec, sp_info_block_t *info_block);
 
-HDFLIBAPI intn HXPsetaccesstype(accrec_t *access_rec);
+HDFLIBAPI int HXPsetaccesstype(accrec_t *access_rec);
 
-HDFLIBAPI intn HXPshutdown(void);
+HDFLIBAPI int HXPshutdown(void);
 
 /*
  ** from hcomp.c
@@ -511,7 +511,7 @@ HDFLIBAPI int32 HCPread(accrec_t *access_rec, int32 length, void *data);
 
 HDFLIBAPI int32 HCPwrite(accrec_t *access_rec, int32 length, const void *data);
 
-HDFLIBAPI intn HCPendaccess(accrec_t *access_rec);
+HDFLIBAPI int HCPendaccess(accrec_t *access_rec);
 
 HDFLIBAPI int32 HCPcloseAID(accrec_t *access_rec);
 
@@ -541,7 +541,7 @@ HDFLIBAPI int32 HBPread(accrec_t *access_rec, int32 length, void *data);
 
 HDFLIBAPI int32 HBPwrite(accrec_t *access_rec, int32 length, const void *data);
 
-HDFLIBAPI intn HBPendaccess(accrec_t *access_rec);
+HDFLIBAPI int HBPendaccess(accrec_t *access_rec);
 
 HDFLIBAPI int32 HBPcloseAID(accrec_t *access_rec);
 
@@ -564,7 +564,7 @@ HDFLIBAPI int32 HRPread(accrec_t *access_rec, int32 length, void *data);
 
 HDFLIBAPI int32 HRPwrite(accrec_t *access_rec, int32 length, const void *data);
 
-HDFLIBAPI intn HRPendaccess(accrec_t *access_rec);
+HDFLIBAPI int HRPendaccess(accrec_t *access_rec);
 
 HDFLIBAPI int32 HRPcloseAID(accrec_t *access_rec);
 
@@ -587,7 +587,7 @@ HDFLIBAPI int32 HRPinfo(accrec_t *access_rec, sp_info_block_t *info_block);
     Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
-intn HTPstart(filerec_t *file_rec /* IN:  File record to store info in */
+int HTPstart(filerec_t *file_rec /* IN:  File record to store info in */
 );
 
 /******************************************************************************
@@ -603,8 +603,8 @@ intn HTPstart(filerec_t *file_rec /* IN:  File record to store info in */
     Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
-intn HTPinit(filerec_t *file_rec, /* IN: File record to store info in */
-             int16      ndds      /* IN: # of DDs to store in each block */
+int HTPinit(filerec_t *file_rec, /* IN: File record to store info in */
+            int16      ndds      /* IN: # of DDs to store in each block */
 );
 
 /******************************************************************************
@@ -619,7 +619,7 @@ intn HTPinit(filerec_t *file_rec, /* IN: File record to store info in */
     Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
-intn HTPsync(filerec_t *file_rec /* IN:  File record to store info in */
+int HTPsync(filerec_t *file_rec /* IN:  File record to store info in */
 );
 
 /******************************************************************************
@@ -636,7 +636,7 @@ intn HTPsync(filerec_t *file_rec /* IN:  File record to store info in */
     Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
-intn HTPend(filerec_t *file_rec /* IN:  File record to store info in */
+int HTPend(filerec_t *file_rec /* IN:  File record to store info in */
 );
 
 /******************************************************************************
@@ -687,7 +687,7 @@ atom_t HTPselect(filerec_t *file_rec, /* IN: File record to store info in */
     Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
-intn HTPendaccess(atom_t ddid /* IN: DD id to end access to */
+int HTPendaccess(atom_t ddid /* IN: DD id to end access to */
 );
 
 /******************************************************************************
@@ -703,7 +703,7 @@ intn HTPendaccess(atom_t ddid /* IN: DD id to end access to */
     Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
-intn HTPdelete(atom_t ddid /* IN: DD id to delete */
+int HTPdelete(atom_t ddid /* IN: DD id to delete */
 );
 
 /******************************************************************************
@@ -719,9 +719,9 @@ intn HTPdelete(atom_t ddid /* IN: DD id to delete */
     Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
-intn HTPupdate(atom_t ddid,    /* IN: DD id to update */
-               int32  new_off, /* IN: new offset for DD */
-               int32  new_len  /* IN: new length for DD */
+int HTPupdate(atom_t ddid,    /* IN: DD id to update */
+              int32  new_off, /* IN: new offset for DD */
+              int32  new_len  /* IN: new length for DD */
 );
 
 /******************************************************************************
@@ -736,11 +736,11 @@ intn HTPupdate(atom_t ddid,    /* IN: DD id to update */
     Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
-intn HTPinquire(atom_t  ddid, /* IN: DD id to inquire about */
-                uint16 *tag,  /* IN: tag of DD */
-                uint16 *ref,  /* IN: ref of DD */
-                int32  *off,  /* IN: offset of DD */
-                int32  *len   /* IN: length of DD */
+int HTPinquire(atom_t  ddid, /* IN: DD id to inquire about */
+               uint16 *tag,  /* IN: tag of DD */
+               uint16 *ref,  /* IN: ref of DD */
+               int32  *off,  /* IN: offset of DD */
+               int32  *len   /* IN: length of DD */
 );
 
 /******************************************************************************
@@ -754,7 +754,7 @@ intn HTPinquire(atom_t  ddid, /* IN: DD id to inquire about */
     Returns TRUE(1)/FALSE(0) if successful and FAIL otherwise
 
 *******************************************************************************/
-intn HTPis_special(atom_t ddid /* IN: DD id to inquire about */
+int HTPis_special(atom_t ddid /* IN: DD id to inquire about */
 );
 
 /******************************************************************************
@@ -769,8 +769,8 @@ intn HTPis_special(atom_t ddid /* IN: DD id to inquire about */
     returns SUCCEED (0) if successful and FAIL (-1) if failed.
 
 *******************************************************************************/
-intn HTPdump_dds(int32 file_id, /* IN: file ID of HDF file to dump info for */
-                 FILE *fout     /* IN: file stream to output to */
+int HTPdump_dds(int32 file_id, /* IN: file ID of HDF file to dump info for */
+                FILE *fout     /* IN: file stream to output to */
 );
 
 #ifdef __cplusplus

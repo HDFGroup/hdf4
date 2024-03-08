@@ -17,7 +17,7 @@
 
 #define NONAME_LEN 12
 
-void   dumpvg_usage(intn argc, char *argv[]);
+void   dumpvg_usage(int argc, char *argv[]);
 int32  Vref_index(int32 file_id, int32 vg_ref);
 int32  Vname_ref(int32 file_id, char *searched_name, int32 *find_ref, int32 *index);
 int32  Vstr_ref(int32 file_id, char *searched_str, int is_name, int32 *find_ref, int32 *index);
@@ -25,21 +25,21 @@ int32  Vindex_ref(int32 file_id, int32 sear_index);
 void   resetVG(int32 *vg_id, const char *curr_file_name);
 void   display(vg_info_t *ptr, int32 level, vg_info_t **list, int32 num_nodes, int32 root_index,
                int32 firstchild, FILE *fp);
-intn   get_VGandInfo(int32 *vg_id, int32 file_id, int32 vg_ref, const char *file_name, int32 *n_entries,
+int    get_VGandInfo(int32 *vg_id, int32 file_id, int32 vg_ref, const char *file_name, int32 *n_entries,
                      char **vgname, char **vgclass);
 char **alloc_list_of_strings(int32 num_entries);
 char  *alloc_strg_of_chars(char *strg);
-int32  get_VGindex_list(int32 file_id, dump_info_t *dumpvg_opts, int32 **vg_chosen, intn *index_error);
+int32  get_VGindex_list(int32 file_id, dump_info_t *dumpvg_opts, int32 **vg_chosen, int *index_error);
 void   closeVG(int32 *file_id, int32 **vg_chosen, const char *curr_file_name);
-intn   vgBuildGraph(int32 vg_id, int32 file_id, int32 num_entries, const char *file_name, vg_info_t *aNode,
-                    intn *skipfile);
-intn   dvg(dump_info_t *dumpvg_opts, intn curr_arg, intn argc, char *argv[]);
-intn   vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 num_entries, FILE *fp,
-                  vg_info_t *aNode, intn *skipfile);
+int    vgBuildGraph(int32 vg_id, int32 file_id, int32 num_entries, const char *file_name, vg_info_t *aNode,
+                    int *skipfile);
+int    dvg(dump_info_t *dumpvg_opts, int curr_arg, int argc, char *argv[]);
+int    vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 num_entries, FILE *fp,
+                  vg_info_t *aNode, int *skipfile);
 
 /* display the usage of command dumpvg */
 void
-dumpvg_usage(intn argc, char *argv[])
+dumpvg_usage(int argc, char *argv[])
 {
     (void)argc;
 
@@ -60,10 +60,10 @@ dumpvg_usage(intn argc, char *argv[])
     printf("\t<filelist>\tList of hdf file names, separated by spaces\n");
 } /* end dumpvg_usage() */
 
-intn
-parse_dumpvg_opts(dump_info_t *dumpvg_opts, intn *curr_arg, intn argc, char *argv[])
+int
+parse_dumpvg_opts(dump_info_t *dumpvg_opts, int *curr_arg, int argc, char *argv[])
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* traverse the command and process each option */
 /* Allows '/' for options on Windows */
@@ -171,7 +171,7 @@ Vindex_ref(int32 file_id, int32 sear_index)
 {
     int32 find_ref  = -1;
     int   index     = 0;
-    intn  found     = FALSE;
+    int   found     = FALSE;
     int32 ret_value = FAIL;
 
     while (!found && index != -1) {
@@ -410,11 +410,11 @@ display(vg_info_t *ptr, int32 level,                         /* level of descend
    vgroup's id to FAIL and returns to the caller with status FAIL.
    If any other failure occurs, get_VGandInfo will return the status
    as FAIL after completing its processing. */
-intn
+int
 get_VGandInfo(int32 *vg_id, int32 file_id, int32 vg_ref, const char *file_name, int32 *n_entries,
               char **vgname, char **vgclass)
 {
-    intn   status, ret_value = SUCCEED;
+    int    status, ret_value = SUCCEED;
     int32  status_32;
     uint16 name_len = 0;
 
@@ -492,11 +492,11 @@ done:
     return (ret_value);
 } /* end of get_VGandInfo */
 
-intn
+int
 print_data_annots(int32 file_id, const char *file_name, int32 tag, int32 ref)
 {
     int32 an_id     = FAIL;
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     if ((an_id = ANstart(file_id)) == FAIL)
         ERROR_GOTO_2("in %s: ANstart failed for file %s\n", "print_data_annots", file_name);
@@ -531,7 +531,7 @@ char **
 alloc_list_of_strings(int32 num_entries)
 {
     char **ptr = NULL;
-    intn   i;
+    int    i;
 
     /* I don't know why +1 here and only i<num_entries at for loop - BMR*/
     /* probably, +1 so that malloc won't fail when num_entries = 0, was */
@@ -618,11 +618,11 @@ print_fields(char *fields, char *field_title, /* */
         - 0 if none.
    If there are any errors, the parameter index_error will return TRUE */
 int32
-get_VGindex_list(int32 file_id, dump_info_t *dumpvg_opts, int32 **vg_chosen, intn *index_error)
+get_VGindex_list(int32 file_id, dump_info_t *dumpvg_opts, int32 **vg_chosen, int *index_error)
 {
-    intn  ii;
+    int   ii;
     int32 index, find_ref, vg_count = 0, num_vg_chosen = dumpvg_opts->num_chosen, found = FALSE, ref_num;
-    intn  ret_value = 0;
+    int   ret_value = 0;
 
     /* if no specific vgroups are requested, return vgroup count
        as NO_SPECIFIC (-1) */
@@ -741,11 +741,11 @@ done:
 /* print_file_annotations manage the AN interface and simply calls the
    two routines print_all_file_labels and print_file_descs defined in
    hdp_list.c to display the file annotations of the current file */
-intn
+int
 print_file_annotations(int32 file_id, const char *file_name)
 {
     int32 an_id  = FAIL;
-    intn  status = SUCCEED, ret_value = SUCCEED;
+    int   status = SUCCEED, ret_value = SUCCEED;
 
     /* initiate the annotation interface */
     an_id = ANstart(file_id);
@@ -798,9 +798,9 @@ closeVG(int32      *file_id,   /* will be returned as a FAIL */
 
 } /* end of closeVG */
 
-intn
+int
 vgBuildGraph(int32 vg_id, int32 file_id, int32 num_entries, const char *file_name, vg_info_t *aNode,
-             intn *skipfile)
+             int *skipfile)
 {
     int32 vs;
     char  vsname[MAXNAMELEN];
@@ -813,7 +813,7 @@ vgBuildGraph(int32 vg_id, int32 file_id, int32 num_entries, const char *file_nam
     int32 elem_n_entries;
     int32 elem_tag;
     int32 vg_ref;
-    intn  status, ret_value = SUCCEED;
+    int   status, ret_value = SUCCEED;
 
     aNode->n_entries = num_entries;
     if (num_entries != 0) {
@@ -932,9 +932,9 @@ done:
     return ret_value;
 } /* vgBuildGraph */
 
-intn
+int
 vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 num_entries, FILE *fp,
-           vg_info_t *aNode, intn *skipfile)
+           vg_info_t *aNode, int *skipfile)
 {
     int32 vgt = FAIL;
     int32 vg_ref;
@@ -954,7 +954,7 @@ vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 num_entri
     char *vgclass   = NULL;
     char *name      = NULL;
     char *file_name = dumpvg_opts->ifile_name;
-    intn  status, ret_value = SUCCEED;
+    int   status, ret_value = SUCCEED;
     char  fields[VSFIELDMAX * FIELDNAMELENMAX];
 
     aNode->n_entries = num_entries;
@@ -1145,8 +1145,8 @@ done:
     return ret_value;
 } /* vgdumpfull */
 
-intn
-dvg(dump_info_t *dumpvg_opts, intn curr_arg, intn argc, char *argv[])
+int
+dvg(dump_info_t *dumpvg_opts, int curr_arg, int argc, char *argv[])
 {
     int32       file_id   = FAIL;
     int32       vg_id     = FAIL;
@@ -1169,7 +1169,7 @@ dvg(dump_info_t *dumpvg_opts, intn curr_arg, intn argc, char *argv[])
     FILE       *fp      = NULL;
     vg_info_t **list    = NULL;
     vg_info_t  *ptr     = NULL;
-    intn        status, ret_value = SUCCEED;
+    int         status, ret_value = SUCCEED;
 
     /* check for missing input file name */
     if (curr_arg >= argc) {
@@ -1180,10 +1180,10 @@ dvg(dump_info_t *dumpvg_opts, intn curr_arg, intn argc, char *argv[])
     /* going through each input file, look for the requested vgroups
        and display them */
     while (curr_arg < argc) {
-        intn isHDF    = TRUE;  /* FALSE, if current file is not HDF file */
-        intn skipfile = FALSE; /* skip the current file when some severe */
-                               /* failure occurs; otherwise, the list of nodes is not */
-                               /* completely prepared and will cause a crash in display */
+        int isHDF    = TRUE;  /* FALSE, if current file is not HDF file */
+        int skipfile = FALSE; /* skip the current file when some severe */
+                              /* failure occurs; otherwise, the list of nodes is not */
+                              /* completely prepared and will cause a crash in display */
 
         strcpy(file_name, argv[curr_arg]);          /* get current input file name */
         strcpy(dumpvg_opts->ifile_name, file_name); /* record for later use */
@@ -1277,7 +1277,7 @@ dvg(dump_info_t *dumpvg_opts, intn curr_arg, intn argc, char *argv[])
 
         {
             int32 skipvg = FALSE;
-            intn  isvdata; /* TRUE if a vdata being processed, FALSE if vg */
+            int   isvdata; /* TRUE if a vdata being processed, FALSE if vg */
 
             /* if not to dump all vgroups but the current vgroup is not
                one of the selected ones */
@@ -1440,11 +1440,11 @@ done:
 
 /* main routine in hdp_vg.c; called by hdp.c/main to process the command
 hdp dumpvg... */
-intn
-do_dumpvg(intn curr_arg, intn argc, char *argv[], intn help)
+int
+do_dumpvg(int curr_arg, int argc, char *argv[], int help)
 {
     dump_info_t dumpvg_opts; /* dumpvg options */
-    intn        status, ret_value = SUCCEED;
+    int         status, ret_value = SUCCEED;
 
     /* initialize the structure that holds user's options and inputs */
     init_dump_opts(&dumpvg_opts);

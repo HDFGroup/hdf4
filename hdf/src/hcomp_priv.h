@@ -78,21 +78,21 @@ typedef struct comp_stateinfo_tag {
 
 /* structure for storing state caching information */
 typedef struct comp_state_cache_tag {
-    intn               num_states; /* the number of states cached */
+    int                num_states; /* the number of states cached */
     comp_stateinfo_t **comp_state; /* pointer to an array of pointers to
                                       compression states */
 } comp_state_cache_t;
 
 /* compinfo_t -- compressed element information structure */
 typedef struct compinfo_tag {
-    intn attached;               /* number of access records attached
-                                    to this information structure */
+    int attached;                /* number of access records attached
+                                     to this information structure */
     int32              length;   /* the actual length of the data elt */
     uint16             comp_ref; /* compressed info ref. number */
     int32              aid;      /* AID of the compressed info */
     comp_model_info_t  minfo;    /* modeling information */
     comp_coder_info_t  cinfo;    /* coding information */
-    intn               caching;  /* whether caching is turned on */
+    int                caching;  /* whether caching is turned on */
     comp_state_cache_t sinfo;    /* state information for caching */
 } compinfo_t;
 

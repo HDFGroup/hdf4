@@ -26,7 +26,7 @@ extern int
 test_sd()
 {
     int32 fid;
-    intn  status;
+    int   status;
 #if defined H4_HAVE_WIN32_API
     int mode;
 #else
@@ -34,7 +34,7 @@ test_sd()
 #endif
 
     FILE *ff;
-    intn  num_errs = 0; /* number of errors so far */
+    int   num_errs = 0; /* number of errors so far */
 
     /* Output message about test being performed */
     TESTING("SDstart for file with no write permission (tsd.c)");

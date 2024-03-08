@@ -70,8 +70,8 @@ verify_info_data(int32 sds_id, int32 expected_dimsize, int16 *result)
     char  info[40];      /* holds brief info where failure occurs */
     int16 outdata[DIM0]; /* data read back */
     char  ds_name[20];   /* dataset name */
-    intn  status   = 0;  /* returned by called functions */
-    intn  num_errs = 0;  /* number of errors */
+    int   status   = 0;  /* returned by called functions */
+    int   num_errs = 0;  /* number of errors */
 
     /* Get information of the first dataset, and verify its dimension */
     status = SDgetinfo(sds_id, ds_name, NULL, dimsizes, NULL, NULL);
@@ -122,8 +122,8 @@ test_1dim_singlevar()
     int32 start[1],      /* where to start writing */
         edges[1];        /* length of data to be read/written */
     int16 fillval  = 99; /* fill value for the variable */
-    intn  status   = 0;  /* returned by called functions */
-    intn  num_errs = 0;  /* number of errors so far */
+    int   status   = 0;  /* returned by called functions */
+    int   num_errs = 0;  /* number of errors so far */
 
     /* result data to compare against read data; the first two elements will
         be changed to "1,2" later for the last test. */
@@ -242,8 +242,8 @@ test_1dim_multivars()
     int16 outdata[DIM0]; /* data read back */
     int16 fillval1 = -1; /* fill value for the variable */
     int16 fillval2 = -2; /* fill value for the variable */
-    intn  status   = 0;  /* returned by called functions */
-    intn  num_errs = 0;  /* number of errors so far */
+    int   status   = 0;  /* returned by called functions */
+    int   num_errs = 0;  /* number of errors so far */
 
     /* result data to compare against read data */
     int16 result1[] = {300, 301, 302, 303, -1, -1, 400, 401, 500, 501, 502};
@@ -397,8 +397,8 @@ test_multidim_singlevar()
         edges[3];                    /* length of data to be read */
     int16 outdata[DIM0][DIM1][DIM2]; /* data read back */
     int16 fillval  = -3;             /* fill value for the variable */
-    intn  status   = 0;              /* returned by called functions */
-    intn  num_errs = 0;              /* number of errors so far */
+    int   status   = 0;              /* returned by called functions */
+    int   num_errs = 0;              /* number of errors so far */
 
     /* result data to compare against read data */
     int16 result[DIM00][DIM1][DIM2] = {{{300, -3}, {-3, -3}, {-3, -3}},     {{301, -3}, {-3, -3}, {-3, -3}},
@@ -584,8 +584,8 @@ test_1dim_multivars_addon()
     int32 start[1],      /* where to start writing */
         edges[1];        /* length of data to be read/written */
     int16 fillval  = -3; /* fill value for the variable */
-    intn  status   = 0;  /* returned by called functions */
-    intn  num_errs = 0;  /* number of errors so far */
+    int   status   = 0;  /* returned by called functions */
+    int   num_errs = 0;  /* number of errors so far */
 
     /* result data to compare against read data */
     int16 result3[] = {300, 301, 302, 303, -3, -3, 30, 31, 801, 802, 803};

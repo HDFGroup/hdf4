@@ -42,10 +42,10 @@ nhiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
     char *fn;
     intf  ret;
 
-    fn = HDf2cstring(name, (intn)*namelen);
+    fn = HDf2cstring(name, (int)*namelen);
     if (!fn)
         return FAIL;
-    ret = (intf)Hopen(fn, (intn)*acc_mode, (int16)*defdds);
+    ret = (intf)Hopen(fn, (int)*acc_mode, (int16)*defdds);
     free(fn);
     return ret;
 }
@@ -96,7 +96,7 @@ nhxisdir(_fcd dir, intf *dirlen)
     char *fn;
     intf  ret;
 
-    fn = HDf2cstring(dir, (intn)*dirlen);
+    fn = HDf2cstring(dir, (int)*dirlen);
     if (!fn)
         return FAIL;
     ret = (intf)HXsetdir(fn);
@@ -120,7 +120,7 @@ nhxiscdir(_fcd dir, intf *dirlen)
     char *fn;
     intf  ret;
 
-    fn = HDf2cstring(dir, (intn)*dirlen);
+    fn = HDf2cstring(dir, (int)*dirlen);
     if (!fn)
         return FAIL;
     ret = (intf)HXsetcreatedir(fn);
@@ -159,7 +159,7 @@ nhglibverc(intf *major_v, intf *minor_v, intf *release, _fcd string, intf *len)
     uint32 cmajor_v;
     uint32 cminor_v;
     uint32 crelease;
-    intn   status;
+    int    status;
 
     cstring = NULL;
     if (*len)
@@ -193,7 +193,7 @@ nhgfilverc(intf *file_id, intf *major_v, intf *minor_v, intf *release, _fcd stri
     uint32 cmajor_v;
     uint32 cminor_v;
     uint32 crelease;
-    intn   status;
+    int    status;
 
     cstring = NULL;
     if (*len)
@@ -226,7 +226,7 @@ nhiishdf(_fcd name, intf *namelen)
     char *fn;
     intf  ret;
 
-    fn = HDf2cstring(name, (intn)*namelen);
+    fn = HDf2cstring(name, (int)*namelen);
     if (!fn)
         return FAIL;
     ret = (intf)Hishdf(fn);
@@ -249,7 +249,7 @@ nhconfinfc(intf *coder_type, intf *info)
 {
     comp_coder_t coder_type_c;
     uint32       info_c;
-    intn         status;
+    int          status;
 
     coder_type_c = (comp_coder_t)*coder_type;
     status       = HCget_config_info(coder_type_c, &info_c);

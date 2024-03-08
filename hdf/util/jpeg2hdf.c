@@ -76,18 +76,18 @@ typedef enum { /* JPEG marker codes */
 static int32 num_bytes;              /* number of bytes until the SOS code. */
 static int32 image_width    = 0;     /* width of the JPEG image in pixels */
 static int32 image_height   = 0;     /* height of the JPEG image in pixels */
-static intn  num_components = 0;     /* number of components in the JPEG image */
+static int   num_components = 0;     /* number of components in the JPEG image */
 static uint8 file_buf[MAX_FILE_BUF]; /* size of the buffer to copy through */
 
 /*
  * Routines to parse JPEG markers & save away the useful info.
  */
 
-static intn
+static int
 jgetc(FILE *f)
 /* Get a 2-byte unsigned integer (e.g., a marker parameter length field) */
 {
-    intn a;
+    int a;
 
     a = fgetc(f);
     if (a != EOF)
@@ -137,13 +137,13 @@ skip_variable(FILE *f)
         (void)jgetc(f);
 }
 
-static intn
+static int
 next_marker(FILE *f)
 /* Find the next JPEG marker */
 /* Note that the output might not be a valid marker code, */
 /* but it will never be 0 or FF */
 {
-    intn c, nbytes;
+    int c, nbytes;
 
     nbytes = 0;
     do {
@@ -244,7 +244,7 @@ read_file_header(FILE *f)
  *          into the HDF file...
  *---------------------------------------------------------------------------*/
 
-static intn
+static int
 DFJPEGaddrig(int32 file_id, uint16 ref, uint16 ctag)
 {
     uint8  ntstring[4];

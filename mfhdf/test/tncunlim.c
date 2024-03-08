@@ -69,8 +69,8 @@ test_1dim_singlevar()
     int     rh_natts;                 /* number of attributes */
     int     ii;
     short   fillval  = 99; /* fill value for the variable */
-    intn    status   = 0;  /* returned by called functions */
-    intn    num_errs = 0;  /* number of errors so far */
+    int     status   = 0;  /* returned by called functions */
+    int     num_errs = 0;  /* number of errors so far */
 
     /* result data to compare against read data; the first two elements will
         be changed to "1,2" later for the last test. */
@@ -305,8 +305,8 @@ test_1dim_multivars()
     int     ii;
     short   var1_fillval = -1; /* fill value for the variable */
     short   var2_fillval = -2; /* fill value for the variable */
-    intn    status       = 0;  /* returned by called functions */
-    intn    num_errs     = 0;  /* number of errors so far */
+    int     status       = 0;  /* returned by called functions */
+    int     num_errs     = 0;  /* number of errors so far */
 
     /* result data to compare against read data; the first two elements will
         be changed to "1,2" later for the last test. */
@@ -685,8 +685,8 @@ test_multidim_singlevar()
     int     rh_natts;                  /* number of attributes */
     int     ii, jj, kk;
     short   fillval  = -3; /* fill value for the variable */
-    intn    status   = 0;  /* returned by called functions */
-    intn    num_errs = 0;  /* number of errors so far */
+    int     status   = 0;  /* returned by called functions */
+    int     num_errs = 0;  /* number of errors so far */
 
     /* result data to compare against read data; the first two elements will
         be changed to "1,2" later for the last test. */

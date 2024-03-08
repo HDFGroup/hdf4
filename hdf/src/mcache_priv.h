@@ -163,13 +163,13 @@ HDFLIBAPI void *mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
                            int32   pgno, /* IN: page number */
                            int32   flags /* IN: XXX not used? */);
 
-HDFLIBAPI intn mcache_put(MCACHE *mp,   /* IN: MCACHE cookie */
-                          void   *page, /* IN: page to put */
-                          int32   flags /* IN: flags = 0, MCACHE_DIRTY */);
+HDFLIBAPI int mcache_put(MCACHE *mp,   /* IN: MCACHE cookie */
+                         void   *page, /* IN: page to put */
+                         int32   flags /* IN: flags = 0, MCACHE_DIRTY */);
 
-HDFLIBAPI intn mcache_sync(MCACHE *mp /* IN: MCACHE cookie */);
+HDFLIBAPI int mcache_sync(MCACHE *mp /* IN: MCACHE cookie */);
 
-HDFLIBAPI intn mcache_close(MCACHE *mp /* IN: MCACHE cookie */);
+HDFLIBAPI int mcache_close(MCACHE *mp /* IN: MCACHE cookie */);
 
 HDFLIBAPI int32 mcache_get_pagesize(MCACHE *mp /* IN: MCACHE cookie */);
 

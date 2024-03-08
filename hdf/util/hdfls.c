@@ -18,17 +18,17 @@
 
 dd_t *desc_buf;
 
-intn debug   = FALSE, /* Debugging is off by default */
+int debug    = FALSE, /* Debugging is off by default */
     ddblocks = FALSE, /* DD block dumping is off by default */
 #ifdef DISKBLOCK_DEBUG
-    diskblock_check = FALSE,     /* check disk-block boundaries */
-#endif                           /* DISKBLOCK_DEBUG */
-    sort                = TRUE,  /* Sorting is on by default */
-    longout             = FALSE, /* short output by default */
-    labels              = FALSE, /* no label info by default */
-    special             = FALSE, /* no special info by default */
-    groups              = FALSE; /* no group info by default */
-static intn v_init_done = FALSE; /* whether the Vset interface has been */
+    diskblock_check = FALSE,    /* check disk-block boundaries */
+#endif                          /* DISKBLOCK_DEBUG */
+    sort               = TRUE,  /* Sorting is on by default */
+    longout            = FALSE, /* short output by default */
+    labels             = FALSE, /* no label info by default */
+    special            = FALSE, /* no special info by default */
+    groups             = FALSE; /* no group info by default */
+static int v_init_done = FALSE; /* whether the Vset interface has been */
 /* initialized for this file */
 uint16 only_tag = DFTAG_NULL; /* by default print info about all tags */
 
@@ -37,7 +37,7 @@ char *file_name; /* name of current file being listed */
 int  compare(const void *, const void *);
 int  main(int, char *a[]);
 void lprint(int32, dd_t *, int);
-void print_item(int32, dd_t *, intn);
+void print_item(int32, dd_t *, int);
 void printfilever(int32 file_id);
 void usage(char *argv[]);
 int  dumpDD(void);
@@ -60,9 +60,9 @@ compare(const void *aa, const void *bb)
 }
 
 void
-print_item(int32 fid, dd_t *desc_list, intn n)
+print_item(int32 fid, dd_t *desc_list, int n)
 {
-    intn  status;
+    int   status;
     int32 len;
     char *name, *label_str;
 
@@ -217,7 +217,7 @@ print_item(int32 fid, dd_t *desc_list, intn n)
 void
 lprint(int32 fid, dd_t *desc_tmp, int num)
 {
-    intn   j = 0, empty = 0;
+    int    j = 0, empty = 0;
     uint16 prev = 0;
     char  *name;
 
@@ -330,7 +330,7 @@ dumpDD(void)
     int16      n_dds;    /* number of DDs in the current block */
     uint16     tag, ref; /* DD tag & ref */
     int32      off, len; /* DD offset & length */
-    intn       l;        /* local counting variable */
+    int        l;        /* local counting variable */
 
     file_id = HI_OPEN(file_name, DFACC_READ);
     if (OPENERR(file_id)) {
@@ -383,7 +383,7 @@ dumpDD(void)
                     return (FAIL);
                 } /* end if */
                 if (memcmp(block_head, diskblock_header, DISKBLOCK_HSIZE) != 0) {
-                    intn k;
+                    int k;
 
                     printf("Header wrong for disk block!\n");
                     for (k = 0; k < DISKBLOCK_HSIZE; k++) {
@@ -400,7 +400,7 @@ dumpDD(void)
                     return (FAIL);
                 } /* end if */
                 if (memcmp(block_tail, diskblock_tail, DISKBLOCK_TSIZE) != 0) {
-                    intn k;
+                    int k;
 
                     printf("Tail wrong for disk block!\n");
                     for (k = 0; k < DISKBLOCK_HSIZE; k++) {

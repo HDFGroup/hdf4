@@ -61,14 +61,14 @@ LOW-LEVEL ROUTINES
     HDgetdatainfo -- Retrieves offset(s) and length(s) of the data in a
                      data element.
  USAGE
-    intn HDgetdatainfo(file_id, tag, ref, start_block, info_count,
+    int HDgetdatainfo(file_id, tag, ref, start_block, info_count,
                          *offsetarray, *lengtharray)
         int32  file_id		IN: file id
         uint16 tag		IN: tag of the element
         uint16 ref		IN: ref of element
         int32 *chk_coord	IN: chunk's coordinates or NULL if not chunked
-        uintn  start_block	IN: data block to start at, 0 base
-        uintn  info_count	IN: number of info records
+        unsigned  start_block	IN: data block to start at, 0 base
+        unsigned  info_count	IN: number of info records
         int32 *offsetarray	OUT: array to hold offsets
         int32 *lengtharray	OUT: array to hold lengths
  RETURNS
@@ -101,9 +101,9 @@ LOW-LEVEL ROUTINES
     Sep 7, 2010: Tested with GRgetdatainfo, but not linked-block yet -BMR
     Oct 5, 2010: Modified to handle compressed/linked-block element -BMR
 --------------------------------------------------------------------------*/
-intn
-HDgetdatainfo(int32 file_id, uint16 tag, uint16 ref, int32 *chk_coord, uintn start_block, uintn info_count,
-              int32 *offsetarray, int32 *lengtharray)
+int
+HDgetdatainfo(int32 file_id, uint16 tag, uint16 ref, int32 *chk_coord, unsigned start_block,
+              unsigned info_count, int32 *offsetarray, int32 *lengtharray)
 {
     filerec_t *file_rec;                            /* file record */
     uint16     sp_tag;                              /* special tag */
@@ -113,10 +113,10 @@ HDgetdatainfo(int32 file_id, uint16 tag, uint16 ref, int32 *chk_coord, uintn sta
     uint8      lbuf[COMP_HEADER_LENGTH], *p = NULL; /* desc record buffer and a pointer to it */
     atom_t     data_id = FAIL;                      /* dd ID of existing element */
     int32      length;                              /* uncomp data len to check if data had been written */
-    intn       count     = 0;                       /* num of data blocks returned by getdatainfo funcs */
+    int        count     = 0;                       /* num of data blocks returned by getdatainfo funcs */
     uint16     spec_code = 0;                       /* special code: SPECIAL_LINKED, SPECIAL_COMP,... */
     int32      comp_aid  = -1;                      /* compressed element access id */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -320,10 +320,10 @@ done:
  NAME
     VSgetdatainfo - Gets the offset/length of a vdata's data
  USAGE
-    intn VSgetdatainfo(vsid, start_block, info_count, offsetarray, lengtharray)
+    int VSgetdatainfo(vsid, start_block, info_count, offsetarray, lengtharray)
         int32  vsid		IN: vdata id
-        uintn  start_block	IN: data block to start at, 0 base
-        uintn  info_count	IN: number of blocks to be retrieved
+        unsigned  start_block	IN: data block to start at, 0 base
+        unsigned  info_count	IN: number of blocks to be retrieved
         int32 *offsetarray	OUT: array to hold offsets
         int32 *lengtharray	OUT: array to hold lengths
  RETURNS
@@ -338,14 +338,14 @@ done:
  NOTES
     Aug 17, 2010: Tested some in hdf/test/tdatainfo.c -BMR
 ----------------------------------------------------------*/
-intn
-VSgetdatainfo(int32 vsid, uintn start_block, uintn info_count, int32 *offsetarray, int32 *lengtharray)
+int
+VSgetdatainfo(int32 vsid, unsigned start_block, unsigned info_count, int32 *offsetarray, int32 *lengtharray)
 {
     vsinstance_t *vs_inst = NULL;
     VDATA        *vs      = NULL;
     accrec_t     *access_rec;
-    intn          count;
-    intn          ret_value = SUCCEED;
+    int           count;
+    int           ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -420,9 +420,9 @@ done:
  NAME
     Vgetattdatainfo - Gets the offset/length of the data of a vgroup's attribute
  USAGE
-    intn Vgetattdatainfo(vgid, attrindex, *offset, *length)
+    int Vgetattdatainfo(vgid, attrindex, *offset, *length)
         int32  vgid		IN: vgroup id
-        intn   attrindex	IN: attribute index
+        int   attrindex	IN: attribute index
         int32 *offset		OUT: buffer for offset
         int32 *length		OUT: buffer for length
  RETURNS
@@ -460,16 +460,16 @@ done:
     info of the attribute's data.
     -BMR 2011/3/19
 ----------------------------------------------------------*/
-intn
-Vgetattdatainfo(int32 vgid, intn attrindex, int32 *offset, int32 *length)
+int
+Vgetattdatainfo(int32 vgid, int attrindex, int32 *offset, int32 *length)
 {
     VGROUP       *vg;
     vg_attr_t    *vg_alist;
     vginstance_t *vg_inst;
     int32         attr_vsid;
-    intn          adjusted_index;
-    intn          status;
-    intn          ret_value = SUCCEED;
+    int           adjusted_index;
+    int           status;
+    int           ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -536,10 +536,10 @@ done:
     VSgetattdatainfo - Gets the offset/length of the data
                       of a vdata's or vdata field's attribute
  USAGE
-    intn VSgetattdatainfo(vsid, findex, attrindex, *offset, *length)
+    int VSgetattdatainfo(vsid, findex, attrindex, *offset, *length)
         int32  vsid		IN: vdata id
         int32  findex		IN: vdata's field index or _HDF_VDATA
-        intn   attrindex	IN: attribute index
+        int   attrindex	IN: attribute index
         int32 *offset		OUT: buffer for offset
         int32 *length		OUT: buffer for length
  RETURNS
@@ -559,16 +559,16 @@ done:
     the attribute.
     -BMR 2011/3/19
 ----------------------------------------------------------*/
-intn
-VSgetattdatainfo(int32 vsid, int32 findex, intn attrindex, int32 *offset, int32 *length)
+int
+VSgetattdatainfo(int32 vsid, int32 findex, int attrindex, int32 *offset, int32 *length)
 {
     VDATA        *vs;
     vs_attr_t    *vs_alist;
     vsinstance_t *vs_inst;
     int32         attr_vsid;
-    intn          nattrs, idx, a_index, found;
-    intn          status;
-    intn          ret_value = SUCCEED;
+    int           nattrs, idx, a_index, found;
+    int           status;
+    int           ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -646,7 +646,7 @@ done:
     GRgetattdatainfo - Gets the offset/length of the data of a
                         GR file's or an image's attribute
  USAGE
-    intn GRgetattdatainfo(id, attrindex, offset, length)
+    int GRgetattdatainfo(id, attrindex, offset, length)
         int32 id		IN: either GR ID or RI ID
         int32 attrindex		IN: index of the attribute being inquired
         int32 *offset		OUT: buffer for offset
@@ -664,7 +664,7 @@ done:
         project, it makes sense to just provide the attribute index. -BMR
 
 --------------------------------------------------------------*/
-intn
+int
 GRgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
 {
     int32      hdf_file_id;         /* file id */
@@ -676,8 +676,8 @@ GRgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
     void     **aentry;              /* temp. ptr to the image found */
     TBBT_TREE *search_tree;         /* attribute tree to search through */
     int        found     = FALSE;   /* TRUE when the searched attribute is found */
-    intn       status    = 0;
-    intn       ret_value = SUCCEED;
+    int        status    = 0;
+    int        ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -771,10 +771,10 @@ done:
 NAME
     GRgetdatainfo - Gets the offsets/lengths of the data of an image
 USAGE
-    intn GRgetdatainfo(riid, start_block, info_count, offsetarray, lengtharray)
+    int GRgetdatainfo(riid, start_block, info_count, offsetarray, lengtharray)
         int32 riid		IN: raster image ID
-        uintn start_block	IN: start retrieving data at
-        uintn info_count	IN: number of data blocks to retrieve
+        unsigned start_block	IN: start retrieving data at
+        unsigned info_count	IN: number of data blocks to retrieve
         int32 *offsetarray	OUT: buffer for offset(s)
         int32 *lengtharray	OUT: buffer for length(s)
 RETURNS
@@ -788,14 +788,14 @@ TODO
     - not tested with linked-block element yet
     - need more documentation
 ----------------------------------------------------------------*/
-intn
-GRgetdatainfo(int32 riid, uintn start_block, uintn info_count, int32 *offsetarray, int32 *lengtharray)
+int
+GRgetdatainfo(int32 riid, unsigned start_block, unsigned info_count, int32 *offsetarray, int32 *lengtharray)
 {
     ri_info_t *ri_ptr;      /* ptr to the image to work with */
     int32      hdf_file_id; /* short cut for file id */
     int32      length = 0;
-    uintn      count;
-    intn       ret_value = SUCCEED;
+    unsigned   count;
+    int        ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -867,9 +867,9 @@ NAME
     GRgetpalinfo - Gets the palette data descriptors (DDs) in the
                    file (i.e., palette tags, refs, offsets, and lengths)
 USAGE
-    intn GRgetpalinfo(gr_id, pal_count, palinfo_array)
+    int GRgetpalinfo(gr_id, pal_count, palinfo_array)
         int32 gr_id		IN: GR interface ID
-        uintn pal_count		IN: number of palette DDs to get
+        unsigned pal_count		IN: number of palette DDs to get
         hdf_ddinfo_t *palinfo_array	OUT: array of palette DDs
 RETURNS
     The number of palette DDs in the file or the actual number of palette
@@ -887,14 +887,14 @@ DESCRIPTION
 
     -BMR 2012/6/19
 ----------------------------------------------------------------*/
-intn
-GRgetpalinfo(int32 gr_id, uintn pal_count, hdf_ddinfo_t *palinfo_array)
+int
+GRgetpalinfo(int32 gr_id, unsigned pal_count, hdf_ddinfo_t *palinfo_array)
 {
     gr_info_t *gr_ptr;
     int32      file_id;
     int32      aid = FAIL;
-    intn       idx;
-    intn       ret_value = SUCCEED;
+    int        idx;
+    int        ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -992,7 +992,7 @@ DESCRIPTION
 NOTES
     Aug 25, 2010: Tested in tdatainfo.c/test_annotation -BMR
 --------------------------------------------------------------------------*/
-intn
+int
 ANgetdatainfo(int32  ann_id, /* IN: annotation id */
               int32 *offset, /* OUT: buffer for offset */
               int32 *length) /* OUT: buffer for length */
@@ -1005,7 +1005,7 @@ ANgetdatainfo(int32  ann_id, /* IN: annotation id */
     int        newflag = 0;
     uint16     ann_tag;
     uint16     ann_ref;
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();

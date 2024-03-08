@@ -123,7 +123,7 @@ const char *get_srcdir(void);
 const char *get_srcdir_filename(const char *filename);
 
 /* Generates the correct name of the source path */
-intn make_sourcepath(char *src_path, unsigned int size);
+int make_sourcepath(char *src_path, unsigned int size);
 
 /* Calls SDcreate, SDwritedata, and SDendaccess */
 int32 make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, int32 unlim_dim,
@@ -140,7 +140,7 @@ int32 make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 
 int32 append_Data2SDS(int32 sd_id, char *sds_name, int32 *start, int32 *edges, void *ap_data);
 
 /* Calls SDgetdatasize then verify the size against data_size */
-intn verify_datasize(int32 sds_id, int32 data_size, char *sds_name);
+int verify_datasize(int32 sds_id, int32 data_size, char *sds_name);
 
 /* Verifies the unlimited dimension's size and the variable's data. */
 int verify_info_data(int32 sds_id, int32 expected_dimsize, int16 *result);

@@ -31,8 +31,8 @@
 
 typedef struct DIlist_struct {
     uint8 *DIlist;
-    intn   num;
-    intn   current;
+    int    num;
+    int    current;
 } DIlist, *DIlist_ptr;
 
 static DIlist_ptr Group_list[MAX_GROUPS] = {NULL};
@@ -53,7 +53,7 @@ static DIlist_ptr Group_list[MAX_GROUPS] = {NULL};
 static int32
 setgroupREC(DIlist_ptr list_rec)
 {
-    uintn i;
+    unsigned i;
 
     for (i = 0; i < MAX_GROUPS; i++)
         if (Group_list[i] == NULL) {
@@ -102,7 +102,7 @@ DFdiread(int32 file_id, uint16 tag, uint16 ref)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
     }
 
-    new_list->num     = (intn)(length / 4);
+    new_list->num     = (int)(length / 4);
     new_list->current = 0; /* no DIs returned so far */
 
     /* read in group */
@@ -126,7 +126,7 @@ DFdiread(int32 file_id, uint16 tag, uint16 ref)
  * Remarks: frees Dilist space when all DIs returned
  *---------------------------------------------------------------------------*/
 
-intn
+int
 DFdiget(int32 list, uint16 *ptag, uint16 *pref)
 {
     uint8     *p;
@@ -162,7 +162,7 @@ DFdiget(int32 list, uint16 *ptag, uint16 *pref)
  * Invokes: none
  * Remarks: nuttin'
  *---------------------------------------------------------------------------*/
-intn
+int
 DFdinobj(int32 list)
 {
     DIlist_ptr list_rec;
@@ -219,7 +219,7 @@ DFdisetup(int maxsize)
  * Remarks: arg is tag/ref rather than DI for convenience
  *---------------------------------------------------------------------------*/
 
-intn
+int
 DFdiput(int32 list, uint16 tag, uint16 ref)
 {
     uint8     *p;
@@ -251,7 +251,7 @@ DFdiput(int32 list, uint16 tag, uint16 ref)
  * Remarks: frees storage for Dilist
  *---------------------------------------------------------------------------*/
 
-intn
+int
 DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
 {
     int32      ret; /* return value */
@@ -269,7 +269,7 @@ DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
     free(list_rec->DIlist);
     free(list_rec);
     Group_list[list & 0xffff] = NULL; /* YUCK! BUG! */
-    return (intn)ret;
+    return (int)ret;
 }
 
 /*-----------------------------------------------------------------------------

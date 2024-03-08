@@ -59,7 +59,7 @@ test_sdmms(void)
 {
     uint32 i, j;
     int    err, err1, err2, ret;
-    intn   rank;
+    int    rank;
     int32  dims[2];
 
     rank    = 2;

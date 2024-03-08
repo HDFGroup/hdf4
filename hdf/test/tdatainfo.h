@@ -22,10 +22,10 @@ typedef struct {
 } t_hdf_datainfo_t;
 
 /* Utility functions to allocate and deallocate hdf_datainfo_t's members*/
-intn alloc_info(t_hdf_datainfo_t *info, uintn info_count);
+int  alloc_info(t_hdf_datainfo_t *info, unsigned info_count);
 void free_info(t_hdf_datainfo_t *info);
 
 /* Other utility functions */
-intn readnoHDF_char(const char *filename, const int32 offset, const int32 length, const char *orig_buf);
+int readnoHDF_char(const char *filename, const int32 offset, const int32 length, const char *orig_buf);
 
 #endif /* H4_TDATAINFO_H */

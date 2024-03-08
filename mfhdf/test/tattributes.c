@@ -78,7 +78,7 @@
 #define ATTR_ZERO     "ZERO"
 #define ATTR_LEN_ZERO 0
 
-static intn
+static int
 test_count(void)
 {
     char    sds_name[20], dim_name[20];
@@ -88,9 +88,9 @@ test_count(void)
     int32   start = 0, stride = 1;
     int32   ntype, rank, count;
     int32   nattrs = 0;
-    intn    status = 0;
+    int     status = 0;
     char    attr_name[H4_MAX_NC_NAME], attr_values[80];
-    intn    num_errs = 0; /* number of errors so far */
+    int     num_errs = 0; /* number of errors so far */
 
     file_id = SDstart(FILE_SATTR, DFACC_CREATE);
     CHECK(file_id, FAIL, "SDstart");
@@ -266,7 +266,7 @@ test_count(void)
 extern int
 test_attributes()
 {
-    intn num_errs = 0; /* number of errors */
+    int num_errs = 0; /* number of errors */
 
     /* Output message about test being performed */
     TESTING("various setting attribute features (tattributes.c)");

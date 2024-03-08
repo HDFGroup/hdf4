@@ -1149,7 +1149,7 @@ test_mgr_init(void)
     CHECK_VOID(grid, FAIL, "GRstart");
 
     /* Test getting the number of datasets and the number of file attributes */
-    ret = (intn)GRfileinfo(grid, &n_datasets, &n_attrs);
+    ret = (int)GRfileinfo(grid, &n_datasets, &n_attrs);
     CHECK_VOID(ret, FAIL, "GRfileinfo");
     if (n_datasets != 0 || n_attrs != 0) {
         MESSAGE(3, printf("Error! Number of datasets/attributes in new file incorrect\n"););
@@ -1175,7 +1175,7 @@ test_mgr_init(void)
     CHECK_VOID(grid, FAIL, "GRstart");
 
     /* Test getting the number of datasets and the number of file attributes */
-    ret = (intn)GRfileinfo(grid, &n_datasets, &n_attrs);
+    ret = (int)GRfileinfo(grid, &n_datasets, &n_attrs);
     CHECK_VOID(ret, FAIL, "GRfileinfo");
     if (n_datasets != 5 || n_attrs != 2) {
         MESSAGE(3, printf("Error! Number of datasets/attributes in existing file incorrect\n"););
@@ -1481,7 +1481,7 @@ test_mgr_image_b2a1aa(int flag)
         TEST_VARTYPE image0[TEST_YDIM][TEST_XDIM][TEST_NCOMP]; /* space for the image data */
         int32        start[2];                                 /* start of image data to grab */
         int32        stride[2];                                /* stride of image data to grab */
-        intn         i, j;                                     /* local counting variables */
+        int          i, j;                                     /* local counting variables */
 
         /* fill the memory-only with the default pixel fill-value */
         for (i = 0; i < TEST_YDIM; i++) {
@@ -1633,7 +1633,7 @@ test_mgr_image_b2a1bb1(int flag)
         int32         start[2];  /* start of image data to use */
         int32         stride[2]; /* stride of image data to use */
         int32         count[2];  /* # of pixels of image data to use */
-        intn          i, j, k;   /* local counting variables */
+        int           i, j, k;   /* local counting variables */
 
         /* fill the memory-only with the default pixel fill-values */
         memset(image0, 0, sizeof(image0));
@@ -1806,7 +1806,7 @@ test_mgr_image_b2a1bb2(int flag)
         int32         start[2];  /* start of image data to use */
         int32         stride[2]; /* stride of image data to use */
         int32         count[2];  /* # of pixels of image data to use */
-        intn          i, j;      /* local counting variables */
+        int           i, j;      /* local counting variables */
 
         /* fill the memory-only with the default pixel fill-values */
         memset(image0, 0, sizeof(image0));
@@ -1979,7 +1979,7 @@ test_mgr_image_b2a1cc1(int flag)
         int32         start[2];  /* start of image data to use */
         int32         stride[2]; /* stride of image data to use */
         int32         count[2];  /* # of pixels of image data to use */
-        intn          i, j, k;   /* local counting variables */
+        int           i, j, k;   /* local counting variables */
 
         /* fill the memory-only with the default pixel fill-values */
         memset(image0, 0, sizeof(TEST_VARTYPE) * (size_t)(TEST_YDIM * TEST_XDIM * TEST_NCOMP));
@@ -2150,7 +2150,7 @@ test_mgr_image_b2a1cc2(int flag)
         int32         start[2];  /* start of image data to use */
         int32         stride[2]; /* stride of image data to use */
         int32         count[2];  /* # of pixels of image data to use */
-        intn          i, j;      /* local counting variables */
+        int           i, j;      /* local counting variables */
 
         /* fill the memory-only with the default pixel fill-values */
         memset(image0, 0, sizeof(image0));
@@ -2322,7 +2322,7 @@ test_mgr_image_b2a2bb(int flag)
         int32         start[2];  /* start of image data to use */
         int32         stride[2]; /* stride of image data to use */
         int32         count[2];  /* # of pixels of image data to use */
-        intn          i, j, k;   /* local counting variables */
+        int           i, j, k;   /* local counting variables */
 
         /* fill the memory-only with the default pixel fill-values */
         HDmemfill(image0, fill_pixel, sizeof(fill_pixel), sizeof(image0) / sizeof(fill_pixel));
@@ -2503,7 +2503,7 @@ test_mgr_image_b2a2cc(int flag)
         int32         start[2];  /* start of image data to use */
         int32         stride[2]; /* stride of image data to use */
         int32         count[2];  /* # of pixels of image data to use */
-        intn          i, j, k;   /* local counting variables */
+        int           i, j, k;   /* local counting variables */
 
         /* fill the memory-only with the default pixel fill-values */
         HDmemfill(image0, fill_pixel, sizeof(fill_pixel), sizeof(image0) / sizeof(fill_pixel));
@@ -2644,9 +2644,9 @@ test_mgr_image_b2b1(int flag)
     {
         int32 n_datasets; /* number of datasets */
         int32 n_attrs;    /* number of attributes */
-        intn  i;          /* local counting variables */
+        int   i;          /* local counting variables */
 
-        ret = (intn)GRfileinfo(grid, &n_datasets, &n_attrs);
+        ret = (int)GRfileinfo(grid, &n_datasets, &n_attrs);
         CHECK_VOID(ret, FAIL, "GRfileinfo");
 
         for (i = 0; i < n_datasets; i++) {
@@ -2843,7 +2843,7 @@ test_mgr_image_chunk(int flag)
         TEST_VARTYPE image0[TEST_YDIM][TEST_XDIM][TEST_NCOMP]; /* space for the image data */
         int32        start[2];                                 /* start of image data to grab */
         int32        stride[2];                                /* stride of image data to grab */
-        intn         i, j;                                     /* local counting variables */
+        int          i, j;                                     /* local counting variables */
 
         /* fill the memory-only with the default pixel fill-value */
         for (i = 0; i < TEST_YDIM; i++) {
@@ -3037,9 +3037,9 @@ test_mgr_interlace(int flag)
     CHECK_VOID(grid, FAIL, "GRstart");
 
     {
-        intn i, j; /* local counting variables */
+        int i, j; /* local counting variables */
 
-        ret = (intn)GRfileinfo(grid, &n_datasets, &n_attrs);
+        ret = (int)GRfileinfo(grid, &n_datasets, &n_attrs);
         CHECK_VOID(ret, FAIL, "GRfileinfo");
 
         for (i = 0; i < n_datasets; i++) {
@@ -3071,7 +3071,7 @@ test_mgr_interlace(int flag)
             ret                   = GRreadimage(riid, start, stride, dimsizes, image);
 
             /* Check the image data itself */
-            for (j = (intn)MFGR_INTERLACE_PIXEL; j <= (intn)MFGR_INTERLACE_COMPONENT; j++) {
+            for (j = (int)MFGR_INTERLACE_PIXEL; j <= (int)MFGR_INTERLACE_COMPONENT; j++) {
                 void *pixel_buf;
 
                 img_data = malloc((size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
@@ -3153,7 +3153,7 @@ test_mgr_lut_a(int flag)
 
     /* pick up here -QAK2 */
     {
-        intn   i, j;               /* local counting variables */
+        int    i, j;               /* local counting variables */
         int32  riid;               /* RI ID for an image */
         int32  lutid;              /* RI ID for an image */
         char   name[MAX_IMG_NAME]; /* storage for the image's name */
@@ -3228,7 +3228,7 @@ test_mgr_lut_a(int flag)
         CHECK_VOID(ret, FAIL, "GRwritelut");
 
         /* Check the image data itself */
-        for (j = (intn)MFGR_INTERLACE_PIXEL; j <= (intn)MFGR_INTERLACE_COMPONENT; j++) {
+        for (j = (int)MFGR_INTERLACE_PIXEL; j <= (int)MFGR_INTERLACE_COMPONENT; j++) {
             void *pixel_buf;
             int32 dimsizes2[2];
 
@@ -3301,7 +3301,7 @@ test_mgr_lut_b(int flag)
     int32 data_type, ncomp, num_comp, interlace_mode;
     uint8 palette_data[256 * 3];
     uint8 r_palette_data[256 * 3];
-    intn  i;
+    int   i;
     int32 dims[2] = {GR_LUTB_X_LENGTH, GR_LUTB_Y_LENGTH};
 
     (void)flag;
@@ -3733,7 +3733,7 @@ test_mgr_old_a(int flag)
         uint8 image0[10][10];     /* space for the image data */
         int32 start[2];           /* start of image data to grab */
         int32 stride[2];          /* stride of image data to grab */
-        intn  i, j;               /* indices */
+        int   i, j;               /* indices */
 
         /* Initialize data we are looking for in image */
         for (i = 0; i < 10; i++)
@@ -3946,9 +3946,9 @@ test_mgr_r24_a(int flag)
         int32 ncomp;                              /* Number of components in the DF24 image */
         int32 nt;                                 /* Number-type of the DF24 image */
         int32 dimsizes[2];                        /* Dimensions of the DF24 image */
-        intn  i, j, k;                            /* indices */
-        intn  is_mappedable;                      /* TRUE if the image is mapped-able (hmap project)*/
-        intn  name_generated;                     /* TRUE if the image has name generated by lib */
+        int   i, j, k;                            /* indices */
+        int   is_mappedable;                      /* TRUE if the image is mapped-able (hmap project)*/
+        int   name_generated;                     /* TRUE if the image has name generated by lib */
 
         /* Initialize data we are going to write out */
         for (i = 0; i < GR_R24YDIM; i++)
@@ -4032,7 +4032,7 @@ test_mgr_r8_a(int flag)
     int32 ret;  /* generic return value */
     uint8 palette[256][3];
     uint8 picture[GR_R8YDIM][GR_R8XDIM];
-    intn  i, j; /* indices */
+    int   i, j; /* indices */
 
     (void)flag;
 
@@ -4080,8 +4080,8 @@ test_mgr_r8_a(int flag)
         int32 dimsizes[2];                      /* Dimensions of the DFR8 image */
         int32 interlace;                        /* Palette interlace */
         int32 num_entries;                      /* Number of palette entries */
-        intn  is_mappedable;                    /* TRUE if the image is mapped-able (hmap project)*/
-        intn  name_generated;                   /* TRUE if the image has name generated by lib */
+        int   is_mappedable;                    /* TRUE if the image is mapped-able (hmap project)*/
+        int   name_generated;                   /* TRUE if the image has name generated by lib */
 
         /* Initialize data we are expecting to read in */
         for (i = 0; i < GR_R8YDIM; i++)
@@ -4183,7 +4183,7 @@ test_mgr_chunkwr_pixelone()
 
     /************************* Variable declaration **************************/
 
-    intn  status;       /* status for functions returning an intn */
+    int   status;       /* status for functions returning an int */
     int32 file_id,      /* HDF file identifier */
         gr_id,          /* GR interface identifier */
         ri_id[4],       /* raster image identifier */
@@ -4421,7 +4421,7 @@ test_mgr_chunkwr_pixel(int flag)
 
     /************************* Variable declaration **************************/
 
-    intn  status;       /* status for functions returning an intn */
+    int   status;       /* status for functions returning an int */
     int32 file_id,      /* HDF file identifier */
         gr_id,          /* GR interface identifier */
         ri_id[4],       /* raster image identifier */
@@ -4432,8 +4432,8 @@ test_mgr_chunkwr_pixel(int flag)
         comp_flag,      /* compression flag */
         index, i;
     int32         start[2], stride[2], edge[2];
-    intn          is_mappedable;  /* TRUE if the image is mapped-able (hmap project)*/
-    intn          name_generated; /* TRUE if the image has name generated by lib */
+    int           is_mappedable;  /* TRUE if the image is mapped-able (hmap project)*/
+    int           name_generated; /* TRUE if the image has name generated by lib */
     int16         data_out[3 * Y_LENGTH * X_LENGTH];
     const char   *image_name[] = {"Image_NO", "Image_RL", "Image_Sk", "Image_DF"};
     const char   *file_name[]  = {"ChunkedGR_NO.hdf", "ChunkedGR_RL.hdf", "ChunkedGR_SK.hdf",

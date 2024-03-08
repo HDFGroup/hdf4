@@ -57,7 +57,7 @@ void
 test_sdnmms(void)
 {
     int   i, j, err, err1, err2, ret;
-    intn  rank;
+    int   rank;
     int32 dims[2];
 
     rank    = 2;

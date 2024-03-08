@@ -67,12 +67,12 @@ static const SYMDEF rstab[] = {
  ** RETURNS FAIL if error, and SUCCEED if ok.
  ** truncates each field to max length of  FIELDNAMELENMAX.
  */
-intn
+int
 VSsetfields(int32 vkey, const char *fields)
 {
     char          **av;
     int32           ac, found;
-    intn            j, i;
+    int             j, i;
     uint16          uj;
     uint16          order;
     int32           value;
@@ -80,7 +80,7 @@ VSsetfields(int32 vkey, const char *fields)
     DYN_VWRITELIST *wlist;
     vsinstance_t   *w;
     VDATA          *vs;
-    intn            ret_value = FAIL;
+    int             ret_value = FAIL;
 
     /* check if a NULL field list is passed in, then return with
        error (bug #554) - BMR 4/30/01 */
@@ -171,7 +171,7 @@ VSsetfields(int32 vkey, const char *fields)
 
                     /* --- now look in the reserved symbol table --- */
                     if (!found) {
-                        for (j = 0; j < (intn)NRESERVED; j++)
+                        for (j = 0; j < (int)NRESERVED; j++)
                             if (!strcmp(av[i], rstab[j].name)) {
                                 found = TRUE;
 
@@ -223,7 +223,7 @@ VSsetfields(int32 vkey, const char *fields)
         rlist->item = NULL;
 
         /* Allocate enough space for the read list */
-        if ((rlist->item = (intn *)malloc(sizeof(intn) * (size_t)(ac))) == NULL)
+        if ((rlist->item = (int *)malloc(sizeof(int) * (size_t)(ac))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         for (i = 0; i < ac; i++) {
             found = FALSE;
@@ -251,17 +251,17 @@ done:
  ** return FAIL if error
  ** return SUCCEED if success
  */
-intn
+int
 VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
 {
     char        **av;
     int32         ac;
     int16         isize, replacesym;
-    intn          usymid;
-    intn          j;
+    int           usymid;
+    int           j;
     vsinstance_t *w;
     VDATA        *vs;
-    intn          ret_value = SUCCEED;
+    int           ret_value = SUCCEED;
 
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -300,7 +300,7 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
     else {
         SYMDEF *tmp_sym = vs->usym; /* temp. pointer to the new symdef list */
 
-        usymid = (intn)vs->nusym;
+        usymid = (int)vs->nusym;
         /* use temporary pointer in case we run out of memory, so we don't loose original list */
         if (tmp_sym == NULL) {
             if ((tmp_sym = (SYMDEF *)malloc(sizeof(SYMDEF) * (size_t)(usymid + 1))) == NULL)
@@ -555,14 +555,14 @@ FORTRAN
 
 --------------------------------------------------------------------------- */
 
-intn
+int
 VSsetexternalfile(int32 vkey, const char *filename, int32 offset)
 {
     int32 ret_value = SUCCEED;
 
     vsinstance_t *w;
     VDATA        *vs;
-    intn          status;
+    int           status;
 
     if (!filename || offset < 0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -587,7 +587,7 @@ VSsetexternalfile(int32 vkey, const char *filename, int32 offset)
     /* no need to give a length since the element already exists */
     /* The Data portion of a Vdata is always stored in linked blocks. */
     /* So, use the special tag */
-    status = (intn)HXcreate(vs->f, (uint16)VSDATATAG, (uint16)w->ref, filename, offset, (int32)0);
+    status = (int)HXcreate(vs->f, (uint16)VSDATATAG, (uint16)w->ref, filename, offset, (int32)0);
     if (status != FAIL) {
         if ((vs->aid != 0) && (vs->aid != FAIL))
             Hendaccess(vs->aid);
@@ -623,14 +623,14 @@ done:
 
 --------------------------------------------------------------------------- */
 
-intn
-VSgetexternalfile(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset)
+int
+VSgetexternalfile(int32 vkey, unsigned buf_size, char *ext_filename, int32 *offset)
 {
     vsinstance_t   *w;
     VDATA          *vs;
     sp_info_block_t info_block;
-    intn            actual_len = 0;
-    intn            ret_value  = SUCCEED;
+    int             actual_len = 0;
+    int             ret_value  = SUCCEED;
 
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -664,7 +664,7 @@ VSgetexternalfile(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset)
                 /* If caller requests the length of the external file name
                    only, return the length */
                 if (buf_size == 0)
-                    actual_len = (intn)ext_file_len;
+                    actual_len = (int)ext_file_len;
                 else {
                     /* Caller requests file name, so buffer must not be NULL */
                     if (ext_filename == NULL)
@@ -697,7 +697,7 @@ done:
  USAGE
         int32 VSgetexternalinfo(id, name_len, filename, offset)
         int32  vkey;            IN: vdata ID
-        uintn  buf_size;        IN: length of buffer for external file name
+        unsigned  buf_size;        IN: length of buffer for external file name
         char  *extfilename;     IN: external file name
         int32 *offset;          IN: offset in external file, where data starts
         int32 *length;          IN: length of data in external file
@@ -725,13 +725,13 @@ done:
 
 --------------------------------------------------------------------------- */
 
-intn
-VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset, int32 *length)
+int
+VSgetexternalinfo(int32 vkey, unsigned buf_size, char *ext_filename, int32 *offset, int32 *length)
 {
     vsinstance_t *w;
     VDATA        *vs;
-    intn          actual_fname_len = 0;
-    intn          ret_value        = SUCCEED;
+    int           actual_fname_len = 0;
+    int           ret_value        = SUCCEED;
 
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -747,7 +747,7 @@ VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset,
     if (vs->aid == 0 || vs->aid == FAIL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     else {
-        intn            retcode = 0;
+        int             retcode = 0;
         sp_info_block_t info_block;
         memset(&info_block, 0, sizeof(sp_info_block_t));
 
@@ -773,7 +773,7 @@ VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset,
             if (info_block.path == NULL || strlen(info_block.path) <= 0)
                 ret_value = FAIL;
             else {
-                intn tmp_len = (intn)info_block.length_file_name;
+                int tmp_len = (int)info_block.length_file_name;
 
                 /* If caller requests the length of the external file name
                    only, return the length */
@@ -788,7 +788,7 @@ VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset,
                        requested buffer size is smaller, use that value for
                        name's length, but that means file name could be
                        truncated! */
-                    actual_fname_len = (intn)buf_size < tmp_len ? (intn)buf_size : tmp_len;
+                    actual_fname_len = (int)buf_size < tmp_len ? (int)buf_size : tmp_len;
 
                     /* Get the name */
                     strncpy(ext_filename, info_block.path, buf_size);
@@ -815,18 +815,18 @@ NAME
     VSfpack -- pack into or unpack from a buf the values of fully
               interlaced fields.
 USAGE
-    intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
-         void * buf, intn bufsz, intn n_records, char *fields, void * fldbufpt[])
+    int VSfpack(int32 vsid, int packtype, char *fields_in_buf,
+         void * buf, int bufsz, int n_records, char *fields, void * fldbufpt[])
     int32 vsid; IN: vdata id.
-    intn packtype; IN:
+    int packtype; IN:
          _HDF_VSPACK(0) -- pack field values into vdata buf;
          _HDF_VSUNPACK(1) -- unpack vdata value into filed bufs.
     char *fields_in_buf; IN:
          fields in buf to write to or read from vdata. NULL
          stands for all fields in the vdata.
     void * buf; IN: buffer for vdata values.
-    intn bufsz; IN: buf size in byte.
-    intn n_records; IN: number of records to pack or unpack.
+    int bufsz; IN: buf size in byte.
+    int n_records; IN: number of records to pack or unpack.
     char *fields; IN:
          names of the fields to be pack/unpack. It may be a
          subset of the fields_in_buf. NULL stands for all
@@ -849,8 +849,8 @@ DESCRIPTION
 
 /*---------------------------------------------------------*/
 
-intn
-VSfpack(int32 vsid, intn packtype, const char *fields_in_buf, void *buf, intn bufsz, intn n_records,
+int
+VSfpack(int32 vsid, int packtype, const char *fields_in_buf, void *buf, int bufsz, int n_records,
         const char *fields, void *fldbufpt[])
 {
     int32           ac;
@@ -858,12 +858,12 @@ VSfpack(int32 vsid, intn packtype, const char *fields_in_buf, void *buf, intn bu
     uint8          *bufp   = (uint8 *)buf;
     uint8         **fbufps = NULL;
     int32           b_rec_size, *fmsizes = NULL, *foffs = NULL;
-    intn            i, j, found, ret_value = SUCCEED;
+    int             i, j, found, ret_value = SUCCEED;
     vsinstance_t   *wi;
     VDATA          *vs;
     DYN_VWRITELIST *w;
     struct blist_t { /* contains info about fields in buf */
-        intn   n;    /* number of fields in buf     */
+        int    n;    /* number of fields in buf     */
         int32 *idx;  /* index of buf fields in vdata */
         int32 *offs; /* offset of buf fields in buf */
     } blist;

@@ -57,7 +57,7 @@ nheprntc(_fcd filename, intf *print_levels, intf *namelen)
 {
     FILE *err_file;
     char *c_name;
-    intn  c_len;
+    int   c_len;
     int   ret = 0;
 
     c_len = *namelen;
@@ -86,7 +86,7 @@ intf
 nhestringc(intf *error_code, _fcd error_message, intf *len)
 {
     char *cstring = NULL;
-    intn  status;
+    int   status;
 
     status  = -1;
     cstring = (char *)HEstring((hdf_err_code_t)*error_code);

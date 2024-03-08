@@ -41,11 +41,11 @@ extern "C" {
 
 HDFLIBAPI bv_ptr bv_new(int32 num_bits);
 
-HDFLIBAPI intn bv_delete(bv_ptr b);
+HDFLIBAPI int bv_delete(bv_ptr b);
 
-HDFLIBAPI intn bv_set(bv_ptr b, int32 bit_num, bv_bool value);
+HDFLIBAPI int bv_set(bv_ptr b, int32 bit_num, bv_bool value);
 
-HDFLIBAPI intn bv_get(bv_ptr b, int32 bit_num);
+HDFLIBAPI int bv_get(bv_ptr b, int32 bit_num);
 
 HDFLIBAPI int32 bv_size(bv_ptr b);
 

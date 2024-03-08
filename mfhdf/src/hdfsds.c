@@ -77,17 +77,17 @@
 #define SDG_MAX_INITIAL 100
 
 /* local variables */
-static intn    sdgCurrent;
-static intn    sdgMax;
+static int     sdgCurrent;
+static int     sdgMax;
 static uint16 *sdgTable = NULL;
 static uint8  *ptbuf    = NULL;
 
 /* Local routines */
-static intn hdf_query_seen_sdg(uint16 ndgRef);
+static int hdf_query_seen_sdg(uint16 ndgRef);
 
-static intn hdf_register_seen_sdg(uint16 ndgRef);
+static int hdf_register_seen_sdg(uint16 ndgRef);
 
-static intn hdf_read_ndgs(NC *handle);
+static int hdf_read_ndgs(NC *handle);
 
 uint8 *hdf_get_pred_str_attr(NC *handle, uint16 stratt_tag, uint16 satt_ref, int null_count);
 
@@ -106,10 +106,10 @@ uint8 *hdf_get_pred_str_attr(NC *handle, uint16 stratt_tag, uint16 satt_ref, int
    TRUE / FALSE
 
 ******************************************************************************/
-static intn
+static int
 hdf_query_seen_sdg(uint16 ndgRef)
 {
-    intn i;
+    int i;
 
     if (!sdgTable)
         return FALSE;
@@ -134,10 +134,10 @@ hdf_query_seen_sdg(uint16 ndgRef)
    SUCCEED / FAIL
 
 ******************************************************************************/
-static intn
+static int
 hdf_register_seen_sdg(uint16 sdgRef)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* check if table is allocated */
     if (!sdgTable) {
@@ -179,10 +179,10 @@ done:
    SUCCEED / FAIL
 
 ******************************************************************************/
-static intn
+static int
 hdf_check_nt(uint8 *ntstring, int32 *type)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
     if ((ntstring[0] != DFNT_VERSION) || ((ntstring[3] != DFNTF_NONE) && (ntstring[3] != DFNTF_IEEE))) {
         if (ntstring[3] == DFNTF_PC) /* Little Endian */
             *type |= DFNT_LITEND;
@@ -263,7 +263,7 @@ static hdf_err_code_t
 hdf_read_dimsizes(int32 acc_id, int16 rank, int32 *dimsizes)
 {
     uint8         *p, *local_buf = NULL;
-    intn           i;
+    int            i;
     hdf_err_code_t ret_value = DFE_NONE;
 
     local_buf = malloc(4 * (size_t)rank * sizeof(uint8));
@@ -356,7 +356,7 @@ done:
 
 ******************************************************************************/
 static hdf_err_code_t
-hdf_get_sdc(NC *handle, uint16 tmpRef, NC_attr **tmp_attr, intn *curr_attr)
+hdf_get_sdc(NC *handle, uint16 tmpRef, NC_attr **tmp_attr, int *curr_attr)
 {
     uint8         *coordbuf = NULL; /* buffer to store coord system info */
     int            len;
@@ -415,7 +415,7 @@ uint8 *
 hdf_get_pred_str_attr(NC *handle, uint16 stratt_tag, uint16 satt_ref, int null_count)
 {
     uint8 *tmpbuf = NULL; /* buffer to store predefined string attribute info */
-    intn   i;
+    int    i;
     uint8 *ret_value = NULL;
 
     if (satt_ref) {
@@ -466,9 +466,9 @@ done:
 
 ******************************************************************************/
 static hdf_err_code_t
-hdf_get_desc_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr, intn *curr_attr)
+hdf_get_desc_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr, int *curr_attr)
 {
-    intn           i;
+    int            i;
     hdf_err_code_t ret_value = DFE_NONE;
 
     /* Re-vamped desc annotation handling to use new ANxxx interface
@@ -477,7 +477,7 @@ hdf_get_desc_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr,
     int32 *ddescs    = NULL;
     char  *ann_desc  = NULL;
     int32  ann_len;
-    intn   num_ddescs;
+    int    num_ddescs;
     char   hremark[30] = ""; /* should be big enough for new attribute */
 
     /* start Annotation interface */
@@ -564,9 +564,9 @@ done:
 
 ******************************************************************************/
 static hdf_err_code_t
-hdf_get_label_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr, intn *curr_attr)
+hdf_get_label_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr, int *curr_attr)
 {
-    intn           i;
+    int            i;
     hdf_err_code_t ret_value = DFE_NONE;
 
     /* Re-vamped label annotation handling to use new ANxxx interface
@@ -575,7 +575,7 @@ hdf_get_label_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr
     int32 *dlabels   = NULL;
     char  *ann_label = NULL;
     int32  ann_len;
-    intn   num_dlabels;
+    int    num_dlabels;
     char   hlabel[30] = ""; /* should be big enough for new attribute */
 
     /* start Annotation interface */
@@ -663,7 +663,7 @@ done:
 
 ******************************************************************************/
 static hdf_err_code_t
-hdf_luf_to_attrs(char *labelstr, char *unitstr, char *formatstr, NC_attr **tmp_attr, intn *curr_attr)
+hdf_luf_to_attrs(char *labelstr, char *unitstr, char *formatstr, NC_attr **tmp_attr, int *curr_attr)
 {
     hdf_err_code_t ret_value = DFE_NONE;
 
@@ -728,10 +728,10 @@ done:
 
 ******************************************************************************/
 static hdf_err_code_t
-hdf_get_rangeinfo(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
+hdf_get_rangeinfo(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, int *curr_attr)
 {
     uint8          tBuf[128] = "";
-    intn           idx       = 0; /* index for tBuf */
+    int            idx       = 0; /* index for tBuf */
     hdf_err_code_t ret_value = DFE_NONE;
 
     if (FAIL == DFKconvert((void *)ptbuf, (void *)tBuf, hdftype, 2, DFACC_READ, 0, 0)) {
@@ -780,14 +780,14 @@ done:
 
 ******************************************************************************/
 static hdf_err_code_t
-hdf_get_cal(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
+hdf_get_cal(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, int *curr_attr)
 {
     uint8          tBuf[128] = "";
-    intn           idx       = 0; /* index for tBuf */
+    int            idx       = 0; /* index for tBuf */
     hdf_err_code_t ret_value = DFE_NONE;
 
     /* for DFNT_FLOAT32 based calibration */
-    intn    incr       = 4; /* increment 4 bytes */
+    int     incr       = 4; /* increment 4 bytes */
     int32   nt_hdftype = DFNT_INT16;
     nc_type nt_nctype  = NC_SHORT;
 
@@ -885,13 +885,13 @@ done:
    SUCCEED / FAIL
 
 ******************************************************************************/
-static intn
+static int
 hdf_read_ndgs(NC *handle)
 {
     char  tmpname[80] = "";
     uint8 ntstring[4] = "";
-    intn  dimcount;
-    intn  dimattrcnt;
+    int   dimcount;
+    int   dimattrcnt;
     /* info about NDG structure */
     int32          GroupID;
     int32          aid;
@@ -912,12 +912,12 @@ hdf_read_ndgs(NC *handle)
     int32          HDFtype;
     int32          temptype;
     hdf_err_code_t err_code;
-    intn           dim;
-    intn           max_thangs;
-    intn           current_dim;
-    intn           current_var;
-    intn           current_attr;
-    intn          *vardims = NULL;
+    int            dim;
+    int            max_thangs;
+    int            current_dim;
+    int            current_var;
+    int            current_attr;
+    int           *vardims = NULL;
     /* info about netCDF structures */
     NC_dim  **dims  = NULL;     /* hold list of dimensions as we create it */
     NC_var  **vars  = NULL;     /* hold variable list as we create it      */
@@ -927,15 +927,15 @@ hdf_read_ndgs(NC *handle)
     uint8    *scalebuf  = NULL; /* buffer to store scale info */
     uint8    *unitbuf   = NULL; /* buffer to store unit info */
     uint8    *formatbuf = NULL; /* buffer to store format info */
-    intn      new_dim;          /* == new dim so create coord variable     */
+    int       new_dim;          /* == new dim so create coord variable     */
     /* random book-keeping */
-    intn   i;
-    intn   status;
-    intn   tag_index;
+    int    i;
+    int    status;
+    int    tag_index;
     uint8 *p = NULL;
-    intn   scale_offset; /* current offset into the scales record for the
-                       current dimension's values */
-    intn ret_value = SUCCEED;
+    int    scale_offset; /* current offset into the scales record for the
+                        current dimension's values */
+    int ret_value = SUCCEED;
 
     /*
      *  Allocate the array to store the dimensions
@@ -1050,7 +1050,7 @@ hdf_read_ndgs(NC *handle)
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
                         }
 
-                        vardims = malloc((uint32)rank * sizeof(intn));
+                        vardims = malloc((uint32)rank * sizeof(int));
                         if (vardims == NULL) {
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
                         }
@@ -1231,7 +1231,7 @@ hdf_read_ndgs(NC *handle)
             scale_offset = rank * sizeof(uint8);
 
             for (dim = 0; dim < rank; dim++) {
-                intn  this_dim    = FAIL;
+                int   this_dim    = FAIL;
                 char *labelvalue  = NULL;
                 char *unitvalue   = NULL;
                 char *formatvalue = NULL;
@@ -1307,7 +1307,7 @@ hdf_read_ndgs(NC *handle)
                  * here too cuz we need to remember the indices of where
                  * we put the dimensions
                  */
-                vardims[dim] = (intn)this_dim;
+                vardims[dim] = (int)this_dim;
 
                 /*
                  * Look at the scale NTs since the scales may have
@@ -1582,12 +1582,12 @@ done:
    SUCCEED / FAIL
 
 ******************************************************************************/
-intn
+int
 hdf_read_sds_cdf(XDR *xdrs, NC **handlep)
 {
-    intn status;
-    NC  *handle    = NULL;
-    intn ret_value = SUCCEED;
+    int status;
+    NC *handle    = NULL;
+    int ret_value = SUCCEED;
 
     (void)xdrs;
 

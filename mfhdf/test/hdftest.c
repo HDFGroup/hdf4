@@ -80,8 +80,8 @@ main(void)
     int32    ival;
     int32    sdid;   /* another SDS handle */
     int32    rank;   /* rank of SDS */
-    intn     status; /* status flag */
-    intn     nattrs; /* Number of attributes again? */
+    int      status; /* status flag */
+    int      nattrs; /* Number of attributes again? */
     char     name[90];
     char     text[256];
     int32    start[10], end[10], stride[10]; /* start, end, stride arrays */

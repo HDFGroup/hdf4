@@ -365,7 +365,7 @@ nscwdata(intf *id, intf *start, intf *stride, intf *end, void *values)
     intf  ret;
     int32 i, rank, dims[100], nt, nattrs, status;
     int32 cstart[100], cstride[100], cend[100];
-    intn  nostride;
+    int   nostride;
 
     status = SDgetinfo(*id, NULL, &rank, dims, &nt, &nattrs);
     if (status == FAIL)
@@ -472,8 +472,8 @@ nsciscvar(intf *id)
 intf
 nscsnbit(intf *id, intf *start_bit, intf *bit_len, intf *sign_ext, intf *fill_one)
 {
-    return ((intf)SDsetnbitdataset((int32)*id, (intn)*start_bit, (intn)*bit_len, (intn)*sign_ext,
-                                   (intn)*fill_one));
+    return (
+        (intf)SDsetnbitdataset((int32)*id, (int)*start_bit, (int)*bit_len, (int)*sign_ext, (int)*fill_one));
 }
 
 /*-----------------------------------------------------------------------------
@@ -1128,7 +1128,7 @@ nsfwdata(intf *id, intf *start, intf *stride, intf *end, void *values)
     intf  ret;
     int32 i, rank, dims[100], nt, nattrs, status;
     int32 cstart[100], cstride[100], cend[100];
-    intn  nostride;
+    int   nostride;
 
     status = SDgetinfo(*id, NULL, &rank, dims, &nt, &nattrs);
     if (status == FAIL)
@@ -1272,7 +1272,7 @@ intf
 nscgainfo(intf *id, intf *number, _fcd name, intf *nt, intf *count, intf *len)
 {
     char *iname;
-    intn  status;
+    int   status;
     int32 nt32;
     int32 cnt32;
 
@@ -1494,8 +1494,8 @@ nscsextf(intf *id, _fcd name, intf *offset, intf *namelen)
 intf
 nsfsnbit(intf *id, intf *start_bit, intf *bit_len, intf *sign_ext, intf *fill_one)
 {
-    return ((intf)SDsetnbitdataset((int32)*id, (intn)*start_bit, (intn)*bit_len, (intn)*sign_ext,
-                                   (intn)*fill_one));
+    return (
+        (intf)SDsetnbitdataset((int32)*id, (int)*start_bit, (int)*bit_len, (int)*sign_ext, (int)*fill_one));
 }
 
 /*-----------------------------------------------------------------------------
@@ -2030,7 +2030,7 @@ nscgcompress(intf *id, intf *comp_type, intf *comp_prm)
     comp_coder_t c_type; /* compression type definition */
 
     int  CASE;
-    intn c_ret;
+    int  c_ret;
     intf ret = -1;
 
     c_ret = SDgetcompinfo(*id, &c_type, &c_info);
@@ -2123,7 +2123,7 @@ nsfsblsz(intf *id, intf *block_size)
 intf
 nscchempty(intf *id, intf *flag)
 {
-    intn flag_c;
+    int  flag_c;
     intf status;
     status = SDcheckempty(*id, &flag_c);
     *flag  = flag_c;
@@ -2142,13 +2142,13 @@ intf
 nscgetfname(intf *file_id, _fcd name, intf *namelen)
 {
     char *fn;
-    intn  ret;
+    int   ret;
 
     fn = NULL;
     if (*namelen)
         fn = (char *)malloc((uint32)*namelen + 1);
 
-    ret = (intn)SDgetfilename(*file_id, fn);
+    ret = (int)SDgetfilename(*file_id, fn);
     HDpackFstring(fn, _fcdtocp(name), *namelen);
 
     free(fn);
@@ -2165,10 +2165,10 @@ nscgetfname(intf *file_id, _fcd name, intf *namelen)
 intf
 nscgetnamelen(intf *obj_id, intf *namelen)
 {
-    intn   ret;
+    int    ret;
     uint16 c_namelen;
 
-    ret = (intn)SDgetnamelen(*obj_id, &c_namelen);
+    ret = (int)SDgetnamelen(*obj_id, &c_namelen);
 
     *namelen = (intf)c_namelen;
     return (ret);
@@ -2187,7 +2187,7 @@ nscgetnamelen(intf *obj_id, intf *namelen)
 intf
 nscidtype(intf *obj_id, intf *obj_type)
 {
-    intn         ret = -1;
+    int          ret = -1;
     hdf_idtype_t c_obj_type;
     ;
 
@@ -2225,7 +2225,7 @@ intf
 nscgmaxopenf(intf *cur_max, intf *sys_limit)
 {
     intf ret = 0;
-    intn c_cur_max, c_sys_limit;
+    int  c_cur_max, c_sys_limit;
 
     ret = (intf)SDget_maxopenfiles(&c_cur_max, &c_sys_limit);
     if (ret < 0)
@@ -2245,7 +2245,7 @@ intf
 nscgnumopenf(intf *cur_num)
 {
     intf ret = 0;
-    intn c_cur_num;
+    int  c_cur_num;
 
     c_cur_num = SDget_numopenfiles();
     if (c_cur_num < 1)
@@ -2270,7 +2270,7 @@ intf
 nscn2indices(intf *sd_id, _fcd name, intf *namelen, intf *var_list, intf *type_list, intf *n_vars)
 {
     char          *fn;
-    intn           ret;
+    int            ret;
     hdf_varlist_t *c_var_list;
     int            idx;
 
@@ -2281,7 +2281,7 @@ nscn2indices(intf *sd_id, _fcd name, intf *namelen, intf *var_list, intf *type_l
     if (!c_var_list)
         return (FAIL);
 
-    ret = (intn)SDnametoindices(*sd_id, fn, c_var_list);
+    ret = (int)SDnametoindices(*sd_id, fn, c_var_list);
 
     if (ret == 0) {
         for (idx = 0; idx < *n_vars; idx++) {
@@ -2308,13 +2308,13 @@ nscgnvars_byname(intf *sd_id, _fcd name, intf *namelen, intf *n_vars)
 {
     char *fn;
     int32 c_n_vars;
-    intn  ret;
+    int   ret;
 
     fn = HDf2cstring(name, *namelen);
     if (!fn)
         return (FAIL);
 
-    ret = (intn)SDgetnumvars_byname(*sd_id, fn, &c_n_vars);
+    ret = (int)SDgetnumvars_byname(*sd_id, fn, &c_n_vars);
 
     free(fn);
     if (ret == FAIL)
