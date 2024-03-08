@@ -45,13 +45,6 @@ struct rlimit rlim;
     (((MAX_SYS_OPENFILES - 3) > H4_MAX_AVAIL_OPENFILES) ? H4_MAX_AVAIL_OPENFILES : (MAX_SYS_OPENFILES - 3))
 
 static int _curr_opened = 0; /* the number of files currently opened */
-/* NOTE: _ncdf might have been the number of files currently opened, yet it
-   is not decremented when ANY file is closed but only when the file that
-   has the same index as _ncdf-1 is closed.  Thus, it indicates the last
-   index in _cdfs instead of the number of files currently opened.  So, I
-   added _curr_opened to keep track of the number of files currently opened.
-   QAK suggested to use atom as in other interfaces and that would eliminate
-   similar issues.  - BMR - 11/03/07 */
 static int  _ncdf = 0; /*  high water mark on open cdf's */
 static NC **_cdfs;
 
@@ -106,7 +99,7 @@ NC_reset_maxopenfiles(intn req_max)
         if (!_cdfs) {
             _cdfs = malloc(sizeof(NC *) * (max_NC_open));
 
-            /* If allocation fails, return 0 for no allocation */
+            /* If allocation fails, return with failure */
             if (_cdfs == NULL) {
                 /* NC_EINVAL is Invalid Argument, but must decide if
                 we just want to return 0 without error or not */
@@ -136,7 +129,7 @@ NC_reset_maxopenfiles(intn req_max)
     /* Allocate a new list */
     newlist = malloc(sizeof(NC *) * alloc_size);
 
-    /* If allocation fails, return 0 for no allocation */
+    /* If allocation fails, return with failure */
     if (newlist == NULL) {
         /* NC_EINVAL is Invalid Argument, but must decide if
         we just want to return 0 without error or not */
@@ -449,7 +442,7 @@ ncabort(int cdfid)
     _curr_opened--; /* one less file currently being opened */
 
     /* if the _cdf list is empty, deallocate and reset it to NULL */
-    if (_ncdf == 0)
+    if (_curr_opened == 0)
         ncreset_cdflist();
 
     return 0;
@@ -911,12 +904,13 @@ ncclose(int cdfid)
 
     _cdfs[cdfid] = NULL; /* reset pointer */
 
+    /* if current file is at the top of the list, adjust the water mark */
     if (cdfid == _ncdf - 1)
         _ncdf--;
     _curr_opened--; /* one less file currently opened */
 
     /* if the _cdf list is empty, deallocate and reset it to NULL */
-    if (_ncdf == 0)
+    if (_curr_opened == 0)
         ncreset_cdflist();
     return 0;
 }
