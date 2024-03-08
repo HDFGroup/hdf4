@@ -49,16 +49,16 @@
 #define FILE_NAME "bug376.hdf" /* data file to test */
 #define DIM0      10
 
-static intn
+static int
 test_file_inuse()
 {
     int32       file_id, sd_id[5], sds_id[5];
-    intn        statusn;
+    int         statusn;
     int32       dims[1], start[1], edges[1], rank;
     int16       array_data[DIM0];
     const char *names[5] = {"data1", "data2", "data3", "data4", "data5"};
-    intn        i, j;
-    intn        num_errs = 0; /* number of errors so far */
+    int         i, j;
+    int         num_errs = 0; /* number of errors so far */
 
     for (i = 0; i < 5; i++) {
         /* Create and open the file and initiate the SD interface. */
@@ -180,7 +180,7 @@ test_max_open_files()
     int32 fids[NUM_FILES_HI];         /* holds IDs of opened files */
     char  filename[NUM_FILES_HI][10]; /* holds generated file names */
     char  readfname[H4_MAX_NC_NAME];  /* file name retrieved from file id */
-    intn  index, status, curr_max,    /* curr maximum number of open files allowed in HDF */
+    int   index, status, curr_max,    /* curr maximum number of open files allowed in HDF */
         sys_limit,                    /* maximum number of open files allowed by system */
         curr_max_bk,                  /* back up of curr_max */
         curr_opened,                  /* number of files currently being opened */
@@ -328,8 +328,8 @@ test_longfilename()
     int32 dims[2]; /* variable shapes */
     char  dsname[10];
     char  filename[256];
-    intn  status   = 0; /* status returned by called functions */
-    intn  num_errs = 0; /* number of errors so far */
+    int   status   = 0; /* status returned by called functions */
+    int   num_errs = 0; /* number of errors so far */
 
     strcpy(dsname, "dataset 1");
     strcpy(filename, "This file name has quite a few characters because it is used to test the fix of "
@@ -376,12 +376,12 @@ static int
 test_fileformat()
 {
     int32       fid;                          /* file id */
-    intn        ishdf        = 0;             /* true if file has HDF format */
-    intn        isnetcdf     = 0;             /* true if file has classic netCDF format */
-    intn        isnetcdf64   = 0;             /* true if file has 64-bit netCDF format */
-    intn        num_errs     = 0;             /* number of errors so far */
+    int         ishdf        = 0;             /* true if file has HDF format */
+    int         isnetcdf     = 0;             /* true if file has classic netCDF format */
+    int         isnetcdf64   = 0;             /* true if file has 64-bit netCDF format */
+    int         num_errs     = 0;             /* number of errors so far */
     const char *hdf_basename = "hdffile.hdf"; /* hdf file to test */
-    intn        status       = 0;             /* status returned by called functions */
+    int         status       = 0;             /* status returned by called functions */
 
     /* Create an empty HDF file to test Hishdf. */
     fid = SDstart(hdf_basename, DFACC_CREATE);
@@ -430,7 +430,7 @@ test_fileformat()
 extern int
 test_files()
 {
-    intn num_errs = 0; /* number of errors */
+    int num_errs = 0; /* number of errors */
 
     /* Output message about test being performed */
     TESTING("miscellaneous file related functions (tfile.c)");

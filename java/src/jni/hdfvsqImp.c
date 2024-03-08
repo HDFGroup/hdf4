@@ -35,7 +35,7 @@ extern "C" {
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_VSQuerycount(JNIEnv *env, jclass clss, jlong vdata_id, jintArray n_records)
 {
-    intn     rval   = FAIL;
+    int      rval   = FAIL;
     jint    *theArg = NULL;
     jboolean isCopy;
 
@@ -62,7 +62,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_VSQueryfields(JNIEnv *env, jclass clss, jlong vdata_id, jobjectArray fields)
 {
-    intn    rval = FAIL;
+    int     rval = FAIL;
     char   *data = NULL;
     jstring rstring;
 
@@ -99,7 +99,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_VSQueryinterlace(JNIEnv *env, jclass clss, jlong vdata_id, jintArray interlace)
 {
-    intn     rval   = FAIL;
+    int      rval   = FAIL;
     jint    *theArg = NULL;
     jboolean isCopy;
 
@@ -126,7 +126,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_VSQueryname(JNIEnv *env, jclass clss, jlong vdata_id, jobjectArray vdata_name)
 {
-    intn    rval = FAIL;
+    int     rval = FAIL;
     char   *data = NULL;
     jstring rstring;
 
@@ -191,7 +191,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_VSQueryvsize(JNIEnv *env, jclass clss, jlong vdata_id, jintArray vdata_size)
 {
-    intn     rval   = FAIL;
+    int      rval   = FAIL;
     jint    *theArg = NULL;
     jboolean isCopy;
 

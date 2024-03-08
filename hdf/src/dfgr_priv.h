@@ -26,8 +26,8 @@
 
 /* description record: used to describe image data, palette data etc. */
 typedef struct {
-    intn  ncomponents; /* number of components */
-    intn  interlace;   /* data ordering: chunky / planar etc */
+    int   ncomponents; /* number of components */
+    int   interlace;   /* data ordering: chunky / planar etc */
     int32 xdim;        /* X- dimension of data */
     int32 ydim;        /* Y- dimensionsof data */
     DFdi  nt;          /* number type of data */

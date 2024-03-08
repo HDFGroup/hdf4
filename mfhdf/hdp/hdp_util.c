@@ -18,7 +18,7 @@
 const char *unknown_tag = "Unknown Tag";
 
 char *
-tagnum_to_name(intn num)
+tagnum_to_name(int num)
 {
     char *ret;
 
@@ -31,7 +31,7 @@ tagnum_to_name(intn num)
     return (ret);
 } /* end tagnum_to_name() */
 
-intn
+int
 tagname_to_num(const char *name)
 {
     return (HDgettagnum(name));
@@ -42,9 +42,9 @@ tagname_to_num(const char *name)
  */
 /* assumes that curr_arg is pointing to the first file name */
 filelist_t *
-make_file_list(intn curr_arg, intn argc, char *argv[])
+make_file_list(int curr_arg, int argc, char *argv[])
 {
-    intn        i;
+    int         i;
     filelist_t *ret;
 
     if (curr_arg > argc) /* consistency check */
@@ -70,7 +70,7 @@ make_file_list(intn curr_arg, intn argc, char *argv[])
 } /* end make_file_list() */
 
 char *
-get_next_file(filelist_t *f_list, intn advance)
+get_next_file(filelist_t *f_list, int advance)
 {
     if (advance)
         f_list->curr_file++;
@@ -83,7 +83,7 @@ get_next_file(filelist_t *f_list, intn advance)
 vg_info_t *
 free_node_vg_info_t(vg_info_t *aNode)
 {
-    intn i;
+    int i;
 
     if (aNode != NULL) {
         if (aNode->children != NULL) {
@@ -114,7 +114,7 @@ free_node_vg_info_t(vg_info_t *aNode)
 vg_info_t **
 free_vginfo_list(vg_info_t **nodelist, int32 num_items)
 {
-    intn i;
+    int i;
 
     /* if the list is not NULL, free each node then reset the list to NULL */
     if (nodelist != NULL) {
@@ -148,7 +148,7 @@ free_node_obj_chosen_t(obj_chosen_t *aNode)
 void
 free_obj_chosen_t_list(obj_chosen_t **nodelist, int32 num_items)
 {
-    intn i;
+    int i;
 
     /* if the list is not NULL, free each node then reset the list to NULL */
     if ((*nodelist) != NULL) {
@@ -165,7 +165,7 @@ free_obj_chosen_t_list(obj_chosen_t **nodelist, int32 num_items)
 char **
 free_str_list(char **str_list, int32 num_items)
 {
-    intn i;
+    int i;
 
     if (str_list != NULL) {
         for (i = 0; i < num_items; i++)
@@ -187,7 +187,7 @@ free_num_list(int32 *num_list)
 void
 free_file_list(filelist_t *f_list)
 {
-    intn i;
+    int i;
 
     for (i = 0; i < f_list->max_files; i++)
         free(f_list->file_arr[i]);
@@ -201,8 +201,8 @@ free_file_list(filelist_t *f_list)
 groupinfo_t *
 make_group_list(int32 fid, uint16 tag, uint16 ref)
 {
-    intn         nobj;
-    intn         i;
+    int          nobj;
+    int          i;
     groupinfo_t *ret;
     int32        gid;
 
@@ -314,7 +314,7 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
 } /* end make_group_list() */
 
 DFdi *
-get_next_group(groupinfo_t *g_list, intn advance)
+get_next_group(groupinfo_t *g_list, int advance)
 {
     if (g_list == NULL)
         return (NULL);
@@ -349,14 +349,14 @@ free_group_list(groupinfo_t *g_list)
 objlist_t *
 make_obj_list(int32 fid, uint32 options)
 {
-    intn            nobj;     /* number of DDs in the file */
+    int             nobj;     /* number of DDs in the file */
     int32           status;   /* status of various HDF calls */
     int32           aid;      /* temporary AID to use while getting DD info */
     int16           tmp_spec; /* temporary storage for special status */
     objlist_t      *obj_ret;  /* pointer to the dd list to return */
     objinfo_t      *obj_ptr;  /* temporary pointer to a working DD object */
     sp_info_block_t info;     /* temp. storage for special elem. info */
-    intn            n, m;     /* local counting variable */
+    int             n, m;     /* local counting variable */
 
     /* get the number of all objects in the file */
     nobj = Hnumber(fid, DFTAG_WILDCARD);
@@ -485,7 +485,7 @@ make_obj_list(int32 fid, uint32 options)
 } /* end make_dd_list() */
 
 objinfo_t *
-get_next_obj(objlist_t *o_list, intn advance)
+get_next_obj(objlist_t *o_list, int advance)
 {
     if (advance)
         o_list->curr_obj++;
@@ -495,7 +495,7 @@ get_next_obj(objlist_t *o_list, intn advance)
 } /* end get_next_obj() */
 
 objinfo_t *
-goto_nth_obj(objlist_t *o_list, intn n)
+goto_nth_obj(objlist_t *o_list, int n)
 {
     if (n >= 0 && n < o_list->max_obj)
         o_list->curr_obj = n;
@@ -512,7 +512,7 @@ reset_obj_list(objlist_t *o_list)
 void
 free_obj_list(objlist_t *o_list)
 {
-    intn       i;       /* local counting variable */
+    int        i;       /* local counting variable */
     objinfo_t *obj_ptr; /* temporary pointer to a working DD object */
 
     if (o_list != NULL) {
@@ -628,7 +628,7 @@ parse_number_opts(char *argv[], int *curr_arg, number_filter_t *filter)
         numItems = numItems + filter->num_items;
 
         /* Allocate a new list */
-        newlist = (int32 *)malloc(sizeof(intn) * numItems);
+        newlist = (int32 *)malloc(sizeof(int) * numItems);
         CHECK_ALLOC(newlist, "newlist", "parse_number_opts");
 
         /* If filter->num_list is already allocated, transfer pointers over
@@ -646,7 +646,7 @@ parse_number_opts(char *argv[], int *curr_arg, number_filter_t *filter)
 
     else {
         /* allocate space to hold all the items in the list */
-        filter->num_list = (int32 *)malloc(sizeof(intn) * numItems);
+        filter->num_list = (int32 *)malloc(sizeof(int) * numItems);
         CHECK_ALLOC(filter->num_list, "filter->num_list", "parse_number_opts");
     }
 

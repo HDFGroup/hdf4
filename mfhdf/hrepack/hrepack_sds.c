@@ -88,7 +88,7 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
     int32         chunk_flags;    /* chunk flags */
     int32         chunk_flags_in; /* chunk flags original*/
     int           szip_mode;      /* szip mode, EC, NN */
-    intn          empty_sds;
+    int           empty_sds;
     int           have_info = 0;
     size_t        need; /* read size needed */
     void         *sm_buf    = NULL;
@@ -662,7 +662,7 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
         }
         /* copy scale information over */
         if (dtype != 0) {
-            intn okdim;
+            int okdim;
 
             /* compute the number of the bytes for each value. */
             numtype = dtype & DFNT_MASK;

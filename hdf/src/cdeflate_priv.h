@@ -29,7 +29,7 @@
 
 /* gzip [en|de]coding information */
 typedef struct {
-    intn     deflate_level;   /* how hard to try to compress this data */
+    int      deflate_level;   /* how hard to try to compress this data */
     int32    offset;          /* offset in the de-compressed array */
     int16    acc_init;        /* is access mode initialized? */
     int16    acc_mode;        /* access mode desired */
@@ -61,7 +61,7 @@ HDFLIBAPI int32 HCPcdeflate_read(accrec_t *access_rec, int32 length, void *data)
 
 HDFLIBAPI int32 HCPcdeflate_write(accrec_t *access_rec, int32 length, const void *data);
 
-HDFLIBAPI intn HCPcdeflate_endaccess(accrec_t *access_rec);
+HDFLIBAPI int HCPcdeflate_endaccess(accrec_t *access_rec);
 
 #ifdef __cplusplus
 }

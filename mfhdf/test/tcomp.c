@@ -53,19 +53,19 @@
 #define Y_LENGTH  16
 #define RANK      2
 
-static intn
+static int
 test_various_comps()
 {
     /************************* Variable declaration **************************/
 
     int32     sd_id, sds_id;
-    intn      status;
+    int       status;
     int32     comp_type; /* Compression flag */
     comp_info c_info;    /* Compression structure */
     int32     start[2], edges[2], dim_sizes[2];
     int32     data[Y_LENGTH][X_LENGTH];
     int32     pixels_per_scanline;
-    intn      num_errs = 0; /* number of errors in compression test so far */
+    int       num_errs = 0; /* number of errors in compression test so far */
     int       i, j;
 
     /********************* End of variable declaration ***********************/
@@ -185,9 +185,9 @@ test_compressed_data()
     int32        idata[100];
     int32        rdata[100];
     int32        fillval;
-    intn         i;
-    intn         num_errs = 0;       /* number of errors in compression test so far */
-    intn         status;             /* status flag */
+    int          i;
+    int          num_errs = 0;       /* number of errors in compression test so far */
+    int          status;             /* status flag */
     int32        start[10], end[10]; /* start and end arrays */
 
     /*
@@ -831,7 +831,7 @@ test_compressed_data()
 extern int
 test_compression()
 {
-    intn num_errs = 0; /* number of errors */
+    int num_errs = 0; /* number of errors */
 
     /* Output message about test being performed */
     TESTING("create/read/write compressed datasets (tcomp.c)");

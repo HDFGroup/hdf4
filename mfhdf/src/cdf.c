@@ -21,8 +21,8 @@
 
 int32 hdf_get_magicnum(const char *filename);
 
-static intn hdf_num_attrs(NC   *handle, /* IN: handle to SDS */
-                          int32 vg /* IN: ref of top Vgroup */);
+static int hdf_num_attrs(NC   *handle, /* IN: handle to SDS */
+                         int32 vg /* IN: ref of top Vgroup */);
 
 static bool_t NC_xdr_cdf(XDR *xdrs, NC **handlep);
 
@@ -132,11 +132,11 @@ done:
 /*
   Return TRUE/FALSE depending on if the given file is a NASA CDF file
 */
-intn
+int
 HDiscdf(const char *filename)
 {
     int32 magic_num = 0;
-    intn  ret_value = FALSE;
+    int   ret_value = FALSE;
 
     /* Use internal function to open the file and get a magic number if the
        file has one */
@@ -155,11 +155,11 @@ HDiscdf(const char *filename)
 
   Return TRUE if the given file is a netCDF file, FALSE otherwise.
 */
-intn
+int
 HDisnetcdf(const char *filename)
 {
     int32 magic_num = 0;
-    intn  ret_value = FALSE;
+    int   ret_value = FALSE;
 
     /* Use internal function to open the file and get a magic number if the
        file has one */
@@ -178,11 +178,11 @@ HDisnetcdf(const char *filename)
 
   Return TRUE if the given file is a netCDF 64-bit file, FALSE otherwise.
 */
-intn
+int
 HDisnetcdf64(const char *filename)
 {
     int32 magic_num = 0;
-    intn  ret_value = FALSE;
+    int   ret_value = FALSE;
 
     /* Use internal function to open the file and get a magic number if the
        file has one */
@@ -1033,7 +1033,7 @@ done:
 /* ----------------------------------------------------------------
 ** Write out a cdf structure
 */
-intn
+int
 hdf_write_xdr_cdf(XDR *xdrs, NC **handlep)
 {
     int32     count;
@@ -1052,7 +1052,7 @@ hdf_write_xdr_cdf(XDR *xdrs, NC **handlep)
     uint32    thash;
     uint8_t  *vars      = NULL;
     uint8_t  *attrs     = NULL;
-    intn      ret_value = SUCCEED;
+    int       ret_value = SUCCEED;
 
     /* Convert old scales into coordinate var values before writing
        out any header info */
@@ -1184,7 +1184,7 @@ done:
 ** change the ref to ndg_ref and the tag to DATA_TAG, writes the
 ** data out.
 */
-intn
+int
 hdf_conv_scales(NC **handlep)
 {
     int       status, scaleref, scaletag, scalelen;
@@ -1193,7 +1193,7 @@ hdf_conv_scales(NC **handlep)
     NC_array *tmp       = NULL;
     uint8    *scalebuf  = NULL;
     uint8    *datap     = NULL;
-    intn      ret_value = SUCCEED;
+    int       ret_value = SUCCEED;
 
     if ((*handlep)->vars) {
         tmp  = (*handlep)->vars;
@@ -1248,7 +1248,7 @@ done:
 ** Read in the dimensions out of a cdf structure
 ** Return FAIL if something goes wrong
 */
-intn
+int
 hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
 {
     char     vgname[H4_MAX_NC_NAME]   = "";
@@ -1260,7 +1260,7 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
     NC_dim **dimension = NULL;
     int32    dim, entries;
     int32    vs;
-    intn     ret_value = SUCCEED;
+    int      ret_value = SUCCEED;
 
     (void)xdrs;
 
@@ -1429,7 +1429,7 @@ done:
    returns number of attributes in vgroup if successful and FAIL
    otherwise.
 *******************************************************************************/
-static intn
+static int
 hdf_num_attrs(NC   *handle, /* IN: handle to SDS */
               int32 vg /* IN: ref of top Vgroup */)
 {
@@ -1438,7 +1438,7 @@ hdf_num_attrs(NC   *handle, /* IN: handle to SDS */
     int32 vs, tag;
     int32 id                    = -1;
     char class[H4_MAX_NC_CLASS] = "";
-    intn ret_value              = FAIL;
+    int ret_value               = FAIL;
 
     n = Vntagrefs(vg);
     if (n == FAIL) {
@@ -1600,7 +1600,7 @@ done:
 **   set the numrecs fields of variables (so we can fill record
 **   variables intelligently)
 */
-intn
+int
 hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
 {
     char vgname[H4_MAX_NC_NAME]  = "";
@@ -1620,12 +1620,12 @@ hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
     int32         entries;
     int32         ndg_ref = 0;
     int32         rag_ref = 0;
-    intn          nattrs;
+    int           nattrs;
     hdf_vartype_t var_type = UNKNOWN;
     int           t, i;
     nc_type       type;
     int32         var, sub;
-    intn          ret_value = SUCCEED;
+    int           ret_value = SUCCEED;
 
     count = 0;
     id    = -1;
@@ -1917,13 +1917,13 @@ done:
 /* ----------------------------------------------------------------
 ** Read in a cdf structure
 */
-intn
+int
 hdf_read_xdr_cdf(XDR *xdrs, NC **handlep)
 {
     int32 cdf_vg = FAIL;
     int   vgid   = 0;
     int   status;
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     if ((vgid = Vfindclass((*handlep)->hdf_file, _HDF_CDF)) != FAIL) {
         cdf_vg = Vattach((*handlep)->hdf_file, vgid, "r");
@@ -1972,11 +1972,11 @@ done:
 **    that fails try to read SDSs out of the HDF file and interpret
 **    them as netCDF information.
 */
-intn
+int
 hdf_xdr_cdf(XDR *xdrs, NC **handlep)
 {
-    intn status;
-    intn ret_value = SUCCEED;
+    int status;
+    int ret_value = SUCCEED;
 
     switch (xdrs->x_op) {
         case XDR_ENCODE:
@@ -2017,13 +2017,13 @@ done:
   just trash everything inside of it, making sure that any VDatas
   with class == DATA are saved
 */
-intn
+int
 hdf_vg_clobber(NC *handle, int id)
 {
     int   t, n;
     int32 vg, tag, ref;
     int32 status;
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     /* loop through and Clobber all top level VGroups */
 
@@ -2091,12 +2091,12 @@ done:
 /*
   Delete a netCDF structure that has been already written to disk
 */
-intn
+int
 hdf_cdf_clobber(NC *handle)
 {
     int32 vg, tag, ref;
     int   n, t, status;
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     if (!handle->vgid) {     /* okay right? */
         ret_value = SUCCEED; /* hmm...since ref of vgroup is zero? */
@@ -2187,7 +2187,7 @@ BMR: handle->numrecs is used to write out the dim value for all unlimited
      vp->numrecs is used for HDF file and handle->numrecs is used for netCDF
      file.  I believe this is what the "BUG:" comment above means.  6/24/2013
 */
-intn
+int
 hdf_close(NC *handle)
 {
     NC_array *tmp  = NULL;
@@ -2198,7 +2198,7 @@ hdf_close(NC *handle)
     int32     vg, dim;
     int32     vs;
     char class[H4_MAX_NC_CLASS] = "";
-    intn ret_value              = SUCCEED;
+    int ret_value               = SUCCEED;
 
     /* loop through and detach from variable data VDatas */
     if (handle->vars) {

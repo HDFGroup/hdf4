@@ -56,32 +56,32 @@ extern "C" {
 /*
  ** from hfile.c
  */
-HDFLIBAPI int32 Hopen(const char *path, intn acc_mode, int16 ndds);
+HDFLIBAPI int32 Hopen(const char *path, int acc_mode, int16 ndds);
 
-HDFLIBAPI intn Hclose(int32 file_id);
+HDFLIBAPI int Hclose(int32 file_id);
 
 HDFLIBAPI int32 Hstartread(int32 file_id, uint16 tag, uint16 ref);
 
-HDFLIBAPI intn Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin);
+HDFLIBAPI int Hnextread(int32 access_id, uint16 tag, uint16 ref, int origin);
 
-HDFLIBAPI intn Hexist(int32 file_id, uint16 search_tag, uint16 search_ref);
+HDFLIBAPI int Hexist(int32 file_id, uint16 search_tag, uint16 search_ref);
 
-HDFLIBAPI intn Hinquire(int32 access_id, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
-                        int32 *poffset, int32 *pposn, int16 *paccess, int16 *pspecial);
+HDFLIBAPI int Hinquire(int32 access_id, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
+                       int32 *poffset, int32 *pposn, int16 *paccess, int16 *pspecial);
 
 HDFLIBAPI int32 Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length);
 
 HDFLIBAPI int32 Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags);
 
-HDFLIBAPI intn Hsetlength(int32 file_id, int32 length);
+HDFLIBAPI int Hsetlength(int32 file_id, int32 length);
 
-HDFLIBAPI intn Happendable(int32 aid);
+HDFLIBAPI int Happendable(int32 aid);
 
-HDFLIBAPI intn HPisappendable(int32 aid);
+HDFLIBAPI int HPisappendable(int32 aid);
 
-HDFLIBAPI intn HPregister_term_func(hdf_termfunc_t term_func);
+HDFLIBAPI int HPregister_term_func(hdf_termfunc_t term_func);
 
-HDFLIBAPI intn Hseek(int32 access_id, int32 offset, intn origin);
+HDFLIBAPI int Hseek(int32 access_id, int32 offset, int origin);
 
 HDFLIBAPI int32 Htell(int32 access_id);
 
@@ -91,11 +91,11 @@ HDFLIBAPI int32 Hwrite(int32 access_id, int32 length, const void *data);
 
 HDFLIBAPI int32 Htrunc(int32 access_id, int32 trunc_len);
 
-HDFLIBAPI intn Hendaccess(int32 access_id);
+HDFLIBAPI int Hendaccess(int32 access_id);
 
-HDFLIBAPI intn HDgetc(int32 access_id);
+HDFLIBAPI int HDgetc(int32 access_id);
 
-HDFLIBAPI intn HDputc(uint8 c, int32 access_id);
+HDFLIBAPI int HDputc(uint8 c, int32 access_id);
 
 HDFLIBAPI int32 Hgetelement(int32 file_id, uint16 tag, uint16 ref, uint8 *data);
 
@@ -105,47 +105,47 @@ HDFLIBAPI int32 Hlength(int32 file_id, uint16 tag, uint16 ref);
 
 HDFLIBAPI int32 Hoffset(int32 file_id, uint16 tag, uint16 ref);
 
-HDFLIBAPI intn Hsync(int32 file_id);
+HDFLIBAPI int Hsync(int32 file_id);
 
-HDFLIBAPI intn Hcache(int32 file_id, intn cache_on);
+HDFLIBAPI int Hcache(int32 file_id, int cache_on);
 
-HDFLIBAPI intn Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *releasev, char *string);
+HDFLIBAPI int Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *releasev, char *string);
 
-HDFLIBAPI intn Hgetfileversion(int32 file_id, uint32 *majorv, uint32 *minorv, uint32 *release, char *string);
+HDFLIBAPI int Hgetfileversion(int32 file_id, uint32 *majorv, uint32 *minorv, uint32 *release, char *string);
 
-HDFLIBAPI intn Hsetaccesstype(int32 access_id, uintn accesstype);
+HDFLIBAPI int Hsetaccesstype(int32 access_id, unsigned accesstype);
 
 HDFLIBAPI uint16 HDmake_special_tag(uint16 tag);
 
-HDFLIBAPI intn HDis_special_tag(uint16 tag);
+HDFLIBAPI int HDis_special_tag(uint16 tag);
 
 HDFLIBAPI uint16 HDbase_tag(uint16 tag);
 
 HDFLIBAPI int HDerr(int32 file_id);
 
-HDFLIBAPI intn HDvalidfid(int32 file_id);
+HDFLIBAPI int HDvalidfid(int32 file_id);
 
 HDFLIBAPI const char *HDgettagdesc(uint16 tag);
 
 HDFLIBAPI char *HDgettagsname(uint16 tag);
 
-HDFLIBAPI intn HDgettagnum(const char *tag_name);
+HDFLIBAPI int HDgettagnum(const char *tag_name);
 
 HDFLIBAPI char *HDgetNTdesc(int32 nt);
 
 HDFLIBAPI const char *HDfidtoname(int32 fid);
 
-HDFLIBAPI intn Hgetntinfo(int32 numbertype, hdf_ntinfo_t *nt_info);
+HDFLIBAPI int Hgetntinfo(int32 numbertype, hdf_ntinfo_t *nt_info);
 
-HDFLIBAPI intn Hishdf(const char *filename);
+HDFLIBAPI int Hishdf(const char *filename);
 
-HDFLIBAPI intn Hfidinquire(int32 file_id, char **fname, intn *acc_mode, intn *attach);
+HDFLIBAPI int Hfidinquire(int32 file_id, char **fname, int *acc_mode, int *attach);
 
-HDFLIBAPI intn Hshutdown(void);
+HDFLIBAPI int Hshutdown(void);
 
 HDFLIBAPI void HPend(void);
 
-HDFLIBAPI intn HDdont_atexit(void);
+HDFLIBAPI int HDdont_atexit(void);
 
 /*
  ** from hfiledd.c
@@ -163,11 +163,11 @@ HDFLIBAPI intn HDdont_atexit(void);
     returns SUCCEED (0) if successful, FAIL (-1) otherwise
 
 *******************************************************************************/
-HDFLIBAPI intn Hdupdd(int32  file_id, /* IN: File ID the tag/refs are in */
-                      uint16 tag,     /* IN: Tag of new tag/ref */
-                      uint16 ref,     /* IN: Ref of new tag/ref */
-                      uint16 old_tag, /* IN: Tag of old tag/ref */
-                      uint16 old_ref  /* IN: Ref of old tag/ref */
+HDFLIBAPI int Hdupdd(int32  file_id, /* IN: File ID the tag/refs are in */
+                     uint16 tag,     /* IN: Tag of new tag/ref */
+                     uint16 ref,     /* IN: Ref of new tag/ref */
+                     uint16 old_tag, /* IN: Tag of old tag/ref */
+                     uint16 old_ref  /* IN: Ref of old tag/ref */
 );
 
 /******************************************************************************
@@ -241,18 +241,18 @@ HDFLIBAPI uint16 Htagnewref(int32  file_id, /* IN: File ID the tag/refs are in *
     returns SUCCEED (0) if successful and FAIL (-1) otherwise
 
 *******************************************************************************/
-HDFLIBAPI intn Hfind(int32   file_id,    /* IN: file ID to search in */
-                     uint16  search_tag, /* IN: the tag to search for (can be DFTAG_WILDCARD) */
-                     uint16  search_ref, /* IN: ref to search for (can be DFREF_WILDCARD) */
-                     uint16 *find_tag,   /* IN: if (*find_tag==0) and (*find_ref==0) then start search */
-                                         /* OUT: tag matching the search tag */
-                     uint16 *find_ref,   /* IN: if (*find_tag==0) and (*find_ref==0) then start search */
-                                         /* OUT: ref matching the search ref */
-                     int32 *find_offset, /* OUT: offset of the data element found */
-                     int32 *find_length, /* OUT: length of the data element found */
-                     intn   direction    /* IN: Direction to search in: */
-                                         /*  DF_FORWARD searches forward from the current location */
-                                         /*  DF_BACKWARD searches backward from the current location */
+HDFLIBAPI int Hfind(int32   file_id,    /* IN: file ID to search in */
+                    uint16  search_tag, /* IN: the tag to search for (can be DFTAG_WILDCARD) */
+                    uint16  search_ref, /* IN: ref to search for (can be DFREF_WILDCARD) */
+                    uint16 *find_tag,   /* IN: if (*find_tag==0) and (*find_ref==0) then start search */
+                                        /* OUT: tag matching the search tag */
+                    uint16 *find_ref,   /* IN: if (*find_tag==0) and (*find_ref==0) then start search */
+                                        /* OUT: ref matching the search ref */
+                    int32 *find_offset, /* OUT: offset of the data element found */
+                    int32 *find_length, /* OUT: length of the data element found */
+                    int    direction    /* IN: Direction to search in: */
+                                        /*  DF_FORWARD searches forward from the current location */
+                                        /*  DF_BACKWARD searches backward from the current location */
 );
 
 /******************************************************************************
@@ -269,9 +269,9 @@ HDFLIBAPI intn Hfind(int32   file_id,    /* IN: file ID to search in */
     -1-> function failed
 
 *******************************************************************************/
-HDFLIBAPI intn HDcheck_tagref(int32  file_id, /* IN: id of file */
-                              uint16 tag,     /* IN: Tag to check */
-                              uint16 ref /* IN: ref to check */);
+HDFLIBAPI int HDcheck_tagref(int32  file_id, /* IN: id of file */
+                             uint16 tag,     /* IN: Tag to check */
+                             uint16 ref /* IN: ref to check */);
 
 /************************************************************************
 NAME
@@ -293,9 +293,9 @@ DESCRIPTION
 RETURNS
    returns SUCCEED (0) if successful, FAIL (-1) otherwise
 ************************************************************************/
-HDFLIBAPI intn HDreuse_tagref(int32  file_id, /* IN: id of file */
-                              uint16 tag,     /* IN: tag of data descriptor to reuse */
-                              uint16 ref /* IN: ref of data descriptor to reuse */);
+HDFLIBAPI int HDreuse_tagref(int32  file_id, /* IN: id of file */
+                             uint16 tag,     /* IN: tag of data descriptor to reuse */
+                             uint16 ref /* IN: ref of data descriptor to reuse */);
 
 /******************************************************************************
  NAME
@@ -312,9 +312,9 @@ HDFLIBAPI intn HDreuse_tagref(int32  file_id, /* IN: id of file */
     returns SUCCEED (0) if successful, FAIL (-1) otherwise
 
 *******************************************************************************/
-HDFLIBAPI intn Hdeldd(int32  file_id, /* IN: File ID the tag/refs are in */
-                      uint16 tag,     /* IN: Tag of tag/ref to delete */
-                      uint16 ref      /* IN: Ref of tag/ref to delete */
+HDFLIBAPI int Hdeldd(int32  file_id, /* IN: File ID the tag/refs are in */
+                     uint16 tag,     /* IN: Tag of tag/ref to delete */
+                     uint16 ref      /* IN: Ref of tag/ref to delete */
 );
 
 /*
@@ -323,34 +323,34 @@ HDFLIBAPI intn Hdeldd(int32  file_id, /* IN: File ID the tag/refs are in */
 
 HDFLIBAPI void *HDmemfill(void *dest, const void *src, uint32 item_size, uint32 num_items);
 
-HDFLIBAPI char *HIstrncpy(char *dest, const char *source, intn len);
+HDFLIBAPI char *HIstrncpy(char *dest, const char *source, int len);
 
 HDFLIBAPI int32 HDspaceleft(void);
 
-HDFLIBAPI intn HDc2fstr(char *str, intn len);
+HDFLIBAPI int HDc2fstr(char *str, int len);
 
-HDFLIBAPI char *HDf2cstring(_fcd fdesc, intn len);
+HDFLIBAPI char *HDf2cstring(_fcd fdesc, int len);
 
-HDFLIBAPI intn HDflush(int32 file_id);
+HDFLIBAPI int HDflush(int32 file_id);
 
-HDFLIBAPI intn HDpackFstring(char *src, char *dest, intn len);
+HDFLIBAPI int HDpackFstring(char *src, char *dest, int len);
 
 /*
  ** from hblocks.c
  */
 HDFLIBAPI int32 HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length, int32 number_blocks);
 
-HDFLIBAPI intn HLconvert(int32 aid, int32 block_length, int32 number_blocks);
+HDFLIBAPI int HLconvert(int32 aid, int32 block_length, int32 number_blocks);
 
 HDFLIBAPI int HDinqblockinfo(int32 aid, int32 *length, int32 *first_length, int32 *block_length,
                              int32 *number_blocks);
 
-HDFLIBAPI intn HLsetblockinfo(int32 aid, int32 block_size, int32 num_blocks);
+HDFLIBAPI int HLsetblockinfo(int32 aid, int32 block_size, int32 num_blocks);
 
-HDFLIBAPI intn HLgetblockinfo(int32 aid, int32 *block_size, int32 *num_blocks);
+HDFLIBAPI int HLgetblockinfo(int32 aid, int32 *block_size, int32 *num_blocks);
 
-HDFLIBAPI intn HLgetdatainfo(int32 file_id, uint8 *buf, uintn start_block, uintn info_count,
-                             int32 *offsetarray, int32 *lengtharray);
+HDFLIBAPI int HLgetdatainfo(int32 file_id, uint8 *buf, unsigned start_block, unsigned info_count,
+                            int32 *offsetarray, int32 *lengtharray);
 
 /*
  ** from hextelt.c
@@ -358,9 +358,9 @@ HDFLIBAPI intn HLgetdatainfo(int32 file_id, uint8 *buf, uintn start_block, uintn
 HDFLIBAPI int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, int32 offset,
                          int32 start_len);
 
-HDFLIBAPI intn HXsetcreatedir(const char *dir);
+HDFLIBAPI int HXsetcreatedir(const char *dir);
 
-HDFLIBAPI intn HXsetdir(const char *dir);
+HDFLIBAPI int HXsetdir(const char *dir);
 
 /*
  ** from hcomp.c
@@ -368,49 +368,49 @@ HDFLIBAPI intn HXsetdir(const char *dir);
 HDFLIBAPI int32 HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type, model_info *m_info,
                          comp_coder_t coder_type, comp_info *c_info);
 
-HDFLIBAPI intn HCPgetcompinfo(int32 file_id, uint16 data_tag, uint16 data_ref, comp_coder_t *coder_type,
-                              comp_info *c_info);
+HDFLIBAPI int HCPgetcompinfo(int32 file_id, uint16 data_tag, uint16 data_ref, comp_coder_t *coder_type,
+                             comp_info *c_info);
 
-HDFLIBAPI intn HCPgetcomptype(int32 file_id, uint16 data_tag, uint16 data_ref, comp_coder_t *coder_type);
+HDFLIBAPI int HCPgetcomptype(int32 file_id, uint16 data_tag, uint16 data_ref, comp_coder_t *coder_type);
 
-HDFLIBAPI intn HCPgetdatasize(int32 file_id, uint16 data_tag, uint16 data_ref, int32 *comp_size,
-                              int32 *orig_size);
+HDFLIBAPI int HCPgetdatasize(int32 file_id, uint16 data_tag, uint16 data_ref, int32 *comp_size,
+                             int32 *orig_size);
 
-HDFPUBLIC intn HCget_config_info(comp_coder_t coder_type, uint32 *compression_config_info);
+HDFPUBLIC int HCget_config_info(comp_coder_t coder_type, uint32 *compression_config_info);
 
 HDFLIBAPI int32 HCPquery_encode_header(comp_model_t model_type, model_info *m_info, comp_coder_t coder_type,
                                        comp_info *c_info);
 
-HDFLIBAPI intn HCPencode_header(uint8 *p, comp_model_t model_type, model_info *m_info,
-                                comp_coder_t coder_type, comp_info *c_info);
+HDFLIBAPI int HCPencode_header(uint8 *p, comp_model_t model_type, model_info *m_info, comp_coder_t coder_type,
+                               comp_info *c_info);
 
-HDFLIBAPI intn HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info *m_info,
-                                comp_coder_t *coder_type, comp_info *c_info);
+HDFLIBAPI int HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info *m_info,
+                               comp_coder_t *coder_type, comp_info *c_info);
 
 /*
  ** from cszip.c
  */
 
-HDFLIBAPI intn HCPsetup_szip_parms(comp_info *c_info, int32 nt, int32 ncomp, int32 ndims, int32 *dims,
-                                   int32 *cdims);
-HDFLIBAPI intn HCPrm_szip_special_bit(comp_info *c_info);
+HDFLIBAPI int HCPsetup_szip_parms(comp_info *c_info, int32 nt, int32 ncomp, int32 ndims, int32 *dims,
+                                  int32 *cdims);
+HDFLIBAPI int HCPrm_szip_special_bit(comp_info *c_info);
 /*
  ** from hbuffer.c
  */
-HDFLIBAPI intn HBconvert(int32 aid);
+HDFLIBAPI int HBconvert(int32 aid);
 
 /*
  ** from hcompri.c
  */
 HDFLIBAPI int32 HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim, int16 scheme,
-                           comp_info *cinfo, uintn pixel_size);
+                           comp_info *cinfo, unsigned pixel_size);
 
 /*
  ** from herr.c
  */
 HDFLIBAPI const char *HEstring(hdf_err_code_t error_code);
 
-HDFLIBAPI void HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_name, intn line);
+HDFLIBAPI void HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_name, int line);
 
 HDFLIBAPI void HEreport(const char *, ...);
 
@@ -420,7 +420,7 @@ HDFLIBAPI int16 HEvalue(int32 level);
 
 HDFLIBAPI void HEclear(void);
 
-HDFLIBAPI intn HEshutdown(void);
+HDFLIBAPI int HEshutdown(void);
 
 /*
  ** from hbitio.c
@@ -429,19 +429,19 @@ HDFLIBAPI int32 Hstartbitread(int32 file_id, uint16 tag, uint16 ref);
 
 HDFLIBAPI int32 Hstartbitwrite(int32 file_id, uint16 tag, uint16 ref, int32 length);
 
-HDFLIBAPI intn Hbitappendable(int32 bitid);
+HDFLIBAPI int Hbitappendable(int32 bitid);
 
-HDFLIBAPI intn Hbitwrite(int32 bitid, intn count, uint32 data);
+HDFLIBAPI int Hbitwrite(int32 bitid, int count, uint32 data);
 
-HDFLIBAPI intn Hbitread(int32 bitid, intn count, uint32 *data);
+HDFLIBAPI int Hbitread(int32 bitid, int count, uint32 *data);
 
-HDFLIBAPI intn Hbitseek(int32 bitid, int32 byte_offset, intn bit_offset);
+HDFLIBAPI int Hbitseek(int32 bitid, int32 byte_offset, int bit_offset);
 
-HDFLIBAPI intn Hgetbit(int32 bitid);
+HDFLIBAPI int Hgetbit(int32 bitid);
 
-HDFLIBAPI int32 Hendbitaccess(int32 bitfile_id, intn flushbit);
+HDFLIBAPI int32 Hendbitaccess(int32 bitfile_id, int flushbit);
 
-HDFLIBAPI intn HPbitshutdown(void);
+HDFLIBAPI int HPbitshutdown(void);
 
 /*
  ** from hdatainfo.c
@@ -458,24 +458,25 @@ typedef struct hdf_ddinfo_t {
 /*
  ** Public functions for getting raw data information - from hdatainfo.c
  */
-HDFLIBAPI intn ANgetdatainfo(int32 ann_id, int32 *offset, int32 *length);
+HDFLIBAPI int ANgetdatainfo(int32 ann_id, int32 *offset, int32 *length);
 
-HDFLIBAPI intn HDgetdatainfo(int32 file_id, uint16 data_tag, uint16 data_ref, int32 *chk_coord,
-                             uintn start_block, uintn info_count, int32 *offsetarray, int32 *lengtharray);
+HDFLIBAPI int HDgetdatainfo(int32 file_id, uint16 data_tag, uint16 data_ref, int32 *chk_coord,
+                            unsigned start_block, unsigned info_count, int32 *offsetarray,
+                            int32 *lengtharray);
 
-HDFLIBAPI intn VSgetdatainfo(int32 vsid, uintn start_block, uintn info_count, int32 *offsetarray,
-                             int32 *lengtharray);
+HDFLIBAPI int VSgetdatainfo(int32 vsid, unsigned start_block, unsigned info_count, int32 *offsetarray,
+                            int32 *lengtharray);
 
-HDFLIBAPI intn VSgetattdatainfo(int32 vsid, int32 findex, intn attrindex, int32 *offset, int32 *length);
+HDFLIBAPI int VSgetattdatainfo(int32 vsid, int32 findex, int attrindex, int32 *offset, int32 *length);
 
-HDFLIBAPI intn Vgetattdatainfo(int32 vgid, intn attrindex, int32 *offset, int32 *length);
+HDFLIBAPI int Vgetattdatainfo(int32 vgid, int attrindex, int32 *offset, int32 *length);
 
-HDFLIBAPI intn GRgetdatainfo(int32 riid, uintn start_block, uintn info_count, int32 *offsetarray,
-                             int32 *lengtharray);
+HDFLIBAPI int GRgetdatainfo(int32 riid, unsigned start_block, unsigned info_count, int32 *offsetarray,
+                            int32 *lengtharray);
 
-HDFLIBAPI intn GRgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length);
+HDFLIBAPI int GRgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length);
 
-HDFLIBAPI intn GRgetpalinfo(int32 gr_id, uintn pal_count, hdf_ddinfo_t *palinfo_array);
+HDFLIBAPI int GRgetpalinfo(int32 gr_id, unsigned pal_count, hdf_ddinfo_t *palinfo_array);
 
 /*
  ** from dfutil.c
@@ -485,8 +486,8 @@ HDFLIBAPI uint16 DFfindnextref(int32 file_id, uint16 tag, uint16 lref);
 /*
  ** from dfcomp.c
  */
-HDFLIBAPI intn DFputcomp(int32 file_id, uint16 tag, uint16 ref, const uint8 *image, int32 xdim, int32 ydim,
-                         uint8 *palette, uint8 *newpal, int16 scheme, comp_info *cinfo);
+HDFLIBAPI int DFputcomp(int32 file_id, uint16 tag, uint16 ref, const uint8 *image, int32 xdim, int32 ydim,
+                        uint8 *palette, uint8 *newpal, int16 scheme, comp_info *cinfo);
 
 HDFLIBAPI int DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim, int32 ydim,
                         uint16 scheme);
@@ -510,49 +511,49 @@ HDFLIBAPI void DFCIunimcomp(int32 xdim, int32 ydim, uint8 in[], uint8 out[]);
  ** from dfjpeg.c
  */
 
-HDFLIBAPI intn DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim, const void *image,
-                        int16 scheme, comp_info *scheme_info);
+HDFLIBAPI int DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim, const void *image,
+                       int16 scheme, comp_info *scheme_info);
 
 /*
  ** from dfunjpeg.c
  */
 
-HDFLIBAPI intn DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, void *image, int32 xdim, int32 ydim,
-                          int16 scheme);
+HDFLIBAPI int DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, void *image, int32 xdim, int32 ydim,
+                         int16 scheme);
 
 /*
  ** from dfgroup.c
  */
 HDFLIBAPI int32 DFdiread(int32 file_id, uint16 tag, uint16 ref);
 
-HDFLIBAPI intn DFdiget(int32 list, uint16 *ptag, uint16 *pref);
+HDFLIBAPI int DFdiget(int32 list, uint16 *ptag, uint16 *pref);
 
-HDFLIBAPI intn DFdinobj(int32 list);
+HDFLIBAPI int DFdinobj(int32 list);
 
 HDFLIBAPI int32 DFdisetup(int maxsize);
 
-HDFLIBAPI intn DFdiput(int32 list, uint16 tag, uint16 ref);
+HDFLIBAPI int DFdiput(int32 list, uint16 tag, uint16 ref);
 
-HDFLIBAPI intn DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref);
+HDFLIBAPI int DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref);
 
 HDFLIBAPI void DFdifree(int32 groupID);
 
 /*
  ** from dfp.c
  */
-HDFLIBAPI intn DFPgetpal(const char *filename, void *palette);
+HDFLIBAPI int DFPgetpal(const char *filename, void *palette);
 
-HDFLIBAPI intn DFPputpal(const char *filename, const void *palette, intn overwrite, const char *filemode);
+HDFLIBAPI int DFPputpal(const char *filename, const void *palette, int overwrite, const char *filemode);
 
-HDFLIBAPI intn DFPaddpal(const char *filename, const void *palette);
+HDFLIBAPI int DFPaddpal(const char *filename, const void *palette);
 
-HDFLIBAPI intn DFPnpals(const char *filename);
+HDFLIBAPI int DFPnpals(const char *filename);
 
-HDFLIBAPI intn DFPreadref(const char *filename, uint16 ref);
+HDFLIBAPI int DFPreadref(const char *filename, uint16 ref);
 
-HDFLIBAPI intn DFPwriteref(const char *filename, uint16 ref);
+HDFLIBAPI int DFPwriteref(const char *filename, uint16 ref);
 
-HDFLIBAPI intn DFPrestart(void);
+HDFLIBAPI int DFPrestart(void);
 
 HDFLIBAPI uint16 DFPlastref(void);
 
@@ -561,106 +562,106 @@ HDFLIBAPI uint16 DFPlastref(void);
  */
 HDFLIBAPI int DFR8setcompress(int32 scheme, comp_info *cinfo);
 
-HDFLIBAPI intn DFR8getdims(const char *filename, int32 *pxdim, int32 *pydim, int *pispal);
+HDFLIBAPI int DFR8getdims(const char *filename, int32 *pxdim, int32 *pydim, int *pispal);
 
-HDFLIBAPI intn DFR8getimage(const char *filename, uint8 *image, int32 xdim, int32 ydim, uint8 *pal);
+HDFLIBAPI int DFR8getimage(const char *filename, uint8 *image, int32 xdim, int32 ydim, uint8 *pal);
 
-HDFLIBAPI intn DFR8setpalette(uint8 *pal);
+HDFLIBAPI int DFR8setpalette(uint8 *pal);
 
-HDFLIBAPI intn DFR8putimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress);
+HDFLIBAPI int DFR8putimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress);
 
-HDFLIBAPI intn DFR8addimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress);
+HDFLIBAPI int DFR8addimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress);
 
-HDFLIBAPI intn DFR8nimages(const char *filename);
+HDFLIBAPI int DFR8nimages(const char *filename);
 
-HDFLIBAPI intn DFR8readref(const char *filename, uint16 ref);
+HDFLIBAPI int DFR8readref(const char *filename, uint16 ref);
 
-HDFLIBAPI intn DFR8writeref(const char *filename, uint16 ref);
+HDFLIBAPI int DFR8writeref(const char *filename, uint16 ref);
 
-HDFLIBAPI intn DFR8restart(void);
+HDFLIBAPI int DFR8restart(void);
 
 HDFLIBAPI uint16 DFR8lastref(void);
 
-HDFLIBAPI intn DFR8getpalref(uint16 *pal_ref);
+HDFLIBAPI int DFR8getpalref(uint16 *pal_ref);
 
-HDFLIBAPI intn DFR8Pshutdown(void);
+HDFLIBAPI int DFR8Pshutdown(void);
 
 /*
  ** from dfgr.c
  */
-HDFLIBAPI intn DFGRgetlutdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pncomps, intn *pil);
+HDFLIBAPI int DFGRgetlutdims(const char *filename, int32 *pxdim, int32 *pydim, int *pncomps, int *pil);
 
-HDFLIBAPI intn DFGRreqlutil(intn il);
+HDFLIBAPI int DFGRreqlutil(int il);
 
-HDFLIBAPI intn DFGRgetlut(const char *filename, void *lut, int32 xdim, int32 ydim);
+HDFLIBAPI int DFGRgetlut(const char *filename, void *lut, int32 xdim, int32 ydim);
 
-HDFLIBAPI intn DFGRgetimdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pncomps, intn *pil);
+HDFLIBAPI int DFGRgetimdims(const char *filename, int32 *pxdim, int32 *pydim, int *pncomps, int *pil);
 
-HDFLIBAPI intn DFGRreqimil(intn il);
+HDFLIBAPI int DFGRreqimil(int il);
 
-HDFLIBAPI intn DFGRgetimage(const char *filename, void *image, int32 xdim, int32 ydim);
+HDFLIBAPI int DFGRgetimage(const char *filename, void *image, int32 xdim, int32 ydim);
 
-HDFLIBAPI intn DFGRsetcompress(int32 scheme, comp_info *cinfo);
+HDFLIBAPI int DFGRsetcompress(int32 scheme, comp_info *cinfo);
 
-HDFLIBAPI intn DFGRsetlutdims(int32 xdim, int32 ydim, intn ncomps, intn il);
+HDFLIBAPI int DFGRsetlutdims(int32 xdim, int32 ydim, int ncomps, int il);
 
-HDFLIBAPI intn DFGRsetlut(void *lut, int32 xdim, int32 ydim);
+HDFLIBAPI int DFGRsetlut(void *lut, int32 xdim, int32 ydim);
 
-HDFLIBAPI intn DFGRaddlut(const char *filename, void *lut, int32 xdim, int32 ydim);
+HDFLIBAPI int DFGRaddlut(const char *filename, void *lut, int32 xdim, int32 ydim);
 
-HDFLIBAPI intn DFGRsetimdims(int32 xdim, int32 ydim, intn ncomps, intn il);
+HDFLIBAPI int DFGRsetimdims(int32 xdim, int32 ydim, int ncomps, int il);
 
-HDFLIBAPI intn DFGRaddimage(const char *filename, void *image, int32 xdim, int32 ydim);
+HDFLIBAPI int DFGRaddimage(const char *filename, void *image, int32 xdim, int32 ydim);
 
-HDFLIBAPI intn DFGRputimage(const char *filename, void *image, int32 xdim, int32 ydim);
+HDFLIBAPI int DFGRputimage(const char *filename, void *image, int32 xdim, int32 ydim);
 
-HDFLIBAPI intn DFGRreadref(const char *filename, uint16 ref);
+HDFLIBAPI int DFGRreadref(const char *filename, uint16 ref);
 
 HDFLIBAPI uint16 DFGRIlastref(void);
 
-HDFLIBAPI intn DFGRIgetdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pncomps, intn *pil,
-                            intn type);
+HDFLIBAPI int DFGRIgetdims(const char *filename, int32 *pxdim, int32 *pydim, int *pncomps, int *pil,
+                           int type);
 
-HDFLIBAPI intn DFGRIreqil(intn il, intn type);
+HDFLIBAPI int DFGRIreqil(int il, int type);
 
-HDFLIBAPI intn DFGRIgetimlut(const char *filename, void *imlut, int32 xdim, int32 ydim, intn type,
-                             intn isfortran, int *compressed, uint16 *compr_type, int *has_pal);
+HDFLIBAPI int DFGRIgetimlut(const char *filename, void *imlut, int32 xdim, int32 ydim, int type,
+                            int isfortran, int *compressed, uint16 *compr_type, int *has_pal);
 
-HDFLIBAPI intn DFGRIsetdims(int32 xdim, int32 ydim, intn ncomps, intn type);
+HDFLIBAPI int DFGRIsetdims(int32 xdim, int32 ydim, int ncomps, int type);
 
-HDFLIBAPI intn DFGRIsetil(intn il, intn type);
+HDFLIBAPI int DFGRIsetil(int il, int type);
 
-HDFLIBAPI intn DFGRIrestart(void);
+HDFLIBAPI int DFGRIrestart(void);
 
-HDFLIBAPI intn DFGRIaddimlut(const char *filename, const void *imlut, int32 xdim, int32 ydim, intn type,
-                             intn isfortran, intn newfile);
+HDFLIBAPI int DFGRIaddimlut(const char *filename, const void *imlut, int32 xdim, int32 ydim, int type,
+                            int isfortran, int newfile);
 
-HDFLIBAPI intn DFGRPshutdown(void);
+HDFLIBAPI int DFGRPshutdown(void);
 
 /*
  ** from df24.c
  */
-HDFLIBAPI intn DF24getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pil);
+HDFLIBAPI int DF24getdims(const char *filename, int32 *pxdim, int32 *pydim, int *pil);
 
-HDFLIBAPI intn DF24reqil(intn il);
+HDFLIBAPI int DF24reqil(int il);
 
-HDFLIBAPI intn DF24getimage(const char *filename, void *image, int32 xdim, int32 ydim);
+HDFLIBAPI int DF24getimage(const char *filename, void *image, int32 xdim, int32 ydim);
 
-HDFLIBAPI intn DF24setdims(int32 xdim, int32 ydim);
+HDFLIBAPI int DF24setdims(int32 xdim, int32 ydim);
 
-HDFLIBAPI intn DF24setil(intn il);
+HDFLIBAPI int DF24setil(int il);
 
-HDFLIBAPI intn DF24setcompress(int32 type, comp_info *cinfo);
+HDFLIBAPI int DF24setcompress(int32 type, comp_info *cinfo);
 
-HDFLIBAPI intn DF24restart(void);
+HDFLIBAPI int DF24restart(void);
 
-HDFLIBAPI intn DF24addimage(const char *filename, const void *image, int32 xdim, int32 ydim);
+HDFLIBAPI int DF24addimage(const char *filename, const void *image, int32 xdim, int32 ydim);
 
-HDFLIBAPI intn DF24putimage(const char *filename, const void *image, int32 xdim, int32 ydim);
+HDFLIBAPI int DF24putimage(const char *filename, const void *image, int32 xdim, int32 ydim);
 
-HDFLIBAPI intn DF24nimages(const char *filename);
+HDFLIBAPI int DF24nimages(const char *filename);
 
-HDFLIBAPI intn DF24readref(const char *filename, uint16 ref);
+HDFLIBAPI int DF24readref(const char *filename, uint16 ref);
 
 HDFLIBAPI uint16 DF24lastref(void);
 
@@ -670,36 +671,36 @@ HDFLIBAPI uint16 DF24lastref(void);
 
 HDFLIBAPI int32 DFANgetlablen(const char *filename, uint16 tag, uint16 ref);
 
-HDFLIBAPI intn DFANgetlabel(const char *filename, uint16 tag, uint16 ref, char *label, int32 maxlen);
+HDFLIBAPI int DFANgetlabel(const char *filename, uint16 tag, uint16 ref, char *label, int32 maxlen);
 
 HDFLIBAPI int32 DFANgetdesclen(const char *filename, uint16 tag, uint16 ref);
 
-HDFLIBAPI intn DFANgetdesc(const char *filename, uint16 tag, uint16 ref, char *desc, int32 maxlen);
+HDFLIBAPI int DFANgetdesc(const char *filename, uint16 tag, uint16 ref, char *desc, int32 maxlen);
 
-HDFLIBAPI int32 DFANgetfidlen(int32 file_id, intn isfirst);
+HDFLIBAPI int32 DFANgetfidlen(int32 file_id, int isfirst);
 
-HDFLIBAPI int32 DFANgetfid(int32 file_id, char *id, int32 maxlen, intn isfirst);
+HDFLIBAPI int32 DFANgetfid(int32 file_id, char *id, int32 maxlen, int isfirst);
 
-HDFLIBAPI int32 DFANgetfdslen(int32 file_id, intn isfirst);
+HDFLIBAPI int32 DFANgetfdslen(int32 file_id, int isfirst);
 
-HDFLIBAPI int32 DFANgetfds(int32 file_id, char *desc, int32 maxlen, intn isfirst);
+HDFLIBAPI int32 DFANgetfds(int32 file_id, char *desc, int32 maxlen, int isfirst);
 
-HDFLIBAPI intn DFANputlabel(const char *filename, uint16 tag, uint16 ref, char *label);
+HDFLIBAPI int DFANputlabel(const char *filename, uint16 tag, uint16 ref, char *label);
 
-HDFLIBAPI intn DFANputdesc(const char *filename, uint16 tag, uint16 ref, char *desc, int32 desclen);
+HDFLIBAPI int DFANputdesc(const char *filename, uint16 tag, uint16 ref, char *desc, int32 desclen);
 
-HDFLIBAPI intn DFANaddfid(int32 file_id, char *id);
+HDFLIBAPI int DFANaddfid(int32 file_id, char *id);
 
-HDFLIBAPI intn DFANaddfds(int32 file_id, char *desc, int32 desclen);
+HDFLIBAPI int DFANaddfds(int32 file_id, char *desc, int32 desclen);
 
 HDFLIBAPI uint16 DFANlastref(void);
 
-HDFLIBAPI intn DFANlablist(const char *filename, uint16 tag, uint16 reflist[], char *labellist, intn listsize,
-                           intn maxlen, intn startpos);
+HDFLIBAPI int DFANlablist(const char *filename, uint16 tag, uint16 reflist[], char *labellist, int listsize,
+                          int maxlen, int startpos);
 
-HDFLIBAPI intn DFANclear(void);
+HDFLIBAPI int DFANclear(void);
 
-HDFLIBAPI intn DFANIclear(void);
+HDFLIBAPI int DFANIclear(void);
 
 HDFLIBAPI uint16 DFANIlocate(int32 file_id, int type, uint16 tag, uint16 ref);
 
@@ -707,10 +708,10 @@ HDFLIBAPI int DFANIaddentry(int type, uint16 annref, uint16 datatag, uint16 data
 
 HDFLIBAPI int32 DFANIgetannlen(const char *filename, uint16 tag, uint16 ref, int type);
 
-HDFLIBAPI intn DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann, int32 maxlen, int type,
-                           int isfortran);
+HDFLIBAPI int DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann, int32 maxlen, int type,
+                          int isfortran);
 
-HDFLIBAPI intn DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann, int32 annlen, int type);
+HDFLIBAPI int DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann, int32 annlen, int type);
 
 HDFLIBAPI int DFANIlablist(const char *filename, uint16 tag, uint16 reflist[], uint8 *labellist, int listsize,
                            int maxlen, int startpos, int isfortran);
@@ -721,13 +722,13 @@ HDFLIBAPI int32 DFANIgetfannlen(int32 file_id, int type, int isfirst);
 
 HDFLIBAPI int32 DFANIgetfann(int32 file_id, char *ann, int32 maxlen, int type, int isfirst);
 
-HDFLIBAPI intn DFANPshutdown(void);
+HDFLIBAPI int DFANPshutdown(void);
 
 /*
  ** from dfsd.c
  */
 
-HDFLIBAPI int DFSDgetdims(const char *filename, intn *prank, int32 sizes[], intn maxrank);
+HDFLIBAPI int DFSDgetdims(const char *filename, int *prank, int32 sizes[], int maxrank);
 
 HDFLIBAPI int DFSDgetdatastrs(char *label, char *unit, char *format, char *coordsys);
 
@@ -737,27 +738,27 @@ HDFLIBAPI int DFSDgetdatalen(int *llabel, int *lunit, int *lformat, int *lcoords
 
 HDFLIBAPI int DFSDgetdimlen(int dim, int *llabel, int *lunit, int *lformat);
 
-HDFLIBAPI int DFSDgetdimscale(intn dim, int32 maxsize, void *scale);
+HDFLIBAPI int DFSDgetdimscale(int dim, int32 maxsize, void *scale);
 
 HDFLIBAPI int DFSDgetrange(void *pmax, void *pmin);
 
-HDFLIBAPI int DFSDgetdata(const char *filename, intn rank, int32 maxsizes[], void *data);
+HDFLIBAPI int DFSDgetdata(const char *filename, int rank, int32 maxsizes[], void *data);
 
 HDFLIBAPI int DFSDsetlengths(int maxlen_label, int maxlen_unit, int maxlen_format, int maxlen_coordsys);
 
-HDFLIBAPI int DFSDsetdims(intn rank, int32 dimsizes[]);
+HDFLIBAPI int DFSDsetdims(int rank, int32 dimsizes[]);
 
 HDFLIBAPI int DFSDsetdatastrs(const char *label, const char *unit, const char *format, const char *coordsys);
 
 HDFLIBAPI int DFSDsetdimstrs(int dim, const char *label, const char *unit, const char *format);
 
-HDFLIBAPI int DFSDsetdimscale(intn dim, int32 dimsize, void *scale);
+HDFLIBAPI int DFSDsetdimscale(int dim, int32 dimsize, void *scale);
 
 HDFLIBAPI int DFSDsetrange(void *maxi, void *mini);
 
-HDFLIBAPI int DFSDputdata(const char *filename, intn rank, int32 dimsizes[], void *data);
+HDFLIBAPI int DFSDputdata(const char *filename, int rank, int32 dimsizes[], void *data);
 
-HDFLIBAPI int DFSDadddata(const char *filename, intn rank, int32 dimsizes[], void *data);
+HDFLIBAPI int DFSDadddata(const char *filename, int rank, int32 dimsizes[], void *data);
 
 HDFLIBAPI int DFSDrestart(void);
 
@@ -783,7 +784,7 @@ HDFLIBAPI int DFSDsetorder(int arrayorder);
 
 HDFLIBAPI int DFSDgetNT(int32 *pnumbertype);
 
-HDFLIBAPI intn DFSDpre32sdg(char *filename, uint16 ref, intn *ispre32);
+HDFLIBAPI int DFSDpre32sdg(char *filename, uint16 ref, int *ispre32);
 
 HDFLIBAPI int DFSDsetcal(float64 cal, float64 cal_err, float64 ioff, float64 ioff_err, int32 cal_nt);
 
@@ -804,7 +805,7 @@ HDFLIBAPI int DFSDendslab(void);
 HDFLIBAPI int DFSDreadslab(const char *filename, int32 start[], int32 slab_size[], int32 stride[],
                            void *buffer, int32 buffer_size[]);
 
-HDFLIBAPI intn DFSDPshutdown(void);
+HDFLIBAPI int DFSDPshutdown(void);
 
 /*
  ** from dfconv.c
@@ -818,7 +819,7 @@ HDFLIBAPI int32 DFKislitendNT(int32 numbertype);
 
 HDFLIBAPI int8 DFKgetPNSC(int32 numbertype, int32 machinetype);
 
-HDFLIBAPI intn DFKsetNT(int32 ntype);
+HDFLIBAPI int DFKsetNT(int32 ntype);
 
 HDFLIBAPI int32 DFKconvert(void *source, void *dest, int32 ntype, int32 num_elm, int16 acc_mode,
                            int32 source_stride, int32 dest_stride);
@@ -827,31 +828,31 @@ HDFLIBAPI int32 DFKconvert(void *source, void *dest, int32 ntype, int32 num_elm,
  ** from dfknat.c
  */
 
-HDFLIBAPI intn DFKnb1b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
+HDFLIBAPI int DFKnb1b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-HDFLIBAPI intn DFKnb2b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
+HDFLIBAPI int DFKnb2b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-HDFLIBAPI intn DFKnb4b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
+HDFLIBAPI int DFKnb4b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-HDFLIBAPI intn DFKnb8b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
+HDFLIBAPI int DFKnb8b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
 /*
  ** from dfkswap.c
  */
 
-HDFLIBAPI intn DFKsb2b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
+HDFLIBAPI int DFKsb2b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-HDFLIBAPI intn DFKsb4b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
+HDFLIBAPI int DFKsb4b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-HDFLIBAPI intn DFKsb8b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
+HDFLIBAPI int DFKsb8b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
 /*
  ** Multi-file Annotation - from mfan.c
  */
 HDFLIBAPI int32 ANstart(int32 file_id);
 
-HDFLIBAPI intn ANfileinfo(int32 an_id, int32 *n_file_label, int32 *n_file_desc, int32 *n_obj_label,
-                          int32 *n_obj_desc);
+HDFLIBAPI int ANfileinfo(int32 an_id, int32 *n_file_label, int32 *n_file_desc, int32 *n_obj_label,
+                         int32 *n_obj_desc);
 
 HDFLIBAPI int32 ANend(int32 an_id);
 
@@ -861,9 +862,9 @@ HDFLIBAPI int32 ANcreatef(int32 an_id, ann_type type);
 
 HDFLIBAPI int32 ANselect(int32 an_id, int32 idx, ann_type type);
 
-HDFLIBAPI intn ANnumann(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref);
+HDFLIBAPI int ANnumann(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref);
 
-HDFLIBAPI intn ANannlist(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref, int32 ann_list[]);
+HDFLIBAPI int ANannlist(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref, int32 ann_list[]);
 
 HDFLIBAPI int32 ANannlen(int32 ann_id);
 
@@ -871,7 +872,7 @@ HDFLIBAPI int32 ANwriteann(int32 ann_id, const char *ann, int32 annlen);
 
 HDFLIBAPI int32 ANreadann(int32 ann_id, char *ann, int32 maxlen);
 
-HDFLIBAPI intn ANendaccess(int32 ann_id);
+HDFLIBAPI int ANendaccess(int32 ann_id);
 
 HDFLIBAPI int32 ANget_tagref(int32 an_id, int32 idx, ann_type type, uint16 *ann_tag, uint16 *ann_ref);
 
@@ -886,13 +887,13 @@ HDFLIBAPI ann_type ANtag2atype(uint16 atag);
 /*
  ** Multi-file General Raster - from mfgr.c
  */
-HDFLIBAPI intn rigcompare(void *k1, void *k2, intn cmparg);
+HDFLIBAPI int rigcompare(void *k1, void *k2, int cmparg);
 
 HDFLIBAPI int32 GRstart(int32 hdf_file_id);
 
-HDFLIBAPI intn GRfileinfo(int32 grid, int32 *n_datasets, int32 *n_attrs);
+HDFLIBAPI int GRfileinfo(int32 grid, int32 *n_datasets, int32 *n_attrs);
 
-HDFLIBAPI intn GRend(int32 grid);
+HDFLIBAPI int GRend(int32 grid);
 
 HDFLIBAPI int32 GRcreate(int32 grid, const char *name, int32 ncomp, int32 nt, int32 il, int32 dimsizes[2]);
 
@@ -900,59 +901,59 @@ HDFLIBAPI int32 GRselect(int32 grid, int32 idx);
 
 HDFLIBAPI int32 GRnametoindex(int32 grid, const char *name);
 
-HDFLIBAPI intn GRgetiminfo(int32 riid, char *name, int32 *ncomp, int32 *nt, int32 *il, int32 dimsizes[2],
-                           int32 *n_attr);
+HDFLIBAPI int GRgetiminfo(int32 riid, char *name, int32 *ncomp, int32 *nt, int32 *il, int32 dimsizes[2],
+                          int32 *n_attr);
 
-HDFLIBAPI intn GRgetnluts(int32 riid);
+HDFLIBAPI int GRgetnluts(int32 riid);
 
-HDFLIBAPI intn GRwriteimage(int32 riid, int32 start[2], int32 stride[2], int32 count[2], void *data);
+HDFLIBAPI int GRwriteimage(int32 riid, int32 start[2], int32 stride[2], int32 count[2], void *data);
 
-HDFLIBAPI intn GRreadimage(int32 riid, int32 start[2], int32 stride[2], int32 count[2], void *data);
+HDFLIBAPI int GRreadimage(int32 riid, int32 start[2], int32 stride[2], int32 count[2], void *data);
 
-HDFLIBAPI intn GRendaccess(int32 riid);
+HDFLIBAPI int GRendaccess(int32 riid);
 
 HDFLIBAPI uint16 GRidtoref(int32 riid);
 
 HDFLIBAPI int32 GRreftoindex(int32 grid, uint16 ref);
 
-HDFLIBAPI intn GRreqlutil(int32 riid, intn il);
+HDFLIBAPI int GRreqlutil(int32 riid, int il);
 
-HDFLIBAPI intn GRreqimageil(int32 riid, intn il);
+HDFLIBAPI int GRreqimageil(int32 riid, int il);
 
 HDFLIBAPI int32 GRgetlutid(int32 riid, int32 idx);
 
 HDFLIBAPI uint16 GRluttoref(int32 lutid);
 
-HDFLIBAPI intn GRgetlutinfo(int32 riid, int32 *ncomp, int32 *nt, int32 *il, int32 *nentries);
+HDFLIBAPI int GRgetlutinfo(int32 riid, int32 *ncomp, int32 *nt, int32 *il, int32 *nentries);
 
-HDFLIBAPI intn GRwritelut(int32 riid, int32 ncomps, int32 nt, int32 il, int32 nentries, void *data);
+HDFLIBAPI int GRwritelut(int32 riid, int32 ncomps, int32 nt, int32 il, int32 nentries, void *data);
 
-HDFLIBAPI intn GRreadlut(int32 lutid, void *data);
+HDFLIBAPI int GRreadlut(int32 lutid, void *data);
 
-HDFLIBAPI intn GRsetexternalfile(int32 riid, const char *filename, int32 offset);
+HDFLIBAPI int GRsetexternalfile(int32 riid, const char *filename, int32 offset);
 
-HDFLIBAPI intn GRsetaccesstype(int32 riid, uintn accesstype);
+HDFLIBAPI int GRsetaccesstype(int32 riid, unsigned accesstype);
 
-HDFLIBAPI intn GRsetcompress(int32 riid, comp_coder_t comp_type, comp_info *cinfo);
+HDFLIBAPI int GRsetcompress(int32 riid, comp_coder_t comp_type, comp_info *cinfo);
 
-HDFLIBAPI intn GRgetcompress(int32 riid, comp_coder_t *comp_type, comp_info *cinfo);
+HDFLIBAPI int GRgetcompress(int32 riid, comp_coder_t *comp_type, comp_info *cinfo);
 
-HDFLIBAPI intn GRgetcompinfo(int32 riid, comp_coder_t *comp_type, comp_info *cinfo);
+HDFLIBAPI int GRgetcompinfo(int32 riid, comp_coder_t *comp_type, comp_info *cinfo);
 
-HDFLIBAPI intn GRsetattr(int32 id, const char *name, int32 attr_nt, int32 count, const void *data);
+HDFLIBAPI int GRsetattr(int32 id, const char *name, int32 attr_nt, int32 count, const void *data);
 
-HDFLIBAPI intn GRattrinfo(int32 id, int32 idx, char *name, int32 *attr_nt, int32 *count);
+HDFLIBAPI int GRattrinfo(int32 id, int32 idx, char *name, int32 *attr_nt, int32 *count);
 
-HDFLIBAPI intn GRgetattr(int32 id, int32 idx, void *data);
+HDFLIBAPI int GRgetattr(int32 id, int32 idx, void *data);
 
 HDFLIBAPI int32 GRfindattr(int32 id, const char *name);
 
-HDFLIBAPI intn GRgetcomptype(int32 riid, comp_coder_t *comp_type);
+HDFLIBAPI int GRgetcomptype(int32 riid, comp_coder_t *comp_type);
 
-HDFLIBAPI intn GRPshutdown(void);
+HDFLIBAPI int GRPshutdown(void);
 
 /* This function was added for hmap project only.  Feb-25-2011 */
-HDFLIBAPI intn GR2bmapped(int32 riid, intn *tobe_mapped, intn *created_byGR);
+HDFLIBAPI int GR2bmapped(int32 riid, int *tobe_mapped, int *created_byGR);
 
 /*=== HDF_CHUNK_DEF same as in mfhdf.h - moved here  ====*/
 
@@ -981,10 +982,10 @@ typedef union hdf_chunk_def_u {
 
     struct {                                  /* For NBIT, Used by SDS and not by GR */
         int32 chunk_lengths[H4_MAX_VAR_DIMS]; /* chunk lengths along each dimension */
-        intn  start_bit;                      /* offset of the start bit in the data */
-        intn  bit_len;                        /* number of bits to store */
-        intn  sign_ext;                       /* whether to sign extend or not */
-        intn  fill_one;                       /* whether to fill with 1's or not (0's) */
+        int   start_bit;                      /* offset of the start bit in the data */
+        int   bit_len;                        /* number of bits to store */
+        int   sign_ext;                       /* whether to sign extend or not */
+        int   fill_one;                       /* whether to fill with 1's or not (0's) */
     } nbit;
 
 } HDF_CHUNK_DEF;
@@ -1090,9 +1091,9 @@ typedef union hdf_chunk_def_u {
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-HDFLIBAPI intn GRsetchunk(int32         riid,      /* IN: raster access id */
-                          HDF_CHUNK_DEF chunk_def, /* IN: chunk definition */
-                          int32         flags /* IN: flags */);
+HDFLIBAPI int GRsetchunk(int32         riid,      /* IN: raster access id */
+                         HDF_CHUNK_DEF chunk_def, /* IN: chunk definition */
+                         int32         flags /* IN: flags */);
 
 /******************************************************************************
  NAME
@@ -1125,9 +1126,9 @@ HDFLIBAPI intn GRsetchunk(int32         riid,      /* IN: raster access id */
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-HDFLIBAPI intn GRgetchunkinfo(int32          riid,      /* IN: Raster access id */
-                              HDF_CHUNK_DEF *chunk_def, /* IN/OUT: chunk definition */
-                              int32         *flags /* IN/OUT: flags */);
+HDFLIBAPI int GRgetchunkinfo(int32          riid,      /* IN: Raster access id */
+                             HDF_CHUNK_DEF *chunk_def, /* IN/OUT: chunk definition */
+                             int32         *flags /* IN/OUT: flags */);
 
 /******************************************************************************
  NAME
@@ -1149,9 +1150,9 @@ HDFLIBAPI intn GRgetchunkinfo(int32          riid,      /* IN: Raster access id 
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-HDFLIBAPI intn GRwritechunk(int32       riid,   /* IN: raster access id */
-                            int32      *origin, /* IN: origin of chunk to write */
-                            const void *datap /* IN: buffer for data */);
+HDFLIBAPI int GRwritechunk(int32       riid,   /* IN: raster access id */
+                           int32      *origin, /* IN: origin of chunk to write */
+                           const void *datap /* IN: buffer for data */);
 
 /******************************************************************************
  NAME
@@ -1173,9 +1174,9 @@ HDFLIBAPI intn GRwritechunk(int32       riid,   /* IN: raster access id */
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-HDFLIBAPI intn GRreadchunk(int32  riid,   /* IN: raster access id */
-                           int32 *origin, /* IN: origin of chunk to read */
-                           void  *datap /* IN/OUT: buffer for data */);
+HDFLIBAPI int GRreadchunk(int32  riid,   /* IN: raster access id */
+                          int32 *origin, /* IN: origin of chunk to read */
+                          void  *datap /* IN/OUT: buffer for data */);
 
 /******************************************************************************
 NAME
@@ -1221,9 +1222,9 @@ RETURNS
      Returns the 'maxcache' value for the chunk cache if successful
      and FAIL otherwise
 ******************************************************************************/
-HDFLIBAPI intn GRsetchunkcache(int32 riid,     /* IN: raster access id */
-                               int32 maxcache, /* IN: max number of chunks to cache */
-                               int32 flags /* IN: flags = 0, HDF_CACHEALL */);
+HDFLIBAPI int GRsetchunkcache(int32 riid,     /* IN: raster access id */
+                              int32 maxcache, /* IN: max number of chunks to cache */
+                              int32 flags /* IN: flags = 0, HDF_CACHEALL */);
 
 /* Vset interface functions (used to be in vproto.h) */
 
@@ -1250,29 +1251,29 @@ HDFLIBAPI intn GRsetchunkcache(int32 riid,     /* IN: raster access id */
 /*
  ** from vattr.c
  */
-HDFLIBAPI intn Vsetattr(int32 vgid, const char *attrname, int32 datatype, int32 count, const void *values);
-HDFLIBAPI intn Vnattrs(int32 vgid);
-HDFLIBAPI intn Vnattrs2(int32 vgid);
-HDFLIBAPI intn Vnoldattrs(int32 vgid);
-HDFLIBAPI intn Vfindattr(int32 vgid, const char *attrname);
-HDFLIBAPI intn Vattrinfo(int32 vgid, intn attrindex, char *name, int32 *datatype, int32 *count, int32 *size);
-HDFLIBAPI intn Vattrinfo2 /* copy of Vattrinfo for old attributes */
-    (int32 vgid, intn attrindex, char *name, int32 *datatype, int32 *count, int32 *size, int32 *nfields,
+HDFLIBAPI int Vsetattr(int32 vgid, const char *attrname, int32 datatype, int32 count, const void *values);
+HDFLIBAPI int Vnattrs(int32 vgid);
+HDFLIBAPI int Vnattrs2(int32 vgid);
+HDFLIBAPI int Vnoldattrs(int32 vgid);
+HDFLIBAPI int Vfindattr(int32 vgid, const char *attrname);
+HDFLIBAPI int Vattrinfo(int32 vgid, int attrindex, char *name, int32 *datatype, int32 *count, int32 *size);
+HDFLIBAPI int Vattrinfo2 /* copy of Vattrinfo for old attributes */
+    (int32 vgid, int attrindex, char *name, int32 *datatype, int32 *count, int32 *size, int32 *nfields,
      uint16 *refnum);
-HDFLIBAPI intn Vgetattr(int32 vgid, intn attrindex, void *values);
-HDFLIBAPI intn Vgetattr2 /* copy of Vgetattr for old attributes */
-    (int32 vgid, intn attrindex, void *values);
+HDFLIBAPI int Vgetattr(int32 vgid, int attrindex, void *values);
+HDFLIBAPI int Vgetattr2 /* copy of Vgetattr for old attributes */
+    (int32 vgid, int attrindex, void *values);
 HDFLIBAPI int32 Vgetversion(int32 vgid);
-HDFLIBAPI intn  VSfindex(int32 vsid, const char *fieldname, int32 *fldindex);
-HDFLIBAPI intn  VSsetattr(int32 vsid, int32 findex, const char *attrname, int32 datatype, int32 count,
+HDFLIBAPI int   VSfindex(int32 vsid, const char *fieldname, int32 *fldindex);
+HDFLIBAPI int   VSsetattr(int32 vsid, int32 findex, const char *attrname, int32 datatype, int32 count,
                           const void *values);
-HDFLIBAPI intn  VSnattrs(int32 vsid);
-HDFLIBAPI intn  VSfnattrs(int32 vsid, int32 findex);
-HDFLIBAPI intn  VSfindattr(int32 vsid, int32 findex, const char *attrname);
-HDFLIBAPI intn VSattrinfo(int32 vsid, int32 findex, intn attrindex, char *name, int32 *datatype, int32 *count,
-                          int32 *size);
-HDFLIBAPI intn VSgetattr(int32 vsid, int32 findex, intn attrindex, void *values);
-HDFLIBAPI intn VSisattr(int32 vsid);
+HDFLIBAPI int   VSnattrs(int32 vsid);
+HDFLIBAPI int   VSfnattrs(int32 vsid, int32 findex);
+HDFLIBAPI int   VSfindattr(int32 vsid, int32 findex, const char *attrname);
+HDFLIBAPI int   VSattrinfo(int32 vsid, int32 findex, int attrindex, char *name, int32 *datatype, int32 *count,
+                           int32 *size);
+HDFLIBAPI int   VSgetattr(int32 vsid, int32 findex, int attrindex, void *values);
+HDFLIBAPI int   VSisattr(int32 vsid);
 /*
  ** from vconv.c
  */
@@ -1291,11 +1292,11 @@ HDFLIBAPI int32 VSelts(int32 vkey);
 
 HDFLIBAPI int32 VSgetinterlace(int32 vkey);
 
-HDFLIBAPI intn VSsetinterlace(int32 vkey, int32 interlace);
+HDFLIBAPI int VSsetinterlace(int32 vkey, int32 interlace);
 
 HDFLIBAPI int32 VSgetfields(int32 vkey, char *fields);
 
-HDFLIBAPI intn VSfexist(int32 vkey, char *fields);
+HDFLIBAPI int VSfexist(int32 vkey, char *fields);
 
 HDFLIBAPI int32 VSsizeof(int32 vkey, char *fields);
 
@@ -1309,10 +1310,10 @@ HDFLIBAPI int32 VSgetname(int32 vkey, char *vsname);
 
 HDFLIBAPI int32 VSgetclass(int32 vkey, char *vsclass);
 
-HDFLIBAPI intn VSinquire(int32 vkey, int32 *nelt, int32 *interlace, char *fields, int32 *eltsize,
-                         char *vsname);
+HDFLIBAPI int VSinquire(int32 vkey, int32 *nelt, int32 *interlace, char *fields, int32 *eltsize,
+                        char *vsname);
 
-HDFLIBAPI intn VSisinternal(const char *vsclass);
+HDFLIBAPI int VSisinternal(const char *vsclass);
 
 HDFLIBAPI int32 VSlone(HFILEID f, int32 *idarray, int32 asize);
 
@@ -1326,36 +1327,37 @@ HDFLIBAPI int32 Vfindclass(HFILEID f, const char *vgclass);
 
 HDFLIBAPI int32 VSfindclass(HFILEID f, const char *vsclass);
 
-HDFLIBAPI intn VSofclass(int32 id, const char *vsclass, uintn start_vd, uintn array_size, uint16 *refarray);
+HDFLIBAPI int VSofclass(int32 id, const char *vsclass, unsigned start_vd, unsigned array_size,
+                        uint16 *refarray);
 
-HDFLIBAPI intn VSgetvdatas(int32 id, uintn start_vd, uintn array_size, uint16 *refarray);
+HDFLIBAPI int VSgetvdatas(int32 id, unsigned start_vd, unsigned array_size, uint16 *refarray);
 
-HDFLIBAPI intn VSsetblocksize(int32 vkey, int32 block_size);
+HDFLIBAPI int VSsetblocksize(int32 vkey, int32 block_size);
 
-HDFLIBAPI intn VSsetnumblocks(int32 vkey, int32 num_blocks);
+HDFLIBAPI int VSsetnumblocks(int32 vkey, int32 num_blocks);
 
-HDFLIBAPI intn VSgetblockinfo(int32 vkey, int32 *block_size, int32 *num_blocks);
+HDFLIBAPI int VSgetblockinfo(int32 vkey, int32 *block_size, int32 *num_blocks);
 
 HDFLIBAPI void Vsetzap(void);
 
 /*
  ** from vgp.c
  */
-HDFLIBAPI intn vcompare(void *k1, void *k2, intn cmparg);
+HDFLIBAPI int vcompare(void *k1, void *k2, int cmparg);
 
-HDFLIBAPI intn vcompareref(void *k1, void *k2, intn cmparg);
+HDFLIBAPI int vcompareref(void *k1, void *k2, int cmparg);
 
 HDFLIBAPI void vdestroynode(void *n);
 
 HDFLIBAPI void vtfreekey(void *k);
 
-HDFLIBAPI intn Vinitialize(HFILEID f);
+HDFLIBAPI int Vinitialize(HFILEID f);
 
-HDFLIBAPI intn Vfinish(HFILEID f);
+HDFLIBAPI int Vfinish(HFILEID f);
 
-HDFLIBAPI HFILEID Vopen(char *path, intn acc_mode, int16 ndds);
+HDFLIBAPI HFILEID Vopen(char *path, int acc_mode, int16 ndds);
 
-HDFLIBAPI intn Vclose(HFILEID f);
+HDFLIBAPI int Vclose(HFILEID f);
 
 HDFLIBAPI int32 vexistvg(HFILEID f, uint16 vgid);
 
@@ -1368,7 +1370,7 @@ HDFLIBAPI int32 Vinsert(int32 vkey, int32 vskey);
 
 HDFLIBAPI int32 Vflocate(int32 vkey, char *field);
 
-HDFLIBAPI intn Vinqtagref(int32 vkey, int32 tag, int32 ref);
+HDFLIBAPI int Vinqtagref(int32 vkey, int32 tag, int32 ref);
 
 HDFLIBAPI int32 Vntagrefs(int32 vkey);
 
@@ -1378,7 +1380,7 @@ HDFLIBAPI int32 Vgettagrefs(int32 vkey, int32 tagarray[], int32 refarray[], int3
 
 HDFLIBAPI int32 Vgetuservgs(int32 id, int32 start_ref, int32 n_vgs, int32 *refarray);
 
-HDFLIBAPI intn Vgettagref(int32 vkey, int32 which, int32 *tag, int32 *ref);
+HDFLIBAPI int Vgettagref(int32 vkey, int32 which, int32 *tag, int32 *ref);
 
 HDFLIBAPI int32 VQueryref(int32 vkey);
 
@@ -1392,9 +1394,9 @@ HDFLIBAPI int32 Vsetname(int32 vkey, const char *vgname);
 
 HDFLIBAPI int32 Vsetclass(int32 vkey, const char *vgclass);
 
-HDFLIBAPI intn Visvg(int32 vkey, int32 id);
+HDFLIBAPI int Visvg(int32 vkey, int32 id);
 
-HDFLIBAPI intn Visvs(int32 vkey, int32 id);
+HDFLIBAPI int Visvs(int32 vkey, int32 id);
 
 HDFLIBAPI int32 Vgetid(HFILEID f, int32 vgid);
 
@@ -1408,16 +1410,16 @@ HDFLIBAPI int32 Vgetclassnamelen(int32 vkey, uint16 *classname_len);
 
 HDFLIBAPI int32 Vgetclass(int32 vkey, char *vgclass);
 
-HDFLIBAPI intn Vinquire(int32 vkey, int32 *nentries, char *vgname);
+HDFLIBAPI int Vinquire(int32 vkey, int32 *nentries, char *vgname);
 
 HDFLIBAPI int32 Vdelete(int32 f, int32 ref);
 
-HDFLIBAPI intn Vgisinternal(int32 vkey);
+HDFLIBAPI int Vgisinternal(int32 vkey);
 
-HDFLIBAPI intn Visinternal /* this function is replaced by Vgisinternal */
+HDFLIBAPI int Visinternal /* this function is replaced by Vgisinternal */
     (const char *classname);
 
-HDFLIBAPI intn Vgetvgroups(int32 id, uintn start_vg, uintn n_vgs, uint16 *refarray);
+HDFLIBAPI int Vgetvgroups(int32 id, unsigned start_vg, unsigned n_vgs, uint16 *refarray);
 
 /*******************************************************************************
 NAME
@@ -1433,11 +1435,11 @@ RETURNS
     FAIL if unsuccessful.
 
 *******************************************************************************/
-HDFLIBAPI intn Vdeletetagref(int32 vkey, /* IN: vgroup key */
-                             int32 tag,  /* IN: tag to delete in vgroup */
-                             int32 ref /* IN: ref to delete in vgroup */);
+HDFLIBAPI int Vdeletetagref(int32 vkey, /* IN: vgroup key */
+                            int32 tag,  /* IN: tag to delete in vgroup */
+                            int32 ref /* IN: ref to delete in vgroup */);
 
-HDFLIBAPI intn VPshutdown(void);
+HDFLIBAPI int VPshutdown(void);
 
 /*
  ** from vparse.c
@@ -1460,7 +1462,7 @@ HDFLIBAPI int32 VHmakegroup(HFILEID f, int32 tagarray[], int32 refarray[], int32
  ** from vio.c
  */
 
-HDFLIBAPI intn VSPhshutdown(void);
+HDFLIBAPI int VSPhshutdown(void);
 
 HDFLIBAPI int32 vexistvs(HFILEID f, uint16 vsref);
 
@@ -1488,9 +1490,9 @@ HDFLIBAPI int32 VSappendable(int32 vkey, int32 blk);
  ** from vsfld.c
  */
 
-HDFLIBAPI intn VSsetfields(int32 vkey, const char *fields);
+HDFLIBAPI int VSsetfields(int32 vkey, const char *fields);
 
-HDFLIBAPI intn VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order);
+HDFLIBAPI int VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order);
 
 HDFLIBAPI int32 VFnfields(int32 vkey);
 
@@ -1504,19 +1506,19 @@ HDFLIBAPI int32 VFfieldesize(int32 vkey, int32 idx);
 
 HDFLIBAPI int32 VFfieldorder(int32 vkey, int32 idx);
 
-HDFLIBAPI intn VSsetexternalfile(int32 vkey, const char *filename, int32 offset);
+HDFLIBAPI int VSsetexternalfile(int32 vkey, const char *filename, int32 offset);
 
-HDFLIBAPI intn VSgetexternalfile(int32 vkey, uintn name_len, char *filename, int32 *offset);
+HDFLIBAPI int VSgetexternalfile(int32 vkey, unsigned name_len, char *filename, int32 *offset);
 
-HDFLIBAPI intn VSgetexternalinfo(int32 vkey, uintn name_len, char *filename, int32 *offset, int32 *length);
+HDFLIBAPI int VSgetexternalinfo(int32 vkey, unsigned name_len, char *filename, int32 *offset, int32 *length);
 
-HDFLIBAPI intn VSfpack(int32 vsid, intn packtype, const char *fields_in_buf, void *buf, intn bufsz,
-                       intn n_records, const char *fields, void *fldbufpt[]);
+HDFLIBAPI int VSfpack(int32 vsid, int packtype, const char *fields_in_buf, void *buf, int bufsz,
+                      int n_records, const char *fields, void *fldbufpt[]);
 
 /*
  ** from vrw.c
  */
-HDFLIBAPI intn VSPshutdown(void);
+HDFLIBAPI int VSPshutdown(void);
 
 HDFLIBAPI int32 VSseek(int32 vkey, int32 eltpos);
 

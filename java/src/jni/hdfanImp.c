@@ -64,7 +64,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_ANfileinfo(JNIEnv *env, jclass clss, jlong anid, jintArray info)
 {
-    intn     rval    = FAIL;
+    int      rval    = FAIL;
     jint    *theArgs = NULL;
     jboolean isCopy;
 
@@ -106,7 +106,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_ANendaccess(JNIEnv *env, jclass clss, jlong ann_id)
 {
-    intn rval = FAIL;
+    int rval = FAIL;
 
     UNUSED(clss);
 
@@ -164,7 +164,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_ANannlist(JNIEnv *env, jclass clss, jlong an_id, jint anntype, jshort tag,
                                      jshort ref, jintArray annlist)
 {
-    intn     rval = FAIL;
+    int      rval = FAIL;
     jint    *iarr = NULL;
     jboolean isCopy;
 
@@ -335,7 +335,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_ANwriteann(JNIEnv *env, jclass clss, jlong ann_id, jstring label, jint ann_length)
 {
-    intn        rval = FAIL;
+    int         rval = FAIL;
     const char *str  = NULL;
 
     UNUSED(clss);

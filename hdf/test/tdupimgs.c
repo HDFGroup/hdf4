@@ -30,8 +30,8 @@ test_mgr_dup_images()
     int32 fid, grid, riid, il = MFGR_INTERLACE_PIXEL;
     int32 start[2], stride[2], edges[2], dims[2];
     uint8 image_data[X_LENGTH][Y_LENGTH];
-    intn  i, j;
-    intn  status;
+    int   i, j;
+    int   status;
     int32 n_datasets; /* number of datasets */
     int32 n_attrs;    /* number of attributes */
 

@@ -50,11 +50,11 @@ HDFLIBAPI int32 ANstart(int32 file_id /* IN: file to start annotation access on 
    Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
-HDFLIBAPI intn ANfileinfo(int32  an_id,        /* IN:  annotation interface id */
-                          int32 *n_file_label, /* OUT: the # of file labels */
-                          int32 *n_file_desc,  /* OUT: the # of file descriptions */
-                          int32 *n_obj_label,  /* OUT: the # of object labels */
-                          int32 *n_obj_desc /* OUT: the # of object descriptions */);
+HDFLIBAPI int ANfileinfo(int32  an_id,        /* IN:  annotation interface id */
+                         int32 *n_file_label, /* OUT: the # of file labels */
+                         int32 *n_file_desc,  /* OUT: the # of file descriptions */
+                         int32 *n_obj_label,  /* OUT: the # of object labels */
+                         int32 *n_obj_desc /* OUT: the # of object descriptions */);
 
 /******************************************************************************
  NAME
@@ -130,10 +130,10 @@ HDFLIBAPI int32 ANselect(int32    an_id, /* IN: annotation interface ID */
    number of annotation found if successful and FAIL (-1) otherwise
 
 *******************************************************************************/
-HDFLIBAPI intn ANnumann(int32    an_id,    /* IN: annotation interface id */
-                        ann_type type,     /* IN: annotation type */
-                        uint16   elem_tag, /* IN: tag of item of which this is annotation */
-                        uint16   elem_ref /* IN: ref of item of which this is annotation*/);
+HDFLIBAPI int ANnumann(int32    an_id,    /* IN: annotation interface id */
+                       ann_type type,     /* IN: annotation type */
+                       uint16   elem_tag, /* IN: tag of item of which this is annotation */
+                       uint16   elem_ref /* IN: ref of item of which this is annotation*/);
 
 /******************************************************************************
  NAME
@@ -148,11 +148,11 @@ HDFLIBAPI intn ANnumann(int32    an_id,    /* IN: annotation interface id */
    number of annotations ids found if successful and FAIL (-1) otherwise
 
 *******************************************************************************/
-HDFLIBAPI intn ANannlist(int32    an_id,    /* IN: annotation interface id */
-                         ann_type type,     /* IN: annotation type */
-                         uint16   elem_tag, /* IN: tag of item of which this is annotation */
-                         uint16   elem_ref, /* IN: ref of item of which this is annotation*/
-                         int32    ann_list[] /* OUT: array of ann_id's that match criteria.*/);
+HDFLIBAPI int ANannlist(int32    an_id,    /* IN: annotation interface id */
+                        ann_type type,     /* IN: annotation type */
+                        uint16   elem_tag, /* IN: tag of item of which this is annotation */
+                        uint16   elem_ref, /* IN: ref of item of which this is annotation*/
+                        int32    ann_list[] /* OUT: array of ann_id's that match criteria.*/);
 
 /******************************************************************************
  NAME
@@ -209,7 +209,7 @@ HDFLIBAPI int32 ANreadann(int32 ann_id, /* IN: annotation id (handle) */
  RETURNS
     SUCCEED(0) or FAIL(-1)
 *******************************************************************************/
-HDFLIBAPI intn ANendaccess(int32 ann_id /* IN: annotation id */);
+HDFLIBAPI int ANendaccess(int32 ann_id /* IN: annotation id */);
 
 /******************************************************************************
  NAME

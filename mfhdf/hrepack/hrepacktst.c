@@ -700,7 +700,7 @@ add_r8(const char *image_file, const char *fname, int32 file_id, int32 vgroup_id
  *-------------------------------------------------------------------------
  */
 static int
-add_r24(const char *image_file, const char *fname, int32 file_id, intn il, int32 vgroup_id)
+add_r24(const char *image_file, const char *fname, int32 file_id, int il, int32 vgroup_id)
 {
     int32 ri_ref;                            /* reference number of the GR image */
     char *srcdir         = getenv("srcdir"); /* the source directory */
@@ -1973,7 +1973,7 @@ do_file_hyperslab(const char *fname)
     int32 rank;
     uint8 array_data[DIM0][DIM1];
     uint8 append_data[DIM1];
-    intn  i, j, n;
+    int   i, j, n;
 
     /* Create a file and initiate the SD interface. */
     if ((sd_id = SDstart(fname, DFACC_CREATE)) == FAIL)

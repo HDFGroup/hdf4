@@ -47,7 +47,7 @@
    it was edited to change the dimensions to much smaller values. */
 #define NC_FILE "smallslice.0000.nc"
 
-static intn
+static int
 test_read_dim()
 {
     int32       fid, sds_id, status, dim1_id;
@@ -55,7 +55,7 @@ test_read_dim()
     int32       array_rank, num_type, attributes;
     char        dim_name[H4_MAX_NC_NAME], name[H4_MAX_NC_NAME];
     int32       size, dim_data_type, dim_num_attrs;
-    intn        num_errs = 0; /* number of errors so far */
+    int         num_errs = 0; /* number of errors so far */
     const char *testfile = get_srcdir_filename(NC_FILE);
 
     /* Create the file defined by BASIC_FILE and initiate the SD interface. */
@@ -104,7 +104,7 @@ static int16 netcdf_u16[2][3] = {{1, 2, 3}, {4, 5, 6}};
 /* Tests reading of netCDF file 'test1.nc' using the SDxxx interface.
    Note not all features of reading SDS from netCDF files are tested here.
    Hopefully more tests will be added over time as needed/required. */
-extern intn
+extern int
 test_netcdf_reading()
 {
     int32       sd_id;
@@ -121,8 +121,8 @@ test_netcdf_reading()
     int16       array_data[2][3];
     char        name[H4_MAX_NC_NAME];
     int32       status;
-    intn        i, j;
-    intn        num_errs = 0; /* number of errors so far */
+    int         i, j;
+    int         num_errs = 0; /* number of errors so far */
     const char *testfile = get_srcdir_filename("test1.nc");
 
     /* Output message about test being performed */

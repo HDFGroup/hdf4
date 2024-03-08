@@ -67,8 +67,8 @@ test_conv(void)
     int32   *src_int32, *dst_int32, *dst2_int32;
     float32 *src_float32, *dst_float32, *dst2_float32;
     float64 *src_float64, *dst_float64, *dst2_float64;
-    intn     i, r;
-    intn     t;
+    int      i, r;
+    int      t;
     int32    ret;
 
     SEED((int)time(NULL)); /* seed with effectively random number */

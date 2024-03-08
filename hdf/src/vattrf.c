@@ -35,7 +35,7 @@ nvsfcfdx(intf *vsid, _fcd fldnm, intf *findex, intf *fldnmlen)
     intf  ret;
     char *fld;
 
-    fld = HDf2cstring(fldnm, (intn)*fldnmlen);
+    fld = HDf2cstring(fldnm, (int)*fldnmlen);
     if (!fld)
         return FAIL;
     ret = (intf)VSfindex((int32)*vsid, fld, (int32 *)findex);
@@ -56,7 +56,7 @@ nvsfcsat(intf *vsid, intf *findex, _fcd attrnm, intf *dtype, intf *count, intf *
     char *attrname;
     int32 cfindex;
 
-    attrname = HDf2cstring(attrnm, (intn)*attrnmlen);
+    attrname = HDf2cstring(attrnm, (int)*attrnmlen);
     if (!attrname)
         return FAIL;
     cfindex = *findex;
@@ -79,7 +79,7 @@ nvsfcsca(intf *vsid, intf *findex, _fcd attrnm, intf *dtype, intf *count, _fcd v
     char *attrname;
     int32 cfindex;
 
-    attrname = HDf2cstring(attrnm, (intn)*attrnmlen);
+    attrname = HDf2cstring(attrnm, (int)*attrnmlen);
     if (!attrname)
         return FAIL;
     cfindex = *findex;
@@ -134,7 +134,7 @@ nvsfcfda(intf *vsid, intf *findex, _fcd attrnm, intf *attrnmlen)
     char *attrname;
     int32 cfindex;
 
-    attrname = HDf2cstring(attrnm, (intn)*attrnmlen);
+    attrname = HDf2cstring(attrnm, (int)*attrnmlen);
     if (!attrname)
         return FAIL;
     cfindex = *findex;
@@ -172,7 +172,7 @@ nvsfcain(intf *vsid, intf *findex, intf *aindex, _fcd attrname, intf *dtype, int
         *count = tcount;
         *size  = tsize;
         /* convert C-string results back to Fortran strings */
-        HDpackFstring(tattrname, _fcdtocp(attrname), (intn)*attrnamelen);
+        HDpackFstring(tattrname, _fcdtocp(attrname), (int)*attrnamelen);
     }
     free(tattrname);
     return ret;
@@ -234,7 +234,7 @@ nvfcsatt(intf *vgid, _fcd attrnm, intf *dtype, intf *count, intf *values, intf *
     intf  ret;
     char *attrname;
 
-    attrname = HDf2cstring(attrnm, (intn)*attrnmlen);
+    attrname = HDf2cstring(attrnm, (int)*attrnmlen);
     if (!attrname)
         return FAIL;
     ret = (intf)Vsetattr((int32)*vgid, attrname, (int32)*dtype, (int32)*count, (void *)values);
@@ -254,7 +254,7 @@ nvfcscat(intf *vgid, _fcd attrnm, intf *dtype, intf *count, _fcd values, intf *a
     intf  ret;
     char *attrname;
 
-    attrname = HDf2cstring(attrnm, (intn)*attrnmlen);
+    attrname = HDf2cstring(attrnm, (int)*attrnmlen);
     if (!attrname)
         return FAIL;
     ret = (intf)Vsetattr((int32)*vgid, attrname, (int32)*dtype, (int32)*count, (void *)_fcdtocp(values));
@@ -287,7 +287,7 @@ nvfcfdat(intf *vgid, _fcd attrnm, intf *attrnmlen)
     intf  ret;
     char *attrname;
 
-    attrname = HDf2cstring(attrnm, (intn)*attrnmlen);
+    attrname = HDf2cstring(attrnm, (int)*attrnmlen);
     if (!attrname)
         return FAIL;
     ret = (intf)Vfindattr((int32)*vgid, attrname);

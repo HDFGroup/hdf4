@@ -59,15 +59,15 @@
     "The name of this dataset is long, and it is used to test the new variable length name feature"
 #define shortname_ds "A"
 
-static intn
+static int
 test_SDSnames()
 {
     int32  fid, dset1, dset2;
     int32  rank, dtype, nattrs, dimsizes[RANK];
     char  *ds_name;
     uint16 name_len;
-    intn   status;
-    intn   num_errs = 0; /* number of errors so far */
+    int    status;
+    int    num_errs = 0; /* number of errors so far */
 
     /* Create a file */
     fid = SDstart(FILE_NAME, DFACC_CREATE);
@@ -179,7 +179,7 @@ test_SDSnames()
 #define DS2_NAME     "data 2"
 #define DIM0         10
 
-static intn
+static int
 test_unlim_dim()
 {
     int32 fid, dset1, dset2;
@@ -188,8 +188,8 @@ test_unlim_dim()
         append_data[DIM0],                           /* data to be appended to both datasets */
         outdata[DIM0 + DIM0], outdata1[DIM0 + DIM0]; /* data read */
     char ds_name[20];
-    intn idx, status;
-    intn num_errs = 0; /* number of errors so far */
+    int  idx, status;
+    int  num_errs = 0; /* number of errors so far */
 
     /* Create a file */
     fid = SDstart(UD_FILE_NAME, DFACC_CREATE);
@@ -322,7 +322,7 @@ test_unlim_dim()
 #define N_DSETS        2
 #define RANK1          1
 
-static intn
+static int
 test_unlim_inloop()
 {
     int32 fid;
@@ -332,9 +332,9 @@ test_unlim_inloop()
     char  sds_name[20];
     int   i, n_writes; /* number of times writing to the data sets */
     /*int32   n,m, mm;*/
-    intn    status;
+    int     status;
     float64 array_data[SIZE];
-    intn    num_errs = 0; /* number of errors so far */
+    int     num_errs = 0; /* number of errors so far */
 
     /* Create a file */
     fid = SDstart(UDIL_FILE_NAME, DFACC_CREATE);
@@ -406,7 +406,7 @@ test_unlim_inloop()
         /* Verify the read data */
         n_writes = 0;
         while (n_writes < 2) {
-            intn in, out;
+            int in, out;
             for (in = 0, out = 0 + (SIZE * n_writes); in < SIZE; in++, out++) {
                 VERIFY(outdata[out], array_data[in], "SDreaddata");
             }
@@ -448,7 +448,7 @@ test_unlim_inloop()
 
 #define ARGS_FILE_NAME "test_arguments.hdf" /* file to test validating args */
 
-static intn
+static int
 test_valid_args()
 {
     int32 fid, dset1, dset2;
@@ -456,8 +456,8 @@ test_valid_args()
     int16 array_data[X_LENGTH][Y_LENGTH], /* data to be written to datasets */
         outdata[X_LENGTH][Y_LENGTH];      /* data read */
     char ds_name[20];
-    intn idxx, idxy, status;
-    intn num_errs = 0; /* number of errors so far */
+    int  idxx, idxy, status;
+    int  num_errs = 0; /* number of errors so far */
 
     /* Create a file */
     fid = SDstart(ARGS_FILE_NAME, DFACC_CREATE);
@@ -578,13 +578,13 @@ test_valid_args()
 #define D3_Z 2
 
 /* Helper function to test_valid_args2 creates and writes to a dataset */
-static intn
+static int
 makeSDS(int32 sd_id, char *name, int32 dtype, int32 rank, int32 *dimsizes, int32 *start, int32 *strides,
         int32 *count, void *data)
 {
     int32 sds_id;
-    intn  status;
-    intn  num_errs = 0; /* number of errors so far */
+    int   status;
+    int   num_errs = 0; /* number of errors so far */
 
     /* Create the named dataset */
     sds_id = SDcreate(sd_id, name, dtype, rank, dimsizes);
@@ -601,7 +601,7 @@ makeSDS(int32 sd_id, char *name, int32 dtype, int32 rank, int32 *dimsizes, int32
     return (status);
 }
 
-static intn
+static int
 test_valid_args2()
 {
     int32   sd_id, sds_id;
@@ -611,8 +611,8 @@ test_valid_args2()
     float32 data1 = 32.0, outdata1;
     int32   data2[D2_X][D2_Y], outdata2[D2_X][D2_Y];
     int16   data3[D3_X][D3_Y][D3_Z], outdata3[D3_X][D3_Y][D3_Z];
-    intn    i, j, k, status;
-    intn    num_errs = 0; /* number of errors so far */
+    int     i, j, k, status;
+    int     num_errs = 0; /* number of errors so far */
 
     /* Create and open the file and initiate the SD interface. */
     sd_id = SDstart("b150.hdf", DFACC_CREATE);
@@ -749,7 +749,7 @@ test_valid_args2()
 extern int
 test_SDSprops()
 {
-    intn num_errs = 0; /* number of errors */
+    int num_errs = 0; /* number of errors */
 
     /* Output message about test being performed */
     TESTING("various SDS' properties (tsdsprops.c)");

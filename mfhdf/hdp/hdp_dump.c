@@ -21,7 +21,7 @@
 #define LINE_FEED       10
 #define HORIZONTAL_TAB  9
 
-typedef intn (*fmtfunct_t)(void *, file_format_t, FILE *);
+typedef int (*fmtfunct_t)(void *, file_format_t, FILE *);
 fmtfunct_t select_func(int32 nt);
 
 /*
@@ -32,7 +32,7 @@ fmtfunct_t select_func(int32 nt);
  *
  */
 
-intn
+int
 fmtbyte(unsigned char *x, /* assumption: byte is the same as unsigned char */
         file_format_t ff, FILE *ofp)
 {
@@ -46,7 +46,7 @@ fmtbyte(unsigned char *x, /* assumption: byte is the same as unsigned char */
     }
 }
 
-intn
+int
 fmtint8(void         *x, /* assumption: int8 is same as signed char */
         file_format_t ff, FILE *ofp)
 {
@@ -60,7 +60,7 @@ fmtint8(void         *x, /* assumption: int8 is same as signed char */
     }
 }
 
-intn
+int
 fmtuint8(void         *x, /* assumption: uint8 is same as unsigned char */
          file_format_t ff, FILE *ofp)
 {
@@ -74,7 +74,7 @@ fmtuint8(void         *x, /* assumption: uint8 is same as unsigned char */
     }
 }
 
-intn
+int
 fmtint16(void *x, file_format_t ff, FILE *ofp)
 {
     int16 s;
@@ -87,7 +87,7 @@ fmtint16(void *x, file_format_t ff, FILE *ofp)
         return (fwrite(&s, sizeof(int16), 1, ofp));
 }
 
-intn
+int
 fmtuint16(void *x, file_format_t ff, FILE *ofp)
 {
     uint16 s;
@@ -100,7 +100,7 @@ fmtuint16(void *x, file_format_t ff, FILE *ofp)
         return (fwrite(&s, sizeof(uint16), 1, ofp));
 }
 
-intn
+int
 fmtchar(void *x, file_format_t ff, FILE *ofp)
 {
     (void)ff;
@@ -115,7 +115,7 @@ fmtchar(void *x, file_format_t ff, FILE *ofp)
     }
 }
 
-intn
+int
 fmtuchar8(void         *x, /* assumption: uchar8 is same as unsigned char */
           file_format_t ff, FILE *ofp)
 {
@@ -131,22 +131,22 @@ fmtuchar8(void         *x, /* assumption: uchar8 is same as unsigned char */
     }
 }
 
-intn
-fmtint(void         *x, /* assumption: int is same as 'intn' */
+int
+fmtint(void         *x, /* assumption: int is same as 'int' */
        file_format_t ff, FILE *ofp)
 {
-    intn i;
+    int i;
 
-    memcpy(&i, x, sizeof(intn));
+    memcpy(&i, x, sizeof(int));
 
     if (ff == DASCII)
         return (fprintf(ofp, "%d", (int)i));
     else
-        return (fwrite(&i, sizeof(intn), 1, ofp));
+        return (fwrite(&i, sizeof(int), 1, ofp));
 }
 
 #define FLOAT32_EPSILON ((float32)1.0e-20)
-intn
+int
 fmtfloat32(void *x, file_format_t ff, FILE *ofp)
 {
     float32 fdata;
@@ -164,7 +164,7 @@ fmtfloat32(void *x, file_format_t ff, FILE *ofp)
     }
 }
 
-intn
+int
 fmtint32(void *x, file_format_t ff, FILE *ofp)
 {
     int32 l;
@@ -177,7 +177,7 @@ fmtint32(void *x, file_format_t ff, FILE *ofp)
         return (fwrite(&l, sizeof(int32), 1, ofp));
 }
 
-intn
+int
 fmtuint32(void *x, file_format_t ff, FILE *ofp)
 {
     uint32 l;
@@ -190,7 +190,7 @@ fmtuint32(void *x, file_format_t ff, FILE *ofp)
         return (fwrite(&l, sizeof(uint32), 1, ofp));
 }
 
-intn
+int
 fmtshort(void *x, file_format_t ff, FILE *ofp)
 {
     short s;
@@ -204,7 +204,7 @@ fmtshort(void *x, file_format_t ff, FILE *ofp)
 }
 
 #define FLOAT64_EPSILON ((float64)1.0e-20)
-intn
+int
 fmtfloat64(void *x, file_format_t ff, FILE *ofp)
 {
     float64 d;
@@ -263,18 +263,18 @@ select_func(int32 nt)
     } /* end switch */
 } /* select_func */
 
-intn
+int
 dumpfull(int32 nt, dump_info_t *dump_opts, int32 cnt, /* number of items in 'databuf' ? */
-         void *databuf, FILE *ofp, intn indent,       /* indentation on the first line */
-         intn cont_indent)                            /* indentation on the continuous lines */
+         void *databuf, FILE *ofp, int indent,        /* indentation on the first line */
+         int cont_indent)                             /* indentation on the continuous lines */
 {
-    intn          i;
+    int           i;
     void         *bufptr   = NULL;
     fmtfunct_t    fmtfunct = NULL;
     int32         off;
-    intn          cn;
+    int           cn;
     file_format_t ff        = dump_opts->file_format;
-    intn          ret_value = SUCCEED;
+    int           ret_value = SUCCEED;
 
     /* check inputs */
     if (NULL == databuf)
@@ -352,18 +352,18 @@ done:
     return ret_value;
 } /* dumpfull */
 
-intn
+int
 dumpclean(int32 nt, dump_info_t *dump_opts, int32 cnt, /* number of items in 'databuf' ? */
           void *databuf, FILE *ofp)
 {
-    intn  i;
+    int   i;
     void *bufptr = NULL;
     int32 off;
-    intn  cn;                /* # of characters being printed on a line */
-    intn  small_attr = TRUE; /* data buffer of the attribute is small */
-    intn  is_null;           /* TRUE if current character is a null  */
+    int   cn;                /* # of characters being printed on a line */
+    int   small_attr = TRUE; /* data buffer of the attribute is small */
+    int   is_null;           /* TRUE if current character is a null  */
     char *tempptr;           /* used in finding CR or LF in data buffer */
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     (void)dump_opts;
 

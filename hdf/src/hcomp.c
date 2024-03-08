@@ -334,7 +334,7 @@ done:
  NAME
     HCPencode_header -- Encode the compression header info to a memory buffer
  USAGE
-    intn HCPencode_header(p, model_type, model_info, coder_type, coder_info)
+    int HCPencode_header(p, model_type, model_info, coder_type, coder_info)
     uint8 * p;               OUT: encoded compression info header
     comp_model_t model_type; IN: the type of modeling to use
     model_info *m_info;      IN: Information needed for the modeling type chosen
@@ -346,7 +346,7 @@ done:
  DESCRIPTION
     Encodes the compression information to a block in memory.
 --------------------------------------------------------------------------*/
-intn
+int
 HCPencode_header(uint8 *p, comp_model_t model_type, model_info *m_info, comp_coder_t coder_type,
                  comp_info *c_info)
 {
@@ -426,7 +426,7 @@ done:
  NAME
     HCPdecode_header -- Decode the compression header info from a memory buffer
  USAGE
-    intn HCPdecode_header(p, model_type, model_info, coder_type, coder_info)
+    int HCPdecode_header(p, model_type, model_info, coder_type, coder_info)
     void * p;                    IN: encoded compression info header
     comp_model_t *model_type;   OUT: the type of modeling to use
     model_info *m_info;         OUT: Information needed for the modeling type chosen
@@ -438,7 +438,7 @@ done:
  DESCRIPTION
     Decodes the compression information from a block in memory.
 --------------------------------------------------------------------------*/
-intn
+int
 HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info *m_info, comp_coder_t *coder_type,
                  comp_info *c_info)
 {
@@ -473,16 +473,16 @@ HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info *m_info, comp_co
             INT32DECODE(p, c_info->nbit.nt);
             /* next is the flag to indicate whether to sign extend */
             UINT16DECODE(p, s_ext);
-            c_info->nbit.sign_ext = (intn)s_ext;
+            c_info->nbit.sign_ext = (int)s_ext;
             /* flag to indicate whether to fill with 1's or 0's */
             UINT16DECODE(p, f_one);
-            c_info->nbit.fill_one = (intn)f_one;
+            c_info->nbit.fill_one = (int)f_one;
             /* offset of the bits extracted */
             INT32DECODE(p, m_off);
-            c_info->nbit.start_bit = (intn)m_off;
+            c_info->nbit.start_bit = (int)m_off;
             /* number of bits extracted */
             INT32DECODE(p, m_len);
-            c_info->nbit.bit_len = (intn)m_len;
+            c_info->nbit.bit_len = (int)m_len;
         } break;
 
         case COMP_CODE_SKPHUFF: /* Obtain info for Skipping Huffman coding */
@@ -494,7 +494,7 @@ HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info *m_info, comp_co
             UINT32DECODE(p, skp_size);
             /* specify # of bytes of skipping data to compress */
             UINT32DECODE(p, comp_size); /* ignored for now */
-            c_info->skphuff.skp_size = (intn)skp_size;
+            c_info->skphuff.skp_size = (int)skp_size;
         } break;
 
         case COMP_CODE_DEFLATE: /* Obtains deflation level for Deflation coding */
@@ -503,7 +503,7 @@ HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info *m_info, comp_co
 
             /* specify deflation level */
             UINT16DECODE(p, level);
-            c_info->deflate.level = (intn)level;
+            c_info->deflate.level = (int)level;
         } break;
 
         case COMP_CODE_SZIP: /* Obtains szip parameters for Szip coding */
@@ -759,7 +759,7 @@ done:
  NAME
     HCPgetcompinfo -- Retrieves compression information of an element
  USAGE
-    intn HCPgetcompinfo(file_id, data_tag, data_ref, comp_type, c_info)
+    int HCPgetcompinfo(file_id, data_tag, data_ref, comp_type, c_info)
     int32 aid;                  IN: access record ID
     uint16 data_tag;            IN: element tag
     uint16 data_ref;            IN: element ref
@@ -774,7 +774,7 @@ done:
     used by GRgetcompinfo and SDgetcompinfo at this time.
 
 --------------------------------------------------------------------------*/
-intn
+int
 HCPgetcompinfo(int32 file_id, uint16 data_tag, uint16 data_ref,
                comp_coder_t *comp_type, /* OUT: compression type */
                comp_info    *c_info)       /* OUT: retrieved compression info */
@@ -784,7 +784,7 @@ HCPgetcompinfo(int32 file_id, uint16 data_tag, uint16 data_ref,
     compinfo_t  *info       = NULL; /* compressed element information */
     comp_coder_t temp_coder = COMP_CODE_NONE;
     model_info   m_info; /* modeling information - dummy */
-    intn         ret_value = SUCCEED;
+    int          ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -975,14 +975,14 @@ done:
     int32 HCPseek(access_rec,offset,origin)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 offset;       IN: the offset in bytes from the origin specified
-    intn origin;        IN: the origin to seek from
+    int origin;        IN: the origin to seek from
  RETURNS
     Returns SUCCEED or FAIL
  DESCRIPTION
     Seek to a position with a compressed data element.
 --------------------------------------------------------------------------*/
 int32
-HCPseek(accrec_t *access_rec, int32 offset, intn origin)
+HCPseek(accrec_t *access_rec, int32 offset, int origin)
 {
     compinfo_t *info; /* information on the special element */
     int32       ret_value;
@@ -1165,18 +1165,18 @@ HCPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, in
  NAME
     HCPendaccess -- Close the compressed data element and free the AID
  USAGE
-    intn HCPendaccess(access_rec)
+    int HCPendaccess(access_rec)
     accrec_t *access_rec;   IN: the access record of the data element
  RETURNS
     Returns SUCCEED or FAIL
  DESCRIPTION
     Close the compressed data element and free the AID.
 --------------------------------------------------------------------------*/
-intn
+int
 HCPendaccess(accrec_t *access_rec)
 {
     filerec_t *file_rec; /* file record */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* validate argument */
     if (access_rec == NULL)
@@ -1282,7 +1282,7 @@ NAME
    HCget_config_info -- return info about configuration of a compression method
 
 USAGE
-     intn HCget_config_info( comp_coder_t coder_type,
+     int HCget_config_info( comp_coder_t coder_type,
     uint32* compression_config_info)
         comp_coder_t coder_type;  IN: the compression type queried
     compression_config_info;  OUT: flags to indiat compression status
@@ -1300,7 +1300,7 @@ DESCRIPTION
    is the only method that varies in the current versions.
 
 ---------------------------------------------------------------------------*/
-intn
+int
 HCget_config_info(comp_coder_t coder_type, /* IN: compression type */
                   uint32      *compression_config_info)
 {
@@ -1343,7 +1343,7 @@ HCget_config_info(comp_coder_t coder_type, /* IN: compression type */
  NAME
     HCPgetcomptype -- Retrieves compression type of an element
  USAGE
-    intn HCPgetcomptype(aid, coder_type)
+    int HCPgetcomptype(aid, coder_type)
     int32 aid;                  IN: access record ID
     comp_coder_t* coder_type;   OUT: the type of compression
  RETURNS
@@ -1360,7 +1360,7 @@ HCget_config_info(comp_coder_t coder_type, /* IN: compression type */
         libraries to be present when only compression type is desired
         and not compression information. -BMR
 --------------------------------------------------------------------------*/
-intn
+int
 HCPgetcomptype(int32 file_id, uint16 data_tag, uint16 data_ref, /* IN: tag/ref of element */
                comp_coder_t *comp_type)                         /* OUT: compression type */
 {
@@ -1373,7 +1373,7 @@ HCPgetcomptype(int32 file_id, uint16 data_tag, uint16 data_ref, /* IN: tag/ref o
     uint16     sp_tag;             /* special tag */
     uint16     c_type;             /* compression type */
     filerec_t *file_rec;           /* file record */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -1490,7 +1490,7 @@ done:
     - If the element is chunked, HCPgetdatasize will let the chunking layer
       retrieve the sizes (HMCgetdatasize.)
 --------------------------------------------------------------------------*/
-intn
+int
 HCPgetdatasize(int32 file_id, uint16 data_tag, uint16 data_ref, /* IN: tag/ref of element */
                int32 *comp_size,                                /* OUT  - size of compressed data */
                int32 *orig_size)                                /* OUT  - size of non-compressed data */
@@ -1501,7 +1501,7 @@ HCPgetdatasize(int32 file_id, uint16 data_tag, uint16 data_ref, /* IN: tag/ref o
     atom_t     data_id  = FAIL; /* dd ID of existing regular element */
     int32      len      = 0;
     filerec_t *file_rec; /* file record */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();

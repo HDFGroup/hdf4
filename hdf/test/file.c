@@ -60,8 +60,8 @@ test_hfile(void)
     int16  acc_mode, special;
     int32  ret;
     int    i;
-    intn   errors = 0;
-    intn   ret_bool;
+    int    errors = 0;
+    int    ret_bool;
 
     outbuf = (uint8 *)calloc(BUF_SIZE, sizeof(uint8));
     inbuf  = (uint8 *)calloc(BUF_SIZE, sizeof(uint8));
@@ -76,7 +76,7 @@ test_hfile(void)
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
     CHECK_VOID(fid, FAIL, "Hopen");
 
-    ret_bool = (intn)Hishdf(TESTFILE_NAME);
+    ret_bool = (int)Hishdf(TESTFILE_NAME);
     CHECK_VOID(ret_bool, FALSE, "Hishdf");
 
     ret = (int32)Hnewref(fid);
@@ -210,13 +210,13 @@ test_hfile(void)
     ret = Hclose(fid1);
     CHECK_VOID(ret, FAIL, "Hclose");
 
-    ret_bool = (intn)Hishdf(TESTFILE_NAME);
+    ret_bool = (int)Hishdf(TESTFILE_NAME);
     CHECK_VOID(ret_bool, FALSE, "Hishdf");
 
-    ret_bool = (intn)Hishdf(__FILE__);
+    ret_bool = (int)Hishdf(__FILE__);
     CHECK_VOID(ret_bool, TRUE, "Hishdf");
 
-    ret_bool = (intn)Hishdf("qqqqqqqq.qqq"); /* I sure hope it isn't there */
+    ret_bool = (int)Hishdf("qqqqqqqq.qqq"); /* I sure hope it isn't there */
     CHECK_VOID(ret, TRUE, "Hishdf");
 
     free(outbuf);

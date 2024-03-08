@@ -280,7 +280,7 @@ error:
  PURPOSE
     Dispose of a new bit-vector.
  USAGE
-    intn bv_delete(b)
+    int bv_delete(b)
         bv_ptr b;                   IN: Bit-vector to dispose of
  RETURNS
     Returns SUCCEED/FAIL
@@ -290,7 +290,7 @@ error:
     allocated space.
  COMMENTS, BUGS, ASSUMPTIONS
 --------------------------------------------------------------------------*/
-intn
+int
 bv_delete(bv_ptr b)
 {
     if (b == NULL || b->buffer == NULL)
@@ -308,7 +308,7 @@ bv_delete(bv_ptr b)
  PURPOSE
     Set a bit in a bit-vector
  USAGE
-    intn bv_set(b,bit_num,value)
+    int bv_set(b,bit_num,value)
         bv_ptr b;                   IN: Bit-vector to use
         int32 bit_num;              IN: bit to set
         bv_bool value;              IN: bit value to set the bit to
@@ -320,7 +320,7 @@ bv_delete(bv_ptr b)
     bit-vector is marked as extendable.
  COMMENTS, BUGS, ASSUMPTIONS
 --------------------------------------------------------------------------*/
-intn
+int
 bv_set(bv_ptr b, int32 bit_num, bv_bool value)
 {
     int32 base_elem; /* the base array index of the bit */
@@ -379,7 +379,7 @@ bv_set(bv_ptr b, int32 bit_num, bv_bool value)
  PURPOSE
     Get a bit from a bit-vector
  USAGE
-    intn bv_get(b,bit_num)
+    int bv_get(b,bit_num)
         bv_ptr b;                   IN: Bit-vector to use
         int32 bit_num;              IN: bit to set
  RETURNS
@@ -388,12 +388,12 @@ bv_set(bv_ptr b, int32 bit_num, bv_bool value)
     Gets a bit from a bit-vector.
  COMMENTS, BUGS, ASSUMPTIONS
 --------------------------------------------------------------------------*/
-intn
+int
 bv_get(bv_ptr b, int32 bit_num)
 {
     int32 base_elem; /* the base array index of the bit */
     int32 bit_elem;  /* the bit index of the bit to set */
-    intn  ret_value; /* the variable to store the return value */
+    int   ret_value; /* the variable to store the return value */
 
     if (b == NULL || b->buffer == NULL || bit_num < 0)
         return FAIL;

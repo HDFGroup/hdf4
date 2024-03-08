@@ -32,12 +32,12 @@
 #include <sys/types.h> /* Windows off_t */
 #endif
 
-static intn test_attrs();
-static intn test_dfannots();
-static intn test_dfsdattrs();
+static int test_attrs();
+static int test_dfannots();
+static int test_dfsdattrs();
 
 /* Reads character string data from HDF file without the use of HDF4 library */
-intn readnoHDF_char(const char *filename, const int32 offset, const int32 length, const char *orig_buf);
+int readnoHDF_char(const char *filename, const int32 offset, const int32 length, const char *orig_buf);
 
 #define ATTR_FILE "attdatainfo.hdf" /* data file */
 #define X_LENGTH  10
@@ -77,7 +77,7 @@ intn readnoHDF_char(const char *filename, const int32 offset, const int32 length
 #define SDS_ATTR_NAME2 "Valid_range 2"
 #define DIM_ATTR_NAME  "Dim_metric"
 
-static intn
+static int
 test_attrs()
 {
     int32   sd_id, sds_id, dim_id, dim_idx, att_idx;
@@ -90,9 +90,9 @@ test_attrs()
     char8   file_values[] = "Storm_track_data";
     float32 sds_values[2] = {2., 10.};
     char8   dim_values[]  = "Seconds";
-    intn    status;
+    int     status;
     int     ii, jj;
-    intn    num_errs = 0; /* number of errors so far */
+    int     num_errs = 0; /* number of errors so far */
 
     /* Create the file and initialize the SD interface */
     sd_id = SDstart(ATTR_FILE, DFACC_CREATE);
@@ -228,7 +228,7 @@ test_attrs()
 /* to generate data set's data */
 static void gen2Dfloat(int height, int width, float *data);
 /* to verify data of labels and descriptions */
-static intn check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label, char *desc);
+static int check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label, char *desc);
 
 /****************************************************************
 **
@@ -254,12 +254,12 @@ gen2Dfloat(int height, int width, float *data)
 **                   with expected ones
 **
 ****************************************************************/
-static intn
+static int
 check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label, char *desc)
 {
     int32 inlablen, indesclen, ret;
     char  inlabel[MAXLEN_LAB], *indesc;
-    intn  num_errs = 0;
+    int   num_errs = 0;
 
     inlablen = DFANgetlablen(fname, tag, ref);
     CHECK(inlablen, FAIL, "check_lab_desc: DFANgetlablen");
@@ -289,13 +289,13 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label, char *desc)
 **      written correctly.  This function also creates the file.
 **
 ****************************************************************/
-intn
+int
 add_sdfile_annotations()
 {
     int32 file_id;
     char  labels[2][MAXLEN_LAB], descs[2][MAXLEN_DESC], tempstr[MAXLEN_DESC];
-    intn  ret;
-    intn  num_errs = 0;
+    int   ret;
+    int   num_errs = 0;
 
     /* set up file labels and descriptions */
 
@@ -381,17 +381,17 @@ add_sdfile_annotations()
 **	DFTAG_NDG.
 **
 ****************************************************************/
-intn
+int
 add_sdsNDG_annotations()
 {
     char   labels[2][MAXLEN_LAB], descs[2][MAXLEN_DESC];
     uint16 refnum;
     int32  ret;
-    intn   rank;
+    int    rank;
     int    jj;
     int32  dimsizes[2];
     float *data;
-    intn   num_errs = 0;
+    int    num_errs = 0;
 
     /* set up object labels and descriptions */
 
@@ -453,12 +453,12 @@ add_sdsNDG_annotations()
 **	DFTAG_SDG.
 **
 ****************************************************************/
-intn
+int
 add_sdsSDG_annotations()
 {
     char   labsds[MAXLEN_LAB], descsds[MAXLEN_DESC], descris[MAXLEN_DESC];
     uint16 refnum;
-    intn   rank;
+    int    rank;
     int    j;
     int32  dimsizes[2];
     float *data;
@@ -514,12 +514,12 @@ add_sdsSDG_annotations()
 **	against the provided offsets/lengths.
 **
 ****************************************************************/
-intn
+int
 get_ann_datainfo(int32 id, ann_type annot_type, int32 *chk_offsets, int32 *chk_lengths)
 {
     int32 *offsetarray = NULL, *lengtharray = NULL;
     int32  num_annots;
-    intn   ii, num_errs = 0;
+    int    ii, num_errs = 0;
 
     num_annots = SDgetanndatainfo(id, annot_type, 0, NULL, NULL);
     CHECK(num_annots, FAIL, "get_ann_datainfo: SDgetanndatainfo annot_type with NULL buffers");
@@ -560,10 +560,10 @@ static int
 test_dfannots(void)
 {
     int32 sd_id, sds_id, sds_index;
-    intn  status;
+    int   status;
     int32 n_datasets, n_file_attr;
     int32 chk_offsets[10], chk_lengths[10];
-    intn  num_errs = 0;
+    int   num_errs = 0;
 
     /* Add file annotations */
     status = add_sdfile_annotations();
@@ -697,20 +697,20 @@ test_dfannots(void)
 #define YY         6
 
 /* Compares a string against the original buffer, returns 0 if equals, or -1 */
-intn compare(const char *outstring, const char *instring);
+int compare(const char *outstring, const char *instring);
 
-static intn
+static int
 test_dfsdattrs()
 {
     int         i, j, ret;
-    intn        rank;
+    int         rank;
     int32       dims[2];
     float32     f32[XX][YY], tf32[XX][YY];
-    intn        info_count = 0;
+    int         info_count = 0;
     int32       offset = 0, length = 0;
     int32       fid = -1, sdsid = -1, dimid = -1;
-    intn        status    = 0;
-    intn        num_errs  = 0; /* number of errors so far */
+    int         status    = 0;
+    int         num_errs  = 0; /* number of errors so far */
     const char *datalabel = "Datalabel", *dataunit = "Dataunit", *datafmt = "Datafmt", *coordsys = "coordsys";
     char        in_datalabel[256], in_dataunit[256], in_datafmt[256], in_coordsys[256];
 
@@ -850,10 +850,10 @@ test_dfsdattrs()
     return (num_errs);
 }
 
-intn
+int
 compare(const char *outstring, const char *instring)
 {
-    intn status = 0;
+    int status = 0;
     if (strcmp(outstring, instring) != 0) {
         fprintf(stderr, ">>> Test failed for %s\n", outstring);
         fprintf(stderr, "    Input string =  %s\n", instring);
@@ -882,13 +882,13 @@ compare(const char *outstring, const char *instring)
         SUCCEED/FAIL
 
 ********************************************************************/
-intn
+int
 readnoHDF_char(const char *filename, const int32 offset, const int32 length, const char *orig_buf)
 {
     FILE  *fd;          /* file descriptor */
     size_t readlen = 0; /* number of bytes actually read */
     char  *readcbuf;
-    intn   ret_value = SUCCEED;
+    int    ret_value = SUCCEED;
 
     /* Open the file for reading without SD API */
     fd = fopen(filename, "r");

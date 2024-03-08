@@ -98,7 +98,7 @@ static char *extcreatedir    = NULL;
 static char *HDFEXTCREATEDIR = NULL;
 static char *extdir          = NULL;
 static char *HDFEXTDIR       = NULL;
-static intn  extdir_changed  = FALSE;
+static int   extdir_changed  = FALSE;
 
 /* extinfo_t -- external elt information structure */
 
@@ -111,12 +111,12 @@ typedef struct {
     int32      para_extfile_id;  /* parallel ID of the external file */
     hdf_file_t file_external;    /* external file descriptor */
     char      *extern_file_name; /* name of the external file */
-    intn       file_open;        /* has the file been opened yet ? */
+    int        file_open;        /* has the file been opened yet ? */
 } extinfo_t;
 
 /* forward declaration of the functions provided in this module */
 static int32 HXIstaccess(accrec_t *access_rec, int16 access);
-static char *HXIbuildfilename(const char *ext_fname, const intn acc_mode);
+static char *HXIbuildfilename(const char *ext_fname, const int acc_mode);
 
 /* ext_funcs -- table of the accessing functions of the external
    data element function modules.  The position of each function in
@@ -368,7 +368,7 @@ done:
 NAME
    HXPsetaccesstype -- set the I/O access type of the external file
 USAGE
-   intn HXPsetaccesstype(access_rec)
+   int HXPsetaccesstype(access_rec)
    accrec_t *access_rec   IN/OUT: access record of the external element
 RETURNS
    SUCCEED if no error, else FAIL
@@ -376,13 +376,13 @@ DESCRIPTION
    Open the external file according to the access type specified.
 
 --------------------------------------------------------------------------*/
-intn
+int
 HXPsetaccesstype(accrec_t *access_rec)
 {
     hdf_file_t file_external; /* external file descriptor */
     extinfo_t *info;          /* special element information */
     char      *fname     = NULL;
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* clear error stack and validate args */
     HEclear();
@@ -850,7 +850,7 @@ done:
 NAME
    HXPendacess -- close file, free AID
 USAGE
-   intn HXPendaccess(access_rec)
+   int HXPendaccess(access_rec)
    access_t * access_rec;      IN:  access record to close
 RETURNS
    SUCCEED / FAIL
@@ -858,11 +858,11 @@ DESCRIPTION
    Close the file pointed to by the current AID and free the AID
 
 ---------------------------------------------------------------------------*/
-intn
+int
 HXPendaccess(accrec_t *access_rec)
 {
     filerec_t *file_rec; /* file record */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* validate argument */
     if (access_rec == NULL)
@@ -1067,7 +1067,7 @@ done:
 NAME
    HXsetcreatedir -- set the directory variable for creating external file
 USAGE
-   intn HXsetcreatedir(dir)
+   int HXsetcreatedir(dir)
    const char *dir		IN: directory for creating external file
 RETURNS
    SUCCEED if no error, else FAIL
@@ -1082,11 +1082,11 @@ FORTRAN
    hxscdir
 
 --------------------------------------------------------------------------*/
-intn
+int
 HXsetcreatedir(const char *dir)
 {
     char *pt;
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     if (dir) {
         if (!(pt = strdup(dir)))
@@ -1107,7 +1107,7 @@ done:
 NAME
    HXsetdir -- set the directory variable for locating external file
 USAGE
-   intn HXsetdir(dir)
+   int HXsetdir(dir)
    const char *dir		IN: directory for locating external file
 RETURNS
    SUCCEED if no error, else FAIL
@@ -1123,11 +1123,11 @@ FORTRAN
    hxsdir
 
 --------------------------------------------------------------------------*/
-intn
+int
 HXsetdir(const char *newdir)
 {
     char *pt        = NULL;
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     if (newdir == NULL) {
         if (extdir != NULL) {
@@ -1164,9 +1164,9 @@ done:
 NAME
     HXIbuildfilename -- Build the Filename for the External Element
 USAGE
-    char* HXIbuildfilename(char *ext_fname, const intn acc_mode)
+    char* HXIbuildfilename(char *ext_fname, const int acc_mode)
     char            * ext_fname;	IN: external filename as stored
-    intn 	      acc_mode;		IN: access mode
+    int 	      acc_mode;		IN: access mode
 RETURNS
     finalpath / NULL
 DESCRIPTION
@@ -1181,7 +1181,7 @@ DESCRIPTION
 #define strcpy4(s1, s2, s3, s4, s5) (strcat(strcat(strcat(strcpy(s1, s2), s3), s4), s5))
 
 static char *
-HXIbuildfilename(const char *ext_fname, const intn acc_mode)
+HXIbuildfilename(const char *ext_fname, const int acc_mode)
 {
     int         fname_len;           /* string length of the ext_fname */
     int         path_len;            /* string length of prepend pathname */
@@ -1356,14 +1356,14 @@ done:
 NAME
    HXPshutdown -- free any memory buffers we've allocated
 USAGE
-   intn HXPshutdown()
+   int HXPshutdown()
 RETURNS
    SUCCEED/FAIL
 DESCRIPTION
     Free buffers we've allocated during the execution of the program.
 
 --------------------------------------------------------------------------*/
-intn
+int
 HXPshutdown(void)
 {
     free(extcreatedir);

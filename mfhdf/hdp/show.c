@@ -30,7 +30,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
     uint8          *bb = NULL;
     uint8          *b  = NULL;
     DYN_VWRITELIST *w  = NULL;
-    intn (*vfmtfn[VSFIELDMAX])(void *, file_format_t ff, FILE *);
+    int (*vfmtfn[VSFIELDMAX])(void *, file_format_t ff, FILE *);
     int32 off[VSFIELDMAX];
     int32 order[VSFIELDMAX];
     int32 nattrs[VSFIELDMAX];
@@ -230,7 +230,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
             if (FAIL == VSread(vd, bb, count, interlace)) {
                 /* If the data set has external element, get the external file
                 name to provide information */
-                intn extfile_namelen = VSgetexternalfile(vd, 0, NULL, NULL);
+                int extfile_namelen = VSgetexternalfile(vd, 0, NULL, NULL);
                 if (extfile_namelen > 0) {
                     char *extfile_name = NULL;
                     extfile_name       = (char *)malloc(sizeof(char *) * (extfile_namelen + 1));
@@ -356,7 +356,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
             if (FAIL == VSread(vd, bb, count, interlace)) {
                 /* If the data set has external element, get the external
                    file name to provide information */
-                intn extfile_namelen = VSgetexternalfile(vd, 0, NULL, NULL);
+                int extfile_namelen = VSgetexternalfile(vd, 0, NULL, NULL);
                 if (extfile_namelen > 0) {
                     char *extfile_name = NULL;
                     extfile_name       = (char *)malloc(sizeof(char *) * (extfile_namelen + 1));
@@ -433,22 +433,22 @@ done:
 /*
  * dumps attributes of vdata for vgroup
  */
-intn
-dumpattr(int32 vid, int32 findex, intn isvs, file_format_t ff, FILE *fp)
+int
+dumpattr(int32 vid, int32 findex, int isvs, file_format_t ff, FILE *fp)
 {
-    intn   i, k;
-    intn   cn = 0;
-    intn   nattrs;
-    intn   alloc_flag = 0;
+    int    i, k;
+    int    cn = 0;
+    int    nattrs;
+    int    alloc_flag = 0;
     int32  i_type;
     int32  i_count;
     int32  i_size, e_size;
     int32  off;
     uint8 *buf = NULL;
     uint8 *ptr = NULL;
-    intn (*vfmtfn)(void *, file_format_t ff, FILE *);
-    intn   status;
-    intn   ret_value = SUCCEED;
+    int (*vfmtfn)(void *, file_format_t ff, FILE *);
+    int    status;
+    int    ret_value = SUCCEED;
     char   name[FIELDNAMELENMAX + 1];
     uint8 *attrbuf = NULL;
 

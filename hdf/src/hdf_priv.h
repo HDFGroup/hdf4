@@ -139,15 +139,15 @@ typedef intptr_t hdf_pint_t;
 
 #define INT16ENCODE(p, i)                                                                                    \
     {                                                                                                        \
-        *(p) = (uint8)(((uintn)(i) >> 8) & 0xff);                                                            \
+        *(p) = (uint8)(((unsigned)(i) >> 8) & 0xff);                                                         \
         (p)++;                                                                                               \
-        *(p) = (uint8)((uintn)(i)&0xff);                                                                     \
+        *(p) = (uint8)((unsigned)(i)&0xff);                                                                  \
         (p)++;                                                                                               \
     }
 
 #define UINT16ENCODE(p, i)                                                                                   \
     {                                                                                                        \
-        *(p) = (uint8)(((uintn)(i) >> 8) & 0xff);                                                            \
+        *(p) = (uint8)(((unsigned)(i) >> 8) & 0xff);                                                         \
         (p)++;                                                                                               \
         *(p) = (uint8)((i)&0xff);                                                                            \
         (p)++;                                                                                               \

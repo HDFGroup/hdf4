@@ -52,7 +52,7 @@ Java_hdf_hdflib_HDFLibrary_Hopen(JNIEnv *env, jclass clss, jstring hdfFile, jint
     PIN_JAVA_STRING(ENVONLY, hdfFile, file, NULL, "Hopen:  hdfFile is not pinned");
 
     /* open HDF file specified by hdf_HDF_file */
-    if ((rval = Hopen(file, (intn)access, (int16)ndds)) == FAIL)
+    if ((rval = Hopen(file, (int)access, (int16)ndds)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -70,7 +70,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_Hclose(JNIEnv *env, jclass clss, jlong fid)
 {
-    intn status = 0;
+    int status = 0;
 
     UNUSED(clss);
 
@@ -94,7 +94,7 @@ done:
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_HDdont_1atexit(JNIEnv *env, jclass clss)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     UNUSED(env);
     UNUSED(clss);
@@ -113,7 +113,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_Hishdf(JNIEnv *env, jclass clss, jstring hdfFile)
 {
     const char *hfile = NULL;
-    intn        rval  = FALSE;
+    int         rval  = FALSE;
 
     UNUSED(clss);
 
@@ -180,11 +180,11 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_Hcache(JNIEnv *env, jclass clss, jlong file_id, jint cache_switch)
 {
 
-    intn rval = FAIL;
+    int rval = FAIL;
 
     UNUSED(clss);
 
-    if ((rval = Hcache((int32)file_id, (intn)cache_switch)) == FAIL)
+    if ((rval = Hcache((int32)file_id, (int)cache_switch)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -200,7 +200,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_Hgetfileversion(JNIEnv *env, jclass clss, jlong file_id, jintArray vers,
                                            jobjectArray fvstring)
 {
-    intn     rval    = FAIL;
+    int      rval    = FAIL;
     jint    *theArgs = NULL;
     char    *data    = NULL;
     jstring  rstring;
@@ -246,7 +246,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_Hgetlibversion(JNIEnv *env, jclass clss, jintArray vers, jobjectArray lvstring)
 {
-    intn     rval    = FAIL;
+    int      rval    = FAIL;
     jint    *theArgs = NULL;
     char    *data    = NULL;
     jstring  rstring;
@@ -299,11 +299,11 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_Hsetaccesstype(JNIEnv *env, jclass clss, jlong h_id, jint access_type)
 {
-    intn rval = FAIL;
+    int rval = FAIL;
 
     UNUSED(clss);
 
-    if ((rval = Hsetaccesstype((int32)h_id, (uintn)access_type)) == FAIL)
+    if ((rval = Hsetaccesstype((int32)h_id, (unsigned)access_type)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -318,7 +318,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_Hsync(JNIEnv *env, jclass clss, jlong file_id)
 {
-    intn rval = FAIL;
+    int rval = FAIL;
 
     UNUSED(clss);
 
@@ -337,7 +337,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_HDFclose(JNIEnv *env, jclass clss, jlong file_id)
 {
-    intn rval = FAIL;
+    int rval = FAIL;
 
     UNUSED(clss);
 
@@ -365,7 +365,7 @@ Java_hdf_hdflib_HDFLibrary_HDFopen(JNIEnv *env, jclass clss, jstring filename, j
         H4_NULL_ARGUMENT_ERROR(ENVONLY, "HDFopen:  filename is null");
 
     PIN_JAVA_STRING(ENVONLY, filename, str, NULL, "HDFopen:  filename is not pinned");
-    if ((rval = HDFopen((char *)str, (intn)access, (int16)n_dds)) == FAIL)
+    if ((rval = HDFopen((char *)str, (int)access, (int16)n_dds)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -384,7 +384,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_HDFflusdd(JNIEnv *env, jclass clss, jlong file_id)
 {
-    intn rval = FAIL;
+    int rval = FAIL;
 
     UNUSED(clss);
 

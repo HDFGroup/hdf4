@@ -34,9 +34,9 @@ EXPORTED ROUTINES
 NAME
    HDc2fstr -- convert a C string into a Fortran string IN PLACE
 USAGE
-   intn HDc2fstr(str, len)
+   int HDc2fstr(str, len)
    char * str;       IN: string to convert
-   intn   len;       IN: length of Fortran string
+   int   len;       IN: length of Fortran string
 RETURNS
    SUCCEED
 DESCRIPTION
@@ -45,8 +45,8 @@ DESCRIPTION
    and the string is padded with spaces
 
 ---------------------------------------------------------------------------*/
-intn
-HDc2fstr(char *str, intn len)
+int
+HDc2fstr(char *str, int len)
 {
     int i;
 
@@ -63,7 +63,7 @@ NAME
 USAGE
    char * HDf2cstring(fdesc, len)
    _fcd  fdesc;     IN: Fortran string descriptor
-   intn  len;       IN: length of Fortran string
+   int  len;       IN: length of Fortran string
 RETURNS
    Pointer to the C string if success, else NULL
 DESCRIPTION
@@ -73,7 +73,7 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 char *
-HDf2cstring(_fcd fdesc, intn len)
+HDf2cstring(_fcd fdesc, int len)
 {
     char *cstr, *str;
     int   i;
@@ -94,10 +94,10 @@ HDf2cstring(_fcd fdesc, intn len)
 NAME
    HDpackFstring -- convert a C string into a Fortran string
 USAGE
-   intn HDpackFstring(src, dest, len)
+   int HDpackFstring(src, dest, len)
    char * src;          IN:  source string
    char * dest;         OUT: destination
-   intn   len;          IN:  length of string
+   int   len;          IN:  length of string
 RETURNS
    SUCCEED / FAIL
 DESCRIPTION
@@ -109,10 +109,10 @@ DESCRIPTION
    support one of these.
 
 ---------------------------------------------------------------------------*/
-intn
-HDpackFstring(char *src, char *dest, intn len)
+int
+HDpackFstring(char *src, char *dest, int len)
 {
-    intn sofar;
+    int sofar;
 
     for (sofar = 0; (sofar < len) && (*src != '\0'); sofar++)
         *dest++ = *src++;
@@ -128,7 +128,7 @@ HDpackFstring(char *src, char *dest, intn len)
 NAME
    HDflush -- flush the HDF file
 USAGE
-   intn HDflush(fid)
+   int HDflush(fid)
    int32 fid;            IN: file ID
 RETURNS
    SUCCEED / FAIL
@@ -142,7 +142,7 @@ DESCRIPTION
    really doing anything.
 
 ---------------------------------------------------------------------------*/
-intn
+int
 HDflush(int32 file_id)
 {
     filerec_t *file_rec;
@@ -172,9 +172,9 @@ DESCRIPTION
 const char *
 HDgettagdesc(uint16 tag)
 {
-    intn i;
+    int i;
 
-    for (i = 0; i < (intn)(sizeof(tag_descriptions) / sizeof(tag_descript_t)); i++)
+    for (i = 0; i < (int)(sizeof(tag_descriptions) / sizeof(tag_descript_t)); i++)
         if (tag_descriptions[i].tag == tag)
             return tag_descriptions[i].desc;
     return NULL;
@@ -198,12 +198,12 @@ char *
 HDgettagsname(uint16 tag)
 {
     char *ret = NULL;
-    intn  i;
+    int   i;
 
     if (SPECIALTAG(tag))
         ret = (char *)strdup("Special ");
     tag = BASETAG(tag);
-    for (i = 0; i < (intn)(sizeof(tag_descriptions) / sizeof(tag_descript_t)); i++)
+    for (i = 0; i < (int)(sizeof(tag_descriptions) / sizeof(tag_descript_t)); i++)
         if (tag_descriptions[i].tag == tag) {
             if (ret == NULL)
                 ret = (char *)strdup(tag_descriptions[i].name);
@@ -229,7 +229,7 @@ HDgettagsname(uint16 tag)
 NAME
    HDgettagnum -- return the tag number for a text description of a tag
 USAGE
-   intn HDgettagnum(tag_name)
+   int HDgettagnum(tag_name)
    char *   tag_name;         IN: name of tag to find
 RETURNS
    Tag number (>=0) on success or FAIL on failure
@@ -237,14 +237,14 @@ DESCRIPTION
    Map a tag name to a statically allocated tag number for it.
 
 ---------------------------------------------------------------------------*/
-intn
+int
 HDgettagnum(const char *tag_name)
 {
-    intn i;
+    int i;
 
-    for (i = 0; i < (intn)(sizeof(tag_descriptions) / sizeof(tag_descript_t)); i++)
+    for (i = 0; i < (int)(sizeof(tag_descriptions) / sizeof(tag_descript_t)); i++)
         if (0 == strcmp(tag_descriptions[i].name, tag_name))
-            return (intn)tag_descriptions[i].tag;
+            return (int)tag_descriptions[i].tag;
     return FAIL;
 } /* HDgettagnum */
 
@@ -264,7 +264,7 @@ DESCRIPTION
 char *
 HDgetNTdesc(int32 nt)
 {
-    intn  i;
+    int   i;
     char *ret_desc = NULL;
 
     /* evil hard-coded values */
@@ -276,7 +276,7 @@ HDgetNTdesc(int32 nt)
         ret_desc = (char *)strdup(nt_descriptions[2].desc);
 
     nt &= DFNT_MASK; /* mask off unusual format types */
-    for (i = 3; i < (intn)(sizeof(nt_descriptions) / sizeof(nt_descript_t)); i++)
+    for (i = 3; i < (int)(sizeof(nt_descriptions) / sizeof(nt_descript_t)); i++)
         if (nt_descriptions[i].nt == nt) {
             if (ret_desc == NULL)
                 ret_desc = (char *)strdup(nt_descriptions[i].desc);

@@ -46,7 +46,7 @@ check_empty_SDS(int32       fid,          /* file id */
                 int        *ret_num_errs /* current number of errors */)
 {
     int32 sds_id, sds_index, status_32;
-    intn  status, emptySDS;
+    int   status, emptySDS;
     int   num_errs = 0;
     char  mesg[80];
 
@@ -84,7 +84,7 @@ check_getchunkinfo(int32       fid,          /* file id */
     int32         sds_id, sds_index;
     HDF_CHUNK_DEF c_def_out; /* Chunking definitions */
     int32         c_flags;
-    intn          status;
+    int           status;
     int           num_errs = 0;
     char          mesg[80];
 
@@ -114,13 +114,13 @@ check_getchunkinfo(int32       fid,          /* file id */
 /* Test non-special SDSs.  This routine creates non-special SDSs, writes
  * data to one of the SDSs, and checks for emptiness on each without closing
  * the file. */
-static intn
+static int
 test_nonspecial_SDSs(int32 fid)
 {
     int32 sds_id;
     int32 dimsize[2], start[2], edges[2];
     int32 data[Y_LENGTH][X_LENGTH];
-    intn  status;
+    int   status;
     int   i, j;
     int   num_errs = 0; /* number of errors so far */
 
@@ -171,7 +171,7 @@ test_nonspecial_SDSs(int32 fid)
 /* Test compressed SDSs.  This routine creates compressed SDSs, writes
  * data to one of the SDSs, and checks for emptiness on each without closing
  * the file. */
-static intn
+static int
 test_compressed_SDSs(int32 fid)
 {
     int32     sds_id, esds_id;
@@ -179,7 +179,7 @@ test_compressed_SDSs(int32 fid)
     int32     comp_type; /* Compression flag */
     comp_info c_info;    /* Compression structure */
     int32     data[Y_LENGTH][X_LENGTH];
-    intn      status;
+    int       status;
     int       i, j;
     int       num_errs = 0; /* number of errors so far */
 
@@ -240,7 +240,7 @@ test_compressed_SDSs(int32 fid)
 #define X_CHUNKED_LENGTH 4
 #define Y_CHUNKED_LENGTH 9
 
-static intn
+static int
 test_chunked_SDSs(int32 fid)
 {
     int32         sds_id, esds_id, sds_index;
@@ -249,7 +249,7 @@ test_chunked_SDSs(int32 fid)
     HDF_CHUNK_DEF c_def; /* Chunking definitions */
     int32         comp_flag;
     int16         fill_value = 0; /* Fill value */
-    intn          status;
+    int           status;
     int           num_errs = 0; /* number of errors so far */
 
     /* Declare chunks data type and initialize some of them. */
@@ -351,14 +351,14 @@ test_chunked_SDSs(int32 fid)
 /* Test unlimited dimension SDSs.  This routine creates unlimited
  * dimension SDSs, writes data to one of the SDSs, and checks for
  * emptiness on each without closing the file. */
-static intn
+static int
 test_unlimited_SDSs(int32 fid)
 {
     int32 sds_id, esds_id, sds_index;
     int32 dim_sizes[2];
     int32 data[Y_LENGTH][X_LENGTH], append_data[X_LENGTH];
     int32 start[2], edges[2];
-    intn  status;
+    int   status;
     int   i, j;
     int   num_errs = 0; /* number of errors so far */
 
@@ -445,11 +445,11 @@ test_unlimited_SDSs(int32 fid)
 /* This function checks which of the SDSs in the file are empty/written,
  * just as in the previous individual tests.  The difference is these
  * SDSs are read back in after the file is closed and reopened. */
-static intn
+static int
 test_with_existing_file()
 {
     int32 fid;
-    intn  status;
+    int   status;
     int   num_errs = 0; /* number of errors so far */
 
     /* Open the file and initialize the SD interface */
@@ -488,11 +488,11 @@ test_with_existing_file()
 /* This function verifies that the bug HDFFR-171 is fixed.  It opens
    the file as read-only, then calls SDgetchunkinfo on some empty SDS's.
    SDgetchunkinfo should not fail and should return HDF_NONE for the flag. */
-static intn
+static int
 test_getchunkinfo()
 {
     int32 fid;
-    intn  status;
+    int   status;
     int   num_errs = 0; /* number of errors so far */
 
     /* Open the file and initialize the SD interface */
@@ -533,7 +533,7 @@ extern int
 test_checkempty()
 {
     int32 fid;
-    intn  status;
+    int   status;
     int   num_errs = 0;
 
     /* Output message about test being performed */

@@ -57,7 +57,7 @@
  *          Note that compression is always row by row for RLE.
  *---------------------------------------------------------------------------*/
 
-intn
+int
 DFputcomp(int32 file_id, uint16 tag, uint16 ref, const uint8 *image, int32 xdim, int32 ydim, uint8 *palette,
           uint8 *newpal, int16 scheme, comp_info *cinfo)
 {
@@ -66,7 +66,7 @@ DFputcomp(int32 file_id, uint16 tag, uint16 ref, const uint8 *image, int32 xdim,
     uint8       *out;      /* pointer to space for compressed output */
     int32        cisize;   /* maximum size of compressed image */
     int32        crowsize; /* maximum size of compressed row */
-    intn         buftype;  /* buftype = 1: buffer enough for whole image */
+    int          buftype;  /* buftype = 1: buffer enough for whole image */
     /* buftype = 2: buffer holds 1 row */
     int32 n;     /* number of compressed bytes produced */
     int32 total; /* total compressed bytes produced so far */
@@ -154,7 +154,7 @@ DFputcomp(int32 file_id, uint16 tag, uint16 ref, const uint8 *image, int32 xdim,
         default: /* unknown compression scheme */
             HRETURN_ERROR(DFE_BADSCHEME, FAIL);
     }
-    return (intn)ret;
+    return (int)ret;
 } /* end DFputcomp() */
 
 /*-----------------------------------------------------------------------------

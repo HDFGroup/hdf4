@@ -29,7 +29,7 @@ typedef struct ANnode {
     int32 file_id; /* which file this annotation belongs to */
     int32 ann_key; /* type/ref: used to find annotation in corresponding
                       TBBT in filerec_t->tree[]. */
-    intn new_ann;  /* flag */
+    int new_ann;   /* flag */
 } ANnode;
 
 /*

@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-int copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex);
+int copy_vdata_attribute(int32 in, int32 out, int32 findex, int attrindex);
 
 int copy_vs(int32 infile_id, int32 outfile_id, int32 tag, int32 ref, /* ref of input VS */
             int32      vgroup_id_out_par,                            /* output parent group ID */

@@ -30,11 +30,11 @@ main(int argc, char *argv[])
 {
     int       i;
     char     *outfile;
-    intn      jpeg_qual = 75; /* JPEG quality factor */
+    int       jpeg_qual = 75; /* JPEG quality factor */
     uint16    prevref, writeref, compress = (uint16)0;
     comp_info cinfo;        /* compression structure */
     int32     out_fid;      /* file ID for the output file */
-    intn      copy_flabel,  /* flag to indicate to copy file labels */
+    int       copy_flabel,  /* flag to indicate to copy file labels */
         copy_fdesc,         /* flag to indicate to copy file descriptions */
         copy_ilabel,        /* flag to indicate to copy image labels */
         copy_idesc;         /* flag to indicate to copy image descriptions */
@@ -100,7 +100,7 @@ main(int argc, char *argv[])
         else { /* file name */
             /* copy the file annotations and labels over */
             if (copy_flabel == TRUE || copy_fdesc == TRUE) {
-                intn  isfirst; /* flip-flop for first image */
+                int   isfirst; /* flip-flop for first image */
                 int32 annlen;  /* length of the annotation to copy */
                 int32 old_fid; /* file ID for the old and new files */
 

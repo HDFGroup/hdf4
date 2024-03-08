@@ -48,16 +48,16 @@ static uint8 *paletteBuf = NULL;
 static uint16 Refset     = 0;  /* Ref of image to get next */
 static uint16 Lastref    = 0;  /* Last ref read/written */
 static uint16 Writeref   = 0;  /* ref of next image to put in this file */
-static intn   foundRig   = -1; /* -1: don't know if HDF file has RIGs
-                                   0: No RIGs, try for RI8s etc.
-                                   1: RIGs used, ignore RI8s etc. */
-static intn Newdata    = 0;    /* does Readrig contain fresh data? */
-static intn Newpalette = -1;   /* -1 = no palette is associated
-                                   0 = palette already written out
-                                   1 = new palette, not yet written out */
+static int    foundRig   = -1; /* -1: don't know if HDF file has RIGs
+                                    0: No RIGs, try for RI8s etc.
+                                    1: RIGs used, ignore RI8s etc. */
+static int Newdata    = 0;     /* does Readrig contain fresh data? */
+static int Newpalette = -1;    /* -1 = no palette is associated
+                                    0 = palette already written out
+                                    1 = new palette, not yet written out */
 
-static intn CompressSet = FALSE;        /* Whether the compression parameters have
-                                            been set for the next image */
+static int CompressSet = FALSE;         /* Whether the compression parameters have
+                                             been set for the next image */
 static int32 CompType = COMP_NONE;      /* What compression to use for the next
                                             image */
 static comp_info CompInfo;              /* Params for compression to perform */
@@ -118,27 +118,27 @@ static DFRrig Zrig = {
 };
 
 /* Whether we've installed the library termination function yet for this interface */
-static intn library_terminate = FALSE;
+static int library_terminate = FALSE;
 
 /* private functions */
-static intn DFR8Iputimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress,
-                          intn append);
+static int DFR8Iputimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress,
+                         int append);
 
-static int32 DFR8Iopen(const char *filename, intn acc_mode);
+static int32 DFR8Iopen(const char *filename, int acc_mode);
 
-static intn DFR8Iriginfo(int32 file_id);
+static int DFR8Iriginfo(int32 file_id);
 
-static intn DFR8getrig(int32 file_id, uint16 ref, DFRrig *rig);
+static int DFR8getrig(int32 file_id, uint16 ref, DFRrig *rig);
 
-static intn DFR8putrig(int32 file_id, uint16 ref, DFRrig *rig, intn wdim);
+static int DFR8putrig(int32 file_id, uint16 ref, DFRrig *rig, int wdim);
 
-static intn DFR8Istart(void);
+static int DFR8Istart(void);
 
 /*--------------------------------------------------------------------------
  NAME
     DFR8setcompress -- set compression scheme for 8-bit image
  USAGE
-    intn DFR8setcompress(type,cinfo)
+    int DFR8setcompress(type,cinfo)
         int32 type;             IN: the type of compression to perform on the
                                     next image
         comp_info *cinfo;       IN: ptr to compression information structure
@@ -158,10 +158,10 @@ static intn DFR8Istart(void);
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DFR8setcompress(int32 type, comp_info *cinfo)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
     if (library_terminate == FALSE)
@@ -194,10 +194,10 @@ done:
     DFR8getdims -- get dimensions of next image from RIG, also if there is a
                     palette
  USAGE
-    intn DFR8getdims(filename,pxdim,pydim,pispal)
+    int DFR8getdims(filename,pxdim,pydim,pispal)
         char *filename;         IN: name of HDF file
         int32 *pxdim, *pydim;   OUT: ptr to locations for returning X & Y dims
-        intn *pispal;           OUT: ptr to location for returning if there is
+        int *pispal;           OUT: ptr to location for returning if there is
                                     a palette
  RETURNS
     SUCCEED on success, FAIL on failure.
@@ -211,11 +211,11 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
-DFR8getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pispal)
+int
+DFR8getdims(const char *filename, int32 *pxdim, int32 *pydim, int *pispal)
 {
     int32 file_id   = (-1);
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     HEclear();
 
@@ -250,7 +250,7 @@ done:
  NAME
     DFR8getimage -- get next image from a RIG, get palette also if desired
  USAGE
-    intn DFR8getimage(filename,image,xdim,ydim,pal)
+    int DFR8getimage(filename,image,xdim,ydim,pal)
         char *filename;         IN: name of HDF file
         uint8 *image;           OUT: ptr to buffer to store image in
         int32 xdim,ydim;        IN: dims of space allocated by user for image
@@ -274,11 +274,11 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DFR8getimage(const char *filename, uint8 *image, int32 xdim, int32 ydim, uint8 *pal)
 {
     int32 file_id   = (-1);
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     HEclear();
 
@@ -348,7 +348,7 @@ done:
  NAME
     DFR8setpalette -- set palette for subsequent images
  USAGE
-    intn DFR8setpalette(pal)
+    int DFR8setpalette(pal)
         uint8 *pal;             IN: 768-byte buffer for palette to use for next
                                     image
  RETURNS
@@ -364,10 +364,10 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DFR8setpalette(uint8 *pal)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
     if (library_terminate == FALSE)
@@ -402,12 +402,12 @@ done:
  NAME
     DFR8Iputimage -- Internal routine to write RIG to file
  USAGE
-    intn DFR8Iputimage(filename, image, xdim, ydim, compress, append)
+    int DFR8Iputimage(filename, image, xdim, ydim, compress, append)
         char *filename;         IN: name of HDF file
         const void * image;            IN: ptr to buffer image is stored in
         int32 xdim,ydim;        IN: dims of space allocated by user for image
         uint16 compress;        IN: type of compression to store image with
-        intn append;            IN: whether to (0) overwrite existing file, or
+        int append;            IN: whether to (0) overwrite existing file, or
                                     (1) append image to file.
  RETURNS
     SUCCEED on success, FAIL on failure.
@@ -425,16 +425,16 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-static intn
-DFR8Iputimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress, intn append)
+static int
+DFR8Iputimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress, int append)
 {
-    intn   acc_mode; /* create if op 0, write if op 1 */
+    int    acc_mode; /* create if op 0, write if op 1 */
     int32  file_id = (-1);
     uint16 r8tag;       /* RIG and raster tags of image being written */
     uint8 *pal;         /* pointer to palette to be written */
     uint8  newpal[768]; /* Imcomp creates new palette to be associated */
-    intn   wdim;        /* have dimensions already been written out? */
-    intn   ret_value = SUCCEED;
+    int    wdim;        /* have dimensions already been written out? */
+    int    ret_value = SUCCEED;
 
     HEclear();
 
@@ -567,7 +567,7 @@ done:
  NAME
     DFR8putimage -- Write 8-bit raster image to HDF file
  USAGE
-    intn DFR8putimage(filename, image, xdim, ydim, compress)
+    int DFR8putimage(filename, image, xdim, ydim, compress)
         char *filename;         IN: name of HDF file
         const void * image;            IN: ptr to buffer to store image in
         int32 xdim,ydim;        IN: dims of space allocated by user for image
@@ -585,10 +585,10 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DFR8putimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress)
 {
-    intn ret_value;
+    int ret_value;
 
     /* Perform global, one-time initialization */
     if (library_terminate == FALSE)
@@ -605,7 +605,7 @@ done:
  NAME
     DFR8addimage -- Append 8-bit raster image to HDF file
  USAGE
-    intn DFR8putimage(filename, image, xdim, ydim, compress)
+    int DFR8putimage(filename, image, xdim, ydim, compress)
         char *filename;         IN: name of HDF file
         const void * image;            IN: ptr to buffer to store image in
         int32 xdim,ydim;        IN: dims of space allocated by user for image
@@ -624,10 +624,10 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DFR8addimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress)
 {
-    intn ret_value;
+    int ret_value;
 
     /* Perform global, one-time initialization */
     if (library_terminate == FALSE)
@@ -649,7 +649,7 @@ done:
  NAME
     DFR8getrig -- Read a RIG into memory
  USAGE
-    intn DFR8getrig(file_id,ref,rig)
+    int DFR8getrig(file_id,ref,rig)
         int32 file_id;          IN: HDF file ID of file to retrieve RIG from
         uint16 ref;             IN: ref # of RIG to get
         DFRrig *rig;            OUT: ptr to RIG structure to place info in
@@ -663,7 +663,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-static intn
+static int
 DFR8getrig(int32 file_id, uint16 ref, DFRrig *rig)
 {
     uint16 elt_tag;
@@ -671,7 +671,7 @@ DFR8getrig(int32 file_id, uint16 ref, DFRrig *rig)
     uint8  ntstring[4];
     int32  GroupID;
     uint8  R8tbuf[64];
-    intn   ret_value = SUCCEED;
+    int    ret_value = SUCCEED;
 
     HEclear();
 
@@ -752,11 +752,11 @@ done:
  NAME
     DFR8putrig -- Write RIG struct out to HDF file
  USAGE
-    intn DFR8putrig(file_id,ref,rig,wdim)
+    int DFR8putrig(file_id,ref,rig,wdim)
         int32 file_id;          IN: HDF file ID of file to put RIG into
         uint16 ref;             IN: ref # of RIG to put
         DFRrig *rig;            IN: ptr to RIG structure to write to file
-        intn wdim;              IN: if (1) write new descr. records, (0)
+        int wdim;              IN: if (1) write new descr. records, (0)
                                     if records already written
  RETURNS
     SUCCEED on success, FAIL on failure.
@@ -769,15 +769,15 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-static intn
-DFR8putrig(int32 file_id, uint16 ref, DFRrig *rig, intn wdim)
+static int
+DFR8putrig(int32 file_id, uint16 ref, DFRrig *rig, int wdim)
 {
     static uint16 prevdimref = 0; /*ref of previous dimension record, to reuse */
     R8dim         im8dim;
     uint8         ntstring[4];
     int32         GroupID;
     uint8         R8tbuf[64];
-    intn          ret_value = SUCCEED;
+    int           ret_value = SUCCEED;
 
     HEclear();
 
@@ -855,7 +855,7 @@ done:
  NAME
     DFR8nimages -- Determines the number of 8-bit raster images in a file
  USAGE
-    intn DFR8nimages(filename)
+    int DFR8nimages(filename)
         char *filename;         IN: filename to check # of images
  RETURNS
     number of images on success, -1 on failure.
@@ -868,23 +868,23 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DFR8nimages(const char *filename)
 {
     int32  file_id;
     int32  group_id;           /* group ID for looking at RIG's */
     uint16 elt_tag, elt_ref;   /* tag/ref of items in a RIG */
-    intn   curr_image;         /* current image gathering information about */
-    intn   nimages;            /* total number of potential images */
+    int    curr_image;         /* current image gathering information about */
+    int    nimages;            /* total number of potential images */
     int32  nrig, nri8, nci8;   /* number of RIGs, RI8s, and CI8s */
     int32 *img_off;            /* storage for an array of image offsets */
     uint16 rig_tag, rig_ref;   /* storage for tag/ref pairs of RIGs */
-    intn   found_8bit;         /* indicates whether a RIG is an 8-bit RIG */
+    int    found_8bit;         /* indicates whether a RIG is an 8-bit RIG */
     uint16 find_tag, find_ref; /* storage for tag/ref pairs found */
     int32  find_off, find_len; /* storage for offset/lengths of tag/refs found */
     uint8  GRtbuf[64];         /* local buffer to read the ID element into */
-    intn   i, j;               /* local counting variable */
-    intn   ret_value = SUCCEED;
+    int    i, j;               /* local counting variable */
+    int    ret_value = SUCCEED;
 
     HEclear();
 
@@ -910,7 +910,7 @@ DFR8nimages(const char *filename)
     nci8 = Hnumber(file_id, DFTAG_CI8);
     if (nci8 == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
-    nimages = (intn)(nrig + nri8 + nci8);
+    nimages = (int)(nrig + nri8 + nci8);
 
     /* if there are no images just close the file and get out */
     if (nimages == 0) {
@@ -963,10 +963,11 @@ DFR8nimages(const char *filename)
                                                       elt_tag == DFTAG_RI) { /* keep for later */
                     rig_tag = elt_tag;
                     rig_ref = elt_ref;
-                }                                                         /* end if */
-        }                                                                 /* end while */
-        if (found_8bit) {                                                 /* check for finding an 8-bit RIG */
-            if ((uintn)rig_tag > (uintn)0 && (uintn)rig_ref > (uintn)0) { /* make certain we found an image */
+                }         /* end if */
+        }                 /* end while */
+        if (found_8bit) { /* check for finding an 8-bit RIG */
+            if ((unsigned)rig_tag > (unsigned)0 &&
+                (unsigned)rig_ref > (unsigned)0) {                        /* make certain we found an image */
                 img_off[curr_image] = Hoffset(file_id, rig_tag, rig_ref); /* store offset */
                 curr_image++;
             } /* end if */
@@ -1013,7 +1014,7 @@ done:
  NAME
     DFR8readref -- Set ref of image to get next
  USAGE
-    intn DFR8readref(char *filename, uint16 ref)
+    int DFR8readref(char *filename, uint16 ref)
         char *filename;         IN: filename to set read ref #
         uint16 ref;             IN: ref# of next image to read
  RETURNS
@@ -1027,12 +1028,12 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DFR8readref(const char *filename, uint16 ref)
 {
     int32 file_id = (-1);
     int32 aid;
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     HEclear();
 
@@ -1067,7 +1068,7 @@ done:
  NAME
     DFR8writeref -- Set ref of image to put next
  USAGE
-    intn DFR8writeref(char *filename, uint16 ref)
+    int DFR8writeref(char *filename, uint16 ref)
         char *filename;         IN: filename to set write ref #
         uint16 ref;             IN: ref# of next image to write
  RETURNS
@@ -1080,10 +1081,10 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DFR8writeref(const char *filename, uint16 ref)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     (void)filename;
 
@@ -1104,7 +1105,7 @@ done:
  NAME
     DFR8restart -- Restart reading/writing from beginning of file
  USAGE
-    intn DFR8restart(void)
+    int DFR8restart(void)
  RETURNS
     SUCCEED on success, FAIL on failure.
  DESCRIPTION
@@ -1115,10 +1116,10 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DFR8restart(void)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
     if (library_terminate == FALSE)
@@ -1172,10 +1173,10 @@ done:
  * RETURNS
  *   SUCCEED.
 --------------------------------------------------------------------------*/
-intn
+int
 DFR8getpalref(uint16 *pal_ref)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     HEclear();
 
@@ -1200,7 +1201,7 @@ done:
  USAGE
     int32 DFR8Iopen(filename, acc_mode)
         char *filename;             IN: name of file to open
-        intn acc_mode;                IN: access mode to open file with
+        int acc_mode;                IN: access mode to open file with
  RETURNS
     HDF file ID on success, FAIL on failure
  DESCRIPTION
@@ -1214,7 +1215,7 @@ done:
  REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
-DFR8Iopen(const char *filename, intn acc_mode)
+DFR8Iopen(const char *filename, int acc_mode)
 {
     int32 file_id;
     int32 ret_value = SUCCEED;
@@ -1251,7 +1252,7 @@ done:
  NAME
     DFR8Iriginfo -- Get information about next RIG or RI8 in file
  USAGE
-    intn DFR8Iriginfo(file_id)
+    int DFR8Iriginfo(file_id)
         int32 file_id;              IN: HDF file ID to read from
  RETURNS
     SUCCEED on success, FAIL on failure
@@ -1266,14 +1267,14 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-static intn
+static int
 DFR8Iriginfo(int32 file_id)
 {
     uint16 riref = 0, ciref = 0;
     int32  aid = FAIL;
     uint16 ref;
     uint8  R8tbuf[64];
-    intn   ret_value = SUCCEED;
+    int    ret_value = SUCCEED;
 
     HEclear();
     /* find next rig */
@@ -1409,7 +1410,7 @@ done:
  PURPOSE
     DFR8-level initialization routine
  USAGE
-    intn DFR8Istart()
+    int DFR8Istart()
  RETURNS
     Returns SUCCEED/FAIL
  DESCRIPTION
@@ -1419,10 +1420,10 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-static intn
+static int
 DFR8Istart(void)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* Don't call this routine again... */
     library_terminate = TRUE;
@@ -1441,7 +1442,7 @@ done:
  PURPOSE
     Terminate various static buffers.
  USAGE
-    intn DFR8shutdown()
+    int DFR8shutdown()
  RETURNS
     Returns SUCCEED/FAIL
  DESCRIPTION
@@ -1452,7 +1453,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DFR8Pshutdown(void)
 {
     free(paletteBuf);

@@ -48,7 +48,7 @@ static int32 fmtshort(char *x);
 
 static int32 fmtdouble(char *x);
 
-static intn dumpattr(int32 vid, intn full, intn isvs);
+static int dumpattr(int32 vid, int full, int isvs);
 
 int
 main(int ac, char **av)
@@ -483,22 +483,22 @@ vsdumpfull(int32 vs)
 
 } /* vsdumpfull */
 /* ------------------------------------------------ */
-static intn
-dumpattr(int32 vid, intn full, intn isvs)
+static int
+dumpattr(int32 vid, int full, int isvs)
 {
     int           i, j, k, _cn = 0;
     VDATA        *vs;
     vsinstance_t *vs_inst;
     VGROUP       *vg;
     vginstance_t *v;
-    intn          ret, nattrs, f_nattrs, alloc_flag = 0;
+    int           ret, nattrs, f_nattrs, alloc_flag = 0;
     vs_attr_t    *vs_alist;
     vg_attr_t    *v_alist;
     int32         i_type, i_count, i_size, off;
     uint8        *buf      = NULL, *ptr;
     int32 (*fmtfn)(char *) = NULL;
     char  name[FIELDNAMELENMAX + 1];
-    intn  ret_val = SUCCEED;
+    int   ret_val = SUCCEED;
     uint8 attrbuf[BUFFER];
 
     if (isvs) {

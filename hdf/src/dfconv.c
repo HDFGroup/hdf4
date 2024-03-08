@@ -197,7 +197,7 @@ DFKNTsize(int32 number_type)
  * DFKsetNT()
  *   Set the number type for future conversion calls
  ************************************************************/
-intn
+int
 DFKsetNT(int32 ntype)
 {
     HEclear();

@@ -62,7 +62,7 @@ EXPORTED ROUTINES
 #include "vg_priv.h"
 
 /* Private Function Prototypes */
-static intn vunpackvs(VDATA *vs, uint8 buf[], int32 len);
+static int vunpackvs(VDATA *vs, uint8 buf[], int32 len);
 
 /* Temporary buffer for I/O */
 static uint32 Vhbufsize = 0;
@@ -200,10 +200,10 @@ VSIrelease_vsinstance_node(vsinstance_t *vs /* IN: vinstance node to release */)
  COMMENTS, BUGS, ASSUMPTIONS
     Should only ever be called by the "atexit" function HDFend
 *******************************************************************************/
-intn
+int
 VSPhshutdown(void)
 {
-    intn          ret_value = SUCCEED;
+    int           ret_value = SUCCEED;
     VDATA        *v         = NULL;
     vsinstance_t *vs        = NULL;
 
@@ -356,7 +356,7 @@ RETURNS
    always SUCCEED?
 
 *******************************************************************************/
-intn
+int
 vpackvs(VDATA *vs,    /* IN/OUT: */
         uint8  buf[], /* IN: */
         int32 *size /* OUT: */)
@@ -364,7 +364,7 @@ vpackvs(VDATA *vs,    /* IN/OUT: */
     int32  i;
     int16  slen;
     uint8 *bb        = NULL;
-    intn   ret_value = SUCCEED;
+    int    ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -471,7 +471,7 @@ RETURNS
    SUCCEED / FAIL
 
 *******************************************************************************/
-static intn
+static int
 vunpackvs(VDATA *vs,    /* IN/OUT: */
           uint8  buf[], /* IN: */
           int32  len /* IN: */)
@@ -512,7 +512,7 @@ vunpackvs(VDATA *vs,    /* IN/OUT: */
 
         /* retrieve nfields */
         INT16DECODE(bb, int16var);
-        vs->wlist.n = (intn)int16var;
+        vs->wlist.n = (int)int16var;
 
         if (vs->wlist.n < 0) {
             /* Negative numbers are an error and would cause enormous buffers
@@ -617,7 +617,7 @@ vunpackvs(VDATA *vs,    /* IN/OUT: */
 
         if (vs->version <= VSET_OLD_TYPES) {
             for (i = 0; i < vs->wlist.n; i++) /* save the type */
-                vs->wlist.type[i] = map_from_old_types((intn)vs->wlist.type[i]);
+                vs->wlist.type[i] = map_from_old_types((int)vs->wlist.type[i]);
         }
 
         /* --- EXTRA --- fill in the machine-dependent size fields */
@@ -649,7 +649,7 @@ void
 vsdestroynode(void *n /* IN: Node in TBBT-tree */)
 {
     VDATA *vs = NULL;
-    intn   i;
+    int    i;
 
     if (n != NULL) {
         vs = ((vsinstance_t *)n)->vs;
@@ -856,7 +856,7 @@ VSattach(HFILEID     f,    /* IN: file handle */
 
         vf->vstabn++;
         w->key       = (int32)vs->oref; /* set the key for the node */
-        w->ref       = (uintn)vs->oref;
+        w->ref       = (unsigned)vs->oref;
         w->vs        = vs;
         w->nattach   = 1;
         w->nvertices = 0;

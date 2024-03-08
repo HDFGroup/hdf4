@@ -43,8 +43,8 @@ extern "C" {
     Returns pointer to the dynarray created if successful and NULL otherwise
 
 *******************************************************************************/
-dynarr_p DAcreate_array(intn start_size, /* IN: Initial array size */
-                        intn incr_mult   /* IN: multiple to create additional elements in */
+dynarr_p DAcreate_array(int start_size, /* IN: Initial array size */
+                        int incr_mult   /* IN: multiple to create additional elements in */
 );
 
 /******************************************************************************
@@ -59,8 +59,8 @@ dynarr_p DAcreate_array(intn start_size, /* IN: Initial array size */
     Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
-intn DAdestroy_array(dynarr_p arr,      /* IN: Array to destroy */
-                     intn     free_elem /* IN: whether to free each element */
+int DAdestroy_array(dynarr_p arr,      /* IN: Array to destroy */
+                    int      free_elem /* IN: whether to free each element */
 );
 
 /******************************************************************************
@@ -74,7 +74,7 @@ intn DAdestroy_array(dynarr_p arr,      /* IN: Array to destroy */
     Returns # of dynarray elements if successful and FAIL otherwise
 
 *******************************************************************************/
-intn DAsize_array(dynarr_p arr /* IN: Array to get size of */
+int DAsize_array(dynarr_p arr /* IN: Array to get size of */
 );
 
 /******************************************************************************
@@ -91,7 +91,7 @@ intn DAsize_array(dynarr_p arr /* IN: Array to get size of */
 
 *******************************************************************************/
 void *DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
-                 intn     elem     /* IN: Array element to retrieve */
+                 int      elem     /* IN: Array element to retrieve */
 );
 
 /******************************************************************************
@@ -108,9 +108,9 @@ void *DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
     Returns SUCCEED if successful and NULL otherwise
 
 *******************************************************************************/
-intn DAset_elem(dynarr_p arr_ptr, /* IN: Array to access */
-                intn     elem,    /* IN: Array element to set */
-                void    *obj      /* IN: Pointer to the object to store */
+int DAset_elem(dynarr_p arr_ptr, /* IN: Array to access */
+               int      elem,    /* IN: Array element to set */
+               void    *obj      /* IN: Pointer to the object to store */
 );
 
 /*****************************************************************************
@@ -127,7 +127,7 @@ intn DAset_elem(dynarr_p arr_ptr, /* IN: Array to access */
 
 *******************************************************************************/
 void *DAdel_elem(dynarr_p arr_ptr, /* IN: Array to access */
-                 intn     elem     /* IN: Array element to retrieve */
+                 int      elem     /* IN: Array element to retrieve */
 );
 
 #ifdef __cplusplus

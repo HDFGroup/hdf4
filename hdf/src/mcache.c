@@ -56,7 +56,7 @@
 /* Private routines */
 static BKT *mcache_bkt(MCACHE *mp);
 static BKT *mcache_look(MCACHE *mp, int32 pgno);
-static intn mcache_write(MCACHE *mp, BKT *bkt);
+static int  mcache_write(MCACHE *mp, BKT *bkt);
 
 /******************************************************************************
 NAME
@@ -173,8 +173,8 @@ mcache_open(void *key,       /* IN: byte string used as handle to share buffers 
     struct _lhqh *lhead     = NULL; /* head of an entry in list hash chain */
     MCACHE       *mp        = NULL; /* MCACHE cookie */
     L_ELEM       *lp        = NULL;
-    intn          ret_value = RET_SUCCESS;
-    intn          entry; /* index into hash table */
+    int           ret_value = RET_SUCCESS;
+    int           entry; /* index into hash table */
     int32         pageno;
 
     (void)key;
@@ -307,8 +307,8 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
     struct _lhqh *lhead     = NULL; /* head of an entry in list hash chain */
     BKT          *bp        = NULL; /* bucket element */
     L_ELEM       *lp        = NULL;
-    intn          ret_value = RET_SUCCESS;
-    intn          list_hit; /* hit flag */
+    int           ret_value = RET_SUCCESS;
+    int           list_hit; /* hit flag */
 
     (void)flags;
 
@@ -400,14 +400,14 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
            Not the original intention. */
         if (mp->pgin != NULL) { /* Note page numbers in HMCPxxx are 0 based not 1 based */
             if (((mp->pgin)(mp->pgcookie, pgno - 1, bp->page)) == FAIL) {
-                HEreport("mcache_get: error reading chunk=%d\n", (intn)pgno - 1);
+                HEreport("mcache_get: error reading chunk=%d\n", (int)pgno - 1);
                 lp        = NULL; /* don't clobber the cache! */
                 ret_value = RET_ERROR;
                 goto done;
             }
         }
         else {
-            HEreport("mcache_get: reading fcn not set,chunk=%d\n", (intn)pgno - 1);
+            HEreport("mcache_get: reading fcn not set,chunk=%d\n", (int)pgno - 1);
             lp        = NULL;
             ret_value = RET_ERROR;
             goto done;
@@ -445,7 +445,7 @@ DESCRIPTION
 RETURNS
     RET_SUCCESS if successful and RET_ERROR otherwise
 ******************************************************************************/
-intn
+int
 mcache_put(MCACHE *mp,   /* IN: MCACHE cookie */
            void   *page, /* IN: page to put */
            int32   flags /* IN: flags = 0, MCACHE_DIRTY */)
@@ -453,7 +453,7 @@ mcache_put(MCACHE *mp,   /* IN: MCACHE cookie */
     struct _lhqh *lhead     = NULL; /* head of an entry in list hash chain */
     L_ELEM       *lp        = NULL;
     BKT          *bp        = NULL; /* bucket element ptr */
-    intn          ret_value = RET_SUCCESS;
+    int           ret_value = RET_SUCCESS;
 
     /* check inputs */
     if (mp == NULL || page == NULL)
@@ -497,13 +497,13 @@ DESCRIPTION
 RETURNS
    RET_SUCCESS if successful and RET_ERROR otherwise
 ******************************************************************************/
-intn
+int
 mcache_close(MCACHE *mp /* IN: MCACHE cookie */)
 {
     L_ELEM *lp        = NULL;
     BKT    *bp        = NULL; /* bucket element */
-    intn    ret_value = RET_SUCCESS;
-    intn    entry; /* index into hash table */
+    int     ret_value = RET_SUCCESS;
+    int     entry; /* index into hash table */
 
     /* check inputs */
     if (mp == NULL)
@@ -544,11 +544,11 @@ DESCRIPTION
 RETURNS
    RET_SUCCESS if successful and RET_ERROR otherwise
 ******************************************************************************/
-intn
+int
 mcache_sync(MCACHE *mp /* IN: MCACHE cookie */)
 {
     BKT *bp        = NULL; /* bucket element */
-    intn ret_value = RET_SUCCESS;
+    int  ret_value = RET_SUCCESS;
 
     /* check inputs */
     if (mp == NULL)
@@ -589,7 +589,7 @@ mcache_bkt(MCACHE *mp /* IN: MCACHE cookie */)
 {
     struct _hqh *head      = NULL; /* head of hash chain */
     BKT         *bp        = NULL; /* bucket element */
-    intn         ret_value = RET_SUCCESS;
+    int          ret_value = RET_SUCCESS;
 
     /* check inputs */
     if (mp == NULL)
@@ -623,7 +623,8 @@ mcache_bkt(MCACHE *mp /* IN: MCACHE cookie */)
         } /* end if bp->flags */
 
     /* create a new page */
-    new : if ((bp = (BKT *)malloc(sizeof(BKT) + (uintn)mp->pagesize)) == NULL) HGOTO_ERROR(DFE_NOSPACE, FAIL);
+    new : if ((bp = (BKT *)malloc(sizeof(BKT) + (unsigned)mp->pagesize)) == NULL)
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
 #ifdef STATISTICS
     ++mp->pagealloc;
@@ -658,7 +659,7 @@ mcache_write(MCACHE *mp, /* IN: MCACHE cookie */
 {
     struct _lhqh *lhead     = NULL; /* head of an entry in list hash chain */
     L_ELEM       *lp        = NULL;
-    intn          ret_value = RET_SUCCESS;
+    int           ret_value = RET_SUCCESS;
 
     /* check inputs */
     if (mp == NULL || bp == NULL)
@@ -685,13 +686,13 @@ mcache_write(MCACHE *mp, /* IN: MCACHE cookie */
        This deviates from the original purpose of the filter. */
     if (mp->pgout) { /* Note page numbers in HMCPxxx are 0 based not 1 based */
         if (((mp->pgout)(mp->pgcookie, bp->pgno - 1, bp->page)) == FAIL) {
-            HEreport("mcache_write: error writing chunk=%d\n", (intn)bp->pgno);
+            HEreport("mcache_write: error writing chunk=%d\n", (int)bp->pgno);
             ret_value = RET_ERROR;
             goto done;
         }
     }
     else {
-        HEreport("mcache_write: writing fcn not set,chunk=%d\n", (intn)bp->pgno);
+        HEreport("mcache_write: writing fcn not set,chunk=%d\n", (int)bp->pgno);
         ret_value = RET_ERROR;
         goto done;
     }
@@ -806,9 +807,9 @@ mcache_stat(MCACHE *mp /* IN: MCACHE cookie */)
     BKT          *bp    = NULL; /* bucket element */
     L_ELEM       *lp    = NULL;
     char         *sep   = NULL;
-    intn          entry; /* index into hash table */
-    intn          cnt;
-    intn          hitcnt;
+    int           entry; /* index into hash table */
+    int           cnt;
+    int           hitcnt;
 
 #ifdef H4_HAVE_GETRUSAGE
     myrusage();

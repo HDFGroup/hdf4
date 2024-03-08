@@ -25,10 +25,10 @@ uint8 red_comp[256], green_comp[256], blue_comp[256];
 
 comp_info cinfo; /* compression structure */
 
-static intn magnify(uint8 *from_buffer, uint8 *to_buffer, int32 from_x0, int32 from_y0, int32 from_x1,
-                    int32 from_y1, int32 from_width, int32 from_height, int32 to_width, int32 to_height);
+static int magnify(uint8 *from_buffer, uint8 *to_buffer, int32 from_x0, int32 from_y0, int32 from_x1,
+                   int32 from_y1, int32 from_width, int32 from_height, int32 to_width, int32 to_height);
 
-static intn convert8to24(uint8 *img8_buf, uint8 *img24_buf, int32 img_xdim, int32 img_ydim);
+static int convert8to24(uint8 *img8_buf, uint8 *img24_buf, int32 img_xdim, int32 img_ydim);
 
 static void usage(void);
 
@@ -59,7 +59,7 @@ static void usage(void);
  *  Calls    :
  *  Called by    :
  **********************************************************************/
-static intn
+static int
 magnify(uint8 *from_buffer, uint8 *to_buffer, int32 from_x0, int32 from_y0, int32 from_x1, int32 from_y1,
         int32 from_width, int32 from_height, int32 to_width, int32 to_height)
 {
@@ -142,7 +142,7 @@ XCoorFailed: /* Failed to allocate memory for the X coor. lookup table */
  *  Calls    :
  *  Called by    :
  **********************************************************************/
-static intn
+static int
 convert8to24(uint8 *img8_buf, uint8 *img24_buf, int32 img_xdim, int32 img_ydim)
 {
     uint32 pixels; /* local counting variable */
@@ -181,17 +181,17 @@ usage(void)
 int
 main(int argc, char *argv[])
 {
-    intn    do_jpeg   = FALSE;        /* flag to indicate JPEG compression */
-    intn    jpeg_qual = 75;           /* JPEG quality factor */
-    intn    do_scale  = FALSE;        /* flag to indicate whether to scale images */
+    int     do_jpeg   = FALSE;        /* flag to indicate JPEG compression */
+    int     jpeg_qual = 75;           /* JPEG quality factor */
+    int     do_scale  = FALSE;        /* flag to indicate whether to scale images */
     float32 img_scale = (float32)1.0; /* scaling factor */
     int32   xdim, ydim;               /* dimensions of the image to convert */
-    intn    ispal;                    /* whether there's a palette with the image */
+    int     ispal;                    /* whether there's a palette with the image */
     uint8  *img_buf;                  /* buffer to store the image in */
     uint8  *img24_buf;                /* buffer to store the 24-bit image in */
     uint8  *pal_buf = NULL;           /* buffer to store the palette in */
-    intn    file    = 1;              /* the argument the files start at */
-    intn    i;                        /* local counting variable */
+    int     file    = 1;              /* the argument the files start at */
+    int     i;                        /* local counting variable */
 
     if (argc < 3)
         usage();

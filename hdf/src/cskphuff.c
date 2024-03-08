@@ -44,7 +44,7 @@ funclist_t cskphuff_funcs = {HCPcskphuff_stread,
                              NULL};
 
 /* declaration of the functions provided in this module */
-static int32 HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf);
+static int32 HCIcskphuff_init(accrec_t *access_rec, unsigned alloc_buf);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -69,12 +69,12 @@ static int32 HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf);
 static void
 HCIcskphuff_splay(comp_coder_skphuff_info_t *skphuff_info, uint8 plain)
 {
-    uintn  a, b;     /* children of nodes to semi-rotate */
-    uint8  c, d;     /* pair of nodes to semi-rotate */
-    intn   skip_num; /* the tree we are splaying */
-    uintn *lleft,    /* local copy of the left pointer */
-        *lright;     /* local copy of the right pointer */
-    uint8 *lup;      /* local copy of the up pointer */
+    unsigned  a, b;     /* children of nodes to semi-rotate */
+    uint8     c, d;     /* pair of nodes to semi-rotate */
+    int       skip_num; /* the tree we are splaying */
+    unsigned *lleft,    /* local copy of the left pointer */
+        *lright;        /* local copy of the right pointer */
+    uint8 *lup;         /* local copy of the up pointer */
 
     skip_num = skphuff_info->skip_pos; /* get the tree number to splay */
 
@@ -83,15 +83,15 @@ HCIcskphuff_splay(comp_coder_skphuff_info_t *skphuff_info, uint8 plain)
     lright = skphuff_info->right[skip_num];
     lup    = skphuff_info->up[skip_num];
 
-    a = (uintn)plain + SUCCMAX; /* get the index for this source code in the up array */
-    do {                        /* walk up the tree, semi-rotating pairs */
-        c = lup[a];             /* find the parent of the node to semi-rotate around */
-        if (c != ROOT) {        /* a pair remain above this node */
-            d = lup[(int)c];    /* get the grand-parent of the node to semi-rotate around */
+    a = (unsigned)plain + SUCCMAX; /* get the index for this source code in the up array */
+    do {                           /* walk up the tree, semi-rotating pairs */
+        c = lup[a];                /* find the parent of the node to semi-rotate around */
+        if (c != ROOT) {           /* a pair remain above this node */
+            d = lup[(int)c];       /* get the grand-parent of the node to semi-rotate around */
             b = lleft[(int)d];
 
             /* Exchange the children of the pair */
-            if ((uintn)c == b) {
+            if ((unsigned)c == b) {
                 b              = lright[(int)d];
                 lright[(int)d] = a;
             } /* end if */
@@ -105,10 +105,10 @@ HCIcskphuff_splay(comp_coder_skphuff_info_t *skphuff_info, uint8 plain)
 
             lup[a] = d;
             lup[b] = c;
-            a      = (uintn)d;
+            a      = (unsigned)d;
         }      /* end if */
         else { /* handle odd node at end */
-            a = (uintn)c;
+            a = (unsigned)c;
         } /* end else */
     } while (a != ROOT);
 } /* end HCIcskphuff_splay() */
@@ -120,7 +120,7 @@ HCIcskphuff_splay(comp_coder_skphuff_info_t *skphuff_info, uint8 plain)
  USAGE
     int32 HCIcskphuff_init(access_rec)
     accrec_t *access_rec;   IN: the access record of the data element
-    uintn alloc_buf;        IN: whether to allocate the buffers or not
+    unsigned alloc_buf;        IN: whether to allocate the buffers or not
 
  RETURNS
     Returns SUCCEED or FAIL
@@ -134,11 +134,11 @@ HCIcskphuff_splay(comp_coder_skphuff_info_t *skphuff_info, uint8 plain)
  REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
-HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
+HCIcskphuff_init(accrec_t *access_rec, unsigned alloc_buf)
 {
     compinfo_t                *info;         /* special element information */
     comp_coder_skphuff_info_t *skphuff_info; /* ptr to skphuff info */
-    intn                       i, j, k;      /* local counting var */
+    int                        i, j, k;      /* local counting var */
 
     info = (compinfo_t *)access_rec->special_info;
 
@@ -153,19 +153,21 @@ HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
 
     if (alloc_buf == TRUE) {
         /* allocate pointers to the compression buffers */
-        if ((skphuff_info->left = (uintn **)malloc(sizeof(uintn *) * (uintn)skphuff_info->skip_size)) == NULL)
+        if ((skphuff_info->left =
+                 (unsigned **)malloc(sizeof(unsigned *) * (unsigned)skphuff_info->skip_size)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
-        if ((skphuff_info->right = (uintn **)malloc(sizeof(uintn *) * (uintn)skphuff_info->skip_size)) ==
+        if ((skphuff_info->right =
+                 (unsigned **)malloc(sizeof(unsigned *) * (unsigned)skphuff_info->skip_size)) == NULL)
+            HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        if ((skphuff_info->up = (uint8 **)malloc(sizeof(uint8 *) * (unsigned)skphuff_info->skip_size)) ==
             NULL)
-            HRETURN_ERROR(DFE_NOSPACE, FAIL);
-        if ((skphuff_info->up = (uint8 **)malloc(sizeof(uint8 *) * (uintn)skphuff_info->skip_size)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
         /* allocate compression buffer for each skipping byte */
         for (i = 0; i < skphuff_info->skip_size; i++) {
-            if ((skphuff_info->left[i] = (uintn *)malloc(sizeof(uintn) * SUCCMAX)) == NULL)
+            if ((skphuff_info->left[i] = (unsigned *)malloc(sizeof(unsigned) * SUCCMAX)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
-            if ((skphuff_info->right[i] = (uintn *)malloc(sizeof(uintn) * SUCCMAX)) == NULL)
+            if ((skphuff_info->right[i] = (unsigned *)malloc(sizeof(unsigned) * SUCCMAX)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
             if ((skphuff_info->up[i] = (uint8 *)malloc(sizeof(uint8) * TWICEMAX)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -177,8 +179,8 @@ HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
             skphuff_info->up[k][i] = (uint8)(i >> 1);
 
         for (j = 0; j < SUCCMAX; j++) { /* initialize the left & right pointers correctly */
-            skphuff_info->left[k][j]  = (uintn)(j << 1);
-            skphuff_info->right[k][j] = (uintn)((j << 1) + 1);
+            skphuff_info->left[k][j]  = (unsigned)(j << 1);
+            skphuff_info->right[k][j] = (unsigned)((j << 1) + 1);
         } /* end for */
     }     /* end for */
 
@@ -212,7 +214,7 @@ HCIcskphuff_decode(compinfo_t *info, int32 length, uint8 *buf)
     comp_coder_skphuff_info_t *skphuff_info; /* ptr to skipping Huffman info */
     int32                      orig_length;  /* original length to read */
     uint32                     bit;          /* bit from the file */
-    uintn                      a;
+    unsigned                   a;
     uint8                      plain; /* the source code expanded from the file */
 
     skphuff_info = &(info->cinfo.coder_info.skphuff_info);
@@ -265,24 +267,24 @@ HCIcskphuff_encode(compinfo_t *info, int32 length, const uint8 *buf)
 {
     comp_coder_skphuff_info_t *skphuff_info; /* ptr to skipping Huffman info */
     int32                      orig_length;  /* original length to write */
-    intn                       stack_ptr;    /* pointer to the position on the stack */
-    uintn                      a, last_node; /* variables to record the current & last position in the tree */
+    int                        stack_ptr;    /* pointer to the position on the stack */
+    unsigned                   a, last_node; /* variables to record the current & last position in the tree */
     uint32                     output_bits[(SKPHUFF_MAX_CHAR / 4) + 1], /* bits to write out */
         bit_count[(SKPHUFF_MAX_CHAR / 4) + 1], /* # of bits stored in each stack location */
         bit_mask;                              /* bit-mask for accumulating bits to output */
 
     skphuff_info = &(info->cinfo.coder_info.skphuff_info);
 
-    orig_length = length;                       /* save this for later */
-    while (length > 0) {                        /* encode until we stored all the bytes */
-        a              = (uintn)*buf + SUCCMAX; /* find position in the up array */
+    orig_length = length;                          /* save this for later */
+    while (length > 0) {                           /* encode until we stored all the bytes */
+        a              = (unsigned)*buf + SUCCMAX; /* find position in the up array */
         stack_ptr      = 0;
         bit_mask       = 1; /* initialize to the lowest bit */
         output_bits[0] = 0;
         bit_count[0]   = 0;
-        do {               /* walk up the tree, pushing bits */
-            last_node = a; /* keep track of the current node */
-            a         = (uintn)skphuff_info->up[skphuff_info->skip_pos][a]; /* move the current node up one */
+        do {                                                           /* walk up the tree, pushing bits */
+            last_node = a;                                             /* keep track of the current node */
+            a = (unsigned)skphuff_info->up[skphuff_info->skip_pos][a]; /* move the current node up one */
             if (skphuff_info->right[skphuff_info->skip_pos][a] == last_node)
                 output_bits[stack_ptr] |= bit_mask; /* push a 1 if this is the right node */
             bit_mask <<= 1;                         /* rotate bit mask over */
@@ -297,8 +299,8 @@ HCIcskphuff_encode(compinfo_t *info, int32 length, const uint8 *buf)
 
         do { /* output the bits we have */
             if (bit_count[stack_ptr] > 0) {
-                if (Hbitwrite(info->aid, (intn)bit_count[stack_ptr], output_bits[stack_ptr]) !=
-                    (intn)bit_count[stack_ptr])
+                if (Hbitwrite(info->aid, (int)bit_count[stack_ptr], output_bits[stack_ptr]) !=
+                    (int)bit_count[stack_ptr])
                     HRETURN_ERROR(DFE_CENCODE, FAIL);
             } /* end if */
             stack_ptr--;
@@ -337,7 +339,7 @@ static int32
 HCIcskphuff_term(compinfo_t *info)
 {
     comp_coder_skphuff_info_t *skphuff_info; /* ptr to skipping Huffman info */
-    intn                       i;            /* local counting variable */
+    int                        i;            /* local counting variable */
 
     skphuff_info = &(info->cinfo.coder_info.skphuff_info);
 
@@ -469,7 +471,7 @@ HCPcskphuff_stwrite(accrec_t *access_rec)
     int32 HCPcskphuff_seek(access_rec,offset,origin)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 offset;       IN: the offset in bytes from the origin specified
-    intn origin;        IN: the origin to seek from [UNUSED!]
+    int origin;        IN: the origin to seek from [UNUSED!]
 
  RETURNS
     Returns SUCCEED or FAIL
@@ -661,7 +663,7 @@ HCPcskphuff_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 HCPcskphuff_endaccess(accrec_t *access_rec)
 {
     compinfo_t *info; /* special element information */

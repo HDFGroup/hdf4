@@ -64,7 +64,7 @@ wrapup_cdata(void)
 static void
 test_little_read(void)
 {
-    intn     rank;
+    int      rank;
     int32    dimsizes[2] = {-1, -1};
     int32    numbertype;
     int8    *data_i8;
@@ -310,7 +310,7 @@ test_little_read(void)
 static void
 test_little_write(void)
 {
-    intn     rank;
+    int      rank;
     int32    dimsizes[2];
     int32    numbertype;
     int8    *data_i8;

@@ -30,11 +30,11 @@ intf
 ngetverb(void)
 {
     char *verb_str;
-    intn  verb_level = FAIL;
+    int   verb_level = FAIL;
     verb_str         = getenv(FOR_VERB);
 
     if (verb_str != NULL)
-        verb_level = (intn)strtol(verb_str, NULL, 0); /* convert whole string using base 10 */
+        verb_level = (int)strtol(verb_str, NULL, 0); /* convert whole string using base 10 */
     return (intf)verb_level;
 } /* end getverb() */
 
@@ -54,7 +54,7 @@ nhisystem(_fcd cmd, intf *cmdlen)
     char *fn;
     intf  ret;
 
-    fn = HDf2cstring(cmd, (intn)*cmdlen);
+    fn = HDf2cstring(cmd, (int)*cmdlen);
     if (!fn)
         return FAIL;
     ret = (intf)system(fn);
@@ -83,7 +83,7 @@ nfixnamec(_fcd name, intf *name_len, _fcd name_out, intf *name_len_out)
     char  testfile[1024] = "";
     char *srcdir         = getenv("srcdir");
 
-    c_name = HDf2cstring(name, (intn)*name_len);
+    c_name = HDf2cstring(name, (int)*name_len);
     if (!c_name)
         return FAIL;
 

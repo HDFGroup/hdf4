@@ -589,7 +589,7 @@ makeChunkInfo(JNIEnv *env, jobject chunkobj, int32 flgs, HDF_CHUNK_DEF *cinf)
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_HCget_1config_1info(JNIEnv *env, jclass clss, jint coder_type)
 {
-    intn   rval                    = FAIL;
+    int    rval                    = FAIL;
     uint32 compression_config_info = 0;
 
     UNUSED(env);

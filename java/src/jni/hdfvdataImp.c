@@ -328,7 +328,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_VSinquire(JNIEnv *env, jclass clss, jlong vdata_id, jintArray iargs,
                                      jobjectArray sargs)
 {
-    intn     rval    = FAIL;
+    int      rval    = FAIL;
     char    *flds    = NULL;
     char    *name    = NULL;
     jint    *theArgs = NULL;
@@ -391,7 +391,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_VSgetblockinfo(JNIEnv *env, jclass clss, jlong vdata_id, jintArray iargs)
 {
-    intn     rval    = FAIL;
+    int      rval    = FAIL;
     jint    *theArgs = NULL;
     jboolean isCopy;
 
@@ -604,8 +604,8 @@ Java_hdf_hdflib_HDFLibrary_VSfpack(JNIEnv *env, jclass clss, jlong vdata_id, jin
     UNUSED(bufptrs);
 
     /*
-        VSfpack((int32) vdata_id, (intn) action, char
-            *fields_in_buf, void * buf, intn buf_size, intn
+        VSfpack((int32) vdata_id, (int) action, char
+            *fields_in_buf, void * buf, int buf_size, int
             n_records, char *fields, void * bufptrs[]);
     */
     H4_UNIMPLEMENTED(ENVONLY, "VSfpack");
@@ -655,7 +655,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_VSsetexternalfile(JNIEnv *env, jclass clss, jint vkey, jstring filename,
                                              jint offset)
 {
-    intn        rval = FAIL;
+    int         rval = FAIL;
     const char *str  = NULL;
 
     UNUSED(clss);
@@ -777,7 +777,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_VSfindex(JNIEnv *env, jclass clss, jlong id, jstring name, jintArray findex)
 {
-    intn        rval = FAIL;
+    int         rval = FAIL;
     const char *str  = NULL;
     jint       *arr  = NULL;
     jboolean    isCopy;
@@ -831,7 +831,7 @@ done:
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VSfnattrs(JNIEnv *env, jclass clss, jlong id, jint attr)
 {
-    intn rval = -1;
+    int rval = -1;
 
     UNUSED(clss);
 
@@ -846,7 +846,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_VSgetattr(JNIEnv *env, jclass clss, jlong id, jint field_index, jint attr_index,
                                      jbyteArray values)
 {
-    intn     rval = FAIL;
+    int      rval = FAIL;
     jbyte   *arr  = NULL;
     jboolean isCopy;
 
@@ -870,7 +870,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_VSisattr(JNIEnv *env, jclass clss, jlong id)
 {
-    intn rval = FAIL;
+    int rval = FAIL;
 
     UNUSED(clss);
 
@@ -884,7 +884,7 @@ done:
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VSnattrs(JNIEnv *env, jclass clss, jlong id)
 {
-    intn rval = -1;
+    int rval = -1;
 
     UNUSED(clss);
 
@@ -902,7 +902,7 @@ Java_hdf_hdflib_HDFLibrary_VSsetattr__JILjava_lang_String_2JILjava_lang_String_2
                                                                                  jlong data_type, jint count,
                                                                                  jstring values)
 {
-    intn        rval = FAIL;
+    int         rval = FAIL;
     const char *str  = NULL;
     const char *val  = NULL;
 
@@ -936,7 +936,7 @@ Java_hdf_hdflib_HDFLibrary_VSsetattr__JILjava_lang_String_2JI_3B(JNIEnv *env, jc
                                                                  jlong data_type, jint count,
                                                                  jbyteArray values)
 {
-    intn        rval = FAIL;
+    int         rval = FAIL;
     jbyte      *arr  = NULL;
     const char *str  = NULL;
     jboolean    isCopy;

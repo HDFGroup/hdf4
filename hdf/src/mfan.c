@@ -87,18 +87,18 @@
 
 /* Whether we've installed the library termination function yet for this
    interface */
-static intn library_terminate = FALSE;
+static int library_terminate = FALSE;
 
 /* Function Prototypes for fcns used by TBBT. Can not be static. */
 extern void ANfreedata(void *data);
 extern void ANfreekey(void *key);
 extern void dumpentryKey(void *key, void *data);
-extern intn ANIanncmp(void *i, void *j, intn value);
+extern int  ANIanncmp(void *i, void *j, int value);
 
 /* private initialization routine */
-static intn ANIstart(void);
+static int ANIstart(void);
 /* private destroy routine */
-static intn ANIdestroy(void);
+static int ANIdestroy(void);
 
 /*-----------------------------------------------------------------------------
  *                          Internal Routines
@@ -155,10 +155,10 @@ dumpentryKey(void *key, void *data)
  AUTHOR
     GeorgeV.
 --------------------------------------------------------------------------- */
-intn
+int
 ANIanncmp(void *i, /* IN: annotation key(tag,ref) */
           void *j, /* IN: annotation key(tag,ref) */
-          intn  value /* not used */)
+          int   value /* not used */)
 {
     (void)value;
 
@@ -185,7 +185,7 @@ ANIanncmp(void *i, /* IN: annotation key(tag,ref) */
     GeorgeV.
 
 --------------------------------------------------------------------------- */
-intn
+int
 ANIdestroy(void)
 {
     int32 ret_value = SUCCEED;
@@ -213,10 +213,10 @@ ANIdestroy(void)
     GeorgeV.
 
 --------------------------------------------------------------------------*/
-static intn
+static int
 ANIstart(void)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* Don't call this routine again... */
     library_terminate = TRUE;
@@ -291,7 +291,7 @@ ANIaddentry(int32    an_id, /* IN: annotation interface id */
             uint16 ann_ref, /* IN: ref of annotation */
             uint16 elmtag,  /* IN: tag of item of which this is annotation */
             uint16 elmref,  /* IN: ref of item of which this is annotation */
-            intn   new_ann /* IN: new annotation flag */)
+            int    new_ann /* IN: new annotation flag */)
 {
     filerec_t *file_rec  = NULL; /* file record pointer */
     uint16     ann_tag   = DFTAG_NULL;
@@ -407,7 +407,7 @@ done:
     GeorgeV.
 
  -------------------------------------------------------------------------*/
-static intn
+static int
 ANIcreate_ann_tree(int32    an_id,/* IN: annotation interface id */
                    ann_type type  /* IN: AN_DATA_LABEL for data labels,
                                          AN_DATA_DESC for data descriptions,
@@ -426,7 +426,7 @@ ANIcreate_ann_tree(int32    an_id,/* IN: annotation interface id */
     uint8     *dptr      = NULL;
     ANentry   *ann_entry = NULL;
     ANnode    *ann_node  = NULL;
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -586,7 +586,7 @@ done:
     GeorgeV.
 
  -------------------------------------------------------------------------*/
-static intn
+static int
 ANInumann(int32    an_id,  /* IN: annotation interface id */
           ann_type type,   /* IN: AN_DATA_LABEL for data labels,
                                   AN_DATA_DESC for data descriptions,
@@ -598,8 +598,8 @@ ANInumann(int32    an_id,  /* IN: annotation interface id */
     filerec_t *file_rec  = NULL; /* file record pointer */
     TBBT_NODE *entry     = NULL;
     ANentry   *ann_entry = NULL;
-    intn       nanns     = 0;
-    intn       ret_value = SUCCEED;
+    int        nanns     = 0;
+    int        ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -646,7 +646,7 @@ done:
     GeorgeV.
 
  ------------------------------------------------------------------------*/
-static intn
+static int
 ANIannlist(int32    an_id,  /* IN: annotation interface id */
            ann_type type,   /* IN: AN_DATA_LABEL for data labels,
                                    AN_DATA_DESC for data descriptions,
@@ -659,8 +659,8 @@ ANIannlist(int32    an_id,  /* IN: annotation interface id */
     filerec_t *file_rec  = NULL; /* file record pointer */
     TBBT_NODE *entry     = NULL;
     ANentry   *ann_entry = NULL;
-    intn       nanns     = 0;
-    intn       ret_value = SUCCEED;
+    int        nanns     = 0;
+    int        ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -788,7 +788,7 @@ done:
     GeorgeV.
 
  ------------------------------------------------------------------------*/
-static intn
+static int
 ANIreadann(int32 ann_id, /* IN: annotation id (handle) */
            char *ann,    /* OUT: space to return annotation in */
            int32 maxlen /* IN: size of space to return annotation in */)
@@ -802,7 +802,7 @@ ANIreadann(int32 ann_id, /* IN: annotation id (handle) */
     uint16  ann_tag;
     uint16  ann_ref;
     uint8   datadi[4] = {0, 0, 0, 0}; /* to read in and discard data/ref! */
-    intn    ret_value = SUCCEED;
+    int     ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -910,7 +910,7 @@ done:
     GeorgeV.
 
  ------------------------------------------------------------------------*/
-static intn
+static int
 ANIwriteann(int32       ann_id, /* IN: annotation id */
             const char *ann,    /* IN: annotation to write */
             int32       ann_len /* IN: length of annotation */)
@@ -930,7 +930,7 @@ ANIwriteann(int32       ann_id, /* IN: annotation id */
     uint16     elem_ref;
     uint8      datadi[4] = {0, 0, 0, 0}; /* to hold data tag/ref for writing */
     uint8     *ptr       = NULL;
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -1051,7 +1051,7 @@ done:
     GeorgeV.
 
 --------------------------------------------------------------------------- */
-static intn
+static int
 ANIcreate(int32    file_id,  /* IN: file ID */
           uint16   elem_tag, /* IN: tag of the item */
           uint16   elem_ref, /* IN: reference number of the item */
@@ -1063,7 +1063,7 @@ ANIcreate(int32    file_id,  /* IN: file ID */
     int32  ann_id = FAIL;
     uint16 ann_tag;
     uint16 ann_ref;
-    intn   ret_value = SUCCEED;
+    int    ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -1174,7 +1174,7 @@ done:
     GeorgeV.
 
 --------------------------------------------------------------------------*/
-intn
+int
 ANfileinfo(int32  an_id,        /* IN:  annotation interface id */
            int32 *n_file_label, /* OUT: the # of file labels */
            int32 *n_file_desc,  /* OUT: the # of file descriptions */
@@ -1182,7 +1182,7 @@ ANfileinfo(int32  an_id,        /* IN:  annotation interface id */
            int32 *n_obj_desc /* OUT: the # of object descriptions */)
 {
     filerec_t *file_rec  = NULL; /* file record pointer */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -1496,7 +1496,7 @@ done:
     GeorgeV.
 
  ------------------------------------------------------------------------*/
-intn
+int
 ANnumann(int32    an_id,  /* IN: annotation interface id */
          ann_type type,   /* IN: AN_DATA_LABEL for data labels,
                                  AN_DATA_DESC for data descriptions,
@@ -1505,7 +1505,7 @@ ANnumann(int32    an_id,  /* IN: annotation interface id */
          uint16 elem_tag, /* IN: tag of item of which this is annotation */
          uint16 elem_ref /* IN: ref of item of which this is annotation */)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* deal with invalid types */
     if (type == AN_FILE_LABEL || type == AN_FILE_DESC)
@@ -1534,7 +1534,7 @@ done:
     GeorgeV.
 
  ------------------------------------------------------------------------*/
-intn
+int
 ANannlist(int32    an_id,  /* IN: annotation interface id */
           ann_type type,   /* IN: AN_DATA_LABEL for data labels,
                                   AN_DATA_DESC for data descriptions,
@@ -1544,7 +1544,7 @@ ANannlist(int32    an_id,  /* IN: annotation interface id */
           uint16 elem_ref, /* IN: ref of item of which this is annotation */
           int32  ann_list[] /* OUT: array of ann_id's that match criteria. */)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* deal with invalid types */
     if (type == AN_FILE_LABEL || type == AN_FILE_DESC)
@@ -1645,10 +1645,10 @@ ANreadann(int32 ann_id, /* IN: annotation id (handle) */
     GeorgeV.
 
 --------------------------------------------------------------------------- */
-intn
+int
 ANendaccess(int32 ann_id /* IN: annotation id */)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     (void)ann_id;
 

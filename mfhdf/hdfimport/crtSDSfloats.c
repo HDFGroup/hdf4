@@ -31,7 +31,7 @@ main()
     int32 dim2_sizes[2];        /* sizes of the 2-dim SDS dimensions */
     int32 dim3_sizes[3];        /* sizes of the 3-dim SDS dimensions */
     int32 start2[2], start3[3]; /* start arrays for both SDSs */
-    intn  status;
+    int   status;
     int32 dim_id, dim_index, /* dimension id and index */
         size, data_type,     /* dimension's size and data type */
         nattrs;              /* number of attributes */
