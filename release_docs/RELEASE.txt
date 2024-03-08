@@ -59,7 +59,12 @@ New features and changes
  
     C Library:
     ----------
-    -
+    - Removed intn and uintn from headers
+
+      These types represent native integers and unsigned integers and have
+      been typedef'd to int and unsigned in for a long time. They are
+      retained in hdf.h so old code will compile, but other public headers
+      now use int and unsigned in place of these types.
 
 Bugs fixed since HDF 4.3.0
 ===========================
