@@ -753,6 +753,270 @@ test_dim_strs()
 
 } /* test_dim_strs */
 
+/********************************************************************
+   Name: test_dim_bw_incomp()
+
+   Description:
+        This test routine tests backward compatibility/incompatibility
+        for dimension representation.
+
+   Return value:
+        The number of errors occurred in this routine.
+
+*********************************************************************/
+
+#define FILE1      "tdim_bwcomp.hdf"
+#define FIRST_DSET "dimval_non_compat"
+
+static int
+test_dim_bw_incomp()
+{
+
+    int32 fid;
+    int32 nt;            /* Number type */
+    int32 ndg_saved_ref; /* used to save a ref of an SDS in one of the test */
+    int32 sds_id;
+    int32 dim_id, dim_id1;
+    int32 dimsize[10]; /* dimension sizes */
+    int32 rank;        /* rank of SDS */
+    int   status;      /* status flag */
+    int   nattrs;      /* Number of attributes again? */
+    char  name[90];
+    int32 start[10], end[10]; /* start, end arrays */
+    int32 scale[10];
+    int32 index;
+    int32 idata[100];
+    int   num_errs = 0; /* number of errors so far */
+
+    /* Open file 'test1.hdf' */
+    fid = SDstart(FILE1, DFACC_CREATE);
+    CHECK(fid, FAIL, "SDstart (file1)");
+
+    /* Set first dimension to be UNLIMITED.
+       Create data set FIRST_DSET */
+    dimsize[0] = SD_UNLIMITED;
+    dimsize[1] = 6;
+    sds_id     = SDcreate(fid, FIRST_DSET, DFNT_INT32, 2, dimsize);
+    CHECK(sds_id, FAIL, "SDcreate:Failed to create data set FIRST_DSET in file 'test1.hdf'");
+
+    /* save the ref number for the first dataset --- will check at very end */
+    ndg_saved_ref = SDidtoref(sds_id);
+    CHECK(ndg_saved_ref, 0, "SDidtoref: Failed to get NDG ref for FIRST_DSET");
+
+    /* Get handle for first dimension of data set FIRST_DSET */
+    dim_id = SDgetdimid(sds_id, 0);
+    CHECK(dim_id, FAIL, "SDgetdimid");
+
+    /* Get handle for second dimension of data set FIRST_DSET */
+    dim_id1 = SDgetdimid(sds_id, 1);
+    CHECK(dim_id1, FAIL, "SDgetdimid");
+
+    /* Set second dimension as being backward compatible, default is
+       non-compatible  */
+    status = SDsetdimval_comp(dim_id1, SD_DIMVAL_BW_COMP);
+    CHECK(status, FAIL, "SDsetdimval_comp");
+
+    for (int i = 0; i < 6; i++)
+        scale[i] = i * 5;
+
+    /* Set the scale for the second dimension */
+    status = SDsetdimscale(dim_id1, 6, DFNT_INT32, scale);
+    CHECK(status, FAIL, "SDsetdimscale");
+
+    for (int i = 0; i < 24; i++)
+        idata[i] = i;
+
+    /* Write data to data set FIRST_DSET */
+    start[0] = 0;
+    start[1] = 0;
+    end[0]   = 4;
+    end[1]   = 6;
+    status   = SDwritedata(sds_id, start, NULL, end, (void *)idata);
+    CHECK(status, FAIL, "SDwritedata");
+
+    /* End access to data set FIRST_DSET */
+    status = SDendaccess(sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* Close file */
+    status = SDend(fid);
+    CHECK(status, FAIL, "SDend");
+
+    /* Read back and change dimval compatibility  */
+
+    /* Re-open the file */
+    fid = SDstart(FILE1, DFACC_RDWR);
+    CHECK(fid, FAIL, "SDstart");
+
+    /* Get index of data set FIRST_DSET */
+    index = SDnametoindex(fid, FIRST_DSET);
+    CHECK(index, FAIL, "SDnametoindex: failed to get index for data set FIRST_DSET");
+
+    /* Select data set FIRST_DSET based on its index in file */
+    sds_id = SDselect(fid, index);
+    CHECK(sds_id, FAIL, "SDselect:Failed to select data set FIRST_DSET");
+
+    /* Info on data set FIRST_DSET */
+    status = SDgetinfo(sds_id, name, (int32 *)&rank, dimsize, &nt, (int32 *)&nattrs);
+    CHECK(status, FAIL, "SDgetinfo");
+
+    /* Verify correctness of information */
+    if (rank != 2 || dimsize[0] != 4 || dimsize[1] != 6 || nt != DFNT_INT32) {
+        fprintf(stderr, "SDgetinfo returned wrong values\n");
+        num_errs++;
+    }
+
+    /* Get handle for first dimension of data set FIRST_DSET */
+    dim_id = SDgetdimid(sds_id, 0);
+    CHECK(dim_id, FAIL, "SDgetdimid");
+
+    /* Get dimension info for first dimension */
+    status = SDdiminfo(dim_id, name, (int32 *)&dimsize[0], &nt, (int32 *)&nattrs);
+    CHECK(status, FAIL, "SDdiminfo");
+
+    /* Verify correctness of information */
+    if (dimsize[0] != SD_UNLIMITED || nt != 0) {
+        fprintf(stderr, "SDdiminfo returned wrong values\n");
+        num_errs++;
+    }
+    /* Is it backward non-compatible? */
+    status = SDisdimval_bwcomp(dim_id);
+    if (status != SD_DIMVAL_BW_INCOMP) {
+        fprintf(stderr, "SDisdimvalcomp returned wrong value for dimension.\n");
+        num_errs++;
+    }
+    /* Re-set first dimension as backward compatible */
+    status = SDsetdimval_comp(dim_id, SD_DIMVAL_BW_COMP);
+    CHECK(status, FAIL, "SDsetdimval_comp");
+
+    /* Get handle for second dimension of data set FIRST_DSET */
+    dim_id1 = SDgetdimid(sds_id, 1);
+    CHECK(dim_id1, FAIL, "SDgetdimid");
+
+    /* Get dimension info for second dimension */
+    status = SDdiminfo(dim_id1, name, (int32 *)&dimsize[1], &nt, (int32 *)&nattrs);
+    CHECK(status, FAIL, "SDdiminfo");
+
+    /* Verify correctness of information */
+    if (dimsize[1] != 6 || nt != DFNT_INT32) {
+        fprintf(stderr, "Failed on SDgetinfo call\n");
+        num_errs++;
+    }
+
+    /* Read data back from data set FIRST_DSET */
+    status = SDreaddata(sds_id, start, NULL, end, (void *)idata);
+    CHECK(status, FAIL, "SDwritedata");
+
+    /* Verify data */
+    for (int i = 0; i < 24; i++) {
+        if (idata[i] != i) {
+            fprintf(stderr, "line %d, wrong value: should be %d, got %d\n", __LINE__, i, (int)idata[i]);
+            num_errs++;
+        }
+    }
+
+    /* Verify that the second dimension is backward compatible */
+    status = SDisdimval_bwcomp(dim_id1);
+    if (status != SD_DIMVAL_BW_COMP) {
+        fprintf(stderr, "This dimension should be backward compatible but not\n");
+        num_errs++;
+    }
+
+    /* Re-set second dimension as backward non-compatible */
+    status = SDsetdimval_comp(dim_id1, SD_DIMVAL_BW_INCOMP);
+    CHECK(status, FAIL, "SDsetdimval_comp");
+
+    /* End access to data set FIRST_DSET */
+    status = SDendaccess(sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* Close the file */
+    status = SDend(fid);
+    CHECK(status, FAIL, "SDend");
+
+    /* Open one last time to check that NDG ref has been constant */
+    /* check SDsetdimval_compat */
+
+    /* Open file FILE1 */
+    fid = SDstart(FILE1, DFACC_RDWR);
+    CHECK(fid, FAIL, "SDstart");
+
+    /* Get index of data set FIRST_DSET */
+    index = SDnametoindex(fid, FIRST_DSET);
+    CHECK(index, FAIL, "SDnametoindex: failed to get index for data set FIRST_DSET");
+
+    /* Select data set FIRST_DSET based on its index in file */
+    sds_id = SDselect(fid, index);
+    CHECK(sds_id, FAIL, "SDselect:Failed to select data set FIRST_DSET");
+
+    /* Get info on data set FIRST_DSET */
+    status = SDgetinfo(sds_id, name, (int32 *)&rank, dimsize, &nt, (int32 *)&nattrs);
+    CHECK(status, FAIL, "SDgetinfo");
+
+    /* Verify correctness of information */
+    if (rank != 2 || dimsize[0] != 4 || dimsize[1] != 6 || nt != DFNT_INT32) {
+        fprintf(stderr, "SDgetinfo returned wrong values\n");
+        num_errs++;
+    }
+
+    /* Get the second dimension of data set FIRST_DSET */
+    dim_id1 = SDgetdimid(sds_id, 1);
+    CHECK(dim_id1, FAIL, "SDgetdimid");
+
+    /* Get dimension info for second dimension */
+    status = SDdiminfo(dim_id1, name, (int32 *)&dimsize[1], &nt, (int32 *)&nattrs);
+    CHECK(status, FAIL, "SDdiminfo");
+
+    /* Verify correctness of information */
+    if (dimsize[1] != 6 || nt != DFNT_INT32) {
+        fprintf(stderr, "Failed to get correct dimension info \n");
+        num_errs++;
+    }
+
+    /* Verify that the second dimension is backward compatible */
+    status = SDisdimval_bwcomp(dim_id1);
+    if (status != SD_DIMVAL_BW_INCOMP) {
+        fprintf(stderr, "SDisdimvalcomp returned wrong value\n");
+        num_errs++;
+    }
+    /* Re-set second dimension as backward compatible */
+    status = SDsetdimval_comp(dim_id1, SD_DIMVAL_BW_COMP);
+    CHECK(status, FAIL, "SDsetdimval_comp");
+
+    /* End access to data set FIRST_DSET */
+    status = SDendaccess(sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /*
+     * Used saved ref at the beginning to retrieve the data set
+     */
+
+    /* Get the index of the data set to which this 'ref' belongs to */
+    index = SDreftoindex(fid, ndg_saved_ref);
+    CHECK(index, FAIL, "SDreftoindex: failed to get index for 'ndg_saved_ref'");
+
+    /* Get handle for this data set (DataSetAlpha) */
+    sds_id = SDselect(fid, index);
+    CHECK(sds_id, FAIL, "SDselect: Failed to get handle for data set 'DataSetAlpha' ");
+
+    /* Check if ref of this is the same as the one saved earlier */
+    if (ndg_saved_ref != SDidtoref(sds_id)) {
+        fprintf(stderr, "Saved NDG ref != to SDindextoref of same\n");
+        num_errs++;
+    }
+
+    /* End access to data set 'DataSetAlpha' in file 'test1.hdf' */
+    status = SDendaccess(sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* Close file 'test1.hdf' */
+    status = SDend(fid);
+    CHECK(status, FAIL, "SDend");
+
+    /* Return the number of errors that's been kept track of so far */
+    return num_errs;
+}
+
 /* Test driver for testing dimension functionality */
 extern int
 test_dimensions()
@@ -770,6 +1034,9 @@ test_dimensions()
 
     /* Test SD[set/get]dimstrs */
     num_errs = num_errs + test_dim_strs();
+
+    /* Test backward compatibility/incompatibility for dimension */
+    num_errs = num_errs + test_dim_bw_incomp();
 
     if (num_errs == 0)
         PASSED();

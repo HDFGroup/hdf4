@@ -22,6 +22,7 @@
  ****************************************************************************/
 
 #include <string.h>
+#include <stdlib.h>
 
 #include "mfhdf.h"
 
@@ -260,7 +261,532 @@ test_count(void)
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
-} /* test_count */
+}
+
+#define FILE1        "test1.hdf"
+#define FILE2        "test2.hdf"
+#define DSALPHA      "DataSetAlpha"
+#define DSBETA       "DataSetBeta"
+#define DSGAMMA      "DataSetGamma"
+#define DSBOGUS      "BogusDataSet"
+#define MYDIM        "MyDim"
+#define DIMATTRCHAR  "DimensionAttribute Char"
+#define DIMATTRFLOAT "DimensionAttribute Float"
+#define DIMATTRINT   "DimensionAttribute Integer"
+#define DIMATTRUINT  "DimensionAttribute Unsigned Integer"
+#define DIMLABEL     "TheLabel"
+#define DIMUNIT      "TheUnits"
+#define DIMFORMAT    "TheFormat"
+#define DIMCOORD     "TheCordsys"
+
+static int
+test_attribute_ops()
+{
+    int32    fid1, fid2;               /* File handles */
+    int32    nt;                       /* Number type */
+    int32    dimsize[10];              /* dimension sizes */
+    int32    newsds, newsds2, newsds3; /* SDS handles */
+    int32    dimid, dimid2;            /* Dimension handles */
+    int32    num_sds;                  /* number of SDS in file */
+    int32    num_gattr;                /* Number of global attributes */
+    int32    index;                    /* Index of dataset in file */
+    int32    ival;
+    int      status; /* status flag */
+    char     name[90];
+    char     text[256];
+    int32    start[10], end[10], stride[10]; /* start, end, stride arrays */
+    int32    scale[10];
+    char     l[80], u[80], fmt[80], c[80];
+    int32    count = 0;
+    int32    idata[100];
+    int16    sdata[100], outdata[100];
+    uint8    iuval;
+    float32 *data = NULL;
+    float32  max, min, imax, imin;
+    float64  cal, cale, ioff, ioffe;
+    int      num_errs = 0; /* number of errors so far */
+
+    ncopts = NC_VERBOSE;
+
+    data = (float32 *)calloc(1000, sizeof(float32));
+    CHECK_ALLOC(data, "data", "main");
+
+    /* Create two files */
+    fid1 = SDstart(FILE1, DFACC_CREATE);
+    CHECK(fid1, FAIL, "SDstart");
+
+    fid2 = SDstart(FILE2, DFACC_CREATE);
+    CHECK(fid2, FAIL, "SDstart");
+
+    /* Verify that the file doesn't contain any data sets or any file attributes */
+    status = SDfileinfo(fid1, &num_sds, &num_gattr);
+    CHECK(status, FAIL, "SDfileinfo");
+
+    if (num_sds != 0 || num_gattr != 0) {
+        fprintf(stderr, "File %s should be empty but is not\n", FILE1);
+        num_errs++;
+    }
+
+    /* Create dataset DSALPHA in file FILE1 */
+    dimsize[0] = 4;
+    dimsize[1] = 8;
+    newsds     = SDcreate(fid1, DSALPHA, DFNT_FLOAT32, 2, dimsize);
+    CHECK(newsds, FAIL, "SDcreate: Failed to create data set DSALPHA");
+
+    /* Create data set DSGAMMA in file FILE1 */
+    newsds3 = SDcreate(fid1, DSGAMMA, DFNT_FLOAT64, 1, dimsize);
+    CHECK(newsds3, FAIL, "SDcreate: Failed to create data set DSGAMMA");
+
+    /* Get info on number of data sets and global attributes in file */
+    status = SDfileinfo(fid1, &num_sds, &num_gattr);
+    CHECK(status, FAIL, "SDfileinfo");
+
+    if (num_sds != 2) {
+        fprintf(stderr, "Wrong number of data sets in FILE1\n");
+        num_errs++;
+    }
+    if (num_gattr != 0) {
+        fprintf(stderr, "Wrong number of file attributes in FILE1\n");
+        num_errs++;
+    }
+
+    /* Get the first dimension of data set DSGAMMA */
+    dimid = SDgetdimid(newsds3, 0);
+    CHECK(dimid, FAIL, "SDgetdimid: Failed to get dimension id");
+
+    /* Reset the dimension name to MYDIM */
+    status = SDsetdimname(dimid, MYDIM);
+    CHECK(status, FAIL, "SDsetdimname: Failed to change a dimension name");
+
+    /* Add attribute DIMATTRCHAR to this dimension */
+    status = SDsetattr(dimid, DIMATTRCHAR, DFNT_CHAR8, 4, "TRUE");
+    CHECK(status, FAIL, "SDsetattr: Failed to set dimension attribute");
+
+    /* Look up the attribute DIMATTRCHAR */
+    status = SDfindattr(dimid, DIMATTRCHAR);
+    if (status != 0) {
+        fprintf(stderr, "SDfindattr: Unable to find attribute DIMATTRCHAR\n");
+        num_errs++;
+    }
+
+    /* Get the info about the first attribute of this dimension  */
+    status = SDattrinfo(dimid, (int32)0, name, &nt, &count);
+    CHECK(status, FAIL, "SDattrinfo");
+
+    /* Read first attribute in, assume CHAR here. */
+    status = SDreadattr(dimid, 0, text);
+    CHECK(status, FAIL, "SDreadattr");
+
+    /* Compare value retrieved to what was written */
+    if (strncmp(text, "TRUE", count)) {
+        fprintf(stderr, "SDreadattr: Invalid dimension attribute read <%s>\n", text);
+        num_errs++;
+    }
+
+    /* Get the first dimension of data sets DSALPHA */
+    dimid = SDgetdimid(newsds, 0);
+    CHECK(dimid, FAIL, "SDgetdimid: Failed to get dimension id");
+
+    /* Set the name of this dimension to MYDIM */
+    status = SDsetdimname(dimid, MYDIM);
+    CHECK(status, FAIL, "SDsetdimname: Failed to change a dimension name");
+
+    /* Set the scales for this dimension also */
+    scale[0] = 1;
+    scale[1] = 5;
+    scale[2] = 7;
+    scale[3] = 24;
+    status   = SDsetdimscale(dimid, 4, DFNT_INT32, (void *)scale);
+    CHECK(status, FAIL, "SDsetdimscale");
+
+    /* Set the dimension strings for the dimension also */
+    status = SDsetdimstrs(dimid, DIMLABEL, NULL, DIMFORMAT);
+    CHECK(status, FAIL, "SDsetdimstrs");
+
+    /* Verify that we can read the dimension's values with SDreaddata */
+    start[0] = 0;
+    end[0]   = 4;
+    status   = SDreaddata(dimid, start, NULL, end, (void *)idata);
+    CHECK(status, FAIL, "SDreaddata");
+
+    /* Compare retrieved values for scale */
+    for (int i = 0; i < 4; i++) {
+        if (idata[i] != scale[i]) {
+            fprintf(stderr, "SDreaddata() returned %ld, not %ld in location %d\n", (long)idata[i],
+                    (long)scale[i], i);
+            num_errs++;
+        }
+    }
+
+    /* Add attribute DIMATTRFLOAT to this dimension */
+    max    = (float32)3.1415;
+    status = SDsetattr(dimid, DIMATTRFLOAT, DFNT_FLOAT32, 1, (void *)&max);
+    CHECK(status, FAIL, "SDsetattr");
+
+    /* Get the info about this attribute.  Note that there are four
+       attributes so far: DIMATTRCHAR, DIMLABEL, DIMFORMAT, and DIMATTRFLOAT */
+    status = SDattrinfo(dimid, 3, name, &nt, &count);
+    CHECK(status, FAIL, "SDattrinfo");
+
+    if (nt != DFNT_FLOAT32) {
+        fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
+        num_errs++;
+    }
+
+    if (count != 1) {
+        fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
+        num_errs++;
+    }
+
+    if (strcmp(name, DIMATTRFLOAT)) {
+        fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
+        num_errs++;
+    }
+
+    /* Get the second dimension of data set DSALPHA */
+    dimid2 = SDgetdimid(newsds, 1);
+    CHECK(dimid2, FAIL, "SDgetdimid: Failed to get second dimension id");
+
+    /* Lets store an attribute for the dimension without explicitly
+       creating the coord var first */
+    ival   = -256;
+    status = SDsetattr(dimid2, DIMATTRINT, DFNT_INT32, 1, (void *)&ival);
+    CHECK(status, FAIL, "SDsetattr");
+
+    /* Get the info about this attribute */
+    status = SDattrinfo(dimid2, 0, name, &nt, &count);
+    CHECK(status, FAIL, "SDattrinfo");
+
+    if (nt != DFNT_INT32) {
+        fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
+        num_errs++;
+    }
+
+    if (count != 1) {
+        fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
+        num_errs++;
+    }
+
+    if (strcmp(name, DIMATTRINT)) {
+        fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
+        num_errs++;
+    }
+
+    /* Read dimension attribute back in */
+    ival   = 0;
+    status = SDreadattr(dimid2, 0, (void *)&ival);
+    CHECK(status, FAIL, "SDreatattr");
+
+    if (ival != -256) {
+        fprintf(stderr, "Wrong value for SDreadattr(dim)\n");
+        num_errs++;
+    }
+
+    /* Add an unsigned integer as an dimension attribute */
+    iuval  = 253;
+    status = SDsetattr(dimid2, DIMATTRUINT, DFNT_UINT8, 1, (void *)&iuval);
+    CHECK(status, FAIL, "SDsetattr");
+
+    /* Get the info about this attribute */
+    status = SDattrinfo(dimid2, 1, name, &nt, &count);
+    CHECK(status, FAIL, "SDattrinfo");
+
+    if (nt != DFNT_UINT8) {
+        fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
+        num_errs++;
+    }
+
+    if (count != 1) {
+        fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
+        num_errs++;
+    }
+
+    if (strcmp(name, DIMATTRUINT)) {
+        fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
+        num_errs++;
+    }
+
+    /* Read second dimension attribute back in */
+    iuval  = 0;
+    status = SDreadattr(dimid2, 1, (void *)&iuval);
+    CHECK(status, FAIL, "SDreatattr");
+
+    if (iuval != 253) {
+        fprintf(stderr, "Wrong value for SDreadattr(dim)\n");
+        num_errs++;
+    }
+
+    /* Find the index of data set DSALPHA in file FILE1 */
+    index = SDnametoindex(fid1, DSALPHA);
+    if (index != 0) {
+        fprintf(stderr, "Couldn't find the first data set DSALPHA in FILE1\n");
+        num_errs++;
+    }
+
+    /* Try finding data set in FILE2, should fail */
+    index = SDnametoindex(fid2, DSALPHA);
+    if (index != FAIL) {
+        fprintf(stderr, "Found data set in wrong file\n");
+        num_errs++;
+    }
+
+    /* Try finding non-existent data sets in file, should fail */
+    index = SDnametoindex(fid1, DSBOGUS);
+    if (index != FAIL) {
+        fprintf(stderr, "Found bogus data set in file 1\n");
+        num_errs++;
+    }
+
+    /* Set fill value for data set DSALPHA */
+    max    = -17.5;
+    status = SDsetfillvalue(newsds, (void *)&max);
+    CHECK(status, FAIL, "SDsetfillvalue");
+
+    /* Initialize array to write out */
+    for (int i = 0; i < 10; i++)
+        data[i] = (float32)i;
+
+    /* write out (1,1)->(3,3) array out */
+    start[0] = start[1] = 1;
+    end[0] = end[1] = 3;
+    status          = SDwritedata(newsds, start, NULL, end, (void *)data);
+    CHECK(status, FAIL, "SDwritedata");
+
+    /* Set the range for data set DSALPHA */
+    max    = (float32)10.0;
+    min    = (float32)4.6;
+    status = SDsetrange(newsds, (void *)&max, (void *)&min);
+    CHECK(status, FAIL, "SDsetrange");
+
+    /* Brilliant...., retrieve it right back....*/
+    status = SDgetrange(newsds, (void *)&imax, (void *)&imin);
+    CHECK(status, FAIL, "SDsetrange");
+
+    /* Set a character attribute for data set DSALPHA */
+    status = SDsetattr(newsds, "spam", DFNT_CHAR8, 6, "Hi mom");
+    CHECK(status, FAIL, "SDsetattr");
+
+    /* Set the data strings for data set DSALPHA */
+    status = SDsetdatastrs(newsds, DIMLABEL, DIMUNIT, NULL, DIMCOORD);
+    CHECK(status, FAIL, "SDsetdatastrs");
+
+    /* Brilliant.....retrieve them right back */
+    status = SDgetdatastrs(newsds, l, u, fmt, c, 80);
+    CHECK(status, FAIL, "SDgetdatastrs");
+
+    if (strcmp(l, DIMLABEL)) {
+        fprintf(stderr, "Bogus label returned (%s)\n", l);
+        num_errs++;
+    }
+    if (strcmp(u, DIMUNIT)) {
+        fprintf(stderr, "Bogus units returned (%s)\n", u);
+        num_errs++;
+    }
+    if (strcmp(fmt, "")) {
+        fprintf(stderr, "Bogus format returned\n");
+        num_errs++;
+    }
+    if (strcmp(c, DIMCOORD)) {
+        fprintf(stderr, "Bogus cordsys returned\n");
+        num_errs++;
+    }
+
+    /* Retrieve CHAR attribute for DSALPHA */
+    status = SDfindattr(newsds, "spam");
+    if (status != 2) {
+        fprintf(stderr, "Bad index for SDfindattr\n");
+        num_errs++;
+    }
+
+    /* Retrieve non-existent CHAR attribute for DSALPHA.
+       Should fail. */
+    status = SDfindattr(newsds, "blarf");
+    if (status != FAIL) {
+        fprintf(stderr, "SDfindattr found non-existent attribute\n");
+        num_errs++;
+    }
+
+    /* Set global attributes for file FILE1 */
+    status = SDsetattr(fid1, "F-attr", DFNT_CHAR8, 10, "globulator");
+    CHECK(status, FAIL, "SDsetattr");
+
+    /* Get info about the global attribute just created */
+    status = SDattrinfo(fid1, (int32)0, name, &nt, &count);
+    CHECK(status, FAIL, "SDattrinfo");
+
+    /* Read this global attribute back in and verify the values */
+    status = SDreadattr(fid1, 0, text);
+    CHECK(status, FAIL, "SDreadattr");
+
+    if (strncmp(text, "globulator", count)) {
+        fprintf(stderr, "Invalid global attribute read <%s>\n", text);
+        num_errs++;
+    }
+
+    /* Get number of SDS and global attributes in file FILE2.
+       The file should be empty */
+    status = SDfileinfo(fid2, &num_sds, &num_gattr);
+    if (num_sds != 0) {
+        fprintf(stderr, "File2 should be empty but contains %d data sets\n", num_sds);
+        num_errs++;
+    }
+    if (num_gattr != 0) {
+        fprintf(stderr, "File2 should be empty but contains %d global attributes\n", num_gattr);
+        num_errs++;
+    }
+
+    /* Set calibration info for dataset DSGAMMA in file FILE1 */
+    cal    = 1.0;
+    cale   = 5.0;
+    ioff   = 3.0;
+    ioffe  = 2.5;
+    nt     = DFNT_INT8;
+    status = SDsetcal(newsds3, cal, cale, ioff, ioffe, nt);
+    CHECK(status, FAIL, "SDsetcal");
+
+    /* Create a record variable in file FILE2 */
+    dimsize[0] = SD_UNLIMITED;
+    dimsize[1] = 6;
+    newsds2    = SDcreate(fid2, DSBETA, DFNT_INT16, 2, dimsize);
+    CHECK(newsds2, FAIL, "SDcreate: Failed to create new data set DSBETA");
+
+    /* Get info on number of SDSs and global attributes in file FILE2.
+       There should be only 1 SDS */
+    status = SDfileinfo(fid2, &num_sds, &num_gattr);
+    if (num_sds != 1) {
+        fprintf(stderr, "Wrong number of datasets in file 2\n");
+        num_errs++;
+    }
+    if (num_gattr != 0) {
+        fprintf(stderr, "There should be no global attributes but it is %d\n", num_gattr);
+        num_errs++;
+    }
+
+    for (int16 i = 0; i < 50; i++)
+        sdata[i] = i;
+
+    /* Write data to dataset DSBETA in file FILE2 */
+    start[0] = start[1] = 0;
+    end[0]              = 8;
+    end[1]              = 6;
+    status              = SDwritedata(newsds2, start, NULL, end, (void *)sdata);
+    CHECK(status, FAIL, "SDwritedata");
+
+    /* Now read part of an earlier dataset, DSALPHA, back in from file FILE1 */
+    start[0] = start[1] = 0;
+    end[0] = end[1] = 3;
+    status          = SDreaddata(newsds, start, NULL, end, (void *)data);
+    CHECK(status, FAIL, "SDreaddata");
+
+    /* Verify the data values retrieved */
+    if (!H4_FLT_ABS_EQUAL(data[0], -17.5F)) {
+        fprintf(stderr, "Wrong value returned loc 0: %f\n", (double)data[0]);
+        num_errs++;
+    }
+    if (!H4_FLT_ABS_EQUAL(data[3], -17.5F)) {
+        fprintf(stderr, "Wrong value returned loc 3: %f\n", (double)data[3]);
+        num_errs++;
+    }
+    if (!H4_FLT_ABS_EQUAL(data[5], 1.0F)) {
+        fprintf(stderr, "Wrong value returned loc 5: %f\n", (double)data[5]);
+        num_errs++;
+    }
+    if (!H4_FLT_ABS_EQUAL(data[6], -17.5F)) {
+        fprintf(stderr, "Wrong value returned loc 6: %f\n", (double)data[6]);
+        num_errs++;
+    }
+    if (!H4_FLT_ABS_EQUAL(data[8], 4.0F)) {
+        fprintf(stderr, "Wrong value returned loc 8: %f\n", (double)data[8]);
+        num_errs++;
+    }
+
+    for (int i = 0; i < 50; i++)
+        outdata[i] = 0;
+
+    /* Read data back in from DSBETA in file FILE2 */
+    start[0] = start[1] = 1;
+    end[0]              = 3;
+    end[1]              = 3;
+    stride[0]           = 2;
+    stride[1]           = 2;
+    status              = SDreaddata(newsds2, start, stride, end, (void *)outdata);
+    CHECK(status, FAIL, "SDreaddata");
+
+    {              /* verify read values; should be
+                 7 9 11 19 21 23 31 33 35 */
+        int i, j;  /* indexing the two dimensions */
+        int k, m;  /* counters = number of elements read on each dimension */
+        int n = 0; /* indexing the outdata array */
+        for (i = 1, m = 0; m < 3; i = i + 2, m++)
+            for (j = (i * 6) + 1, k = 0; k < 3; j = j + 2, k++, n++) {
+                if (n < 10) /* number of elements read is 9 */
+                    if (outdata[n] != sdata[j]) {
+                        fprintf(stderr, "line %d, wrong value: should be %d, got %d\n", __LINE__, sdata[j],
+                                outdata[n]);
+                        num_errs++;
+                    }
+            }
+    }
+
+    /* why do we set calibration info and then use SDgetcal()
+       on dataset DSGAMMA ? */
+    cal    = 1.0;
+    cale   = 5.0;
+    ioff   = 3.0;
+    ioffe  = 2.5;
+    nt     = DFNT_INT8;
+    status = SDgetcal(newsds3, &cal, &cale, &ioff, &ioffe, &nt);
+    CHECK(status, FAIL, "SDgetcal");
+
+    /* Verify calibration data for data set DSGAMMA */
+    if (!H4_DBL_ABS_EQUAL(cal, 1.0)) {
+        fprintf(stderr, "Wrong calibration info\n");
+        num_errs++;
+    }
+
+    if (!H4_DBL_ABS_EQUAL(cale, 5.0)) {
+        fprintf(stderr, "Wrong calibration info\n");
+        num_errs++;
+    }
+
+    if (!H4_DBL_ABS_EQUAL(ioff, 3.0)) {
+        fprintf(stderr, "Wrong calibration info\n");
+        num_errs++;
+    }
+
+    if (!H4_DBL_ABS_EQUAL(ioffe, 2.5)) {
+        fprintf(stderr, "Wrong calibration info\n");
+        num_errs++;
+    }
+
+    if (nt != DFNT_INT8) {
+        fprintf(stderr, "Wrong calibration info\n");
+        num_errs++;
+    }
+
+    /* end access to data set DSALPHA */
+    status = SDendaccess(newsds);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* end access to data set DSBETA */
+    status = SDendaccess(newsds2);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* end access to data set DSGAMMA */
+    status = SDendaccess(newsds3);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* Close access to file FILE1 */
+    status = SDend(fid1);
+    CHECK(status, FAIL, "SDend");
+
+    /* Close access to file 'test2.hdf' */
+    status = SDend(fid2);
+    CHECK(status, FAIL, "SDend");
+
+    /* Return the number of errors that's been kept track of so far */
+    return num_errs;
+}
 
 /* Test driver for testing SD attributes. */
 extern int
@@ -273,6 +799,9 @@ test_attributes()
 
     /* test when count is passed into SDsetattr as 0 */
     num_errs = num_errs + test_count();
+
+    /* test various operations on attributes */
+    num_errs = num_errs + test_attribute_ops();
 
     if (num_errs == 0)
         PASSED();
