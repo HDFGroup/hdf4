@@ -1157,6 +1157,9 @@ test_unlim_fillvalue()
     /* close file FILE1 */
     status = SDend(f1);
     CHECK(status, FAIL, "SDend");
+
+    /* Return the number of errors that's been kept track of so far */
+    return num_errs;
 }
 
 /* Test driver for testing various SDS' properties. */
