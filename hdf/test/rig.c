@@ -473,7 +473,7 @@ void
 test_r24(void)
 {
     int32  xd, yd;
-    intn   il;
+    int    il;
     int    Error;
     char   buf[YSIZE][XSIZE][3];
     char   buf1[YSIZE][3][XSIZE];
@@ -843,7 +843,7 @@ test_r24_jpeg(void)
         riid;                   /* raster image ID */
     comp_info cinfo;            /* compression information for the JPEG */
     int32     xd, yd;           /* image's dimensions */
-    intn      il;               /* image's interlace */
+    int       il;               /* image's interlace */
     long      begin_offset = 0, /* offset at the beginning of image's data */
         end_offset         = 0; /* offset at the end of image's data */
     uint8 *jpeg_24bit_temp;     /* buffer for 24-bit image data */
@@ -851,8 +851,8 @@ test_r24_jpeg(void)
     /* buffer for data read by JPEG function */
     int32  offset, length;     /* offset/length in the HDF file */
     int32  nonhdf_offset;      /* offset in the nonHDF file */
-    intn   status;             /* status returned from GR routines */
-    intn   ii;                 /* indices */
+    int    status;             /* status returned from GR routines */
+    int    ii;                 /* indices */
     int32  n_images, n_fattrs; /* number of images and number of file attrs */
     uint8 *hdf_buffer,         /* buffer of data read from HDF file */
         *nonhdf_buffer;        /* buffer of data read from non-HDF file */

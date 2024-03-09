@@ -50,14 +50,14 @@
 /* crinfo_t -- compressed raster information structure */
 
 typedef struct {
-    intn attached;        /* number of access records attached
-                             to this information structure */
+    int attached;         /* number of access records attached
+                              to this information structure */
     int32     fid;        /* File ID of image */
     uint16    tag, ref;   /* Tag & ref of compressed raster image */
     int32     xdim, ydim; /* Image dimensions */
     int16     scheme;     /* Compression scheme */
     comp_info cinfo;      /* Compression information */
-    uintn     image_size; /* Size of the uncompressed image in memory */
+    unsigned  image_size; /* Size of the uncompressed image in memory */
 } crinfo_t;
 
 /* forward declaration of the functions provided in this module */
@@ -74,13 +74,13 @@ funclist_t cr_funcs = {
 NAME
    HRPconvert -- wrap an existing raster image with the special element routines.
 USAGE
-   intn HRPconvert(fid, tag, ref, xdim, ydim, scheme, cinfo, pixel_size)
+   int HRPconvert(fid, tag, ref, xdim, ydim, scheme, cinfo, pixel_size)
         int32 fid;          IN: File ID for raster image
         uint16 tag, ref;    IN: Tag & Ref of raster image to wrap
         int32 xdim, ydim;   IN: Dimensions of raster image
         int16 scheme;       IN: Compression scheme used
         comp_info *cinfo;   IN: Additional compression parameters
-        uintn pixel_size;   IN: Size of the pixels in the image
+        unsigned pixel_size;   IN: Size of the pixels in the image
 RETURNS
    AID on SUCCEED/FAIL on failure
 DESCRIPTION
@@ -93,7 +93,7 @@ FORTRAN
 --------------------------------------------------------------------------*/
 int32
 HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim, int16 scheme, comp_info *cinfo,
-           uintn pixel_size)
+           unsigned pixel_size)
 {
     filerec_t *file_rec;          /* file record */
     accrec_t  *access_rec = NULL; /* access element record */
@@ -380,7 +380,7 @@ done:
 NAME
    HRPendacess -- free AID
 USAGE
-   intn HRPendaccess(access_rec)
+   int HRPendaccess(access_rec)
        access_t * access_rec;      IN:  access record to close
 RETURNS
    SUCCEED / FAIL
@@ -388,11 +388,11 @@ DESCRIPTION
    Free the AID
 
 ---------------------------------------------------------------------------*/
-intn
+int
 HRPendaccess(accrec_t *access_rec)
 {
     filerec_t *file_rec; /* file record */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* validate argument */
     if (access_rec == NULL)

@@ -25,8 +25,8 @@ extern int test_ncvargetfill();
 int
 main(void)
 {
-    intn status;       /* status flag */
-    int  num_errs = 0; /* number of errors so far */
+    int status;       /* status flag */
+    int num_errs = 0; /* number of errors so far */
 
     /* Tests reading/writing datasets with unlimited dimension via HDF API */
     status   = test_unlim(); /* in tunlim.c */

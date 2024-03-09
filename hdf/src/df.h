@@ -65,21 +65,21 @@ typedef struct DF {
     /* used by DFstart */
     uint16 last_tag; /* Last tag searched for by DFfind */
     uint16 last_ref; /* Last reference number searched for */
-    intn   type;     /* 0= not in use, 1= normal, -1 = multiple */
+    int    type;     /* 0= not in use, 1= normal, -1 = multiple */
     /* this is a hook for when */
     /* multiple files are open */
-    intn access; /* permitted access types: */
+    int access; /* permitted access types: */
     /* 0=none, 1=r, 2=w, 3=r/w */
-    intn changed; /* True if anything in DDs modified */
+    int changed; /* True if anything in DDs modified */
     /* since last write */
-    intn last_dd;   /* see last_dle */
-    intn defdds;    /* default number of DD's in each block */
-    intn up_access; /* access permissions to element being */
+    int last_dd;   /* see last_dle */
+    int defdds;    /* default number of DD's in each block */
+    int up_access; /* access permissions to element being */
     /* read/updated. Used by DFstart */
     /* File handle is a file pointer or file descriptor depending on whether */
     /* we use buffered or unbuffered I/O.  But, since this structure is a */
     /* fake, it doesn't matter whether I/O is buffered or not. */
-    intn file; /* file descriptor */
+    int file; /* file descriptor */
 } DF;
 
 typedef struct DFdata { /* structure for returning status information */
@@ -149,7 +149,7 @@ HDFLIBAPI void *DFIfreespace(void *ptr);
 
 HDFLIBAPI int DFIc2fstr(char *str, int len);
 
-HDFLIBAPI char *DFIf2cstring(_fcd fdesc, intn len);
+HDFLIBAPI char *DFIf2cstring(_fcd fdesc, int len);
 
 /* prototypes for dfconv.c */
 HDFLIBAPI int DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype, int desttype, int32 size);

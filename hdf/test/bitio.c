@@ -69,15 +69,15 @@ test_bitio_write(void)
     int32  fid;
     int32  bitid1;
     int32  ret;
-    intn   i;
+    int    i;
     uint32 tot_bits = 0;
 
     MESSAGE(6, printf("Testing bitio write routines\n"););
-    SEED((uintn)time(NULL));
+    SEED((unsigned)time(NULL));
     for (i = 0; i < BUFSIZE; i++) {
         totbits[i] = tot_bits;
         tot_bits += (uint32)(outbuf[i] = (uint8)(((RAND() >> 4) % 32) + 1)); /* number of bits to output */
-        outbuf2[i] = (uintn)RAND() & maskbuf[outbuf[i]];                     /* actual bits to output */
+        outbuf2[i] = (unsigned)RAND() & maskbuf[outbuf[i]];                  /* actual bits to output */
     }                                                                        /* end for */
 
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
@@ -90,7 +90,7 @@ test_bitio_write(void)
     RESULT("Hbitappendable");
 
     for (i = 0; i < BUFSIZE; i++) {
-        ret = Hbitwrite(bitid1, (intn)outbuf[i], (uint32)outbuf2[i]);
+        ret = Hbitwrite(bitid1, (int)outbuf[i], (uint32)outbuf2[i]);
         VERIFY_VOID((uint8)ret, outbuf[i], "Hbitwrite");
     } /* end for */
 
@@ -101,7 +101,7 @@ test_bitio_write(void)
     CHECK_VOID(bitid1, FAIL, "Hstartbitread");
 
     for (i = 0; i < BUFSIZE; i++) {
-        ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
+        ret = Hbitread(bitid1, (int)outbuf[i], &inbuf2[i]);
         VERIFY_VOID((uint8)ret, outbuf[i], "Hbitread");
     } /* end for */
     if (memcmp(outbuf2, inbuf2, sizeof(int32) * BUFSIZE)) {
@@ -123,13 +123,13 @@ test_bitio_read(void)
     int32       fid;
     int32       bitid1;
     int32       ret;
-    intn        inbits;
+    int         inbits;
     uint32      tempbuf;
-    intn        i;
+    int         i;
     uint8      *test_ptr;
     const char *datafile = get_srcdir_filename(DATAFILE_NAME);
 
-    SEED((uintn)time(NULL));
+    SEED((unsigned)time(NULL));
 
     MESSAGE(6, printf("Testing bitio read routines\n"););
 
@@ -208,9 +208,9 @@ test_bitio_seek(void)
     int32 fid;
     int32 bitid1;
     int32 ret;
-    intn  i;
+    int   i;
 
-    SEED((uintn)time(NULL));
+    SEED((unsigned)time(NULL));
 
     MESSAGE(6, printf("Testing bitio seek routines\n"););
 
@@ -222,9 +222,9 @@ test_bitio_seek(void)
     CHECK_VOID(bitid1, FAIL, "Hstartbitread");
 
     for (i = 0; i < BUFSIZE; i++) {
-        ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn)(totbits[i] % 8));
+        ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (int)(totbits[i] % 8));
         CHECK_VOID(ret, FAIL, "Hbitseek");
-        ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
+        ret = Hbitread(bitid1, (int)outbuf[i], &inbuf2[i]);
         VERIFY_VOID((uint8)ret, outbuf[i], "Hbitread");
         if (outbuf2[i] != inbuf2[i])
             printf("outbuf[%d]=%u, outbuf2[%d]=%lu inbuf2[%d]=%lu, totbits[%d]=%lu\n", i, outbuf[i], i,
@@ -239,9 +239,9 @@ test_bitio_seek(void)
     CHECK_VOID(bitid1, FAIL, "Hstartbitread");
 
     for (i = BUFSIZE - 1; i >= 0; i--) {
-        ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn)(totbits[i] % 8));
+        ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (int)(totbits[i] % 8));
         CHECK_VOID(ret, FAIL, "Hbitseek");
-        ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
+        ret = Hbitread(bitid1, (int)outbuf[i], &inbuf2[i]);
         VERIFY_VOID((uint8)ret, outbuf[i], "Hbitread");
         if (outbuf2[i] != inbuf2[i])
             printf("outbuf[%d]=%u, outbuf2[%d]=%lu inbuf2[%d]=%lu, totbits[%d]=%lu\n", i, outbuf[i], i,
@@ -258,11 +258,11 @@ test_bitio_seek(void)
     MESSAGE(9, printf("Writing new data to every other bit-sequence\n"););
     /* re-write every other sequence of bits in the dataset */
     for (i = 0; i < BUFSIZE; i += 2) {
-        outbuf2[i] = (uintn)RAND() & maskbuf[outbuf[i]]; /* actual bits to output */
+        outbuf2[i] = (unsigned)RAND() & maskbuf[outbuf[i]]; /* actual bits to output */
 
-        ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn)(totbits[i] % 8));
+        ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (int)(totbits[i] % 8));
         CHECK_VOID(ret, FAIL, "Hbitseek");
-        ret = Hbitwrite(bitid1, (intn)outbuf[i], (uint32)outbuf2[i]);
+        ret = Hbitwrite(bitid1, (int)outbuf[i], (uint32)outbuf2[i]);
         VERIFY_VOID((uint8)ret, outbuf[i], "Hbitwrite");
     } /* end for */
 
@@ -274,9 +274,9 @@ test_bitio_seek(void)
     CHECK_VOID(bitid1, FAIL, "Hstartbitread");
 
     for (i = 0; i < BUFSIZE; i++) {
-        ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn)(totbits[i] % 8));
+        ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (int)(totbits[i] % 8));
         RESULT("Hbitseek");
-        ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
+        ret = Hbitread(bitid1, (int)outbuf[i], &inbuf2[i]);
         VERIFY_VOID((uint8)ret, outbuf[i], "Hbitread");
         if (outbuf2[i] != inbuf2[i])
             printf("outbuf[%d]=%u, outbuf2[%d]=%lu inbuf2[%d]=%lu, totbits[%d]=%lu\n", i, outbuf[i], i,
@@ -293,11 +293,11 @@ test_bitio_seek(void)
     MESSAGE(9, printf("Writing new data to every other bit-sequence from the end\n"););
     /* re-write every other sequence of bits in the dataset */
     for (i = BUFSIZE - 1; i >= 0; i -= 2) {
-        outbuf2[i] = (uintn)RAND() & maskbuf[outbuf[i]]; /* actual bits to output */
+        outbuf2[i] = (unsigned)RAND() & maskbuf[outbuf[i]]; /* actual bits to output */
 
-        ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn)(totbits[i] % 8));
+        ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (int)(totbits[i] % 8));
         RESULT("Hbitseek");
-        ret = Hbitwrite(bitid1, (intn)outbuf[i], (uint32)outbuf2[i]);
+        ret = Hbitwrite(bitid1, (int)outbuf[i], (uint32)outbuf2[i]);
         VERIFY_VOID((uint8)ret, outbuf[i], "Hbitwrite");
     } /* end for */
 
@@ -309,9 +309,9 @@ test_bitio_seek(void)
     CHECK_VOID(bitid1, FAIL, "Hstartbitread");
 
     for (i = 0; i < BUFSIZE; i++) {
-        ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn)(totbits[i] % 8));
+        ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (int)(totbits[i] % 8));
         CHECK_VOID(ret, FAIL, "Hbitseek");
-        ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
+        ret = Hbitread(bitid1, (int)outbuf[i], &inbuf2[i]);
         VERIFY_VOID((uint8)ret, outbuf[i], "Hbitread");
         if (outbuf2[i] != inbuf2[i])
             printf("outbuf[%d]=%u, outbuf2[%d]=%lu inbuf2[%d]=%lu, totbits[%d]=%lu\n", i, outbuf[i], i,

@@ -82,8 +82,8 @@ static void   allocate_buffers(void);
 static void   init_buffers(void);
 static void   free_buffers(void);
 static uint16 write_data(int32 fid, comp_model_t m_type, model_info *m_info, comp_coder_t c_type,
-                         comp_info *c_info, intn test_num, int32 ntype);
-static void   read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype);
+                         comp_info *c_info, int test_num, int32 ntype);
+static void   read_data(int32 fid, uint16 ref_num, int test_num, int32 ntype);
 
 static void
 init_model_info(comp_model_t m_type, model_info *m_info, int32 test_ntype)
@@ -119,7 +119,7 @@ init_coder_info(comp_coder_t c_type, comp_info *c_info, int32 test_ntype)
 static void
 allocate_buffers(void)
 {
-    intn i;
+    int i;
 
     for (i = 0; i < NUM_OUTBUFS; i++) {
         outbuf_int8[i]   = (int8 *)malloc(BUFSIZE * sizeof(int8));
@@ -140,7 +140,7 @@ allocate_buffers(void)
 static void
 init_buffers(void)
 {
-    intn i, j;
+    int i, j;
 
     for (i = 0; i < NUM_OUTBUFS; i++) {
         switch (i) {
@@ -173,7 +173,7 @@ init_buffers(void)
 
             case 2: /* random #'s */
             {
-                intn r;
+                int r;
 
                 SEED(time(NULL));
                 for (j = 0; j < BUFSIZE; j++) {
@@ -213,7 +213,7 @@ init_buffers(void)
 static void
 free_buffers(void)
 {
-    intn i;
+    int i;
 
     for (i = 0; i < NUM_OUTBUFS; i++) {
         free(outbuf_int8[i]);
@@ -233,7 +233,7 @@ free_buffers(void)
 
 static uint16
 write_data(int32 fid, comp_model_t m_type, model_info *m_info, comp_coder_t c_type, comp_info *c_info,
-           intn test_num, int32 ntype)
+           int test_num, int32 ntype)
 {
     int32  aid;
     uint16 ret_ref;
@@ -291,7 +291,7 @@ write_data(int32 fid, comp_model_t m_type, model_info *m_info, comp_coder_t c_ty
 } /* end write_data() */
 
 static void
-read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype)
+read_data(int32 fid, uint16 ref_num, int test_num, int32 ntype)
 {
     int32           aid;
     int32           err_ret;
@@ -299,7 +299,7 @@ read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype)
     void           *out_ptr;
     void           *in_ptr;
     sp_info_block_t info_block;
-    intn            i;
+    int             i;
 
     MESSAGE(8, {
         char *s = HDgetNTdesc(ntype);
@@ -377,7 +377,7 @@ test_comp(void)
     comp_info  c_info;
     uint16     ref_num; /* reference number of the data written out */
     int32      fid;     /* file ID of HDF file for testing */
-    intn       test_num, ntype_num, model_num, coder_num;
+    int        test_num, ntype_num, model_num, coder_num;
     int32      ret;
 
     MESSAGE(6, printf("Starting compression test\n");)

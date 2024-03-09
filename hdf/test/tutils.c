@@ -76,8 +76,8 @@ get_srcdir(void)
         return NULL;
 } /* end get_srcdir() */
 
-intn
-fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor)
+int
+fuzzy_memcmp(const void *s1, const void *s2, int32 len, int fuzz_factor)
 {
     const uint8 *t1 = (const uint8 *)s1;
     const uint8 *t2 = (const uint8 *)s2;
@@ -90,7 +90,7 @@ fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor)
     if (len == 0)
         return 0;
     else {
-        return (intn)(*t1 - *t2);
+        return (int)(*t1 - *t2);
     }
 } /* end fuzzy_memcmp() */
 

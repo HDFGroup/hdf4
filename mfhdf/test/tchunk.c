@@ -102,8 +102,8 @@ test_chunk()
     int32         c_flags;            /* chunk flags to set */
     int32         c_flags_out;        /* chunk flags retrieved */
     int32         index;              /* Index of dataset in file */
-    intn          status;             /* status flag */
-    intn          i, j, k;            /* loop variables */
+    int           status;             /* status flag */
+    int           i, j, k;            /* loop variables */
     int32         start[10], end[10]; /* start, end, stride arrays */
     int32         idata[100];
     int32         rdata[100];

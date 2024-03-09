@@ -25,12 +25,12 @@
 #define LABEL_FIELD_WIDTH   15
 #define DESC_FIELD_WIDTH    15
 
-static intn parse_list_opts(list_info_t *list_opts, intn curr_arg, intn argc, char *argv[]);
-intn print_annots_by_object(const char *fname, int32 an_id, ann_type annot_type, uint16 tag, uint16 ref);
-intn print_annots_in_file(int32 an_id, const char *fname, int32 n_annotations, ann_type annot_type);
+static int parse_list_opts(list_info_t *list_opts, int curr_arg, int argc, char *argv[]);
+int print_annots_by_object(const char *fname, int32 an_id, ann_type annot_type, uint16 tag, uint16 ref);
+int print_annots_in_file(int32 an_id, const char *fname, int32 n_annotations, ann_type annot_type);
 
 static void
-list_usage(intn argc, char *argv[])
+list_usage(int argc, char *argv[])
 {
     (void)argc;
 
@@ -67,10 +67,10 @@ init_list_opts(list_info_t *list_opts)
     list_opts->limit_tag  = 0;      /* initialize... */
 } /* end init_list_opts() */
 
-static intn
-parse_list_opts(list_info_t *list_opts, intn curr_arg, intn argc, char *argv[])
+static int
+parse_list_opts(list_info_t *list_opts, int curr_arg, int argc, char *argv[])
 {
-    intn ret = SUCCEED;
+    int ret = SUCCEED;
 
     for (; curr_arg < argc; curr_arg++) {
 /* Allows '/' for options on Windows */
@@ -199,10 +199,10 @@ print_list_header(list_info_t *list_opts)
    descriptions, for object with tag/ref
    This routine is used by print_data_labels and print_data_descs
    for common code */
-intn
+int
 print_annots_by_object(const char *fname, int32 an_id, ann_type annot_type, uint16 tag, uint16 ref)
 {
-    intn        i;
+    int         i;
     char       *buf = NULL;
     int32       ann_num;
     int32       ann_length;
@@ -211,7 +211,7 @@ print_annots_by_object(const char *fname, int32 an_id, ann_type annot_type, uint
     const char *annot_type_text = "invalid";                /* "label" or "description" */
     const char *func_name       = "print_annots_by_object"; /* used to print error msg */
     char        error_item[256];                            /* holds tag, ref, and fname for error msg */
-    intn        ret_value = SUCCEED;
+    int         ret_value = SUCCEED;
 
     /* stores the current values tag, ref, and file name in error_item,
          just to simplify the error printing statement */
@@ -294,10 +294,10 @@ done:
 } /* print_annots_by_object() */
 
 /* print all data labels for object with tag/ref */
-intn
+int
 print_data_labels(const char *fname, int32 an_id, uint16 tag, uint16 ref)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     ret_value = print_annots_by_object(fname, an_id, AN_DATA_LABEL, tag, ref);
     if (ret_value == FAIL)
@@ -308,10 +308,10 @@ done:
 } /* end print_data_labels */
 
 /* print all data descriptions for object with tag/ref */
-intn
+int
 print_data_descs(const char *fname, int32 an_id, uint16 tag, uint16 ref)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     ret_value = print_annots_by_object(fname, an_id, AN_DATA_DESC, tag, ref);
     if (ret_value == FAIL)
@@ -324,16 +324,16 @@ done:
 /* Prints all annotations in the file.
    This routine is used by print_all_data_labels, print_all_data_descs,
 print_all_file_labels, and print_all_file_descs for the common code. */
-intn
+int
 print_annots_in_file(int32 an_id, const char *fname, int32 n_annotations, ann_type annot_type)
 {
-    intn        i;
+    int         i;
     int32       len;
     char       *annotation      = NULL;
     const char *func_name       = "print_annots_in_file";
     int32       ann_id          = FAIL;
     const char *annot_type_text = "invalid"; /* "label" or "description" */
-    intn        ret_value       = SUCCEED;
+    int         ret_value       = SUCCEED;
 
     /* validate annotation type before processing */
     if (annot_type == AN_DATA_LABEL)
@@ -395,14 +395,14 @@ done:
 
 /* Exported
  * Prints all data labels in file */
-intn
+int
 print_all_data_labels(const char *fname, int32 an_id)
 {
     int32 n_file_label;
     int32 n_data_label;
     int32 n_file_desc;
     int32 n_data_desc;
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     /* find out how many file labels/descs and data labels/descs in file */
     if (FAIL == ANfileinfo(an_id, &n_file_label, &n_file_desc, &n_data_label, &n_data_desc))
@@ -419,18 +419,18 @@ done:
 
 /* Exported
  * Prints all data descriptions in file */
-intn
+int
 print_all_data_descs(const char *fname, int32 an_id)
 {
     int32 len;
     char *desc   = NULL;
     int32 ann_id = FAIL;
-    intn  i;
+    int   i;
     int32 n_file_label;
     int32 n_file_desc;
     int32 n_data_label;
     int32 n_data_desc;
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     /* find out how many file labels/descs and data labels/descs in file */
     if (FAIL == ANfileinfo(an_id, &n_file_label, &n_file_desc, &n_data_label, &n_data_desc)) {
@@ -491,18 +491,18 @@ done:
     return ret_value;
 } /* print_all_data_descs() */
 
-intn
+int
 print_all_file_labels(const char *fname, int32 an_id)
 {
     int32 len;
     char *label = NULL;
-    intn  i;
+    int   i;
     int32 ann_id = FAIL;
     int32 n_file_label;
     int32 n_file_desc;
     int32 n_data_label;
     int32 n_data_desc;
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     /* find out how many file labels/descs and data labels/descs in file */
     if (FAIL == ANfileinfo(an_id, &n_file_label, &n_file_desc, &n_data_label, &n_data_desc)) {
@@ -563,7 +563,7 @@ done:
     return ret_value;
 } /* end print_all_file_labels() */
 
-intn
+int
 print_all_file_descs(const char *fname, list_info_t *list_opts, /* for print_SDattrs */
                      int32 an_id)
 {
@@ -571,7 +571,7 @@ print_all_file_descs(const char *fname, list_info_t *list_opts, /* for print_SDa
     int32 len;
     char *desc   = NULL;
     int32 ann_id = FAIL;
-    intn  i;
+    int   i;
     int32 n_file_label;
     int32 n_file_desc;
     int32 n_data_label;
@@ -581,7 +581,7 @@ print_all_file_descs(const char *fname, list_info_t *list_opts, /* for print_SDa
     int32 ndsets, nattrs;
     char *attr_nt_desc = NULL;
     void *attr_buf     = NULL;
-    intn  ret_value    = SUCCEED;
+    int   ret_value    = SUCCEED;
 
     (void)list_opts;
 
@@ -673,19 +673,19 @@ done:
    the file annotations because print_all_file_descs also prints SD
    file attributes.  Probably will separate SD file attributes when
    adding GR file attributes */
-intn
+int
 print_file_descs(const char *f_name, int32 an_id)
 {
     /* file desc */
     int32 len;
     char *desc   = NULL;
     int32 ann_id = FAIL;
-    intn  i;
+    int   i;
     int32 n_file_label;
     int32 n_file_desc;
     int32 n_data_label;
     int32 n_data_desc;
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     /* find out how many file labels/descs and data labels/descs in file */
     if (FAIL == ANfileinfo(an_id, &n_file_label, &n_file_desc, &n_data_label, &n_data_desc)) {
@@ -750,13 +750,13 @@ done:
 
 /* prints all relevant information that an HDF object can have
    including annotations */
-static intn
-print_list_obj(const char *fname, list_info_t *l_opts, objinfo_t *o_info, intn o_num, int32 an_id)
+static int
+print_list_obj(const char *fname, list_info_t *l_opts, objinfo_t *o_info, int o_num, int32 an_id)
 {
     int32 i;
     char *s         = NULL;
     char *buf       = NULL;
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     switch (l_opts->verbosity) {
         case VSHORT: /* short output */
@@ -818,10 +818,10 @@ print_list_obj(const char *fname, list_info_t *l_opts, objinfo_t *o_info, intn o
                 break;
 
             case SPECIAL_CHUNKED:
-                printf("\tChunked element: chunk size %d, ndims %d, [", (intn)o_info->spec_info->chunk_size,
-                       (intn)o_info->spec_info->ndims);
+                printf("\tChunked element: chunk size %d, ndims %d, [", (int)o_info->spec_info->chunk_size,
+                       (int)o_info->spec_info->ndims);
                 for (i = 0; i < o_info->spec_info->ndims; i++) {
-                    printf("%d", (intn)o_info->spec_info->cdims[i]);
+                    printf("%d", (int)o_info->spec_info->cdims[i]);
                     if (i != (o_info->spec_info->ndims - 1))
                         printf(",");
                 }
@@ -877,8 +877,8 @@ printfilever(int32 file_id)
 }
 
 /* low level object listing routine for HDF file */
-intn
-do_list(intn curr_arg, intn argc, char *argv[], intn help)
+int
+do_list(int curr_arg, int argc, char *argv[], int help)
 {
     list_info_t list_opts;        /* list options */
     filelist_t *f_list = NULL;    /* list of files to dump */
@@ -886,11 +886,11 @@ do_list(intn curr_arg, intn argc, char *argv[], intn help)
     objinfo_t  *o_info = NULL;    /* pointer to a DD object */
     char       *f_name = NULL;    /* current file name to list */
     int32       fid    = FAIL;    /* HDF file ID */
-    intn        obj_num;          /* number of the object we are displaying */
-    intn        status;           /* status from various function calls */
+    int         obj_num;          /* number of the object we are displaying */
+    int         status;           /* status from various function calls */
     char       *s         = NULL; /* temporary character pointer */
     int32       an_id     = FAIL; /* annotation interface handle */
-    intn        ret_value = SUCCEED;
+    int         ret_value = SUCCEED;
 
     /* Do this early, to avoid uninitialized warnings in cleanup code */
     init_list_opts(&list_opts);

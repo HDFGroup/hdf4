@@ -30,6 +30,12 @@
  * These types were added long before C99 was widely supported (or even
  * existed). They were formerly mapped to native C types on a machine-specific
  * basis, but they are now mapped to their equivalent C99 types.
+ *
+ * They have been removed from the library, but have been retained here
+ * for compatibility with earlier code that uses them. They were in
+ * widespread use for many years and should remain here forever unless
+ * there is a VERY compelling reason to delete them or hide them behind
+ * an ifdef.
  *-------------------------------------------------------------------------*/
 
 /* Floating-point types */
@@ -134,7 +140,7 @@ typedef enum {
 #define SUCCEED 0
 #define FAIL    (-1)
 
-/* boolean values,  reminder: NEVER compare with numeric values */
+/* Boolean values,  reminder: NEVER compare with numeric values */
 
 #ifndef FALSE
 #define FALSE 0
@@ -169,7 +175,7 @@ typedef struct hdf_ntinfo_t {
 /* type for File ID to send to Hlevel from Vxx interface */
 typedef int32 HFILEID;
 
-typedef intn (*hdf_termfunc_t)(void); /* termination function typedef */
+typedef int (*hdf_termfunc_t)(void); /* termination function typedef */
 
 /* .................................................................. */
 

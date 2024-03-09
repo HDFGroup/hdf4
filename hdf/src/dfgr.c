@@ -48,17 +48,17 @@
 
 static char     *Grlastfile = NULL;
 static uint8    *Grlutdata  = NULL; /* points to lut, if in memory */
-static intn      Grnewdata  = 0;    /* does Grread contain fresh data? */
-static intn      Grcompr    = 0;    /* compression scheme to use */
+static int       Grnewdata  = 0;    /* does Grread contain fresh data? */
+static int       Grcompr    = 0;    /* compression scheme to use */
 static comp_info Grcinfo;           /* Compression information for each
                                         scheme */
 static uint16 Grrefset   = 0;       /* Ref of image to get next */
 static uint16 Grlastref  = 0;       /* Last ref read/written */
-static intn   Grreqil[2] = {0, 0};  /* requested lut/image il */
+static int    Grreqil[2] = {0, 0};  /* requested lut/image il */
 static struct {                     /* track refs of set vals written before */
-    intn  lut;                      /* -1: no vals set */
+    int   lut;                      /* -1: no vals set */
     int16 dims[2];                  /* 0: vals set, not written */
-    intn  nt;                       /* non-zero: ref of val in file */
+    int   nt;                       /* non-zero: ref of val in file */
 } Ref                 = {-1, {-1, -1}, -1};
 static DFGRrig Grread = {
     /* information about RIG being read */
@@ -128,16 +128,16 @@ static DFGRrig Grzrig = {
 };
 
 /* Whether we've installed the library termination function yet for this interface */
-static intn library_terminate = FALSE;
+static int library_terminate = FALSE;
 
 #define LUT   0
 #define IMAGE 1
 
 /* private functions */
-static int  DFGRIriginfo(int32 file_id);
-static int  DFGRgetrig(int32 file_id, uint16 ref, DFGRrig *rig);
-static int  DFGRaddrig(int32 file_id, uint16 ref, DFGRrig *rig);
-static intn DFGRIstart(void);
+static int DFGRIriginfo(int32 file_id);
+static int DFGRgetrig(int32 file_id, uint16 ref, DFGRrig *rig);
+static int DFGRaddrig(int32 file_id, uint16 ref, DFGRrig *rig);
+static int DFGRIstart(void);
 
 /*-----------------------------------------------------------------------------
  * Name:    DFGRgetlutdims
@@ -267,7 +267,7 @@ DFGRgetimage(const char *filename, void *image, int32 xdim, int32 ydim)
 int
 DFGRsetcompress(int32 scheme, comp_info *cinfo)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     HEclear();
 
@@ -288,7 +288,7 @@ DFGRsetcompress(int32 scheme, comp_info *cinfo)
     if (scheme == COMP_JPEG)
         Grcompr = DFTAG_JPEG5; /* Set the compression scheme */
     else                       /* otherwise, just use mapped tag */
-        Grcompr = (intn)compress_map[scheme];
+        Grcompr = (int)compress_map[scheme];
     Grcinfo = (*cinfo); /* Set the compression parameters */
 
 done:
@@ -412,7 +412,7 @@ DFGRputimage(const char *filename, void *image, int32 xdim, int32 ydim)
 int
 DFGRreadref(const char *filename, uint16 ref)
 {
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
     int32 file_id   = (-1);
 
     HEclear();
@@ -466,7 +466,7 @@ DFGRgetrig(int32 file_id, uint16 ref, DFGRrig *rig)
     int    type;
     int32  GroupID;
     uint8  GRtbuf[64]; /* local buffer for reading RIG info */
-    intn   ret_value = SUCCEED;
+    int    ret_value = SUCCEED;
 
     HEclear();
 
@@ -506,9 +506,9 @@ DFGRgetrig(int32 file_id, uint16 ref, DFGRrig *rig)
                     UINT16DECODE(p, rig->datadesc[type].nt.tag);
                     UINT16DECODE(p, rig->datadesc[type].nt.ref);
                     INT16DECODE(p, int16var);
-                    rig->datadesc[type].ncomponents = (intn)int16var;
+                    rig->datadesc[type].ncomponents = (int)int16var;
                     INT16DECODE(p, int16var);
-                    rig->datadesc[type].interlace = (intn)int16var;
+                    rig->datadesc[type].interlace = (int)int16var;
                     UINT16DECODE(p, rig->datadesc[type].compr.tag);
                     UINT16DECODE(p, rig->datadesc[type].compr.ref);
                 }
@@ -559,7 +559,7 @@ DFGRaddrig(int32 file_id, uint16 ref, DFGRrig *rig)
     int32 lutsize;
     int32 GroupID;
     uint8 GRtbuf[64]; /* local buffer for reading RIG info */
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     HEclear();
 
@@ -581,7 +581,7 @@ DFGRaddrig(int32 file_id, uint16 ref, DFGRrig *rig)
             HGOTO_ERROR(DFE_PUTELEM, FAIL);
         rig->datadesc[IMAGE].nt.tag = DFTAG_NT;
         rig->datadesc[IMAGE].nt.ref = ref;
-        Ref.nt                      = (intn)ref;
+        Ref.nt                      = (int)ref;
     }
 
     if (Ref.dims[IMAGE] == 0) {
@@ -610,7 +610,7 @@ DFGRaddrig(int32 file_id, uint16 ref, DFGRrig *rig)
             HGOTO_ERROR(DFE_PUTELEM, FAIL);
         rig->data[LUT].tag = DFTAG_LUT;
         rig->data[LUT].ref = ref;
-        Ref.lut            = (intn)ref;
+        Ref.lut            = (int)ref;
     }
 
     if (Ref.dims[LUT] == 0) {
@@ -744,7 +744,7 @@ DFGRIriginfo(int32 file_id)
     } r8dims;
     char *p;
     int32 aid;
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
     if (library_terminate == FALSE)
@@ -855,7 +855,7 @@ done:
 int
 DFGRIgetdims(const char *filename, int32 *pxdim, int32 *pydim, int *pncomps, int *pil, int type)
 {
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
     int32 file_id   = (-1);
 
     HEclear();
@@ -905,9 +905,9 @@ done:
  *---------------------------------------------------------------------------*/
 
 int
-DFGRIreqil(intn il, intn type)
+DFGRIreqil(int il, int type)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     HEclear();
 
@@ -948,7 +948,7 @@ DFGRIgetimlut(const char *filename, void *imlut, int32 xdim, int32 ydim, int typ
     int32  currpos[3], currmax[3], destsize[3], bufsize, i, j;
     uint8 *buf, *destp;
     int32  aid;
-    intn   ret_value = SUCCEED;
+    int    ret_value = SUCCEED;
 
     (void)isfortran;
 
@@ -1099,9 +1099,9 @@ done:
  *---------------------------------------------------------------------------*/
 
 int
-DFGRIsetdims(int32 xdim, int32 ydim, intn ncomps, int type)
+DFGRIsetdims(int32 xdim, int32 ydim, int ncomps, int type)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
     if (library_terminate == FALSE)
@@ -1135,7 +1135,7 @@ done:
 int
 DFGRIsetil(int il, int type)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
     if (library_terminate == FALSE)
@@ -1162,7 +1162,7 @@ done:
 int
 DFGRIrestart(void)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
     if (library_terminate == FALSE)
@@ -1207,7 +1207,7 @@ DFGRIaddimlut(const char *filename, const void *imlut, int32 xdim, int32 ydim, i
         uint16 ydim;
     } r8dims;
     uint8 *p;
-    intn   ret_value = SUCCEED;
+    int    ret_value = SUCCEED;
 
     (void)isfortran;
 
@@ -1310,7 +1310,7 @@ DFGRIaddimlut(const char *filename, const void *imlut, int32 xdim, int32 ydim, i
     if (Grcompr == DFTAG_IMC) {
         if (Hputelement(file_id, DFTAG_LUT, wref, newlut, lutsize) == FAIL)
             HGOTO_ERROR(DFE_PUTELEM, FAIL);
-        Ref.lut = (intn)wref;
+        Ref.lut = (int)wref;
     }
 
     if ((rigref = Htagnewref(file_id, DFTAG_RIG)) == 0)
@@ -1370,7 +1370,7 @@ DFGRIlastref(void)
  PURPOSE
     DFGR-level initialization routine
  USAGE
-    intn DFGRIstart()
+    int DFGRIstart()
  RETURNS
     Returns SUCCEED/FAIL
  DESCRIPTION
@@ -1380,10 +1380,10 @@ DFGRIlastref(void)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-static intn
+static int
 DFGRIstart(void)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* Don't call this routine again... */
     library_terminate = TRUE;
@@ -1402,7 +1402,7 @@ done:
  PURPOSE
     Terminate various static buffers.
  USAGE
-    intn DFGRshutdown()
+    int DFGRshutdown()
  RETURNS
     Returns SUCCEED/FAIL
  DESCRIPTION
@@ -1413,7 +1413,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DFGRPshutdown(void)
 {
     free(Grlastfile);

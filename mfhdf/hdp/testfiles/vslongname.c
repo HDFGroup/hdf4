@@ -25,7 +25,7 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn  status_n;  /* returned status for functions returning an intn  */
+    int   status_n;  /* returned status for functions returning an int  */
     int32 status_32; /* returned status for functions returning an int32 */
     int32 file_id, file2_id, vdata_id, vdata1_id, vdata2_id;
     int32 vdata_ref = -1; /* ref number of a vdata, set to -1 to create  */

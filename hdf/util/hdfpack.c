@@ -79,7 +79,7 @@ main(int argc, char *argv[])
     int     intr     = 0;
     int16   ndds     = 0;
     int     optset   = 0;
-    intn    external = FALSE;
+    int     external = FALSE;
     char   *tmp, fname[2][80];
 
     /*

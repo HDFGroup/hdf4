@@ -47,25 +47,25 @@ typedef struct gr_info {
 
     int32      gr_count;    /* # of image entries in gr_tab so far */
     TBBT_TREE *grtree;      /* Root of image B-Tree */
-    uintn      gr_modified; /* whether any images have been modified */
+    unsigned   gr_modified; /* whether any images have been modified */
 
     int32      gattr_count;    /* # of global attr entries in gr_tab so far */
     TBBT_TREE *gattree;        /* Root of global attribute B-Tree */
-    uintn      gattr_modified; /* whether any global attributes have been modified */
+    unsigned   gattr_modified; /* whether any global attributes have been modified */
 
-    intn   access;     /* the number of active pointers to this file's GRstuff */
+    int    access;     /* the number of active pointers to this file's GRstuff */
     uint32 attr_cache; /* the threshold for the attribute sizes to cache */
 } gr_info_t;
 
 typedef struct at_info {
-    int32  index;         /* index of the attribute (needs to be first in the struct) */
-    int32  nt;            /* number type of the attribute */
-    int32  len;           /* length/order of the attribute */
-    uint16 ref;           /* ref of the attribute (stored in VData) */
-    uintn  data_modified; /* flag to indicate whether the attribute data has been modified */
-    uintn  new_at;        /* flag to indicate whether the attribute was added to the Vgroup */
-    char  *name;          /* name of the attribute */
-    void  *data;          /* data for the attribute */
+    int32    index;         /* index of the attribute (needs to be first in the struct) */
+    int32    nt;            /* number type of the attribute */
+    int32    len;           /* length/order of the attribute */
+    uint16   ref;           /* ref of the attribute (stored in VData) */
+    unsigned data_modified; /* flag to indicate whether the attribute data has been modified */
+    unsigned new_at;        /* flag to indicate whether the attribute was added to the Vgroup */
+    char    *name;          /* name of the attribute */
+    void    *data;          /* data for the attribute */
 } at_info_t;
 
 typedef struct dim_info {
@@ -88,31 +88,32 @@ typedef struct ri_info {
     dim_info_t     lut_dim;          /* palette dimension information */
     uint16         img_tag, img_ref; /* tag & ref of the image data */
     int32          img_aid;          /* AID for the image data */
-    intn           acc_perm;         /* Access permission (read/write) for image AID */
+    int            acc_perm;         /* Access permission (read/write) for image AID */
     uint16         lut_tag, lut_ref; /* tag & ref of the palette data */
     gr_interlace_t im_il;            /* interlace of image when next read (default PIXEL) */
     gr_interlace_t lut_il;           /* interlace of LUT when next read */
-    uintn          data_modified;    /* whether the image or palette data has been modified */
-    uintn          meta_modified;    /* whether the image or palette meta-info has been modified */
-    uintn          attr_modified;    /* whether the attributes have been modified */
+    unsigned       data_modified;    /* whether the image or palette data has been modified */
+    unsigned       meta_modified;    /* whether the image or palette meta-info has been modified */
+    unsigned       attr_modified;    /* whether the attributes have been modified */
     char          *name;             /* name of the image */
     int32          lattr_count;      /* # of local attr entries in ri_info so far */
     TBBT_TREE     *lattree;          /* Root of the local attribute B-Tree */
-    intn           access;           /* the number of times this image has been selected */
-    uintn          use_buf_drvr; /* access to image needs to be through the buffered special element driver */
-    uintn use_cr_drvr; /* access to image needs to be through the compressed raster special element driver */
-    uintn comp_img;    /* whether to compress image data */
+    int            access;           /* the number of times this image has been selected */
+    unsigned       use_buf_drvr; /* access to image needs to be through the buffered special element driver */
+    unsigned
+        use_cr_drvr; /* access to image needs to be through the compressed raster special element driver */
+    unsigned     comp_img;   /* whether to compress image data */
     comp_coder_t comp_type;  /* compression type */
     comp_info    cinfo;      /* compression information */
-    uintn        ext_img;    /* whether to make image data external */
+    unsigned     ext_img;    /* whether to make image data external */
     char        *ext_name;   /* name of the external file */
     int32        ext_offset; /* offset in the external file */
-    uintn        acc_img;    /* whether to make image data a different access type */
-    uintn        acc_type;   /* type of access-mode to get image data with */
-    uintn        fill_img;   /* whether to fill image, or just store fill value */
+    unsigned     acc_img;    /* whether to make image data a different access type */
+    unsigned     acc_type;   /* type of access-mode to get image data with */
+    unsigned     fill_img;   /* whether to fill image, or just store fill value */
     void        *fill_value; /* pointer to the fill value (NULL means use default fill value of 0) */
-    uintn        store_fill; /* whether to add fill value attribute or not */
-    intn name_generated; /* whether the image has name that was given by app. or was generated by the library
+    unsigned     store_fill; /* whether to add fill value attribute or not */
+    int name_generated; /* whether the image has name that was given by app. or was generated by the library
                             like the DFR8 images (added for hmap)*/
 } ri_info_t;
 
@@ -122,8 +123,8 @@ extern "C" {
 
 /* Useful raster routines for generally private use */
 
-HDFLIBAPI intn GRIil_convert(const void *inbuf, gr_interlace_t inil, void *outbuf, gr_interlace_t outil,
-                             int32 dims[2], int32 ncomp, int32 nt);
+HDFLIBAPI int GRIil_convert(const void *inbuf, gr_interlace_t inil, void *outbuf, gr_interlace_t outil,
+                            int32 dims[2], int32 ncomp, int32 nt);
 
 HDFLIBAPI void GRIgrdestroynode(void *n);
 

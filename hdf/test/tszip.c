@@ -55,7 +55,7 @@ test_szip_RI8bit()
 {
     /************************* Variable declaration **************************/
 
-    intn  status;       /* status for functions returning an intn */
+    int   status;       /* status for functions returning an int */
     int32 file_id,      /* HDF file identifier */
         gr_id,          /* GR interface identifier */
         ri_id,          /* raster image identifier */
@@ -268,7 +268,7 @@ test_szip_RI16bit()
 {
     /************************* Variable declaration **************************/
 
-    intn  status;       /* status for functions returning an intn */
+    int   status;       /* status for functions returning an int */
     int32 file_id,      /* HDF file identifier */
         gr_id,          /* GR interface identifier */
         ri_id,          /* raster image identifier */
@@ -481,7 +481,7 @@ test_szip_RI32bit()
 {
     /************************* Variable declaration **************************/
 
-    intn  status;       /* status for functions returning an intn */
+    int   status;       /* status for functions returning an int */
     int32 file_id,      /* HDF file identifier */
         gr_id,          /* GR interface identifier */
         ri_id,          /* raster image identifier */
@@ -694,7 +694,7 @@ test_szip_RIfl32bit()
 {
     /************************* Variable declaration **************************/
 
-    intn  status;       /* status for functions returning an intn */
+    int   status;       /* status for functions returning an int */
     int32 file_id,      /* HDF file identifier */
         gr_id,          /* GR interface identifier */
         ri_id,          /* raster image identifier */
@@ -908,7 +908,7 @@ test_szip_RIfl64bit()
 {
     /************************* Variable declaration **************************/
 
-    intn  status;       /* status for functions returning an intn */
+    int   status;       /* status for functions returning an int */
     int32 file_id,      /* HDF file identifier */
         gr_id,          /* GR interface identifier */
         ri_id,          /* raster image identifier */
@@ -1129,7 +1129,7 @@ test_szip_chunk()
 
     /************************* Variable declaration **************************/
 
-    intn  status;       /* status for functions returning an intn */
+    int   status;       /* status for functions returning an int */
     int32 file_id,      /* HDF file identifier */
         gr_id,          /* GR interface identifier */
         ri_id,          /* raster image identifier */

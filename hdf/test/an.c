@@ -46,7 +46,7 @@ test_an(void)
     uint8 *image, *newimage;
     uint16 refnum;
     int32  ret;
-    intn   rank;
+    int    rank;
     int    j;
     int32  dimsizes[2];
     float *data;
@@ -222,7 +222,7 @@ test_an_2(void)
     uint8 *image, *newimage;
     uint16 refnum;
     int32  ret;
-    intn   rank;
+    int    rank;
     int    j;
     int32  dimsizes[2];
     float *data;

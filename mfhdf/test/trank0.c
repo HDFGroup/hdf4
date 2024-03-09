@@ -41,9 +41,9 @@ test_rank0()
     int32         comp_flag; /* compression flag */
     HDF_CHUNK_DEF c_def;     /* Chunking definitions */
     int32         buf[Y_LENGTH][X_LENGTH];
-    intn          i, j, status;
+    int           i, j, status;
     int32         status_32;
-    intn          num_errs = 0; /* number of errors so far */
+    int           num_errs = 0; /* number of errors so far */
 
     /* Output message about test being performed */
     TESTING("several APIs with SDS having rank = 0 (trank0.c)");

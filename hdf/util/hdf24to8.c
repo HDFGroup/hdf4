@@ -175,12 +175,12 @@ r24r8(int32 xres, int32 yres, UCHAR *dat24, UCHAR *dat8, int cres, UCHAR *cdat)
     dip = dat24;
     dop = dat8;
 
-    for (xct = (intn)(3 * xres); --xct >= 0;)
+    for (xct = (int)(3 * xres); --xct >= 0;)
         *cp++ = (UINT)*dip++;
 
     for (yct = 0; yct < (yres - 1); yct++) {
         np = idat[(yct + 1) % 2];
-        for (xct = (intn)(3 * xres); --xct >= 0;)
+        for (xct = (int)(3 * xres); --xct >= 0;)
             *np++ = (UINT)*dip++;
 
         cp = idat[yct % 2];

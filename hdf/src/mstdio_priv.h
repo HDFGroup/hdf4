@@ -53,7 +53,7 @@ HDFLIBAPI int32 HCPmstdio_read(accrec_t *access_rec, int32 length, void *data);
 
 HDFLIBAPI int32 HCPmstdio_write(accrec_t *access_rec, int32 length, const void *data);
 
-HDFLIBAPI intn HCPmstdio_endaccess(accrec_t *access_rec);
+HDFLIBAPI int HCPmstdio_endaccess(accrec_t *access_rec);
 
 #ifdef __cplusplus
 }

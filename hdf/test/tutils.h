@@ -235,7 +235,7 @@ const char *get_srcdir(void);
 /* Append the test file name to the srcdir path and return the whole string */
 const char *get_srcdir_filename(const char *filename);
 
-intn fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor);
+int  fuzzy_memcmp(const void *s1, const void *s2, int32 len, int fuzz_factor);
 void print_mismatched(const void *s1, const void *s2, int32 size2cmp);
 
 /* System command to use for Cleanup */

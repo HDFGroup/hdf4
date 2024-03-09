@@ -19,7 +19,7 @@
 #define IMAGE 1
 
 static void
-dumprig_usage(intn argc, char *argv[])
+dumprig_usage(int argc, char *argv[])
 {
     (void)argc;
 
@@ -80,8 +80,8 @@ init_dumprig_opts(dump_info_t *dumprig_opts)
     strcpy(dumprig_opts->file_name, "\0");
 } /* end init_dumprig_opts() */
 
-static intn
-parse_dumprig_opts(dump_info_t *dumprig_opts, intn *curr_arg, intn argc, char *argv[], int *model)
+static int
+parse_dumprig_opts(dump_info_t *dumprig_opts, int *curr_arg, int argc, char *argv[], int *model)
 {
     int32 i;
     int32 numItems;
@@ -131,7 +131,7 @@ parse_dumprig_opts(dump_info_t *dumprig_opts, intn *curr_arg, intn argc, char *a
                 if (*ptr != '\0') /* count the last item */
                     numItems++;
 
-                dumprig_opts->filter_num = (intn *)malloc(sizeof(intn) * numItems);
+                dumprig_opts->filter_num = (int *)malloc(sizeof(int) * numItems);
                 if (dumprig_opts->filter_num == NULL) {
                     printf("Not enough memory!\n");
                     exit(-1);
@@ -198,15 +198,15 @@ parse_dumprig_opts(dump_info_t *dumprig_opts, intn *curr_arg, intn argc, char *a
     return (SUCCEED);
 } /* end parse_dumprig_opts */
 
-static intn
-drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int model)
+static int
+drig(dump_info_t *dumprig_opts, int curr_arg, int argc, char *argv[], int model)
 {
     int32        *rig_chosen = NULL;
     int32         num_rig_chosen;
     int32         width, height;
     int32         ndsets;
     int32         temp;
-    intn          i, k, x;
+    int           i, k, x;
     char          file_name[MAXFNLEN];
     FILE         *fp      = NULL;
     void         *image   = NULL;
@@ -214,7 +214,7 @@ drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int mode
     int           ncomps;
     int           il;
     file_format_t ff;
-    intn          ret_value = SUCCEED;
+    int           ret_value = SUCCEED;
 
     while (curr_arg < argc) { /* Examine all files. */
         strcpy(file_name, argv[curr_arg]);
@@ -579,12 +579,12 @@ done:
     return ret_value;
 } /* drig */
 
-intn
-do_dumprig(intn curr_arg, intn argc, char *argv[], intn help)
+int
+do_dumprig(int curr_arg, int argc, char *argv[], int help)
 {
     dump_info_t dumprig_opts; /* dumprig options */
     int         model     = 0;
-    intn        ret_value = SUCCEED;
+    int         ret_value = SUCCEED;
 
     if (help == TRUE) {
         dumprig_usage(argc, argv);

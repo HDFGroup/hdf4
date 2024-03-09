@@ -40,14 +40,14 @@
 /*
  Tests SDidtype on SD API ids: sd, sds, dim ids
 */
-static intn
+static int
 test_SDAPI_ids()
 {
     int32        fid, dset1, dset2, dim_id;
     int32        dimsize[RANK];
     hdf_idtype_t id_type;
-    intn         status;
-    intn         num_errs = 0; /* number of errors so far */
+    int          status;
+    int          num_errs = 0; /* number of errors so far */
 
     /* Create a file */
     fid = SDstart(IDTYPE_FILE, DFACC_CREATE);
@@ -121,15 +121,15 @@ test_SDAPI_ids()
 /*
  Tests SDidtype on non SD API ids and invalid id.
 */
-static intn
+static int
 test_nonSDAPI_ids()
 {
     int32        fid, gr_id, vdata_id, ri_id;
     int32        vdata_ref;
-    intn         status;
+    int          status;
     int32        dims[2] = {4, 5}; /* dimensions for the empty image */
     hdf_idtype_t id_type;
-    intn         num_errs = 0; /* number of errors so far */
+    int          num_errs = 0; /* number of errors so far */
 
     /* Open the HDF file */
     fid = Hopen(IDTYPE_FILE, DFACC_RDWR, 0);
@@ -243,22 +243,22 @@ test_nonSDAPI_ids()
 #define NUM_VGS    3
 #define NUM_VDS    1
 
-static intn
+static int
 test_vdatavgroups()
 {
     int32       fid, dset1, dset2, dset3, dimid, vgroup_id, vdata_id;
     int32       num_allvdatas;
-    intn        num_vgroups, num_vdatas;
+    int         num_vgroups, num_vdatas;
     int32       dimsize[RANK];
     float32     att1_values[2] = {2., 10.};
     char8       att2_values[]  = "Seconds";
     uint16     *refarray       = NULL;
     uint16      name_len       = 0;
-    intn        ii, status;
+    int         ii, status;
     char       *vg_name           = NULL, vd_name[10];
     const char *check_vg_names[3] = {"Vgroup_1", "Vgroup_2", "Vgroup_3"};
     const char *check_vd_names[1] = {"Vdata_1"};
-    intn        num_errs          = 0; /* number of errors so far */
+    int         num_errs          = 0; /* number of errors so far */
 
     /* Create a file */
     fid = SDstart(VVS_FILE, DFACC_CREATE);
@@ -460,17 +460,17 @@ test_vdatavgroups()
 
 #define VVS_FILE "tvdatasvgroups_SD.hdf"
 #define GR_FILE  "grtdfui83.hdf"
-static intn
+static int
 test_vgisinternal()
 {
     int32 fid, vgroup_id;
-    intn  is_internal = FALSE;
+    int   is_internal = FALSE;
     int32 vref        = -1;
-    intn  ii, status;
+    int   ii, status;
     char  internal_array1[20] = {TRUE, TRUE, TRUE, TRUE, TRUE,  TRUE,  TRUE, TRUE,
                                 TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE};
     char  internal_array2[9]  = {TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE};
-    intn  num_errs            = 0; /* number of errors so far */
+    int   num_errs            = 0; /* number of errors so far */
 
     /* Open the HDF file and initialize the V interface */
     fid = Hopen(VVS_FILE, DFACC_READ, 0);
@@ -539,7 +539,7 @@ test_vgisinternal()
 extern int
 test_mixed_apis()
 {
-    intn num_errs = 0; /* number of errors */
+    int num_errs = 0; /* number of errors */
 
     /* Output message about test being performed */
     TESTING("a mix of SD, V, and VS functions (tmixed_apis.c)");

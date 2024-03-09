@@ -343,7 +343,7 @@ done:
 NAME
    HLconvert -- convert an AID into a linked block element
 USAGE
-   intn HLconvert(aid, blocklen, numblocks)
+   int HLconvert(aid, blocklen, numblocks)
    int32   aid;         IN: AID to convert
    int32   blocklen;    IN: length of standard block
    int32   numblocks;   IN: number of blocks per block list
@@ -376,7 +376,7 @@ DESCRIPTION
    and application dependent.
 
 ---------------------------------------------------------------------------*/
-intn
+int
 HLconvert(int32 aid, int32 block_length, int32 number_blocks)
 {
     filerec_t  *file_rec;                               /* file record */
@@ -393,7 +393,7 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
     int32  file_id;                                     /* file ID for the access record */
     uint8  local_ptbuf[16];
     int32  old_posn; /* position in the access element */
-    intn   ret_value = SUCCEED;
+    int    ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -736,8 +736,8 @@ USAGE
    int32 HLgetdatainfo(file_id, link_ref, num_blocks, offsetarray, lengtharray)
    int32  file_id;	IN: the file
    uint8 *buf;		IN: special header info read from the file by caller
-   uintn start_block,   IN: data block to start at, 0 base
-   uintn info_count,    IN: size of offset/length lists
+   unsigned start_block,   IN: data block to start at, 0 base
+   unsigned info_count,    IN: size of offset/length lists
    int32 *offsetarray;	OUT: offsets of data blocks
    int32 *lengtharray;	OUT: lengths of data blocks
 RETURNS
@@ -754,23 +754,23 @@ TODO
      project, and we're running out of time, I'm leaving it out.
      Feb 18, 2011 -BMR
 ---------------------------------------------------------------------------*/
-intn
+int
 HLgetdatainfo(int32 file_id, uint8 *buf, /* IN: special header info */
-              uintn  start_block,        /* IN: data block to start at, 0 base */
-              uintn  info_count,         /* IN: size of offset/length lists */
-              int32 *offsetarray,        /* OUT: array to hold offsets */
-              int32 *lengtharray)        /* OUT: array to hold lengths */
+              unsigned start_block,      /* IN: data block to start at, 0 base */
+              unsigned info_count,       /* IN: size of offset/length lists */
+              int32   *offsetarray,      /* OUT: array to hold offsets */
+              int32   *lengtharray)        /* OUT: array to hold lengths */
 {
-    link_t *link_info = NULL; /* link information, to get block ref#s*/
-    uintn   num_data_blocks;  /* number of blocks that actually have data */
-    uint16  link_ref;         /* ref# pointing to a block table */
-    uint8  *p = NULL;         /* pointer to special info buffer */
-    int32   num_blocks,       /* number of blocks in each table */
-        block_length,         /* length of each block */
-        total_length,         /* total data length of the element */
-        accum_length;         /* accumulative length of actual data in blocks */
-    int  ii;
-    intn ret_value = SUCCEED;
+    link_t  *link_info = NULL; /* link information, to get block ref#s*/
+    unsigned num_data_blocks;  /* number of blocks that actually have data */
+    uint16   link_ref;         /* ref# pointing to a block table */
+    uint8   *p = NULL;         /* pointer to special info buffer */
+    int32    num_blocks,       /* number of blocks in each table */
+        block_length,          /* length of each block */
+        total_length,          /* total data length of the element */
+        accum_length;          /* accumulative length of actual data in blocks */
+    int ii;
+    int ret_value = SUCCEED;
 
     (void)start_block; /*not used */
     /* Clear error stack */
@@ -874,7 +874,7 @@ HLgetdatainfo(int32 file_id, uint8 *buf, /* IN: special header info */
     /* Return the number of blocks with actual data */
     if (num_data_blocks > INT_MAX)
         HGOTO_DONE(FAIL);
-    ret_value = (intn)num_data_blocks;
+    ret_value = (int)num_data_blocks;
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
@@ -1545,7 +1545,7 @@ done:
 NAME
    HLPendacess -- close a linked block AID
 USAGE
-   intn HLPendaccess(access_rec)
+   int HLPendaccess(access_rec)
    access_t * access_rec;      IN:  access record to close
 RETURNS
    SUCCEED / FAIL
@@ -1556,11 +1556,11 @@ DESCRIPTION
    out.
 
 --------------------------------------------------------------------------- */
-intn
+int
 HLPendaccess(accrec_t *access_rec)
 {
     filerec_t *file_rec; /* file record */
-    intn       ret_value = SUCCEED;
+    int        ret_value = SUCCEED;
 
     /* validate argument */
     if (access_rec == NULL)
@@ -1685,7 +1685,7 @@ NAME
    HLsetblockinfo -- set the block length of a linked-block element
 
 USAGE
-   intn HLsetblockinfo(
+   int HLsetblockinfo(
    int32 aid		IN: access record id
    int32 block_size	IN: length to be used for each linked-block
    int32 num_blocks	IN: number of blocks the element will have
@@ -1708,13 +1708,13 @@ MODIFICATION
    BMR - added in June 2001 to fix bug# 267
 
 --------------------------------------------------------------------------*/
-intn
+int
 HLsetblockinfo(int32 aid,        /* access record id */
                int32 block_size, /* length to be used for each linked-block */
                int32 num_blocks) /* number of blocks the element will have */
 {
     accrec_t *access_rec; /* access record */
-    intn      ret_value = SUCCEED;
+    int       ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -1755,7 +1755,7 @@ NAME
                     linked-block element
 
 USAGE
-   intn HLgetblockinfo(aid, block_size, num_blocks)
+   int HLgetblockinfo(aid, block_size, num_blocks)
    int32  aid		IN: access record id
    int32* block_size	OUT: the returned block size of each linked-block
    int32* num_blocks	OUT: the returned number of blocks of the element
@@ -1775,13 +1775,13 @@ MODIFICATION
    BMR - added in June 2001 to fix bug# 267
 
 --------------------------------------------------------------------------*/
-intn
+int
 HLgetblockinfo(int32  aid,        /* access record id */
                int32 *block_size, /* length being used for each linked-block */
                int32 *num_blocks) /* number of blocks the element will have */
 {
     accrec_t *access_rec; /* access record */
-    intn      ret_value = SUCCEED;
+    int       ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();

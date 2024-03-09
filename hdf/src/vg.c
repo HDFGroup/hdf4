@@ -195,13 +195,13 @@ DESCRIPTION
 RETURNS
    SUCCEED/FAIL
 --------------------------------------------------------------------*/
-intn
+int
 VSsetinterlace(int32 vkey, /* IN: vdata key */
                int32 interlace /* IN: interlace for storing records */)
 {
     vsinstance_t *w         = NULL;
     VDATA        *vs        = NULL;
-    intn          ret_value = SUCCEED;
+    int           ret_value = SUCCEED;
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -308,7 +308,7 @@ RETURNS
    Returns SUCCEED if all fields exist
    else otherwise FAIL is returned.
 --------------------------------------------------------------------*/
-intn
+int
 VSfexist(int32 vkey, /* IN: vdata key */
          char *fields /* IN: names of fields to check for */)
 {
@@ -320,7 +320,7 @@ VSfexist(int32 vkey, /* IN: vdata key */
     int32           ac;
     int32           i, j;
     int32           found;
-    intn            ret_value = SUCCEED;
+    int             ret_value = SUCCEED;
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -565,10 +565,10 @@ VSsetclass(int32       vkey, /* IN: vdata key */
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     /* get current length of vdata class name */
-    curr_len = (intn)strlen(vs->vsclass);
+    curr_len = (int)strlen(vs->vsclass);
 
     /* check length of new class name against MAX length */
-    if ((slen = (intn)strlen(vsclass)) > VSNAMELENMAX) {
+    if ((slen = (int)strlen(vsclass)) > VSNAMELENMAX) {
         strncpy(vs->vsclass, vsclass, VSNAMELENMAX);
         vs->vsclass[VSNAMELENMAX] = '\0';
     }
@@ -682,7 +682,7 @@ RETURNS
    SUCCEED/FAIL
 
 ------------------------------------------------------------------------*/
-intn
+int
 VSinquire(int32  vkey,      /* IN: vdata key */
           int32 *nelt,      /* OUT: number of elements in vdata */
           int32 *interlace, /* OUT: interlace scheme of vdata */
@@ -690,8 +690,8 @@ VSinquire(int32  vkey,      /* IN: vdata key */
           int32 *eltsize,   /* OUT: total size of all fields in bytes */
           char  *vsname /* OUT: name of vdata */)
 {
-    intn ret_value = SUCCEED;
-    intn status;
+    int ret_value = SUCCEED;
+    int status;
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -1058,13 +1058,13 @@ DESCRIPTION
 RETURNS
    Returns SUCCEED/FAIL
 ---------------------------------------------------------------------*/
-intn
+int
 VSsetblocksize(int32 vkey,       /* IN: vdata key */
                int32 block_size) /* length to be used for each linked-block */
 {
     vsinstance_t *w         = NULL;
     VDATA        *vs        = NULL;
-    intn          ret_value = SUCCEED;
+    int           ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -1108,13 +1108,13 @@ MODIFICATION
    BMR - added in June 2001 to fix bug# 267
 
 ---------------------------------------------------------------------*/
-intn
+int
 VSsetnumblocks(int32 vkey,       /* IN: vdata key */
                int32 num_blocks) /* number of blocks the element can have */
 {
     vsinstance_t *w         = NULL;
     VDATA        *vs        = NULL;
-    intn          ret_value = SUCCEED;
+    int           ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -1157,14 +1157,14 @@ MODIFICATION
    BMR - added in June 2001 to fix bug# 267
 
 ---------------------------------------------------------------------*/
-intn
+int
 VSgetblockinfo(int32  vkey,       /* IN: vdata id */
                int32 *block_size, /* OUT: length used for each linked-block */
                int32 *num_blocks) /* OUT: number of blocks the element has */
 {
     vsinstance_t *w         = NULL;
     VDATA        *vs        = NULL;
-    intn          ret_value = SUCCEED;
+    int           ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -1199,11 +1199,11 @@ done:
     vdata created by the the library and FALSE (0) otherwise.
 
 *******************************************************************************/
-intn
+int
 VSisinternal(const char *classname)
 {
-    int  i;
-    intn ret_value = FALSE;
+    int i;
+    int ret_value = FALSE;
 
     /* Check if this class name is one of the internal class name and return
         TRUE, otherwise, return FALSE */
@@ -1253,14 +1253,14 @@ NOTE
     Vnattrs does not handle attributes created via VHstoredatam and Vaddtagref.
     -BMR - 2010/11/21
 ---------------------------------------------------------------------*/
-intn
+int
 VSofclass(int32       id,       /* IN: file id or vgroup id */
           const char *vsclass,  /* IN: class to be queried */
-          uintn       start_vd, /* IN: vdata number to start retrieving */
-          uintn       n_vds,    /* IN: number of user-created vds to return */
+          unsigned    start_vd, /* IN: vdata number to start retrieving */
+          unsigned    n_vds,    /* IN: number of user-created vds to return */
           uint16     *refarray /* IN/OUT: ref array to fill */)
 {
-    intn ret_value = 0;
+    int ret_value = 0;
 
     /* clear error stack */
     HEclear();
@@ -1288,7 +1288,7 @@ RETURNS
    return TRUE, else FALSE.
    BMR - 2010/11/30
 *******************************************************************************/
-static intn
+static int
 vscheckclass(int32 id, /* IN: vgroup id or file id */
 	    uint16 vs_ref, /* IN: reference number of vdata being checked */
 	    const char *vsclass  /* IN: class name to be queried or NULL for
@@ -1296,7 +1296,7 @@ vscheckclass(int32 id, /* IN: vgroup id or file id */
 {
     vsinstance_t *vs_inst   = NULL;
     VDATA        *vs        = NULL;
-    intn          ret_value = FALSE;
+    int           ret_value = FALSE;
 
     /* get instance of vdata; if it's not found, continue to look for
        other vdatas */
@@ -1385,16 +1385,16 @@ RETURNS
     The number of user-created vdatas if successful and FAIL, otherwise.
     BMR - 2010/07/10
 *******************************************************************************/
-intn
-VSIgetvdatas(int32       id,       /* IN: file id or vgroup id */
-             const char *vsclass,  /* IN: a specific class or NULL for user-created vdatas */
-             const uintn start_vd, /* IN: vdata number to start retrieving */
-             const uintn n_vds,    /* IN: number of user-created vds to return */
-             uint16     *refarray /* IN/OUT: ref array to fill */)
+int
+VSIgetvdatas(int32          id,       /* IN: file id or vgroup id */
+             const char    *vsclass,  /* IN: a specific class or NULL for user-created vdatas */
+             const unsigned start_vd, /* IN: vdata number to start retrieving */
+             const unsigned n_vds,    /* IN: number of user-created vds to return */
+             uint16        *refarray /* IN/OUT: ref array to fill */)
 {
     vginstance_t *vg_inst     = NULL;
     group_t       id_type     = HAatom_group(id); /* id is FIDGROUP or VGIDGROUP */
-    intn          nactual_vds = 0, nfound_vds = 0, ii;
+    int           nactual_vds = 0, nfound_vds = 0, ii;
     VGROUP       *vg = NULL;
     vfile_t      *vf = NULL;
     int32         vs_ref;
@@ -1425,7 +1425,7 @@ VSIgetvdatas(int32       id,       /* IN: file id or vgroup id */
         vs_ref      = VSgetid(id, -1); /* get ref number of first vd in the file */
         while ((vs_ref != FAIL)        /* there are more vdatas */
                && ((nactual_vds < n_vds) || (n_vds == 0)) && (nactual_vds <= nfound_vds)) {
-            intn found = FALSE;
+            int found = FALSE;
 
             /* Check if the vdata either has the specified class (when vsclass
                is !NULL) or is a user-created vdata (when vsclass is NULL) */
@@ -1482,7 +1482,7 @@ VSIgetvdatas(int32       id,       /* IN: file id or vgroup id */
              ii++) {
             /* If an element is a vdata, then get access to it */
             if (vg->tag[ii] == DFTAG_VH) {
-                intn found = FALSE;
+                int found = FALSE;
 
                 found = vscheckclass((int32)vg->f, vg->ref[ii], vsclass);
 
@@ -1560,11 +1560,11 @@ MODIFICATION
       that the code can be reused by VSofclass.  VSgetvdatas now simply calls
       VSIgetvdatas. -BMR - 2010/11/17
 *******************************************************************************/
-intn
-VSgetvdatas(int32       id,       /* IN: file id or vgroup id */
-            const uintn start_vd, /* IN: vdata number to start retrieving */
-            const uintn n_vds,    /* IN: number of user-created vds to return */
-            uint16     *refarray /* IN/OUT: ref array to fill */)
+int
+VSgetvdatas(int32          id,       /* IN: file id or vgroup id */
+            const unsigned start_vd, /* IN: vdata number to start retrieving */
+            const unsigned n_vds,    /* IN: number of user-created vds to return */
+            uint16        *refarray /* IN/OUT: ref array to fill */)
 {
     int32 ret_value = SUCCEED;
 

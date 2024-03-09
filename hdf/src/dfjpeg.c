@@ -56,9 +56,9 @@ typedef hdf_destination_mgr *hdf_dest_ptr;
 extern void    hdf_init_destination(struct jpeg_compress_struct *cinfo_ptr);
 extern boolean hdf_empty_output_buffer(struct jpeg_compress_struct *cinfo_ptr);
 extern void    hdf_term_destination(struct jpeg_compress_struct *cinfo_ptr);
-extern intn    jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag, uint16 ref,
+extern int     jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag, uint16 ref,
                              const void *image, int32 xdim, int32 ydim, int16 scheme);
-extern intn    jpeg_HDF_dest_term(struct jpeg_compress_struct *cinfo_ptr);
+extern int     jpeg_HDF_dest_term(struct jpeg_compress_struct *cinfo_ptr);
 
 void (*jpeg_message_handler)(j_common_ptr cinfo) = NULL;
 
@@ -165,7 +165,7 @@ hdf_term_destination(struct jpeg_compress_struct *cinfo_ptr)
  * Remarks: Sets up the destination manager functions for the JPEG library.
  *          These routines will be called by the JPEG routines to output
  *---------------------------------------------------------------------------*/
-intn
+int
 jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag, uint16 ref,
               const void *image, int32 xdim, int32 ydim, int16 scheme)
 {
@@ -202,7 +202,7 @@ jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag,
  * Invokes: JPEG library routines (lots of them...)
  * Remarks: Terminates the destination manager functions for the JPEG library.
  *---------------------------------------------------------------------------*/
-intn
+int
 jpeg_HDF_dest_term(struct jpeg_compress_struct *cinfo_ptr)
 {
     /* all we need to do for now is to free up the dest. mgr structure */
@@ -231,7 +231,7 @@ jpeg_HDF_dest_term(struct jpeg_compress_struct *cinfo_ptr)
  *          DFputcomp() to write out the entire image at once.
  *---------------------------------------------------------------------------*/
 
-intn
+int
 DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim, const void *image, int16 scheme,
          comp_info *scheme_info)
 {
@@ -243,7 +243,7 @@ DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim, const vo
     struct jpeg_compress_struct *cinfo_ptr;
     struct jpeg_error_mgr       *jerr_ptr;
     JSAMPROW                     row_pointer[1];
-    intn                         row_stride;
+    int                          row_stride;
     const uint8                 *image_buffer = image;
 
     if ((cinfo_ptr = calloc(1, sizeof(struct jpeg_compress_struct))) == NULL)

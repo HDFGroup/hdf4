@@ -22,7 +22,7 @@ WriteHDF(GIFTOMEM GifMemoryStruct, char *HDFName, char *GIFFileName)
     GIFHEAD      gifHead;      /* GIF Header structure            */
     GIFIMAGEDESC gifImageDesc; /* Logical Image Descriptor struct */
 
-    intn  status;         /* status for functions returning an intn */
+    int   status;         /* status for functions returning an int */
     int32 file_id,        /* HDF file identifier */
         gr_id,            /* GR interface identifier */
         ri_id, vgroup_id, /* VGroup interface identifier */

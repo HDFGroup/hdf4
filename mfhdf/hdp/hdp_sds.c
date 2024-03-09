@@ -18,15 +18,15 @@
 
 #ifdef H4_HAVE_LIBSZ
 #include "szlib.h"
-intn have_szip = 1;
+int have_szip = 1;
 #else
-intn have_szip = 0;
+int have_szip = 0;
 #endif
 #include "cszip_priv.h"
 #include "nc_priv.h" /* to use some definitions */
 
 void
-dumpsds_usage(intn argc, char *argv[])
+dumpsds_usage(int argc, char *argv[])
 {
     (void)argc;
 
@@ -52,10 +52,10 @@ dumpsds_usage(intn argc, char *argv[])
     printf("\t<filelist>\tList of hdf file names, separated by spaces\n");
 } /* end list_usage() */
 
-intn
-parse_dumpsds_opts(dump_info_t *dumpsds_opts, intn *curr_arg, intn argc, char *argv[])
+int
+parse_dumpsds_opts(dump_info_t *dumpsds_opts, int *curr_arg, int argc, char *argv[])
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* traverse the command and process each option */
 /* Allows '/' for options on Windows */
@@ -188,9 +188,9 @@ sdsdumpfull(int32 sds_id, dump_info_t *dumpsds_opts, int32 rank, int32 dimsizes[
     int32        *left     = NULL;
     int32        *start    = NULL;
     int32        *edge     = NULL;
-    intn          emptySDS = TRUE;
+    int           emptySDS = TRUE;
     file_format_t ff;
-    intn          status    = FAIL;
+    int           status    = FAIL;
     int32         status32  = FAIL;
     int32         ret_value = SUCCEED;
 
@@ -251,7 +251,7 @@ sdsdumpfull(int32 sds_id, dump_info_t *dumpsds_opts, int32 rank, int32 dimsizes[
         if (FAIL == SDreaddata(sds_id, start, NULL, edge, buf)) {
             /* If the data set has external element, get the external file
                name to provide information */
-            intn extfile_namelen = SDgetexternalfile(sds_id, 0, NULL, NULL);
+            int extfile_namelen = SDgetexternalfile(sds_id, 0, NULL, NULL);
             if (extfile_namelen > 0) {
                 char *extfile_name = NULL;
                 extfile_name       = (char *)malloc(sizeof(char *) * (extfile_namelen + 1));
@@ -285,7 +285,7 @@ sdsdumpfull(int32 sds_id, dump_info_t *dumpsds_opts, int32 rank, int32 dimsizes[
             if (FAIL == SDreaddata(sds_id, start, NULL, edge, buf)) {
                 /* If the data set has external element, get the external file
                    name to provide information */
-                intn extfile_namelen = SDgetexternalfile(sds_id, 0, NULL, NULL);
+                int extfile_namelen = SDgetexternalfile(sds_id, 0, NULL, NULL);
                 if (extfile_namelen > 0) {
                     char *extfile_name = NULL;
                     extfile_name       = (char *)malloc(sizeof(char *) * (extfile_namelen + 1));
@@ -373,16 +373,16 @@ done:
         - 0 if none.
    If any failure occurs, the parameter index_error will be set to TRUE
 */
-intn
+int
 get_SDSindex_list(int32 sd_id, dump_info_t *dumpsds_opts,
                   int32 **sds_chosen, /* array of indices of SDSs to be processed */
-                  intn   *index_error)
+                  int    *index_error)
 {
-    intn  ii;
+    int   ii;
     int32 sds_index,        /* index of an SDS */
         sds_count      = 0, /* number of SDSs to be processed */
         num_sds_chosen = dumpsds_opts->num_chosen;
-    intn ret_value     = 0; /* assume that no SDS will be processed */
+    int ret_value      = 0; /* assume that no SDS will be processed */
 
     /* if no specific datasets are requested, return the SDS count as
        NO_SPECIFIC (-1) to indicate that all datasets are to be dumped */
@@ -452,14 +452,14 @@ done:
 } /* end of get_SDSindex_list */
 
 /* Displays all SD file attributes */
-intn
+int
 print_SDattrs(int32 sd_id, FILE *fp, int32 n_file_attrs, dump_info_t *dumpsds_opts)
 {
     int32 attr_index, attr_count, attr_nt, attr_buf_size;
     char  attr_name[MAXNAMELEN], *attr_nt_desc = NULL;
     void *attr_buf = NULL;
-    intn  printed  = FALSE; /* whether file attr title has been printed */
-    intn  status   = FAIL,  /* status from a called routine */
+    int   printed  = FALSE; /* whether file attr title has been printed */
+    int   status   = FAIL,  /* status from a called routine */
         ret_value  = SUCCEED;
 
     /* for each file attribute, print its info and values */
@@ -538,13 +538,13 @@ print_SDattrs(int32 sd_id, FILE *fp, int32 n_file_attrs, dump_info_t *dumpsds_op
     return (ret_value);
 } /* end of print_SDattrs */
 
-intn
+int
 print_SDSattrs(int32 sds_id, int32 nattrs, FILE *fp, dump_info_t *dumpsds_opts)
 {
     int32 attr_index, attr_count, attr_nt, attr_buf_size;
     char  attr_name[MAXNAMELEN], *attr_nt_desc = NULL;
     void *attr_buf = NULL;
-    intn  status   = FAIL,    /* status returned from a called routine */
+    int   status   = FAIL,    /* status returned from a called routine */
         ret_value  = SUCCEED; /* returned value of print_SDSattrs */
 
     /* for each attribute, display its info and data */
@@ -636,10 +636,10 @@ resetSDS(int32 *sds_id, int32 sds_index, char *curr_file_name)
  * Forms a string containing all the szip encoding schemes and other options
  * that are set in the parameter options_mask.  BMR - bugzilla 1202 - Jul, 2008
  */
-intn
+int
 option_mask_string(int32 options_mask, char *opt_mask_strg)
 {
-    intn ret_value = SUCCEED;
+    int  ret_value = SUCCEED;
     char numval[16];
 
     strcpy(opt_mask_strg, ""); /* init string to empty string */
@@ -712,12 +712,12 @@ option_mask_string(int32 options_mask, char *opt_mask_strg)
  * Prints compression method and compression information of a data set.
  * BMR - bugzilla 1202 - Jul, 2008
  */
-intn
+int
 print_comp_info(FILE *fp, int32 sds_id, comp_coder_t *comp_type)
 {
     comp_info c_info;                       /* Compression structure */
     int32     comp_size = 0, orig_size = 0; /* compressed and original sizes */
-    intn      status = FAIL;                /* returned status from a called function */
+    int       status = FAIL;                /* returned status from a called function */
 
     /* get compression info */
     memset(&c_info, 0, sizeof(c_info));
@@ -791,7 +791,7 @@ print_comp_info(FILE *fp, int32 sds_id, comp_coder_t *comp_type)
 } /* print_comp_info */
 
 /* printSDS_ASCII prints all of the requested SDSs in the file */
-intn
+int
 printSDS_ASCII(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* index of the SDS */
                FILE *fp)
 {
@@ -811,7 +811,7 @@ printSDS_ASCII(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* index
         curr_file_name[MAXFNLEN];     /* curr hdf file name */
     uint16       name_len  = 0;
     comp_coder_t comp_type = COMP_CODE_NONE;
-    intn         isdimvar,   /* TRUE if curr SDS is used for a dim */
+    int          isdimvar,   /* TRUE if curr SDS is used for a dim */
         j, status = FAIL,    /* status returned from a routine */
         ret_value = SUCCEED; /* returned value of printSDS_ASCII */
 
@@ -985,14 +985,14 @@ done:
     return ret_value;
 } /* end of printSDS_ASCII() */
 
-intn
+int
 printSDS_BINARY(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* index of the SDS */
                 FILE *fp)
 {
     int32        sds_id = FAIL, dimsizes[MAXRANK], rank, nt, nattrs;
     char         curr_file_name[MAXFNLEN];
     comp_coder_t comp_type = COMP_CODE_NONE;
-    intn         status = FAIL, ret_value = SUCCEED;
+    int          status = FAIL, ret_value = SUCCEED;
 
     /* temp. names for file type and curr input file name for ease of use */
     strcpy(curr_file_name, dumpsds_opts->ifile_name);
@@ -1036,14 +1036,14 @@ done:
     return ret_value;
 } /* end of printSDS_BINARY */
 
-intn
-dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[])
+int
+dsd(dump_info_t *dumpsds_opts, int curr_arg, int argc, char *argv[])
 {
     int32         sd_id = FAIL, *sds_chosen = NULL, num_sds_chosen, ndsets, n_file_attrs;
     char          file_name[MAXFNLEN];
     FILE         *fp          = NULL;
     file_format_t ff          = dumpsds_opts->file_format;
-    intn          index_error = 0, ii, status = FAIL, ret_value = SUCCEED;
+    int           index_error = 0, ii, status = FAIL, ret_value = SUCCEED;
 
     /* check for missing input file name */
     if (curr_arg >= argc) {
@@ -1151,7 +1151,7 @@ dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[])
                 else /* no -k */
                 {
                     int32 sds_count, sds_index;
-                    intn  dumpall = FALSE;
+                    int   dumpall = FALSE;
 
                     /* if only specific datasets were requested, sort the list
                        to dump them in index order */
@@ -1207,7 +1207,7 @@ dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[])
                 else /* no -k */
                 {
                     int32 sds_count, sds_index;
-                    intn  dumpall = FALSE;
+                    int   dumpall = FALSE;
 
                     /* if only specific datasets were requested, sort the list
                        to dump them in index order */
@@ -1270,11 +1270,11 @@ done:
 } /* dsd */
 
 /* Exported */
-intn
-do_dumpsds(intn curr_arg, intn argc, char *argv[], intn help)
+int
+do_dumpsds(int curr_arg, int argc, char *argv[], int help)
 {
     dump_info_t dumpsds_opts; /* dumpsds options */
-    intn        status = FAIL, ret_value = SUCCEED;
+    int         status = FAIL, ret_value = SUCCEED;
 
     /* initialize the structure that holds user's options and inputs */
     init_dump_opts(&dumpsds_opts);

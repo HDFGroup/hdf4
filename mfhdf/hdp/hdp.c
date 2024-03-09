@@ -21,7 +21,7 @@
 /********************/
 
 /* indicates Vsets have been initialized for the current file */
-intn vinit_done = FALSE;
+int vinit_done = FALSE;
 
 /********************************/
 /* Local variables and typedefs */
@@ -42,7 +42,7 @@ static const command_t commands[] = {{HELP, "help"},       {LIST, "list"},
 
 /* Print the usage message about this utility */
 static void
-usage(intn argc, char *argv[])
+usage(int argc, char *argv[])
 {
     (void)argc;
 
@@ -112,9 +112,9 @@ int
 main(int argc, char *argv[])
 {
     command_value_t cmd = BAD_COMMAND; /* command to perform */
-    intn            curr_arg;          /* current cmd line argument */
+    int             curr_arg;          /* current cmd line argument */
     dump_opt_t      glob_opts;         /* global options for all commands */
-    intn            j;                 /* local counting variables */
+    int             j;                 /* local counting variables */
 
     memset(&glob_opts, 0, sizeof(dump_opt_t));
 
@@ -278,10 +278,10 @@ done:
 NAME
        VSattrhdfsize -- get hdfsize of a vdata attribute
 USAGE
-      intn VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size);
+      int VSattrhdfsize(int32 vsid, int32 findex, int attrindex, int32 *size);
       int32 vsid;      IN: vdata id
       int32 findex;    IN: field index. _HDF_VDATA (-1) for the vdata
-      intn attrindex;  IN: which attr of the field/vdata
+      int attrindex;  IN: which attr of the field/vdata
                            attrindex is 0-based
       int32 *size;     OUT: size of the attr values in hdf files.
 RETURNS
@@ -289,8 +289,8 @@ RETURNS
 DESCRIPTION
         size can be NULL if which is not interested.
 --------------------------------------------------- */
-intn
-VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size)
+int
+VSattrhdfsize(int32 vsid, int32 findex, int attrindex, int32 *size)
 {
 
     VDATA          *vs, *attr_vs;
@@ -298,7 +298,7 @@ VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size)
     vsinstance_t   *vs_inst, *attr_inst;
     int32           attr_vsid;
     int32           ret_value = SUCCEED;
-    intn            i, nattrs, a_index, found;
+    int             i, nattrs, a_index, found;
     DYN_VWRITELIST *w;
 
     HEclear();
@@ -364,9 +364,9 @@ done:
 NAME
        Vattrhdfsize -- get hdfsize of a vgroup attribute
 USAGE
-        intn Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
+        int Vattrhdfsize(int32 vgid, int attrindex, int32 *size)
         int32 vgid;      IN: vgroup id
-        intn attrindex;  IN: which attr's info we want
+        int attrindex;  IN: which attr's info we want
                              attrindex is 0-based
         int32 *size;     OUT: size of the attr values in hdf files.
 
@@ -375,8 +375,8 @@ RETURNS
 DESCRIPTION
         size can be NULL if which is not interested.
 --------------------------------------------------- */
-intn
-Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
+int
+Vattrhdfsize(int32 vgid, int attrindex, int32 *size)
 {
     VGROUP         *vg;
     VDATA          *vs;
@@ -384,7 +384,7 @@ Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
     vginstance_t   *v;
     vsinstance_t   *vs_inst;
     vg_attr_t      *vg_alist = NULL;
-    intn            adjusted_index;
+    int             adjusted_index;
     int32           fid, vsid;
     int32           ret_value = SUCCEED;
 

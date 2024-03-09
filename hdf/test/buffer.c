@@ -73,7 +73,7 @@ static void  init_buffer(void);
 static void  usage(void);
 static char *fixname(const char *base_name, char *fullname, size_t size);
 static long  read_test(int32 aid);
-static long  write_test(int32 aid, intn num_timings);
+static long  write_test(int32 aid, int num_timings);
 
 /* Initialize output buffer */
 static void
@@ -152,9 +152,9 @@ read_test(int32 aid)
     struct timeval start_time, end_time; /* timing counts */
     long           acc_time;
     int32          ret;
-    intn           i;         /* local counting index */
-    intn           timing;    /* Which timing test we are on */
-    intn           err_count; /* number of incorrect array positions */
+    int            i;         /* local counting index */
+    int            timing;    /* Which timing test we are on */
+    int            err_count; /* number of incorrect array positions */
 
     acc_time = 0;
     for (timing = 0; timing < NUM_TIMINGS; timing++) {
@@ -262,13 +262,13 @@ read_test(int32 aid)
 } /* end read_test() */
 
 static long
-write_test(int32 aid, intn num_timings)
+write_test(int32 aid, int num_timings)
 {
     struct timeval start_time, end_time; /* timing counts */
     long           acc_time;
     int32          ret;
-    intn           i;      /* local counting index */
-    intn           timing; /* Which timing test we are on */
+    int            i;      /* local counting index */
+    int            timing; /* Which timing test we are on */
 
     acc_time = 0;
     for (timing = 0; timing < num_timings; timing++) {
@@ -392,7 +392,7 @@ main(int argc, char *argv[])
     uint16     ref_num; /* reference number of the data written out */
     int32      fid;     /* file ID of HDF file for testing */
     int32      aid;     /* AID of element to test */
-    intn       test_num;
+    int        test_num;
     int32      ret;
     char       hfilename[32];
     char       extfilename[32];

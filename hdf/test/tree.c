@@ -28,12 +28,12 @@
 #define SEED(s)       (srand(s))
 #define RandInt(a, b) ((rand() % (((b) - (a)) + 1)) + (a))
 
-static void swap_arr(int32 *arr, intn a, intn b);
+static void swap_arr(int32 *arr, int a, int b);
 
-intn tcompare(void *k1, void *k2, intn cmparg);
+int tcompare(void *k1, void *k2, int cmparg);
 
 static void
-swap_arr(int32 *arr, intn a, intn b)
+swap_arr(int32 *arr, int a, int b)
 {
     int32 t;
 
@@ -44,26 +44,26 @@ swap_arr(int32 *arr, intn a, intn b)
     } /* end if */
 } /* end swap_arr() */
 
-intn
-tcompare(void *k1, void *k2, intn cmparg)
+int
+tcompare(void *k1, void *k2, int cmparg)
 {
     (void)cmparg;
-    return (intn)((*(int32 *)k1) - (*(int32 *)k2));
+    return (int)((*(int32 *)k1) - (*(int32 *)k2));
 }
 
 void
 test_tbbt(void)
 {
-    intn       test_size;
-    intn       i, j;
+    int        test_size;
+    int        i, j;
     int32      ins_arr[MAX_TEST_SIZE];
     int32      rem_arr[MAX_TEST_SIZE];
-    intn       t;
+    int        t;
     TBBT_TREE *tree;
     void     **r;
 
-    t = (intn)time(NULL);
-    SEED((uintn)t);
+    t = (int)time(NULL);
+    SEED((unsigned)t);
 
     for (test_size = 3; test_size <= MAX_TEST_SIZE; test_size++) {
         MESSAGE(7, printf("\nTesting trees with %d elements\n", test_size););

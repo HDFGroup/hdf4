@@ -35,7 +35,7 @@ test_vglongnames(void)
     int32  ref;      /* Vdata ref */
     uint16 name_len; /* Length of a vgroup's name or class name */
     char  *vgname, *vgclass;
-    intn   is_internal;
+    int    is_internal;
     int32  status; /* Status values from routines */
 
     /* Open the HDF file. */
@@ -186,7 +186,7 @@ test_undefined(void)
     int32  file_id;     /* File ID */
     int32  vg1;         /* Vdata ID */
     int32  ref;         /* Vdata ref */
-    intn   is_internal; /* to test Vgisinternal */
+    int    is_internal; /* to test Vgisinternal */
     uint16 name_len;    /* Length of a vgroup's name or class name */
     /* to simulate calls to Vgetclass/Vgetname in older applications */
     char vgname[VGNAMELENMAX + 1], vgclass[VGNAMELENMAX + 1];
@@ -301,9 +301,9 @@ static void
 test_vgisinternal()
 {
     int32       fid, vgroup_id;
-    intn        is_internal = FALSE;
+    int         is_internal = FALSE;
     int32       vref        = -1;
-    intn        ii, status;
+    int         ii, status;
     const char *testfile           = get_srcdir_filename(GR_FILE);
     char        internal_array2[2] = {TRUE, TRUE};
 

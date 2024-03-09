@@ -160,8 +160,8 @@ test_1dim_multivars()
     int32 rank     = 1;  /* rank of the 1-D data sets */
     int16 fillval1 = -1; /* fill value for the variable */
     int16 fillval2 = -2; /* fill value for the variable */
-    intn  status   = 0;  /* returned by called functions */
-    intn  num_errs = 0;  /* number of errors so far */
+    int   status   = 0;  /* returned by called functions */
+    int   num_errs = 0;  /* number of errors so far */
 
     /* result data to compare against read data */
     int16 sdresult1[] = {300, 301, 302, 303, -1, -1, 306, 307};
@@ -668,8 +668,8 @@ test_readings(long max_numrecs)
     int16 outdata3D[DIM0][DIM1][DIM2]; /* 3-D data read back */
     int16 outdata1D[DIM0];             /* 1-D data read back */
     int32 dimsizes3D[3];               /* dimension size buffer for first SDS */
-    intn  status   = 0;                /* returned by called functions */
-    intn  num_errs = 0;                /* number of errors so far */
+    int   status   = 0;                /* returned by called functions */
+    int   num_errs = 0;                /* number of errors so far */
 
     /* result data to compare against read data */
 

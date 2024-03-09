@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * <td>Java</td>
  * </tr>
  * <tr>
- * <td>int, intn, int32, uint32</td>
+ * <td>int, unsigned, int32, uint32</td>
  * <td>int</td>
  * </tr>
  * <tr>
@@ -82,7 +82,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * The <i>return value</i> of Java methods is also the analogous type, as above. A major exception
  * to that rule is that all HDF functions that return SUCCEED/FAIL are declared <i>boolean</i> in
- * the Java version, rather than <i>intn</i> or whatever. (Functions that return a value or else
+ * the Java version, rather than <i>int</i> or whatever. (Functions that return a value or else
  * FAIL are declared the equivalent to the C function.)
  * <p>
  * Java does not support pass by reference of arguments, so arguments that are returned through

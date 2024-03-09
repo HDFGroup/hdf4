@@ -38,8 +38,8 @@
 #include "hdf_priv.h"
 #include "dfgr_priv.h"
 
-static intn  Newdata   = 0; /* does Readrig contain fresh data? */
-static intn  dimsset   = 0; /* have dimensions been set? */
+static int   Newdata   = 0; /* does Readrig contain fresh data? */
+static int   dimsset   = 0; /* have dimensions been set? */
 static int32 last_xdim = 0;
 static int32 last_ydim = 0; /* .....gheesh......... */
 
@@ -50,10 +50,10 @@ static int32 last_ydim = 0; /* .....gheesh......... */
  NAME
     DF24getdims -- get dimensions of next image RIG
  USAGE
-    intn DF24getdims(filename,pxdim,pydim,pil)
+    int DF24getdims(filename,pxdim,pydim,pil)
         char *filename;         IN: the file to get retrieve dims. from
         int32 *pxdim,*pydim;    OUT: ptrs to the X&Y dims retrieved
-        intn *pil;              OUT: ptr to the interlace for the image
+        int *pil;              OUT: ptr to the interlace for the image
  RETURNS
     SUCCEED on success, FAIL on failure.
  DESCRIPTION
@@ -64,11 +64,11 @@ static int32 last_ydim = 0; /* .....gheesh......... */
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
-DF24getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pil)
+int
+DF24getdims(const char *filename, int32 *pxdim, int32 *pydim, int *pil)
 {
-    intn ncomps;
-    intn ret_value = SUCCEED;
+    int ncomps;
+    int ret_value = SUCCEED;
 
     do {
         if (DFGRIgetdims(filename, pxdim, pydim, &ncomps, pil, IMAGE) < 0)
@@ -87,8 +87,8 @@ done:
  NAME
     DF24reqil -- get next image with specified interlace
  USAGE
-    intn DF24reqil(il)
-        intn il;            IN: the interlace requested for the next image
+    int DF24reqil(il)
+        int il;            IN: the interlace requested for the next image
  RETURNS
     SUCCEED on success, FAIL on failure.
  DESCRIPTION
@@ -98,10 +98,10 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
-DF24reqil(intn il)
+int
+DF24reqil(int il)
 {
-    intn ret_value;
+    int ret_value;
 
     ret_value = (DFGRIreqil(il, IMAGE));
 
@@ -112,7 +112,7 @@ DF24reqil(intn il)
  NAME
     DF24getimage -- get image from next RIG
  USAGE
-    intn DF24getimage(filename,image,xdim,ydim)
+    int DF24getimage(filename,image,xdim,ydim)
         char *filename;     IN: file name to retrieve image from
         void * image;        OUT: buffer to store image in
         int32 xdim,ydim;    IN: dimensions of image buffer
@@ -129,14 +129,14 @@ DF24reqil(intn il)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DF24getimage(const char *filename, void *image, int32 xdim, int32 ydim)
 {
-    intn   il;
+    int    il;
     int32  tx, ty;
     int    compressed, has_pal;
     uint16 compr_type;
-    intn   ret_value = SUCCEED;
+    int    ret_value = SUCCEED;
 
     HEclear();
 
@@ -166,7 +166,7 @@ done:
  NAME
     DF24setdims -- set dimensions of image to write next
  USAGE
-    intn DF24setdims(xdim,ydim)
+    int DF24setdims(xdim,ydim)
         int32 xdim,ydim;    IN: the dimensions of the image to write next
  RETURNS
     SUCCEED on success, FAIL on failure.
@@ -178,10 +178,10 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DF24setdims(int32 xdim, int32 ydim)
 {
-    intn ret_value;
+    int ret_value;
 
     dimsset   = 1;
     ret_value = (DFGRIsetdims(xdim, ydim, 3, IMAGE));
@@ -193,8 +193,8 @@ DF24setdims(int32 xdim, int32 ydim)
  NAME
     DF24setil -- set interlace of image to write next
  USAGE
-    intn DF24setil(il)
-        intn il;            IN: the interlace of the image to write next
+    int DF24setil(il)
+        int il;            IN: the interlace of the image to write next
  RETURNS
     SUCCEED on success, FAIL on failure.
  DESCRIPTION
@@ -204,10 +204,10 @@ DF24setdims(int32 xdim, int32 ydim)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
-DF24setil(intn il)
+int
+DF24setil(int il)
 {
-    intn ret_value;
+    int ret_value;
 
     ret_value = (DFGRIsetil(il, IMAGE));
 
@@ -218,7 +218,7 @@ DF24setil(intn il)
  NAME
     DF24setcompress -- set compression scheme for next 24-bit image
  USAGE
-    intn DF24setcompress(type,cinfo)
+    int DF24setcompress(type,cinfo)
         int32 type;         IN: compression scheme for next image
         comp_info *cinfo;   IN: additional compression information for
                                 certain compression schemes (currently only
@@ -234,10 +234,10 @@ DF24setil(intn il)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DF24setcompress(int32 type, comp_info *cinfo)
 {
-    intn ret_value;
+    int ret_value;
 
     ret_value = (DFGRsetcompress(type, cinfo));
 
@@ -248,7 +248,7 @@ DF24setcompress(int32 type, comp_info *cinfo)
  NAME
     DF24restart -- restart access to a file
  USAGE
-    intn DF24restart(void)
+    int DF24restart(void)
  RETURNS
     SUCCEED on success, FAIL on failure.
  DESCRIPTION
@@ -259,10 +259,10 @@ DF24setcompress(int32 type, comp_info *cinfo)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DF24restart(void)
 {
-    intn ret_value;
+    int ret_value;
 
     ret_value = (DFGRIrestart());
 
@@ -273,7 +273,7 @@ DF24restart(void)
  NAME
     DF24addimage -- append 24-bit image to file
  USAGE
-    intn DF24addimage(filename,image,xdim,ydim)
+    int DF24addimage(filename,image,xdim,ydim)
         char *filename;     IN: name of HDF file to write to
         void * image;        IN: Pointer to image data
         int32 xdim,ydim;    IN: Dimensions of image to write
@@ -289,10 +289,10 @@ DF24restart(void)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DF24addimage(const char *filename, const void *image, int32 xdim, int32 ydim)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* 0 == C */
     if (!dimsset && DFGRIsetdims(xdim, ydim, 3, IMAGE) == FAIL)
@@ -309,7 +309,7 @@ done:
  NAME
     DF24putimage -- write 24-bit image to file
  USAGE
-    intn DF24addimage(filename,image,xdim,ydim)
+    int DF24addimage(filename,image,xdim,ydim)
         char *filename;     IN: name of HDF file to write to
         void * image;        IN: Pointer to image data
         int32 xdim,ydim;    IN: Dimensions of image to write
@@ -325,10 +325,10 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DF24putimage(const char *filename, const void *image, int32 xdim, int32 ydim)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* 0 == C */
     if (!dimsset && DFGRIsetdims(xdim, ydim, 3, IMAGE) == FAIL)
@@ -345,7 +345,7 @@ done:
  NAME
     DF24nimages -- determines number of 24-bit raster images in a file
  USAGE
-    intn DF24nimages(filename)
+    int DF24nimages(filename)
         char *filename;     IN: name of HDF file to check
  RETURNS
     Number of images on success, FAIL on failure.
@@ -356,17 +356,17 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DF24nimages(const char *filename)
 {
     int32  file_id;
     int32  group_id;           /* group ID for looking at RIG's */
     uint16 elt_tag, elt_ref;   /* tag/ref of items in a RIG */
-    intn   nimages;            /* total number of potential images */
+    int    nimages;            /* total number of potential images */
     uint16 find_tag, find_ref; /* storage for tag/ref pairs found */
     int32  find_off, find_len; /* storage for offset/lengths of tag/refs found */
     uint8  GRtbuf[64];         /* local buffer to read the ID element into */
-    intn   ret_value = SUCCEED;
+    int    ret_value = SUCCEED;
 
     HEclear();
 
@@ -420,7 +420,7 @@ done:
  NAME
     DF24readref -- set ref # of 24-bit RIG to read next
  USAGE
-    intn DF24readref(filename,ref)
+    int DF24readref(filename,ref)
         char *filename;     IN: name of HDF file
         uint16 ref;         IN: ref # of next 24-bit RIG to read
  RETURNS
@@ -432,10 +432,10 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DF24readref(const char *filename, uint16 ref)
 {
-    intn ret_value;
+    int ret_value;
 
     ret_value = (DFGRreadref(filename, ref));
 

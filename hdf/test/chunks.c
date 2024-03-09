@@ -183,7 +183,7 @@ test_chunks(void)
     sp_info_block_t info_block;         /* special info block */
     comp_info       cinfo;
     model_info      minfo;
-    intn            errors = 0;
+    int             errors = 0;
 
     outbuf = (uint8 *)calloc(BUFSIZE, sizeof(uint8));
     inbuf  = (uint8 *)calloc(BUFSIZE, sizeof(uint8));

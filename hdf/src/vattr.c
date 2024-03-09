@@ -108,7 +108,7 @@
 *         uint32  flags;
 *         int32   nattrs;
 *         vd_attr_t *alist;
-*         intn new_h_sz;  --  set to 1 when VH size changed
+*         int new_h_sz;  --  set to 1 when VH size changed
 *
 * Changes in the internal structure VGROUP:
 *     add fields:
@@ -117,51 +117,51 @@
 *         vg_attr_t *alist;
 *
 * New routines:
-*   intn VSfindex(int32 vsid, char *fieldname, int32 *findex)
+*   int VSfindex(int32 vsid, char *fieldname, int32 *findex)
 *        find out the index of a field given the field name.
-*   intn VSsetattr(int32 vsid, int32 findex, char *attrname,
+*   int VSsetattr(int32 vsid, int32 findex, char *attrname,
 *                  int32 datatype, int32 count, void * values)
 *        set attr for a field of a vdata or for the vdata.
 *        if the attr already exists the new values will replace
 *           the current ones as far as the datatype and order
 *           are not changed.
-*   intn VSnattrs(int32 vsid)
+*   int VSnattrs(int32 vsid)
 *        total number of attr for a vdata and its fields
 *   int32 VSfnattrs(int32 vsid, int32 findex)
 *        number of attrs for a vdata or a field of it
-*   intn VSfindattr(int32 vsid, int32 findex, char *attrname)
+*   int VSfindattr(int32 vsid, int32 findex, char *attrname)
 *        get index of an attribute with a given name
-*   intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
+*   int VSattrinfo(int32 vsid, int32 findex, int attrindex,
 *                   char *name, int32 *datatype, int32 *count,
                     int32 *size);
 *        get info about an attribute
-*   intn VSgetattr(int32 vsid, int32 findex, intn attrindex,
+*   int VSgetattr(int32 vsid, int32 findex, int attrindex,
 *                  void * values)
 *        get values of an attribute
-*   intn VSisattr(int32 vsid)
+*   int VSisattr(int32 vsid)
 *        test if a vdata is an attribute of other object
 *   < int32 VSgetversion(int32 vsid) already defined in vio.c >
 *   <    get vset version of a vdata  >
-*   intn Vsetattr(int32 vgid,  char *attrname, int32 datatype,
+*   int Vsetattr(int32 vgid,  char *attrname, int32 datatype,
 *                 int32 count, void * values)
 *        set attr for a vgroup
-*   intn Vnattrs(int32 vgid)
+*   int Vnattrs(int32 vgid)
 *        number of attrs for a vgroup
-*   intn Vnattrs2(int32 vgid)
+*   int Vnattrs2(int32 vgid)
 *        number of attrs for a vgroup, also including attrs created prior
 *        to the availability of Vdata and Vgroup attribute API routines
-*   intn Vfindattr(int32 vgid, char *attrname)
+*   int Vfindattr(int32 vgid, char *attrname)
 *        get index of an attribute with a given name
-*   intn Vattrinfo(int32 vgid, intn attrindex, char *name,
+*   int Vattrinfo(int32 vgid, int attrindex, char *name,
 *                  int32 *datatype, int32 *count, int32 *size)
 *        get info about an attribute
-*   intn Vattrinfo2(int32 vgid, intn attrindex, char *name,
+*   int Vattrinfo2(int32 vgid, int attrindex, char *name,
 *                  int32 *datatype, int32 *count, int32 *size)
 *        get info about an attribute - this function processes attributes
 *	 that are counted by Vnattrs2.
-*   intn Vgetattr(int32 vgid, intn attrindex, void * values)
+*   int Vgetattr(int32 vgid, int attrindex, void * values)
 *        get values of an attribute
-*   intn Vgetattr2(int32 vgid, intn attrindex, void * values)
+*   int Vgetattr2(int32 vgid, int attrindex, void * values)
 *        get values of an attribute - this function processes attributes
 *	 that are counted by Vnattrs2.
 *   int32 Vgetversion(int32 vgid)
@@ -189,7 +189,7 @@
 NAME
       VSfindex -- find index of a named field in a vdata
 USAGE
-      intn VSfindex(int32 vsid, char *fieldname, int32 *findex)
+      int VSfindex(int32 vsid, char *fieldname, int32 *findex)
       int32 vsid;    IN: vdata id which contains this field
       const char *fieldname; IN: field name
       int32 *findex; OUT: field index
@@ -201,7 +201,7 @@ DESCRIPTION
       search the vdata name.  Use VSinquire() or VSgetname()
       to find vdata name.
 ---------------------------------------------------- */
-intn
+int
 VSfindex(int32 vsid, const char *fieldname, int32 *findex)
 {
     vsinstance_t   *vs_inst;
@@ -209,7 +209,7 @@ VSfindex(int32 vsid, const char *fieldname, int32 *findex)
     DYN_VWRITELIST *w;
     int32           nflds;
     int32           ret_value = SUCCEED;
-    intn            i, found = 0;
+    int             i, found = 0;
 
     HEclear();
     if (HAatom_group(vsid) != VSIDGROUP)
@@ -247,7 +247,7 @@ NAME
    VSsetattr -- Set attribute for a vdata or a field of a
                      vdata
 USAGE
-   intn VSsetattr(int32 vsid, int32 findex, char *attrname,
+   int VSsetattr(int32 vsid, int32 findex, char *attrname,
                  int32 datatype, int32 count, void * values)
    int32 vsid;     IN: vdata access id
    int32 findex; IN: number determined by assigning each field
@@ -269,13 +269,13 @@ DESCRIPTION
    No limit on max number of attributes. (int32 is the final
    limit.)
 -----------------------------------------------------------  */
-intn
+int
 VSsetattr(int32 vsid, int32 findex, const char *attrname, int32 datatype, int32 count, const void *values)
 {
     vsinstance_t   *vs_inst, *attr_inst;
     VDATA          *vs, *attr_vs;
     DYN_VWRITELIST *w, *attr_w;
-    intn            i;
+    int             i;
     int32           nattrs, ret_value = SUCCEED;
     int32           attr_vs_ref, fid, attr_vsid;
 
@@ -370,7 +370,7 @@ NAME
    VSnattrs -- get total number of attributes assigned for
                   this vdata and its fields
 USAGE
-   intn VSnattrs(int32 vsid);
+   int VSnattrs(int32 vsid);
    int32 vsid;   IN: access id of the vdata
 RETURNS
    Returns total number of attributes assigned to this vdata
@@ -379,7 +379,7 @@ DESCRIPTION
    Use VSfnattrs to get number of attributes for a field
    or for the vdata itself.
 --------------------------------------------------------  */
-intn
+int
 VSnattrs(int32 vsid)
 {
     vsinstance_t *vs_inst;
@@ -405,7 +405,7 @@ NAME
    VSfnattrs -- get the number of attributes assigned to
                   a vdata or a field of a vdata.
 USAGE
-   intn VSfnattrs(int32 vsid, int32 findex);
+   int VSfnattrs(int32 vsid, int32 findex);
    int32 vsid;   IN: access id of the vdata
    int32 findex; IN: index of the field, 0 based.
                      Use _HDF_VDATA (-1) for the vdata itself.
@@ -416,14 +416,14 @@ DESCRIPTION
    Use VSnattrs to get total number of attributes for all
    fields and the vdata itself.
 --------------------------------------------------------  */
-intn
+int
 VSfnattrs(int32 vsid, int32 findex)
 {
     vsinstance_t *vs_inst;
     VDATA        *vs;
     int32         ret_value = SUCCEED;
     vs_attr_t    *vs_alist;
-    intn          i, nattrs, t_attrs;
+    int           i, nattrs, t_attrs;
 
     HEclear();
     if (HAatom_group(vsid) != VSIDGROUP)
@@ -455,7 +455,7 @@ NAME
    VSfindattr -- get index of an attribute with given name
                       for a field of a vdata or for the vdata itself
 USAGE
-   intn VSfindattr(int32 vsid, int32 findex, char *attrname)
+   int VSfindattr(int32 vsid, int32 findex, char *attrname)
    int32 vsid;        IN: access id of the vdata
    int32 findex;      IN: index of the field starting from 0;
                           _HDF_VDATA (-1) for the vdata
@@ -465,7 +465,7 @@ RETURNS
 DESCRIPTION
 
 ------------------------------------------------------------  */
-intn
+int
 VSfindattr(int32 vsid, int32 findex, const char *attrname)
 {
     VDATA        *vs, *attr_vs;
@@ -473,7 +473,7 @@ VSfindattr(int32 vsid, int32 findex, const char *attrname)
     vs_attr_t    *vs_alist;
     int32         fid, attr_vsid;
     int32         ret_value = FAIL;
-    intn          i, nattrs, a_index, found;
+    int           i, nattrs, a_index, found;
 
     HEclear();
     /* check if id is valid vdata */
@@ -537,11 +537,11 @@ done:
 NAME
    VSattrinfo -- get info of an attribute of a vdata/field
 USAGE
-   intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
+   int VSattrinfo(int32 vsid, int32 findex, int attrindex,
         char *name, int32 *datatype, int32 *count, int32 *size);
    int32 vsid;      IN: vdata id
    int32 findex;    IN: field index. _HDF_VDATA (-1) for the vdata
-   intn attrindex;  IN: which attr of the field/vdata
+   int attrindex;  IN: which attr of the field/vdata
                         attrindex is 0-based
    char *name;      OUT: attribute name
    int32 *datatype; OUT: datatype of the attribute
@@ -552,15 +552,15 @@ RETURNS
 DESCRIPTION
    name, datatype or count can be NULL if which is not interested.
 --------------------------------------------------- */
-intn
-VSattrinfo(int32 vsid, int32 findex, intn attrindex, char *name, int32 *datatype, int32 *count, int32 *size)
+int
+VSattrinfo(int32 vsid, int32 findex, int attrindex, char *name, int32 *datatype, int32 *count, int32 *size)
 {
     VDATA          *vs, *attr_vs;
     vs_attr_t      *vs_alist;
     vsinstance_t   *vs_inst, *attr_inst;
     int32           attr_vsid;
     int32           ret_value = SUCCEED;
-    intn            i, nattrs, a_index, found;
+    int             i, nattrs, a_index, found;
     DYN_VWRITELIST *w;
     char           *fldname;
 
@@ -627,26 +627,26 @@ done:
 NAME
    VSgetattr -- get values of a specified attribute
 USAGE
-   intn VSgetattr(int32 vsid, int32 findex, intn attrindex,
+   int VSgetattr(int32 vsid, int32 findex, int attrindex,
                   void * values)
    int32 vsid;     IN: vdata access id
    int32 findex;   IN: field index; _HDF_VDATA (-1) for vdata
-   intn attrindex; IN: attribute index
+   int attrindex; IN: attribute index
    void * values;  OUT: buffer holding attribute values.
 RETURNS
    Returns SUCCEED if successful, FAIL otherwise
 DESCRIPTION
 
 --------------------------------------------------------- */
-intn
-VSgetattr(int32 vsid, int32 findex, intn attrindex, void *values)
+int
+VSgetattr(int32 vsid, int32 findex, int attrindex, void *values)
 {
     VDATA        *vs, *attr_vs;
     vs_attr_t    *vs_alist;
     vsinstance_t *vs_inst, *attr_inst;
     int32         fid, attr_vsid;
     int32         ret_value = SUCCEED;
-    intn          i, nattrs, a_index, found;
+    int           i, nattrs, a_index, found;
     int32         n_recs, il;
     char          fields[FIELDNAMELENMAX + 1];
 
@@ -713,7 +713,7 @@ NAME
    VSisattr -- test if a vdata is an attribute of
                     other object
 USAGE
-   intn VSisattr(int32 vsid)
+   int VSisattr(int32 vsid)
    int32 vsid;    IN: vdata access id
 RETURNS
    Returns TRUE if the vdata is an attribute,
@@ -721,7 +721,7 @@ RETURNS
 DESCRIPTION
 
 -------------------------------------------------------- */
-intn
+int
 VSisattr(int32 vsid)
 {
     vsinstance_t *vs_inst;
@@ -746,7 +746,7 @@ done:
 NAME
    Vsetattr -- set an attribute for a vgroup
 USAGE
-   intn Vsetattr(int32 vgid,  char *attrname, int32 datatype,
+   int Vsetattr(int32 vgid,  char *attrname, int32 datatype,
              int32 count, void * values)
    int32 vgid;        IN: access id of the vgroup
    char *attrname;    IN: name of the attr
@@ -764,7 +764,7 @@ DESCRIPTION
    No limit on max number of attributes. (int32 is the final
       limit.
 ------------------------------------------------------------  */
-intn
+int
 Vsetattr(int32 vgid, const char *attrname, int32 datatype, int32 count, const void *values)
 {
     VGROUP         *vg;
@@ -774,7 +774,7 @@ Vsetattr(int32 vgid, const char *attrname, int32 datatype, int32 count, const vo
     DYN_VWRITELIST *w;
     int32           ret_value = SUCCEED;
     int32           attr_vs_ref, fid, vsid;
-    intn            i;
+    int             i;
 
     HEclear();
 
@@ -905,14 +905,14 @@ done:
 NAME
    Vnattrs  -- get number of attributes for a vgroup
 USAGE
-   intn Vnattrs(int32 vgid)
+   int Vnattrs(int32 vgid)
    int32 vgid;    IN: access id of the vgroup
 RETURNS
    Returns number of attributes when successful, Fail otherwise.
 DESCRIPTION
 
 --------------------------------------------------  */
-intn
+int
 Vnattrs(int32 vgid)
 {
     VGROUP       *vg;
@@ -941,7 +941,7 @@ done:
 NAME
    Vnoldattrs  -- get number of old-style attributes in a vgroup
 USAGE
-   intn Vnoldattrs(int32 vgid)
+   int Vnoldattrs(int32 vgid)
    int32 vgid;    IN: access id of the vgroup
 RETURNS
    Returns number of old-style attributes when successful, FAIL, otherwise.
@@ -979,13 +979,13 @@ DESCRIPTION
    -BMR 2011/2/16
 
 --------------------------------------------------  */
-intn
+int
 Vnoldattrs(int32 vgid)
 {
     VGROUP       *vg;
     vginstance_t *v;
-    intn          n_old_attrs = 0;
-    intn          ii;
+    int           n_old_attrs = 0;
+    int           ii;
     uint16       *areflist  = NULL;
     int32         ret_value = 0;
 
@@ -1021,7 +1021,7 @@ Vnoldattrs(int32 vgid)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         /* Get ref numbers of old-style attributes belonging to this vg */
-        n_old_attrs = VSofclass(vgid, _HDF_ATTRIBUTE, 0, (uintn)n_old_attrs, areflist);
+        n_old_attrs = VSofclass(vgid, _HDF_ATTRIBUTE, 0, (unsigned)n_old_attrs, areflist);
         if (n_old_attrs == FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
@@ -1063,7 +1063,7 @@ done:
 NAME
    Vnattrs2  -- get number of old and new attributes for a vgroup
 USAGE
-   intn Vnattrs2(int32 vgid)
+   int Vnattrs2(int32 vgid)
    int32 vgid;    IN: access id of the vgroup
 RETURNS
    Returns number of attributes when successful, FAIL, otherwise.
@@ -1081,10 +1081,10 @@ DESCRIPTION
    project.  -BMR 2011/2/8
 
 --------------------------------------------------  */
-intn
+int
 Vnattrs2(int32 vgid)
 {
-    intn  n_new_attrs = 0, n_old_attrs = 0;
+    int   n_new_attrs = 0, n_old_attrs = 0;
     int32 ret_value = SUCCEED;
 
     HEclear();
@@ -1110,14 +1110,14 @@ done:
  NAME
    Vfindattr -- get index of an attribute with given name
  USAGE
-   intn Vfindattr(int32 vgid, char *attrname)
+   int Vfindattr(int32 vgid, char *attrname)
    int32 vgid;        IN: access id of the vgroup
    const char *attrname;    IN: name of the attr
  RETURNS
    Returns the index of the attr when successful, FAIL otherwise.
  DESCRIPTION
 ------------------------------------------------------------  */
-intn
+int
 Vfindattr(int32 vgid, const char *attrname)
 {
     VGROUP       *vg;
@@ -1126,7 +1126,7 @@ Vfindattr(int32 vgid, const char *attrname)
     vsinstance_t *vs_inst;
     int32         fid, vsid;
     int32         ret_value = FAIL;
-    intn          i, found;
+    int           i, found;
 
     HEclear();
 
@@ -1176,10 +1176,10 @@ done:
 NAME
    Vattrinfo -- get info of a vgroup attribute
 USAGE
-   intn Vattrinfo(int32 vgid, intn attrindex, char *name,
+   int Vattrinfo(int32 vgid, int attrindex, char *name,
                   int32 *datatype, int32 *count, int32 *size)
    int32 vgid;      IN: vgroup id
-   intn attrindex;  IN: which attr's info we want
+   int attrindex;  IN: which attr's info we want
                              attrindex is 0-based
    char *name;      OUT: attribute name
    int32 *datatype; OUT: datatype of the attribute
@@ -1192,8 +1192,8 @@ DESCRIPTION
    name, datatype or count can be NULL if which is
    not interested.
 --------------------------------------------------- */
-intn
-Vattrinfo(int32 vgid, intn attrindex, char *name, int32 *datatype, int32 *count, int32 *size)
+int
+Vattrinfo(int32 vgid, int attrindex, char *name, int32 *datatype, int32 *count, int32 *size)
 {
     VGROUP         *vg;
     VDATA          *vs;
@@ -1255,10 +1255,10 @@ done:
 NAME
    Vattrinfo2 -- get info of a vgroup attribute
 USAGE
-   intn Vattrinfo2(int32 vgid, intn attrindex, char *name,
+   int Vattrinfo2(int32 vgid, int attrindex, char *name,
                   int32 *datatype, int32 *count, int32 *size)
    int32 vgid;      IN: vgroup id
-   intn attrindex;  IN: which attr's info we want, attrindex is 0-based
+   int attrindex;  IN: which attr's info we want, attrindex is 0-based
    char *name;      OUT: attribute name
    int32 *datatype; OUT: datatype of the attribute
    int32 *count;    OUT: number of values
@@ -1290,8 +1290,8 @@ DESCRIPTION
    is not interested.
    -BMR 2011/2/16
 -------------------------------------------------------------- */
-intn
-Vattrinfo2(int32 vgid, intn attrindex, char *name, int32 *datatype, int32 *count, int32 *size, int32 *nfields,
+int
+Vattrinfo2(int32 vgid, int attrindex, char *name, int32 *datatype, int32 *count, int32 *size, int32 *nfields,
            uint16 *refnum)
 {
     VGROUP         *vg;
@@ -1301,7 +1301,7 @@ Vattrinfo2(int32 vgid, intn attrindex, char *name, int32 *datatype, int32 *count
     vsinstance_t   *vs_inst;
     vg_attr_t      *vg_alist = NULL;
     int32           vsid;
-    intn            adjusted_index;
+    int             adjusted_index;
     int32           ret_value = SUCCEED;
 
     /* Clear error stack */
@@ -1377,9 +1377,9 @@ done:
 NAME
    Vgetattr -- read values of a vgroup attribute
 USAGE
-   intn Vgetattr(int32 vgid, intn attrindex, void * values)
+   int Vgetattr(int32 vgid, int attrindex, void * values)
    int32 vgid;      IN: vgroup id
-   intn attrindex;  IN: index of the attribute
+   int attrindex;  IN: index of the attribute
    void * values;    OUT: where the values go
 RETURNS
    Returns SUCCEED when successful, FAIL otherwise
@@ -1387,8 +1387,8 @@ DESCRIPTION
 
 ------------------------------------------------- */
 
-intn
-Vgetattr(int32 vgid, intn attrindex, void *values)
+int
+Vgetattr(int32 vgid, int attrindex, void *values)
 {
     VGROUP       *vg;
     VDATA        *vs;
@@ -1446,9 +1446,9 @@ NAME
    Vgetattr2 -- read values of a vgroup attribute
                    (updated of Vgetattr)
 USAGE
-   intn Vgetattr2(int32 vgid, intn attrindex, void * values)
+   int Vgetattr2(int32 vgid, int attrindex, void * values)
    int32 vgid;      IN: vgroup id
-   intn attrindex;  IN: index of the attribute
+   int attrindex;  IN: index of the attribute
    void * values;  OUT: buffer for attribute values
 RETURNS
    Returns SUCCEED when successful, FAIL otherwise
@@ -1462,8 +1462,8 @@ DESCRIPTION
    header of Vnattrs2 and Vnoldattrs.
    -BMR 2011/2/16
 ------------------------------------------------- */
-intn
-Vgetattr2(int32 vgid, intn attrindex, void *values)
+int
+Vgetattr2(int32 vgid, int attrindex, void *values)
 {
     VGROUP       *vg;
     VDATA        *vs;
@@ -1471,7 +1471,7 @@ Vgetattr2(int32 vgid, intn attrindex, void *values)
     vginstance_t *v;
     vsinstance_t *vs_inst;
     vg_attr_t    *vg_alist = NULL;
-    intn          adjusted_index;
+    int           adjusted_index;
     int32         vsid = -1;
     int32         n_recs, il;
     int32         ret_value = SUCCEED;

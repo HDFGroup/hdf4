@@ -80,7 +80,7 @@
 #define ATTR_LEN_ZERO 0
 
 static int
-test_count()
+test_count(void)
 {
     char    sds_name[20], dim_name[20];
     float32 sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};

@@ -40,18 +40,18 @@
 /*
  * Generate szipped data to test reading szipped data and compression info.
  */
-intn
+int
 main()
 {
     /************************* Variable declaration **************************/
 
     int32     sd_id, sds_id, sds_index;
-    intn      status;
+    int       status;
     int32     comp_type; /* Compression flag */
     comp_info c_info;    /* Compression structure */
     int32     start[2], edges[2], dim_sizes[2];
     int32     pixels_per_scanline;
-    intn      num_errs = 0; /* number of errors in compression test so far */
+    int       num_errs = 0; /* number of errors in compression test so far */
     int       i, j;
     int32     data[Y_LENGTH][X_LENGTH] = {
         100, 100, 200, 200, 300, 0,   0,   0,   0,   0,   100, 100, 200, 200, 300, 400, 300, 200, 100, 0,

@@ -1041,14 +1041,14 @@ DFIfreespace(void *ptr)
     return NULL;
 }
 
-intn
+int
 DFIc2fstr(char *str, int len)
 {
     return HDc2fstr(str, len);
 }
 
 char *
-DFIf2cstring(_fcd fdesc, intn len)
+DFIf2cstring(_fcd fdesc, int len)
 {
     return HDf2cstring(fdesc, len);
 }

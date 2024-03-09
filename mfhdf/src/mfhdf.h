@@ -67,85 +67,86 @@ extern "C" {
 
 HDFLIBAPI int32 SDstart(const char *name, int32 accs);
 
-HDFLIBAPI intn SDend(int32 fid);
+HDFLIBAPI int SDend(int32 fid);
 
-HDFLIBAPI intn SDfileinfo(int32 fid, int32 *datasets, int32 *attrs);
+HDFLIBAPI int SDfileinfo(int32 fid, int32 *datasets, int32 *attrs);
 
 HDFLIBAPI int32 SDselect(int32 fid, int32 idx);
 
-HDFLIBAPI intn SDgetinfo(int32 sdsid, char *name, int32 *rank, int32 *dimsizes, int32 *nt, int32 *nattr);
+HDFLIBAPI int SDgetinfo(int32 sdsid, char *name, int32 *rank, int32 *dimsizes, int32 *nt, int32 *nattr);
 
-HDFLIBAPI intn SDreaddata(int32 sdsid, int32 *start, int32 *stride, int32 *end, void *data);
+HDFLIBAPI int SDreaddata(int32 sdsid, int32 *start, int32 *stride, int32 *end, void *data);
 
 HDFLIBAPI uint16 SDgerefnumber(int32 sdsid);
 
 HDFLIBAPI int32 SDnametoindex(int32 fid, const char *name);
 
-HDFLIBAPI intn SDnametoindices(int32 fid, const char *name, hdf_varlist_t *var_list);
+HDFLIBAPI int SDnametoindices(int32 fid, const char *name, hdf_varlist_t *var_list);
 
-HDFLIBAPI intn SDgetnumvars_byname(int32 fid, const char *name, int32 *n_vars);
+HDFLIBAPI int SDgetnumvars_byname(int32 fid, const char *name, int32 *n_vars);
 
-HDFLIBAPI intn SDgetrange(int32 sdsid, void *pmax, void *pmin);
+HDFLIBAPI int SDgetrange(int32 sdsid, void *pmax, void *pmin);
 
 HDFLIBAPI int32 SDcreate(int32 fid, const char *name, int32 nt, int32 rank, int32 *dimsizes);
 
-HDFLIBAPI int32 SDgetdimid(int32 sdsid, intn number);
+HDFLIBAPI int32 SDgetdimid(int32 sdsid, int number);
 
-HDFLIBAPI intn SDsetdimname(int32 id, const char *name);
+HDFLIBAPI int SDsetdimname(int32 id, const char *name);
 
-HDFLIBAPI intn SDendaccess(int32 id);
+HDFLIBAPI int SDendaccess(int32 id);
 
-HDFLIBAPI intn SDsetrange(int32 sdsid, void *pmax, void *pmin);
+HDFLIBAPI int SDsetrange(int32 sdsid, void *pmax, void *pmin);
 
-HDFLIBAPI intn SDsetattr(int32 id, const char *name, int32 nt, int32 count, const void *data);
+HDFLIBAPI int SDsetattr(int32 id, const char *name, int32 nt, int32 count, const void *data);
 
-HDFLIBAPI intn SDattrinfo(int32 id, int32 idx, char *name, int32 *nt, int32 *count);
+HDFLIBAPI int SDattrinfo(int32 id, int32 idx, char *name, int32 *nt, int32 *count);
 
-HDFLIBAPI intn SDreadattr(int32 id, int32 idx, void *buf);
+HDFLIBAPI int SDreadattr(int32 id, int32 idx, void *buf);
 
-HDFLIBAPI intn SDwritedata(int32 sdsid, int32 *start, int32 *stride, int32 *end, void *data);
+HDFLIBAPI int SDwritedata(int32 sdsid, int32 *start, int32 *stride, int32 *end, void *data);
 
-HDFLIBAPI intn SDsetdatastrs(int32 sdsid, const char *l, const char *u, const char *f, const char *c);
+HDFLIBAPI int SDsetdatastrs(int32 sdsid, const char *l, const char *u, const char *f, const char *c);
 
-HDFLIBAPI intn SDsetcal(int32 sdsid, float64 cal, float64 cale, float64 ioff, float64 ioffe, int32 nt);
+HDFLIBAPI int SDsetcal(int32 sdsid, float64 cal, float64 cale, float64 ioff, float64 ioffe, int32 nt);
 
-HDFLIBAPI intn SDsetfillvalue(int32 sdsid, void *val);
+HDFLIBAPI int SDsetfillvalue(int32 sdsid, void *val);
 
-HDFLIBAPI intn SDgetfillvalue(int32 sdsid, void *val);
+HDFLIBAPI int SDgetfillvalue(int32 sdsid, void *val);
 
-HDFLIBAPI intn SDsetfillmode(int32 id, intn fillmode);
+HDFLIBAPI int SDsetfillmode(int32 id, int fillmode);
 
-HDFLIBAPI intn SDgetdatastrs(int32 sdsid, char *l, char *u, char *f, char *c, intn len);
+HDFLIBAPI int SDgetdatastrs(int32 sdsid, char *l, char *u, char *f, char *c, int len);
 
-HDFLIBAPI intn SDgetcal(int32 sdsid, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, int32 *nt);
+HDFLIBAPI int SDgetcal(int32 sdsid, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, int32 *nt);
 
-HDFLIBAPI intn SDsetdimstrs(int32 id, const char *l, const char *u, const char *f);
+HDFLIBAPI int SDsetdimstrs(int32 id, const char *l, const char *u, const char *f);
 
-HDFLIBAPI intn SDsetdimscale(int32 id, int32 count, int32 nt, void *data);
+HDFLIBAPI int SDsetdimscale(int32 id, int32 count, int32 nt, void *data);
 
-HDFLIBAPI intn SDgetdimscale(int32 id, void *data);
+HDFLIBAPI int SDgetdimscale(int32 id, void *data);
 
-HDFLIBAPI intn SDdiminfo(int32 id, char *name, int32 *size, int32 *nt, int32 *nattr);
+HDFLIBAPI int SDdiminfo(int32 id, char *name, int32 *size, int32 *nt, int32 *nattr);
 
-HDFLIBAPI intn SDgetdimstrs(int32 id, char *l, char *u, char *f, intn len);
+HDFLIBAPI int SDgetdimstrs(int32 id, char *l, char *u, char *f, int len);
 
-HDFLIBAPI intn SDgetexternalfile(int32 id, intn buf_size, char *ext_filename, int32 *offset);
+HDFLIBAPI int SDgetexternalfile(int32 id, int buf_size, char *ext_filename, int32 *offset);
 
-HDFLIBAPI intn SDgetexternalinfo(int32 id, uintn buf_size, char *ext_filename, int32 *offset, int32 *length);
+HDFLIBAPI int SDgetexternalinfo(int32 id, unsigned buf_size, char *ext_filename, int32 *offset,
+                                int32 *length);
 
-HDFLIBAPI intn SDsetexternalfile(int32 id, const char *filename, int32 offset);
+HDFLIBAPI int SDsetexternalfile(int32 id, const char *filename, int32 offset);
 
-HDFLIBAPI intn SDsetnbitdataset(int32 id, intn start_bit, intn bit_len, intn sign_ext, intn fill_one);
+HDFLIBAPI int SDsetnbitdataset(int32 id, int start_bit, int bit_len, int sign_ext, int fill_one);
 
-HDFLIBAPI intn SDsetcompress(int32 id, comp_coder_t type, comp_info *c_info);
+HDFLIBAPI int SDsetcompress(int32 id, comp_coder_t type, comp_info *c_info);
 
 #ifndef H4_NO_DEPRECATED_SYMBOLS
-HDFLIBAPI intn SDgetcompress(int32 id, comp_coder_t *type, comp_info *c_info);
+HDFLIBAPI int SDgetcompress(int32 id, comp_coder_t *type, comp_info *c_info);
 #endif
 
-HDFLIBAPI intn SDgetcompinfo(int32 id, comp_coder_t *type, comp_info *c_info);
+HDFLIBAPI int SDgetcompinfo(int32 id, comp_coder_t *type, comp_info *c_info);
 
-HDFLIBAPI intn SDgetcomptype(int32 id, comp_coder_t *type);
+HDFLIBAPI int SDgetcomptype(int32 id, comp_coder_t *type);
 
 HDFLIBAPI int32 SDfindattr(int32 id, const char *attrname);
 
@@ -155,33 +156,33 @@ HDFLIBAPI int32 SDreftoindex(int32 fid, int32 ref);
 
 HDFLIBAPI int32 SDisrecord(int32 id);
 
-HDFLIBAPI intn SDiscoordvar(int32 id);
+HDFLIBAPI int SDiscoordvar(int32 id);
 
-HDFLIBAPI intn SDsetaccesstype(int32 id, uintn accesstype);
+HDFLIBAPI int SDsetaccesstype(int32 id, unsigned accesstype);
 
-HDFLIBAPI intn SDsetblocksize(int32 sdsid, int32 block_size);
+HDFLIBAPI int SDsetblocksize(int32 sdsid, int32 block_size);
 
-HDFLIBAPI intn SDgetblocksize(int32 sdsid, int32 *block_size);
+HDFLIBAPI int SDgetblocksize(int32 sdsid, int32 *block_size);
 
-HDFLIBAPI intn SDsetdimval_comp(int32 dimid, intn compt_mode);
+HDFLIBAPI int SDsetdimval_comp(int32 dimid, int compt_mode);
 
-HDFLIBAPI intn SDisdimval_bwcomp(int32 dimid);
+HDFLIBAPI int SDisdimval_bwcomp(int32 dimid);
 
-HDFLIBAPI int32 SDcheckempty(int32 sdsid, intn *emptySDS);
+HDFLIBAPI int32 SDcheckempty(int32 sdsid, int *emptySDS);
 
 HDFLIBAPI hdf_idtype_t SDidtype(int32 an_id);
 
-HDFLIBAPI intn SDreset_maxopenfiles(intn req_max);
+HDFLIBAPI int SDreset_maxopenfiles(int req_max);
 
-HDFLIBAPI intn SDget_maxopenfiles(intn *curr_max, intn *sys_limit);
+HDFLIBAPI int SDget_maxopenfiles(int *curr_max, int *sys_limit);
 
-HDFLIBAPI intn SDget_numopenfiles(void);
+HDFLIBAPI int SDget_numopenfiles(void);
 
-HDFLIBAPI intn SDgetdatasize(int32 sdsid, int32 *comp_size, int32 *uncomp_size);
+HDFLIBAPI int SDgetdatasize(int32 sdsid, int32 *comp_size, int32 *uncomp_size);
 
-HDFLIBAPI intn SDgetfilename(int32 fid, char *filename);
+HDFLIBAPI int SDgetfilename(int32 fid, char *filename);
 
-HDFLIBAPI intn SDgetnamelen(int32 sdsid, uint16 *name_len);
+HDFLIBAPI int SDgetnamelen(int32 sdsid, uint16 *name_len);
 
 /*====================== Chunking Routines ================================*/
 
@@ -289,9 +290,9 @@ HDFLIBAPI intn SDgetnamelen(int32 sdsid, uint16 *name_len);
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-HDFLIBAPI intn SDsetchunk(int32         sdsid,     /* IN: sds access id */
-                          HDF_CHUNK_DEF chunk_def, /* IN: chunk definition */
-                          int32         flags /* IN: flags */);
+HDFLIBAPI int SDsetchunk(int32         sdsid,     /* IN: sds access id */
+                         HDF_CHUNK_DEF chunk_def, /* IN: chunk definition */
+                         int32         flags /* IN: flags */);
 
 /******************************************************************************
  NAME
@@ -325,9 +326,9 @@ HDFLIBAPI intn SDsetchunk(int32         sdsid,     /* IN: sds access id */
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-HDFLIBAPI intn SDgetchunkinfo(int32          sdsid,     /* IN: sds access id */
-                              HDF_CHUNK_DEF *chunk_def, /* IN/OUT: chunk definition */
-                              int32         *flags /* IN/OUT: flags */);
+HDFLIBAPI int SDgetchunkinfo(int32          sdsid,     /* IN: sds access id */
+                             HDF_CHUNK_DEF *chunk_def, /* IN/OUT: chunk definition */
+                             int32         *flags /* IN/OUT: flags */);
 
 /******************************************************************************
  NAME
@@ -349,9 +350,9 @@ HDFLIBAPI intn SDgetchunkinfo(int32          sdsid,     /* IN: sds access id */
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-HDFLIBAPI intn SDwritechunk(int32       sdsid,  /* IN: sds access id */
-                            int32      *origin, /* IN: origin of chunk to write */
-                            const void *datap /* IN: buffer for data */);
+HDFLIBAPI int SDwritechunk(int32       sdsid,  /* IN: sds access id */
+                           int32      *origin, /* IN: origin of chunk to write */
+                           const void *datap /* IN: buffer for data */);
 
 /******************************************************************************
  NAME
@@ -373,9 +374,9 @@ HDFLIBAPI intn SDwritechunk(int32       sdsid,  /* IN: sds access id */
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-HDFLIBAPI intn SDreadchunk(int32  sdsid,  /* IN: sds access id */
-                           int32 *origin, /* IN: origin of chunk to read */
-                           void  *datap /* IN/OUT: buffer for data */);
+HDFLIBAPI int SDreadchunk(int32  sdsid,  /* IN: sds access id */
+                          int32 *origin, /* IN: origin of chunk to read */
+                          void  *datap /* IN/OUT: buffer for data */);
 
 /******************************************************************************
 NAME
@@ -421,23 +422,23 @@ RETURNS
      Returns the 'maxcache' value for the chunk cache if successful
      and FAIL otherwise
 ******************************************************************************/
-HDFLIBAPI intn SDsetchunkcache(int32 sdsid,    /* IN: sds access id */
-                               int32 maxcache, /* IN: max number of chunks to cache */
-                               int32 flags /* IN: flags = 0, HDF_CACHEALL */);
+HDFLIBAPI int SDsetchunkcache(int32 sdsid,    /* IN: sds access id */
+                              int32 maxcache, /* IN: max number of chunks to cache */
+                              int32 flags /* IN: flags = 0, HDF_CACHEALL */);
 
 /*
  ** Public functions for getting raw data information - from mfdatainfo.c
  */
 
-HDFLIBAPI intn SDgetdatainfo(int32 sdsid, int32 *chk_coord, uintn start_block, uintn info_count,
-                             int32 *offsetarray, int32 *lengtharray);
+HDFLIBAPI int SDgetdatainfo(int32 sdsid, int32 *chk_coord, unsigned start_block, unsigned info_count,
+                            int32 *offsetarray, int32 *lengtharray);
 
-HDFLIBAPI intn SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length);
+HDFLIBAPI int SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length);
 
-HDFLIBAPI intn SDgetoldattdatainfo(int32 dimid, int32 sdsid, char *attr_name, int32 *offset, int32 *length);
+HDFLIBAPI int SDgetoldattdatainfo(int32 dimid, int32 sdsid, char *attr_name, int32 *offset, int32 *length);
 
-HDFLIBAPI intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32 *offsetarray,
-                                int32 *lengtharray);
+HDFLIBAPI int SDgetanndatainfo(int32 sdsid, ann_type annot_type, unsigned size, int32 *offsetarray,
+                               int32 *lengtharray);
 
 #ifdef __cplusplus
 }

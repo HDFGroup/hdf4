@@ -56,17 +56,17 @@ const uint32 maskl[33] = {0x00000000, 0x00000001, 0x00000003, 0x00000007, 0x0000
                           0x0fffffff, 0x1fffffff, 0x3fffffff, 0x7fffffff, 0xffffffffUL};
 
 /* Whether we've installed the library termination function yet for this interface */
-static intn library_terminate = FALSE;
+static int library_terminate = FALSE;
 
 /* Local Function Declarations */
 static bitrec_t *HIget_bitfile_rec(void);
 
-static intn HIbitflush(bitrec_t *bitfile_rec, intn flushbit, intn writeout);
+static int HIbitflush(bitrec_t *bitfile_rec, int flushbit, int writeout);
 
-static intn HIwrite2read(bitrec_t *bitfile_rec);
-static intn HIread2write(bitrec_t *bitfile_rec);
+static int HIwrite2read(bitrec_t *bitfile_rec);
+static int HIread2write(bitrec_t *bitfile_rec);
 
-static intn HIbitstart(void);
+static int HIbitstart(void);
 
 /* Actual Function Definitions */
 
@@ -130,7 +130,7 @@ Hstartbitread(int32 file_id, uint16 tag, uint16 ref)
         read_size = MIN((bitfile_rec->max_offset - bitfile_rec->byte_offset), BITBUF_SIZE);
         if ((n = Hread(bitfile_rec->acc_id, read_size, bitfile_rec->bytea)) == FAIL)
             return FAIL;                            /* EOF? somebody pulled the rug out from under us! */
-        bitfile_rec->buf_read = (intn)n;            /* keep track of the number of bytes in buffer */
+        bitfile_rec->buf_read = (int)n;             /* keep track of the number of bytes in buffer */
         bitfile_rec->bytep    = bitfile_rec->bytea; /* set to the beginning of the buffer */
     }                                               /* end if */
     else {
@@ -169,7 +169,7 @@ Hstartbitwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
 {
     bitrec_t *bitfile_rec; /* access record */
     int32     aid;         /* Access ID for the bit-level routines to use */
-    intn      exists;      /* whether dataset exists already */
+    int       exists;      /* whether dataset exists already */
     int32     ret_value;   /* return bit ID */
 
     /* clear error stack and check validity of file id */
@@ -207,7 +207,7 @@ Hstartbitwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
             read_size = MIN((bitfile_rec->max_offset - bitfile_rec->byte_offset), BITBUF_SIZE);
             if ((n = Hread(bitfile_rec->acc_id, read_size, bitfile_rec->bytea)) == FAIL)
                 HRETURN_ERROR(DFE_READERROR, FAIL); /* EOF? somebody pulled the rug out from under us! */
-            bitfile_rec->buf_read = (intn)n;        /* keep track of the number of bytes in buffer */
+            bitfile_rec->buf_read = (int)n;         /* keep track of the number of bytes in buffer */
             if (Hseek(bitfile_rec->acc_id, bitfile_rec->block_offset, DF_START) == FAIL)
                 HRETURN_ERROR(DFE_SEEKERROR, FAIL);
         } /* end if */
@@ -231,7 +231,7 @@ Hstartbitwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
  NAME
        Hbitappendable -- make a bitio AID appendable
  USAGE
-       intn Hbitappendable(bitid)
+       int Hbitappendable(bitid)
        int32 bitid;         IN: id of bit-element to make appendable
  RETURNS
         SUCCEED for success
@@ -245,7 +245,7 @@ Hstartbitwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 Hbitappendable(int32 bitid)
 {
     bitrec_t *bitfile_rec; /* access record */
@@ -270,9 +270,9 @@ Hbitappendable(int32 bitid)
  NAME
        Hbitwrite -- write a number of bits out to a bit-element
  USAGE
-       intn Hbitwrite(bitid, count, data)
+       int Hbitwrite(bitid, count, data)
        int32 bitid;         IN: id of bit-element to write to
-       intn count;          IN: number of bits to write
+       int count;          IN: number of bits to write
        uint32 data;         IN: actual data bits to output
                             (bits to output must be in the low bits)
  RETURNS
@@ -287,12 +287,12 @@ Hbitappendable(int32 bitid)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
-Hbitwrite(int32 bitid, intn count, uint32 data)
+int
+Hbitwrite(int32 bitid, int count, uint32 data)
 {
     static int32     last_bit_id = (-1);  /* the bit ID of the last bitfile_record accessed */
     static bitrec_t *bitfile_rec = NULL;  /* access record */
-    intn             orig_count  = count; /* keep track of orig, number of bits to output */
+    int              orig_count  = count; /* keep track of orig, number of bits to output */
 
     /* clear error stack and check validity of file id */
     HEclear();
@@ -313,8 +313,8 @@ Hbitwrite(int32 bitid, intn count, uint32 data)
     if (bitfile_rec->access != 'w')
         HRETURN_ERROR(DFE_BADACC, FAIL);
 
-    if (count > (intn)DATANUM)
-        count = (intn)DATANUM;
+    if (count > (int)DATANUM)
+        count = (int)DATANUM;
 
     /* change bitfile modes if necessary */
     if (bitfile_rec->mode == 'r')
@@ -356,8 +356,8 @@ Hbitwrite(int32 bitid, intn count, uint32 data)
     }     /* end if */
 
     /* output any and all remaining whole bytes */
-    while (count >= (intn)BITNUM) {
-        *(bitfile_rec->bytep) = (uint8)(data >> (count -= (intn)BITNUM));
+    while (count >= (int)BITNUM) {
+        *(bitfile_rec->bytep) = (uint8)(data >> (count -= (int)BITNUM));
         bitfile_rec->byte_offset++;
         if (++bitfile_rec->bytep == bitfile_rec->bytez) {
             int32 write_size;
@@ -384,7 +384,7 @@ Hbitwrite(int32 bitid, intn count, uint32 data)
     }         /* end while */
 
     /* put any remaining bits into the bits buffer */
-    if ((bitfile_rec->count = (intn)BITNUM - count) > 0)
+    if ((bitfile_rec->count = (int)BITNUM - count) > 0)
         bitfile_rec->bits = (uint8)(data << bitfile_rec->count);
 
     /* Update the offset in the buffer */
@@ -399,9 +399,9 @@ Hbitwrite(int32 bitid, intn count, uint32 data)
  NAME
        Hbitread -- read a number of bits from a bit-element
  USAGE
-       intn Hbitread(bitid, count, data)
+       int Hbitread(bitid, count, data)
        int32 bitid;         IN: id of bit-element to write to
-       intn count;          IN: number of bits to write
+       int count;          IN: number of bits to write
        uint32 *data;        IN: pointer to the bits to read
                             OUT: points to the bits read in
                             (bits input will be in the low bits)
@@ -417,14 +417,14 @@ Hbitwrite(int32 bitid, intn count, uint32 data)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
-Hbitread(int32 bitid, intn count, uint32 *data)
+int
+Hbitread(int32 bitid, int count, uint32 *data)
 {
     static int32     last_bit_id = (-1); /* the bit ID of the last bitfile_record accessed */
     static bitrec_t *bitfile_rec = NULL; /* access record */
     uint32           l;
     uint32           b = 0;      /* bits to return */
-    intn             orig_count; /* the original number of bits to read in */
+    int              orig_count; /* the original number of bits to read in */
     int32            n;
 
     /* clear error stack and check validity of file id */
@@ -447,13 +447,13 @@ Hbitread(int32 bitid, intn count, uint32 *data)
     if (bitfile_rec->mode == 'w')
         HIwrite2read(bitfile_rec);
 
-    if (count > (intn)DATANUM) /* truncate the count if it's too large */
+    if (count > (int)DATANUM) /* truncate the count if it's too large */
         count = DATANUM;
 
     /* if the request can be satisfied with just the */
     /* buffered bits then do the shift and return */
     if (count <= bitfile_rec->count) {
-        *data = (uint32)((uintn)bitfile_rec->bits >> (bitfile_rec->count -= count)) & (uint32)maskc[count];
+        *data = (uint32)((unsigned)bitfile_rec->bits >> (bitfile_rec->count -= count)) & (uint32)maskc[count];
         return count;
     } /* end if */
 
@@ -467,7 +467,7 @@ Hbitread(int32 bitid, intn count, uint32 *data)
     } /* end if */
 
     /* bring in as many whole bytes as the request allows */
-    while (count >= (intn)BITNUM) {
+    while (count >= (int)BITNUM) {
         if (bitfile_rec->bytep == bitfile_rec->bytez) {
             n = Hread(bitfile_rec->acc_id, BITBUF_SIZE, bitfile_rec->bytea);
             if (n == FAIL) { /* EOF */
@@ -482,7 +482,7 @@ Hbitread(int32 bitid, intn count, uint32 *data)
             bitfile_rec->buf_read = n; /* keep track of the number of bytes in buffer */
         }                              /* end if */
         l = (uint32)(*bitfile_rec->bytep++);
-        b |= (uint32)(l << (count -= (intn)BITNUM));
+        b |= (uint32)(l << (count -= (int)BITNUM));
         bitfile_rec->byte_offset++;
         if (bitfile_rec->byte_offset > bitfile_rec->max_offset)
             bitfile_rec->max_offset = bitfile_rec->byte_offset;
@@ -503,7 +503,7 @@ Hbitread(int32 bitid, intn count, uint32 *data)
             bitfile_rec->bytez    = n + (bitfile_rec->bytep = bitfile_rec->bytea);
             bitfile_rec->buf_read = n; /* keep track of the number of bytes in buffer */
         }                              /* end if */
-        bitfile_rec->count = ((intn)BITNUM - count);
+        bitfile_rec->count = ((int)BITNUM - count);
         l                  = (uint32)(bitfile_rec->bits = *bitfile_rec->bytep++);
         b |= l >> bitfile_rec->count;
         bitfile_rec->byte_offset++;
@@ -522,10 +522,10 @@ Hbitread(int32 bitid, intn count, uint32 *data)
  NAME
        Hbitseek -- seek to a given bit position in a bit-element
  USAGE
-       intn Hbitseek(bitid, offset)
+       int Hbitseek(bitid, offset)
        int32 bitid;         IN: id of bit-element to write to
-       intn byte_offset;    IN: byte offset in the bit-element
-       intn bit_offset;     IN: bit offset from the byte offset
+       int byte_offset;    IN: byte offset in the bit-element
+       int bit_offset;     IN: bit offset from the byte offset
 
  RETURNS
        returns FAIL (-1) if fail, SUCCEED (0) otherwise.
@@ -541,19 +541,19 @@ Hbitread(int32 bitid, intn count, uint32 *data)
             Hbitseek(bitid,bit_offset/8,bit_offset%8);
 REVISION LOG
 --------------------------------------------------------------------------*/
-intn
-Hbitseek(int32 bitid, int32 byte_offset, intn bit_offset)
+int
+Hbitseek(int32 bitid, int32 byte_offset, int bit_offset)
 {
     bitrec_t *bitfile_rec; /* access record */
     int32     seek_pos;    /* position of block to seek to */
     int32     read_size;   /* number of bytes to read into buffer */
     int32     n;           /* number of bytes actually read */
-    intn      new_block;   /* whether to move to another block in the dataset */
+    int       new_block;   /* whether to move to another block in the dataset */
 
     /* clear error stack and check validity of file id */
     HEclear();
 
-    if (byte_offset < 0 || bit_offset < 0 || bit_offset > ((intn)BITNUM - 1) ||
+    if (byte_offset < 0 || bit_offset < 0 || bit_offset > ((int)BITNUM - 1) ||
         (bitfile_rec = HAatom_object(bitid)) == NULL || byte_offset > bitfile_rec->max_offset)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
@@ -587,7 +587,7 @@ Hbitseek(int32 bitid, int32 byte_offset, intn bit_offset)
     /* set to the correct position in the buffer */
     bitfile_rec->bytep = bitfile_rec->bytea + (byte_offset - bitfile_rec->block_offset);
     if (bit_offset > 0) {
-        bitfile_rec->count = ((intn)BITNUM - bit_offset);
+        bitfile_rec->count = ((int)BITNUM - bit_offset);
         if (bitfile_rec->mode == 'w') { /* if writing, mask off bits not yet written */
             bitfile_rec->bits = *(bitfile_rec->bytep);
             bitfile_rec->bits &= maskc[bit_offset] << bitfile_rec->count;
@@ -614,7 +614,7 @@ Hbitseek(int32 bitid, int32 byte_offset, intn bit_offset)
  NAME
        Hgetbit -- read 1 bit from a bit-element
  USAGE
-       intn Hgetbit(bitid)
+       int Hgetbit(bitid)
        int32 bitid;         IN: id of bit-element to read from
  RETURNS
        the bit read in (0/1) on success, FAIL(-1) to indicate failure
@@ -626,14 +626,14 @@ Hbitseek(int32 bitid, int32 byte_offset, intn bit_offset)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 Hgetbit(int32 bitid)
 {
     uint32 data;
 
     if (Hbitread(bitid, 1, &data) == FAIL)
         HRETURN_ERROR(DFE_BITREAD, FAIL);
-    return (intn)data;
+    return (int)data;
 } /* end Hgetbit() */
 
 /*--------------------------------------------------------------------------
@@ -643,7 +643,7 @@ Hgetbit(int32 bitid)
  USAGE
        int32 Hendbitaccess(bitfile_id,flushbit)
        int32 bitfile_id;        IN: id of bitfile element to dispose of
-       intn flushbit;           IN: determines how to flush leftover bits
+       int flushbit;           IN: determines how to flush leftover bits
                                    (leftover bits are bits that have been
                                     buffered, but are less than the
                                     BITNUM (usually set to 8) number of
@@ -662,7 +662,7 @@ Hgetbit(int32 bitid)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-Hendbitaccess(int32 bitfile_id, intn flushbit)
+Hendbitaccess(int32 bitfile_id, int flushbit)
 {
     bitrec_t *bitfile_rec; /* bitfile record */
 
@@ -691,7 +691,7 @@ Hendbitaccess(int32 bitfile_id, intn flushbit)
  PURPOSE
     Bit I/O initialization routine
  USAGE
-    intn HIbitstart()
+    int HIbitstart()
  RETURNS
     Returns SUCCEED/FAIL
  DESCRIPTION
@@ -701,10 +701,10 @@ Hendbitaccess(int32 bitfile_id, intn flushbit)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-static intn
+static int
 HIbitstart(void)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* Don't call this routine again... */
     library_terminate = TRUE;
@@ -722,9 +722,9 @@ done:
  NAME
     HIbitflush -- flush the bits out to a writable bitfile
  USAGE
-    intn HIbitflush(bitfile_rec,flushbit)
+    int HIbitflush(bitfile_rec,flushbit)
         bitrec_t *bitfile_rec;  IN: record of bitfile element to flush
-        intn flushbit;          IN: determines how to flush leftover bits
+        int flushbit;          IN: determines how to flush leftover bits
                                    (leftover bits are bits that have been
                                     buffered, but are less than the
                                     BITNUM (usually set to 8) number of
@@ -747,12 +747,12 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-static intn
-HIbitflush(bitrec_t *bitfile_rec, intn flushbit, intn writeout)
+static int
+HIbitflush(bitrec_t *bitfile_rec, int flushbit, int writeout)
 {
-    intn write_size; /* number of bytes to write out */
+    int write_size; /* number of bytes to write out */
 
-    if (bitfile_rec->count < (intn)BITNUM) { /* check if there are any */
+    if (bitfile_rec->count < (int)BITNUM) { /* check if there are any */
         if (bitfile_rec->byte_offset > bitfile_rec->max_offset) {
             if (flushbit != (-1)) /* only flush bits if asked and there are bits to flush */
                 if (Hbitwrite(bitfile_rec->bit_id, bitfile_rec->count, (uint32)(flushbit ? 0xFF : 0)) == FAIL)
@@ -761,7 +761,7 @@ HIbitflush(bitrec_t *bitfile_rec, intn flushbit, intn writeout)
         else { /* we are in the middle of a dataset and need to integrate */
             /* mask off a place for the new bits */
             *(bitfile_rec->bytep) &=
-                (uint8)(~(maskc[(intn)BITNUM - bitfile_rec->count] << bitfile_rec->count));
+                (uint8)(~(maskc[(int)BITNUM - bitfile_rec->count] << bitfile_rec->count));
 
             /* merge in new bits */
             *(bitfile_rec->bytep) |= bitfile_rec->bits;
@@ -778,7 +778,7 @@ HIbitflush(bitrec_t *bitfile_rec, intn flushbit, intn writeout)
         }                                /* end else */
     }                                    /* end if */
     if (writeout == TRUE) {              /* only write data out if necessary */
-        write_size = (intn)MIN((bitfile_rec->bytez - bitfile_rec->bytea), bitfile_rec->max_offset);
+        write_size = (int)MIN((bitfile_rec->bytez - bitfile_rec->bytea), bitfile_rec->max_offset);
         if (write_size > 0)
             if (Hwrite(bitfile_rec->acc_id, write_size, bitfile_rec->bytea) == FAIL)
                 HRETURN_ERROR(DFE_WRITEERROR, FAIL);
@@ -808,7 +808,7 @@ HIget_bitfile_rec(void)
  NAME
     HIread2write - switch from reading bits to writing them
  USAGE
-    intn HIread2write(bitfile_rec)
+    int HIread2write(bitfile_rec)
         bitrec_t *bitfile_rec;  IN: record of bitfile element to switch
  RETURNS
     returns SUCCEED (0) if successful, FAIL (-1) otherwise
@@ -820,13 +820,13 @@ HIget_bitfile_rec(void)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-static intn
+static int
 HIread2write(bitrec_t *bitfile_rec)
 {
 
     bitfile_rec->block_offset = (int32)LONG_MIN; /* set to bogus value */
     bitfile_rec->mode         = 'w';             /* change to write mode */
-    if (Hbitseek(bitfile_rec->bit_id, bitfile_rec->byte_offset, ((intn)BITNUM - bitfile_rec->count)) == FAIL)
+    if (Hbitseek(bitfile_rec->bit_id, bitfile_rec->byte_offset, ((int)BITNUM - bitfile_rec->count)) == FAIL)
         HRETURN_ERROR(DFE_INTERNAL, FAIL);
     return SUCCEED;
 } /* HIread2write */
@@ -836,7 +836,7 @@ HIread2write(bitrec_t *bitfile_rec)
  NAME
     HIwrite2read - switch from writing bits to reading them
  USAGE
-    intn HIwrite2read(bitfile_rec)
+    int HIwrite2read(bitfile_rec)
         bitrec_t *bitfile_rec;  IN: record of bitfile element to switch
  RETURNS
     returns SUCCEED (0) if successful, FAIL (-1) otherwise
@@ -848,10 +848,10 @@ HIread2write(bitrec_t *bitfile_rec)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-static intn
+static int
 HIwrite2read(bitrec_t *bitfile_rec)
 {
-    intn  prev_count  = bitfile_rec->count; /* preserve this for later */
+    int   prev_count  = bitfile_rec->count; /* preserve this for later */
     int32 prev_offset = bitfile_rec->byte_offset;
 
     if (HIbitflush(bitfile_rec, -1, TRUE) == FAIL) /* flush any leftover bits */
@@ -859,7 +859,7 @@ HIwrite2read(bitrec_t *bitfile_rec)
 
     bitfile_rec->block_offset = (int32)LONG_MIN; /* set to bogus value */
     bitfile_rec->mode         = 'r';             /* change to read mode */
-    if (Hbitseek(bitfile_rec->bit_id, prev_offset, ((intn)BITNUM - prev_count)) == FAIL)
+    if (Hbitseek(bitfile_rec->bit_id, prev_offset, ((int)BITNUM - prev_count)) == FAIL)
         HRETURN_ERROR(DFE_INTERNAL, FAIL);
     return SUCCEED;
 } /* HIwrite2read */
@@ -870,7 +870,7 @@ HIwrite2read(bitrec_t *bitfile_rec)
  PURPOSE
     Terminate various static buffers.
  USAGE
-    intn HPbitshutdown()
+    int HPbitshutdown()
  RETURNS
     Returns SUCCEED/FAIL
  DESCRIPTION
@@ -881,7 +881,7 @@ HIwrite2read(bitrec_t *bitfile_rec)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 HPbitshutdown(void)
 {
     /* Shutdown the file ID atom group */

@@ -634,7 +634,7 @@ gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_ma
     int32       sd_id, sds_id, sd_index;
     int32       len = in->dims[0] * in->dims[1] * in->dims[2];
     char        infile[NAME_LEN];
-    intn        status;
+    int         status;
     const char *err1 = "Unable to get input data from file: %s.\n";
 
     /*
@@ -840,7 +840,7 @@ gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
         int32  sds_id, sd_index;
         int32  sd_id    = infile_info.handle; /* shortcut for handle from SDstart */
         uint16 name_len = 0;
-        intn   status   = FAIL;
+        int    status   = FAIL;
 
         /* get the dimension information of the only SDS in the file */
         sd_index = 0;
@@ -1187,7 +1187,7 @@ gmaxmin(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_
      */
     if (in->is_hdf == TRUE) {
         int32 sds_id, sd_index = 0;
-        intn  status;
+        int   status;
 
         sds_id = SDselect(infile_info.handle, sd_index);
         status = SDgetrange(sds_id, &in->max, &in->min);
@@ -2535,7 +2535,7 @@ create_SDS(int32 sd_id, int32 nt, struct Input *in)
  *    was factored out to reduce the length of 'process.'
  *    Returns SUCCEED or FAIL. (bmribler - 2006/8/18)
  */
-static intn
+static int
 alloc_data(void **data, int32 len, int outtype)
 {
     const char *alloc_err = "Unable to dynamically allocate memory.\n";
@@ -2586,7 +2586,7 @@ alloc_data(void **data, int32 len, int outtype)
  *    was factored out to reduce the length of 'process.'
  *    Returns SUCCEED or FAIL. (bmribler - 2006/8/18)
  */
-static intn
+static int
 write_SDS(int32 sds_id, struct Input *in)
 {
     const char *write_err = "Unable to write an SDS to the HDF output file\n";
@@ -2627,7 +2627,7 @@ write_SDS(int32 sds_id, struct Input *in)
  *    It was factored out to reduce the length of 'process.'
  *    Returns SUCCEED or FAIL. (bmribler - 2006/8/18)
  */
-static intn
+static int
 set_dimensions(int32 sds_id, struct Input *in, int32 nt, void *dscale, void *vscale, void *hscale)
 {
     int32       dim_id, dim_index;
@@ -2825,7 +2825,7 @@ process(struct Options *opt)
          * put the input data in the HDF output file, in SDS format
          */
         if (opt->to_float == TRUE) {
-            intn status;
+            int status;
             switch (in.outtype) {
 
                 case 0: /* 32-bit float */

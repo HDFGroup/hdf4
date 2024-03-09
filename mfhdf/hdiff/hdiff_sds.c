@@ -63,8 +63,8 @@ diff_sds(int32 sd1_id, int32 sd2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
     char   sds1_name[H4_MAX_NC_NAME];
     char   sds2_name[H4_MAX_NC_NAME];
     int    dim_diff = 0; /* dimensions are different */
-    intn   empty1_sds;
-    intn   empty2_sds;
+    int    empty1_sds;
+    int    empty2_sds;
     void  *buf1 = NULL;
     void  *buf2 = NULL;
     uint32 max_err_cnt;

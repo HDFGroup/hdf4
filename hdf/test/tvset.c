@@ -1273,8 +1273,8 @@ test_vsdelete(void)
     /* Test VSgetexternalinfo on this vdata that doesn't have external
        element, should return 0 for length of external file name */
     {
-        intn name_len = 0;
-        name_len      = VSgetexternalinfo(vdata_id, 0, NULL, NULL, NULL);
+        int name_len = 0;
+        name_len     = VSgetexternalinfo(vdata_id, 0, NULL, NULL, NULL);
         VERIFY_VOID(name_len, 0, "VSgetexternalinfo:vdata_id");
     }
 
@@ -1914,15 +1914,15 @@ test_getvgroups(void)
 {
     int32 fid; /* File ID */
     int32 vgroup_id, vgroup0_id, vgroup1_id, vgroup2_id, vgroup3_id, vgroup4_id,
-        vgroup5_id;     /* Various vgroup IDs */
-    int32   vgroup_ref; /* Vgroup ref */
-    uintn   n_vgs = 0;
-    uint16 *refarray;
-    int32   ref_list[NUM_VGROUPS];
-    char    vgclass[20];
-    int     ii;
-    int32   status;   /* Status values from routines */
-    intn    status_n; /* returned status for functions returning an intn  */
+        vgroup5_id;      /* Various vgroup IDs */
+    int32    vgroup_ref; /* Vgroup ref */
+    unsigned n_vgs = 0;
+    uint16  *refarray;
+    int32    ref_list[NUM_VGROUPS];
+    char     vgclass[20];
+    int      ii;
+    int32    status;   /* Status values from routines */
+    int      status_n; /* returned status for functions returning an int  */
 
     /* Create HDF file and initialize the interface. */
     fid = Hopen(USERVGROUPS, DFACC_CREATE, 0);
@@ -2211,16 +2211,16 @@ test_getvgroups(void)
     CHECK_VOID(status_n, FAIL, "Hclose");
 } /* test_getvgroups() */
 
-intn
-check_vgs(int32 id, uintn start_vg, uintn n_vgs,
+int
+check_vgs(int32 id, unsigned start_vg, unsigned n_vgs,
           const char *ident_text,  /* just for debugging, remove when done */
-          uintn       resultcount, /* expected number of vgroups */
+          unsigned    resultcount, /* expected number of vgroups */
           uint16     *resultarray)     /* array containing expected values */
 {
-    uint16 *refarray = NULL;
-    uintn   count    = 0, ii;
-    char    message[30];
-    intn    ret_value = SUCCEED;
+    uint16  *refarray = NULL;
+    unsigned count    = 0, ii;
+    char     message[30];
+    int      ret_value = SUCCEED;
 
     strcpy(message, "Vgetvgroups: ");
     strcat(message, ident_text);
@@ -2253,15 +2253,15 @@ check_vgs(int32 id, uintn start_vg, uintn n_vgs,
 }
 
 static int
-check_vds(int32 id, uintn start_vd, uintn n_vds,
+check_vds(int32 id, unsigned start_vd, unsigned n_vds,
           const char *ident_text,  /* just for debugging, remove when done */
-          uintn       resultcount, /* expected number of vdatas */
+          unsigned    resultcount, /* expected number of vdatas */
           uint16     *resultarray)     /* array containing expected values */
 {
-    uint16 *refarray = NULL;
-    uintn   count    = 0, ii;
-    char    message[30];
-    intn    ret_value = SUCCEED;
+    uint16  *refarray = NULL;
+    unsigned count    = 0, ii;
+    char     message[30];
+    int      ret_value = SUCCEED;
 
     strcpy(message, "VSgetvdatas: ");
     strcat(message, ident_text);
@@ -2306,12 +2306,12 @@ test_getvdatas(void)
     int32 vgroup0_id, vgroup1_id, vgroup2_id, vgroup4_id, vgroup6_id, vgroup7_id,
         vgroup9_id; /* Various vgroup IDs */
     int32 vdata1_id, vdata2_id, vdata3_id, vdata4_id, vdata5_id, vdata6_id, vdata7_id; /* Various vdata IDs */
-    uintn n_vgs = 0;
-    int32 ref_list[NUM_VGROUPS], vdref_list[NUM_VDATAS];
-    char  vgclass[20];
-    int   ii;
-    int32 status;   /* Status values from routines */
-    intn  status_n; /* returned status for functions returning an intn  */
+    unsigned n_vgs = 0;
+    int32    ref_list[NUM_VGROUPS], vdref_list[NUM_VDATAS];
+    char     vgclass[20];
+    int      ii;
+    int32    status;   /* Status values from routines */
+    int      status_n; /* returned status for functions returning an int  */
 
     /* Create HDF file and initialize the interface. */
     fid = Hopen(USERVDATAS, DFACC_CREATE, 0);
@@ -2646,8 +2646,8 @@ test_extfile(void)
     void      *columnPtrs[3];
     int        bufsize;
     void      *databuf;
-    intn       name_len = 0;
-    intn       status_n; /* returned status for functions returning an intn  */
+    int        name_len = 0;
+    int        status_n; /* returned status for functions returning an int  */
     int32      status;   /* returned status for functions returning an int32 */
     char8      col1buf[NROWS][2] = {{'A', 'B'}, {'B', 'C'}, {'C', 'D'}, {'D', 'E'}, {'E', 'F'}};
     uint16     col2buf[NROWS]    = {1, 2, 3, 4, 5};
@@ -2748,7 +2748,7 @@ test_extfile(void)
         /* Get the length of the external file name first - VSgetexternalfile
            is deprecated as of 4.2.7 */
         name_len = VSgetexternalfile(vdata1_id, 0, NULL, NULL);
-        VERIFY_VOID(name_len, (intn)strlen(EXTERNAL_FILE), "VSgetexternalfile");
+        VERIFY_VOID(name_len, (int)strlen(EXTERNAL_FILE), "VSgetexternalfile");
 
         extfile_name = (char *)malloc(sizeof(char) * (name_len + 1));
         CHECK_ALLOC(extfile_name, "extfile_name", "test_extfile");
@@ -2756,21 +2756,21 @@ test_extfile(void)
         /* Old function: Get the external file name - VSgetexternalfile
            is deprecated as of 4.2.7 */
         name_len = VSgetexternalfile(vdata1_id, name_len + 1, extfile_name, &offset);
-        VERIFY_VOID(name_len, (intn)strlen(EXTERNAL_FILE), "VSgetexternalfile");
+        VERIFY_VOID(name_len, (int)strlen(EXTERNAL_FILE), "VSgetexternalfile");
         VERIFY_CHAR_VOID(extfile_name, EXTERNAL_FILE, "VSgetexternalfile");
         free(extfile_name);
     } /* old test */
 
     /* Get the length of the external file name first */
     name_len = VSgetexternalinfo(vdata1_id, 0, NULL, NULL, NULL);
-    VERIFY_VOID(name_len, (intn)strlen(EXTERNAL_FILE), "VSgetexternalinfo");
+    VERIFY_VOID(name_len, (int)strlen(EXTERNAL_FILE), "VSgetexternalinfo");
 
     extfile_name = (char *)malloc(sizeof(char) * (name_len + 1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_extfile");
 
     /* Get the external file name */
     name_len = VSgetexternalinfo(vdata1_id, name_len + 1, extfile_name, &offset, &length);
-    VERIFY_VOID(name_len, (intn)strlen(EXTERNAL_FILE), "VSgetexternalinfo");
+    VERIFY_VOID(name_len, (int)strlen(EXTERNAL_FILE), "VSgetexternalinfo");
     VERIFY_CHAR_VOID(extfile_name, EXTERNAL_FILE, "VSgetexternalinfo");
     free(extfile_name);
 
@@ -2789,7 +2789,7 @@ test_extfile(void)
         /* Call VSgetexternalinfo again with smaller buffer size and make sure
            VSgetexternalinfo reads the name truncated to the given buffer size*/
         name_len = VSgetexternalinfo(vdata1_id, name_len - 2, extfile_name, &offset, &length);
-        VERIFY_VOID(name_len, (intn)strlen(extfile_name), "VSgetexternalinfo");
+        VERIFY_VOID(name_len, (int)strlen(extfile_name), "VSgetexternalinfo");
         VERIFY_CHAR_VOID(extfile_name, short_name, "VSgetexternalinfo");
         free(short_name);
         free(extfile_name);
@@ -2850,7 +2850,7 @@ test_extfile(void)
 static void
 test_blockinfo_oneLB(void)
 {
-    intn  status_n; /* returned status for functions returning an intn  */
+    int   status_n; /* returned status for functions returning an int  */
     int32 status;   /* returned status for functions returning an int32 */
     int16 rec_num;  /* current record number */
     int32 fid, vdata1_id, vdata2_id;
@@ -3069,7 +3069,7 @@ test_blockinfo_oneLB(void)
 static void
 test_blockinfo_multLBs(void)
 {
-    intn  status_n; /* returned status for functions returning an intn  */
+    int   status_n; /* returned status for functions returning an int  */
     int32 status;   /* returned status for functions returning an int32 */
     int16 rec_num;  /* current record number */
     int32 fid, vdata1_id, vdata2_id;
@@ -3231,10 +3231,10 @@ test_blockinfo_multLBs(void)
 static void
 test_VSofclass()
 {
-    intn    status_n; /* returned status for functions returning an intn  */
+    int     status_n; /* returned status for functions returning an int  */
     int32   status;   /* returned status for functions returning an int32 */
     int32   fid;
-    intn    n_vds    = 0;
+    int     n_vds    = 0;
     uint16 *refarray = NULL;
 
     /* Open file LKBLK_FILE for reading. */

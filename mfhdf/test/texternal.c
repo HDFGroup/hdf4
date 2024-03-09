@@ -95,8 +95,8 @@ test_setexternal()
     int32 start[2], edges[2], dimsizes[2], nt, offset;
     int32 idata[DIM1 * DIM2];
     int   ii;
-    intn  status;
-    intn  num_errs = 0; /* number of errors in compression test so far */
+    int   status;
+    int   num_errs = 0; /* number of errors in compression test so far */
 
     /* Create an HDF file */
     sd_id = SDstart(EXTTST, DFACC_CREATE);
@@ -267,14 +267,14 @@ static int
 test_getexternal()
 {
     int32 sd_id, sds_id, noextsds;
-    intn  name_len = 0;
+    int   name_len = 0;
     char *extfile_name;
     int32 offset = 0, length = 0;
     int32 start[2], edges[2], dimsizes[2], nt;
     int32 idata[DIM1 * DIM2];
     int   ii;
-    intn  num_errs = 0; /* number of errors in compression test so far */
-    intn  status   = SUCCEED;
+    int   num_errs = 0; /* number of errors in compression test so far */
+    int   status   = SUCCEED;
 
     /* Open file 'exttst.hdf' again */
     sd_id = SDstart(EXTTST, DFACC_RDWR);
@@ -319,7 +319,7 @@ test_getexternal()
     deprecated as of 4.2.7 because it missed the length argument */
     { /* deprecated */
         name_len = SDgetexternalfile(sds_id, 0, NULL, NULL);
-        VERIFY(name_len, (intn)strlen(EXTFILE), "SDgetexternalfile");
+        VERIFY(name_len, (int)strlen(EXTFILE), "SDgetexternalfile");
 
         extfile_name = (char *)malloc(sizeof(char *) * (name_len + 1));
         CHECK_ALLOC(extfile_name, "extfile_name", "SDgetexternalfile");
@@ -327,7 +327,7 @@ test_getexternal()
 
         /* Call SDgetexternalfile again and get the external file info */
         name_len = SDgetexternalfile(sds_id, name_len + 1, extfile_name, &offset);
-        VERIFY(name_len, (intn)strlen(EXTFILE), "SDgetexternalfile");
+        VERIFY(name_len, (int)strlen(EXTFILE), "SDgetexternalfile");
         VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalfile");
         free(extfile_name);
     }
@@ -335,13 +335,13 @@ test_getexternal()
     /* Call SDgetexternalinfo the first time passing in 0 for external
     file name length to get the actual length */
     name_len = SDgetexternalinfo(sds_id, 0, NULL, NULL, NULL);
-    VERIFY(name_len, (intn)strlen(EXTFILE), "SDgetexternalinfo");
+    VERIFY(name_len, (int)strlen(EXTFILE), "SDgetexternalinfo");
 
     /* Test passing in NULL pointer for external file name buffer, should
     fail gracefully */
     {
         char *null_buffer = NULL;
-        intn  ret_code    = 0;
+        int   ret_code    = 0;
 
         ret_code = SDgetexternalinfo(sds_id, name_len + 1, null_buffer, &offset, &length);
         VERIFY(ret_code, FAIL, "SDgetexternalinfo");
@@ -354,7 +354,7 @@ test_getexternal()
 
     /* Call SDgetexternalinfo again and get the external file info */
     name_len = SDgetexternalinfo(sds_id, name_len + 1, extfile_name, &offset, &length);
-    VERIFY(name_len, (intn)strlen(EXTFILE), "SDgetexternalinfo");
+    VERIFY(name_len, (int)strlen(EXTFILE), "SDgetexternalinfo");
     VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalinfo");
 
     /* Test passing in smaller buffer for external file name than actual;
@@ -370,7 +370,7 @@ test_getexternal()
            that SDgetexternalinfo reads the name truncated to the given
            buffer size*/
         name_len = SDgetexternalinfo(sds_id, name_len - 2, extfile_name, &offset, &length);
-        VERIFY(name_len, (intn)strlen(extfile_name), "SDgetexternalinfo");
+        VERIFY(name_len, (int)strlen(extfile_name), "SDgetexternalinfo");
         VERIFY_CHAR(short_name, extfile_name, "SDgetexternalinfo");
         free(short_name);
     }
@@ -391,13 +391,13 @@ test_getexternal()
     /* Call SDgetexternalinfo the first time passing in 0 for external
     file name length to get the actual length */
     name_len = SDgetexternalinfo(sds_id, 0, NULL, NULL, NULL);
-    VERIFY(name_len, (intn)strlen(EXTFILE), "SDgetexternalinfo");
+    VERIFY(name_len, (int)strlen(EXTFILE), "SDgetexternalinfo");
 
     /* Test passing in NULL pointer for external file name buffer, should
     fail gracefully */
     {
         char *null_buffer = NULL;
-        intn  ret_code    = 0;
+        int   ret_code    = 0;
         ret_code          = SDgetexternalinfo(sds_id, name_len + 1, null_buffer, &offset, &length);
         VERIFY(ret_code, FAIL, "SDgetexternalinfo");
     }
@@ -408,7 +408,7 @@ test_getexternal()
 
     /* Call SDgetexternalinfo again and get the external file info */
     name_len = SDgetexternalinfo(sds_id, name_len + 1, extfile_name, &offset, &length);
-    VERIFY(name_len, (intn)strlen(EXTFILE), "SDgetexternalinfo");
+    VERIFY(name_len, (int)strlen(EXTFILE), "SDgetexternalinfo");
     VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalinfo");
     free(extfile_name);
 
@@ -459,9 +459,9 @@ test_mult_setexternal()
     int32 dim_sizes[3];
     int32 size_written = 0;
     char *extfile_name = NULL;
-    intn  name_len     = 0;
-    intn  status       = SUCCEED;
-    intn  num_errs     = 0; /* number of errors in compression test so far */
+    int   name_len     = 0;
+    int   status       = SUCCEED;
+    int   num_errs     = 0; /* number of errors in compression test so far */
 
     /* Create the file and initialize the SD interface */
     sd_id = SDstart(EXTTST, DFACC_CREATE);
@@ -514,7 +514,7 @@ test_mult_setexternal()
 
     /* Call SDgetexternalinfo again and get the external file info */
     name_len = SDgetexternalinfo(sds1_id, name_len + 1, extfile_name, NULL, NULL);
-    VERIFY(name_len, (intn)strlen(EXTFILE2), "SDgetexternalinfo");
+    VERIFY(name_len, (int)strlen(EXTFILE2), "SDgetexternalinfo");
     VERIFY_CHAR(EXTFILE2, extfile_name, "SDgetexternalinfo");
 
     /* Close the data set and the file */
@@ -570,9 +570,9 @@ test_special_combos()
     int32 num_sds = 0, num_attrs = 0;
     int32 ap_start[3], ap_edges[3], dim_sizes[3];
     int32 sds2_size = 0, sds3_size = 0, sds4_size = 0, size_written = 0;
-    intn  status = 0;
+    int   status = 0;
     int   ii, jj, kk;
-    intn  num_errs = 0; /* number of errors in compression test so far */
+    int   num_errs = 0; /* number of errors in compression test so far */
 
     /* Create the file and initialize the SD interface */
     sd_id = SDstart(EXTTST, DFACC_CREATE);
@@ -733,8 +733,8 @@ test_change_extdir(void)
     char  *created_file_path = NULL; /* path to the created external file */
     int32  sds_index;
     int    command_ret = 0; /* retvalue from system commands */
-    intn   status      = 0;
-    intn   num_errs    = 0; /* number of errors in compression test so far */
+    int    status      = 0;
+    int    num_errs    = 0; /* number of errors in compression test so far */
 
     status = make_sourcepath(dir_name, MAX_PATH_LEN);
     CHECK(status, FAIL, "make_sourcepath");
@@ -894,8 +894,8 @@ test_HDFFR_1609(void)
     char *temp_dir          = NULL; /* temp dir to create the external file in */
     char *created_file_path = NULL; /* path to the created external file */
     int   command_ret       = 0;    /* retvalue from system commands */
-    intn  status            = 0;
-    intn  num_errs          = 0; /* number of errors in compression test so far */
+    int   status            = 0;
+    int   num_errs          = 0; /* number of errors in compression test so far */
 
     status = make_sourcepath(dir_name, MAX_PATH_LEN);
     CHECK(status, FAIL, "make_sourcepath");
@@ -978,8 +978,8 @@ test_HDFFR_1609(void)
 extern int
 test_external()
 {
-    int  ii, jj, kk;
-    intn num_errs = 0; /* number of errors */
+    int ii, jj, kk;
+    int num_errs = 0; /* number of errors */
 
     /* Data initialization */
     for (kk = 0; kk < Z_LENGTH; kk++)
@@ -1035,9 +1035,9 @@ verify_data(int32 sd_id, int32 sds_ind)
     char   name[80];
     int32  data_size, rank1;
     int32  start[3], edges[3], dims[3];
-    intn   status;
+    int    status;
     int32 *outdata  = NULL, num_elems;
-    intn   num_errs = 0; /* number of errors in compression test so far */
+    int    num_errs = 0; /* number of errors in compression test so far */
     int32  data_wappended[Z_LENGTH + 1][Y_LENGTH]
                         [X_LENGTH]; /* Buffer for first written data + appended data */
 

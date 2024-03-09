@@ -21,12 +21,12 @@
 static bool_t nssdc_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint32 count,
                                 void *values);
 
-static intn hdf_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint32 count,
-                            void *values);
+static int hdf_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint32 count,
+                           void *values);
 
-static intn hdf_xdr_NCv1data(NC *handle, NC_var *vp, unsigned long where, nc_type type, void *values);
+static int hdf_xdr_NCv1data(NC *handle, NC_var *vp, unsigned long where, nc_type type, void *values);
 
-static intn SDIresizebuf(void **buf, int32 *buf_size, int32 size_wanted);
+static int SDIresizebuf(void **buf, int32 *buf_size, int32 size_wanted);
 
 static const long *NCvcmaxcontig(NC *, NC_var *, const long *, const long *);
 
@@ -270,7 +270,7 @@ NC_varoffset(NC *handle, NC_var *vp, const long *coords)
     unsigned long *up;
     const long    *boundary;
     vix_t         *vix;
-    intn           i;
+    int            i;
 
     if (vp->assoc->count == 0) /* 'scaler' variable */
         return vp->begin;
@@ -506,7 +506,7 @@ static int8 *tValues      = NULL;
 /*
     Throw away the temporary buffer we've allocated
 */
-intn
+int
 SDPfreebuf(void)
 {
     if (tBuf != NULL) {
@@ -528,10 +528,10 @@ SDPfreebuf(void)
 /*
     Resize a temporary buffer to the proper size
 */
-static intn
+static int
 SDIresizebuf(void **buf, int32 *buf_size, int32 size_wanted)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     if (*buf_size < size_wanted) {
         free(*buf);
@@ -558,7 +558,7 @@ done:
  * NEW WAY: we delay filling until data is  written out -QAK
  *
  */
-intn
+int
 hdf_get_data(NC *handle, NC_var *vp)
 {
     int32 vg   = FAIL;
@@ -776,7 +776,7 @@ done:
  *
  * The calling routine is responsible for calling DFKsetNT() as required.
  */
-static intn
+static int
 hdf_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint32 count, void *values)
 {
     NC_attr **attr = NULL; /* pointer to the fill-value attribute */
@@ -786,15 +786,15 @@ hdf_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint3
     int32     data_size;         /* size of data block being processed in bytes */
     int32     new_count; /* computed by dividing number of elements 'count' by 2 since 'count' is too big to
                             allocate temporary buffer */
-    int32  bytes_left;
-    int32  elem_length;    /* length of the element pointed to */
-    int8   platntsubclass; /* the machine type of the current platform */
-    int8   outntsubclass;  /* the data's machine type */
-    uintn  convert;        /* whether to convert or not */
-    uint8 *pvalues;        /* pointer to traverse user's buffer "values" */
-    int16  isspecial;
-    intn   ret_value    = SUCCEED;
-    int32  alloc_status = FAIL; /* no successful allocation yet */
+    int32    bytes_left;
+    int32    elem_length;    /* length of the element pointed to */
+    int8     platntsubclass; /* the machine type of the current platform */
+    int8     outntsubclass;  /* the data's machine type */
+    unsigned convert;        /* whether to convert or not */
+    uint8   *pvalues;        /* pointer to traverse user's buffer "values" */
+    int16    isspecial;
+    int      ret_value    = SUCCEED;
+    int32    alloc_status = FAIL; /* no successful allocation yet */
 
     (void)type;
 
@@ -867,7 +867,7 @@ hdf_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint3
         outntsubclass = DFKislitendNT(vp->HDFtype) ? DFNTF_PC : DFNTF_HDFDEFAULT;
     }
 
-    convert = (uintn)(platntsubclass != outntsubclass);
+    convert = (unsigned)(platntsubclass != outntsubclass);
 
     /* BMR - bug#268: removed the block here that attempted to allocation
     large amount of space and failed.  The allocation is not incorporated
@@ -1297,11 +1297,11 @@ done:
  *  similar name
  * Return TRUE if everything worked, else FALSE
  */
-static intn
+static int
 hdf_xdr_NCv1data(NC *handle, NC_var *vp, unsigned long where, nc_type type, void *values)
 {
 
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     if (FAIL == DFKsetNT(vp->HDFtype)) {
         ret_value = FAIL;

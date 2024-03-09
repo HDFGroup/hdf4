@@ -33,13 +33,13 @@
 
 #ifdef H4_HAVE_SZIP_ENCODER /* only compile all these test functions when                                    \
                                 encoder is available */
-static intn
+static int
 test_szip_SDS8bit()
 {
     /************************* Variable declaration **************************/
 
     int32        sd_id, sds_id;
-    intn         status;
+    int          status;
     int32        dim_sizes[2], array_rank, num_type, attributes;
     char         name[H4_MAX_NC_NAME];
     comp_info    c_info;     /* Compression parameters - union */
@@ -159,13 +159,13 @@ test_szip_SDS8bit()
     return num_errs;
 } /* test_szip_SDS8bit */
 
-static intn
+static int
 test_szip_SDS16bit()
 {
     /************************* Variable declaration **************************/
 
     int32     sd_id, sds_id;
-    intn      status;
+    int       status;
     int32     dim_sizes[2], array_rank, num_type, attributes;
     char      name[H4_MAX_NC_NAME];
     comp_info c_info;
@@ -275,13 +275,13 @@ test_szip_SDS16bit()
     return num_errs;
 } /* test_szip_SDS16bit */
 
-static intn
+static int
 test_szip_SDS32bit()
 {
     /************************* Variable declaration **************************/
 
     int32     sd_id, sds_id;
-    intn      status;
+    int       status;
     int32     dim_sizes[2], array_rank, num_type, attributes;
     char      name[H4_MAX_NC_NAME];
     comp_info c_info;
@@ -391,13 +391,13 @@ test_szip_SDS32bit()
     return num_errs;
 } /* test_szip_SDS32bit */
 
-static intn
+static int
 test_szip_SDSfl32bit()
 {
     /************************* Variable declaration **************************/
 
     int32     sd_id, sds_id;
-    intn      status;
+    int       status;
     int32     dim_sizes[2], array_rank, num_type, attributes;
     char      name[H4_MAX_NC_NAME];
     comp_info c_info;
@@ -509,13 +509,13 @@ test_szip_SDSfl32bit()
     return num_errs;
 } /* test_szip_SDSfl32bit */
 
-static intn
+static int
 test_szip_SDSfl64bit()
 {
     /************************* Variable declaration **************************/
 
     int32     sd_id, sds_id;
-    intn      status;
+    int       status;
     int32     dim_sizes[2], array_rank, num_type, attributes;
     char      name[H4_MAX_NC_NAME];
     comp_info c_info;
@@ -635,13 +635,13 @@ test_szip_SDSfl64bit()
 #define CWIDTH      2 /* width of the chunk */
 #define CLENGTH     3 /* length of the chunk */
 
-static intn
+static int
 test_szip_chunk()
 {
     /************************* Variable declaration **************************/
 
     int32         sd_id, sds_id, sds_index;
-    intn          status;
+    int           status;
     int32         flag, maxcache, new_maxcache;
     int32         dim_sizes[2], origin[2];
     HDF_CHUNK_DEF c_def;     /* Chunking definitions */
@@ -885,13 +885,13 @@ test_szip_chunk()
 #define CHK_DIM1      2  /* second dimension of the chunk */
 #define CHK_DIM2      2  /* third dimension of the chunk */
 
-static intn
+static int
 test_szip_chunk_3d()
 {
     /************************* Variable declaration **************************/
 
     int32         sd_id, sds_id0, sds_id, sds_index;
-    intn          status;
+    int           status;
     int32         dim_sizes[3];
     HDF_CHUNK_DEF c_def;     /* Chunking definitions */
     HDF_CHUNK_DEF c_def_out; /* Chunking definitions */
@@ -1051,13 +1051,13 @@ test_szip_chunk_3d()
  */
 #define FILE_NAME_UNLIM "SDSunlimitedsziped.hdf"
 #define SDS_NAME_UNLIM  "UnlimitedData"
-static intn
+static int
 test_szip_unlimited()
 {
     /************************* Variable declaration **************************/
 
     int32     sd_id, sds_id;
-    intn      status;
+    int       status;
     int32     dim_sizes[2], array_rank, num_type, attributes;
     char      name[H4_MAX_NC_NAME];
     comp_info c_info;
@@ -1202,13 +1202,13 @@ test_szip_unlimited()
 #define SZ_WIDTH  5
 #define SZ_LENGTH 16
 
-static intn
+static int
 test_getszipinfo()
 {
     /************************* Variable declaration **************************/
 
     int32        sd_id, sds_id, sds_index;
-    intn         status;
+    int          status;
     int32        dim_sizes[2] = {-1, -1};
     int32        array_rank   = -1;
     int32        num_type     = -1;
@@ -1297,13 +1297,13 @@ test_getszipinfo()
 *********************************************************************/
 
 #ifdef H4_HAVE_LIBSZ /* needed to read data, either decoder or encoder */
-static intn
+static int
 test_getszipdata()
 {
     /************************* Variable declaration **************************/
 
     int32       sd_id, sds_id;
-    intn        status;
+    int         status;
     int32       dim_sizes[2], array_rank, num_type, attributes;
     char        name[H4_MAX_NC_NAME];
     int32       start[2], edges[2];

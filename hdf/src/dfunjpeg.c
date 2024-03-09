@@ -46,8 +46,8 @@ typedef struct {
     uint16 tag, ref; /* tag & ref of image to input */
 
     /* HDF backward compatibility flags */
-    intn old_jpeg_image;  /* whether the image is an JPEG4-style HDF image */
-    intn old_header_read; /* if the header has been read from the old image */
+    int old_jpeg_image;  /* whether the image is an JPEG4-style HDF image */
+    int old_header_read; /* if the header has been read from the old image */
 
     JOCTET *buffer; /* buffer for JPEG library to fill */
 } hdf_source_mgr;
@@ -69,9 +69,9 @@ extern void    hdf_init_source(struct jpeg_decompress_struct *cinfo_ptr);
 extern boolean hdf_fill_input_buffer(struct jpeg_decompress_struct *cinfo_ptr);
 extern void    hdf_skip_input_data(struct jpeg_decompress_struct *cinfo_ptr, long num_bytes);
 extern void    hdf_term_source(struct jpeg_decompress_struct *cinfo_ptr);
-extern intn    jpeg_HDF_src(struct jpeg_decompress_struct *cinfo_ptr, int32 file_id, uint16 tag, uint16 ref,
+extern int     jpeg_HDF_src(struct jpeg_decompress_struct *cinfo_ptr, int32 file_id, uint16 tag, uint16 ref,
                             void *image, int32 xdim, int32 ydim, int16 scheme);
-extern intn    jpeg_HDF_src_term(struct jpeg_decompress_struct *cinfo_ptr);
+extern int     jpeg_HDF_src_term(struct jpeg_decompress_struct *cinfo_ptr);
 void           hdf_error_exit(j_common_ptr cinfo);
 
 /*-----------------------------------------------------------------------------
@@ -257,7 +257,7 @@ hdf_term_source(struct jpeg_decompress_struct *cinfo_ptr)
  * Remarks: Sets up the source manager functions for the JPEG library.
  *          These routines will be called by the JPEG routines to input
  *---------------------------------------------------------------------------*/
-intn
+int
 jpeg_HDF_src(struct jpeg_decompress_struct *cinfo_ptr, int32 file_id, uint16 tag, uint16 ref, void *image,
              int32 xdim, int32 ydim, int16 scheme)
 {
@@ -310,7 +310,7 @@ jpeg_HDF_src(struct jpeg_decompress_struct *cinfo_ptr, int32 file_id, uint16 tag
  * Invokes: JPEG library routines (lots of them...)
  * Remarks: Terminates the source manager functions for the JPEG library.
  *---------------------------------------------------------------------------*/
-intn
+int
 jpeg_HDF_src_term(struct jpeg_decompress_struct *cinfo_ptr)
 {
     /* all we need to do for now is to free up the dest. mgr structure */
@@ -333,7 +333,7 @@ jpeg_HDF_src_term(struct jpeg_decompress_struct *cinfo_ptr)
  * Remarks: Uses the JPEG library routines.
  *---------------------------------------------------------------------------*/
 
-intn
+int
 DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, void *image, int32 xdim, int32 ydim, int16 scheme)
 {
     /* These three structs contain JPEG parameters and working data.

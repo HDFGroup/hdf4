@@ -655,8 +655,8 @@ HDFFCLIBAPI intf nafitg2tp(intf *tag);
 /* Multi-file Annotation C-routines found in mfan.c */
 HDFLIBAPI int32 ANstart(int32 file_id);
 
-HDFLIBAPI intn ANfileinfo(int32 an_id, int32 *n_file_label, int32 *n_file_desc, int32 *n_obj_label,
-                          int32 *n_obj_desc);
+HDFLIBAPI int ANfileinfo(int32 an_id, int32 *n_file_label, int32 *n_file_desc, int32 *n_obj_label,
+                         int32 *n_obj_desc);
 
 HDFLIBAPI int32 ANend(int32 an_id);
 
@@ -666,9 +666,9 @@ HDFLIBAPI int32 ANcreatef(int32 an_id, ann_type type);
 
 HDFLIBAPI int32 ANselect(int32 an_id, int32 idx, ann_type type);
 
-HDFLIBAPI intn ANnumann(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref);
+HDFLIBAPI int ANnumann(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref);
 
-HDFLIBAPI intn ANannlist(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref, int32 ann_list[]);
+HDFLIBAPI int ANannlist(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref, int32 ann_list[]);
 
 HDFLIBAPI int32 ANannlen(int32 ann_id);
 
@@ -676,7 +676,7 @@ HDFLIBAPI int32 ANwriteann(int32 ann_id, const char *ann, int32 annlen);
 
 HDFLIBAPI int32 ANreadann(int32 ann_id, char *ann, int32 maxlen);
 
-HDFLIBAPI intn ANendaccess(int32 ann_id);
+HDFLIBAPI int ANendaccess(int32 ann_id);
 
 HDFLIBAPI int32 ANget_tagref(int32 an_id, int32 idx, ann_type type, uint16 *ann_tag, uint16 *ann_ref);
 
@@ -689,7 +689,7 @@ HDFLIBAPI uint16 ANatype2tag(ann_type atype);
 HDFLIBAPI ann_type ANtag2atype(uint16 atag);
 
 /* Removed because this function is meant to be private.
-HDFLIBAPI intn ANdestroy(void); */
+HDFLIBAPI int ANdestroy(void); */
 
 /* for Multi-file fortran GR interface */
 /*

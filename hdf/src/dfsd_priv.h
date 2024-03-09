@@ -34,7 +34,7 @@
 /* structure to hold SDG info */
 typedef struct DFSsdg {
     DFdi    data;     /* tag/ref of data in file */
-    intn    rank;     /* number of dimensions */
+    int     rank;     /* number of dimensions */
     int32  *dimsizes; /* dimensions of data */
     char   *coordsys;
     char   *dataluf[3];  /* label/unit/format of data */
@@ -51,7 +51,7 @@ typedef struct DFSsdg {
     float64 ioff, ioff_err;               /* calibration offset stuff              */
     int32   cal_type;                     /* number type of data after calibration */
     uint8   fill_value[DFSD_MAXFILL_LEN]; /* fill value if any specified  */
-    intn    fill_fixed;                   /* whether the fill value is a fixed value, or it can change */
+    int     fill_fixed;                   /* whether the fill value is a fixed value, or it can change */
 } DFSsdg;
 
 /* DFnsdgle is the internal structure which stores SDG or NDS and   */
@@ -81,9 +81,9 @@ HDFLIBAPI int DFSDIclear(DFSsdg *sdg);
 
 HDFLIBAPI int DFSDIclearNT(DFSsdg *sdg);
 
-HDFLIBAPI int DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], void *data, int isfortran);
+HDFLIBAPI int DFSDIgetdata(const char *filename, int rank, int32 maxsizes[], void *data, int isfortran);
 
-HDFLIBAPI int DFSDIputdata(const char *filename, intn rank, int32 *dimsizes, void *data, int accmode,
+HDFLIBAPI int DFSDIputdata(const char *filename, int rank, int32 *dimsizes, void *data, int accmode,
                            int isfortran);
 
 HDFLIBAPI int DFSDIgetslice(const char *filename, int32 winst[], int32 windims[], void *data, int32 dims[],
@@ -93,13 +93,13 @@ HDFLIBAPI int DFSDIputslice(int32 windims[], void *data, int32 dims[], int isfor
 
 HDFLIBAPI int DFSDIendslice(int isfortran);
 
-HDFLIBAPI intn DFSDIrefresh(char *filename);
+HDFLIBAPI int DFSDIrefresh(char *filename);
 
-HDFLIBAPI int DFSDIisndg(intn *isndg);
+HDFLIBAPI int DFSDIisndg(int *isndg);
 
-HDFLIBAPI int DFSDIgetrrank(intn *rank);
+HDFLIBAPI int DFSDIgetrrank(int *rank);
 
-HDFLIBAPI int DFSDIgetwrank(intn *rank);
+HDFLIBAPI int DFSDIgetwrank(int *rank);
 
 HDFLIBAPI int DFSDIsetdimstrs(int dim, const char *label, const char *unit, const char *format);
 

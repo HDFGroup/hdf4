@@ -51,17 +51,17 @@ LOCAL ROUTINES
 #endif
 
 /* Local function prototypes */
-static intn get_attr_tag(char *attr_name, uint16 *attr_tag);
+static int get_attr_tag(char *attr_name, uint16 *attr_tag);
 
 /******************************************************************************
  NAME
     SDgetdatainfo -- Retrieves location and size of data blocks.
  USAGE
-    intn SDgetdatainfo(sdsid, chk_coord, start_block, info_count, offsetarray, lengtharray)
+    int SDgetdatainfo(sdsid, chk_coord, start_block, info_count, offsetarray, lengtharray)
   int32 sdsid    IN: dataset ID
   int32 *chk_coord  IN: chunk coord array or NULL for non-chunk SDS
   int32 start_block  IN: indicating where to start reading offsets
-  uintn info_count  IN: number of data blocks the arrays can hold
+  unsigned info_count  IN: number of data blocks the arrays can hold
   int32 *offsetarray  OUT: array for offsets
   int32 *lengtharray  OUT: array for lengths
  RETURNS
@@ -90,14 +90,14 @@ static intn get_attr_tag(char *attr_name, uint16 *attr_tag);
     BMR - 2010/07/14: Revised to combine SDgetdatainfo and SDgetdatainfo_count
 
  ******************************************************************************/
-intn
-SDgetdatainfo(int32 sdsid, int32 *chk_coord, uintn start_block, uintn info_count, int32 *offsetarray,
+int
+SDgetdatainfo(int32 sdsid, int32 *chk_coord, unsigned start_block, unsigned info_count, int32 *offsetarray,
               int32 *lengtharray)
 {
     NC     *handle;
     NC_var *var;
-    intn    count     = FAIL; /* number of data blocks */
-    intn    ret_value = 0;
+    int     count     = FAIL; /* number of data blocks */
+    int     ret_value = 0;
 
     /* Clear error stack */
     HEclear();
@@ -154,7 +154,7 @@ done:
  NAME
     SDgetattdatainfo -- Retrieves location and size of attribute's data.
  USAGE
-    intn SDgetattdatainfo(id, attrindex, offset, length)
+    int SDgetattdatainfo(id, attrindex, offset, length)
   int32 id    IN: file ID, SDS ID, or dimension ID
   int32 attrindex    IN: index of the attribute being inquired
   int32 *offset    OUT: offset of attribute's data
@@ -182,7 +182,7 @@ done:
   project, it makes sense to just provide the attribute index. -BMR
 
  ******************************************************************************/
-intn
+int
 SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
 {
     NC     *handle;
@@ -198,7 +198,7 @@ SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
         vsname[H4_MAX_NC_CLASS]   = ""; /* vs name to see if it's the inquired attr's name*/
     int32 ntype                   = 0,  /* need these because SDattrinfo doesn't... */
         count                     = 0;  /* ...take NULL pointers for not needed arguments */
-    intn status,                        /* returned value */
+    int status,                         /* returned value */
         found,                          /* TRUE when attribute is found */
         ret_value = SUCCEED;
 
@@ -338,7 +338,7 @@ SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
 
                 /* the searched attribute if found */
                 if (!strcmp(attrname, vsname)) {
-                    intn info_count = 0;
+                    int info_count = 0;
 
                     /* get offset/length of attribute's data */
                     info_count = VSgetdatainfo(vs_id, 0, 1, offset, length);
@@ -380,7 +380,7 @@ done:
     get_attr_tag -- Convert the name of a pre-defined attribute to its
          associated hdf tag (Private)
  USAGE
-    intn get_attr_tag(attr_name, *attr_tag)
+    int get_attr_tag(attr_name, *attr_tag)
   char *attr_name    IN: name of the luf attributes
   uint16 *attr_tag  OUT: associated tag of luf
  RETURNS
@@ -397,10 +397,10 @@ done:
     application can use tag/ref to read the attribute string.
 
  ******************************************************************************/
-static intn
+static int
 get_attr_tag(char *attr_name, uint16 *attr_tag)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     if (strcmp(_HDF_LongName, attr_name) == 0)
         *attr_tag = DFTAG_SDL;
@@ -435,7 +435,7 @@ get_attr_tag(char *attr_name, uint16 *attr_tag)
     SDgetoldattdatainfo -- Retrieves location and size of old predefined
          attribute's data.
  USAGE
-    intn SDgetoldattdatainfo(id, sdsid, attr_name, offset, length)
+    int SDgetoldattdatainfo(id, sdsid, attr_name, offset, length)
   int32 dim_id    IN: dimension ID
   int32 sdsid    IN: ID of dataset the dim belongs to
   char *attr_name    IN: name of the attribute being inquired
@@ -475,7 +475,7 @@ get_attr_tag(char *attr_name, uint16 *attr_tag)
     2011/1/11: Revised to handle offset/length of SDS' attribute too. -BMR
 
  ******************************************************************************/
-intn
+int
 SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char *attr_name, int32 *offset, int32 *length)
 {
     NC     *handle;
@@ -483,9 +483,9 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char *attr_name, int32 *offset, i
     int32   off, len, dim_att_len = 0, sdsluf_len = 0, offp = 0;
     char   *lufbuf = NULL, *lufp = NULL;
     uint16  att_tag, att_ref;
-    intn    dimidx_infile = 0, dimidx_invar = 0;
-    intn    isdim = 0;
-    intn    status, /* returned value */
+    int     dimidx_infile = 0, dimidx_invar = 0;
+    int     isdim = 0;
+    int     status, /* returned value */
         ret_value = 0;
 
     /* Clear error stack */
@@ -651,10 +651,10 @@ done:
  NAME
     SDgetanndatainfo -- Retrieves location and size of annotations' data.
  USAGE
-    intn SDgetanndatainfo(sdsid, annot_type, size, offsetarray, lengtharray)
+    int SDgetanndatainfo(sdsid, annot_type, size, offsetarray, lengtharray)
   int32 sdsid    IN: SDS ID
   ann_type annot_type  IN: type of annotations to retrieve data info
-  uintn size    IN: size of offsetarray and lengtharray
+  unsigned size    IN: size of offsetarray and lengtharray
   int32 *offsetarray  OUT: offsets of annotations' data
   int32 *lengtharray  OUT: lengths of annotations' data
  RETURNS
@@ -678,8 +678,8 @@ done:
     -BMR 2011/1/9
 
  ******************************************************************************/
-intn
-SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32 *offsetarray, int32 *lengtharray)
+int
+SDgetanndatainfo(int32 sdsid, ann_type annot_type, unsigned size, int32 *offsetarray, int32 *lengtharray)
 {
     int32  file_id   = FAIL; /* file */
     int32  an_id     = FAIL; /* AN API */
@@ -739,7 +739,7 @@ SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32 *offsetarra
             HGOTO_DONE(num_annots);
 
         /* If more annotations than space in user's buffers, only fill up buffers */
-        if ((uintn)num_annots > size)
+        if ((unsigned)num_annots > size)
             num_annots = size;
 
         /* Get offset/length of each annotation of the specified type */

@@ -57,10 +57,10 @@ static uint8 *Vtbuf     = NULL;
     Returns SUCCEED/FAIL
 
 *******************************************************************************/
-intn
+int
 VSPshutdown(void)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     /* free global buffers */
     if (Vtbuf != NULL) {
@@ -153,11 +153,11 @@ VSread(int32 vkey,  /* IN: vdata key */
        int32 nelt,  /* IN: number of elements to read */
        int32 interlace /* IN: interlace to return elements in 'buf' */)
 {
-    intn            isize = 0;
-    intn            order = 0;
-    intn            index = 0;
-    intn            esize = 0;
-    intn            hsize = 0;
+    int             isize = 0;
+    int             order = 0;
+    int             index = 0;
+    int             esize = 0;
+    int             hsize = 0;
     uint8          *Src;
     uint8          *b1 = NULL;
     uint8          *b2 = NULL;
@@ -211,7 +211,7 @@ VSread(int32 vkey,  /* IN: vdata key */
     /* read/write lists */
     w           = &(vs->wlist);
     r           = &(vs->rlist);
-    hsize       = (intn)vs->wlist.ivsize; /* size as stored in HDF */
+    hsize       = (int)vs->wlist.ivsize; /* size as stored in HDF */
     total_bytes = hsize * nelt;
 
     /*
@@ -305,9 +305,9 @@ VSread(int32 vkey,  /* IN: vdata key */
                     b1    = Src + offset;
                     b2    = Vtbuf + (size_t)w->off[i];
                     type  = (int32)w->type[r->item[j]];
-                    esize = (intn)w->esize[i];
-                    isize = (intn)w->isize[i];
-                    order = (intn)w->order[i];
+                    esize = (int)w->esize[i];
+                    isize = (int)w->isize[i];
+                    order = (int)w->order[i];
 
                     for (index = 0; index < order; index++) {
                         DFKconvert(b2, b1, type, (uint32)chunk, DFACC_READ, (uint32)hsize, (uint32)uvsize);
@@ -357,9 +357,9 @@ VSread(int32 vkey,  /* IN: vdata key */
                 i     = r->item[j];
                 b2    = Vtbuf + (size_t)w->off[i];
                 type  = (int32)w->type[i];
-                isize = (intn)w->isize[i];
-                esize = (intn)w->esize[i];
-                order = (intn)w->order[i];
+                isize = (int)w->isize[i];
+                esize = (int)w->esize[i];
+                order = (int)w->order[i];
 
                 for (index = 0; index < order; index++) {
                     DFKconvert(b2, b1, type, (uint32)nelt, DFACC_READ, (uint32)hsize, (uint32)esize);
@@ -378,9 +378,9 @@ VSread(int32 vkey,  /* IN: vdata key */
                 i     = r->item[j];
                 b2    = Vtbuf + (size_t)w->off[i] * (size_t)nelt;
                 type  = (int32)w->type[i];
-                esize = (intn)w->esize[i];
-                isize = (intn)w->isize[i];
-                order = (intn)w->order[i];
+                esize = (int)w->esize[i];
+                isize = (int)w->isize[i];
+                order = (int)w->order[i];
 
                 for (index = 0; index < order; index++) {
                     DFKconvert(b2, b1, type, (uint32)nelt, DFACC_READ, (uint32)isize, (uint32)esize);
@@ -404,9 +404,9 @@ VSread(int32 vkey,  /* IN: vdata key */
                 b1    = buf + offset;
                 b2    = Vtbuf + (size_t)w->off[i] * (size_t)nelt;
                 type  = (int32)w->type[i];
-                isize = (intn)w->isize[i];
-                esize = (intn)w->esize[i];
-                order = (intn)w->order[i];
+                isize = (int)w->isize[i];
+                esize = (int)w->esize[i];
+                order = (int)w->order[i];
 
                 for (index = 0; index < order; index++) {
                     DFKconvert(b2, b1, type, (uint32)nelt, DFACC_READ, (uint32)isize, (uint32)uvsize);
@@ -447,10 +447,10 @@ VSwrite(int32       vkey,  /* IN: vdata key */
         int32       nelt,  /* IN: number of elements */
         int32       interlace /* IN: interlace of elements 'buf' */)
 {
-    intn            isize = 0;
-    intn            order = 0;
-    intn            index = 0;
-    intn            esize = 0;
+    int             isize = 0;
+    int             order = 0;
+    int             index = 0;
+    int             esize = 0;
     uint8          *dest  = NULL;
     const uint8    *src, *Src;
     int32           j;
@@ -462,7 +462,7 @@ VSwrite(int32       vkey,  /* IN: vdata key */
     int32           total_bytes; /* total number of bytes that need to be written out */
     DYN_VWRITELIST *w = NULL;
     int32           int_size;     /* size of "element" as needed by user in memory */
-    intn            hdf_size = 0; /* size of record in HDF file */
+    int             hdf_size = 0; /* size of record in HDF file */
     vsinstance_t   *wi       = NULL;
     VDATA          *vs       = NULL;
     int32           bytes; /* number of elements / bytes to write next time */
@@ -506,7 +506,7 @@ VSwrite(int32       vkey,  /* IN: vdata key */
     if (interlace != NO_INTERLACE && interlace != FULL_INTERLACE)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    hdf_size    = (intn)w->ivsize; /* as stored in HDF file */
+    hdf_size    = (int)w->ivsize; /* as stored in HDF file */
     total_bytes = hdf_size * nelt;
 
     /* make sure we have a valid AID */
@@ -519,7 +519,7 @@ VSwrite(int32       vkey,  /* IN: vdata key */
      *  AND we are increasing its size
      */
     HQueryposition(vs->aid, &position);
-    new_size = (position / (intn)vs->wlist.ivsize) + nelt;
+    new_size = (position / (int)vs->wlist.ivsize) + nelt;
 
     /* this should really be cached in the Vdata structure */
     for (int_size = 0, j = 0; j < w->n; j++)
@@ -601,9 +601,9 @@ VSwrite(int32       vkey,  /* IN: vdata key */
                 src   = Src + offset;
                 dest  = Vtbuf + (size_t)w->off[j];
                 type  = (int32)w->type[j];
-                esize = (intn)w->esize[j];
-                isize = (intn)w->isize[j];
-                order = (intn)w->order[j];
+                esize = (int)w->esize[j];
+                isize = (int)w->isize[j];
+                order = (int)w->order[j];
 
                 for (index = 0; index < order; index++) {
                     DFKconvert((void *)src, dest, type, (uint32)chunk, DFACC_WRITE, (uint32)int_size,
@@ -651,9 +651,9 @@ VSwrite(int32       vkey,  /* IN: vdata key */
             for (j = 0; j < w->n; j++) {
                 dest  = Vtbuf + (size_t)w->off[j];
                 type  = (int32)w->type[j];
-                esize = (intn)w->esize[j];
-                isize = (intn)w->isize[j];
-                order = (intn)w->order[j];
+                esize = (int)w->esize[j];
+                isize = (int)w->isize[j];
+                order = (int)w->order[j];
 
                 for (index = 0; index < order; index++) {
                     DFKconvert((void *)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)esize,
@@ -674,9 +674,9 @@ VSwrite(int32       vkey,  /* IN: vdata key */
             for (j = 0; j < w->n; j++) {
                 dest  = Vtbuf + w->off[j] * nelt;
                 type  = (int32)w->type[j];
-                esize = (intn)w->esize[j];
-                isize = (intn)w->isize[j];
-                order = (intn)w->order[j];
+                esize = (int)w->esize[j];
+                isize = (int)w->isize[j];
+                order = (int)w->order[j];
 
                 for (index = 0; index < order; index++) {
                     DFKconvert((void *)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)esize,
@@ -697,9 +697,9 @@ VSwrite(int32       vkey,  /* IN: vdata key */
                 src   = buf + offset;
                 dest  = Vtbuf + w->off[j] * nelt;
                 type  = (int32)w->type[j];
-                isize = (intn)w->isize[j];
-                esize = (intn)w->esize[j];
-                order = (intn)w->order[j];
+                isize = (int)w->isize[j];
+                esize = (int)w->esize[j];
+                order = (int)w->order[j];
 
                 for (index = 0; index < order; index++) {
                     DFKconvert((void *)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)int_size,

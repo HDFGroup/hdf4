@@ -30,7 +30,7 @@ void
 test_tsdstr(void)
 {
     int         i, j, ret;
-    intn        rank;
+    int         rank;
     int32       dims[2];
     float32     f32[10][10], tf32[10][10];
     const char *datalabel = "Datalabel", *dataunit = "Dataunit", *datafmt = "Datafmt", *coordsys = "coordsys";

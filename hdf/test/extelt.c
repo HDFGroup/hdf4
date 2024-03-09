@@ -37,8 +37,8 @@ test_hextelt(void)
     int16  acc_mode, special;
     int    i;
     int32  ret;
-    intn   errflag = 0;
-    intn   errors  = 0;
+    int    errflag = 0;
+    int    errors  = 0;
 
     outbuf = (uint8 *)calloc(BUF_SIZE, sizeof(uint8));
     inbuf  = (uint8 *)calloc(BUF_SIZE, sizeof(uint8));

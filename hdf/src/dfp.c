@@ -37,13 +37,13 @@ static uint16 Lastref  = 0; /* Last ref read/written */
 
 static char Lastfile[DF_MAXFNLEN] = ""; /* last file opened */
 
-static int32 DFPIopen(const char *filename, intn acc_mode);
+static int32 DFPIopen(const char *filename, int acc_mode);
 
 /*--------------------------------------------------------------------------
  NAME
     DFPgetpal -- get next palette from file
  USAGE
-    intn DFPgetpal(filename,palette)
+    int DFPgetpal(filename,palette)
         char *filename;         IN: name of HDF file
         void * palette;          OUT: ptr to the buffer to store the palette in
  RETURNS
@@ -56,13 +56,13 @@ static int32 DFPIopen(const char *filename, intn acc_mode);
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DFPgetpal(const char *filename, void *palette)
 {
     int32 file_id;
     int32 aid;
     int32 length;
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     HEclear();
 
@@ -129,10 +129,10 @@ done:
  NAME
     DFPputpal -- Write palette to file
  USAGE
-    intn DFPputpal(filename,palette,overwrite,filemode)
+    int DFPputpal(filename,palette,overwrite,filemode)
         char *filename;         IN: name of HDF file
         void * palette;          IN: ptr to the buffer retrieve the palette from
-        intn overwrite;         IN: whether to (1) overwrite last palette written,
+        int overwrite;         IN: whether to (1) overwrite last palette written,
                                     or (0) write it as a fresh palette
         char *filemode;         IN: if "a" append palette to file, "w" create
                                     new file
@@ -147,11 +147,11 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
-DFPputpal(const char *filename, const void *palette, intn overwrite, const char *filemode)
+int
+DFPputpal(const char *filename, const void *palette, int overwrite, const char *filemode)
 {
     int32 file_id;
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     HEclear();
 
@@ -195,7 +195,7 @@ done:
  NAME
     DFPaddpal -- Append palette to file
  USAGE
-    intn DFPaddpal(filename,palette)
+    int DFPaddpal(filename,palette)
         char *filename;         IN: name of HDF file
         void * palette;          IN: ptr to the buffer retrieve the palette from
  RETURNS
@@ -207,10 +207,10 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DFPaddpal(const char *filename, const void *palette)
 {
-    intn ret_value;
+    int ret_value;
 
     ret_value = (DFPputpal(filename, palette, 0, "a"));
 
@@ -221,7 +221,7 @@ DFPaddpal(const char *filename, const void *palette)
  NAME
     DFPnpals -- determine # of palettes in a file
  USAGE
-    intn DFPnpals(filename)
+    int DFPnpals(filename)
         char *filename;         IN: name of HDF file
  RETURNS
     SUCCEED on success, FAIL on failure.
@@ -232,18 +232,18 @@ DFPaddpal(const char *filename, const void *palette)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DFPnpals(const char *filename)
 {
     int32  file_id;
-    intn   curr_pal;           /* current palette count */
+    int    curr_pal;           /* current palette count */
     int32  nip8, nlut;         /* number of IP8s & number of LUTs */
-    intn   npals;              /* total number of palettes */
+    int    npals;              /* total number of palettes */
     uint16 find_tag, find_ref; /* storage for tag/ref pairs found */
     int32  find_off, find_len; /* storage for offset/lengths of tag/refs found */
     int32 *pal_off;            /* storage for an array of palette offsets */
-    intn   i, j;               /* local counting variable */
-    intn   ret_value = SUCCEED;
+    int    i, j;               /* local counting variable */
+    int    ret_value = SUCCEED;
 
     HEclear();
 
@@ -262,7 +262,7 @@ DFPnpals(const char *filename)
         ret_value = (HDerr(file_id));
         goto done;
     }
-    npals = (intn)(nip8 + nlut);
+    npals = (int)(nip8 + nlut);
 
     /* if no palettes just return zero and get out */
     if (npals == 0) {
@@ -322,7 +322,7 @@ done:
  NAME
     DFPreadref -- set ref # of palette to read next
  USAGE
-    intn DFPreadref(filename,ref)
+    int DFPreadref(filename,ref)
         char *filename;         IN: name of HDF file
         uint16 ref;             IN: ref # of palette to read next
  RETURNS
@@ -335,12 +335,12 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DFPreadref(const char *filename, uint16 ref)
 {
     int32 file_id;
     int32 aid;
-    intn  ret_value = SUCCEED;
+    int   ret_value = SUCCEED;
 
     HEclear();
 
@@ -369,7 +369,7 @@ done:
  NAME
     DFPwriteref -- set ref # of palette to write next
  USAGE
-    intn DFPwriteref(filename,ref)
+    int DFPwriteref(filename,ref)
         char *filename;         IN: name of HDF file
         uint16 ref;             IN: ref # of palette to write next
  RETURNS
@@ -382,10 +382,10 @@ done:
     Writeref
 
 --------------------------------------------------------------------------*/
-intn
+int
 DFPwriteref(const char *filename, uint16 ref)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     (void)filename;
 
@@ -398,7 +398,7 @@ DFPwriteref(const char *filename, uint16 ref)
  NAME
     DFPrestart -- restart reading/writing palettes from the start of a file
  USAGE
-    intn DFPrestart(void)
+    int DFPrestart(void)
  RETURNS
     SUCCEED on success, FAIL on failure.
  DESCRIPTION
@@ -409,10 +409,10 @@ DFPwriteref(const char *filename, uint16 ref)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+int
 DFPrestart(void)
 {
-    intn ret_value = SUCCEED;
+    int ret_value = SUCCEED;
 
     Lastfile[0] = '\0';
 
@@ -466,7 +466,7 @@ DFPlastref(void)
  USAGE
     int32 DFPIopen(filename,acc_mode)
         char *filename;         IN: name of HDF file
-        intn acc_mode;            IN: type of access to open file with
+        int acc_mode;            IN: type of access to open file with
  RETURNS
     HDF file handle on success, FAIL on failure.
  DESCRIPTION
@@ -480,7 +480,7 @@ DFPlastref(void)
  REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
-DFPIopen(const char *filename, intn acc_mode)
+DFPIopen(const char *filename, int acc_mode)
 {
     int32 file_id;
     int32 ret_value = SUCCEED;

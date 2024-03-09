@@ -20,10 +20,10 @@
 typedef struct {
     int32    hdim;      /* horizontal dimension of input data */
     int32    vdim;      /* vertical dimension of input data */
-    intn     is_pal;    /* flag to tell whether there is a palette */
-    intn     is_vscale; /* flag telling whether vertical scale included  */
-    intn     is_hscale; /* flag telling whether horizonatal scale included */
-    intn     ct_method; /* color transform method: EXPAND or INTERP */
+    int      is_pal;    /* flag to tell whether there is a palette */
+    int      is_vscale; /* flag telling whether vertical scale included  */
+    int      is_hscale; /* flag telling whether horizonatal scale included */
+    int      ct_method; /* color transform method: EXPAND or INTERP */
     float32  max;       /* max value of data */
     float32  min;       /* min value of the data */
     float32 *hscale;    /* horizontal scale */
@@ -35,7 +35,7 @@ typedef struct {
 typedef struct {
     int32  hres;        /* horizontal resolution of image */
     int32  vres;        /* vertical resolution of image */
-    intn   compress;    /* compression scheme */
+    int    compress;    /* compression scheme */
     char   outfile[32]; /* output file name */
     uint8 *image;       /* Image */
     uint8 *palette;     /* Palette */

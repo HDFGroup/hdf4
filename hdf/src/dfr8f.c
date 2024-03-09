@@ -82,9 +82,9 @@ nd8igdim(_fcd filename, intf *xdim, intf *ydim, intf *ispal, intf *lenfn)
     char *fn;
     intf  ret;
     int32 txdim, tydim;
-    intn  tispal;
+    int   tispal;
 
-    fn = HDf2cstring(filename, (intn)*lenfn);
+    fn = HDf2cstring(filename, (int)*lenfn);
     if (!fn)
         return -1;
     ret = DFR8getdims(fn, &txdim, &tydim, &tispal);
@@ -116,7 +116,7 @@ nd8igimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, _fcd pal, intf *lenf
     char *fn;
     intf  ret;
 
-    fn = HDf2cstring(filename, (intn)*lenfn);
+    fn = HDf2cstring(filename, (int)*lenfn);
     if (!fn)
         return -1;
     ret = DFR8getimage(fn, (uint8 *)_fcdtocp(image), *xdim, *ydim, (uint8 *)_fcdtocp(pal));
@@ -143,7 +143,7 @@ nd8ipimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress, intf
     char *fn;
     intf  ret;
 
-    fn = HDf2cstring(filename, (intn)*lenfn);
+    fn = HDf2cstring(filename, (int)*lenfn);
     if (!fn)
         return -1;
     ret = (intf)DFR8putimage(fn, (void *)_fcdtocp(image), (int32)*xdim, (int32)*ydim, (uint16)*compress);
@@ -170,7 +170,7 @@ nd8iaimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress, intf
     char *fn;
     intf  ret;
 
-    fn = HDf2cstring(filename, (intn)*lenfn);
+    fn = HDf2cstring(filename, (int)*lenfn);
     if (!fn)
         return -1;
     ret = (intf)DFR8addimage(fn, (void *)_fcdtocp(image), (int32)*xdim, (int32)*ydim, (uint16)*compress);
@@ -198,7 +198,7 @@ nd8irref(_fcd filename, intf *ref, intf *fnlen)
 
     Ref = (uint16)*ref;
 
-    fn = HDf2cstring(filename, (intn)*fnlen);
+    fn = HDf2cstring(filename, (int)*fnlen);
     if (!fn)
         return -1;
     ret = DFR8readref(fn, Ref);
@@ -226,7 +226,7 @@ nd8iwref(_fcd filename, intf *ref, intf *fnlen)
 
     Ref = (uint16)*ref;
 
-    fn = HDf2cstring(filename, (intn)*fnlen);
+    fn = HDf2cstring(filename, (int)*fnlen);
     if (!fn)
         return -1;
     ret = DFR8writeref(fn, Ref);
@@ -251,7 +251,7 @@ nd8inims(_fcd filename, intf *fnlen)
     char *fn;
     intf  ret;
 
-    fn = HDf2cstring(filename, (intn)*fnlen);
+    fn = HDf2cstring(filename, (int)*fnlen);
     if (!fn)
         return -1;
     ret = DFR8nimages(fn);
@@ -316,8 +316,8 @@ nd8sjpeg(intf *quality, intf *force_baseline)
 {
     comp_info cinfo; /* Structure containing compression parameters */
 
-    cinfo.jpeg.quality        = (intn)*quality;
-    cinfo.jpeg.force_baseline = (intn)*force_baseline;
+    cinfo.jpeg.quality        = (int)*quality;
+    cinfo.jpeg.force_baseline = (int)*force_baseline;
     return DFR8setcompress((int32)COMP_JPEG, &cinfo);
 } /* end d8sjpeg() */
 
@@ -409,7 +409,7 @@ ndfr8sjpeg(intf *quality, intf *force_baseline)
 {
     comp_info cinfo; /* Structure containing compression parameters */
 
-    cinfo.jpeg.quality        = (intn)*quality;
-    cinfo.jpeg.force_baseline = (intn)*force_baseline;
+    cinfo.jpeg.quality        = (int)*quality;
+    cinfo.jpeg.force_baseline = (int)*force_baseline;
     return DFR8setcompress((int32)COMP_JPEG, &cinfo);
 } /* end dfr8setjpeg() */

@@ -138,7 +138,7 @@ nmgicreat(intf *grid, _fcd name, intf *ncomp, intf *nt, intf *il, intf dimsizes[
     intf  ret;
 
     /* Convert the FORTRAN string into a C string */
-    fn = HDf2cstring(name, (intn)*nlen);
+    fn = HDf2cstring(name, (int)*nlen);
     if (fn == NULL)
         return FAIL;
 
@@ -187,7 +187,7 @@ nmgin2ndx(intf *grid, _fcd name, intf *nlen)
     intf  ret;
 
     /* Convert the FORTRAN string into a C string */
-    fn = HDf2cstring(name, (intn)*nlen);
+    fn = HDf2cstring(name, (int)*nlen);
     if (fn == NULL)
         return FAIL;
 
@@ -396,7 +396,7 @@ nmgr2idx(intf *grid, intf *ref)
 intf
 nmgrltil(intf *riid, intf *il)
 {
-    return (intf)GRreqlutil((int32)*riid, (intn)*il);
+    return (intf)GRreqlutil((int32)*riid, (int)*il);
 } /* end mgrltil() */
 
 /*-----------------------------------------------------------------------------
@@ -413,7 +413,7 @@ nmgrltil(intf *riid, intf *il)
 intf
 nmgrimil(intf *riid, intf *il)
 {
-    return (intf)GRreqimageil((int32)*riid, (intn)*il);
+    return (intf)GRreqimageil((int32)*riid, (int)*il);
 } /* end mgrimil() */
 
 /*-----------------------------------------------------------------------------
@@ -430,7 +430,7 @@ nmgrimil(intf *riid, intf *il)
 intf
 nmggltid(intf *riid, intf *lut_index)
 {
-    return (intf)GRgetlutid((int32)*riid, (intn)*lut_index);
+    return (intf)GRgetlutid((int32)*riid, (int)*lut_index);
 } /* end mggltid() */
 
 /*-----------------------------------------------------------------------------
@@ -558,7 +558,7 @@ nmgisxfil(intf *riid, _fcd filename, intf *offset, intf *nlen)
     intf  ret;
 
     /* Convert the FORTRAN string into a C string */
-    fn = HDf2cstring(filename, (intn)*nlen);
+    fn = HDf2cstring(filename, (int)*nlen);
     if (fn == NULL)
         return FAIL;
 
@@ -582,7 +582,7 @@ nmgisxfil(intf *riid, _fcd filename, intf *offset, intf *nlen)
 intf
 nmgsactp(intf *riid, intf *accesstype)
 {
-    return (intf)GRsetaccesstype((int32)*riid, (uintn)*accesstype);
+    return (intf)GRsetaccesstype((int32)*riid, (unsigned)*accesstype);
 } /* end mgsactp() */
 
 /*-----------------------------------------------------------------------------
@@ -626,7 +626,7 @@ nmgisattr(intf *riid, _fcd name, intf *nt, intf *count, void *data, intf *nlen)
     intf  ret;
 
     /* Convert the FORTRAN string into a C string */
-    fn = HDf2cstring(name, (intn)*nlen);
+    fn = HDf2cstring(name, (int)*nlen);
     if (fn == NULL)
         return FAIL;
 
@@ -737,7 +737,7 @@ nmgifndat(intf *riid, _fcd name, intf *nlen)
     intf  ret;
 
     /* Convert the FORTRAN string into a C string */
-    fn = HDf2cstring(name, (intn)*nlen);
+    fn = HDf2cstring(name, (int)*nlen);
     if (fn == NULL)
         return FAIL;
 
@@ -1133,7 +1133,7 @@ nmgcgcompress(intf *id, intf *comp_type, intf *comp_prm)
 
     int  CASE;
     intf ret = -1;
-    intn c_ret;
+    int  c_ret;
 
     c_ret = GRgetcompinfo(*id, &c_type, &c_info);
 
@@ -1203,7 +1203,7 @@ intf
 nmgcgnluts(intf *id)
 {
     intf ret = -1;
-    intn c_ret;
+    int  c_ret;
 
     c_ret = GRgetnluts(*id);
     if (c_ret >= 0)

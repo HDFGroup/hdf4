@@ -340,7 +340,7 @@ do_big_file(void)
     uint8 array_data[DIM0][DIM1];
     uint8 append_data1[DIM1];
     uint8 append_data2[DIM1];
-    intn  i, j, n;
+    int   i, j, n;
 
     /* Create 2 files and initiate the SD interface. */
     if ((sd1_id = SDstart(FILE3_NAME, DFACC_CREATE)) == FAIL)

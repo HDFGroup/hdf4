@@ -209,7 +209,7 @@ test_mgr_userattr()
     int16        ri_attr_2[RI_ATT2_N_VALUES] = {1, 2, 3, 4, 5, 6};
     void        *data_buf; /* buffer to hold the attribute values */
     hdf_ntinfo_t nt_info;  /* struct containing name and byte order of a num type */
-    intn         status;   /* status for functions returning an intn */
+    int          status;   /* status for functions returning an int */
 
     MESSAGE(8, printf("Reading user-defined attribute\n"););
 

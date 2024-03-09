@@ -75,8 +75,8 @@ test_vvsattrs()
     int32 offset, length;
     char  vgclass[20];
     int   ii;
-    intn  status;    /* returned status */
-    intn  status_32; /* returned status for functions returning an int32! */
+    int   status;    /* returned status */
+    int   status_32; /* returned status for functions returning an int32! */
 
     /* Attributes to be set for various elements */
     uint32 attr1[4] = {4, 5, 6, 7};
@@ -310,8 +310,8 @@ test_vgmixedattrs()
        a data element block; data of an attribute only has one pair of off/len*/
     int   ii;
     int32 attr_ref;
-    intn  status;    /* returned status */
-    intn  status_32; /* returned status for functions returning an int32! */
+    int   status;    /* returned status */
+    int   status_32; /* returned status for functions returning an int32! */
 
     /* Attributes to be set for various elements */
     uint32 attr1[4] = {4, 5, 6, 7}; /* copied from test_vvsattrs, only to
@@ -512,7 +512,7 @@ test_grattrs()
         dimsizes[2],    /* sizes of the two dimensions of the image array   */
         interlace_mode, /* interlace mode of the image */
         ii, jj;
-    intn  status;
+    int   status;
     int16 ri_att2_val[RI_ATT2_COUNT] = {1, 2, 3, 4, 5, 6};
     int8  image_buf[Y_LENGTH][X_LENGTH][N_COMPS];
     int32 offsets[4], lengths[4]; /* offsets and lengths of attrs' data */
@@ -615,8 +615,8 @@ test_grattrs()
        though it was created by GR, it has 8-bit data, 1 compnonent, and no
        compression */
     {
-        intn is_mappedable;
-        intn name_generated;
+        int is_mappedable;
+        int name_generated;
 
         status = GR2bmapped(ri_id, &is_mappedable, &name_generated);
         CHECK_VOID(status, FAIL, "GR2bmapped");

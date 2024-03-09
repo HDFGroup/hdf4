@@ -219,7 +219,7 @@ gen_dim(char *name, /* name of SDS */
     int32         chunk_flags;    /* chunk flags */
     int32         chunk_flags_in; /* chunk flags original*/
     int           szip_mode;      /* szip mode, EC, NN */
-    intn          empty_sds;
+    int           empty_sds;
     int           have_info = 0;
 
     sds_index = SDreftoindex(sd_in, ref);

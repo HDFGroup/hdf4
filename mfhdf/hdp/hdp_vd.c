@@ -15,7 +15,7 @@
 #include <math.h>
 
 void
-dumpvd_usage(intn argc, char *argv[])
+dumpvd_usage(int argc, char *argv[])
 {
     (void)argc;
 
@@ -38,8 +38,8 @@ dumpvd_usage(intn argc, char *argv[])
     printf("\t<filelist>\tList of hdf file names, separated by spaces\n");
 } /* end dumpvd_usage() */
 
-intn
-parse_dumpvd_opts(dump_info_t *dumpvd_opts, intn *curr_arg, intn argc, char *argv[],
+int
+parse_dumpvd_opts(dump_info_t *dumpvd_opts, int *curr_arg, int argc, char *argv[],
                   char *flds_chosen[MAXCHOICES], int *dumpallfields)
 {
     int32 i, lastItem;
@@ -265,7 +265,7 @@ choose_vd(dump_info_t *dumpvd_opts, int32 **vd_chosen, int32 file_id, int *index
 {
     int32    i, index, find_ref, number, num_vd_chosen = dumpvd_opts->num_chosen, vd_count = 0;
     filter_t filter    = dumpvd_opts->filter; /* temporary name */
-    intn     ret_value = 0;
+    int      ret_value = 0;
 
     /* if no specific vdatas are requested, return vdata count as
        NO_SPECIFIC (-1) */
@@ -416,7 +416,7 @@ printHeader(FILE *fp, char *fldstring, char *fields, vd_info_t *curr_vd)
 
 } /* end of printHeader */
 
-intn
+int
 getFieldIndices(char *fields, char *flds_chosen[MAXCHOICES], int32 *flds_indices)
 {
     int32 lastItem = 0;          /* whether the last field in the list 'fields' is reached */
@@ -426,8 +426,8 @@ getFieldIndices(char *fields, char *flds_chosen[MAXCHOICES], int32 *flds_indices
     char *ptr     = NULL;        /* used to forward to next field name in the field name list */
     char  fldstring[MAXNAMELEN]; /* holds a field name extracted from field name list */
     int32 i;
-    intn  flds_match = 0;
-    intn  ret_value  = SUCCEED;
+    int   flds_match = 0;
+    int   ret_value  = SUCCEED;
     char  tempflds[VSFIELDMAX * FIELDNAMELENMAX];
 
     /* make copy of the field name list retrieved by VSinquire to use
@@ -476,7 +476,7 @@ getFieldIndices(char *fields, char *flds_chosen[MAXCHOICES], int32 *flds_indices
     return ret_value;
 } /* end of getFieldIndices */
 
-intn
+int
 dumpvd_ascii(dump_info_t *dumpvd_opts, int32 file_id, const char *file_name, FILE *fp, int32 num_vd_chosen,
              char *flds_chosen[MAXCHOICES], int32 *vd_chosen, int dumpallfields)
 {
@@ -491,13 +491,13 @@ dumpvd_ascii(dump_info_t *dumpvd_opts, int32 file_id, const char *file_name, FIL
     char          vdclass[VSNAMELENMAX + 1];
     char          vdname[VSNAMELENMAX + 1];
     char          fldstring[MAXNAMELEN];
-    intn          dumpall = 0;
+    int           dumpall = 0;
     file_format_t ff      = DASCII;
     vd_info_t     curr_vd;
     int32         vd_id      = FAIL;
     int32         an_handle  = FAIL;
     int32         num_fields = 0;
-    intn          status = SUCCEED, ret_value = SUCCEED;
+    int           status = SUCCEED, ret_value = SUCCEED;
     char          fields[VSFIELDMAX * FIELDNAMELENMAX];
 
     if (dumpvd_opts->contents != DDATA) {
@@ -523,10 +523,10 @@ dumpvd_ascii(dump_info_t *dumpvd_opts, int32 file_id, const char *file_name, FIL
     for (i = 0;
          (vdata_ref = VSgetid(file_id, vdata_ref)) != FAIL && (dumpall != 0 || vd_chosen_idx < num_vd_chosen);
          i++) {
-        intn data_only;      /* indicates whether to print data only */
-        intn flds_match = 0; /* indicates whether any requested fields exist,
+        int data_only;      /* indicates whether to print data only */
+        int flds_match = 0; /* indicates whether any requested fields exist,
                 or if no field requested, set to 1 means dump all fields */
-        char sep[2];         /* the character that is used to separate 2 fields */
+        char sep[2];        /* the character that is used to separate 2 fields */
 
         /* Only dump the info of the chosen VDs or all of the VDs if none
            has been selected. */
@@ -673,7 +673,7 @@ done:
     return ret_value;
 } /* dumpvd_ascii() */
 
-intn
+int
 dumpvd_binary(dump_info_t *dumpvd_opts, int32 file_id, const char *file_name, FILE *fp, int32 num_vd_chosen,
               char *flds_chosen[MAXCHOICES], int32 *vd_chosen, int dumpallfields)
 {
@@ -683,11 +683,11 @@ dumpvd_binary(dump_info_t *dumpvd_opts, int32 file_id, const char *file_name, FI
     int32         interlace;
     int32         vdata_ref = -1;
     char          vdname[VSNAMELENMAX + 1];
-    intn          dumpall = 0;
+    int           dumpall = 0;
     file_format_t ff      = DBINARY;
     int32         vd_id   = FAIL;
-    intn          status;
-    intn          ret_value = SUCCEED;
+    int           status;
+    int           ret_value = SUCCEED;
     char          fields[VSFIELDMAX * FIELDNAMELENMAX];
 
     (void)dumpvd_opts;
@@ -799,8 +799,8 @@ closeVD(int32      *file_id,   /* will be returned as a FAIL */
 
 } /* end of closeVD */
 
-intn
-dvd(dump_info_t *dumpvd_opts, intn curr_arg, intn argc, char *argv[], char *flds_chosen[MAXCHOICES],
+int
+dvd(dump_info_t *dumpvd_opts, int curr_arg, int argc, char *argv[], char *flds_chosen[MAXCHOICES],
     int dumpallfields)
 {
     int32         file_id = FAIL;
@@ -808,10 +808,10 @@ dvd(dump_info_t *dumpvd_opts, intn curr_arg, intn argc, char *argv[], char *flds
     int32        *vd_chosen = NULL;
     FILE         *fp        = NULL;
     int32         num_vd_chosen;
-    intn          index_error = 0;
+    int           index_error = 0;
     file_format_t ff;
-    intn          status;
-    intn          ret_value = SUCCEED;
+    int           status;
+    int           ret_value = SUCCEED;
 
     /* check for missing input file name */
     if (curr_arg >= argc) /* goto done with FAIL */
@@ -819,7 +819,7 @@ dvd(dump_info_t *dumpvd_opts, intn curr_arg, intn argc, char *argv[], char *flds
 
     while (curr_arg < argc) { /* Loop until all specified files have been processed */
 
-        intn isHDF = TRUE; /* FALSE, if current file is not HDF file */
+        int isHDF = TRUE; /* FALSE, if current file is not HDF file */
 
         /* get file name */
         strcpy(file_name, argv[curr_arg]);
@@ -933,13 +933,13 @@ done:
 } /* dvd */
 
 /* exported */
-intn
-do_dumpvd(intn curr_arg, intn argc, char *argv[], intn help)
+int
+do_dumpvd(int curr_arg, int argc, char *argv[], int help)
 {
     dump_info_t dumpvd_opts; /* dumpvd options */
     char       *flds_chosen[MAXCHOICES];
     int         dumpallfields;
-    intn        status, ret_value = SUCCEED;
+    int         status, ret_value = SUCCEED;
     int         i;
 
     flds_chosen[0] = NULL;

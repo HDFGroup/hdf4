@@ -29,7 +29,7 @@
 
 static char *symptr[VSFIELDMAX];                   /* array of ptrs to tokens  ? */
 static char  sym[VSFIELDMAX][FIELDNAMELENMAX + 1]; /* array of tokens ? */
-static intn  nsym;                                 /* token index ? */
+static int   nsym;                                 /* token index ? */
 
 /* Temporary buffer for I/O */
 static uint32 Vpbufsize = 0;
@@ -64,7 +64,7 @@ int32
 scanattrs(const char *attrs, int32 *attrc, char ***attrv)
 {
     char  *s, *s0, *ss;
-    intn   len;
+    int    len;
     size_t slen = strlen(attrs) + 1;
 
     if (slen > Vpbufsize) {
@@ -89,7 +89,7 @@ scanattrs(const char *attrs, int32 *attrc, char ***attrv)
         if (ISCOMMA(*s)) {
 
             /* make sure we've got a legitimate length */
-            len = (intn)(s - s0);
+            len = (int)(s - s0);
             if (len <= 0)
                 return FAIL;
 
@@ -120,7 +120,7 @@ scanattrs(const char *attrs, int32 *attrc, char ***attrv)
     }
 
     /* save the last token */
-    len = (intn)(s - s0);
+    len = (int)(s - s0);
     if (len <= 0)
         return FAIL;
     ss = symptr[nsym] = sym[nsym];
@@ -150,7 +150,7 @@ scanattrs(const char *attrs, int32 *attrc, char ***attrv)
     Returns SUCCEED/FAIL
 
 *******************************************************************************/
-intn
+int
 VPparse_shutdown(void)
 {
     if (Vpbuf != NULL) {

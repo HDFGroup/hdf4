@@ -34,7 +34,7 @@ putword(int w, FILE *fp)
 int
 main(int argc, char **argv)
 {
-    intn  status;                  /* status for functions returning an intn */
+    int   status;                  /* status for functions returning an int */
     int32 file_id;                 /* HDF file identifier */
     int32 gr_id;                   /* GR interface identifier */
     int32 ri_id, pal_id, start[2]; /* start position to write for each dimension */
