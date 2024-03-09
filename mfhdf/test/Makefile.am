@@ -16,9 +16,7 @@ AM_CPPFLAGS=$(test_INCLUDES) $(DEFINES)
 #############################################################################
 
 TEST_PROG = cdftest hdfnctest hdftest
-TEST_SCRIPT = testmfhdf.sh
 check_PROGRAMS = cdftest hdfnctest hdftest
-check_SCRIPTS = testmfhdf.sh
 
 cdftest_SOURCES = cdftest.c
 cdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@

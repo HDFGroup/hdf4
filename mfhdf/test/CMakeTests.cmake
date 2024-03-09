@@ -95,9 +95,7 @@ add_test (
 set_tests_properties (MFHDF_TEST-clearall-objects PROPERTIES FIXTURES_SETUP clear_MFHDF_TEST)
 
 add_test (NAME MFHDF_TEST-hdftest COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdftest>)
-set (passRegex "HDF-SD test passes")
 set_tests_properties (MFHDF_TEST-hdftest PROPERTIES
-    PASS_REGULAR_EXPRESSION "${passRegex}"
     FIXTURES_REQUIRED clear_MFHDF_TEST
     WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/TEST
     LABELS ${PROJECT_NAME}
@@ -123,9 +121,7 @@ set_tests_properties (MFHDF_TEST-cdftest PROPERTIES
 )
 
 add_test (NAME MFHDF_TEST-hdfnctest COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfnctest>)
-set (NCpassRegex "HDF-nc test passes")
 set_tests_properties (MFHDF_TEST-hdfnctest PROPERTIES
-    PASS_REGULAR_EXPRESSION "${NCpassRegex}"
     FIXTURES_REQUIRED clear_MFHDF_TEST
     DEPENDS MFHDF_TEST-cdftest
     LABELS ${PROJECT_NAME}

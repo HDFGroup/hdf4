@@ -175,9 +175,7 @@ foreach (decade ${thf_decade})
 endforeach (decade ${thf_decade})
 
 add_test (NAME HDF_TEST-testhdf COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:testhdf>)
-set (passRegex "All tests were successful")
 set_tests_properties (HDF_TEST-testhdf PROPERTIES
-    PASS_REGULAR_EXPRESSION "${passRegex}"
     WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/TEST
     LABELS ${PROJECT_NAME}
 )
