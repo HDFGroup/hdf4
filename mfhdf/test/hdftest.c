@@ -58,7 +58,7 @@ test_nbit()
     int32    nt;                 /* Number type */
     int32    dimsize[10];        /* dimension sizes */
     int32    newsds, newsds2;    /* SDS handles */
-    intn     status;             /* status flag */
+    int      status;             /* status flag */
     int32    start[10], end[10]; /* start, end arrays */
     int32    idata[100];
     int32    rdata[100];

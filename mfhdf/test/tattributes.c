@@ -79,7 +79,7 @@
 #define ATTR_ZERO     "ZERO"
 #define ATTR_LEN_ZERO 0
 
-static intn
+static int
 test_count()
 {
     char    sds_name[20], dim_name[20];
@@ -89,9 +89,9 @@ test_count()
     int32   start = 0, stride = 1;
     int32   ntype, rank, count;
     int32   nattrs = 0;
-    intn    status = 0;
+    int     status = 0;
     char    attr_name[H4_MAX_NC_NAME], attr_values[80];
-    intn    num_errs = 0; /* number of errors so far */
+    int     num_errs = 0; /* number of errors so far */
 
     file_id = SDstart(FILE_SATTR, DFACC_CREATE);
     CHECK(file_id, FAIL, "SDstart");
@@ -279,7 +279,7 @@ test_count()
 #define DIMFORMAT    "TheFormat"
 #define DIMCOORD     "TheCordsys"
 
-static intn
+static int
 test_attribute_ops()
 {
     int32    fid1, fid2;               /* File handles */
@@ -291,7 +291,7 @@ test_attribute_ops()
     int32    num_gattr;                /* Number of global attributes */
     int32    index;                    /* Index of dataset in file */
     int32    ival;
-    intn     status; /* status flag */
+    int      status; /* status flag */
     char     name[90];
     char     text[256];
     int32    start[10], end[10], stride[10]; /* start, end, stride arrays */
@@ -792,7 +792,7 @@ test_attribute_ops()
 extern int
 test_attributes()
 {
-    intn num_errs = 0; /* number of errors */
+    int num_errs = 0; /* number of errors */
 
     /* Output message about test being performed */
     TESTING("various setting attribute features (tattributes.c)");

@@ -58,14 +58,14 @@
 #define DIM2_NAME  "Dimension 2" /* name of second SDS' first dim */
 #define DIM3_NAME  "Dimension 3" /* name of third SDS' first dim */
 
-static intn
+static int
 test_basic_dim()
 {
     int32 fid, sds_id, status, dim0_id, dim1_id, sds_idx;
     int32 dims[2], start[2], edges[2], rank;
     int16 array1_data[LENGTH0][LENGTH1]; /* data for first SDS */
     int32 dim_sizes[H4_MAX_VAR_DIMS];    /* read dimensions */
-    intn  i, j;
+    int   i, j;
     int32 array_rank, num_type, attributes;
     char  dim_name[H4_MAX_NC_NAME], name[H4_MAX_NC_NAME];
     uint8 scale0[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 255};
@@ -270,7 +270,7 @@ test_basic_dim()
 *********************************************************************/
 #define SCALES_FILE "scaletst.hdf" /* file to test dimension scales */
 
-static intn
+static int
 test_dim_scales()
 {
     int32   fid, sds_id, status, dim0_id, dim1_id, sds_idx;
@@ -278,7 +278,7 @@ test_dim_scales()
     int16   array1_data[LENGTH0][LENGTH1]; /* data for first SDS */
     uint32  array2_data[LENGTH2][LENGTH3]; /* data for second SDS */
     int32   dim_sizes[H4_MAX_VAR_DIMS];    /* read dimensions */
-    intn    i, j;
+    int     i, j;
     int32   array_rank, num_type, attributes;
     char    dim_name[H4_MAX_NC_NAME], name[H4_MAX_NC_NAME];
     uint8   scale0[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 255};
@@ -520,7 +520,7 @@ test_dim_scales()
 #define UNITS       "Units"
 #define FORMAT      "TheFormat"
 #define DIMSTRS_LEN 20 /* length of the dimension string buffers */
-static intn
+static int
 test_dim_strs()
 {
     int32  fid, sds_id, status, dim0_id, dim1_id, sds_idx, coord_var_id;
@@ -528,7 +528,7 @@ test_dim_strs()
     int16  array1_data[LENGTH0][LENGTH1]; /* data for first SDS */
     uint32 array2_data[LENGTH2][LENGTH3]; /* data for second SDS */
     int32  dim_sizes[H4_MAX_VAR_DIMS];    /* read dimensions */
-    intn   i, j;
+    int    i, j;
     int32  array_rank, num_type, attributes;
     char   dim_name[H4_MAX_NC_NAME], name[H4_MAX_NC_NAME];
     char8  scale2[] = {'d', 'i', 'm', '2'};
@@ -768,7 +768,7 @@ test_dim_strs()
 #define FILE1      "tdim_bwcomp.hdf"
 #define FIRST_DSET "dimval_non_compat"
 
-static intn
+static int
 test_dim_bw_incomp()
 {
 
@@ -779,8 +779,8 @@ test_dim_bw_incomp()
     int32 dim_id, dim_id1;
     int32 dimsize[10]; /* dimension sizes */
     int32 rank;        /* rank of SDS */
-    intn  status;      /* status flag */
-    intn  nattrs;      /* Number of attributes again? */
+    int   status;      /* status flag */
+    int   nattrs;      /* Number of attributes again? */
     char  name[90];
     int32 start[10], end[10]; /* start, end arrays */
     int32 scale[10];
