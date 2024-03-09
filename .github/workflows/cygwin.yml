@@ -1,11 +1,26 @@
-name: cwin
+name: cygwin
 
 on:
+  workflow_dispatch:
   push:
+  pull_request:
     branches: [ master ]
+    paths-ignore:
+    - '.github/CODEOWNERS'
+    - 'release_notes/**'
+    - 'COPYING'
+    - '**.md'
+
+permissions:
+  contents: read
+
+# Using concurrency to cancel any in-progress job or run
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
-  test:
+  cygwin-cmake:
     runs-on: windows-latest
     steps:
       - name: Set git to use LF
@@ -26,7 +41,6 @@ jobs:
           which cmake
           cmake -G Ninja \
            -D BUILD_SHARED_LIBS:BOOL=OFF \
-           -D CTEST_DROP_SITE_INIT:STRING="my.cdash.org" \
-           -D SITE:STRING=cwin ..
-          ctest -D Experimental
+           ..
+          ctest . -C Release -V
         shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
