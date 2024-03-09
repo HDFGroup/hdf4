@@ -14,7 +14,7 @@ var searchData=
   ['copy_5fgr_5fattrs_11',['copy_gr_attrs',['../hrepack__gr_8h.html#a94f0e6eb794f61cd2c9be79fd41b3ef8',1,'hrepack_gr.h']]],
   ['copy_5fsds_12',['copy_sds',['../hrepack__sds_8h.html#a2f06e53564247d3bbe51250c4b7a939d',1,'hrepack_sds.h']]],
   ['copy_5fsds_5fattrs_13',['copy_sds_attrs',['../hrepack__sds_8h.html#a99a6f1d6f6146024041819ce49a3f2b5',1,'hrepack_sds.h']]],
-  ['copy_5fvdata_5fattribute_14',['copy_vdata_attribute',['../hrepack__vs_8h.html#ace44a6daec7346513795e22704244ef5',1,'hrepack_vs.h']]],
+  ['copy_5fvdata_5fattribute_14',['copy_vdata_attribute',['../hrepack__vs_8h.html#a6ae6f95e9a56dd6f449f203932af5359',1,'hrepack_vs.h']]],
   ['copy_5fvg_5fan_15',['copy_vg_an',['../hrepack__an_8h.html#a1710ea349d20fa8d2d8cd72845677f85',1,'hrepack_an.h']]],
   ['copy_5fvgroup_5fattrs_16',['copy_vgroup_attrs',['../hrepack__vg_8h.html#a2f5804b5d4c0feda3effc6fc2eacb61c',1,'copy_vgroup_attrs(int32 vg_in, int32 vg_out, char *path, options_t *options):&#160;hrepack_vg.h'],['../hrepack__vs_8h.html#a2f5804b5d4c0feda3effc6fc2eacb61c',1,'copy_vgroup_attrs(int32 vg_in, int32 vg_out, char *path, options_t *options):&#160;hrepack_vs.h']]],
   ['copy_5fvs_17',['copy_vs',['../hrepack__vs_8h.html#ab246998b0954a471e5bfa3c444983ce1',1,'hrepack_vs.h']]],

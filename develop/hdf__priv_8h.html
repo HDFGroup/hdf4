@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.1-d931f16</span>
+   &#160;<span id="projectnumber">4.3.1-899f063</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -260,7 +260,7 @@ Typedefs</h2></td></tr>
 <div class="line">        (i) |= (<a class="code hl_typedef" href="hdf_8h.html#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a>)((*(p)&amp;0xff));                                                                         \</div>
 <div class="line">        (p)++;                                                                                               \</div>
 <div class="line">    }</div>
-<div class="ttc" id="ahdf_8h_html_aa0d0fdc87fd135ef2bedb030901cdb9c"><div class="ttname"><a href="hdf_8h.html#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a></div><div class="ttdeci">int16_t int16</div><div class="ttdef"><b>Definition</b> hdf.h:48</div></div>
+<div class="ttc" id="ahdf_8h_html_aa0d0fdc87fd135ef2bedb030901cdb9c"><div class="ttname"><a href="hdf_8h.html#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a></div><div class="ttdeci">int16_t int16</div><div class="ttdef"><b>Definition</b> hdf.h:54</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -283,13 +283,12 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    {                                                                                                        \</div>
-<div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((<a class="code hl_typedef" href="hdf_8h.html#a8f0189616483670e42751f89a02501b5">uintn</a>)(i) &gt;&gt; 8) &amp; 0xff);                                                            \</div>
+<div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((unsigned)(i) &gt;&gt; 8) &amp; 0xff);                                                         \</div>
 <div class="line">        (p)++;                                                                                               \</div>
-<div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)((<a class="code hl_typedef" href="hdf_8h.html#a8f0189616483670e42751f89a02501b5">uintn</a>)(i)&amp;0xff);                                                                     \</div>
+<div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)((unsigned)(i)&amp;0xff);                                                                  \</div>
 <div class="line">        (p)++;                                                                                               \</div>
 <div class="line">    }</div>
-<div class="ttc" id="ahdf_8h_html_a33a5e996e7a90acefb8b1c0bea47e365"><div class="ttname"><a href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a></div><div class="ttdeci">uint8_t uint8</div><div class="ttdef"><b>Definition</b> hdf.h:47</div></div>
-<div class="ttc" id="ahdf_8h_html_a8f0189616483670e42751f89a02501b5"><div class="ttname"><a href="hdf_8h.html#a8f0189616483670e42751f89a02501b5">uintn</a></div><div class="ttdeci">unsigned int uintn</div><div class="ttdef"><b>Definition</b> hdf.h:55</div></div>
+<div class="ttc" id="ahdf_8h_html_a33a5e996e7a90acefb8b1c0bea47e365"><div class="ttname"><a href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a></div><div class="ttdeci">uint8_t uint8</div><div class="ttdef"><b>Definition</b> hdf.h:53</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -321,7 +320,7 @@ Typedefs</h2></td></tr>
 <div class="line">        (i) |= (*(p)&amp;0xff);                                                                                  \</div>
 <div class="line">        (p)++;                                                                                               \</div>
 <div class="line">    }</div>
-<div class="ttc" id="ahdf_8h_html_ab7903878916593daecbeb95b98115ab0"><div class="ttname"><a href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></div><div class="ttdeci">int32_t int32</div><div class="ttdef"><b>Definition</b> hdf.h:50</div></div>
+<div class="ttc" id="ahdf_8h_html_ab7903878916593daecbeb95b98115ab0"><div class="ttname"><a href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></div><div class="ttdeci">int32_t int32</div><div class="ttdef"><b>Definition</b> hdf.h:56</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -353,7 +352,7 @@ Typedefs</h2></td></tr>
 <div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)((<a class="code hl_typedef" href="hdf_8h.html#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a>)(i)&amp;0xff);                                                                    \</div>
 <div class="line">        (p)++;                                                                                               \</div>
 <div class="line">    }</div>
-<div class="ttc" id="ahdf_8h_html_acbd4acd0d29e2d6c43104827f77d9cd2"><div class="ttname"><a href="hdf_8h.html#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a></div><div class="ttdeci">uint32_t uint32</div><div class="ttdef"><b>Definition</b> hdf.h:51</div></div>
+<div class="ttc" id="ahdf_8h_html_acbd4acd0d29e2d6c43104827f77d9cd2"><div class="ttname"><a href="hdf_8h.html#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a></div><div class="ttdeci">uint32_t uint32</div><div class="ttdef"><b>Definition</b> hdf.h:57</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -456,7 +455,7 @@ Typedefs</h2></td></tr>
 <div class="line">        (i) |= (<a class="code hl_typedef" href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)(*(p)&amp;0xff);                                                                          \</div>
 <div class="line">        (p)++;                                                                                               \</div>
 <div class="line">    }</div>
-<div class="ttc" id="ahdf_8h_html_ac2a9e79eb120216f855626495b7bd18a"><div class="ttname"><a href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a></div><div class="ttdeci">uint16_t uint16</div><div class="ttdef"><b>Definition</b> hdf.h:49</div></div>
+<div class="ttc" id="ahdf_8h_html_ac2a9e79eb120216f855626495b7bd18a"><div class="ttname"><a href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a></div><div class="ttdeci">uint16_t uint16</div><div class="ttdef"><b>Definition</b> hdf.h:55</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -479,7 +478,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    {                                                                                                        \</div>
-<div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((<a class="code hl_typedef" href="hdf_8h.html#a8f0189616483670e42751f89a02501b5">uintn</a>)(i) &gt;&gt; 8) &amp; 0xff);                                                            \</div>
+<div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((unsigned)(i) &gt;&gt; 8) &amp; 0xff);                                                         \</div>
 <div class="line">        (p)++;                                                                                               \</div>
 <div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)((i)&amp;0xff);                                                                            \</div>
 <div class="line">        (p)++;                                                                                               \</div>
