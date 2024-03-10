@@ -51,10 +51,6 @@ extern int Verbosity;
 static int32       test_type[] = {0, DFNT_LITEND, DFNT_NATIVE};
 static const char *test_name[] = {"Big-Endian", "Little-Endian", "Native"};
 
-/* for those machines with imprecise IEEE<-> conversions, this should be */
-/* close enough */
-#define EPS64 ((float64)1.0E-14)
-#define EPS32 ((float32)1.0E-7)
 void
 test_conv(void)
 {

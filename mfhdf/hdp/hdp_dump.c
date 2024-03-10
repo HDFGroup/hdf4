@@ -11,11 +11,13 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <ctype.h>
+#include <float.h>
+#include <math.h>
 #include <stdio.h>
+
 #include "mfhdf.h"
 #include "hdp.h"
-#include <ctype.h>
-#include <math.h>
 
 #define CARRIAGE_RETURN 13
 #define LINE_FEED       10
@@ -145,7 +147,6 @@ fmtint(void         *x, /* assumption: int is same as 'int' */
         return (fwrite(&i, sizeof(int), 1, ofp));
 }
 
-#define FLOAT32_EPSILON ((float32)1.0e-20)
 int
 fmtfloat32(void *x, file_format_t ff, FILE *ofp)
 {
@@ -154,7 +155,7 @@ fmtfloat32(void *x, file_format_t ff, FILE *ofp)
     memcpy(&fdata, x, sizeof(float32));
 
     if (ff == DASCII) {
-        if (fabsf(fdata - FILL_FLOAT) <= FLOAT32_EPSILON)
+        if (fabsf(fdata - FILL_FLOAT) <= FLT_EPSILON)
             return (fprintf(ofp, "FloatInf"));
         else
             return (fprintf(ofp, "%f", (double)fdata));
@@ -203,7 +204,6 @@ fmtshort(void *x, file_format_t ff, FILE *ofp)
         return (fwrite(&s, sizeof(short), 1, ofp));
 }
 
-#define FLOAT64_EPSILON ((float64)1.0e-20)
 int
 fmtfloat64(void *x, file_format_t ff, FILE *ofp)
 {
@@ -212,7 +212,7 @@ fmtfloat64(void *x, file_format_t ff, FILE *ofp)
     memcpy(&d, x, sizeof(float64));
 
     if (ff == DASCII) {
-        if (fabs(d - FILL_DOUBLE) <= FLOAT64_EPSILON)
+        if (fabs(d - FILL_DOUBLE) <= DBL_EPSILON)
             return (fprintf(ofp, "DoubleInf"));
         else
             return (fprintf(ofp, "%f", d));

@@ -419,7 +419,7 @@ test_attribute_ops()
     }
 
     /* Add attribute DIMATTRFLOAT to this dimension */
-    max    = (float32)3.1415;
+    max    = 3.1415F;
     status = SDsetattr(dimid, DIMATTRFLOAT, DFNT_FLOAT32, 1, (void *)&max);
     CHECK(status, FAIL, "SDsetattr");
 
@@ -553,8 +553,8 @@ test_attribute_ops()
     CHECK(status, FAIL, "SDwritedata");
 
     /* Set the range for data set DSALPHA */
-    max    = (float32)10.0;
-    min    = (float32)4.6;
+    max    = 10.0F;
+    min    = 4.6F;
     status = SDsetrange(newsds, (void *)&max, (void *)&min);
     CHECK(status, FAIL, "SDsetrange");
 

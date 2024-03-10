@@ -385,7 +385,7 @@ write_vset_stuff(void)
     p = gbuf;
     c = 'a';
     j = 0;
-    f = (float32)15.5;
+    f = 15.5F;
     for (i = 0, count = 10; i < count; i++) {
         memcpy(p, &c, sizeof(char8));
         p += sizeof(char8);
@@ -404,7 +404,7 @@ write_vset_stuff(void)
         j++;
         memcpy(p, &f, sizeof(float32));
         p += sizeof(float32);
-        f += (float32)0.5;
+        f += 0.5F;
     }
 
     /* store it */
@@ -464,7 +464,7 @@ write_vset_stuff(void)
 
     /* create some bogus data */
     for (i = 0; i < max_order; i++)
-        gbuf2[i] = (float32)i * (float32)0.11;
+        gbuf2[i] = (float32)i * 0.11F;
 
     status = VSwrite(vs1, (unsigned char *)gbuf2, 1, FULL_INTERLACE);
     CHECK(status, FAIL, "VSwrite:vs1");
@@ -1010,7 +1010,7 @@ read_vset_stuff(void)
     CHECK(status, FAIL, "VSread:vs1");
 
     p           = gbuf;
-    fl_expected = (float32)15.5;
+    fl_expected = 15.5F;
     in_expected = 0;
     c_expected  = 'a';
 

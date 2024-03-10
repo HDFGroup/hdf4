@@ -46,9 +46,9 @@ main(void)
 
     float32 b32r2[3][4], b32r3[5][3][4];
     float32 row4[3], col4[4], pln4[5];
-    float32 rowo4 = (float32)11.0e0, colo4 = (float32)21.0e0, plno4 = (float32)51.0e0;
-    float32 rowi4 = (float32)1.0e0, coli4 = (float32)2.0e0, plni4 = (float32)5.0e0;
-    float32 ezero = (float32)0.0e0;
+    float32 rowo4 = 11.0e0F, colo4 = 21.0e0F, plno4 = 51.0e0F;
+    float32 rowi4 = 1.0e0F, coli4 = 2.0e0F, plni4 = 5.0e0F;
+    float32 ezero = 0.0e0F;
 
     int32 b32i2[3][4], b32i3[5][3][4];
     int32 row4i[3], col4i[4], pln4i[5];

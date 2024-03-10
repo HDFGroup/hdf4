@@ -22,8 +22,6 @@
 #include "emalloc.h"
 
 #define LEN_OF(array) ((sizeof array) / (sizeof array[0]))
-#define EPS64         ((float64)1.0E-14)
-#define EPS32         ((float32)1.0E-7)
 
 /*
  * Test ncvardef
@@ -235,7 +233,7 @@ test_ncvardef(char *path)
             case NC_FLOAT: {
                 float val, fillval = FILL_FLOAT;
                 if (ncvarget1(cdfid, va_id[iv], where, (void *)&val) != -1) {
-                    if (fabs((double)(val - fillval)) > fabs((double)(fillval * EPS32))) {
+                    if (fabs((double)(val - fillval)) > fabs((double)(fillval * FLT_EPSILON))) {
                         error("%s: unwritten float not FILL_FLOAT", pname);
                         nerrs++;
                     }
@@ -248,7 +246,7 @@ test_ncvardef(char *path)
             case NC_DOUBLE: {
                 double val, fillval = FILL_DOUBLE;
                 if (ncvarget1(cdfid, va_id[iv], where, (void *)&val) != -1) {
-                    if (fabs((double)(val - fillval)) > fabs((double)(fillval * EPS64))) {
+                    if (fabs((double)(val - fillval)) > fabs((double)(fillval * DBL_EPSILON))) {
                         error("%s: unwritten double not FILL_DOUBLE", pname);
                         nerrs++;
                     }

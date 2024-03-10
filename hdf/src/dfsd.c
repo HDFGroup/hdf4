@@ -107,53 +107,52 @@ Fortran stub functions:
 /* Init NSDG table header      */
 static DFnsdg_t_hdr *nsdghdr = NULL;
 
-/* initialize aid to -1 and numbertype to DFNT_NONE.   S. Xu    */
-static DFSsdg Readsdg = /* struct for reading */
-    {{(uint16)0, (uint16)0},
-     (int)0,
-     NULL,
-     NULL,
-     {NULL, NULL, NULL},
-     {NULL, NULL, NULL},
-     NULL,
-     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-     (int32)DFNT_NONE,
-     DFNTF_NONE,
-     (int32)-1,
-     (int32)0,
-     (int32)0,
-     (float64)1.0,
-     (float64)0.0,
-     (float64)0.0,
-     (float64)0.0,
-     (int32)-1,
-     {0},
-     0};
+/* Struct for reading */
+static DFSsdg Readsdg = {{(uint16)0, (uint16)0},
+                         0,
+                         NULL,
+                         NULL,
+                         {NULL, NULL, NULL},
+                         {NULL, NULL, NULL},
+                         NULL,
+                         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                         DFNT_NONE,
+                         DFNTF_NONE,
+                         -1,
+                         0,
+                         0,
+                         1.0,
+                         0.0,
+                         0.0,
+                         0.0,
+                         -1,
+                         {0},
+                         0};
 
-static DFSsdg Writesdg = /* struct for writing */
-    {{(uint16)0, (uint16)0},
-     (int)0,
-     NULL,
-     NULL,
-     {NULL, NULL, NULL},
-     {NULL, NULL, NULL},
-     NULL,
-     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-     (int32)DFNT_NONE,
-     DFNTF_NONE,
-     (int32)-1,
-     (int32)0,
-     (int32)0,
-     (float64)1.0,
-     (float64)0.0,
-     (float64)0.0,
-     (float64)0.0,
-     (int32)-1,
-     {0},
-     0};
+/* Struct for writing */
+static DFSsdg Writesdg = {{(uint16)0, (uint16)0},
+                          0,
+                          NULL,
+                          NULL,
+                          {NULL, NULL, NULL},
+                          {NULL, NULL, NULL},
+                          NULL,
+                          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                          DFNT_NONE,
+                          DFNTF_NONE,
+                          -1,
+                          0,
+                          0,
+                          1.0,
+                          0.0,
+                          0.0,
+                          0.0,
+                          -1,
+                          {0},
+                          0};
 
 static uint16 Writeref = 0;         /* ref of next SDG/NDG to write to file */
-static int    Newdata  = (-1);      /* Values in Readsdg fresh? */
+static int    Newdata  = -1;        /* Values in Readsdg fresh? */
                                     /* -1 : no descriptor read */
                                     /* 1 : descriptor read */
 static int Nextsdg = 1;             /* Signal if DFSDgetdata should get the */

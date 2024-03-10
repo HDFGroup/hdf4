@@ -416,7 +416,7 @@ slabwf64(void)
     int32   ret     = 0;
     int32   num_err = 0;
     float64 sdata[2][3][4]; /* Data array read from from file */
-    float64 lfill = (float64)0.0;
+    float64 lfill = 0.0;
 
     MESSAGE(10, printf("\n slabwf64:  Writing 5 slabs to slabwf64.hdf \n"););
 
