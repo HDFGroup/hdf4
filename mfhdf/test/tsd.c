@@ -57,7 +57,7 @@ test_sd()
     return 0;
 #endif
 
-#if defined(H4_HAVE_UNISTD_H)
+#if defined(H4_HAVE_UNISTD_H) && !defined(__MINGW32__)
     /* Root users on POSIX systems may have privileges that allow SDstart()
      * to open read-only files for writing, so we'll skip the test.
      */
