@@ -51,7 +51,7 @@ test_sd()
 
 #ifdef __CYGWIN__
     /* Default Cygwin permissions will allow SDstart() to open read-only files
-     * for writing, so we'll skipt the test.
+     * for writing, so we'll skip the test.
      */
     SKIPPED();
     return 0;
