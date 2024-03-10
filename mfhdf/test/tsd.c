@@ -47,7 +47,7 @@ test_sd()
     /* Root users on POSIX systems may have privileges that allow the
      * second SDstart() call to pass, so we'll skip the test.
      */
-    uid_t uid  = getuid();
+    uid_t uid = getuid();
 
     if (uid == 0) {
         SKIPPED();
