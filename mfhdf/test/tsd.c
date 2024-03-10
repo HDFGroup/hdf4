@@ -44,7 +44,7 @@ test_sd()
     /* Output message about test being performed */
     TESTING("SDstart for file with no write permission (tsd.c)");
 
-#ifdef H4_HAVE_UNISTD_H
+#if defined(H4_HAVE_UNISTD_H) && !defined(__MINGW32__) && !defined(__CYGWIN__)
     /* Root users on POSIX systems may have privileges that allow the
      * second SDstart() call to pass, so we'll skip the test.
      */
