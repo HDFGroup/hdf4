@@ -107,8 +107,8 @@ Fortran stub functions:
 /* Init NSDG table header      */
 static DFnsdg_t_hdr *nsdghdr = NULL;
 
-/* initialize aid to -1 and numbertype to DFNT_NONE */
-static DFSsdg Readsdg = /* struct for reading */
+/* Struct for reading */
+static DFSsdg Readsdg =
     {{(uint16)0, (uint16)0},
      0,
      NULL,
@@ -130,7 +130,8 @@ static DFSsdg Readsdg = /* struct for reading */
      {0},
      0};
 
-static DFSsdg Writesdg = /* struct for writing */
+/* Struct for writing */
+static DFSsdg Writesdg =
     {{(uint16)0, (uint16)0},
      0,
      NULL,
