@@ -13,6 +13,11 @@
 
 /****************************************************************************
  * tsd.c - tests SDstart for file with no write permission
+ *
+ * NOTE:    This test is very flaky since it depends on the user's
+ *          permissions. When run as root, for example, the call to
+ *          SDstart() with write permissions will pass.
+ *
  ****************************************************************************/
 
 #ifdef H4_HAVE_UNISTD_H
@@ -27,12 +32,12 @@
 /* Data file to test ID types */
 #define FILE_NAME "sdtest.hdf"
 
-extern int
+int
 test_sd()
 {
     int32 fid;
     int   status;
-#if defined H4_HAVE_WIN32_API
+#if defined(H4_HAVE_WIN32_API)
     int mode;
 #else
     mode_t mode;
@@ -44,9 +49,17 @@ test_sd()
     /* Output message about test being performed */
     TESTING("SDstart for file with no write permission (tsd.c)");
 
-#if defined(H4_HAVE_UNISTD_H) && !defined(__MINGW32__) && !defined(__CYGWIN__)
-    /* Root users on POSIX systems may have privileges that allow the
-     * second SDstart() call to pass, so we'll skip the test.
+#ifdef __CYGWIN__
+    /* Default Cygwin permissions will allow SDstart() to open read-only files
+     * for writing, so we'll skipt the test.
+     */
+    SKIPPED();
+    return 0;
+#endif
+
+#if defined(H4_HAVE_UNISTD_H)
+    /* Root users on POSIX systems may have privileges that allow SDstart()
+     * to open read-only files for writing, so we'll skip the test.
      */
     uid_t uid = getuid();
 
@@ -56,8 +69,8 @@ test_sd()
     }
 #endif
 
-    /* delete the file just to be sure */
-    unlink(FILE_NAME);
+    /* Delete the file just to be sure */
+    remove(FILE_NAME);
 
     /* Create a file */
     fid = SDstart(FILE_NAME, DFACC_CREATE);
@@ -67,7 +80,7 @@ test_sd()
     status = SDend(fid);
     CHECK(status, FAIL, "SDend");
 
-#if defined H4_HAVE_WIN32_API
+#if defined(H4_HAVE_WIN32_API)
     mode = _S_IREAD;
 #else
     mode = S_IRUSR;
@@ -87,7 +100,7 @@ test_sd()
         HI_CLOSE(ff);
     }
 
-#if defined H4_HAVE_WIN32_API
+#if defined(H4_HAVE_WIN32_API) && !defined(__MINGW32__)
     mode = _S_IWRITE;
 #else
     mode = S_IWUSR;
