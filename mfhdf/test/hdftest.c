@@ -195,10 +195,7 @@ main(void)
        library is not present or only decoder is available. */
     num_errs = num_errs + test_szip_compression();
 
-    /* NOTE: This test had a history of failing on some systems when the user
-     * is logged in as root. It has been re-enabled and we'll investigate
-     * if it starts failing again.
-     */
+    /* Tests SDstart for files with no write permission */
     num_errs = num_errs + test_sd();
 
     if (num_errs == 0) {

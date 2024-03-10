@@ -12,7 +12,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /****************************************************************************
- * tsd.c - tests SDstart for file with no write permission
+ * tsd.c    Tests SDstart for files with no write permission
  *
  * NOTE:    This test is very flaky since it depends on the user's
  *          permissions. When run as root, for example, the call to
@@ -100,7 +100,7 @@ test_sd()
         HI_CLOSE(ff);
     }
 
-#if defined(H4_HAVE_WIN32_API) && !defined(__MINGW32__)
+#if defined(H4_HAVE_WIN32_API)
     mode = _S_IWRITE;
 #else
     mode = S_IWUSR;
