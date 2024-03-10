@@ -38,8 +38,3 @@ The utilities are:
     . jpeg2hdf -- converts jpeg images to hdf raster images
 
     . hdf2jpeg -- converts hdf raster images to jpeg images
-
-    . fp2hdf -- converts 2D and 3D floating point data sets into HDF SDS.
-
-
-
