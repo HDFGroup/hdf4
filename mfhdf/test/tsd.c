@@ -15,6 +15,10 @@
  * tsd.c - tests SDstart for file with no write permission
  ****************************************************************************/
 
+#ifdef H4_HAVE_UNISTD_H
+#include <unistd.h.>
+#endif
+
 #include "mfhdf.h"
 
 #include "hdftest.h"
@@ -39,6 +43,18 @@ test_sd()
     /* Output message about test being performed */
     TESTING("SDstart for file with no write permission (tsd.c)");
 
+#ifdef H4_HAVE_UNISTD_H
+    /* Root users on POSIX systems may have privileges that allow the
+     * second SDstart() call to pass, so we'll skip the test.
+     */
+    uid_t uid  = getuid();
+
+    if (uid == 0) {
+        SKIPPED();
+        return 0;
+    }
+#endif
+
     /* delete the file just to be sure */
     unlink(FILE_NAME);
 
@@ -49,6 +65,7 @@ test_sd()
     /* Close the file */
     status = SDend(fid);
     CHECK(status, FAIL, "SDend");
+
 #if defined H4_HAVE_WIN32_API
     mode = _S_IREAD;
 #else
