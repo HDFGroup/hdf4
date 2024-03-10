@@ -20,24 +20,12 @@
 
 #define NBITFILE "nbit.hdf"
 
-/* Which tests to run? */
-#define EXTERNAL_TEST
-#define NBIT_TEST
-#define COMP_TEST
-#define CHUNK_TEST
-/*  commented out for now because of 'long' handling on 64-bit
-    machines by this version of the netCDF library is broken.
-    The new version of the netCDF library(2.4.3?) has fixed
-    this I think. To fix it here requires merging in those fixes.*/
-
-#define NETCDF_READ_TEST
-
-/* all test functions to be called in main */
+/* All test functions to be called in main */
 extern int test_netcdf_reading();
 extern int test_szip_compression();
 extern int test_checkempty();
 extern int test_idtest();
-/* extern int test_sd(); - removed temporarily, see note in main(...) */
+extern int test_sd();
 extern int test_mixed_apis();
 extern int test_files();
 extern int test_SDSprops();
@@ -50,6 +38,9 @@ extern int test_datasizes();
 extern int test_datainfo();
 extern int test_external();
 extern int test_att_ann_datainfo();
+
+/* FIXME: Disabled due to test failures */
+/* extern int test_rank0(); */
 
 static int
 test_nbit()
@@ -150,29 +141,17 @@ main(void)
 {
     int num_errs = 0; /* number of errors so far */
 
-#ifdef NBIT_TEST
     /* Test nbits functions */
     num_errs = num_errs + test_nbit();
 
-#endif /* NBIT_TEST */
-
-#ifdef COMP_TEST
     /* Test the compressed storage routines */
     num_errs = num_errs + test_compression();
 
-#endif /* COMP_TEST */
-
-#ifdef CHUNK_TEST
     /* Tests chunking functions */
     num_errs = num_errs + test_chunk();
 
-#endif /* CHUNK_TEST */
-
-#ifdef NETCDF_READ_TEST
     /* Tests reading netCDF file using SD interface */
     num_errs = num_errs + test_netcdf_reading();
-
-#endif /* NETCDF_READ_TEST */
 
     /* Tests dimension functions (in tdim.c) */
     num_errs = num_errs + test_dimensions();
@@ -199,11 +178,9 @@ main(void)
     /* Tests miscellaneous file-related APIs (in tfiles.c) */
     num_errs = num_errs + test_files();
 
-    /* BMR: Added a test routine dedicated for testing the behavior of
-     * several functions when the SDS has rank=0. (in trank0.c) - 02/4/05 */
-    /* BMR: SDcreate fails on Copper when rank=0.  EP decided to remove
-     * this test until further study can be made on this feature.
-    num_errs = num_errs + test_rank0(); */
+    /* Test the behavior of several functions when the SDS has rank=0 (in trank0.c) */
+    /* FIXME: Currently failing - fix ASAP */
+    /* num_errs = num_errs + test_rank0(); */
 
     /* Tests functionality related to SDS' properties (in tsdsprops.c) */
     num_errs = num_errs + test_SDSprops();
@@ -218,10 +195,11 @@ main(void)
        library is not present or only decoder is available. */
     num_errs = num_errs + test_szip_compression();
 
-    /* BMR: This test fails on some systems when the user are logged in
-     * as root.  We decided to comment it out until further work can be
-     * attempted. (in tsd.c) 11/04/05 */
-    /* num_errs = num_errs + test_sd(); */
+    /* NOTE: This test had a history of failing on some systems when the user
+     * is logged in as root. It has been re-enabled and we'll investigate
+     * if it starts failing again.
+     */
+    num_errs = num_errs + test_sd();
 
     if (num_errs == 0) {
         printf("*** HDF-SD test passes ***\n");
