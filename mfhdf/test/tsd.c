@@ -24,7 +24,8 @@
 #include "hdftest.h"
 #include "hfile_priv.h"
 
-#define FILE_NAME "sdtest.hdf" /* data file to test ID types */
+/* Data file to test ID types */
+#define FILE_NAME "sdtest.hdf"
 
 extern int
 test_sd()
@@ -38,7 +39,7 @@ test_sd()
 #endif
 
     FILE *ff;
-    int   num_errs = 0; /* number of errors so far */
+    int   num_errs = 0; /* Number of errors so far */
 
     /* Output message about test being performed */
     TESTING("SDstart for file with no write permission (tsd.c)");
