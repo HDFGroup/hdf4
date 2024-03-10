@@ -147,7 +147,6 @@ fmtint(void         *x, /* assumption: int is same as 'int' */
         return (fwrite(&i, sizeof(int), 1, ofp));
 }
 
-#define FLOAT32_EPSILON ((float32)1.0e-20)
 int
 fmtfloat32(void *x, file_format_t ff, FILE *ofp)
 {
@@ -156,7 +155,7 @@ fmtfloat32(void *x, file_format_t ff, FILE *ofp)
     memcpy(&fdata, x, sizeof(float32));
 
     if (ff == DASCII) {
-        if (fabsf(fdata - FILL_FLOAT) <= FLOAT32_EPSILON)
+        if (fabsf(fdata - FILL_FLOAT) <= FLT_EPSILON)
             return (fprintf(ofp, "FloatInf"));
         else
             return (fprintf(ofp, "%f", (double)fdata));

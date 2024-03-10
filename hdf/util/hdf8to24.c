@@ -181,17 +181,17 @@ usage(void)
 int
 main(int argc, char *argv[])
 {
-    int     do_jpeg   = FALSE;        /* flag to indicate JPEG compression */
-    int     jpeg_qual = 75;           /* JPEG quality factor */
-    int     do_scale  = FALSE;        /* flag to indicate whether to scale images */
-    float32 img_scale = (float32)1.0; /* scaling factor */
-    int32   xdim, ydim;               /* dimensions of the image to convert */
-    int     ispal;                    /* whether there's a palette with the image */
-    uint8  *img_buf;                  /* buffer to store the image in */
-    uint8  *img24_buf;                /* buffer to store the 24-bit image in */
-    uint8  *pal_buf = NULL;           /* buffer to store the palette in */
-    int     file    = 1;              /* the argument the files start at */
-    int     i;                        /* local counting variable */
+    int     do_jpeg   = FALSE; /* flag to indicate JPEG compression */
+    int     jpeg_qual = 75;    /* JPEG quality factor */
+    int     do_scale  = FALSE; /* flag to indicate whether to scale images */
+    float32 img_scale = 1.0F;  /* scaling factor */
+    int32   xdim, ydim;        /* dimensions of the image to convert */
+    int     ispal;             /* whether there's a palette with the image */
+    uint8  *img_buf;           /* buffer to store the image in */
+    uint8  *img24_buf;         /* buffer to store the 24-bit image in */
+    uint8  *pal_buf = NULL;    /* buffer to store the palette in */
+    int     file    = 1;       /* the argument the files start at */
+    int     i;                 /* local counting variable */
 
     if (argc < 3)
         usage();
@@ -203,11 +203,11 @@ main(int argc, char *argv[])
         while (argv[file][0] == '-' || argv[file][0] == '/') {
             switch (argv[file][1]) {
                 case 's':
-                    if ((img_scale = (float32)atof(&argv[file][2])) <=
-                        (float32)0.0) { /* check for valid scale */
+                    /* Check for valid scale */
+                    if ((img_scale = (float32)atof(&argv[file][2])) <= 0.0) {
                         printf("Bad scale, must be greater than 0\n");
-                        return (1);
-                    } /* end if */
+                        return 1;
+                    }
                     do_scale = TRUE;
                     break;
 

@@ -36,7 +36,7 @@
 #define RED     0
 #define GREEN   1
 #define BLUE    2
-#define EPSILON 0.5
+#define EPSILON 0.5F
 #define LO      1
 #define HI      0
 
@@ -192,15 +192,14 @@ compress(unsigned char raster[], int block)
     int     c_hi[3], c_lo[3];
 
     /* calculate luminance */
-    y_av = (float32)0.0;
+    y_av = 0.0F;
     for (i = 0; i < 16; i++) {
         j    = 3 * i;
-        y[i] = (float32)0.3 * (float32)raster[j] + (float32)0.59 * (float32)raster[j + 1] +
-               (float32)0.11 * (float32)raster[j + 2];
+        y[i] = 0.3F * (float32)raster[j] + 0.59F * (float32)raster[j + 1] + 0.11F * (float32)raster[j + 2];
         /*    printf("compress: y[%d] is %f\n",i,y[i]); */
         y_av = y_av + y[i];
     }
-    y_av /= (float32)16.0;
+    y_av /= 16.0F;
     /*  printf("y_av is %f\n",y_av); */
 
     /* initialize c_hi and c_lo */
@@ -634,8 +633,8 @@ init(int blocks, int distinct, struct rgb *my_color_pt)
     /* set up first box */
     first = (struct box *)malloc(sizeof(struct box));
     for (i = RED; i <= BLUE; i++) {
-        first->bnd[i][LO] = (float32)999.9;
-        first->bnd[i][HI] = (float32)-999.9;
+        first->bnd[i][LO] = 999.9F;
+        first->bnd[i][HI] = -999.9F;
 
         for (j = 0; j < distinct; j++) {
             if (first->bnd[i][LO] > (float)distinct_pt[j].c[i])
@@ -645,8 +644,8 @@ init(int blocks, int distinct, struct rgb *my_color_pt)
                 first->bnd[i][HI] = (float)distinct_pt[j].c[i];
         } /* end of for j */
 
-        first->bnd[i][LO] = first->bnd[i][LO] - (float32)EPSILON;
-        first->bnd[i][HI] = first->bnd[i][HI] + (float32)EPSILON;
+        first->bnd[i][LO] = first->bnd[i][LO] - EPSILON;
+        first->bnd[i][HI] = first->bnd[i][HI] + EPSILON;
     } /* end of for i */
 
     first->pts = (int *)malloc((unsigned)distinct * sizeof(int));
@@ -975,10 +974,10 @@ find_med(struct box *ptr, int dim)
 
     if (prev == 0) {
         /* the first distinct point overshot the median */
-        median = (float32)distinct_pt[rank[prev]].c[dim] + (float32)EPSILON;
+        median = (float32)distinct_pt[rank[prev]].c[dim] + EPSILON;
     }
     else
-        median = (float32)distinct_pt[rank[prev - 1]].c[dim] + (float32)EPSILON;
+        median = (float32)distinct_pt[rank[prev - 1]].c[dim] + EPSILON;
 
     free(rank);
     return median;
