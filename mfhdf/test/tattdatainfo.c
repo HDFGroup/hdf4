@@ -149,7 +149,7 @@ test_attrs()
 
     for (ii = 0; ii < LENGTH2_X; ii++)
         for (jj = 0; jj < LENGTH2_Y; jj++)
-            data2[ii][jj] = 500.50 * (ii + jj);
+            data2[ii][jj] = 500.50F * (ii + jj);
 
     starts[0] = 0;
     starts[1] = 0;

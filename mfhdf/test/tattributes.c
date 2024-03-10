@@ -83,7 +83,7 @@ static int
 test_count(void)
 {
     char    sds_name[20], dim_name[20];
-    float32 sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
+    float32 sds1_data[] = {0.1F, 2.3F, 4.5F, 6.7F, 8.9F};
     int32   dimsize[1], size;
     int32   sds_id, file_id, dim_id, index;
     int32   start = 0, stride = 1;

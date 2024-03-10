@@ -226,7 +226,7 @@ test_nonspecial_SDSs()
 
     for (int ii = 0; ii < LENGTH2_X; ii++)
         for (int jj = 0; jj < LENGTH2_Y; jj++)
-            data2[ii][jj] = 500.50 * (ii + jj);
+            data2[ii][jj] = 500.50F * (ii + jj);
 
     starts[0] = 0;
     starts[1] = 0;
@@ -568,7 +568,7 @@ test_compressed_SDSs()
 
     for (ii = 0; ii < LENGTH2_X; ii++)
         for (jj = 0; jj < LENGTH2_Y; jj++)
-            data2[ii][jj] = 500.50 * (ii + jj);
+            data2[ii][jj] = 500.50F * (ii + jj);
 
 #ifdef H4_HAVE_SZIP_ENCODER
     /*

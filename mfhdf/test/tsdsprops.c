@@ -184,12 +184,14 @@ test_unlim_dim()
 {
     int32 fid, dset1, dset2;
     int32 rank, start[1], edges[1], dtype, nattrs, dimsizes[1];
-    int16 array_data[DIM0],                          /* data to be written to both datasets */
-        append_data[DIM0],                           /* data to be appended to both datasets */
-        outdata[DIM0 + DIM0], outdata1[DIM0 + DIM0]; /* data read */
-    char ds_name[20];
-    int  idx, status;
-    int  num_errs = 0; /* number of errors so far */
+    int16 array_data[DIM0];      /* Data to be written to both datasets */
+    int16 append_data[DIM0];     /* Data to be appended to both datasets */
+    int16 outdata[DIM0 + DIM0];  /* Data read */
+    int16 outdata1[DIM0 + DIM0]; /* Data read */
+    char  ds_name[20];
+    int16 idx;
+    int   status;
+    int   num_errs = 0; /* number of errors so far */
 
     /* Create a file */
     fid = SDstart(UD_FILE_NAME, DFACC_CREATE);
@@ -408,7 +410,7 @@ test_unlim_inloop()
         while (n_writes < 2) {
             int in, out;
             for (in = 0, out = 0 + (SIZE * n_writes); in < SIZE; in++, out++) {
-                VERIFY(outdata[out], array_data[in], "SDreaddata");
+                VERIFY_DOUBLE(outdata[out], array_data[in], "SDreaddata");
             }
             n_writes++;
         }
@@ -453,11 +455,12 @@ test_valid_args()
 {
     int32 fid, dset1, dset2;
     int32 start[2], edges[2], dtype, nattrs, dimsizes[2], rank, strides[2];
-    int16 array_data[X_LENGTH][Y_LENGTH], /* data to be written to datasets */
-        outdata[X_LENGTH][Y_LENGTH];      /* data read */
-    char ds_name[20];
-    int  idxx, idxy, status;
-    int  num_errs = 0; /* number of errors so far */
+    int16 array_data[X_LENGTH][Y_LENGTH]; /* Data to be written to datasets */
+    int16 outdata[X_LENGTH][Y_LENGTH];    /* Data read */
+    char  ds_name[20];
+    int16 idxx, idxy;
+    int   status;
+    int   num_errs = 0; /* number of errors so far */
 
     /* Create a file */
     fid = SDstart(ARGS_FILE_NAME, DFACC_CREATE);
@@ -476,7 +479,7 @@ test_valid_args()
     /* Fill the stored-data array with values. */
     for (idxx = 0; idxx < X_LENGTH; idxx++) {
         for (idxy = 0; idxy < Y_LENGTH; idxy++) {
-            array_data[idxx][idxy] = idxx * idxy + 1;
+            array_data[idxx][idxy] = (int16)(idxx * idxy + 1);
         }
     }
 
@@ -579,7 +582,7 @@ test_valid_args()
 
 /* Helper function to test_valid_args2 creates and writes to a dataset */
 static int
-makeSDS(int32 sd_id, char *name, int32 dtype, int32 rank, int32 *dimsizes, int32 *start, int32 *strides,
+makeSDS(int32 sd_id, const char *name, int32 dtype, int32 rank, int32 *dimsizes, int32 *start, int32 *strides,
         int32 *count, void *data)
 {
     int32 sds_id;
@@ -608,7 +611,7 @@ test_valid_args2()
     int32   dim[1], dims2[2], dims3[3], d1start[1], d2start[2], d3start[3];
     int32   d1count[1], d2count[2], d3count[3];
     int32   d1stride[1], d2stride[2], d3stride[3];
-    float32 data1 = 32.0, outdata1;
+    float32 data1 = 32.0F, outdata1;
     int32   data2[D2_X][D2_Y], outdata2[D2_X][D2_Y];
     int16   data3[D3_X][D3_Y][D3_Z], outdata3[D3_X][D3_Y][D3_Z];
     int     i, j, k, status;
@@ -650,7 +653,7 @@ test_valid_args2()
     for (i = 0; i < D3_X; i++)
         for (j = 0; j < D3_Y; j++)
             for (k = 0; k < D3_Z; k++)
-                data3[i][j][k] = i * j * k;
+                data3[i][j][k] = (int16)(i * j * k);
 
     status = makeSDS(sd_id, "data3", DFNT_INT16, 3, dims3, d3start, NULL, d3count, data3);
     CHECK(status, FAIL, "makeSDS data3");
@@ -682,7 +685,7 @@ test_valid_args2()
     d1count[0] = 1;
     status     = SDreaddata(sds_id, d1start, d1stride, d1count, &outdata1);
     CHECK(status, FAIL, "SDreaddata");
-    VERIFY(outdata1, data1, "SDreaddata first dataset");
+    VERIFY_FLOAT(outdata1, data1, "SDreaddata first dataset");
 
     /* Terminate access to the first dataset */
     status = SDendaccess(sds_id);
@@ -774,6 +777,10 @@ test_fillvalue()
     /* test fixed size SDS   */
     /* create an empty SDS, set SD_NOFILL.
        Change the fill mode to SD_FILL, and write a slab of data */
+
+    /* Initialize idata with an obvious sentinel value */
+    for (int i = 0; i < 100; i++)
+        idata[i] = 42;
 
     /* open file FILE1 */
     f1 = SDstart(FILE1, DFACC_RDWR);
