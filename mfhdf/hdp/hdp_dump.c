@@ -11,11 +11,13 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <ctype.h>
+#include <float.h>
+#include <math.h>
 #include <stdio.h>
+
 #include "mfhdf.h"
 #include "hdp.h"
-#include <ctype.h>
-#include <math.h>
 
 #define CARRIAGE_RETURN 13
 #define LINE_FEED       10
@@ -203,7 +205,6 @@ fmtshort(void *x, file_format_t ff, FILE *ofp)
         return (fwrite(&s, sizeof(short), 1, ofp));
 }
 
-#define FLOAT64_EPSILON ((float64)1.0e-20)
 int
 fmtfloat64(void *x, file_format_t ff, FILE *ofp)
 {
@@ -212,7 +213,7 @@ fmtfloat64(void *x, file_format_t ff, FILE *ofp)
     memcpy(&d, x, sizeof(float64));
 
     if (ff == DASCII) {
-        if (fabs(d - FILL_DOUBLE) <= FLOAT64_EPSILON)
+        if (fabs(d - FILL_DOUBLE) <= DBL_EPSILON)
             return (fprintf(ofp, "DoubleInf"));
         else
             return (fprintf(ofp, "%f", d));

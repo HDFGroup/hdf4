@@ -60,8 +60,6 @@
 #define ATTNAME8             "attname8"
 #define ATTNAME9             "attname9"
 #define ATTNAME10            "attname10"
-#define EPS64                (float64)1.0E-14
-#define EPS32                (float32)1.0E-7
 #define MAX_HDF4_NAME_LENGTH 256
 
 int32   data1[6] = {0, -1, 10, 11, 20, 21}, idata1[6];
@@ -663,7 +661,7 @@ read_vattrs(void)
         printf(" got  %s %d %d.\n", iattrname, (int)i_type, (int)i_count);
     }
     if (FAIL == VSgetattr(vsid, _HDF_VDATA, 1, iattr4) ||
-        (fabs((double)(iattr4[0] - attr4[0])) > fabs((double)(attr4[0] * EPS32)))) {
+        (fabs((double)(iattr4[0] - attr4[0])) > fabs((double)(attr4[0] * FLT_EPSILON)))) {
         num_errs++;
         printf(">>> Wrong values for attname4  of vsname1; \
                      got %f, should be %f.\n",
@@ -687,7 +685,7 @@ read_vattrs(void)
         printf(" got  %s %d %d.\n", iattrname, (int)i_type, (int)i_count);
     }
     if (FAIL == VSgetattr(vsid, 0, 2, iattr5) ||
-        (fabs((double)(iattr5[0] - attr5[0])) > fabs((double)(attr5[0] * EPS64)))) {
+        (fabs((double)(iattr5[0] - attr5[0])) > fabs((double)(attr5[0] * DBL_EPSILON)))) {
         num_errs++;
         printf(">>> Wrong values for attr VSNAME1  of fld 0 of vsname1; \
                      got %f, should be %f.\n",
