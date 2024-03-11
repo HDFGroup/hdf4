@@ -80,6 +80,26 @@
         }                                                                                                    \
     }
 
+/* Verify that a float value is as expected and, if not, print error message */
+#define VERIFY_FLOAT(item, value, test_name)                                                                 \
+    {                                                                                                        \
+        if (!H4_FLT_ABS_EQUAL(item, value)) {                                                                \
+            fprintf(stderr, "*** UNEXPECTED VALUE from %s is %f at line %4d in %s\n", test_name,             \
+                    (double)item, (int)__LINE__, __FILE__);                                                  \
+            num_errs++;                                                                                      \
+        }                                                                                                    \
+    }
+
+/* Verify that a double value is as expected and, if not, print error message */
+#define VERIFY_DOUBLE(item, value, test_name)                                                                \
+    {                                                                                                        \
+        if (!H4_DBL_ABS_EQUAL(item, value)) {                                                                \
+            fprintf(stderr, "*** UNEXPECTED VALUE from %s is %f at line %4d in %s\n", test_name, item,       \
+                    (int)__LINE__, __FILE__);                                                                \
+            num_errs++;                                                                                      \
+        }                                                                                                    \
+    }
+
 /* Verify that a value of type char* is as expected and, if not, print
    error message */
 #define VERIFY_CHAR(item, value, test_name)                                                                  \
