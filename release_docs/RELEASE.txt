@@ -154,6 +154,11 @@ This version has been tested in the following platforms:
 
 Known problems
 ==============
+o  The test_sd() test in mfhdf's hdftest can fail depending on the privileges
+   of the account running the test. We've engineered around cases like running
+   as root, but you may still encounter test failures when running that test
+   from highly privileged accounts that can open read-only files for writing.
+
 o  The Fortran interface does not work on 64-bit systems as it stores addresses
    in memory as Fortran INTEGER values, which are typically 32-bit. The
    Fortran interface is currently disabled by default due to this. It should
