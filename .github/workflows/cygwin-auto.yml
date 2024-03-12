@@ -29,7 +29,7 @@ jobs:
       - name: Install Cygwin
         uses: cygwin/cygwin-install-action@master
         with:
-          packages: automake make gcc-fortran libjpeg-devel libtool libaec-dev zlib-devel
+          packages: automake make gcc-fortran jpeg libjpeg-devel libtool zlib-devel
 
       - name: Autotools Configure
         shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
@@ -48,8 +48,8 @@ jobs:
         shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
         run: |
           export PATH=/usr/bin:$PATH
+          cd build
           make -j3
-        working-directory: $GITHUB_WORKSPACE/build
 
       # RUN TESTS
       # NORMAL
@@ -57,12 +57,12 @@ jobs:
         shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
         run: |
           export PATH=/usr/bin:$PATH
+          cd build
           make check -j
-        working-directory: $GITHUB_WORKSPACE/build
 
       - name: Autotools Install
         shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
         run: |
           export PATH=/usr/bin:$PATH
+          cd build
           make install
-        working-directory: $GITHUB_WORKSPACE/build
