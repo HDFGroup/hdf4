@@ -31,9 +31,10 @@ jobs:
         shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
         run: |
           export PATH=/usr/bin:$PATH
-          mkdir "$GITHUB_WORKSPACE/build"
-          cd "$GITHUB_WORKSPACE/build"
-          cmake -C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake -G Ninja \
+          mkdir build
+          cd build
+          cmake -C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake \
+          -G Ninja \
           -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
           -DBUILD_SHARED_LIBS:BOOL=OFF \
           -DJPEG_USE_LOCALCONTENT=OFF \

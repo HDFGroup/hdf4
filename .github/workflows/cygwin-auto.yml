@@ -36,8 +36,8 @@ jobs:
         run: |
           export PATH=/usr/bin:$PATH
           sh ./autogen.sh
-          mkdir "$GITHUB_WORKSPACE/build"
-          cd "$GITHUB_WORKSPACE/build"
+          mkdir build
+          cd build
           $GITHUB_WORKSPACE/configure \
             ${{ inputs.build_option }} \
             --enable-shared \
