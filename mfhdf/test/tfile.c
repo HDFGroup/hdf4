@@ -474,8 +474,8 @@ extern int
 test_files()
 {
     int num_errs = 0; /* number of errors */
-    int curr_max;  /* current # of open files allowed */
-    int sys_limit; /* max # of open files allowed on a system */
+    int curr_max;     /* current # of open files allowed */
+    int sys_limit;    /* max # of open files allowed on a system */
 
     /* Output message about test being performed */
     TESTING("miscellaneous file related functions (tfile.c)");

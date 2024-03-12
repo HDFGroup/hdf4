@@ -32,7 +32,7 @@
  * Uses: nccreate, ncendef, ncclose, ncopen.
  *
  * path - name of cdf file to create
- * 
+ *
  * NOTE: There is no way to create a new cdf file in hdf4, so this test
  *       is not reliable where it's counting on the new file to be a cdf file.
  */
