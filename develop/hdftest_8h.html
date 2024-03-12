@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.1-4dc4578</span>
+   &#160;<span id="projectnumber">4.3.1-9055b67</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -132,6 +132,10 @@ Macros</h2></td></tr>
 <tr class="separator:a97260c77fe0fc4fecb9fcf1820fa9c3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad925328fea29215cea31c14795f9fa2a" id="r_ad925328fea29215cea31c14795f9fa2a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad925328fea29215cea31c14795f9fa2a">VERIFY</a>(item,  value,  test_name)</td></tr>
 <tr class="separator:ad925328fea29215cea31c14795f9fa2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83b865cde91d2a9d8f5d1f71d96d2d83" id="r_a83b865cde91d2a9d8f5d1f71d96d2d83"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a83b865cde91d2a9d8f5d1f71d96d2d83">VERIFY_FLOAT</a>(item,  value,  test_name)</td></tr>
+<tr class="separator:a83b865cde91d2a9d8f5d1f71d96d2d83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04b91746a007574eb335a4511492793e" id="r_a04b91746a007574eb335a4511492793e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a04b91746a007574eb335a4511492793e">VERIFY_DOUBLE</a>(item,  value,  test_name)</td></tr>
+<tr class="separator:a04b91746a007574eb335a4511492793e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a24991242b8731799f6db0b8f492c74af" id="r_a24991242b8731799f6db0b8f492c74af"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a24991242b8731799f6db0b8f492c74af">VERIFY_CHAR</a>(item,  value,  test_name)</td></tr>
 <tr class="separator:a24991242b8731799f6db0b8f492c74af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6484c6ac3c314d53821bdfa81981812c" id="r_a6484c6ac3c314d53821bdfa81981812c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6484c6ac3c314d53821bdfa81981812c">CHECK_ALLOC</a>(<a class="el" href="hproto__fortran_8h.html#a73d29f95cc1f772c77b9d7a41678fa60">buffer</a>,  buf_name,  func_name)</td></tr>
@@ -504,6 +508,74 @@ Functions</h2></td></tr>
 <div class="line">            <a class="code hl_variable" href="tutils_8h.html#aed4fdd79a91ca60813c50b229984953c">num_errs</a>++;                                                                                      \</div>
 <div class="line">        }                                                                                                    \</div>
 <div class="line">    }</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a04b91746a007574eb335a4511492793e" name="a04b91746a007574eb335a4511492793e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04b91746a007574eb335a4511492793e">&#9670;&#160;</a></span>VERIFY_DOUBLE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define VERIFY_DOUBLE</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">item, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">value, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">test_name</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">    {                                                                                                        \</div>
+<div class="line">        if (!<a class="code hl_define" href="#aae73f3763c0b2c70a94d3e011d15e219">H4_DBL_ABS_EQUAL</a>(item, value)) {                                                                \</div>
+<div class="line">            fprintf(stderr, <span class="stringliteral">&quot;*** UNEXPECTED VALUE from %s is %f at line %4d in %s\n&quot;</span>, test_name, item,       \</div>
+<div class="line">                    (<span class="keywordtype">int</span>)__LINE__, __FILE__);                                                                \</div>
+<div class="line">            <a class="code hl_variable" href="tutils_8h.html#aed4fdd79a91ca60813c50b229984953c">num_errs</a>++;                                                                                      \</div>
+<div class="line">        }                                                                                                    \</div>
+<div class="line">    }</div>
+<div class="ttc" id="ahdftest_8h_html_aae73f3763c0b2c70a94d3e011d15e219"><div class="ttname"><a href="#aae73f3763c0b2c70a94d3e011d15e219">H4_DBL_ABS_EQUAL</a></div><div class="ttdeci">#define H4_DBL_ABS_EQUAL(X, Y)</div><div class="ttdef"><b>Definition</b> hdftest.h:134</div></div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a83b865cde91d2a9d8f5d1f71d96d2d83" name="a83b865cde91d2a9d8f5d1f71d96d2d83"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83b865cde91d2a9d8f5d1f71d96d2d83">&#9670;&#160;</a></span>VERIFY_FLOAT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define VERIFY_FLOAT</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">item, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">value, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">test_name</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">    {                                                                                                        \</div>
+<div class="line">        if (!<a class="code hl_define" href="#aa48acb888300e9db94083b860e10447c">H4_FLT_ABS_EQUAL</a>(item, value)) {                                                                \</div>
+<div class="line">            fprintf(stderr, <span class="stringliteral">&quot;*** UNEXPECTED VALUE from %s is %f at line %4d in %s\n&quot;</span>, test_name,             \</div>
+<div class="line">                    (<span class="keywordtype">double</span>)item, (<span class="keywordtype">int</span>)__LINE__, __FILE__);                                                  \</div>
+<div class="line">            <a class="code hl_variable" href="tutils_8h.html#aed4fdd79a91ca60813c50b229984953c">num_errs</a>++;                                                                                      \</div>
+<div class="line">        }                                                                                                    \</div>
+<div class="line">    }</div>
+<div class="ttc" id="ahdftest_8h_html_aa48acb888300e9db94083b860e10447c"><div class="ttname"><a href="#aa48acb888300e9db94083b860e10447c">H4_FLT_ABS_EQUAL</a></div><div class="ttdeci">#define H4_FLT_ABS_EQUAL(X, Y)</div><div class="ttdef"><b>Definition</b> hdftest.h:133</div></div>
 </div><!-- fragment -->
 </div>
 </div>
