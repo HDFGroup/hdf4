@@ -38,7 +38,7 @@ jobs:
           sh ./autogen.sh
           mkdir build
           cd build
-          $GITHUB_WORKSPACE/configure \
+          ../configure \
             ${{ inputs.build_option }} \
             --enable-shared \
             --disable-fortran

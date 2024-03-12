@@ -33,7 +33,7 @@ jobs:
           export PATH=/usr/bin:$PATH
           mkdir build
           cd build
-          cmake -C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake \
+          cmake -C ../config/cmake/cacheinit.cmake \
           -G Ninja \
           -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
           -DBUILD_SHARED_LIBS:BOOL=OFF \
@@ -42,7 +42,7 @@ jobs:
           -DZLIB_USE_LOCALCONTENT=OFF \
           -DHDF4_BUILD_FORTRAN:BOOL=ON \
           -DHDF4_BUILD_JAVA:BOOL=OFF \
-          $GITHUB_WORKSPACE
+          ..
 
       # BUILD
       - name: CMake Build
