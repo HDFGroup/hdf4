@@ -48,11 +48,10 @@ jobs:
       - name: Autotools Configure
         run: |
           sh ./autogen.sh
-          mkdir "${{ runner.workspace }}/build"
-          cd "${{ runner.workspace }}/build"
-          $GITHUB_WORKSPACE/configure \
+          mkdir "$GITHUB_WORKSPACE/build"
+          cd "$GITHUB_WORKSPACE/build"
+          LDFLAGS="-lws2_32" $GITHUB_WORKSPACE/configure \
             ${{ inputs.build_option }} \
-            LDFLAGS="-lws2_32" \
             --disable-netcdf \
             --enable-static-exec
 
@@ -60,11 +59,11 @@ jobs:
       - name: Autotools Build
         run: |
           make -j3
-        working-directory: ${{ runner.workspace }}/build
+        working-directory: $GITHUB_WORKSPACE/build
 
       # RUN TESTS
       # NORMAL
       - name: Autotools Run Tests
         run: |
           make check -j
-        working-directory: ${{ runner.workspace }}/build
+        working-directory: $GITHUB_WORKSPACE/build
