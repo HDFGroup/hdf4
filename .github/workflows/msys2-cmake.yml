@@ -1,6 +1,5 @@
 name: hdf4 dev CMake MSys2 CI
 
-# Controls when the action will run. Triggers the workflow on a call
 on:
   workflow_call:
     inputs:

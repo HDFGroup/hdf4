@@ -40,7 +40,7 @@ jobs:
           cd "${{ runner.workspace }}/build"
           $GITHUB_WORKSPACE/configure \
             ${{ inputs.build_option }} \
-            --enable-shared
+            --disable-shared
 
       # BUILD
       - name: Autotools Build

@@ -35,6 +35,7 @@ jobs:
           cd "${{ runner.workspace }}/build"
           cmake -C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake -G Ninja \
           -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
+          -DBUILD_SHARED_LIBS:BOOL=OFF \
           -DJPEG_USE_LOCALCONTENT=OFF \
           -DLIBAEC_USE_LOCALCONTENT=OFF \
           -DZLIB_USE_LOCALCONTENT=OFF \

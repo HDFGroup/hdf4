@@ -1,39 +1,39 @@
-name: msys2 auto
+name: hdf4 dev Autotools MSys2 CI
 
 on:
-  workflow_dispatch:
-  push:
-  pull_request:
-    branches: [ master ]
-    paths-ignore:
-    - '.github/CODEOWNERS'
-    - 'doc/**'
-    - 'release_docs/**'
-    - 'COPYING'
-    - '**.md'
+  workflow_call:
+    inputs:
+      build_mode:
+        description: "release vs. debug build"
+        required: true
+        type: string
+      build_option:
+        description: "--enable-production or --disable-production"
+        required: true
+        type: string
 
 permissions:
   contents: read
 
-# Using concurrency to cancel any in-progress job or run
-concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref && github.ref || github.run_id }}
-  cancel-in-progress: true
-
 jobs:
-  build:
+  Msys2_build_and_test:
+    runs-on: windows-latest
     strategy:
       matrix:
-        sys:
-          - mingw64
-          - mingw32
-          - ucrt64
-          - clang64
-    runs-on: windows-latest
+        include:
+          - { icon: '⬛', sys: mingw32 }
+          - { icon: '🟦', sys: mingw64 }
+          - { icon: '🟨', sys: ucrt64  }
+          - { icon: '🟧', sys: clang64 }
+    name: ${{ matrix.icon }} MSYS2-${{ matrix.sys }}-${{ inputs.build_mode }}
+    defaults:
+      run:
+        shell: msys2 {0}
     steps:
-      - uses: actions/checkout@v4.1.1
+      - name: Get Sources
+        uses: actions/checkout@v4.1.1
 
-      - name: Setup MSYS2
+      - name: '${{ matrix.icon }} Setup MSYS2'
         uses: msys2/setup-msys2@v2
         with:
           msystem: ${{matrix.sys}}
@@ -46,17 +46,25 @@ jobs:
             libjpeg-turbo:p
 
       - name: Autotools Configure
-        shell: msys2 {0}
         run: |
-          ./autogen.sh
-          ./configure LDFLAGS="-lws2_32" --disable-netcdf --enable-static-exec
+          sh ./autogen.sh
+          mkdir "${{ runner.workspace }}/build"
+          cd "${{ runner.workspace }}/build"
+          $GITHUB_WORKSPACE/configure \
+            ${{ inputs.build_option }} \
+            LDFLAGS="-lws2_32" \
+            --disable-netcdf \
+            --enable-static-exec
 
+      # BUILD
       - name: Autotools Build
-        shell: msys2 {0}
         run: |
-          make
+          make -j3
+        working-directory: ${{ runner.workspace }}/build
 
+      # RUN TESTS
+      # NORMAL
       - name: Autotools Run Tests
-        shell: msys2 {0}
         run: |
-          make check
+          make check -j
+        working-directory: ${{ runner.workspace }}/build
