@@ -52,8 +52,7 @@ jobs:
           $GITHUB_WORKSPACE/configure \
             ${{ inputs.build_option }} \
             --disable-fortran \
-            --enable-shared \
-          #cat config.log
+            --enable-shared
 
       # BUILD
       - name: Autotools Build
@@ -71,15 +70,8 @@ jobs:
           make check -j
         working-directory: ${{ runner.workspace }}/build
 
-      # INSTALL (note that this runs even when we don't run the tests)
       - name: Autotools Install
         run: |
           export PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/23.9/compilers/bin:$PATH
           make install
         working-directory: ${{ runner.workspace }}/build
-
-#      - name: Autotools Verify Install
-#        run: |
-#          export PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/23.9/compilers/bin:$PATH
-#          make check-install
-#        working-directory: ${{ runner.workspace }}/build

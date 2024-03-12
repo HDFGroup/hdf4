@@ -68,3 +68,10 @@ jobs:
             build_mode: "production"
             build_option: "--enable-production"
 
+    call-release-auto-cygwin:
+      name: "Autotools Cygwin Workflows"
+      uses: ./.github/workflows/cygwin-auto.yml
+      with:
+            build_mode: "production"
+            build_option: "--enable-production"
+
