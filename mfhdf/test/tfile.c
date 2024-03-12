@@ -196,7 +196,7 @@ test_max_open_files()
     curr_max = SDreset_maxopenfiles(33);
     VERIFY(curr_max, 33, "test_maxopenfiles: SDreset_maxopenfiles");
 
-    /* Try to create more files than the default max (currently, 32) and
+    /* Try to create more files than the default max (currently, 33) and
        all should succeed */
     for (index = 0; index < NUM_FILES_LOW; index++) {
         /* Create a file */
@@ -204,6 +204,10 @@ test_max_open_files()
         fids[index] = SDstart(filename[index], DFACC_CREATE);
         CHECK(fids[index], FAIL, "test_maxopenfiles: SDstart");
     }
+    /* Get the current max and system limit, the current max should now be at system limit */
+    status = SDget_maxopenfiles(&curr_max, &sys_limit);
+    CHECK(status, FAIL, "test_maxopenfiles: SDget_maxopenfiles");
+    VERIFY(curr_max, sys_limit, "test_maxopenfiles: SDget_maxopenfiles");
 
     /* Verify that NUM_FILES_LOW files are opened */
     curr_opened = SDget_numopenfiles();
@@ -218,11 +222,6 @@ test_max_open_files()
     CHECK(status, FAIL, "test_maxopenfiles: SDend");
     curr_opened = SDget_numopenfiles();
     VERIFY(curr_opened, NUM_FILES_LOW - 3, "test_maxopenfiles: SDget_numopenfiles");
-
-    /* Get the current max and system limit */
-    status = SDget_maxopenfiles(&curr_max, &sys_limit);
-    CHECK(status, FAIL, "test_maxopenfiles: SDget_maxopenfiles");
-    VERIFY(curr_max, sys_limit, "test_maxopenfiles: SDreset_maxopenfiles");
 
     /* Get the current max another way, it should be the system limit */
     curr_max = SDreset_maxopenfiles(0);
@@ -241,7 +240,7 @@ test_max_open_files()
     /* Reset current max to a value that is smaller than the current
        number of opened files; it shouldn't reset */
     curr_max_bk = curr_max;
-    curr_max    = SDreset_maxopenfiles(curr_opened - 1);
+    curr_max    = SDreset_maxopenfiles(curr_opened - 4);
     VERIFY(curr_max, curr_max_bk, "test_maxopenfiles: SDreset_maxopenfiles");
 
     /* Reset current max again to a value that is smaller than the
@@ -475,9 +474,14 @@ extern int
 test_files()
 {
     int num_errs = 0; /* number of errors */
+    int curr_max;  /* current # of open files allowed */
+    int sys_limit; /* max # of open files allowed on a system */
 
     /* Output message about test being performed */
     TESTING("miscellaneous file related functions (tfile.c)");
+
+    /* Get the current limits */
+    SDget_maxopenfiles(&curr_max, &sys_limit);
 
     /* Test that an in-use file is not removed in certain failure cleanup. */
     num_errs = num_errs + test_file_inuse();
