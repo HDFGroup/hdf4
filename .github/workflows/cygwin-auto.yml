@@ -40,7 +40,8 @@ jobs:
           cd "$GITHUB_WORKSPACE/build"
           $GITHUB_WORKSPACE/configure \
             ${{ inputs.build_option }} \
-            --disable-shared
+            --enable-shared \
+            --disable-fortran
 
       # BUILD
       - name: Autotools Build
