@@ -474,14 +474,9 @@ extern int
 test_files()
 {
     int num_errs = 0; /* number of errors */
-    int curr_max;     /* current # of open files allowed */
-    int sys_limit;    /* max # of open files allowed on a system */
 
     /* Output message about test being performed */
     TESTING("miscellaneous file related functions (tfile.c)");
-
-    /* Get the current limits */
-    SDget_maxopenfiles(&curr_max, &sys_limit);
 
     /* Test that an in-use file is not removed in certain failure cleanup. */
     num_errs = num_errs + test_file_inuse();

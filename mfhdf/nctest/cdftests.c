@@ -33,8 +33,9 @@
  *
  * path - name of cdf file to create
  *
- * NOTE: There is no way to create a new cdf file in hdf4, so this test
- *       is not reliable where it's counting on the new file to be a cdf file.
+ * NOTE: There is no way to create a new cdf file in HDF4; an HDF4 file will
+ *       be created instead.  Hence, some tests in this file are not reliable
+ *       where the functionality being tested was only applicable to a cdf file.
  */
 void
 test_nccreate(char *path)
