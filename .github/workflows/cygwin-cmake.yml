@@ -1,4 +1,4 @@
-name: hdf4 dev CMake cygwin
+name: hdf4 CMake cygwin
 
 on:
   workflow_call:
@@ -20,7 +20,8 @@ jobs:
         run: |
           git config --global core.autocrlf input
 
-      - uses: actions/checkout@v4.1.1
+      - name: Get Sources
+        uses: actions/checkout@v4.1.1
 
       - name: Install Cygwin
         uses: cygwin/cygwin-install-action@master
@@ -34,17 +35,17 @@ jobs:
           mkdir build
           cd build
           cmake -C ../config/cmake/cacheinit.cmake \
-          -G Ninja \
-          -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
-          -DBUILD_SHARED_LIBS:BOOL=OFF \
-          -DJPEG_USE_LOCALCONTENT=OFF \
-          -DLIBAEC_USE_LOCALCONTENT=OFF \
-          -DZLIB_USE_LOCALCONTENT=OFF \
-          -DHDF4_BUILD_FORTRAN:BOOL=ON \
-          -DHDF4_BUILD_JAVA:BOOL=OFF \
-          ..
+            -G Ninja \
+            --log-level=VERBOSE \
+            -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
+            -DBUILD_SHARED_LIBS:BOOL=OFF \
+            -DJPEG_USE_LOCALCONTENT=OFF \
+            -DLIBAEC_USE_LOCALCONTENT=OFF \
+            -DZLIB_USE_LOCALCONTENT=OFF \
+            -DHDF4_BUILD_FORTRAN:BOOL=ON \
+            -DHDF4_BUILD_JAVA:BOOL=OFF \
+            ..
 
-      # BUILD
       - name: CMake Build
         shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
         run: |
@@ -52,7 +53,6 @@ jobs:
           cd build
           cmake --build . --parallel 3 --config ${{ inputs.build_mode }}
 
-      # RUN TESTS
       - name: CMake Run Tests
         shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
         run: |

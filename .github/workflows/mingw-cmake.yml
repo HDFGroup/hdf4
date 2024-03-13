@@ -1,6 +1,5 @@
-name: hdf4 dev CMake MinGW CI
+name: hdf4 CMake MinGW
 
-# Controls when the action will run. Triggers the workflow on a call
 on:
   workflow_call:
     inputs:
@@ -21,43 +20,32 @@ permissions:
   contents: read
 
 jobs:
-  # A workflow that builds the library and runs all the tests
-  CMake_build_and_test:
-    name: "Ubuntu mingw-${{ inputs.build_mode }}-NC=${{ inputs.netcdf }}"
-    # Don't run the action if the commit message says to skip CI
+  mingw_build_and_test:
+    name: "mingw-${{ inputs.build_mode }}-NC=${{ inputs.netcdf }}"
     if: "!contains(github.event.head_commit.message, 'skip-ci')"
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: Get Sources
+        uses: actions/checkout@v4.1.1
 
-      #
-      # SETUP
-      #
-      - name: Install CMake Dependencies (Linux)
+      - name: Install Dependencies
+        shell: bash
         run: |
            sudo apt update
            sudo apt-get install -y ninja-build libtirpc-dev graphviz
 
-      - name: Install MinGW Dependencies (Linux)
+      - name: Install MinGW
         uses: egor-tensin/setup-mingw@v2
         with:
           platform: x64
 
-      - name: Install Dependencies
+      - name: Install Doxygen
         uses: ssciwr/doxygen-install@v1
         with:
           version: "1.9.7"
 
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Get Sources
-        uses: actions/checkout@v4.1.1
-
-      #
-      # CMAKE CONFIGURE
-      #
       - name: CMake Configure
+        shell: bash
         run: |
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
@@ -79,28 +67,25 @@ jobs:
             -DHDF4_PACK_EXAMPLES:BOOL=ON \
             -DHDF4_PACKAGE_EXTLIBS:BOOL=ON \
             $GITHUB_WORKSPACE
-        shell: bash
 
-      #
-      # BUILD
-      #
       - name: CMake Build
-        run: cmake --build . --parallel 3 --config ${{ inputs.build_mode }}
+        shell: bash
+        run: |
+          cmake --build . --parallel 3 --config ${{ inputs.build_mode }}
         working-directory: ${{ runner.workspace }}/build
 
-      #
-      # RUN TESTS
-      #
       - name: CMake Run Tests
-        run: ctest . --parallel 2 -C ${{ inputs.build_mode }} -V
-        working-directory: ${{ runner.workspace }}/build
+        shell: bash
+        run: |
+          ctest . --parallel 2 -C ${{ inputs.build_mode }} -V
         if: false
 
-      - name: CMake Run Package
-        run: cpack -C ${{ inputs.build_mode }} -V
+      - name: CMake Package
+        shell: bash
+        run: |
+          cpack -C ${{ inputs.build_mode }} -V
         working-directory: ${{ runner.workspace }}/build
 
       - name: List files in the space
         run: |
               ls -l ${{ runner.workspace }}/build
-        

@@ -1,4 +1,4 @@
-name: hdf4 dev CMake MSys2 CI
+name: hdf4 CMake MSys2
 
 on:
   workflow_call:
@@ -12,7 +12,7 @@ permissions:
   contents: read
 
 jobs:
-  Msys2_build_and_test:
+  msys2_build_and_test:
     runs-on: windows-latest
     strategy:
       matrix:
@@ -21,7 +21,7 @@ jobs:
           - { icon: '🟦', sys: mingw64 }
           - { icon: '🟨', sys: ucrt64  }
           - { icon: '🟧', sys: clang64 }
-    name: ${{ matrix.icon }} MSYS2-${{ matrix.sys }}-${{ inputs.build_mode }}
+    name: ${{ matrix.icon }} msys2-${{ matrix.sys }}-${{ inputs.build_mode }}
     defaults:
       run:
         shell: msys2 {0}
@@ -56,13 +56,12 @@ jobs:
             -DHDF4_BUILD_FORTRAN=OFF \
             -DHDF4_BUILD_JAVA=OFF \
             $GITHUB_WORKSPACE
-      # BUILD
+
       - name: CMake Build
         run: |
           cmake --build . --parallel 3 --config ${{ inputs.build_mode }}
         working-directory: ${{ runner.workspace }}/build
 
-      # RUN TESTS
       - name: CMake Run Tests
         run: |
           ctest . --parallel 2 -C ${{ inputs.build_mode }} -V
