@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   cygwin_build_and_test:
-    name: "cygwin ${{ inputs.build_mode }}"
+    name: "cygwin-${{ inputs.build_mode }}"
     runs-on: windows-latest
     steps:
       - name: Set git to use LF

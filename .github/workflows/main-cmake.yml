@@ -74,7 +74,7 @@ jobs:
             localjpeg: OFF
             locallibaec: OFF
             localzlib: OFF
-            toolchain: "-DCMAKE_TOOLCHAIN_FILE=config/toolchain/gcc.cmake"
+            toolchain: "-DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/config/toolchain/gcc.cmake"
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
             run_tests: true
