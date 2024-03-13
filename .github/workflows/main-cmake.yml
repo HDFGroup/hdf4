@@ -182,7 +182,7 @@ jobs:
       - name: CMake Run Tests
         run: ctest . --parallel 2 -C ${{ inputs.build_mode }} -V
         working-directory: ${{ runner.workspace }}/build
-       if: ${{ (matrix.run_tests) && (matrix.name != 'Ubuntu mingw CMake') }}
+        if: ${{ (matrix.run_tests) && (matrix.name != 'Ubuntu mingw CMake') }}
 
       - name: CMake Run Package
         run: cpack -C ${{ inputs.build_mode }} -V
