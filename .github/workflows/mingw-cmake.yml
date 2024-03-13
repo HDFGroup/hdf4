@@ -53,7 +53,7 @@ jobs:
             -G Ninja \
             --log-level=VERBOSE \
             -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
-            -DCMAKE_TOOLCHAIN_FILE=config/toolchain/mingw64.cmake \
+            -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/config/toolchain/mingw64.cmake \
             -DBUILD_SHARED_LIBS:BOOL=${{ inputs.shared }} \
             -DHDF4_BUILD_EXAMPLES:BOOL=ON \
             -DBUILD_JPEG_WITH_PIC:BOOL=ON \

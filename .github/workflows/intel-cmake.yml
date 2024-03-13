@@ -105,7 +105,7 @@ jobs:
             -DJPEG_USE_LOCALCONTENT=OFF \
             -DLIBAEC_USE_LOCALCONTENT=OFF \
             -DZLIB_USE_LOCALCONTENT=OFF \
-            GITHUB_WORKSPACE
+            $GITHUB_WORKSPACE
 
       - name: CMake Build (Windows)
         shell: pwsh
