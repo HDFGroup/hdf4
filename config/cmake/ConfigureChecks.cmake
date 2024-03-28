@@ -145,6 +145,11 @@ if (MINGW OR NOT WINDOWS)
   endif ()
 endif ()
 
+if (CYGWIN)
+  set (CMAKE_REQUIRED_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS} -D_GNU_SOURCE")
+  add_definitions ("-D_GNU_SOURCE")
+endif ()
+
 add_definitions (${HDF_EXTRA_FLAGS})
 
 #-----------------------------------------------------------------------------

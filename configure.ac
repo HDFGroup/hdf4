@@ -557,6 +557,44 @@ fi
 
 AC_SUBST([LT_STATIC_EXEC])
 
+## ----------------------------------------------------------------------
+## Some platforms require that all symbols are resolved when a library
+## is linked. We can use the -no-undefined flag to tell libtool that
+## it will be able to build shared libraries on these architectures,
+## as it will not do so by default.
+##
+if test "X${enable_shared}" = "Xyes"; then
+  AC_MSG_CHECKING([if libtool needs -no-undefined flag to build shared libraries])
+  case "`uname`" in
+    CYGWIN*|MINGW*|AIX*)
+      ## Add in the -no-undefined flag to LDFLAGS for libtool.
+      AC_MSG_RESULT([yes])
+      LDFLAGS="$LDFLAGS -no-undefined"
+      ;;
+    *)
+      ## Don't add in anything.
+      AC_MSG_RESULT([no])
+      ;;
+  esac
+fi
+
+## ----------------------------------------------------------------------
+## Add necessary defines for Linux Systems.
+##
+case "$host_cpu-$host_vendor-$host_os" in
+  *mingw*)
+    AC_DEFINE([HAVE_WINDOWS], [1], [Define if this is a Windows machine])
+    AC_DEFINE([HAVE_WIN32_API], [1], [Define if on the Windows platform using the Win32 API])
+    AC_DEFINE([HAVE_MINGW], [1], [Define if using MinGW])
+    CPPFLAGS="-D_GNU_SOURCE -D__USE_MINGW_ANSI_STDIO $CPPFLAGS"
+    ;;
+  *cygwin*)
+    AC_DEFINE([HAVE_CYGWIN], [1], [Define if using Cygwin])
+    CPPFLAGS="-D_GNU_SOURCE $CPPFLAGS"
+    ;;
+esac
+
+
 ## ======================================================================
 ## Checks for libraries
 ## ======================================================================
@@ -1129,27 +1167,6 @@ if test -n "$java_version_info"; then
   JAVA_VERSION="$JAVA_VERSION ($java_version_info)"
 fi
 AM_CONDITIONAL([BUILD_JAVA_CONDITIONAL], [test "X$HDF_JAVA" = "Xyes"])
-
-## ----------------------------------------------------------------------
-## Some platforms require that all symbols are resolved when a library
-## is linked. We can use the -no-undefined flag to tell libtool that
-## it will be able to build shared libraries on these architectures,
-## as it will not do so by default.
-##
-if test "X${enable_shared}" = "Xyes"; then
-  AC_MSG_CHECKING([if libtool needs -no-undefined flag to build shared libraries])
-  case "`uname`" in
-    CYGWIN*|MINGW*|AIX*)
-      ## Add in the -no-undefined flag to LDFLAGS for libtool.
-      AC_MSG_RESULT([yes])
-      LDFLAGS="$LDFLAGS -no-undefined"
-      ;;
-    *)
-      ## Don't add in anything.
-      AC_MSG_RESULT([no])
-      ;;
-  esac
-fi
 
 
 ## ----------------------------------------------------------------------
