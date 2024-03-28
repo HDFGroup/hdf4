@@ -565,9 +565,9 @@ AC_SUBST([LT_STATIC_EXEC])
 ##
 if test "X${enable_shared}" = "Xyes"; then
   AC_MSG_CHECKING([if libtool needs -no-undefined flag to build shared libraries])
-  case "`uname`" in
-    CYGWIN*|MINGW*|AIX*)
-      ## Add in the -no-undefined flag to LDFLAGS for libtool.
+  case "$host_os" in
+    *cygwin*|*mingw*|*aix*)
+      ## Add in the -no-undefined flag to LDFLAGS for libtool
       AC_MSG_RESULT([yes])
       LDFLAGS="$LDFLAGS -no-undefined"
       ;;
@@ -581,7 +581,7 @@ fi
 ## ----------------------------------------------------------------------
 ## Add necessary defines for Linux Systems.
 ##
-case "$host_cpu-$host_vendor-$host_os" in
+case "$host_os" in
   *mingw*)
     AC_DEFINE([HAVE_WINDOWS], [1], [Define if this is a Windows machine])
     AC_DEFINE([HAVE_WIN32_API], [1], [Define if on the Windows platform using the Win32 API])
