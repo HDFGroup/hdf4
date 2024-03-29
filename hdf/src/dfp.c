@@ -35,7 +35,7 @@ static uint16 Writeref = 0;
 static uint16 Refset   = 0; /* Ref of palette to get next */
 static uint16 Lastref  = 0; /* Last ref read/written */
 
-static char Lastfile[DF_MAXFNLEN] = ""; /* last file opened */
+static char Lastfile[DF_MAXFNLEN + 1] = ""; /* last file opened */
 
 static int32 DFPIopen(const char *filename, int acc_mode);
 
@@ -276,7 +276,7 @@ DFPnpals(const char *filename)
     }
 
     /* Get space to store the palette offsets */
-    if ((pal_off = (int32 *)malloc(npals * sizeof(int32))) == NULL)
+    if ((pal_off = (int32 *)malloc((size_t)npals * sizeof(int32))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* go through the IP8s */
@@ -286,7 +286,7 @@ DFPnpals(const char *filename)
                  DF_FORWARD) == SUCCEED) {
         pal_off[curr_pal] = find_off; /* store offset */
         curr_pal++;
-    } /* end while */
+    }
 
     /* go through the LUTs */
     find_tag = find_ref = 0;
@@ -405,10 +405,7 @@ DFPwriteref(const char *filename, uint16 ref)
     Restart reading/writing palettes to a file.
  GLOBAL VARIABLES
     Lastfile
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
---------------------------------------------------------------------------*/
+ --------------------------------------------------------------------------*/
 int
 DFPrestart(void)
 {
@@ -476,8 +473,6 @@ DFPlastref(void)
  COMMENTS, BUGS, ASSUMPTIONS
     This is a hook for someday providing more efficient ways to
     reopen a file, to avoid re-reading all the headers
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 DFPIopen(const char *filename, int acc_mode)
@@ -492,14 +487,15 @@ DFPIopen(const char *filename, int acc_mode)
             HGOTO_ERROR(DFE_BADOPEN, FAIL);
         Refset  = 0; /* no ref to get set for this file */
         Readref = 0;
-    } /* end if */
+    }
     else if ((file_id = Hopen(filename, acc_mode, 0)) == FAIL)
         HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
     /* remember filename, so reopen may be used next time if same file */
     strncpy(Lastfile, filename, DF_MAXFNLEN);
+    Lastfile[DF_MAXFNLEN] = '\0';
 
-    ret_value = (file_id);
+    ret_value = file_id;
 
 done:
     return ret_value;
