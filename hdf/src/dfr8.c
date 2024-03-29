@@ -56,12 +56,12 @@ static int Newpalette = -1;    /* -1 = no palette is associated
                                     0 = palette already written out
                                     1 = new palette, not yet written out */
 
-static int CompressSet = FALSE;         /* Whether the compression parameters have
-                                             been set for the next image */
-static int32 CompType = COMP_NONE;      /* What compression to use for the next
-                                            image */
-static comp_info CompInfo;              /* Params for compression to perform */
-static char      Lastfile[DF_MAXFNLEN]; /* last file opened */
+static int CompressSet = FALSE;             /* Whether the compression parameters have
+                                                 been set for the next image */
+static int32 CompType = COMP_NONE;          /* What compression to use for the next
+                                                image */
+static comp_info CompInfo;                  /* Params for compression to perform */
+static char      Lastfile[DF_MAXFNLEN + 1]; /* last file opened */
 static DFRrig    Readrig = {
     /* information about RIG being read */
     NULL,
@@ -1112,9 +1112,6 @@ done:
     Restarts reading and writing of RIGs from file from the beginning.
  GLOBAL VARIABLES
     Lastfile
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int
 DFR8restart(void)
@@ -1211,8 +1208,6 @@ done:
  COMMENTS, BUGS, ASSUMPTIONS
     This is a hook for someday providing more efficient ways to
     reopen a file, to avoid re-reading all the headers.
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 static int32
 DFR8Iopen(const char *filename, int acc_mode)
@@ -1236,11 +1231,11 @@ DFR8Iopen(const char *filename, int acc_mode)
     else {
         if ((file_id = Hopen(filename, acc_mode, 0)) == FAIL)
             HGOTO_ERROR(DFE_BADOPEN, FAIL);
-    } /* end else */
+    }
 
     /* remember filename, so reopen may be used next time if same file */
     strncpy(Lastfile, filename, DF_MAXFNLEN);
-    Lastfile[DF_MAXFNLEN - 1] = '\0';
+    Lastfile[DF_MAXFNLEN] = '\0';
 
     ret_value = file_id;
 
