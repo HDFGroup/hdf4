@@ -343,7 +343,7 @@ HTPinit(filerec_t *file_rec, /* IN: File record to store info in */
         HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
     /* allocate and initialize dd list */
-    list = block->ddlist = (dd_t *)malloc((uint32)ndds * sizeof(dd_t));
+    list = block->ddlist = (dd_t *)malloc((size_t)ndds * sizeof(dd_t));
     if (list == (dd_t *)NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -355,8 +355,9 @@ HTPinit(filerec_t *file_rec, /* IN: File record to store info in */
     list[0].blk    = block;
     HDmemfill(&list[1], &list[0], sizeof(dd_t), (uint32)(ndds - 1));
 
-    tbuf = (uint8 *)malloc(ndds * DD_SZ);
-    if (tbuf == NULL) /* check for DD list */
+    tbuf = (uint8 *)malloc((size_t)(ndds * DD_SZ));
+    /* check for DD list */
+    if (tbuf == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* Fill the first disk DD block with NIL dd's */
@@ -1410,7 +1411,7 @@ HTInew_dd_block(filerec_t *file_rec)
     if (file_rec->cache != 0) { /* if we are caching, wait to update previous DD block */
         uint8 *tbuf;            /* temporary buffer */
 
-        tbuf = (uint8 *)malloc(ndds * DD_SZ);
+        tbuf = (uint8 *)malloc((size_t)(ndds * DD_SZ));
         if (tbuf == (uint8 *)NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 

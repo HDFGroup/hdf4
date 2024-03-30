@@ -4580,13 +4580,13 @@ DFSDstartslab(const char *filename)
 
             /* Initialize buffer to fill value */
             for (i = 0; i < fill_bufsize; i = i + localNTsize)
-                memcpy(&(fill_buf[i]), buf2, localNTsize);
+                memcpy(&(fill_buf[i]), buf2, (size_t)localNTsize);
         }
         else /* no conversion */
         {
             /* Initialize buffer to fill value */
             for (i = 0; i < fill_bufsize; i = i + localNTsize)
-                memcpy(&(fill_buf[i]), Writesdg.fill_value, localNTsize);
+                memcpy(&(fill_buf[i]), Writesdg.fill_value, (size_t)localNTsize);
         }
 
         /* Write fill values */

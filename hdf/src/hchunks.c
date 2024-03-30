@@ -1034,7 +1034,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* finally decode fill value */
-            memcpy(info->fill_val, p, info->fill_val_len); /* 1 byte */
+            memcpy(info->fill_val, p, (size_t)info->fill_val_len); /* 1 byte */
 
         } /* end decode special header */
 
@@ -1062,7 +1062,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
                     HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
                 /* Allocate buffer space for compression special header */
-                if ((info->comp_sp_tag_header = calloc(info->comp_sp_tag_head_len, 1)) == NULL)
+                if ((info->comp_sp_tag_header = calloc((size_t)info->comp_sp_tag_head_len, 1)) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 /* read special header in */
@@ -1424,7 +1424,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     if ((info->fill_val = malloc((uint32)fill_val_len)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     /* copy fill value over */
-    memcpy(info->fill_val, fill_val, info->fill_val_len); /* fill_val_len bytes */
+    memcpy(info->fill_val, fill_val, (size_t)info->fill_val_len); /* fill_val_len bytes */
 
     /* if compression set then fill in info i.e ENCODE for storage */
     switch (info->flag & 0xff) /* only using 8bits for now */
@@ -1596,7 +1596,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     }
 
     /* Allocate buffer space for header */
-    if ((c_sp_header = (uint8 *)calloc(sp_tag_header_len, 1)) == NULL)
+    if ((c_sp_header = (uint8 *)calloc((size_t)sp_tag_header_len, 1)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* Calculate length of this special element header itself.
@@ -1642,8 +1642,8 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
         }                                                  /* = 12 x ndims bytes */
 
         /* now for fill value */
-        INT32ENCODE(p, (info->fill_val_len));          /* 4 bytes */
-        memcpy(p, info->fill_val, info->fill_val_len); /* fill_val_len bytes */
+        INT32ENCODE(p, (info->fill_val_len));                  /* 4 bytes */
+        memcpy(p, info->fill_val, (size_t)info->fill_val_len); /* fill_val_len bytes */
         p = p + fill_val_len;
 
         /* Future to encode multiply specialness stuff
@@ -1654,7 +1654,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
                 UINT16ENCODE(p, SPECIAL_COMP);              /* 2 bytes */
                 INT32ENCODE(p, info->comp_sp_tag_head_len); /* 4 bytes */
                 /* copy special element header */
-                memcpy(p, info->comp_sp_tag_header, info->comp_sp_tag_head_len);
+                memcpy(p, info->comp_sp_tag_header, (size_t)info->comp_sp_tag_head_len);
                 p = p + info->comp_sp_tag_head_len;
                 break;
             default:
@@ -1861,7 +1861,7 @@ HMCgetcomptype(int32         dd_aid,    /* IN: access id of header info */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* Allocate buffer space for rest of special header */
-    if ((c_sp_header = (uint8 *)calloc(sp_tag_header_len, 1)) == NULL)
+    if ((c_sp_header = (uint8 *)calloc((size_t)sp_tag_header_len, 1)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* read special info header in */
@@ -1904,7 +1904,7 @@ HMCgetcomptype(int32         dd_aid,    /* IN: access id of header info */
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
             /* Allocate buffer space for compression special header */
-            if ((comp_sp_tag_header = calloc(comp_sp_tag_head_len, 1)) == NULL)
+            if ((comp_sp_tag_header = calloc((size_t)comp_sp_tag_head_len, 1)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* Read compression special header in */
@@ -2725,7 +2725,7 @@ HMCreadChunk(int32  access_id, /* IN: access aid to mess with */
         chk_dptr = chk_data; /* set chunk data ptr */
 
         /* copy data from chunk to users buffer */
-        memcpy(bptr, chk_dptr, read_len);
+        memcpy(bptr, chk_dptr, (size_t)read_len);
 
         /* put chunk back to cache and mark it as *not* DIRTY */
         if (mcache_put(info->chk_cache, /* cache handle */
@@ -2848,7 +2848,7 @@ HMCPread(accrec_t *access_rec, /* IN: access record to mess with */
         chk_dptr += read_seek; /* move to correct position in chunk */
 
         /* copy data from chunk to users buffer */
-        memcpy(bptr, chk_dptr, chunk_size);
+        memcpy(bptr, chk_dptr, (size_t)chunk_size);
 
         /* put chunk back to cache */
         if (mcache_put(info->chk_cache, /* cache handle */
@@ -3144,7 +3144,7 @@ HMCwriteChunk(int32       access_id, /* IN: access aid to mess with */
         chk_dptr = chk_data; /* set chunk data ptr */
 
         /* copy data from users buffer to chunk */
-        memcpy(chk_dptr, bptr, write_len);
+        memcpy(chk_dptr, bptr, (size_t)write_len);
 
         /* put chunk back to cache and mark it as DIRTY */
         if (mcache_put(info->chk_cache, /* cache handle */
@@ -3314,7 +3314,7 @@ HMCPwrite(accrec_t   *access_rec, /* IN: access record to mess with */
         chk_dptr += write_seek; /* move to correct position in chunk */
 
         /* copy data from users buffer to chunk */
-        memcpy(chk_dptr, bptr, chunk_size);
+        memcpy(chk_dptr, bptr, (size_t)chunk_size);
 
         /* put chunk back to cache as DIRTY */
         if (mcache_put(info->chk_cache, /* cache handle */

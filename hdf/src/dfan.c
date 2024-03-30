@@ -686,8 +686,8 @@ DFANIopen(const char *filename, int acc_mode)
             HGOTO_ERROR(DFE_BADOPEN, FAIL);
     }
 
-    HIstrncpy(Lastfile, filename, DF_MAXFNLEN);
     /* remember filename, so reopen may be used next time if same file */
+    HIstrncpy(Lastfile, filename, DF_MAXFNLEN);
 
     ret_value = file_id;
 

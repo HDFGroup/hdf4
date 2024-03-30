@@ -86,10 +86,10 @@ DAcreate_array(int start_size, /* IN: Initial array size */
     new_arr->num_elems = start_size;
     new_arr->incr_mult = incr_mult;
     if (start_size > 0) { /* only allocate space if the initial size is positive */
-        new_arr->arr = (void **)calloc(start_size, sizeof(void *));
+        new_arr->arr = (void **)calloc((size_t)start_size, sizeof(void *));
         if (new_arr->arr == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
-    } /* end if */
+    }
 
     ret_value = (dynarr_p)new_arr;
 
@@ -240,19 +240,19 @@ DAset_elem(dynarr_p arr_ptr, /* IN: Array to access */
 
         new_size = ((elem / arr->incr_mult) + 1) * arr->incr_mult;
         if (arr->num_elems == 0) { /* array not currently allocated */
-            if ((arr->arr = (void **)calloc(new_size, sizeof(void *))) == NULL)
+            if ((arr->arr = (void **)calloc((size_t)new_size, sizeof(void *))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }                   /* end if */
         else {              /* extend the existing array */
             void **new_arr; /* storage for the new array of ptrs */
 
-            if ((new_arr = (void **)realloc(arr->arr, new_size * sizeof(void *))) == NULL)
+            if ((new_arr = (void **)realloc(arr->arr, (size_t)new_size * sizeof(void *))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
             memset(&new_arr[arr->num_elems], 0, sizeof(void *) * (unsigned)(new_size - arr->num_elems));
             arr->arr = new_arr;
-        } /* end else */
+        }
         arr->num_elems = new_size;
-    } /* end if */
+    }
 
     /* Set the element value */
     arr->arr[elem] = obj;
@@ -292,7 +292,7 @@ DAdel_elem(dynarr_p arr_ptr, /* IN: Array to access */
     else {
         ret_value      = arr->arr[elem];
         arr->arr[elem] = NULL;
-    } /* end else */
+    }
 
 done:
     return ret_value;

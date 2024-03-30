@@ -335,7 +335,7 @@ Hbitwrite(int32 bitid, int count, uint32 data)
     if (++bitfile_rec->bytep == bitfile_rec->bytez) {
         int32 write_size;
 
-        write_size         = bitfile_rec->bytez - bitfile_rec->bytea;
+        write_size         = (int32)(bitfile_rec->bytez - bitfile_rec->bytea);
         bitfile_rec->bytep = bitfile_rec->bytea;
         if (Hwrite(bitfile_rec->acc_id, write_size, bitfile_rec->bytea) == FAIL)
             HRETURN_ERROR(DFE_WRITEERROR, FAIL);
@@ -362,7 +362,7 @@ Hbitwrite(int32 bitid, int count, uint32 data)
         if (++bitfile_rec->bytep == bitfile_rec->bytez) {
             int32 write_size;
 
-            write_size         = bitfile_rec->bytez - bitfile_rec->bytea;
+            write_size         = (int32)(bitfile_rec->bytez - bitfile_rec->bytea);
             bitfile_rec->bytep = bitfile_rec->bytea;
             if (Hwrite(bitfile_rec->acc_id, write_size, bitfile_rec->bytea) == FAIL)
                 HRETURN_ERROR(DFE_WRITEERROR, FAIL);
