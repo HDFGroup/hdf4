@@ -27,15 +27,6 @@
  * Function: main
  *
  * Purpose: hdiff main program
- *
- * Programmer: Pedro Vicente Nunes, pvn@ncsa.uiuc.edu
- *
- * Date:  August 27, 2003
- *  Modifications:
- *  March 8, 2006. Added percent (relative) option
- *
- * Comments:
- *
  *-------------------------------------------------------------------------
  */
 
@@ -88,7 +79,7 @@ main(int argc, char *argv[])
             0,        /* if -u specified, number of variables */
             0,        /* if -u specified, list of variable names */
             0,        /* if -S specified print statistics */
-            0,        /* -p err_rel */
+            0.0F,     /* -p err_rel */
             0,        /* error status */
         };
     int    c;
@@ -134,7 +125,7 @@ main(int argc, char *argv[])
                 opt.vd = 1;
                 break;
             case 'e': /* max no. of difference to be printed */
-                opt.max_err_cnt = atoi(h4optarg);
+                opt.max_err_cnt = (uint32)atoi(h4optarg);
                 break;
             case 't': /* range of difference to be printed */
                 opt.err_limit = (float32)atof(h4optarg);

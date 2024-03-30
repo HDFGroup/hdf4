@@ -24,13 +24,8 @@
  *
  * Return: number of differences found
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 22, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 uint32
 hdiff(const char *fname1, const char *fname2, diff_opt_t *opt)
 {
@@ -215,10 +210,6 @@ out:
  *
  * Return: Number of differences found
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 22, 2003
- *
  *-------------------------------------------------------------------------
  */
 uint32
@@ -231,7 +222,7 @@ match(uint32 nobjects1, dtable_t *list1, uint32 nobjects2, dtable_t *list2, int3
     uint32         curr2            = 0;
     uint32         nfound           = 0;
     match_table_t *mattbl           = NULL;
-    unsigned       infile[2];
+    int            infile[2];
     char           c1, c2;
     uint32         i;
 
@@ -335,13 +326,8 @@ match(uint32 nobjects1, dtable_t *list1, uint32 nobjects2, dtable_t *list2, int3
  *
  * Return: Number of differences found
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 25, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 uint32
 diff(int32 file1_id, int32 file2_id, int32 sd1_id, int32 sd2_id, int32 gr1_id, int32 gr2_id, char *obj1_name,
      char *obj2_name, int32 tag1, int32 ref1, int32 tag2, int32 ref2, diff_opt_t *opt)

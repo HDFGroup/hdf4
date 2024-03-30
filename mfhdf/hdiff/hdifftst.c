@@ -54,7 +54,6 @@ static int do_groups(void);
  * main
  *-------------------------------------------------------------------------
  */
-
 int
 main(void)
 {
@@ -340,7 +339,6 @@ do_big_file(void)
     uint8 array_data[DIM0][DIM1];
     uint8 append_data1[DIM1];
     uint8 append_data2[DIM1];
-    int   i, j, n;
 
     /* Create 2 files and initiate the SD interface. */
     if ((sd1_id = SDstart(FILE3_NAME, DFACC_CREATE)) == FAIL)
@@ -360,13 +358,13 @@ do_big_file(void)
         goto error;
 
     /* initial values */
-    for (j = 0; j < DIM0; j++) {
-        for (i = 0; i < DIM1; i++)
-            array_data[j][i] = (i + j) + 1;
+    for (uint8 j = 0; j < DIM0; j++) {
+        for (uint8 i = 0; i < DIM1; i++)
+            array_data[j][i] = (uint8)(i + j + 1);
     }
 
     /* define the location, pattern, and size of the data set */
-    for (i = 0; i < rank; i++) {
+    for (int i = 0; i < rank; i++) {
         start[i] = 0;
     }
     edges[0] = DIM0; /* 10 */
@@ -404,21 +402,21 @@ do_big_file(void)
         goto error;
 
     /* define the location of the append */
-    for (n = 0; n < ADD_ROWS; n++) {
+    for (int n = 0; n < ADD_ROWS; n++) {
         start[0] = DIM0 + n; /* 10 */
         start[1] = 0;
         edges[0] = 1;    /* 1 row at a time */
         edges[1] = DIM1; /* 5 elements */
 
         /* store array values to be appended */
-        for (i = 0; i < DIM1; i++)
+        for (uint8 i = 0; i < DIM1; i++)
             append_data1[i] = i + 1;
-        for (i = 0; i < DIM1; i++)
+        for (uint8 i = 0; i < DIM1; i++)
             append_data2[i] = i + 1;
 
         if (n == 20 || n == ADD_ROWS / 2 || n == ADD_ROWS - 10) {
             /* change a few values at 3 places evenly divided */
-            for (i = 0; i < DIM1; i++)
+            for (int i = 0; i < DIM1; i++)
                 append_data2[i] = 100;
 
             /* append data to file */
@@ -454,7 +452,6 @@ error:
  * do_lone
  *-------------------------------------------------------------------------
  */
-
 int
 do_lone(char *file_name, int do_diffs)
 {
@@ -572,7 +569,6 @@ fail:
  *
  *-------------------------------------------------------------------------
  */
-
 static int
 do_groups(void)
 {

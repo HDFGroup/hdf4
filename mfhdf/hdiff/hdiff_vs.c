@@ -27,13 +27,8 @@ static uint32 vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, diff_opt
  *
  * Return: Number of differences found
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 26, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 uint32
 diff_vs(int32 file1_id, int32 file2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
 {
@@ -190,7 +185,6 @@ out:
  *
  *-------------------------------------------------------------------------
  */
-
 static uint32
 vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, diff_opt_t *opt)
 {
@@ -369,7 +363,6 @@ out:
  *
  *-------------------------------------------------------------------------
  */
-
 void
 fmt_print(uint8 *x, int32 type)
 {

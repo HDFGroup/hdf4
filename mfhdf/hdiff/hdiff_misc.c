@@ -129,11 +129,13 @@ pr_att_vals(nc_type type, int len, void *vals)
     switch (type) {
         case DFNT_INT8:
             gp.cp = (char *)vals;
-            for (iel = 0; iel < len; iel++)
-                if (isprint(uc = *gp.cp++ & 0377))
+            for (iel = 0; iel < len; iel++) {
+                uc = (unsigned char)(*gp.cp++) & 0377;
+                if (isprint(uc))
                     printf("'%c'%s", uc, iel < len - 1 ? ", " : "");
                 else
                     printf("'\\%o'%s", uc, iel < len - 1 ? ", " : "");
+            }
             break;
         case DFNT_CHAR:
             gp.cp = (char *)vals;
@@ -142,8 +144,9 @@ pr_att_vals(nc_type type, int len, void *vals)
             sp = gp.cp + len - 1;
             while (*sp-- == '\0' && len > 0)
                 len--;
-            for (iel = 0; iel < len; iel++)
-                switch (uc = *gp.cp++ & 0377) {
+            for (iel = 0; iel < len; iel++) {
+                uc = (unsigned char)(*gp.cp++) & 0377;
+                switch (uc) {
                     case '\b':
                         printf("\\b");
                         break;
@@ -175,6 +178,7 @@ pr_att_vals(nc_type type, int len, void *vals)
                         printf("%c", uc);
                         break;
                 }
+            }
             printf("\"");
             break;
         case DFNT_INT16:
@@ -190,7 +194,7 @@ pr_att_vals(nc_type type, int len, void *vals)
         case DFNT_FLOAT:
             gp.fp = (float32 *)vals;
             for (iel = 0; iel < len; iel++) {
-                int ll;
+                size_t ll;
                 (void)sprintf(gps, f_fmt, (double)*gp.fp++);
                 /* append a trailing "f" for floating-point attributes */
                 ll          = strlen(gps);
@@ -231,7 +235,7 @@ make_vars(char *optarg, diff_opt_t *opt, int option)
             nvars++;
 
     if (option == 1) {
-        opt->lvars = (char **)malloc(nvars * sizeof(char *));
+        opt->lvars = (char **)malloc((size_t)nvars * sizeof(char *));
         if (!opt->lvars) {
             fprintf(stderr, "Out of memory!\n");
             exit(EXIT_FAILURE);
@@ -239,7 +243,7 @@ make_vars(char *optarg, diff_opt_t *opt, int option)
         cpp = opt->lvars;
     }
     else {
-        opt->uvars = (char **)malloc(nvars * sizeof(char *));
+        opt->uvars = (char **)malloc((size_t)nvars * sizeof(char *));
         if (!opt->uvars) {
             fprintf(stderr, "Out of memory!\n");
             exit(EXIT_FAILURE);

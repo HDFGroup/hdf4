@@ -28,7 +28,6 @@
  *
  *-------------------------------------------------------------------------
  */
-
 uint32
 gattr_diff(int32 sdid1, int32 sdid2, diff_opt_t *opt)
 {
@@ -72,7 +71,8 @@ gattr_diff(int32 sdid1, int32 sdid2, diff_opt_t *opt)
         if (att1.type != att2.type || att1.len != att2.len)
             iret2 = 1;
         if (iret2 == 0) /* compare the data */
-            iret2 = memcmp((void *)att1.val, att2.val, att1.len * DFKNTsize(att1.type | DFNT_NATIVE));
+            iret2 =
+                memcmp((void *)att1.val, att2.val, (size_t)(att1.len * DFKNTsize(att1.type | DFNT_NATIVE)));
 
         if (iret2 != 0) {
             printf("\n---------------------------\n");
