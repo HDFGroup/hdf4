@@ -25,13 +25,8 @@ static void usage(void);
  *
  * Purpose: hrepack main program
  *
- * Programmer: Pedro Vicente Nunes, pvn@ncsa.uiuc.edu
- *
- * Date: July 10, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 int
 main(int argc, char **argv)
 {
@@ -133,7 +128,6 @@ out:
  *
  *-------------------------------------------------------------------------
  */
-
 static void
 usage(void)
 {

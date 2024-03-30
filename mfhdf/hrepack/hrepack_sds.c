@@ -42,13 +42,8 @@ int get_print_info(int chunk_flags, HDF_CHUNK_DEF *chunk_def, int comp_type, cha
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 10, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 int
 copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
          int32      ref,                       /* ref of input SDS */
@@ -540,19 +535,19 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
         else /* possibly not enough memory, read/write by hyperslabs */
 
         {
-            size_t p_type_nbytes = eltsz; /*size of type */
-            uint32 p_nelmts      = nelms; /*total selected elmts */
-            uint32 elmtno;                /*counter  */
-            int    carry;                 /*counter carry value */
+            int32 p_type_nbytes = eltsz; /* size of type */
+            int32 p_nelmts      = nelms; /* total selected elmts */
+            int32 elmtno;                /* counter */
+            int   carry;                 /* counter carry value */
 
             /* stripmine info */
-            int32 sm_size[H4_MAX_VAR_DIMS]; /*stripmine size */
-            int32 sm_nbytes;                /*bytes per stripmine */
+            int32 sm_size[H4_MAX_VAR_DIMS]; /* stripmine size */
+            int32 sm_nbytes;                /* bytes per stripmine */
 
             /* hyperslab info */
-            int32 hs_offset[H4_MAX_VAR_DIMS]; /*starting offset */
-            int32 hs_size[H4_MAX_VAR_DIMS];   /*size this pass */
-            int32 hs_nelmts;                  /*elements in request */
+            int32 hs_offset[H4_MAX_VAR_DIMS]; /* starting offset */
+            int32 hs_size[H4_MAX_VAR_DIMS];   /* size this pass */
+            int32 hs_nelmts;                  /* elements in request */
 
             /*
              * determine the strip mine size and allocate a buffer. The strip mine is
@@ -668,7 +663,7 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
             numtype = dtype & DFNT_MASK;
             eltsz   = DFKNTsize(numtype | DFNT_NATIVE);
 
-            if ((dim_buf = (void *)malloc(dimsizes[i] * eltsz)) == NULL) {
+            if ((dim_buf = (void *)malloc((size_t)(dimsizes[i] * eltsz))) == NULL) {
                 printf("Failed to alloc %d for dimension scale\n", dimsizes[i]);
                 goto out;
             }
@@ -765,13 +760,8 @@ out:
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 30, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 int
 copy_sds_attrs(int32 id_in, int32 id_out, int32 nattrs, options_t *options)
 {
@@ -794,7 +784,7 @@ copy_sds_attrs(int32 id_in, int32 id_out, int32 nattrs, options_t *options)
         /* compute the number of the bytes for each value. */
         numtype = dtype & DFNT_MASK;
         eltsz   = DFKNTsize(numtype | DFNT_NATIVE);
-        if ((attr_buf = (void *)malloc(nelms * eltsz)) == NULL) {
+        if ((attr_buf = (void *)malloc((size_t)(nelms * eltsz))) == NULL) {
             printf("Error allocating %d values of size %d for attribute %s", nelms, numtype, attr_name);
             goto out;
         }
@@ -825,7 +815,6 @@ out:
  * get_print_info
  *-------------------------------------------------------------------------
  */
-
 int
 get_print_info(int chunk_flags, HDF_CHUNK_DEF *chunk_def, /* chunk definition */
                int comp_type, char *path, char *sds_name, int32 sd_id)
@@ -870,7 +859,8 @@ get_print_info(int chunk_flags, HDF_CHUNK_DEF *chunk_def, /* chunk definition */
         /* compression ratio = uncompressed size /  compressed size */
         a = uncomp_size;
         b = comp_size;
-        if (b != 0)
+        /* Avoid division by zero */
+        if (b > 0.0 || b < 0.0)
             r = a / b;
 
         sprintf(comp_str, "(%.2f:1)", r);
@@ -891,7 +881,6 @@ out:
  * print_info
  *-------------------------------------------------------------------------
  */
-
 void
 print_info(int chunk_flags, HDF_CHUNK_DEF *chunk_def, /* chunk definition */
            int comp_type, char *path, char *ratio)

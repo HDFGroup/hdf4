@@ -25,19 +25,12 @@
  *
  * Return: index on success, -1 on failure
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 int
 list_table_search(list_table_t *list_tbl, int tag, int ref)
 {
-    int i;
-
-    for (i = 0; i < list_tbl->nobjs; i++) {
+    for (int i = 0; i < list_tbl->nobjs; i++) {
         if (list_tbl->objs[i].tag == tag && list_tbl->objs[i].ref == ref)
             return i;
     }
@@ -52,22 +45,17 @@ list_table_search(list_table_t *list_tbl, int tag, int ref)
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 void
-list_table_add(list_table_t *list_tbl, int tag, int ref, char *path)
+list_table_add(list_table_t *list_tbl, int tag, int ref, const char *path)
 {
-    int path_len;
-    int i;
+    size_t path_len;
+    int    i;
 
     if (list_tbl->nobjs == list_tbl->size) {
         list_tbl->size *= 2;
-        list_tbl->objs = (obj_info_t *)realloc(list_tbl->objs, list_tbl->size * sizeof(obj_info_t));
+        list_tbl->objs = (obj_info_t *)realloc(list_tbl->objs, (size_t)list_tbl->size * sizeof(obj_info_t));
 
         for (i = list_tbl->nobjs; i < list_tbl->size; i++) {
             list_tbl->objs[i].tag  = -1;
@@ -83,7 +71,7 @@ list_table_add(list_table_t *list_tbl, int tag, int ref, char *path)
     /* copy the path over */
     path_len               = strlen(path);
     list_tbl->objs[i].path = (char *)malloc(path_len + 1);
-    HIstrncpy(list_tbl->objs[i].path, path, path_len + 1);
+    HIstrncpy(list_tbl->objs[i].path, path, (int)path_len + 1);
 }
 
 /*-------------------------------------------------------------------------
@@ -93,24 +81,18 @@ list_table_add(list_table_t *list_tbl, int tag, int ref, char *path)
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 void
 list_table_init(list_table_t **tbl)
 {
-    int           i;
     list_table_t *list_tbl = (list_table_t *)malloc(sizeof(list_table_t));
 
     list_tbl->size  = 20;
     list_tbl->nobjs = 0;
-    list_tbl->objs  = (obj_info_t *)malloc(list_tbl->size * sizeof(obj_info_t));
+    list_tbl->objs  = (obj_info_t *)malloc((size_t)list_tbl->size * sizeof(obj_info_t));
 
-    for (i = 0; i < list_tbl->size; i++) {
+    for (int i = 0; i < list_tbl->size; i++) {
         list_tbl->objs[i].tag = -1;
         list_tbl->objs[i].ref = -1;
     }
@@ -125,19 +107,12 @@ list_table_init(list_table_t **tbl)
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 void
 list_table_free(list_table_t *list_tbl)
 {
-    int i;
-
-    for (i = 0; i < list_tbl->nobjs; i++) {
+    for (int i = 0; i < list_tbl->nobjs; i++) {
         assert(list_tbl->objs[i].path);
         free(list_tbl->objs[i].path);
     }
@@ -152,20 +127,14 @@ list_table_free(list_table_t *list_tbl)
  *
  * Return: error string or NULL for success
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 const char *
 list_table_check(list_table_t *list_tbl, char *obj_name)
 {
-    int   i;
     int32 tag;
 
-    for (i = 0; i < list_tbl->nobjs; i++) {
+    for (int i = 0; i < list_tbl->nobjs; i++) {
         if (strcmp(list_tbl->objs[i].path, obj_name) == 0) {
             /* found the name; check if it is an SDS or Image */
             tag = list_tbl->objs[i].tag;
@@ -188,13 +157,8 @@ list_table_check(list_table_t *list_tbl, char *obj_name)
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 25, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 void
 list_table_print(list_table_t *list_tbl)
 {

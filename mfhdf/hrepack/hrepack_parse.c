@@ -30,13 +30,8 @@
  *
  * Return: a list of names, the number of names and its compression type
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 15, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 obj_list_t *
 parse_comp(const char *str, int *n_objs, comp_info_t *comp)
 {
@@ -54,7 +49,7 @@ parse_comp(const char *str, int *n_objs, comp_info_t *comp)
     for (i = 0, n = 0; i < len; i++) {
         c = str[i];
         if (c == ':') {
-            end_obj = i;
+            end_obj = (int)i;
         }
         if (c == ',') {
             n++;
@@ -72,7 +67,7 @@ parse_comp(const char *str, int *n_objs, comp_info_t *comp)
      */
 
     n++;
-    obj_list = malloc(n * sizeof(obj_list_t));
+    obj_list = malloc((size_t)n * sizeof(obj_list_t));
     *n_objs  = n;
 
     /* get object list */
@@ -102,7 +97,7 @@ parse_comp(const char *str, int *n_objs, comp_info_t *comp)
      */
 
     m = 0;
-    for (i = end_obj + 1, k = 0; i < len; i++, k++) {
+    for (i = (unsigned)(end_obj + 1), k = 0; i < len; i++, k++) {
         c        = str[i];
         scomp[k] = c;
         if (c == ' ' || i == len - 1) {
@@ -136,8 +131,8 @@ parse_comp(const char *str, int *n_objs, comp_info_t *comp)
                             l++;
                             if (l == 2) {
                                 smask[l] = '\0';
-                                i        = len - 1; /* end */
-                                (*n_objs)--;        /* we counted an extra ',' */
+                                i        = (unsigned)len - 1; /* end */
+                                (*n_objs)--;                  /* we counted an extra ',' */
                                 if (strcmp(smask, "NN") == 0)
                                     comp->szip_mode = NN_MODE;
                                 else if (strcmp(smask, "EC") == 0)
@@ -169,7 +164,7 @@ parse_comp(const char *str, int *n_objs, comp_info_t *comp)
                 /* set return value of the compression parameter */
                 stype[m]   = '\0';
                 comp->info = atoi(stype);
-                i += m; /* jump */
+                i += (unsigned)m; /* jump */
 
             } /* if c==' ' */
 
@@ -296,13 +291,8 @@ out:
  *
  * Return: a list of names, the number of names and its chunking info
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 17, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 obj_list_t *
 parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank)
 {
@@ -318,7 +308,7 @@ parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank)
     for (i = 0, n = 0; i < len; i++) {
         c = str[i];
         if (c == ':') {
-            end_obj = i;
+            end_obj = (int)i;
         }
         if (c == ',') {
             n++;
@@ -336,7 +326,7 @@ parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank)
      */
 
     n++;
-    obj_list = malloc(n * sizeof(obj_list_t));
+    obj_list = malloc((size_t)n * sizeof(obj_list_t));
     *n_objs  = n;
 
     /* get object list */
@@ -363,10 +353,10 @@ parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank)
 
     /* get chunk info */
     k = 0;
-    for (i = end_obj + 1, c_index = 0; i < len; i++) {
+    for (i = (unsigned)(end_obj + 1), c_index = 0; i < len; i++) {
         c       = str[i];
         sdim[k] = c;
-        k++; /*increment sdim index */
+        k++; /* increment sdim index */
 
         if (!isdigit(c) && c != 'x' && c != 'N' && c != 'O' && c != 'N' && c != 'E') {
             printf("Input Error: Invalid chunking in <%s>\n", str);
@@ -418,13 +408,8 @@ out:
  *
  * Return: number, -1 for FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 31, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 int
 parse_number(char *str)
 {
@@ -451,7 +436,6 @@ parse_number(char *str)
  *
  *-------------------------------------------------------------------------
  */
-
 const char *
 get_scomp(comp_coder_t code)
 {

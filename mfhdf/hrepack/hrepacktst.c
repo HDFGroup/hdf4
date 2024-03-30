@@ -1775,26 +1775,29 @@ do_file_all(const char *fname)
      *-------------------------------------------------------------------------
      */
     if (SZ_encoder_enabled()) {
+        int32 *buf    = NULL;
+        int32  dim[2] = {YD1, XD1};
+        int32  bpp    = 32;
+
         chunk_flags = HDF_NONE;
         comp_type   = COMP_CODE_SZIP;
+
         if (add_sd(file_id, sd_id, "dset_szip", 0, chunk_flags, comp_type, &c_info) < 0)
             goto out;
 
-        {
+        if (NULL == (buf = (int32 *)malloc((size_t)(YD1 * XD1) * sizeof(int32))))
+            goto out;
 
-            int i, j;
-            {
-                int32 buf[YD1][XD1];
-                int32 dim[2] = {YD1, XD1};
-                int32 bpp    = 32;
-                for (j = 0; j < YD1; j++) {
-                    for (i = 0; i < XD1; i++)
-                        buf[j][i] = (int32)(i + j) + 1;
-                }
-                if (add_sd_szip(file_id, sd_id, "dset32szip", 0, HDF_NONE, DFNT_INT32, bpp, dim, buf) < 0)
-                    return FAIL;
-            }
+        for (int32 j = 0; j < YD1; j++) {
+            for (int32 i = 0; i < XD1; i++)
+                buf[(j * YD1) + i] = i + j + 1;
         }
+        if (add_sd_szip(file_id, sd_id, "dset32szip", 0, HDF_NONE, DFNT_INT32, bpp, dim, buf) < 0) {
+            free(buf);
+            goto out;
+        }
+
+        free(buf);
     }
 
 #endif

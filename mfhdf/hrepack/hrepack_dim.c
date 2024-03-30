@@ -44,7 +44,7 @@ typedef struct match_dim_table_t {
 /* methods for match_dim_table_t */
 static void match_dim_table_free(match_dim_table_t *mdim_tbl);
 static void match_dim_table_init(match_dim_table_t **tbl);
-static void match_dim_table_add(match_dim_table_t *mdim_tbl, unsigned *flags, char *dim_name, int32 ref);
+static void match_dim_table_add(match_dim_table_t *mdim_tbl, int *flags, char *dim_name, int32 ref);
 
 /* generate the SDS */
 static int gen_dim(char *name, int32 ref, int32 sd_in, int32 sd_out, options_t *options);
@@ -58,11 +58,6 @@ static int gen_dim(char *name, int32 ref, int32 sd_in, int32 sd_out, options_t *
  *  Folk, Michael; Zoellick, Bill. (1992). File Structures. Addison-Wesley.
  *
  * Return: void
- *
- * Programmer: Pedro Vicente Nunes, pvn@hdfgroup.org
- *
- * Date: May 10, 2006
- *
  *-------------------------------------------------------------------------
  */
 void
@@ -74,7 +69,7 @@ match_dim(int32 sd_in, int32 sd_out, dim_table_t *dt1, dim_table_t *dt2, options
     int curr2            = 0;
     /*build a common list */
     match_dim_table_t *mattbl = NULL;
-    unsigned           inlist[2];
+    int                inlist[2];
     int                i;
 
 #if defined(HREPACK_DEBUG)
@@ -181,11 +176,6 @@ match_dim(int32 sd_in, int32 sd_out, dim_table_t *dt1, dim_table_t *dt2, options
  * Purpose: generate "lone" dimensions.
  *
  * Return: -1 error, 1 ok
- *
- * Programmer: Pedro Vicente Nunes, pvn@ncsa.uiuc.edu
- *
- * Date: May 10, 2006
- *
  *-------------------------------------------------------------------------
  */
 static int
@@ -193,19 +183,19 @@ gen_dim(char *name, /* name of SDS */
         int32 ref,  /* ref of SDS */
         int32 sd_in, int32 sd_out, options_t *options)
 {
-    int32 sds_id,                  /* data set identifier */
-        sds_out = FAIL,            /* data set identifier */
-        dim_id,                    /* dimension identifier */
-        sds_index,                 /* index number of the data set */
-        dtype,                     /* SDS data type */
-        dimsizes[H4_MAX_VAR_DIMS], /* dimensions of SDS */
-        start[H4_MAX_VAR_DIMS],    /* read start */
-        edges[H4_MAX_VAR_DIMS],    /* read edges */
-        nattrs,                    /* number of SDS attributes */
-        rank,                      /* rank of SDS */
-        numtype,                   /* number type */
-        eltsz,                     /* element size */
-        nelms;                     /* number of elements */
+    int32         sds_id;                    /* data set identifier */
+    int32         sds_out = FAIL;            /* data set identifier */
+    int32         dim_id;                    /* dimension identifier */
+    int32         sds_index;                 /* index number of the data set */
+    int32         dtype;                     /* SDS data type */
+    int32         dimsizes[H4_MAX_VAR_DIMS]; /* dimensions of SDS */
+    int32         start[H4_MAX_VAR_DIMS];    /* read start */
+    int32         edges[H4_MAX_VAR_DIMS];    /* read edges */
+    int32         nattrs;                    /* number of SDS attributes */
+    int32         rank;                      /* rank of SDS */
+    int32         numtype;                   /* number type */
+    int32         eltsz;                     /* element size */
+    int32         nelms;                     /* number of elements */
     char          sds_name[H4_MAX_NC_NAME];
     void         *buf = NULL;
     int           i, j, ret = 1;
@@ -618,7 +608,7 @@ gen_dim(char *name, /* name of SDS */
          */
 
         /* alloc */
-        if ((buf = (void *)malloc(nelms * eltsz)) == NULL) {
+        if ((buf = (void *)malloc((size_t)(nelms * eltsz))) == NULL) {
             printf("Failed to allocate %d elements of size %d\n", nelms, eltsz);
             ret = -1;
             goto out;
@@ -668,16 +658,10 @@ out:
  * Function: match_dim_table_add
  *
  * Purpose: add an entry from a list of dimension names into the match table
- *
- * Programmer: Pedro Vicente, pvn@hdfgroup.org
- *
- * Date: January 17, 2007
- *
  *-------------------------------------------------------------------------
  */
-
 static void
-match_dim_table_add(match_dim_table_t *mdim_tbl, unsigned *flags, char *dim_name, int32 ref)
+match_dim_table_add(match_dim_table_t *mdim_tbl, int *flags, char *dim_name, int32 ref)
 {
     int i;
 
@@ -696,7 +680,7 @@ match_dim_table_add(match_dim_table_t *mdim_tbl, unsigned *flags, char *dim_name
     if (mdim_tbl->nobjs == mdim_tbl->size) {
         mdim_tbl->size *= 2;
         mdim_tbl->objs =
-            (match_dim_name_t *)realloc(mdim_tbl->objs, mdim_tbl->size * sizeof(match_dim_name_t));
+            (match_dim_name_t *)realloc(mdim_tbl->objs, (size_t)mdim_tbl->size * sizeof(match_dim_name_t));
 
         for (i = mdim_tbl->nobjs; i < mdim_tbl->size; i++) {
             mdim_tbl->objs[i].ref      = -1;
@@ -717,14 +701,8 @@ match_dim_table_add(match_dim_table_t *mdim_tbl, unsigned *flags, char *dim_name
  * Purpose: initialize match table
  *
  * Return: void
- *
- * Programmer: Pedro Vicente, pvn@hdfgroup.org
- *
- * Date: January 17, 2007
- *
  *-------------------------------------------------------------------------
  */
-
 static void
 match_dim_table_init(match_dim_table_t **tbl)
 {
@@ -733,7 +711,7 @@ match_dim_table_init(match_dim_table_t **tbl)
 
     mdim_tbl->size  = 20;
     mdim_tbl->nobjs = 0;
-    mdim_tbl->objs  = (match_dim_name_t *)malloc(mdim_tbl->size * sizeof(match_dim_name_t));
+    mdim_tbl->objs  = (match_dim_name_t *)malloc((size_t)mdim_tbl->size * sizeof(match_dim_name_t));
 
     for (i = 0; i < mdim_tbl->size; i++) {
         mdim_tbl->objs[i].ref      = -1;
@@ -749,14 +727,8 @@ match_dim_table_init(match_dim_table_t **tbl)
  * Purpose: free match table
  *
  * Return: void
- *
- * Programmer: Pedro Vicente, pvn@hdfgroup.org
- *
- * Date: January 17, 2007
- *
  *-------------------------------------------------------------------------
  */
-
 static void
 match_dim_table_free(match_dim_table_t *mdim_tbl)
 {
@@ -770,14 +742,8 @@ match_dim_table_free(match_dim_table_t *mdim_tbl)
  * Purpose: add an entry of pair REF/NAME into a dimension table
  *
  * Return: void
- *
- * Programmer: Pedro Vicente, pvn@hdfgroup.org
- *
- * Date: January 17, 2007
- *
  *-------------------------------------------------------------------------
  */
-
 void
 dim_table_add(dim_table_t *dim_tbl, int ref, char *name)
 {
@@ -785,7 +751,7 @@ dim_table_add(dim_table_t *dim_tbl, int ref, char *name)
 
     if (dim_tbl->nobjs == dim_tbl->size) {
         dim_tbl->size *= 2;
-        dim_tbl->objs = (dim_name_t *)realloc(dim_tbl->objs, dim_tbl->size * sizeof(dim_name_t));
+        dim_tbl->objs = (dim_name_t *)realloc(dim_tbl->objs, (size_t)dim_tbl->size * sizeof(dim_name_t));
 
         for (i = dim_tbl->nobjs; i < dim_tbl->size; i++) {
             dim_tbl->objs[i].ref = -1;
@@ -803,14 +769,8 @@ dim_table_add(dim_table_t *dim_tbl, int ref, char *name)
  * Purpose: initialize dimension table
  *
  * Return: void
- *
- * Programmer: Pedro Vicente, pvn@hdfgroup.org
- *
- * Date: January 17, 2007
- *
  *-------------------------------------------------------------------------
  */
-
 void
 dim_table_init(dim_table_t **tbl)
 {
@@ -819,7 +779,7 @@ dim_table_init(dim_table_t **tbl)
 
     dim_tbl->size  = 20;
     dim_tbl->nobjs = 0;
-    dim_tbl->objs  = (dim_name_t *)malloc(dim_tbl->size * sizeof(dim_name_t));
+    dim_tbl->objs  = (dim_name_t *)malloc((size_t)dim_tbl->size * sizeof(dim_name_t));
 
     for (i = 0; i < dim_tbl->size; i++) {
         dim_tbl->objs[i].ref = -1;
@@ -834,14 +794,8 @@ dim_table_init(dim_table_t **tbl)
  * Purpose: free dimension table
  *
  * Return: void
- *
- * Programmer: Pedro Vicente, pvn@hdfgroup.org
- *
- * Date: January 17, 2007
- *
  *-------------------------------------------------------------------------
  */
-
 void
 dim_table_free(dim_table_t *dim_tbl)
 {

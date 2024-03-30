@@ -168,7 +168,7 @@ copy_an_data(int32 infile_id, int32 outfile_id, int32 ref_in, int32 tag_in, int3
         if (is_label)
             ann_length++;
 
-        if ((buf = (char *)malloc((ann_length) * sizeof(int8))) == NULL) {
+        if ((buf = (char *)malloc((size_t)ann_length * sizeof(int8))) == NULL) {
             printf("Failed to get memory for AN %d of <%s>\n", i, path);
             continue;
         }
