@@ -60,7 +60,7 @@ typedef struct list_table_t {
 void        list_table_init(list_table_t **list_tbl);
 void        list_table_free(list_table_t *list_tbl);
 int         list_table_search(list_table_t *list_tbl, int tag, int ref);
-void        list_table_add(list_table_t *list_tbl, int tag, int ref, char *obj_name);
+void        list_table_add(list_table_t *list_tbl, int tag, int ref, const char *obj_name);
 const char *list_table_check(list_table_t *list_tbl, char *obj_name);
 void        list_table_print(list_table_t *list_tbl);
 

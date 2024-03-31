@@ -28,13 +28,8 @@
  *
  * Return: 0, -1 for error
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 11, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 int
 copy_vs(int32 infile_id, int32 outfile_id, int32 tag, /* tag of input VS */
         int32      ref,                               /* ref of input VS */
@@ -302,13 +297,8 @@ out:
  *
  * Return: 1, for success, -1 for error
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 28, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 int
 copy_vdata_attribute(int32 in, int32 out, int32 findex, int attrindex)
 {

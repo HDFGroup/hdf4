@@ -45,13 +45,8 @@ main(int argc, char **argv)
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 3, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 static int
 sds_get_compck(char *fname, char *sds_name)
 {
@@ -152,13 +147,8 @@ sds_get_compck(char *fname, char *sds_name)
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 3, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 static int
 sds_get_all(char *fname)
 {
@@ -214,7 +204,6 @@ sds_get_all(char *fname)
  *
  *-------------------------------------------------------------------------
  */
-
 static const char *
 get_scomp(comp_coder_t code)
 {
@@ -247,7 +236,6 @@ get_scomp(comp_coder_t code)
  *
  *-------------------------------------------------------------------------
  */
-
 static const char *
 get_schunk(int32 flags)
 {
@@ -272,7 +260,6 @@ get_schunk(int32 flags)
  *
  *-------------------------------------------------------------------------
  */
-
 static void
 usage(void)
 {

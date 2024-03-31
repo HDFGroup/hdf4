@@ -31,14 +31,8 @@
  *  using options
  *
  * Return: 0 ok, -1 not ok
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 11, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 int
 copy_gr(int32 infile_id, int32 outfile_id, int32 gr_in, int32 gr_out, int32 tag, /* tag of input GR */
         int32      ref,                                                          /* ref of input GR */
@@ -348,11 +342,12 @@ copy_gr(int32 infile_id, int32 outfile_id, int32 gr_in, int32 gr_out, int32 tag,
 
     /* check inspection mode */
     if (options->trip == 0) {
-        free(path);
         if (GRendaccess(ri_id) == FAIL) {
             printf("Could not close GR <%s>\n", path);
+            free(path);
             return -1;
         }
+        free(path);
         return 0;
     }
     /*-------------------------------------------------------------------------
@@ -361,7 +356,7 @@ copy_gr(int32 infile_id, int32 outfile_id, int32 gr_in, int32 gr_out, int32 tag,
      */
 
     /* alloc */
-    if ((buf = (void *)malloc(data_size)) == NULL) {
+    if ((buf = (void *)malloc((size_t)data_size)) == NULL) {
         printf("Failed to allocate %d elements of size %d\n", nelms, eltsz);
         GRendaccess(ri_id);
         free(path);
@@ -578,14 +573,8 @@ out:
  * Purpose: copy GR attributes from input file to output file
  *
  * Return: 1, for success, -1 for error
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 28, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 int
 copy_gr_attrs(int32 ri_id, int32 ri_out, int32 nattrs, options_t *options)
 {
@@ -608,7 +597,7 @@ copy_gr_attrs(int32 ri_id, int32 ri_out, int32 nattrs, options_t *options)
         /* compute the number of the bytes for each value. */
         numtype = dtype & DFNT_MASK;
         eltsz   = DFKNTsize(numtype | DFNT_NATIVE);
-        if ((attr_buf = (void *)malloc(nelms * eltsz)) == NULL) {
+        if ((attr_buf = (void *)malloc((size_t)(nelms * eltsz))) == NULL) {
             printf("Error allocating %d values of size %d for attribute %s", nelms, numtype, attr_name);
             return -1;
         }

@@ -26,13 +26,8 @@
  *
  * Return: 1 if reserved, 0 if not
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 22, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 int
 is_reserved(char *vgroup_class)
 {
@@ -65,13 +60,8 @@ is_reserved(char *vgroup_class)
  *
  * Return: path
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 11, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 char *
 get_path(char *path_name, char *obj_name)
 {
@@ -97,13 +87,8 @@ get_path(char *path_name, char *obj_name)
  *
  * Return: 0 if no information for this PATH, 1 otherwise
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 28, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 int
 options_get_info(options_t     *options,     /* global options */
                  int32         *chunk_flags, /* chunk flags OUT */
@@ -406,13 +391,8 @@ options_get_info(options_t     *options,     /* global options */
  *
  * Return: 0 for OK, -1 otherwise
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 11, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 int
 set_szip(int        pixels_per_block, /*in */
          int        compression_mode, /* in */
@@ -471,7 +451,6 @@ set_szip(int        pixels_per_block, /*in */
  *
  *-------------------------------------------------------------------------
  */
-
 int
 cache(HDF_CHUNK_DEF chunk_def, int32 eltsz, int32 rank, int32 *dimsize)
 {
