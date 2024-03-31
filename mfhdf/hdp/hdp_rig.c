@@ -11,10 +11,11 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <math.h>
 #include <stdio.h>
+
 #include "mfhdf.h"
 #include "hdp.h"
-#include <math.h>
 
 #define IMAGE 1
 
@@ -131,7 +132,7 @@ parse_dumprig_opts(dump_info_t *dumprig_opts, int *curr_arg, int argc, char *arg
                 if (*ptr != '\0') /* count the last item */
                     numItems++;
 
-                dumprig_opts->filter_num = (int *)malloc(sizeof(int) * numItems);
+                dumprig_opts->filter_num = (int *)malloc(sizeof(int) * (size_t)numItems);
                 if (dumprig_opts->filter_num == NULL) {
                     printf("Not enough memory!\n");
                     exit(-1);
@@ -216,28 +217,29 @@ drig(dump_info_t *dumprig_opts, int curr_arg, int argc, char *argv[], int model)
     file_format_t ff;
     int           ret_value = SUCCEED;
 
-    while (curr_arg < argc) { /* Examine all files. */
+    /* Examine all files */
+    while (curr_arg < argc) {
         strcpy(file_name, argv[curr_arg]);
         curr_arg++;
 
         num_rig_chosen = dumprig_opts->num_chosen;
         if (num_rig_chosen > 0) {
-            if ((rig_chosen = (int32 *)malloc(sizeof(int32) * num_rig_chosen)) == NULL) {
+            if ((rig_chosen = (int32 *)malloc(sizeof(int32) * (size_t)num_rig_chosen)) == NULL) {
                 fprintf(stderr, "Memory allocation error\n");
                 ret_value = FAIL;
                 goto done;
-            } /* end if */
+            }
 
-            k = (-1);
-            HDmemfill(rig_chosen, &k, sizeof(int32), num_rig_chosen);
-        } /* end if */
+            k = -1;
+            HDmemfill(rig_chosen, &k, sizeof(int32), (uint32)num_rig_chosen);
+        }
 
         /* Determine which RIGs are to be displayed. */
         if (dumprig_opts->filter == DINDEX) {
             for (i = 0; i < dumprig_opts->num_chosen; i++)
                 rig_chosen[i] = dumprig_opts->filter_num[i];
             sort(rig_chosen, num_rig_chosen); /* DREFNUM doesn't need this */
-        }                                     /* end if */
+        }
 
         /* ASCII or Binary? */
         ff = dumprig_opts->file_format;
@@ -312,7 +314,7 @@ drig(dump_info_t *dumprig_opts, int curr_arg, int argc, char *argv[], int model)
                        8-bit image or 3 for a 24-bit image. */
                     eltsz      = DFKNTsize(DFNT_UINT8 | DFNT_NATIVE) * ncomps;
                     read_nelts = width * height; /* Number of elements to be read in. */
-                    if ((image = (void *)malloc(read_nelts * eltsz)) == NULL) {
+                    if ((image = (void *)malloc((size_t)(read_nelts * eltsz))) == NULL) {
                         fprintf(stderr, "Not enough memory!\n");
                         ret_value = FAIL;
                         goto done;
@@ -403,6 +405,9 @@ drig(dump_info_t *dumprig_opts, int curr_arg, int argc, char *argv[], int model)
 
                             if (dumprig_opts->contents == DHEADER)
                                 break;
+
+                            /* FALLTHROUGH */
+
                         case DDATA:
                             if (dumprig_opts->contents != DDATA)
                                 fprintf(fp, "\tData : \n");
@@ -495,7 +500,7 @@ drig(dump_info_t *dumprig_opts, int curr_arg, int argc, char *argv[], int model)
                        8-bit image or 3 for a 24-bit image. */
                     eltsz      = DFKNTsize(DFNT_UINT8 | DFNT_NATIVE) * ncomps;
                     read_nelts = width * height; /* Number of elements to be read in. */
-                    if ((image = (void *)malloc(read_nelts * eltsz)) == NULL) {
+                    if ((image = (void *)malloc((size_t)(read_nelts * eltsz))) == NULL) {
                         fprintf(stderr, "Not enough memory!\n");
                         ret_value = FAIL;
                         goto done;

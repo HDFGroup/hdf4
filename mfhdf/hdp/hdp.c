@@ -114,7 +114,6 @@ main(int argc, char *argv[])
     command_value_t cmd = BAD_COMMAND; /* command to perform */
     int             curr_arg;          /* current cmd line argument */
     dump_opt_t      glob_opts;         /* global options for all commands */
-    int             j;                 /* local counting variables */
 
     memset(&glob_opts, 0, sizeof(dump_opt_t));
 
@@ -132,6 +131,7 @@ main(int argc, char *argv[])
                     glob_opts.help = TRUE; /* for displaying options. */
                     break;
                 }
+                /* FALLTHROUGH */
             default:
                 usage(argc, argv); /* Display the general usage. */
                 exit(EXIT_FAILURE);
@@ -139,7 +139,7 @@ main(int argc, char *argv[])
         curr_arg++;
     }
 
-    for (j = 0; j < (sizeof(commands) / sizeof(command_t)); j++) {
+    for (size_t j = 0; j < (sizeof(commands) / sizeof(command_t)); j++) {
         if (strcmp(argv[curr_arg], commands[j].name) == 0) {
             cmd = commands[j].value;
             break;

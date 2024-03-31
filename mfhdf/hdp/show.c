@@ -11,13 +11,10 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* Modified from vshow.c by Eric Tsui, 12/25/1994. */
-
+#include "vg_priv.h"
 #include "hdp.h"
 
-#include "vg_priv.h"
-
-#define BUFFER 1000000
+#define BUFFER 1048576
 
 /* ------------------------------------------------ */
 
@@ -31,15 +28,15 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
     uint8          *b  = NULL;
     DYN_VWRITELIST *w  = NULL;
     int (*vfmtfn[VSFIELDMAX])(void *, file_format_t ff, FILE *);
-    int32 off[VSFIELDMAX];
-    int32 order[VSFIELDMAX];
-    int32 nattrs[VSFIELDMAX];
-    int32 bufsize; /* size of the buffer we are using */
-    int32 chunk;   /* number of rows that will fit in the buffer */
-    int32 done;    /* number of rows we have done */
-    int32 count;   /* number of rows to do this time through
-                              the loop */
-    int32 nf;      /* number of fields in this Vdata */
+    int32  off[VSFIELDMAX];
+    int32  order[VSFIELDMAX];
+    int32  nattrs[VSFIELDMAX];
+    size_t bufsize; /* size of the buffer we are using */
+    int32  chunk;   /* number of rows that will fit in the buffer */
+    int32  done;    /* number of rows we have done */
+    int32  count;   /* number of rows to do this time through
+                               the loop */
+    int32 nf;       /* number of fields in this Vdata */
     int32 x, display;
     int32 temp;
     int32 addr_width = 0;
@@ -49,8 +46,14 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
     int32 cnt1, cnt2;
     int32 cn        = 0;
     int32 ret_value = SUCCEED;
-    char  fields[VSFIELDMAX * FIELDNAMELENMAX];
-    char  flds[VSFIELDMAX * FIELDNAMELENMAX];
+
+    char *fields = NULL;
+    char *flds   = NULL;
+
+    fields = (char *)calloc(VSFIELDMAX * FIELDNAMELENMAX, sizeof(char));
+    CHECK_ALLOC(fields, "fields", "dumpvd");
+    flds = (char *)calloc(VSFIELDMAX * FIELDNAMELENMAX, sizeof(char));
+    CHECK_ALLOC(flds, "flds", "dumpvd");
 
     /* inquire about vdata */
     if (FAIL == VSinquire(vd, &nv, &interlace, fields, &vsize, vdname)) {
@@ -68,7 +71,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
     else
     /* Otherwise, all the records will be read in at one time. */
     {
-        bufsize = nv * vsize;
+        bufsize = (size_t)(nv * vsize);
         chunk   = nv;
     }
 
@@ -233,11 +236,12 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
                 int extfile_namelen = VSgetexternalfile(vd, 0, NULL, NULL);
                 if (extfile_namelen > 0) {
                     char *extfile_name = NULL;
-                    extfile_name       = (char *)malloc(sizeof(char *) * (extfile_namelen + 1));
+                    extfile_name       = (char *)malloc(sizeof(char *) * (size_t)(extfile_namelen + 1));
                     CHECK_ALLOC(extfile_name, "extfile_name", "dumpvd");
 
                     /* Get the external file info, we don't need offset here */
-                    extfile_namelen = VSgetexternalfile(vd, extfile_namelen + 1, extfile_name, NULL);
+                    extfile_namelen =
+                        VSgetexternalfile(vd, (unsigned)extfile_namelen + 1, extfile_name, NULL);
                     ERROR_GOTO_3("in %s: VSread failed for vd(%d) with external file %s.  Please verify the "
                                  "file exists in the same directory.",
                                  "dumpvd", (int)vd, extfile_name);
@@ -359,11 +363,12 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
                 int extfile_namelen = VSgetexternalfile(vd, 0, NULL, NULL);
                 if (extfile_namelen > 0) {
                     char *extfile_name = NULL;
-                    extfile_name       = (char *)malloc(sizeof(char *) * (extfile_namelen + 1));
+                    extfile_name       = (char *)malloc(sizeof(char *) * (size_t)(extfile_namelen + 1));
                     CHECK_ALLOC(extfile_name, "extfile_name", "dumpvd");
 
                     /* Get the external file info, we don't need offset here */
-                    extfile_namelen = VSgetexternalfile(vd, extfile_namelen + 1, extfile_name, NULL);
+                    extfile_namelen =
+                        VSgetexternalfile(vd, (unsigned)extfile_namelen + 1, extfile_name, NULL);
                     ERROR_GOTO_3("in %s: VSread failed for vd(%d) with external file %s.  Please verify the "
                                  "file exists in the same directory",
                                  "dumpvd", (int)vd, extfile_name);
@@ -423,9 +428,12 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
     } /* binary file */
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
+    if (ret_value == FAIL) {
         free(bb);
     }
+
+    free(fields);
+    free(flds);
 
     return ret_value;
 } /* dumpvd */
@@ -442,7 +450,8 @@ dumpattr(int32 vid, int32 findex, int isvs, file_format_t ff, FILE *fp)
     int    alloc_flag = 0;
     int32  i_type;
     int32  i_count;
-    int32  i_size, e_size;
+    int32  i_size;
+    int32  e_size;
     int32  off;
     uint8 *buf = NULL;
     uint8 *ptr = NULL;
@@ -505,7 +514,7 @@ dumpattr(int32 vid, int32 findex, int isvs, file_format_t ff, FILE *fp)
 
         /* we have two buffer sizes? */
         if (e_size > BUFFER) {
-            if (NULL == (buf = malloc(e_size))) {
+            if (NULL == (buf = malloc((size_t)e_size))) {
                 fprintf(stderr, ">>>dumpattr:can't allocate buf for %d'th attribute.\n", i);
                 ret_value = FAIL;
                 goto done; /* do we want exit here? */

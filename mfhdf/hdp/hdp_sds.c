@@ -11,10 +11,11 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <math.h>
 #include <stdio.h>
+
 #include "mfhdf.h"
 #include "hdp.h"
-#include <math.h>
 
 #ifdef H4_HAVE_LIBSZ
 #include "szlib.h"
@@ -208,16 +209,16 @@ sdsdumpfull(int32 sds_id, dump_info_t *dumpsds_opts, int32 rank, int32 dimsizes[
     CHECK_POS(eltsz, "eltsz", "sdsdumpfull");
     CHECK_POS(rank, "rank", "sdsdumpfull");
 
-    buf = (void *)malloc(read_nelts * eltsz);
+    buf = (void *)malloc((size_t)(read_nelts * eltsz));
     CHECK_ALLOC(buf, "buf", "sdsdumpfull");
 
-    left = (int32 *)malloc(rank * sizeof(int32));
+    left = (int32 *)malloc((size_t)rank * sizeof(int32));
     CHECK_ALLOC(left, "left", "sdsdumpfull");
 
-    start = (int32 *)malloc(rank * sizeof(int32));
+    start = (int32 *)malloc((size_t)rank * sizeof(int32));
     CHECK_ALLOC(start, "start", "sdsdumpfull");
 
-    edge = (int32 *)malloc(rank * sizeof(int32));
+    edge = (int32 *)malloc((size_t)rank * sizeof(int32));
     CHECK_ALLOC(edge, "edge", "sdsdumpfull");
 
     /* BMR - how come this doesn't have stride as for GR? */
@@ -254,7 +255,7 @@ sdsdumpfull(int32 sds_id, dump_info_t *dumpsds_opts, int32 rank, int32 dimsizes[
             int extfile_namelen = SDgetexternalfile(sds_id, 0, NULL, NULL);
             if (extfile_namelen > 0) {
                 char *extfile_name = NULL;
-                extfile_name       = (char *)malloc(sizeof(char *) * (extfile_namelen + 1));
+                extfile_name       = (char *)malloc(sizeof(char *) * (size_t)(extfile_namelen + 1));
                 CHECK_ALLOC(extfile_name, "extfile_name", "sdsdumpfull");
 
                 /* Get the external file information, we don't need offset here */
@@ -288,7 +289,7 @@ sdsdumpfull(int32 sds_id, dump_info_t *dumpsds_opts, int32 rank, int32 dimsizes[
                 int extfile_namelen = SDgetexternalfile(sds_id, 0, NULL, NULL);
                 if (extfile_namelen > 0) {
                     char *extfile_name = NULL;
-                    extfile_name       = (char *)malloc(sizeof(char *) * (extfile_namelen + 1));
+                    extfile_name       = (char *)malloc(sizeof(char *) * (size_t)(extfile_namelen + 1));
                     CHECK_ALLOC(extfile_name, "extfile_name", "sdsdumpfull");
 
                     /* Get the external file information, we don't need offset here */
@@ -501,7 +502,7 @@ print_SDattrs(int32 sd_id, FILE *fp, int32 n_file_attrs, dump_info_t *dumpsds_op
             CHECK_POS(attr_buf_size, "attr_buf_size", "print_SDattrs");
 
             /* allocate space for the attribute's values */
-            attr_buf = (void *)malloc(attr_buf_size);
+            attr_buf = (void *)malloc((size_t)attr_buf_size);
 
             /* if allocation fails, handle the failure */
             CHECK_ALLOC(attr_buf, "attr_buf", "print_SDattrs");
@@ -581,7 +582,7 @@ print_SDSattrs(int32 sds_id, int32 nattrs, FILE *fp, dump_info_t *dumpsds_opts)
             resetBuff(&attr_buf);
 
             /* allocate space for attribute's values */
-            attr_buf = (void *)malloc(attr_buf_size);
+            attr_buf = (void *)malloc((size_t)attr_buf_size);
             CHECK_ALLOC(attr_buf, "attr_buf", "print_SDSattrs");
 
             /* read the values of the attribute into buffer attr_buf */
@@ -951,6 +952,8 @@ printSDS_ASCII(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* index
 
             /* case DDATA doesn't need this */
             fprintf(fp, "\t Data : \n");
+
+            /* FALLTHROUGH */
 
         case DDATA:
             if (comp_type == COMP_CODE_SZIP && have_szip == 0) {

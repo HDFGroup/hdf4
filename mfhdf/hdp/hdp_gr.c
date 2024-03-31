@@ -12,10 +12,11 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include <stdio.h>
+#include <math.h>
+
 #include "mfhdf.h"
 #include "mfgr.h"
 #include "hdp.h"
-#include <math.h>
 
 #define N_ENTRIES 256 /* number of elements of each color */
 
@@ -112,7 +113,7 @@ parse_dumpgr_opts(dump_info_t *dumpgr_opts, int *curr_arg, int argc, char *argv[
 
             case 'm':          /* dump data in different interlace than at creation */
                 (*curr_arg)++; /* move forward to interlace option input */
-                user_interlace = atoi(argv[*curr_arg]);
+                user_interlace = (gr_interlace_t)atoi(argv[*curr_arg]);
                 if (user_interlace == MFGR_INTERLACE_PIXEL || user_interlace == MFGR_INTERLACE_LINE ||
                     user_interlace == MFGR_INTERLACE_COMPONENT)
                     dumpgr_opts->interlace = user_interlace; /* store interlace */
@@ -243,7 +244,7 @@ grdumpfull(int32 ri_id, dump_info_t *dumpgr_opts, int32 ncomps, /* "ncomps" is t
     CHECK_POS(eltsz, "eltsz", "grdumpfull");
     CHECK_POS(ncomps, "ncomps", "grdumpfull");
 
-    buf = (void *)malloc(read_nelts * eltsz);
+    buf = (void *)malloc((size_t)(read_nelts * eltsz));
     CHECK_ALLOC(buf, "buf", "grdumpfull");
 
     start = (int32 *)malloc(2 * sizeof(int32));
@@ -420,7 +421,7 @@ print_GRattrs(int32 gr_id, int32 n_file_attrs, FILE *fp, dump_info_t *dumpgr_opt
             CHECK_POS(attr_buf_size, "attr_buf_size", "print_GRattrs");
 
             /* allocate space for the attribute's values */
-            attr_buf = (void *)malloc(attr_buf_size);
+            attr_buf = (void *)malloc((size_t)attr_buf_size);
             CHECK_ALLOC(attr_buf, "attr_buf", "print_GRattrs");
 
             /* read the values of the attribute into the buffer */
@@ -501,7 +502,7 @@ print_RIattrs(int32 ri_id, int ri_index, int32 nattrs, FILE *fp, dump_info_t *du
             CHECK_POS(attr_buf_size, "attr_buf_size", "print_RIattrs");
 
             /* allocate space for attribute's values */
-            attr_buf = (void *)malloc(attr_buf_size);
+            attr_buf = (void *)malloc((size_t)attr_buf_size);
             CHECK_ALLOC(attr_buf, "attr_buf", "print_RIattrs");
 
             /* read the values of the attribute into buffer attr_buf */
@@ -838,6 +839,8 @@ printGR_ASCII(int32 gr_id, dump_info_t *dumpgr_opts, int32 ndsets, /* number of 
 
                     if (dumpgr_opts->contents == DHEADER)
                         break; /* break out for header only */
+
+                    /* FALLTHROUGH */
 
                 case DDATA:
                     if (dumpgr_opts->contents != DDATA)

@@ -11,8 +11,9 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "hdp.h"
 #include <math.h>
+
+#include "hdp.h"
 
 void
 dumpvd_usage(int argc, char *argv[])
@@ -75,8 +76,7 @@ parse_dumpvd_opts(dump_info_t *dumpvd_opts, int *curr_arg, int argc, char *argv[
                 dumpvd_opts->filter |= DREFNUM; /* set bit DREFNUM */
                 (*curr_arg)++;
 
-                /* parse and store the given ref numbers in structure
-   by_ref */
+                /* parse and store the given ref numbers in structure by_ref */
                 parse_number_opts(argv, curr_arg, &dumpvd_opts->by_ref);
                 (*curr_arg)++;
                 break;
@@ -335,7 +335,7 @@ choose_vd(dump_info_t *dumpvd_opts, int32 **vd_chosen, int32 file_id, int *index
                 if (vd_count < num_vd_chosen)
                     (*vd_chosen)[vd_count] = index;
                 else {
-                    *vd_chosen = (int32 *)realloc(*vd_chosen, sizeof(int32) * (num_vd_chosen + 1));
+                    *vd_chosen = (int32 *)realloc(*vd_chosen, sizeof(int32) * (size_t)(num_vd_chosen + 1));
                     if (*vd_chosen == NULL) {
                         fprintf(stderr, "Failure in choose_vd: Memory re-allocation error\n");
                         exit(1);
@@ -428,7 +428,10 @@ getFieldIndices(char *fields, char *flds_chosen[MAXCHOICES], int32 *flds_indices
     int32 i;
     int   flds_match = 0;
     int   ret_value  = SUCCEED;
-    char  tempflds[VSFIELDMAX * FIELDNAMELENMAX];
+    char *tempflds   = NULL;
+
+    tempflds = (char *)calloc(VSFIELDMAX * FIELDNAMELENMAX, sizeof(char));
+    CHECK_ALLOC(tempflds, "tempflds", "getFieldIndices");
 
     /* make copy of the field name list retrieved by VSinquire to use
        in processing the field names */
@@ -467,11 +470,13 @@ getFieldIndices(char *fields, char *flds_chosen[MAXCHOICES], int32 *flds_indices
                 idx++;
                 flds_match = 1;
             }
-        } /* for (i...) */
-    }     /* for (fld_name_idx...) */
+        }
+    }
 
     /* return the flag indicating whether any given fields exist */
     ret_value = flds_match;
+
+    free(tempflds);
 
     return ret_value;
 } /* end of getFieldIndices */
@@ -498,7 +503,11 @@ dumpvd_ascii(dump_info_t *dumpvd_opts, int32 file_id, const char *file_name, FIL
     int32         an_handle  = FAIL;
     int32         num_fields = 0;
     int           status = SUCCEED, ret_value = SUCCEED;
-    char          fields[VSFIELDMAX * FIELDNAMELENMAX];
+    char         *fields = NULL;
+
+    fields = (char *)calloc(VSFIELDMAX * FIELDNAMELENMAX, sizeof(char));
+    if (NULL == fields)
+        ERROR_GOTO_0("out of memory");
 
     if (dumpvd_opts->contents != DDATA) {
         fprintf(fp, "File name: %s \n\n", file_name);
@@ -662,13 +671,15 @@ dumpvd_ascii(dump_info_t *dumpvd_opts, int32 file_id, const char *file_name, FIL
     } /* for each vdata */
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
+    if (ret_value == FAIL) {
         if (an_handle != FAIL)
             ANend(an_handle);
 
         if (vd_id != FAIL)
             VSdetach(vd_id);
     }
+
+    free(fields);
 
     return ret_value;
 } /* dumpvd_ascii() */
@@ -688,10 +699,13 @@ dumpvd_binary(dump_info_t *dumpvd_opts, int32 file_id, const char *file_name, FI
     int32         vd_id   = FAIL;
     int           status;
     int           ret_value = SUCCEED;
-    char          fields[VSFIELDMAX * FIELDNAMELENMAX];
+    char         *fields    = NULL;
 
     (void)dumpvd_opts;
     (void)file_name;
+
+    fields = (char *)calloc(VSFIELDMAX * FIELDNAMELENMAX, sizeof(char));
+    CHECK_ALLOC(fields, "fields", "dumpvd_binary");
 
     vd_chosen_idx = 0; /* "vd_chosen_idx" is used to index the array of "vd_chosen". */
 
@@ -772,7 +786,9 @@ dumpvd_binary(dump_info_t *dumpvd_opts, int32 file_id, const char *file_name, FI
 
     } /* for each vdata */
 
-    return (ret_value);
+    free(fields);
+
+    return ret_value;
 } /* dumpvd_binary */
 
 /* closeVD combines the processes of Vend, Hclose, freeing the list
