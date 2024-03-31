@@ -597,7 +597,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
     }
 
     /* Get space to store the image offsets */
-    if ((img_info = (imginfo_t *)malloc(nimages * sizeof(imginfo_t))) == NULL)
+    if ((img_info = (imginfo_t *)malloc((size_t)nimages * sizeof(imginfo_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     memset(img_info, 0, (size_t)nimages * sizeof(imginfo_t));
 
@@ -632,8 +632,8 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                                            the image into image_info_struct and
                                            increment image count */
                                         if (img_tag == DFTAG_RI || img_tag == DFTAG_CI) {
-                                            Store_imginfo(&img_info[curr_image], grp_tag, grp_ref, img_tag,
-                                                          img_ref);
+                                            Store_imginfo(&img_info[curr_image], (uint16)grp_tag,
+                                                          (uint16)grp_ref, (uint16)img_tag, (uint16)img_ref);
                                             img_info[curr_image].offset = Hoffset(
                                                 file_id, (uint16)img_tag, (uint16)img_ref); /* store offset */
                                             curr_image++;
@@ -2531,15 +2531,15 @@ done:
 int
 GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], void *data)
 {
-    int32      stride[2];           /* pointer to the stride array */
-    gr_info_t *gr_ptr;              /* ptr to the GR information for this grid */
-    ri_info_t *ri_ptr;              /* ptr to the image to work with */
-    int        solid_block = FALSE; /* whether the image data is a solid block of data */
-    int        whole_image = FALSE; /* whether we are writing out the whole image */
-    void     **img_data;            /* pointer to the converted image data to write */
-    unsigned   pixel_mem_size,      /* size of a pixel in memory */
-        pixel_disk_size;            /* size of a pixel on disk */
-    uint16       scheme;            /* compression scheme used for JPEG images */
+    int32        stride[2];           /* pointer to the stride array */
+    gr_info_t   *gr_ptr;              /* ptr to the GR information for this grid */
+    ri_info_t   *ri_ptr;              /* ptr to the image to work with */
+    int          solid_block = FALSE; /* whether the image data is a solid block of data */
+    int          whole_image = FALSE; /* whether we are writing out the whole image */
+    void       **img_data;            /* pointer to the converted image data to write */
+    size_t       pixel_mem_size;      /* size of a pixel in memory */
+    size_t       pixel_disk_size;     /* size of a pixel on disk */
+    uint16       scheme;              /* compression scheme used for JPEG images */
     uint32       comp_config;
     comp_coder_t comp_type;
     comp_info    cinfo;
@@ -2623,8 +2623,8 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
 
     /* Get the size of the pixels in memory and on disk */
     pixel_mem_size =
-        (unsigned)(ri_ptr->img_dim.ncomps * DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
-    pixel_disk_size = (unsigned)(ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt));
+        (size_t)(ri_ptr->img_dim.ncomps * DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
+    pixel_disk_size = (size_t)(ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt));
 
     /* Get number-type and conversion information */
     platnumsubclass = (uint8)DFKgetPNSC(ri_ptr->img_dim.nt & (~DFNT_LITEND), DF_MT);
@@ -2734,9 +2734,9 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
             /* create the "line" pixel block */
             /* allocate space for the "line" block */
             fill_line_size = (int32)pixel_disk_size * ri_ptr->img_dim.xdim;
-            if ((fill_line = malloc(fill_line_size)) == NULL)
+            if ((fill_line = malloc((size_t)fill_line_size)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
-            HDmemfill(fill_line, fill_pixel, pixel_disk_size, (uint32)ri_ptr->img_dim.xdim);
+            HDmemfill(fill_line, fill_pixel, (uint32)pixel_disk_size, (uint32)ri_ptr->img_dim.xdim);
 
             fill_image         = TRUE; /* set flag to write out fill pixels */
             ri_ptr->store_fill = TRUE; /* set flag to store fill value attribute */
@@ -2848,7 +2848,6 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
                         } /* end if */
                         tmp_data = (void *)((char *)tmp_data + pixel_disk_size);
                     } /* end for */
-
                     /* Fill in the y-dim stride lines */
                     if (fill_ydim == TRUE)
                         for (k = 1; k < stride[YDIM]; k++) {
@@ -4435,10 +4434,10 @@ GRsetattr(int32 id, const char *name, int32 attr_nt, int32 count, const void *da
             /* check if we need a bigger buffer */
             if (new_at_size > at_size || at_ptr->data == NULL) {
                 free(at_ptr->data);
-                if ((at_ptr->data = malloc(new_at_size)) == NULL)
+                if ((at_ptr->data = malloc((size_t)new_at_size)) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
             } /* end if */
-            memcpy(at_ptr->data, data, new_at_size);
+            memcpy(at_ptr->data, data, (size_t)new_at_size);
 
             /* Update in-memory fields */
             at_ptr->len           = count;
@@ -4465,9 +4464,9 @@ GRsetattr(int32 id, const char *name, int32 attr_nt, int32 count, const void *da
         at_size = at_ptr->len * DFKNTsize((at_ptr->nt | DFNT_NATIVE) & (~DFNT_LITEND));
         if ((uint32)at_size < gr_ptr->attr_cache) { /* cacheable */
             /* allocate space for the attribute name & copy it */
-            if ((at_ptr->data = (char *)malloc(at_size)) == NULL)
+            if ((at_ptr->data = (char *)malloc((size_t)at_size)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
-            memcpy(at_ptr->data, data, at_size);
+            memcpy(at_ptr->data, data, (size_t)at_size);
             at_ptr->data_modified = TRUE;
             at_ptr->ref           = DFREF_WILDCARD;
         }      /* end if */
@@ -4632,7 +4631,7 @@ GRgetattr(int32 id, int32 index, void *data)
             HGOTO_ERROR(DFE_ARGS, FAIL);
 
         search_tree = gr_ptr->gattree;
-    } /* end if */
+    }
     else if (HAatom_group(id) == RIIDGROUP) {
         /* locate RI's object in hash table */
         if (NULL == (ri_ptr = (ri_info_t *)HAatom_object(id)))
@@ -4643,7 +4642,7 @@ GRgetattr(int32 id, int32 index, void *data)
             HGOTO_ERROR(DFE_ARGS, FAIL);
 
         search_tree = ri_ptr->lattree;
-    }    /* end if */
+    }
     else /* shouldn't get here, but what the heck... */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -4660,7 +4659,7 @@ GRgetattr(int32 id, int32 index, void *data)
         int32 AttrID; /* attribute Vdata id */
 
         /* Grab some memory for the attribute data */
-        if ((at_ptr->data = malloc(at_size)) == NULL)
+        if ((at_ptr->data = malloc((size_t)at_size)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         if ((AttrID = VSattach(hdf_file_id, (int32)at_ptr->ref, "r")) == FAIL)
@@ -4668,17 +4667,17 @@ GRgetattr(int32 id, int32 index, void *data)
         if (VSsetfields(AttrID, at_ptr->name) == FAIL) {
             VSdetach(AttrID);
             HGOTO_ERROR(DFE_BADFIELDS, FAIL);
-        } /* end if */
+        }
         if (VSread(AttrID, at_ptr->data, at_ptr->len, FULL_INTERLACE) == FAIL) {
             VSdetach(AttrID);
             HGOTO_ERROR(DFE_VSWRITE, FAIL);
-        } /* end if */
+        }
         if (VSdetach(AttrID) == FAIL)
             HGOTO_ERROR(DFE_CANTDETACH, FAIL);
-    } /* end if */
+    }
 
     /* Copy the attribute into the user's buffer */
-    memcpy(data, at_ptr->data, at_size);
+    memcpy(data, at_ptr->data, (size_t)at_size);
 
     /* If the attribute is too large to keep in memory, chuck it again */
     if ((uint32)at_size > gr_ptr->attr_cache)
@@ -4868,15 +4867,15 @@ GRIgetaid(ri_info_t *ri_ptr, int acc_perm)
                 pixel_size = (unsigned)(ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt));
 
                 /* Wraps an existing compressed raster image with the special element*/
-                if ((ri_ptr->img_aid = HRPconvert(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref,
-                                                  ri_ptr->img_dim.xdim, ri_ptr->img_dim.ydim,
-                                                  ri_ptr->img_dim.comp_tag, &(ri_ptr->cinfo), pixel_size)) ==
-                    FAIL)
+                if ((ri_ptr->img_aid =
+                         HRPconvert(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref, ri_ptr->img_dim.xdim,
+                                    ri_ptr->img_dim.ydim, (int16)ri_ptr->img_dim.comp_tag, &(ri_ptr->cinfo),
+                                    pixel_size)) == FAIL)
                     HGOTO_ERROR(DFE_BADAID, FAIL);
             }      /* end if */
             else { /* Use regular startaccess to create element */
-                if ((ri_ptr->img_aid =
-                         Hstartaccess(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref, acc_perm)) == FAIL)
+                if ((ri_ptr->img_aid = Hstartaccess(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref,
+                                                    (uint32)acc_perm)) == FAIL)
                     HGOTO_ERROR(DFE_BADAID, FAIL);
             }                       /* end else */
         }                           /* end else */
@@ -5153,7 +5152,7 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
                   for Rasters it is 2 */
 
     /* allocate space for chunk dimensions */
-    if ((chunk[0].pdims = (DIM_DEF *)malloc(ndims * sizeof(DIM_DEF))) == NULL)
+    if ((chunk[0].pdims = (DIM_DEF *)malloc((size_t)ndims * sizeof(DIM_DEF))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* initialize image/chunk sizes using CHUNK definition structure */
@@ -5237,7 +5236,7 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
                           (uint16)ri_ptr->img_tag, /* Data tag */
                           (uint16)ri_ptr->img_ref, /* Data ref */
                           nlevels,                 /* nlevels */
-                          pixel_disk_size,         /* fill value length */
+                          (int32)pixel_disk_size,  /* fill value length */
                           (void *)fill_pixel,      /* fill value */
                           (HCHUNK_DEF *)chunk /* chunk definition */);
 
@@ -5404,7 +5403,7 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
         pixel_disk_size;             /* size of a pixel on disk */
     void           *img_data = NULL; /* buffer used for conversion */
     int16           special;         /* Special code */
-    int32           csize;           /* physical chunk size */
+    size_t          csize;           /* physical chunk size */
     sp_info_block_t info_block;      /* special info block */
     int8            platnumsubclass; /* the machine type of the current platform */
     unsigned        convert;         /* whether to convert or not */
@@ -5486,7 +5485,7 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
                 /* calculate chunk size  */
                 csize = 1;
                 for (i = 0; i < info_block.ndims; i++)
-                    csize *= info_block.cdims[i];
+                    csize *= (size_t)info_block.cdims[i];
 
                 /* Get the size of the pixels in memory and on disk */
                 pixel_mem_size  = (unsigned)(ri_ptr->img_dim.ncomps *
@@ -5507,14 +5506,14 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
                 /* convert if necessary */
                 if (convert || switch_interlace == TRUE) {
                     /* Allocate space for the conversion buffer */
-                    if ((img_data = malloc(pixel_disk_size * csize)) == NULL)
+                    if ((img_data = malloc((size_t)(pixel_disk_size * csize))) == NULL)
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                     if (switch_interlace == TRUE) {
                         void *pixel_buf; /* buffer for the pixel interlaced data */
 
                         /* Allocate space for the conversion buffer */
-                        if ((pixel_buf = malloc(pixel_mem_size * csize)) == NULL)
+                        if ((pixel_buf = malloc((size_t)(pixel_mem_size * csize))) == NULL)
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                         if (FAIL == GRIil_convert((void *)datap, ri_ptr->img_dim.il, pixel_buf,
@@ -5524,7 +5523,7 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
 
                         /* convert the pixel data into the HDF disk format */
                         if (FAIL == DFKconvert(pixel_buf, img_data, ri_ptr->img_dim.nt,
-                                               ri_ptr->img_dim.ncomps * csize, DFACC_WRITE, 0, 0))
+                                               ri_ptr->img_dim.ncomps * (int32)csize, DFACC_WRITE, 0, 0))
                             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
                         free(pixel_buf);
@@ -5532,7 +5531,7 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
                     else /* convert the pixel data into the HDF disk format */
                     {
                         if (FAIL == DFKconvert((void *)datap, img_data, ri_ptr->img_dim.nt,
-                                               ri_ptr->img_dim.ncomps * csize, DFACC_WRITE, 0, 0))
+                                               ri_ptr->img_dim.ncomps * (int32)csize, DFACC_WRITE, 0, 0))
                             HGOTO_ERROR(DFE_INTERNAL, FAIL);
                     }
                     /* Write chunk out, */
@@ -5593,11 +5592,11 @@ GRreadchunk(int32  riid,   /* IN: access aid to GR */
             void  *datap /* IN/OUT: buffer for data */)
 {
     ri_info_t      *ri_ptr = NULL;   /* ptr to the image to work with */
-    unsigned        pixel_mem_size;  /* size of a pixel in memory */
-    unsigned        pixel_disk_size; /* size of a pixel on disk */
+    size_t          pixel_mem_size;  /* size of a pixel in memory */
+    size_t          pixel_disk_size; /* size of a pixel on disk */
     void           *img_data = NULL; /* buffer used for conversion */
     int16           special;         /* Special code */
-    int32           csize;           /* physical chunk size */
+    size_t          csize;           /* physical chunk size */
     sp_info_block_t info_block;      /* special info block */
     int8            platnumsubclass; /* the machine type of the current platform */
     unsigned        convert;         /* whether to convert or not */
@@ -5682,12 +5681,12 @@ GRreadchunk(int32  riid,   /* IN: access aid to GR */
                 /* calculate chunk size  */
                 csize = 1;
                 for (i = 0; i < info_block.ndims; i++)
-                    csize *= info_block.cdims[i];
+                    csize *= (size_t)info_block.cdims[i];
 
                 /* Get the size of the pixels in memory and on disk */
-                pixel_mem_size  = (unsigned)(ri_ptr->img_dim.ncomps *
-                                            DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
-                pixel_disk_size = (unsigned)(ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt));
+                pixel_mem_size  = (size_t)(ri_ptr->img_dim.ncomps *
+                                          DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
+                pixel_disk_size = (size_t)(ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt));
 
                 /* figure out if data needs to be converted */
                 /* Get number-type and conversion information */
@@ -5705,7 +5704,7 @@ GRreadchunk(int32  riid,   /* IN: access aid to GR */
                     /* read it in */
                     if ((ret_value = HMCreadChunk(ri_ptr->img_aid, origin, img_data)) != FAIL) {
                         if (FAIL == DFKconvert(img_data, datap, ri_ptr->img_dim.nt,
-                                               ri_ptr->img_dim.ncomps * csize, DFACC_READ, 0, 0))
+                                               ri_ptr->img_dim.ncomps * (int32)csize, DFACC_READ, 0, 0))
                             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
                         ret_value = SUCCEED;
@@ -5883,13 +5882,6 @@ DESCRIPTION
 
 RETURNS
    SUCCEED/FAIL
-   Feb 24, 2011 -BMR
-
-MODIFICATION
-   Mar 17, 2011: Changed the function from
-  int GR2bmapped(int32 riid), returning TRUE/FALSE/FAIL, to
-  int GR2bmapped(int32 riid, int *tobe_mapped, int *name_generated),
-  returning SUCCEED/FAIL
 ----------------------------------------------------------------*/
 int
 GR2bmapped(int32 riid, int *tobe_mapped, int *name_generated)
@@ -5897,7 +5889,7 @@ GR2bmapped(int32 riid, int *tobe_mapped, int *name_generated)
     ri_info_t *ri_ptr;             /* ptr to the image to work with */
     int        should_map = FALSE; /* TRUE if the image should be mapped */
     uint16     img_tag, img_ref;   /* shortcuts image's tag/ref */
-    int32      ritype;             /* image's type */
+    int32      ritype       = -1;  /* image's type */
     int        special_type = 0;   /* specialness of the image data */
     int32      file_id;            /* shortcut file id */
     int        ret_value = SUCCEED;

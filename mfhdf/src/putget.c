@@ -132,22 +132,24 @@ NCcoordck(NC *handle, NC_var *vp, const long *coords)
         void     *strg1 = NULL;
         NC_attr **attr  = NULL;
         int       count, byte_count;
-        int       len;
+        size_t    len;
 
         /* Determine if fill values need to be written.  For example, if
-           vp's numrecs is 5, and the accessed index is 8 (*ip), then recs
-           #5,6,7 will be filled with fill value.  Note: maybe '<' should be
-    "<=", but adding it alone caused ill-effects so a through study
-    is needed, plus '<' doesn't really cause problem, it just meant
-    when unfilled = 0, we'll fill 0 record below. -BMR, 12/8/2008*/
+         * vp's numrecs is 5, and the accessed index is 8 (*ip), then recs
+         * #5,6,7 will be filled with fill value.  Note: maybe '<' should be
+         * "<=", but adding it alone caused ill-effects so a through study
+         * is needed, plus '<' doesn't really cause problem, it just meant
+         * when unfilled = 0, we'll fill 0 record below.
+         */
         if ((unfilled = *ip - vp->numrecs) < 0)
             return TRUE;
 
         /* If we get here from an nc API, then reading beyond the end of the
-           current variable will write fill values to the gap between the end
-           of this variable and the max numrecs in the file.  It will only fail
-           for reading beyond the end if the calling function is from the SD
-           API. */
+         * current variable will write fill values to the gap between the end
+         * of this variable and the max numrecs in the file.  It will only fail
+         * for reading beyond the end if the calling function is from the SD
+         * API.
+         */
 
         /* check to see if we are trying to read beyond the end */
         if (handle->xdrs->x_op != XDR_ENCODE) {

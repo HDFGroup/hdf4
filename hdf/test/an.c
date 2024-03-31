@@ -201,7 +201,7 @@ check_lab_desc(uint16 tag, uint16 ref, char *label, char *desc)
         num_errs++;
     }
     else {
-        indesc = (char *)malloc(indesclen + 1);
+        indesc = (char *)malloc((size_t)indesclen + 1);
         ret    = DFANgetdesc(TESTFILE, tag, ref, indesc, MAXLEN_DESC);
         RESULT("DFANgetdesc");
         indesc[indesclen] = '\0';

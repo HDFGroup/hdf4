@@ -52,9 +52,6 @@ static int32 DFPIopen(const char *filename, int acc_mode);
     Gets the next palette from the file specified.
  GLOBAL VARIABLES
     Lastref, Refset
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int
 DFPgetpal(const char *filename, void *palette)
@@ -76,7 +73,7 @@ DFPgetpal(const char *filename, void *palette)
         aid = Hstartread(file_id, DFTAG_IP8, Refset);
         if (aid == FAIL)
             aid = Hstartread(file_id, DFTAG_LUT, Refset);
-    } /* end if */
+    }
     else if (Readref) {
         aid = Hstartread(file_id, DFTAG_IP8, Readref);
         if (aid == FAIL)
@@ -85,14 +82,14 @@ DFPgetpal(const char *filename, void *palette)
             if (Hnextread(aid, DFTAG_LUT, DFREF_WILDCARD, DF_CURRENT) == FAIL) {
                 Hendaccess(aid);
                 aid = FAIL;
-            } /* end if */
-        }     /* end if */
-    }         /* end if */
+            }
+        }
+    }
     else {
         aid = Hstartread(file_id, DFTAG_IP8, DFREF_WILDCARD);
         if (aid == FAIL)
             aid = Hstartread(file_id, DFTAG_LUT, DFREF_WILDCARD);
-    } /* end else */
+    }
 
     Refset = 0;
     /* on error, close file and return -1 */
@@ -106,14 +103,14 @@ DFPgetpal(const char *filename, void *palette)
         Hendaccess(aid);
         ret_value = HDerr(file_id);
         goto done;
-    } /* end if */
+    }
 
     /* read palette */
     if (Hread(aid, length, (uint8 *)palette) == FAIL) {
         Hendaccess(aid);
         ret_value = (HDerr(file_id));
         goto done;
-    } /* end if */
+    }
 
     Hendaccess(aid);
 
@@ -144,8 +141,6 @@ done:
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
     To overwrite, the filename must be the same as for the previous call.
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int
 DFPputpal(const char *filename, const void *palette, int overwrite, const char *filemode)
@@ -185,7 +180,7 @@ DFPputpal(const char *filename, const void *palette, int overwrite, const char *
     if (Hexist(file_id, DFTAG_LUT, Lastref) == FAIL)
         Hdupdd(file_id, DFTAG_LUT, Lastref, DFTAG_IP8, Lastref);
 
-    ret_value = (Hclose(file_id));
+    ret_value = Hclose(file_id);
 
 done:
     return ret_value;
@@ -202,10 +197,6 @@ done:
     SUCCEED on success, FAIL on failure.
  DESCRIPTION
     Appends a palette in an HDF file.
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int
 DFPaddpal(const char *filename, const void *palette)
@@ -227,10 +218,6 @@ DFPaddpal(const char *filename, const void *palette)
     SUCCEED on success, FAIL on failure.
  DESCRIPTION
     Determines the number of unique palettes in a file.
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int
 DFPnpals(const char *filename)
@@ -294,7 +281,7 @@ DFPnpals(const char *filename)
                  DF_FORWARD) == SUCCEED) {
         pal_off[curr_pal] = find_off; /* store offset */
         curr_pal++;
-    } /* end while */
+    }
 
     npals = curr_pal;                /* reset the number of palettes we really have */
     for (i = 1; i < curr_pal; i++) { /* go through the palettes looking for duplicates */
@@ -303,11 +290,12 @@ DFPnpals(const char *filename)
                 if (pal_off[i] == pal_off[j]) {
                     npals--;           /* if duplicate found, decrement the number of palettes */
                     pal_off[j] = (-1); /* mark as used, so we don't count it too... */
-                }                      /* end if */
-            }                          /* end for */
-    }                                  /* end for */
+                }
+            }
+    }
 
-    free(pal_off); /* free offsets */
+    /* free offsets */
+    free(pal_off);
 
     if (Hclose(file_id) == FAIL)
         HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
@@ -331,9 +319,6 @@ done:
     Sets the ref # of the next palette to read from a file
  GLOBAL VARIABLES
     Refset
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int
 DFPreadref(const char *filename, uint16 ref)
@@ -354,7 +339,7 @@ DFPreadref(const char *filename, uint16 ref)
             ret_value = (HDerr(file_id));
             goto done;
         }
-    } /* end if */
+    }
 
     Hendaccess(aid);
     Refset = ref;
@@ -380,7 +365,6 @@ done:
     is written to, it will have the reference number ref.
  GLOBAL VARIABLES
     Writeref
-
 --------------------------------------------------------------------------*/
 int
 DFPwriteref(const char *filename, uint16 ref)
@@ -405,7 +389,7 @@ DFPwriteref(const char *filename, uint16 ref)
     Restart reading/writing palettes to a file.
  GLOBAL VARIABLES
     Lastfile
- --------------------------------------------------------------------------*/
+--------------------------------------------------------------------------*/
 int
 DFPrestart(void)
 {

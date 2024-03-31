@@ -303,7 +303,7 @@ HBPread(accrec_t *access_rec, int32 length, void *data)
         HGOTO_ERROR(DFE_RANGE, FAIL);
 
     /* Copy data from buffer */
-    memcpy(data, info->buf + access_rec->posn, length);
+    memcpy(data, info->buf + access_rec->posn, (size_t)length);
 
     /* adjust access position */
     access_rec->posn += length;
@@ -366,7 +366,7 @@ HBPwrite(accrec_t *access_rec, int32 length, const void *data)
     } /* end if */
 
     /* Copy data to buffer */
-    memcpy(info->buf + access_rec->posn, data, length);
+    memcpy(info->buf + access_rec->posn, data, (size_t)length);
 
     /* Mark the buffer as modified */
     info->modified = TRUE;
