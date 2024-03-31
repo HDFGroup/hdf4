@@ -11,9 +11,10 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "hdp.h"
 #include <math.h>
+
 #include "vg.h"
+#include "hdp.h"
 
 #define NONAME_LEN 12
 
@@ -28,7 +29,7 @@ void   display(vg_info_t *ptr, int32 level, vg_info_t **list, int32 num_nodes, i
 int    get_VGandInfo(int32 *vg_id, int32 file_id, int32 vg_ref, const char *file_name, int32 *n_entries,
                      char **vgname, char **vgclass);
 char **alloc_list_of_strings(int32 num_entries);
-char  *alloc_strg_of_chars(char *strg);
+char  *alloc_string_of_chars(const char *s);
 int32  get_VGindex_list(int32 file_id, dump_info_t *dumpvg_opts, int32 **vg_chosen, int *index_error);
 void   closeVG(int32 *file_id, int32 **vg_chosen, const char *curr_file_name);
 int    vgBuildGraph(int32 vg_id, int32 file_id, int32 num_entries, const char *file_name, vg_info_t *aNode,
@@ -531,47 +532,56 @@ char **
 alloc_list_of_strings(int32 num_entries)
 {
     char **ptr = NULL;
-    int    i;
 
     /* I don't know why +1 here and only i<num_entries at for loop - BMR*/
     /* probably, +1 so that malloc won't fail when num_entries = 0, was */
     /* added in r1842.  But, that means possible memory leak! */
-    ptr = (char **)malloc(sizeof(char *) * (num_entries));
+    ptr = (char **)malloc(sizeof(char *) * (size_t)num_entries);
 
     /* If allocation fails, alloc_list_of_string simply terminates hdp. */
     CHECK_ALLOC(ptr, "ptr", "alloc_list_of_strings");
 
     /* Init. all strings to NULL */
-    for (i = 0; i < num_entries; i++)
+    for (int i = 0; i < num_entries; i++)
         ptr[i] = NULL;
 
-    return (ptr);
+    return ptr;
 } /* end of alloc_list_of_strings */
 
 char *
-alloc_strg_of_chars(char *strg)
+alloc_string_of_chars(const char *s)
 {
     char *ptr = NULL;
 
-    ptr = (char *)malloc(sizeof(char) * (strlen(strg) + 1));
+    ptr = (char *)malloc(sizeof(char) * (strlen(s) + 1));
 
     /* If allocation fails, alloc_list_of_string simply terminates hdp. */
-    CHECK_ALLOC(ptr, "ptr", "alloc_strg_of_chars");
+    CHECK_ALLOC(ptr, "ptr", "alloc_string_of_chars");
 
-    strcpy(ptr, strg); /* copy given string */
+    strcpy(ptr, s); /* copy given string */
 
-    return (ptr);
+    return ptr;
 }
 
 /* print_fields displays the vdata's fields in an aligned format,
-   particularly when there are many fields and/or fields names are
-   lengthy */
+ * particularly when there are many fields and/or fields names are
+ * lengthy
+ */
 void
-print_fields(char *fields, char *field_title, /* */
-             FILE *fp)
+print_fields(const char *fields, const char *field_title, FILE *fp)
 {
-    int32 lastItem = 0, i, count = 0;
-    char *ptr = NULL, *tempPtr = NULL, fldname[MAXNAMELEN], tempflds[VSFIELDMAX * FIELDNAMELENMAX];
+    int32  lastItem = 0;
+    size_t count    = 0;
+    char  *ptr      = NULL;
+    char  *tempPtr  = NULL;
+    char  *fldname  = NULL;
+    ;
+    char *tempflds = NULL;
+
+    fldname = (char *)calloc(MAXNAMELEN, sizeof(char));
+    CHECK_ALLOC(fldname, "fldname", "print_fields");
+    tempflds = (char *)calloc(VSFIELDMAX * FIELDNAMELENMAX, sizeof(char));
+    CHECK_ALLOC(tempflds, "tempflds", "print_fields");
 
     /* if fields are not defined by VSsetfields and VSfdefine */
     if (fields[0] == '\0' || fields == NULL)
@@ -585,7 +595,7 @@ print_fields(char *fields, char *field_title, /* */
         /* traverse the temporary fieldname list to obtain and print each
          * field name; use ',' to locate individual field names, and each
          * line should not exceed 50 characters beside the alignment */
-        for (i = 0; !lastItem; i++) {
+        for (int i = 0; !lastItem; i++) {
             tempPtr = strchr(ptr, ','); /* locate next separator */
             if (tempPtr == NULL)
                 lastItem = 1; /* set flag for end of list */
@@ -669,7 +679,8 @@ get_VGindex_list(int32 file_id, dump_info_t *dumpvg_opts, int32 **vg_chosen, int
                     else {
                         /* reallocate the array vg_chosen to hold multiple
                            vgroups since name is not unique b/w vgroups */
-                        *vg_chosen = (int32 *)realloc(*vg_chosen, sizeof(int32) * (num_vg_chosen + 1));
+                        *vg_chosen =
+                            (int32 *)realloc(*vg_chosen, sizeof(int32) * (size_t)(num_vg_chosen + 1));
                         if (*vg_chosen == NULL) {
                             fprintf(stderr, "Failure in get_VGindex_list: Not enough memory!\n");
                             exit(1);
@@ -704,7 +715,8 @@ get_VGindex_list(int32 file_id, dump_info_t *dumpvg_opts, int32 **vg_chosen, int
                     else {
                         /* reallocate the array vg_chosen to hold multiple
                            vgroups since class name is not unique b/w vgroups */
-                        *vg_chosen = (int32 *)realloc(*vg_chosen, sizeof(int32) * (num_vg_chosen + 1));
+                        *vg_chosen =
+                            (int32 *)realloc(*vg_chosen, sizeof(int32) * (size_t)(num_vg_chosen + 1));
                         if (*vg_chosen == NULL) {
                             fprintf(stderr, "Failure in get_VGindex_list: Not enough memory!\n");
                             exit(1);
@@ -834,8 +846,8 @@ vgBuildGraph(int32 vg_id, int32 file_id, int32 num_entries, const char *file_nam
             if (elem_ref == 0) /* taken care of ref=0 in tdfr8f and tdf24 for now */
             {
                 /* add the name and type of this element to the current graph */
-                aNode->children[entry_num] = alloc_strg_of_chars("***");
-                aNode->type[entry_num]     = alloc_strg_of_chars("<vg/ref=0>");
+                aNode->children[entry_num] = alloc_string_of_chars("***");
+                aNode->type[entry_num]     = alloc_string_of_chars("<vg/ref=0>");
             }
             else if (elem_tag == DFTAG_VG) { /* vgroup */
 
@@ -863,8 +875,8 @@ vgBuildGraph(int32 vg_id, int32 file_id, int32 num_entries, const char *file_nam
                 resetVG(&vgt, file_name);
 
                 /* add the name and type of this element to the current graph */
-                aNode->children[entry_num] = alloc_strg_of_chars(vgname);
-                aNode->type[entry_num]     = alloc_strg_of_chars("vg");
+                aNode->children[entry_num] = alloc_string_of_chars(vgname);
+                aNode->type[entry_num]     = alloc_string_of_chars("vg");
                 free(vgname);
                 vgname = NULL;
                 free(vgclass);
@@ -873,12 +885,12 @@ vgBuildGraph(int32 vg_id, int32 file_id, int32 num_entries, const char *file_nam
             }                                 /* if current element is vgroup */
             else if (elem_tag == VSDESCTAG) { /* vdata */
                                               /* add type of this element to the current graph */
-                aNode->type[entry_num] = alloc_strg_of_chars("vd");
+                aNode->type[entry_num] = alloc_string_of_chars("vd");
 
                 vs = VSattach(file_id, elem_ref, "r");
                 if (vs == FAIL) {
                     /* add Invalid for the name of this element to the current graph */
-                    aNode->children[entry_num] = alloc_strg_of_chars("<Invalid>");
+                    aNode->children[entry_num] = alloc_string_of_chars("<Invalid>");
 
                     ERROR_CONT_2("in %s: VSattach failed for vdata with ref#=%d", "vgBuildGraph",
                                  (int)elem_ref);
@@ -904,7 +916,7 @@ vgBuildGraph(int32 vg_id, int32 file_id, int32 num_entries, const char *file_nam
                     strcat(vsname, "<Undefined>");
 
                 /* add the name of this element to the current graph */
-                aNode->children[entry_num] = alloc_strg_of_chars(vsname);
+                aNode->children[entry_num] = alloc_string_of_chars(vsname);
 
             }    /* if current element is a vdata */
             else /* else something else */
@@ -914,10 +926,10 @@ vgBuildGraph(int32 vg_id, int32 file_id, int32 num_entries, const char *file_nam
                     name = strdup("Unknown Tag");
 
                 /* add the name and type of this element to the current graph */
-                aNode->children[entry_num] = alloc_strg_of_chars("***");
+                aNode->children[entry_num] = alloc_string_of_chars("***");
 
                 if (!strcmp(name, "Unknown Tag")) {
-                    aNode->type[entry_num] = alloc_strg_of_chars("Unknown Object");
+                    aNode->type[entry_num] = alloc_string_of_chars("Unknown Object");
                 }
                 else
                     aNode->type[entry_num] = name;
@@ -955,7 +967,10 @@ vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 num_entri
     char *name      = NULL;
     char *file_name = dumpvg_opts->ifile_name;
     int   status, ret_value = SUCCEED;
-    char  fields[VSFIELDMAX * FIELDNAMELENMAX];
+    char *fields = NULL;
+
+    if (NULL == (fields = (char *)calloc(VSFIELDMAX * FIELDNAMELENMAX, sizeof(char))))
+        ERROR_GOTO_0("out of memory");
 
     aNode->n_entries = num_entries;
     if (num_entries != 0) {
@@ -981,8 +996,8 @@ vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 num_entri
                 fprintf(fp, "reference = %d;\n", (int)elem_ref);
 
                 /* add the name and type of this element to the current graph */
-                aNode->children[entry_num] = alloc_strg_of_chars("***");
-                aNode->type[entry_num]     = alloc_strg_of_chars("<vg/ref=0>");
+                aNode->children[entry_num] = alloc_string_of_chars("***");
+                aNode->type[entry_num]     = alloc_string_of_chars("<vg/ref=0>");
             }
 
             else if (elem_tag == DFTAG_VG) { /* vgroup */
@@ -1010,8 +1025,8 @@ vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 num_entri
                 }
 
                 /* add the name and type of this element to the current graph */
-                aNode->children[entry_num] = alloc_strg_of_chars(vgname);
-                aNode->type[entry_num]     = alloc_strg_of_chars("vg");
+                aNode->children[entry_num] = alloc_string_of_chars(vgname);
+                aNode->type[entry_num]     = alloc_string_of_chars("vg");
 
                 /* print the entry's info */
                 fprintf(fp, "     #%d (Vgroup)\n", (int)entry_num);
@@ -1108,8 +1123,8 @@ vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 num_entri
                     strcat(vsname, "<Undefined>");
 
                 /* add the name and type of this element to the list node */
-                aNode->children[entry_num] = alloc_strg_of_chars(vsname);
-                aNode->type[entry_num]     = alloc_strg_of_chars("vd");
+                aNode->children[entry_num] = alloc_string_of_chars(vsname);
+                aNode->type[entry_num]     = alloc_string_of_chars("vd");
 
             }    /* if current element is a vdata */
             else /* else something else */
@@ -1122,11 +1137,11 @@ vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 num_entri
                 fprintf(fp, "\ttag = %d; reference = %d;\n", (int)elem_tag, (int)elem_ref);
 
                 /* add the name and type of this element to the current graph */
-                aNode->children[entry_num] = alloc_strg_of_chars("***");
+                aNode->children[entry_num] = alloc_string_of_chars("***");
 
                 if (!strcmp(name, "Unknown Tag")) {
                     free(name);
-                    aNode->type[entry_num] = alloc_strg_of_chars("Unknown Object");
+                    aNode->type[entry_num] = alloc_string_of_chars("Unknown Object");
                 }
                 else
                     aNode->type[entry_num] = name;
@@ -1139,8 +1154,9 @@ vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 num_entri
         printf("     None.\n");
 
 done:
-    SAFE_FREE(vgname);  /* free vg name and set it to NULL */
-    SAFE_FREE(vgclass); /* free vg class name and set it to NULL */
+    free(vgname);
+    free(vgclass);
+    free(fields);
 
     return ret_value;
 } /* vgdumpfull */
@@ -1259,7 +1275,7 @@ dvg(dump_info_t *dumpvg_opts, int curr_arg, int argc, char *argv[])
         /* allocate space for the list of nodes to be printed in the
            Graphical Representation part */
         max_vgs = NUM_VGS;
-        list    = (vg_info_t **)malloc(sizeof(vg_info_t *) * max_vgs);
+        list    = (vg_info_t **)malloc(sizeof(vg_info_t *) * (size_t)max_vgs);
         CHECK_ALLOC(list, "list", "dvg");
 
         for (j = 0; j < max_vgs; j++) /* init that list */
@@ -1307,7 +1323,7 @@ dvg(dump_info_t *dumpvg_opts, int curr_arg, int argc, char *argv[])
                reallocate the list of nodes to the proper amount */
             if (num_nodes > max_vgs) {
                 max_vgs += NUM_VGS;
-                list = realloc(list, (uint32)sizeof(vg_info_t *) * max_vgs);
+                list = realloc(list, sizeof(vg_info_t *) * (size_t)max_vgs);
                 CHECK_ALLOC(list, "list", "dvg");
             }
 

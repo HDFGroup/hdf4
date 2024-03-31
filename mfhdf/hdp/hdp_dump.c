@@ -41,10 +41,10 @@ fmtbyte(unsigned char *x, /* assumption: byte is the same as unsigned char */
     unsigned char s;
 
     if (ff == DASCII)
-        return (fprintf(ofp, "%02x ", (unsigned)*x));
+        return fprintf(ofp, "%02x ", (unsigned)*x);
     else {
         s = (unsigned char)*x;
-        return (fwrite(&s, sizeof(unsigned char), 1, ofp));
+        return (int)fwrite(&s, sizeof(unsigned char), 1, ofp);
     }
 }
 
@@ -55,10 +55,10 @@ fmtint8(void         *x, /* assumption: int8 is same as signed char */
     int8 s;
 
     if (ff == DASCII)
-        return (fprintf(ofp, "%d", (int)*((signed char *)x)));
+        return fprintf(ofp, "%d", (int)*((signed char *)x));
     else {
         s = (int8) * ((signed char *)x);
-        return (fwrite(&s, sizeof(int8), 1, ofp));
+        return (int)fwrite(&s, sizeof(int8), 1, ofp);
     }
 }
 
@@ -69,10 +69,10 @@ fmtuint8(void         *x, /* assumption: uint8 is same as unsigned char */
     uint8 s;
 
     if (ff == DASCII)
-        return (fprintf(ofp, "%u", (unsigned)*((unsigned char *)x)));
+        return fprintf(ofp, "%u", (unsigned)*((unsigned char *)x));
     else {
         s = (uint8) * ((unsigned char *)x);
-        return (fwrite(&s, sizeof(uint8), 1, ofp));
+        return (int)fwrite(&s, sizeof(uint8), 1, ofp);
     }
 }
 
@@ -84,9 +84,9 @@ fmtint16(void *x, file_format_t ff, FILE *ofp)
     memcpy(&s, x, sizeof(int16));
 
     if (ff == DASCII)
-        return (fprintf(ofp, "%d", (int)s));
+        return fprintf(ofp, "%d", (int)s);
     else
-        return (fwrite(&s, sizeof(int16), 1, ofp));
+        return (int)fwrite(&s, sizeof(int16), 1, ofp);
 }
 
 int
@@ -97,9 +97,9 @@ fmtuint16(void *x, file_format_t ff, FILE *ofp)
     memcpy(&s, x, sizeof(uint16));
 
     if (ff == DASCII)
-        return (fprintf(ofp, "%u", (unsigned)s));
+        return fprintf(ofp, "%u", (unsigned)s);
     else
-        return (fwrite(&s, sizeof(uint16), 1, ofp));
+        return (int)fwrite(&s, sizeof(uint16), 1, ofp);
 }
 
 int
@@ -113,38 +113,36 @@ fmtchar(void *x, file_format_t ff, FILE *ofp)
     }
     else {
         putc('\\', ofp);
-        return (1 + fprintf(ofp, "%03o", *((uchar8 *)x)));
+        return 1 + fprintf(ofp, "%03o", *((uchar8 *)x));
     }
 }
 
+/* Assumption: uchar8 is same as unsigned char */
 int
-fmtuchar8(void         *x, /* assumption: uchar8 is same as unsigned char */
-          file_format_t ff, FILE *ofp)
+fmtuchar8(void *x, file_format_t ff, FILE *ofp)
 {
     uchar8 s;
 
     if (ff == DASCII)
-        /* replace %o with %d by Elena's suggestion: it doesn't make
-           sense to print in octal - BMR 06/23/00 */
-        return (fprintf(ofp, "%d", *((uchar8 *)x)));
+        return fprintf(ofp, "%d", *((uchar8 *)x));
     else {
         s = (uchar8) * ((unsigned char *)x);
-        return (fwrite(&s, sizeof(uchar8), 1, ofp));
+        return (int)fwrite(&s, sizeof(uchar8), 1, ofp);
     }
 }
 
+/* Assumption: int is same as 'int' */
 int
-fmtint(void         *x, /* assumption: int is same as 'int' */
-       file_format_t ff, FILE *ofp)
+fmtint(void *x, file_format_t ff, FILE *ofp)
 {
     int i;
 
     memcpy(&i, x, sizeof(int));
 
     if (ff == DASCII)
-        return (fprintf(ofp, "%d", (int)i));
+        return fprintf(ofp, "%d", (int)i);
     else
-        return (fwrite(&i, sizeof(int), 1, ofp));
+        return (int)fwrite(&i, sizeof(int), 1, ofp);
 }
 
 int
@@ -156,12 +154,12 @@ fmtfloat32(void *x, file_format_t ff, FILE *ofp)
 
     if (ff == DASCII) {
         if (fabsf(fdata - FILL_FLOAT) <= FLT_EPSILON)
-            return (fprintf(ofp, "FloatInf"));
+            return fprintf(ofp, "FloatInf");
         else
-            return (fprintf(ofp, "%f", (double)fdata));
+            return fprintf(ofp, "%f", (double)fdata);
     }
     else {
-        return (fwrite(&fdata, sizeof(float32), 1, ofp));
+        return (int)fwrite(&fdata, sizeof(float32), 1, ofp);
     }
 }
 
@@ -173,9 +171,9 @@ fmtint32(void *x, file_format_t ff, FILE *ofp)
     memcpy(&l, x, sizeof(int32));
 
     if (ff == DASCII)
-        return (fprintf(ofp, "%ld", (long)l));
+        return fprintf(ofp, "%ld", (long)l);
     else
-        return (fwrite(&l, sizeof(int32), 1, ofp));
+        return (int)fwrite(&l, sizeof(int32), 1, ofp);
 }
 
 int
@@ -186,9 +184,9 @@ fmtuint32(void *x, file_format_t ff, FILE *ofp)
     memcpy(&l, x, sizeof(uint32));
 
     if (ff == DASCII)
-        return (fprintf(ofp, "%lu", (unsigned long)l));
+        return fprintf(ofp, "%lu", (unsigned long)l);
     else
-        return (fwrite(&l, sizeof(uint32), 1, ofp));
+        return (int)fwrite(&l, sizeof(uint32), 1, ofp);
 }
 
 int
@@ -199,9 +197,9 @@ fmtshort(void *x, file_format_t ff, FILE *ofp)
     memcpy(&s, x, sizeof(short));
 
     if (ff == DASCII)
-        return (fprintf(ofp, "%d", (int)s));
+        return fprintf(ofp, "%d", (int)s);
     else
-        return (fwrite(&s, sizeof(short), 1, ofp));
+        return (int)fwrite(&s, sizeof(short), 1, ofp);
 }
 
 int
@@ -213,12 +211,12 @@ fmtfloat64(void *x, file_format_t ff, FILE *ofp)
 
     if (ff == DASCII) {
         if (fabs(d - FILL_DOUBLE) <= DBL_EPSILON)
-            return (fprintf(ofp, "DoubleInf"));
+            return fprintf(ofp, "DoubleInf");
         else
-            return (fprintf(ofp, "%f", d));
+            return fprintf(ofp, "%f", d);
     }
     else {
-        return (fwrite(&d, sizeof(float64), 1, ofp));
+        return (int)fwrite(&d, sizeof(float64), 1, ofp);
     }
 }
 
@@ -259,8 +257,8 @@ select_func(int32 nt)
         default:
             fprintf(stderr, "HDP does not support type [%d].  Use signed character printing function.\n",
                     (int)nt);
-            return (fmtchar);
-    } /* end switch */
+            return fmtchar;
+    }
 } /* select_func */
 
 int

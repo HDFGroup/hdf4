@@ -300,7 +300,6 @@ typedef struct {
 } list_info_t;
 
 /* Which dataset to dump */
-/* BMR: added defined values to fix exclusive problem - 1/23/99 */
 typedef enum { DALL = 0, DINDEX = 1, DREFNUM = 2, DNAME = 4, DCLASS = 8, DFIELDS = 16 } filter_t;
 
 /* What type of information being stored */
@@ -470,10 +469,10 @@ int32 sdsdumpfull(int32 sds_id, dump_info_t *dumpsds_opts, int32 rank, int32 dim
 int   printSDS_ASCII(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, FILE *fp);
 int   printSDS_BINARY(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, FILE *fp);
 int   get_SDSindex_list(int32 sd_id, dump_info_t *dumpsds_opts, int32 **sds_chosen, int *index_error);
-char *comp_method_txt(comp_coder_t comp_type);
-int   option_mask_string(int32 options_mask, char *opt_mask_strg);
-int   print_comp_info(FILE *fp, int32 sds_id, comp_coder_t *comp_type);
-void  resetSDS(int32 *sds_id, int32 sds_index, char *curr_file_name);
+const char *comp_method_txt(comp_coder_t comp_type);
+int         option_mask_string(int32 options_mask, char *opt_mask_strg);
+int         print_comp_info(FILE *fp, int32 sds_id, comp_coder_t *comp_type);
+void        resetSDS(int32 *sds_id, int32 sds_index, char *curr_file_name);
 
 /* hdp_rig.c */
 extern int do_dumprig(int curr_arg, int argc, char *argv[], int help);
@@ -482,7 +481,8 @@ extern int do_dumprig(int curr_arg, int argc, char *argv[], int help);
 extern int do_dumpvg(int curr_arg, int argc, char *argv[], int help);
 extern int print_data_annots(int32 file_id, const char *file_name, int32 tag, int32 ref);
 extern int print_file_annotations(int32 file_id, const char *file_name);
-void       print_fields(char *fields, char *field_title, FILE *fp);
+void       print_fields(const char *fields, const char *field_title, FILE *fp);
+
 /* hdp_vd.c */
 int do_dumpvd(int curr_arg, int argc, char *argv[], int help);
 int parse_dumpvd_opts(dump_info_t *dumpvd_opts, int *curr_arg, int argc, char *argv[],

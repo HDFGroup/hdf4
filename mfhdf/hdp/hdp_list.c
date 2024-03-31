@@ -11,9 +11,10 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <ctype.h>
+
 #include "mfhdf.h"
 #include "hdp.h"
-#include <ctype.h>
 
 #define NUM_FIELD_WIDTH     5
 #define TAGNAME_FIELD_WIDTH 20
@@ -129,13 +130,13 @@ parse_list_opts(list_info_t *list_opts, int curr_arg, int argc, char *argv[])
                     ret++;
                     if (isdigit(argv[curr_arg][0])) {
                         list_opts->limit      = LTAGNUM; /* limit to tag name output */
-                        list_opts->limit_tag  = atoi(argv[curr_arg]);
+                        list_opts->limit_tag  = (uint16)atoi(argv[curr_arg]);
                         list_opts->limit_name = tagnum_to_name(list_opts->limit_tag);
                     }                                     /* end if */
                     else {                                /* must be a tag name */
                         list_opts->limit      = LTAGNAME; /* limit to tag name output */
                         list_opts->limit_name = strdup(argv[curr_arg]);
-                        list_opts->limit_tag  = tagname_to_num(list_opts->limit_name);
+                        list_opts->limit_tag  = (uint16)tagname_to_num(list_opts->limit_name);
                         if (list_opts->limit_tag == DFTAG_NULL) {
                             printf("ERROR: invalid tag name: %s\n", list_opts->limit_name);
                             return (FAIL);
@@ -233,7 +234,7 @@ print_annots_by_object(const char *fname, int32 an_id, ann_type annot_type, uint
     if (ann_num > 0) { /* print data annotation */
 
         /* allocate space for all label/description id's for data object */
-        ann_list = malloc(ann_num * sizeof(int32));
+        ann_list = malloc((size_t)ann_num * sizeof(int32));
         CHECK_ALLOC(ann_list, "ann_list", func_name);
 
         /* retrieve all the data objects label/description handles and
@@ -251,7 +252,7 @@ print_annots_by_object(const char *fname, int32 an_id, ann_type annot_type, uint
                              annot_type_text, error_item);
 
             /* allocate space for the data annotation */
-            buf = calloc((ann_length + 1) * sizeof(char), 1);
+            buf = calloc((size_t)(ann_length + 1), sizeof(char));
             CHECK_ALLOC(buf, "buf", func_name);
 
             buf[ann_length] = '\0';
@@ -362,7 +363,7 @@ print_annots_in_file(int32 an_id, const char *fname, int32 n_annotations, ann_ty
                          fname);
 
         /* allocate space for an annotation */
-        annotation = (char *)calloc(len + 1, 1);
+        annotation = (char *)calloc((size_t)(len + 1), 1);
         CHECK_ALLOC(annotation, "annotation", func_name);
 
         /* read in annotation and print it */
@@ -458,7 +459,7 @@ print_all_data_descs(const char *fname, int32 an_id)
         }
 
         /* allocate room for a data desc */
-        desc = (char *)calloc(len + 1, 1);
+        desc = (char *)calloc((size_t)(len + 1), 1);
         CHECK_ALLOC(desc, "desc", "print_all_data_descs");
 
         /* read in data desc and print it */
@@ -530,7 +531,7 @@ print_all_file_labels(const char *fname, int32 an_id)
         }
 
         /* allocate room for the file label */
-        label = (char *)calloc(len + 1, 1);
+        label = (char *)calloc((size_t)(len + 1), 1);
         CHECK_ALLOC(label, "label", "print_all_data_labels");
 
         /* read in file label and print it */
@@ -611,7 +612,7 @@ print_all_file_descs(const char *fname, list_info_t *list_opts, /* for print_SDa
         }
 
         /* allocate room for the file desc */
-        desc = (char *)calloc(len + 1, 1);
+        desc = (char *)calloc((size_t)(len + 1), 1);
         CHECK_ALLOC(desc, "desc", "print_all_file_descs");
 
         /* read in file desc and print it */
@@ -713,7 +714,7 @@ print_file_descs(const char *f_name, int32 an_id)
         }
 
         /* allocate room for the file desc */
-        desc = (char *)calloc(len + 1, 1);
+        desc = (char *)calloc((size_t)(len + 1), 1);
         CHECK_ALLOC(desc, "desc", "print_file_descs");
 
         /* read in file desc and print it */
@@ -942,7 +943,7 @@ do_list(int curr_arg, int argc, char *argv[], int help)
                 desc_flag = CHECK_DESC;
 
             /* make list of all objects in file */
-            o_list = make_obj_list(fid, label_flag | desc_flag | CHECK_GROUP | CHECK_SPECIAL);
+            o_list = make_obj_list(fid, (uint32)(label_flag | desc_flag | CHECK_GROUP | CHECK_SPECIAL));
 
             /* if there are any object in the file, print annotations if
                requested, then the object information as requested */
