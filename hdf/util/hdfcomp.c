@@ -114,7 +114,7 @@ main(int argc, char *argv[])
                         if (annbuflen == 0 || annlen > annbuflen) {
                             if (annbuflen != 0)
                                 free(annbuf);
-                            if ((annbuf = (char *)malloc(annlen)) == NULL) {
+                            if ((annbuf = (char *)malloc((size_t)annlen)) == NULL) {
                                 printf("Error allocating buffer for annotation, aborting!\n");
                                 exit(1);
                             } /* end if */
@@ -135,7 +135,7 @@ main(int argc, char *argv[])
                         if (annbuflen == 0 || annlen > annbuflen) {
                             if (annbuflen != 0)
                                 free(annbuf);
-                            if ((annbuf = (char *)malloc(annlen)) == NULL) {
+                            if ((annbuf = (char *)malloc((size_t)annlen)) == NULL) {
                                 printf("Error allocating buffer for annotation, aborting!\n");
                                 exit(1);
                             } /* end if */
@@ -192,7 +192,7 @@ main(int argc, char *argv[])
                             if (annbuflen == 0 || annlen > annbuflen) {
                                 if (annbuflen != 0)
                                     free(annbuf);
-                                if ((annbuf = (char *)malloc(annlen)) == NULL) {
+                                if ((annbuf = (char *)malloc((size_t)annlen)) == NULL) {
                                     printf("Error allocating buffer for annotation, aborting!\n");
                                     exit(1);
                                 } /* end if */
@@ -209,7 +209,7 @@ main(int argc, char *argv[])
                             if (annbuflen == 0 || annlen > annbuflen) {
                                 if (annbuflen != 0)
                                     free(annbuf);
-                                if ((annbuf = (char *)malloc(annlen)) == NULL) {
+                                if ((annbuf = (char *)malloc((size_t)annlen)) == NULL) {
                                     printf("Error allocating buffer for annotation, aborting!\n");
                                     exit(1);
                                 } /* end if */

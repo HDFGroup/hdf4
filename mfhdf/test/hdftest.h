@@ -146,7 +146,7 @@ const char *get_srcdir_filename(const char *filename);
 int make_sourcepath(char *src_path, unsigned int size);
 
 /* Calls SDcreate, SDwritedata, and SDendaccess */
-int32 make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, int32 unlim_dim,
+int32 make_SDS(int32 sd_id, const char *sds_name, int32 type, int32 rank, int32 *dim_sizes, int32 unlim_dim,
                void *written_data);
 
 /* Calls SDcreate, SDsetcompress, SDwritedata, and SDendaccess */

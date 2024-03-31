@@ -107,8 +107,8 @@ NC_re_string(NC_string *old, unsigned count, const char *str)
     if (str == NULL)
         return NULL;
 
-    (void)memcpy(old->values, str, count);
-    memset(old->values + count, 0, (int)old->count - (int)count + 1);
+    memcpy(old->values, str, count);
+    memset(old->values + count, 0, (size_t)(old->count - count + 1));
 
     /* make sure len is always == to the string length */
     old->len  = count;

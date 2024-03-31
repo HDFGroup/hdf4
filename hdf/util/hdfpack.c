@@ -191,7 +191,7 @@ main(int argc, char *argv[])
     if (num_desc == FAIL)
         hdferror();
 
-    dlist = (mydd_t *)malloc(num_desc * sizeof(*dlist));
+    dlist = (mydd_t *)malloc((size_t)num_desc * sizeof(*dlist));
     if (dlist == NULL)
         error("\tWow!  That file must be HUGE!\n\tThere isn't enough memory to hold the DD's.\n");
 
@@ -200,7 +200,7 @@ main(int argc, char *argv[])
      */
     data_size = 1048576; /* 1 MB */
     data      = NULL;
-    while ((data = (unsigned char *)malloc(data_size)) == NULL)
+    while ((data = (unsigned char *)malloc((size_t)data_size)) == NULL)
         data_size /= 2; /* okay then, cut request by half */
 
     /*
@@ -313,7 +313,7 @@ main(int argc, char *argv[])
                         if ((_aid = Hstartaccess(infile, dlist[i].tag, dlist[i].ref, DFACC_READ)) == FAIL)
                             continue;
                         HQuerylength(aid, &len);
-                        buf = malloc(len);
+                        buf = malloc((size_t)len);
                         Hread(_aid, len, buf);
                         Hendaccess(_aid);
 

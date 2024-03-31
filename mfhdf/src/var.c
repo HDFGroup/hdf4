@@ -123,7 +123,7 @@ NC_var_shape(NC_var *var, NC_array *dims)
         var->len = xszof;
         goto out;
     }
-    shape = malloc(ii * sizeof(unsigned long));
+    shape = malloc((size_t)ii * sizeof(unsigned long));
     if (shape == NULL) {
         nc_serror("NC_var_shape");
         return -1;
@@ -159,7 +159,7 @@ NC_var_shape(NC_var *var, NC_array *dims)
      * Allocate the dsizes array
      */
     ii     = var->assoc->count;
-    dsizes = malloc(ii * sizeof(unsigned long));
+    dsizes = malloc((size_t)ii * sizeof(unsigned long));
     if (dsizes == NULL) {
         free(shape);
         var->shape = NULL;

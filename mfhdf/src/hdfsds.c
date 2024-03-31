@@ -142,7 +142,7 @@ hdf_register_seen_sdg(uint16 sdgRef)
     /* check if table is allocated */
     if (!sdgTable) {
         sdgMax   = SDG_MAX_INITIAL;
-        sdgTable = malloc(sdgMax * sizeof(uint16));
+        sdgTable = malloc((size_t)sdgMax * sizeof(uint16));
         if (sdgTable == NULL) {
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
@@ -155,7 +155,7 @@ hdf_register_seen_sdg(uint16 sdgRef)
     /* check if we need to increase size of table */
     if (sdgCurrent == sdgMax) {
         sdgMax *= 2;
-        sdgTable = realloc(sdgTable, sdgMax * sizeof(uint16));
+        sdgTable = realloc(sdgTable, (size_t)sdgMax * sizeof(uint16));
         if (sdgTable == NULL) {
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
@@ -489,7 +489,7 @@ hdf_get_desc_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr,
     num_ddescs = ANnumann(an_handle, AN_DATA_DESC, ndgTag, ndgRef);
     if (num_ddescs != 0) {
         /* allocate space for list of desc annotation id's with this tag/ref */
-        if ((ddescs = malloc(num_ddescs * sizeof(int32))) == NULL) {
+        if ((ddescs = malloc((size_t)num_ddescs * sizeof(int32))) == NULL) {
             HGOTO_ERROR(DFE_NOSPACE, DFE_ANAPIERROR);
         }
 
@@ -506,10 +506,10 @@ hdf_get_desc_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr,
 
             /* allocate space for desc */
             if (ann_desc == NULL) {
-                if ((ann_desc = malloc((ann_len + 1) * sizeof(char))) == NULL) {
+                if ((ann_desc = malloc((size_t)(ann_len + 1) * sizeof(char))) == NULL) {
                     HGOTO_ERROR(DFE_NOSPACE, DFE_NOSPACE);
                 }
-                memset(ann_desc, '\0', ann_len + 1);
+                memset(ann_desc, '\0', (size_t)ann_len + 1);
             }
 
             /* read desc */
@@ -588,7 +588,7 @@ hdf_get_label_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr
 
     if (num_dlabels != 0) {
         /* allocate space for list of label annotation id's with this tag/ref */
-        if ((dlabels = malloc(num_dlabels * sizeof(int32))) == NULL) {
+        if ((dlabels = malloc((size_t)num_dlabels * sizeof(int32))) == NULL) {
             HGOTO_ERROR(DFE_ANAPIERROR, DFE_ANAPIERROR);
         }
 
@@ -605,10 +605,10 @@ hdf_get_label_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr
 
             /* allocate space for label */
             if (ann_label == NULL) {
-                if ((ann_label = malloc((ann_len + 1) * sizeof(char))) == NULL) {
+                if ((ann_label = malloc((size_t)(ann_len + 1) * sizeof(char))) == NULL) {
                     HGOTO_ERROR(DFE_ANAPIERROR, DFE_ANAPIERROR);
                 }
-                memset(ann_label, '\0', ann_len + 1);
+                memset(ann_label, '\0', (size_t)ann_len + 1);
             }
 
             /* read label */
@@ -942,12 +942,12 @@ hdf_read_ndgs(NC *handle)
      */
     max_thangs = 1; /* what is this limit ? */
 
-    dims = malloc(sizeof(NC_dim *) * max_thangs);
+    dims = malloc(sizeof(NC_dim *) * (size_t)max_thangs);
     if (NULL == dims) {
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     }
 
-    vars = malloc(sizeof(NC_var *) * max_thangs);
+    vars = malloc(sizeof(NC_var *) * (size_t)max_thangs);
     if (NULL == vars) {
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     }
@@ -1045,17 +1045,17 @@ hdf_read_ndgs(NC *handle)
                             HGOTO_ERROR(err_code, FAIL);
 
                         /* get space for dimensions */
-                        dimsizes = malloc((uint32)rank * sizeof(int32));
+                        dimsizes = malloc((size_t)rank * sizeof(int32));
                         if (dimsizes == NULL) {
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
                         }
 
-                        vardims = malloc((uint32)rank * sizeof(int));
+                        vardims = malloc((size_t)rank * sizeof(int));
                         if (vardims == NULL) {
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
                         }
 
-                        scaletypes = malloc((uint32)rank * sizeof(int32));
+                        scaletypes = malloc((size_t)rank * sizeof(int32));
                         if (scaletypes == NULL) {
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
                         }
@@ -1282,12 +1282,12 @@ hdf_read_ndgs(NC *handle)
                 if (current_dim == max_thangs) {
                     /* need to allocate more space */
                     max_thangs *= 2;
-                    dims = realloc(dims, sizeof(NC_dim *) * max_thangs);
+                    dims = realloc(dims, sizeof(NC_dim *) * (size_t)max_thangs);
                     if (NULL == dims) {
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
                     }
 
-                    vars = realloc(vars, sizeof(NC_var *) * max_thangs);
+                    vars = realloc(vars, sizeof(NC_var *) * (size_t)max_thangs);
                     if (NULL == vars) {
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
                     }
@@ -1381,11 +1381,11 @@ hdf_read_ndgs(NC *handle)
                         /* need to allocate more space */
                         max_thangs *= 2;
 
-                        dims = realloc(dims, sizeof(NC_dim *) * max_thangs);
+                        dims = realloc(dims, sizeof(NC_dim *) * (size_t)max_thangs);
                         if (NULL == dims)
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-                        vars = realloc(vars, sizeof(NC_var *) * max_thangs);
+                        vars = realloc(vars, sizeof(NC_var *) * (size_t)max_thangs);
                         if (NULL == vars)
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
                     }
@@ -1494,12 +1494,12 @@ hdf_read_ndgs(NC *handle)
                 /* need to allocate more space */
                 max_thangs *= 2;
 
-                dims = realloc(dims, sizeof(NC_dim *) * max_thangs);
+                dims = realloc(dims, sizeof(NC_dim *) * (size_t)max_thangs);
                 if (NULL == dims) {
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
                 }
 
-                vars = realloc(vars, sizeof(NC_var *) * max_thangs);
+                vars = realloc(vars, sizeof(NC_var *) * (size_t)max_thangs);
                 if (NULL == vars) {
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
                 }

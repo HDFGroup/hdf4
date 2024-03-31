@@ -400,23 +400,23 @@ vpackvs(VDATA *vs,    /* IN/OUT: */
 
         /* save each field length and name - omit the null */
         for (i = 0; i < vs->wlist.n; i++) {
-            slen = strlen(vs->wlist.name[i]);
+            slen = (int16)strlen(vs->wlist.name[i]);
             INT16ENCODE(bb, slen);
 
             strcpy((char *)bb, vs->wlist.name[i]);
             bb += slen;
         }
-    } /* end if */
+    }
 
     /* save the vsnamelen and vsname - omit the null */
-    slen = strlen(vs->vsname);
+    slen = (int16)strlen(vs->vsname);
     INT16ENCODE(bb, slen);
 
     strcpy((char *)bb, vs->vsname);
     bb += slen;
 
     /* save the vsclasslen and vsclass- omit the null */
-    slen = strlen(vs->vsclass);
+    slen = (int16)strlen(vs->vsclass);
     INT16ENCODE(bb, slen);
 
     strcpy((char *)bb, vs->vsclass);
@@ -564,7 +564,7 @@ vunpackvs(VDATA *vs,    /* IN/OUT: */
 
             for (i = 0; i < vs->wlist.n; i++) {
                 INT16DECODE(bb, int16var); /* this gives the length */
-                if (NULL == (vs->wlist.name[i] = malloc((int16var + 1) * sizeof(char))))
+                if (NULL == (vs->wlist.name[i] = malloc((size_t)(int16var + 1) * sizeof(char))))
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 HIstrncpy(vs->wlist.name[i], (char *)bb, int16var + 1);
@@ -604,7 +604,7 @@ vunpackvs(VDATA *vs,    /* IN/OUT: */
             if (vs->flags & VS_ATTR_SET) { /* get attr info */
                 INT32DECODE(bb, vs->nattrs);
 
-                if (NULL == (vs->alist = (vs_attr_t *)malloc(vs->nattrs * sizeof(vs_attr_t))))
+                if (NULL == (vs->alist = (vs_attr_t *)malloc((size_t)vs->nattrs * sizeof(vs_attr_t))))
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 for (i = 0; i < vs->nattrs; i++) {

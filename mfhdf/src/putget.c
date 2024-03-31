@@ -538,7 +538,7 @@ SDIresizebuf(void **buf, int32 *buf_size, int32 size_wanted)
     if (*buf_size < size_wanted) {
         free(*buf);
         *buf_size = size_wanted;
-        *buf      = calloc(1, size_wanted);
+        *buf      = calloc(1, (size_t)size_wanted);
         if (*buf == NULL) {
             *buf_size = 0;
             ret_value = FAIL;

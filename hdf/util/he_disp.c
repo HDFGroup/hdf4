@@ -229,7 +229,7 @@ rImage(int usepal)
      *  Send the data for the image with RLE encoding for efficiency.
      *  Encode each line and send it.
      */
-    space    = (int8 *)malloc(ydim + 128);
+    space    = (int8 *)malloc((size_t)ydim + 128);
     thisline = (int8 *)wheresmall;
 
     for (i = 0; i < ydim; i++) {
@@ -294,7 +294,7 @@ bigImg(unsigned char *targ, unsigned char *src)
                 *q++ = *p;
 
         for (i = 1; i < factor; i++) {
-            memcpy(q, oldq, xsize); /* make one copy of the line */
+            memcpy(q, oldq, (size_t)xsize); /* make one copy of the line */
             q += xsize;
         }
     }

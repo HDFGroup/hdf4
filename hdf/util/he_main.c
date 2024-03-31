@@ -191,7 +191,7 @@ getElement(int desc, char **pdata)
     length = he_desc[desc].length;
 
     /* alloc memory to read the element in */
-    *pdata = (char *)malloc(length);
+    *pdata = (char *)malloc((size_t)length);
     if (*pdata == NULL)
         return FAIL;
 
@@ -215,7 +215,7 @@ getElement(int desc, char **pdata)
 int
 getTmpName(char **pname)
 {
-    int        length;
+    size_t     length;
     static int count = 0;
     char       s[32];
 
@@ -223,14 +223,12 @@ getTmpName(char **pname)
     (void)sprintf(s, "%she%d.%d", TDIR, pid, count);
     count++;
 
-    length = (int)strlen(s);
-    if (length <= 0)
-        return FAIL;
+    length = strlen(s);
 
     *pname = (char *)malloc(length + 1);
     strcpy(*pname, s);
 
-    return length;
+    return (int)length;
 }
 
 int
@@ -364,7 +362,7 @@ updateDesc(void)
                             he_grp[he_numGrp].ddList = (tag_ref_ptr) malloc(he_desc[i].length);
             */
             he_grp[he_numGrp].size   = (int)(he_desc[i].length / 4);
-            he_grp[he_numGrp].ddList = (tag_ref_ptr)malloc(he_grp[he_numGrp].size * sizeof(tag_ref));
+            he_grp[he_numGrp].ddList = (tag_ref_ptr)malloc((size_t)he_grp[he_numGrp].size * sizeof(tag_ref));
 
             if (!he_grp[he_numGrp].ddList) {
                 fprintf(stderr, "Out of memory. Closing file.\n");
@@ -446,7 +444,7 @@ getR8(int xdim, int ydim, char *image, char *pal, int compress)
             goto error;
 
     length = xdim * ydim;
-    buf    = (char *)malloc(length);
+    buf    = (char *)malloc((size_t)length);
 
     if ((fp = fopen(image, "r")) == NULL) {
         fprintf(stderr, "Error opening image file: %s.\n", image);
@@ -604,7 +602,7 @@ getCurrRig(int32 *pXdim, int32 *pYdim, char **pPalette, char **pRaster)
 }
 
 int
-putWithTempl(char *template, int n1, int n2, int n3, char *data, int length, int verbose)
+putWithTempl(const char *template, int n1, int n2, int n3, char *data, int length, int verbose)
 {
     char *file = NULL;
     int   ret  = FAIL;
@@ -853,10 +851,10 @@ putAnn(int ann, uint16 tag, uint16 ref, char *buf, int32 len)
 int32
 readFromFile(char *file, char **pBuf)
 {
-    FILE *fp = NULL;
-    int32 soFar;
-    int32 bufLen;
-    int32 num_read;
+    FILE  *fp = NULL;
+    size_t soFar;
+    size_t bufLen;
+    int32  num_read;
 
     fp = fopen(file, "r");
     if (fp == NULL)
@@ -935,12 +933,12 @@ struct {
 int
 findOpt(char *word)
 {
-    unsigned len;
-    int      found = -1;
+    size_t len;
+    int    found = -1;
 
     len = strlen(word);
 
-    for (int i = 0; i < sizeof(he_optTab) / sizeof(he_optTab[0]); i++)
+    for (size_t i = 0; i < sizeof(he_optTab) / sizeof(he_optTab[0]); i++)
         if (!strncmp(he_optTab[i].str, word, len)) {
             /* exact match */
             if (strlen(he_optTab[i].str) == len)
@@ -1131,12 +1129,13 @@ convertTemplate(char *template, int n1, int n2, int n3, char **pname)
 void
 fillTemplate(char **template, char **pout, char *s, char templateChar)
 {
-    int templateLen, sLen;
+    int    templateLen;
+    size_t sLen;
 
     /* count length of template to replace */
     for (templateLen = 0; **template == templateChar; (*template)++, templateLen++)
         ;
-    sLen = (int)strlen(s);
+    sLen = strlen(s);
 
     /* fill with zero's if the space reserved in template is
        longer than the length of s */

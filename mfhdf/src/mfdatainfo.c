@@ -554,7 +554,7 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char *attr_name, int32 *offset, i
         }
 
         /* Read the luf string */
-        lufbuf = malloc(len + 1);
+        lufbuf = malloc((size_t)len + 1);
         if (lufbuf == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         Hgetelement(handle->hdf_file, att_tag, att_ref, (uint8 *)lufbuf);
@@ -566,7 +566,7 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char *attr_name, int32 *offset, i
         lufp = lufbuf;
 
         /* Get the length of the data set's luf */
-        sdsluf_len = strlen(lufbuf);
+        sdsluf_len = (int32)strlen(lufbuf);
 
         /* If data set's attribute is being inquired, then return with offset
          and length of the SDS' attribute's data only */
@@ -611,7 +611,7 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char *attr_name, int32 *offset, i
                     /* Extract current dimension's attribute */
                     strcpy(dim_att, (char *)lufp);
                     dim_att[strlen(lufp)] = 0;
-                    dim_att_len           = strlen(dim_att);
+                    dim_att_len           = (int32)strlen(dim_att);
                 }
 
                 /* Move forward if this is not the dim we're looking for */
@@ -806,10 +806,10 @@ SDgetanndatainfo(int32 sdsid, ann_type annot_type, unsigned size, int32 *offseta
 
             /* If more annotations than space in user's buffers, only fill up buffers */
             if (num_annots > size)
-                num_annots = size;
+                num_annots = (int)size;
 
             /* Allocate space for list of annotation IDs on this tag/ref */
-            if ((dannots = malloc(num_annots * sizeof(int32))) == NULL)
+            if ((dannots = malloc((size_t)num_annots * sizeof(int32))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* Get list of annotations IDs on this tag/ref */

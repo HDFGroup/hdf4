@@ -104,7 +104,7 @@ read_verify_nc_api_1dim(void)
     /* Read the entire variable */
     start[0] = 0;
     edges[0] = dimsize;
-    memset(outdata, 0, edges[0]);
+    memset(outdata, 0, (size_t)edges[0]);
     status = ncvarget(ncid, var1id, start, edges, outdata);
     CHECK(status, -1, "ncvarget");
 
@@ -132,7 +132,7 @@ read_verify_nc_api_1dim(void)
 
     start[0] = 0;
     edges[0] = dimsize;
-    memset(outdata, 0, edges[0]);
+    memset(outdata, 0, (size_t)edges[0]);
     status = ncvarget(ncid, var2id, start, edges, outdata);
     CHECK(status, -1, "ncvarget");
 
@@ -343,12 +343,12 @@ read_verify_nc_api_multidims(void)
     VERIFY(dims[0], MAX_NUMRECS, "ncdiminq");
 
     /* Get data */
-    memset(outdata3D, 0, edges[0] * edges[1] * edges[2] * sizeof(int16));
+    memset(outdata3D, 0, (size_t)(edges[0] * edges[1] * edges[2]) * sizeof(int16));
     status = ncvarget(ncid, var1id, start, edges, outdata3D);
     CHECK(status, -1, "ncvarget");
 
     /* Verify against the result buffer within the size of the read data */
-    status = memcmp(outdata3D, result3D, edges[0] * edges[1] * edges[2] * sizeof(int16));
+    status = memcmp(outdata3D, result3D, (size_t)(edges[0] * edges[1] * edges[2]) * sizeof(int16));
     VERIFY(status, 0, "memcmp");
 
     /* Verify variable info and data of second data set */
@@ -369,7 +369,7 @@ read_verify_nc_api_multidims(void)
 
     /* Get data */
     edges[0] = dims[0];
-    memset(outdata1D, 0, edges[0] * sizeof(int16));
+    memset(outdata1D, 0, (size_t)edges[0] * sizeof(int16));
     status = ncvarget(ncid, var2id, start, edges, outdata1D);
     CHECK(status, -1, "ncvarget");
 
@@ -400,12 +400,12 @@ read_verify_nc_api_multidims(void)
     /* Get data */
     start[0] = 0;
     edges[0] = dims[0];
-    memset(outdata1D, 0, edges[0] * sizeof(int16));
+    memset(outdata1D, 0, (size_t)edges[0] * sizeof(int16));
     status = ncvarget(ncid, var3id, start, edges, outdata1D);
     CHECK(status, -1, "ncvarget");
 
     /* Verify against the result buffer within the size of the read data */
-    status = memcmp(outdata1D, ncresult1Ddozen, edges[0] * sizeof(int16));
+    status = memcmp(outdata1D, ncresult1Ddozen, (size_t)edges[0] * sizeof(int16));
     VERIFY(status, 0, "memcmp");
 
     status = ncclose(ncid);
@@ -497,14 +497,14 @@ test_multidims()
     edges[0]                       = dimsizes3D[0];
     edges[1]                       = dimsizes3D[1];
     edges[2]                       = dimsizes3D[2];
-    outdata3                       = (int16 *)calloc(edges[0] * edges[1] * edges[2], sizeof(int16));
+    outdata3                       = (int16 *)calloc((size_t)(edges[0] * edges[1] * edges[2]), sizeof(int16));
     CHECK_ALLOC(outdata3, "outdata3", "test_multidims");
 
     status = SDreaddata(dset1, start, NULL, edges, (void *)outdata3);
     CHECK(status, FAIL, "SDreaddata");
 
     /* Verify against the result buffer within the size of the read data */
-    status = memcmp(outdata3, result3D, edges[0] * edges[1] * edges[2] * sizeof(int16));
+    status = memcmp(outdata3, result3D, (size_t)(edges[0] * edges[1] * edges[2]) * sizeof(int16));
     VERIFY(status, 0, "memcmp");
 
     free(outdata3);
@@ -568,7 +568,7 @@ test_multidims()
     CHECK(status, FAIL, "SDreaddata");
 
     /* Verify against the result buffer within the size of the read data */
-    status = memcmp(outdata3D, result3D, edges[0] * edges[1] * edges[2] * sizeof(int16));
+    status = memcmp(outdata3D, result3D, (size_t)(edges[0] * edges[1] * edges[2]) * sizeof(int16));
     VERIFY(status, 0, "memcmp");
 
     /* Data should be
@@ -596,7 +596,7 @@ test_multidims()
     CHECK(status, FAIL, "SDreaddata");
 
     /* Verify against the result buffer within the size of the read data */
-    status = memcmp(outdata1D, sdresult1D, edges[0] * sizeof(int16));
+    status = memcmp(outdata1D, sdresult1D, (size_t)edges[0] * sizeof(int16));
     VERIFY(status, 0, "memcmp");
 
     /* Close the datasets */
@@ -723,7 +723,7 @@ test_readings(long max_numrecs)
     edges[0]            = 6;
     edges[1]            = 1;
     edges[2]            = 1;
-    memset(outdata3D, 0, edges[0] * edges[1] * edges[2] * sizeof(int16));
+    memset(outdata3D, 0, (size_t)(edges[0] * edges[1] * edges[2]) * sizeof(int16));
     status = ncvarget(ncid, var1id, start, edges, outdata3D);
     CHECK(status, -1, "ncvarget");
 
@@ -734,7 +734,8 @@ test_readings(long max_numrecs)
            to skipping during writing */
 
     /* Verify against the result buffer within the size of the read data */
-    status = memcmp(outdata3D, result3D_start400_edge611, edges[0] * edges[1] * edges[2] * sizeof(int16));
+    status = memcmp(outdata3D, result3D_start400_edge611,
+                    (size_t)(edges[0] * edges[1] * edges[2]) * sizeof(int16));
     VERIFY(status, 0, "memcmp");
 
     /* Read data past the max numrecs in the file, ncvarget should fail */
@@ -742,7 +743,7 @@ test_readings(long max_numrecs)
     start[1] = start[2] = 0;
     edges[0]            = 10;
     edges[1] = edges[2] = 1;
-    memset(outdata3D, 0, edges[0] * edges[1] * edges[2] * sizeof(int16));
+    memset(outdata3D, 0, (size_t)(edges[0] * edges[1] * edges[2]) * sizeof(int16));
     status = ncvarget(ncid, var1id, start, edges, outdata3D);
     VERIFY(status, -1, "ncvarget");
 
@@ -768,7 +769,7 @@ test_readings(long max_numrecs)
     /* Read data past the written data, but before max numrecs in the file */
     start[0] = 4;
     edges[0] = 6;
-    memset(outdata1D, 0, edges[0] * sizeof(int16));
+    memset(outdata1D, 0, (size_t)edges[0] * sizeof(int16));
     status = ncvarget(ncid, var2id, start, edges, outdata1D);
     CHECK(status, -1, "ncvarget");
 
@@ -779,7 +780,7 @@ test_readings(long max_numrecs)
     /* Read data past the max numrecs in the file, ncvarget should fail */
     start[0] = 4;
     edges[0] = 10;
-    memset(outdata1D, 0, edges[0] * sizeof(int16));
+    memset(outdata1D, 0, (size_t)edges[0] * sizeof(int16));
     status = ncvarget(ncid, var2id, start, edges, outdata1D);
     VERIFY(status, -1, "ncvarget");
 

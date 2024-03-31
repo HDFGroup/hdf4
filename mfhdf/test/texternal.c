@@ -321,9 +321,9 @@ test_getexternal()
         name_len = SDgetexternalfile(sds_id, 0, NULL, NULL);
         VERIFY(name_len, (int)strlen(EXTFILE), "SDgetexternalfile");
 
-        extfile_name = (char *)malloc(sizeof(char *) * (name_len + 1));
+        extfile_name = (char *)malloc(sizeof(char *) * (size_t)(name_len + 1));
         CHECK_ALLOC(extfile_name, "extfile_name", "SDgetexternalfile");
-        memset(extfile_name, '\0', name_len + 1);
+        memset(extfile_name, '\0', (size_t)name_len + 1);
 
         /* Call SDgetexternalfile again and get the external file info */
         name_len = SDgetexternalfile(sds_id, name_len + 1, extfile_name, &offset);
@@ -348,9 +348,9 @@ test_getexternal()
     }
 
     /* Prepare buffer for external file name */
-    extfile_name = (char *)malloc(sizeof(char *) * (name_len + 1));
+    extfile_name = (char *)malloc(sizeof(char *) * (size_t)(name_len + 1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_getexternal");
-    memset(extfile_name, '\0', name_len + 1);
+    memset(extfile_name, '\0', (size_t)name_len + 1);
 
     /* Call SDgetexternalinfo again and get the external file info */
     name_len = SDgetexternalinfo(sds_id, name_len + 1, extfile_name, &offset, &length);
@@ -360,11 +360,11 @@ test_getexternal()
     /* Test passing in smaller buffer for external file name than actual;
     name should be truncated */
     {
-        char *short_name = (char *)malloc(sizeof(char *) * (name_len));
+        char *short_name = (char *)malloc(sizeof(char *) * (size_t)name_len);
         CHECK_ALLOC(short_name, "short_name", "test_getexternal");
-        memset(short_name, '\0', name_len);
-        strncpy(short_name, EXTFILE, name_len - 2);
-        memset(extfile_name, '\0', name_len);
+        memset(short_name, '\0', (size_t)name_len);
+        strncpy(short_name, EXTFILE, (size_t)name_len - 2);
+        memset(extfile_name, '\0', (size_t)name_len);
 
         /* Call SDgetexternalinfo again with smaller buffer size and verify
            that SDgetexternalinfo reads the name truncated to the given
@@ -402,9 +402,9 @@ test_getexternal()
         VERIFY(ret_code, FAIL, "SDgetexternalinfo");
     }
 
-    extfile_name = (char *)malloc(sizeof(char *) * (name_len + 1));
+    extfile_name = (char *)malloc(sizeof(char *) * (size_t)(name_len + 1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_getexternal");
-    memset(extfile_name, '\0', name_len + 1);
+    memset(extfile_name, '\0', (size_t)name_len + 1);
 
     /* Call SDgetexternalinfo again and get the external file info */
     name_len = SDgetexternalinfo(sds_id, name_len + 1, extfile_name, &offset, &length);
@@ -508,9 +508,9 @@ test_mult_setexternal()
         fprintf(stderr, "SDsetexternalfile should return length greater than 0\n");
 
     /* Prepare buffer for external file name */
-    extfile_name = malloc(sizeof(char *) * (name_len + 1));
+    extfile_name = malloc(sizeof(char *) * (size_t)(name_len + 1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_getexternal");
-    memset(extfile_name, '\0', name_len + 1);
+    memset(extfile_name, '\0', (size_t)name_len + 1);
 
     /* Call SDgetexternalinfo again and get the external file info */
     name_len = SDgetexternalinfo(sds1_id, name_len + 1, extfile_name, NULL, NULL);
@@ -1092,7 +1092,7 @@ verify_data(int32 sd_id, int32 sds_ind)
     }
 
     /* Allocate buffer for reading, after establishing the data size */
-    outdata = (int32 *)malloc(data_size);
+    outdata = (int32 *)malloc((size_t)data_size);
     CHECK_ALLOC(outdata, "outdata", "verify_data");
 
     /* Read the entire sds and verify that the data is as the original buffer */

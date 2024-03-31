@@ -373,10 +373,10 @@ vsdumpfull(int32 vs)
     }
 
     done = 0;
-    bb   = (uint8 *)malloc(bufsize);
+    bb   = (uint8 *)malloc((size_t)bufsize);
     if (bb == NULL) {
         printf("vsdumpfull malloc error\n");
-        return (0);
+        return 0;
     }
 
     VSsetfields(vs, fields);
@@ -555,7 +555,7 @@ dumpattr(int32 vid, int full, int isvs)
                 printf("     %d: name=%s type=%d count=%d size=%d\n", i, name, (int)i_type, (int)i_count,
                        (int)i_size);
                 if (i_size > BUFFER) {
-                    if (NULL == (buf = malloc(i_size))) {
+                    if (NULL == (buf = malloc((size_t)i_size))) {
                         printf(">>>dumpattr:can't allocate buf.\n");
                         continue;
                     }
@@ -664,7 +664,7 @@ dumpattr(int32 vid, int full, int isvs)
             printf("   %d: name=%s type=%d count=%d size=%d\n", i, name, (int)i_type, (int)i_count,
                    (int)i_size);
             if (i_size > BUFFER) {
-                if (NULL == (buf = malloc(i_size))) {
+                if (NULL == (buf = malloc((size_t)i_size))) {
                     printf(">>>dumpattr:can't allocate buf.\n");
                     continue;
                 }

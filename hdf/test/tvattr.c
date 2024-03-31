@@ -760,7 +760,7 @@ test_readattrtwice(void)
             ret = VSattrinfo(vsid, _HDF_VDATA, k, name, &data_type, &count, &size);
             CHECK_VOID(ret, FAIL, "VSattrinfo");
 
-            buffer = malloc(size + 1);
+            buffer = malloc((size_t)size + 1);
             CHECK_VOID(buffer, NULL, "malloc");
 
             ret = VSgetattr(vsid, _HDF_VDATA, k, buffer);
@@ -784,7 +784,7 @@ test_readattrtwice(void)
                     ret = VSattrinfo(vsid, findex, fattr_index, name, &data_type, &count, &size);
                     CHECK_VOID(ret, FAIL, "VSattrinfo");
 
-                    buffer = malloc(size);
+                    buffer = malloc((size_t)size);
                     CHECK_VOID(buffer, NULL, "malloc");
 
                     ret = VSgetattr(vsid, findex, fattr_index, buffer);

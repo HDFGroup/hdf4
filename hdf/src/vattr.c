@@ -349,7 +349,7 @@ VSsetattr(int32 vsid, int32 findex, const char *attrname, int32 datatype, int32 
         vs->alist = (vs_attr_t *)malloc(sizeof(vs_attr_t));
     }
     else
-        vs->alist = realloc(vs->alist, (vs->nattrs + 1) * sizeof(vs_attr_t));
+        vs->alist = realloc(vs->alist, (size_t)(vs->nattrs + 1) * sizeof(vs_attr_t));
     if (vs->alist == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     vs->alist[vs->nattrs].findex = findex;
@@ -842,7 +842,7 @@ Vsetattr(int32 vgid, const char *attrname, int32 datatype, int32 count, const vo
         vg->alist = (vg_attr_t *)malloc(sizeof(vg_attr_t));
     else
         /* not exist */
-        vg->alist = realloc(vg->alist, (vg->nattrs + 1) * sizeof(vg_attr_t));
+        vg->alist = realloc(vg->alist, (size_t)(vg->nattrs + 1) * sizeof(vg_attr_t));
     if (vg->alist == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     vg->nattrs++;
@@ -1016,7 +1016,7 @@ Vnoldattrs(int32 vgid)
            or if it is outdated. */
 
         /* temporary list of attr refs to pass into VSofclass */
-        areflist = (uint16 *)malloc(sizeof(uint16) * n_old_attrs);
+        areflist = (uint16 *)malloc(sizeof(uint16) * (size_t)n_old_attrs);
         if (areflist == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -1038,7 +1038,7 @@ Vnoldattrs(int32 vgid)
             free(vg->old_alist);
 
             /* Allocate new list */
-            vg->old_alist = (vg_attr_t *)malloc(sizeof(vg_attr_t) * (n_old_attrs));
+            vg->old_alist = (vg_attr_t *)malloc(sizeof(vg_attr_t) * (size_t)n_old_attrs);
             if (vg->old_alist == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 

@@ -1023,9 +1023,9 @@ test_r24_jpeg(void)
         CHECK_VOID(status, FAIL, "GRgetdatainfo");
 
         /* Allocate buffers for the data from the HDF file and non-HDF file */
-        hdf_buffer = (uint8 *)malloc(length * sizeof(uint8));
+        hdf_buffer = (uint8 *)malloc((size_t)length * sizeof(uint8));
         CHECK_ALLOC(hdf_buffer, "hdf_buffer", "test_r24_jpeg");
-        nonhdf_buffer = (uint8 *)malloc(length * sizeof(uint8));
+        nonhdf_buffer = (uint8 *)malloc((size_t)length * sizeof(uint8));
         CHECK_ALLOC(nonhdf_buffer, "nonhdf_buffer", "test_r24_jpeg");
 
         /* Read the block of data from the HDF file using offset/length returned by
@@ -1041,7 +1041,7 @@ test_r24_jpeg(void)
 
         /* Compare compressed data from the HDF file against that from the
            non-HDF file.  The two buffers should be identical */
-        if (memcmp(hdf_buffer, nonhdf_buffer, length)) {
+        if (memcmp(hdf_buffer, nonhdf_buffer, (size_t)length)) {
             /* Display any mismatched values for debugging */
             print_mismatched(hdf_buffer, nonhdf_buffer, length);
             num_errs++;

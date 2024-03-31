@@ -23,13 +23,14 @@ main(int argv, char *argc[])
 
     GIFTOMEM GifMemoryStruct;
 
-    FILE *fpGif;
-    int32 i;
-    int32 filesize;
-    BYTE *MemGif;
-    BYTE *StartPos;
-    char  GIFFileName[256];
-    char  HDFFileName[256];
+    FILE  *fpGif;
+    int32  i;
+    size_t filesize;
+    BYTE  *MemGif;
+    BYTE  *StartPos;
+    char   GIFFileName[256];
+    char   HDFFileName[256];
+    long   ret;
 
     /* Initialize all GifMemoryStruct pointers to null
     ** to prevent hassles later on
@@ -43,7 +44,7 @@ main(int argv, char *argc[])
 
     if (argv < 3) {
         printf("\n\nWrong Usage. Use:\ngif2hdf <GIFFILE> <HDFFILE>\n\n");
-        return (-1);
+        return EXIT_FAILURE;
     }
 
     strncpy(GIFFileName, argc[1], VSNAMELENMAX - 1);
@@ -54,22 +55,27 @@ main(int argv, char *argc[])
     if (!(fpGif = fopen(GIFFileName, "rb"))) {
         printf("Unable to open GIF file for reading.\n");
         printf("Filename (including path) must be less than %d characters in length\n", VSNAMELENMAX);
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
 
     /* Get the whole file into memory. Mem's much faster than I/O */
     fseek(fpGif, 0L, 2);
-    filesize = ftell(fpGif);
+    ret = ftell(fpGif);
+    if (ret < 0) {
+        printf("ftell failed");
+        exit(EXIT_FAILURE);
+    }
+    filesize = (size_t)ret;
     fseek(fpGif, 0L, 0);
     if (filesize == 0)
         printf("File Size Zero");
     if (!(MemGif = StartPos = (BYTE *)malloc(filesize))) {
         printf("Out of memory");
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
     if (fread(MemGif, filesize, 1, fpGif) != 1) {
         printf("Corrupted Input File");
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
 
     fseek(fpGif, 0L, 0);
@@ -82,7 +88,7 @@ main(int argv, char *argc[])
     GifMemoryStruct = Gif2Mem(MemGif);
     if (ferror(fpGif)) {
         printf("File Stream Error\n\n");
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
     fclose(fpGif);
 
@@ -144,5 +150,5 @@ main(int argv, char *argc[])
 
     free(GifMemoryStruct.GifHeader);
 
-    return (0);
+    return EXIT_SUCCESS;
 }

@@ -68,11 +68,11 @@ scanattrs(const char *attrs, int32 *attrc, char ***attrv)
     size_t slen = strlen(attrs) + 1;
 
     if (slen > Vpbufsize) {
-        Vpbufsize = slen;
+        Vpbufsize = (uint32)slen;
         free(Vpbuf);
         if ((Vpbuf = (uint8 *)malloc(Vpbufsize)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
-    } /* end if */
+    }
 
     strcpy((char *)Vpbuf, attrs);
     s    = (char *)Vpbuf;

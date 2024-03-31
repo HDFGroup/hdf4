@@ -516,14 +516,14 @@ readnoHDF_char(const char *filename, const int32 offset, const int32 length, con
     }
 
     /* Allocate buffers for SDS' data */
-    readcbuf = (char *)malloc(length * sizeof(char));
+    readcbuf = (char *)malloc((size_t)length * sizeof(char));
     if (readcbuf == NULL) {
         fprintf(stderr, "readnoHDF_char: allocation readcbuf failed\n");
         ret_value = FAIL;
     }
 
     /* Read in this block of data */
-    readlen = fread((void *)readcbuf, 1, length, fd);
+    readlen = fread((void *)readcbuf, 1, (size_t)length, fd);
     if (readlen > 0) {
         /* Compare data read without HDF4 lib against the original buffer */
         if (strncmp(readcbuf, orig_buf, readlen) != 0)
@@ -568,9 +568,9 @@ readnoHDF_char(const char *filename, const int32 offset, const int32 length, con
         The number of annotations whose data info is successfully retrieved
         and stored in ann_info or FAIL if failure occurs.
 ********************************************************************/
-int
+static int
 get_annot_datainfo(int32 an_id, ann_type annot_type, int32 num_anns, t_ann_info_t *ann_info, int ann_info_num,
-                   char *ann_text)
+                   const char *ann_text)
 {
     int32 ann_id, ann_index;
     int   status_n, ret_value = 0;
@@ -820,7 +820,7 @@ test_annotation()
 /* Convenient function to create and write to an image, used by
    test_oneblock_ri */
 static int
-make_comp_image(int32 grid, char *img_name,
+make_comp_image(int32 grid, const char *img_name,
                 char       start_char, /* first value in the image, for variety of data */
                 int32      comp_type,  /* compression method */
                 comp_info *cinfo)      /* compression parameters */
@@ -1359,7 +1359,7 @@ test_getpalinfo()
         n_pals = GRgetpalinfo(grid, 0, NULL);
         CHECK_VOID(n_pals, FAIL, "GRgetpalinfo");
 
-        palinfo_array = (hdf_ddinfo_t *)malloc(n_pals * sizeof(hdf_ddinfo_t));
+        palinfo_array = (hdf_ddinfo_t *)malloc((size_t)n_pals * sizeof(hdf_ddinfo_t));
         CHECK_ALLOC(palinfo_array, "palinfo_array", "test_getpalinfo");
 
         n_pals = GRgetpalinfo(grid, n_pals, palinfo_array);
@@ -1369,12 +1369,12 @@ test_getpalinfo()
            data identifiers 201/ref and 301/ref */
         /* inbuf = (uint8 *) malloc(palinfo_array[0].length * sizeof(uint8));
          */
-        inbuf = (uint8 *)malloc(palinfo_array[0].length);
+        inbuf = (uint8 *)malloc((size_t)(palinfo_array[0].length));
         CHECK_ALLOC(inbuf, "inbuf", "test_getpalinfo");
         status = Hgetelement(fid, palinfo_array[0].tag, palinfo_array[0].ref, inbuf);
         CHECK_VOID(status, FAIL, "Hgetelement");
 
-        if (memcmp(inbuf, paletteA, palinfo_array[0].length) != 0)
+        if (memcmp(inbuf, paletteA, (size_t)(palinfo_array[0].length)) != 0)
             fprintf(stderr,
                     "palette data pointed by tag/ref = %d/%d at offset/length = %d/%d differs from written\n",
                     palinfo_array[0].tag, palinfo_array[0].ref, palinfo_array[0].offset,
@@ -1387,12 +1387,12 @@ test_getpalinfo()
 
         /* inbuf = (uint8 *) malloc(palinfo_array[7].length * sizeof(uint8));
          */
-        inbuf = (uint8 *)malloc(palinfo_array[7].length);
+        inbuf = (uint8 *)malloc((size_t)palinfo_array[7].length);
         CHECK_ALLOC(inbuf, "inbuf", "test_getpalinfo");
         status = Hgetelement(fid, palinfo_array[7].tag, palinfo_array[7].ref, inbuf);
         CHECK_VOID(status, FAIL, "Hgetelement");
 
-        if (memcmp(inbuf, palette_buf1, palinfo_array[7].length) != 0)
+        if (memcmp(inbuf, palette_buf1, (size_t)palinfo_array[7].length) != 0)
             fprintf(stderr,
                     "palette data pointed by tag/ref = %d/%d at offset/length = %d/%d differs from written\n",
                     palinfo_array[7].tag, palinfo_array[7].ref, palinfo_array[7].offset,

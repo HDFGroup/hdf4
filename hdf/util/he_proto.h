@@ -164,15 +164,15 @@ void printAlias(char *word, HE_CMD *cmd);
 
 void prompt(void);
 
-int put(char *template, int verbose);
+int put(const char *template, int verbose);
 
 int putAnn(int ann, uint16 tag, uint16 ref, char *buf, int32 len);
 
 int putElement(char *file, uint16 tag, uint16 ref, char *data, int32 len);
 
-int putR8(char *image, char *pal, int verbose);
+int putR8(const char *image, const char *pal, int verbose);
 
-int putWithTempl(char *template, int n1, int n2, int n3, char *data, int length, int verbose);
+int putWithTempl(const char *template, int n1, int n2, int n3, char *data, int length, int verbose);
 
 int quit(int status);
 
