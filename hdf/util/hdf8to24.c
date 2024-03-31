@@ -87,14 +87,14 @@ magnify(uint8 *from_buffer, uint8 *to_buffer, int32 from_x0, int32 from_y0, int3
     wind_height = (float64)((from_y1 - from_y0) + 1);
 
     /* allocate room for the x coordinate lookup table */
-    x_coor = (int32 *)malloc((int32)((size_t)to_width * sizeof(int32)));
+    x_coor = (int32 *)malloc((size_t)to_width * sizeof(int32));
     EXCHECK(x_coor == NULL, XCoorFailed); /* check if malloc() failed */
     temp_val = wind_width / (float64)to_width;
     for (u = 0; u < to_width; u++) /* calculate the x coordinate lookup table */
         x_coor[u] = ((uint16)((float64)u * temp_val) + from_x0);
 
     /* allocate room for the array of pointers */
-    y_coor = (uint8 **)malloc((int32)((size_t)to_height * sizeof(uint8 *)));
+    y_coor = (uint8 **)malloc((size_t)to_height * sizeof(uint8 *));
     EXCHECK(y_coor == NULL, YCoorFailed); /* check if malloc() failed */
     temp_val = wind_height / (float64)to_height;
     for (u = 0; u < to_height; u++) /* calculate the y coordinates */
@@ -115,10 +115,10 @@ magnify(uint8 *from_buffer, uint8 *to_buffer, int32 from_x0, int32 from_y0, int3
         } /* end if */
           /* this line is the same as the previous one, just copy it */
         else {
-            memcpy(buf_off, last_buf, to_width); /* copy the previous line */
-            buf_off += to_width;                 /* advance the buffer offset pointer */
-        }                                        /* end else */
-    }                                            /* end for */
+            memcpy(buf_off, last_buf, (size_t)to_width); /* copy the previous line */
+            buf_off += to_width;                         /* advance the buffer offset pointer */
+        }                                                /* end else */
+    }                                                    /* end for */
     free(y_coor);
     free(x_coor);
     return (TRUE);
@@ -204,7 +204,7 @@ main(int argc, char *argv[])
             switch (argv[file][1]) {
                 case 's':
                     /* Check for valid scale */
-                    if ((img_scale = (float32)atof(&argv[file][2])) <= 0.0) {
+                    if ((img_scale = (float32)atof(&argv[file][2])) <= 0.0F) {
                         printf("Bad scale, must be greater than 0\n");
                         return 1;
                     }

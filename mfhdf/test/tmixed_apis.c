@@ -374,7 +374,7 @@ test_vdatavgroups()
     VERIFY(num_vgroups, NUM_VGS, "Vgetvgroups");
 
     /* Allocate sufficient memory to hold the list of user-created vg refs */
-    refarray = (uint16 *)malloc(sizeof(uint16) * num_vgroups);
+    refarray = (uint16 *)malloc(sizeof(uint16) * (size_t)num_vgroups);
     CHECK_ALLOC(refarray, "refarray", "test_vdatavgroups");
 
     /* Now, get the user-created vgroup refs */

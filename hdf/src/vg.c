@@ -505,10 +505,10 @@ VSsetname(int32       vkey, /* IN: Vdata key */
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     /* get current length of vdata name */
-    curr_len = strnlen(vs->vsname, VSNAMELENMAX + 1);
+    curr_len = (int32)strnlen(vs->vsname, VSNAMELENMAX + 1);
 
     /* check length of new name against MAX length */
-    if ((slen = strlen(vsname)) > VSNAMELENMAX) { /* truncate name */
+    if ((slen = (int32)strlen(vsname)) > VSNAMELENMAX) { /* truncate name */
         strncpy(vs->vsname, vsname, VSNAMELENMAX);
         vs->vsname[VSNAMELENMAX] = '\0';
     }

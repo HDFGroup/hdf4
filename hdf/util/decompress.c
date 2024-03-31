@@ -204,7 +204,7 @@ Decompress(GIFIMAGEDESC *GifImageDesc, GIFHEAD *GifHead)
 
     /* Allocate the Image */
 
-    if (!(Image = (BYTE *)malloc(IWidth * IHeight))) {
+    if (!(Image = (BYTE *)malloc((size_t)(IWidth * IHeight)))) {
         printf("Out of memory");
         exit(-1);
     }

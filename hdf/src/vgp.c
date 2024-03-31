@@ -821,7 +821,7 @@ vpackvg(VGROUP *vg,    /* IN: */
     /* save the vgnamelen and vgname - omit the null */
     if (vg->vgname != NULL)
         slen = strlen(vg->vgname);
-    temp_len = slen > 0 ? slen : 0;
+    temp_len = (uint16)(slen > 0 ? slen : 0);
     UINT16ENCODE(bb, temp_len);
 
     if (vg->vgname != NULL)
@@ -832,7 +832,7 @@ vpackvg(VGROUP *vg,    /* IN: */
     slen = 0;
     if (vg->vgclass != NULL)
         slen = strlen(vg->vgclass);
-    temp_len = slen > 0 ? slen : 0;
+    temp_len = (uint16)(slen > 0 ? slen : 0);
     UINT16ENCODE(bb, temp_len);
 
     if (vg->vgclass != NULL)
@@ -922,8 +922,8 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
         UINT16DECODE(bb, vg->nvelt);
 
         vg->msize = ((unsigned)vg->nvelt > (unsigned)MAXNVELT ? vg->nvelt : MAXNVELT);
-        vg->tag   = (uint16 *)malloc(vg->msize * sizeof(uint16));
-        vg->ref   = (uint16 *)malloc(vg->msize * sizeof(uint16));
+        vg->tag   = (uint16 *)malloc((size_t)vg->msize * sizeof(uint16));
+        vg->ref   = (uint16 *)malloc((size_t)vg->msize * sizeof(uint16));
 
         if ((vg->tag == NULL) || (vg->ref == NULL))
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -965,7 +965,7 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
             if (vg->flags & VG_ATTR_SET) { /* the vg has attrs */
                 INT32DECODE(bb, vg->nattrs);
 
-                if (NULL == (vg->alist = malloc(vg->nattrs * sizeof(vg_attr_t))))
+                if (NULL == (vg->alist = malloc((size_t)vg->nattrs * sizeof(vg_attr_t))))
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 for (i = 0; i < vg->nattrs; i++) {
@@ -1114,8 +1114,8 @@ Vattach(HFILEID     f,    /* IN: file handle */
 
         /* initialize new vg */
         vg->msize = MAXNVELT;
-        vg->tag   = (uint16 *)malloc(vg->msize * sizeof(uint16));
-        vg->ref   = (uint16 *)malloc(vg->msize * sizeof(uint16));
+        vg->tag   = (uint16 *)malloc((size_t)vg->msize * sizeof(uint16));
+        vg->ref   = (uint16 *)malloc((size_t)vg->msize * sizeof(uint16));
 
         vg->vgname  = NULL;
         vg->vgclass = NULL;
@@ -1971,8 +1971,8 @@ vinsertpair(VGROUP *vg,  /* IN: vgroup struct */
     if ((int)vg->nvelt >= vg->msize) {
         vg->msize *= 2;
 
-        vg->tag = (uint16 *)realloc((void *)vg->tag, vg->msize * sizeof(uint16));
-        vg->ref = (uint16 *)realloc((void *)vg->ref, vg->msize * sizeof(uint16));
+        vg->tag = (uint16 *)realloc((void *)vg->tag, (size_t)vg->msize * sizeof(uint16));
+        vg->ref = (uint16 *)realloc((void *)vg->ref, (size_t)vg->msize * sizeof(uint16));
 
         if ((vg->tag == NULL) || (vg->ref == NULL))
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -2080,7 +2080,7 @@ Vsetname(int32       vkey, /* IN: vgroup key */
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* copy given name after allocation succeeded, with \0 terminated */
-    HIstrncpy(vg->vgname, vgname, name_len + 1);
+    HIstrncpy(vg->vgname, vgname, (int)name_len + 1);
 
     vg->marked = TRUE;
 
@@ -2148,7 +2148,7 @@ Vsetclass(int32       vkey, /* IN: vgroup key */
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* copy given class name after allocation succeeded, with \0 terminated */
-    HIstrncpy(vg->vgclass, vgclass, classname_len + 1);
+    HIstrncpy(vg->vgclass, vgclass, (int)classname_len + 1);
 
     vg->marked = TRUE;
 
@@ -2443,19 +2443,12 @@ Vgetnamelen(int32   vkey, /* IN: vgroup key */
      * Obtain the name length
      */
 
-    /* if there is no name... */
     if (vg->vgname == NULL)
+        /* if there is no name... */
         *name_len = 0;
-    /* if name had been set... */
-    else {
-        size_t temp_len = strlen(vg->vgname); /* shortcut */
-
-        /* return name's length if it is a valid value */
-        if (temp_len >= 0)
-            *name_len = (uint16)temp_len;
-        else /* unlikely, but just in case */
-            ret_value = FAIL;
-    }
+    else
+        /* if name had been set... */
+        *name_len = (uint16)strlen(vg->vgname);
 
 done:
     return ret_value;
@@ -2500,16 +2493,9 @@ Vgetclassnamelen(int32   vkey, /* IN: vgroup key */
     /* obtain the class name length */
     if (vg->vgclass == NULL)
         *classname_len = 0;
-    /* if name had been set... */
-    else {
-        size_t temp_len = strlen(vg->vgclass); /* shortcut */
-
-        /* return class name's length if it is a valid value */
-        if (temp_len >= 0)
-            *classname_len = (uint16)temp_len;
-        else /* unlikely, but just in case */
-            ret_value = FAIL;
-    }
+    else
+        /* if name had been set... */
+        *classname_len = (uint16)strlen(vg->vgclass);
 
 done:
     return ret_value;

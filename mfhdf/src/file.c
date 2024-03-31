@@ -113,7 +113,7 @@ NC_reset_maxopenfiles(int req_max)
         else
             _cdfs_size = req_max;
 
-        _cdfs = malloc(sizeof(NC *) * (_cdfs_size));
+        _cdfs = malloc(sizeof(NC *) * (size_t)_cdfs_size);
 
         /* If allocation fails, return with failure */
         if (_cdfs == NULL) {
@@ -150,7 +150,7 @@ NC_reset_maxopenfiles(int req_max)
         alloc_size = req_max;
 
     /* Allocate a new list */
-    newlist = malloc(sizeof(NC *) * alloc_size);
+    newlist = malloc(sizeof(NC *) * (size_t)alloc_size);
 
     /* If allocation fails, return with failure */
     if (newlist == NULL) {

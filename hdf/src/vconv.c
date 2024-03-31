@@ -191,7 +191,7 @@ vimakecompat(HFILEID f)
         HQuerylength(aid, &bsize);
         if (buf == NULL || bsize > old_bsize) {
             free(buf);
-            if ((buf = (uint8 *)malloc(bsize)) == NULL)
+            if ((buf = (uint8 *)malloc((size_t)bsize)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, 0);
             old_bsize = bsize;
         }
@@ -244,7 +244,7 @@ vimakecompat(HFILEID f)
         HQuerylength(aid, &bsize);
         if (buf == NULL || bsize > old_bsize) {
             free(buf);
-            if ((buf = (uint8 *)malloc(bsize)) == NULL)
+            if ((buf = (uint8 *)malloc((size_t)bsize)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, 0);
             old_bsize = bsize;
         }

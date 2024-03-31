@@ -385,7 +385,7 @@ ReadDataSubBlocks(BYTE **MemGif2, WORD *DSize)
             break; /* Block Terminator encountered */
 
         /* Increase the buffer size to accommodate the next sub-block */
-        if (!(ptr1 = ptr2 = (BYTE *)realloc(ptr2, bufSize + dataSize + 1)))
+        if (!(ptr1 = ptr2 = (BYTE *)realloc(ptr2, (size_t)(bufSize + dataSize + 1))))
             return ((BYTE *)NULL);
 
         ptr1 += bufSize; /* Move pointer to the end of the data */

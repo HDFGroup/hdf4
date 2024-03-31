@@ -430,8 +430,8 @@ int
 HEput(HE_CMD *cmd)
 {
     int i;
-    int verbose    = NO;
-    char *template = (char *)"elt#.@";
+    int verbose          = NO;
+    const char *template = "elt#.@";
 
     for (i = 1; i < cmd->argc; i++)
         if (cmd->argv[i][0] == '-')
@@ -466,7 +466,7 @@ HEput(HE_CMD *cmd)
 }
 
 int
-put(char *template, int verbose)
+put(const char *template, int verbose)
 {
     int   length;
     char *data;
@@ -528,7 +528,7 @@ HEputR8(HE_CMD *cmd)
 }
 
 int
-putR8(char *image, char *pal, int verbose)
+putR8(const char *image, const char *pal, int verbose)
 {
     int   ret;
     int32 xdim, ydim;

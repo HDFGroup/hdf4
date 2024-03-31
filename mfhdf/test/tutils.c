@@ -130,7 +130,7 @@ make_sourcepath(char *src_path, unsigned int size)
 
 *********************************************************************/
 int32
-make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, int32 unlim_dim,
+make_SDS(int32 sd_id, const char *sds_name, int32 type, int32 rank, int32 *dim_sizes, int32 unlim_dim,
          void *written_data)
 {
     int32  sds_id;
@@ -139,9 +139,9 @@ make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, 
     int    status, ii;
     int    num_errs = 0; /* number of errors in compression test so far */
 
-    start = (int32 *)malloc(sizeof(int32) * rank);
+    start = (int32 *)malloc(sizeof(int32) * (size_t)rank);
     CHECK_ALLOC(start, "start", "make_SDS");
-    edges = (int32 *)malloc(sizeof(int32) * rank);
+    edges = (int32 *)malloc(sizeof(int32) * (size_t)rank);
     CHECK_ALLOC(edges, "edges", "make_SDS");
 
     /* Create the array with the name defined in SDS_NAME */
@@ -207,9 +207,9 @@ make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_s
     int    status   = 0, ii;
     int    num_errs = 0; /* number of errors in compression test so far */
 
-    start = (int32 *)malloc(sizeof(int32) * rank);
+    start = (int32 *)malloc(sizeof(int32) * (size_t)rank);
     CHECK_ALLOC(start, "start", "make_Ext3D_SDS");
-    edges = (int32 *)malloc(sizeof(int32) * rank);
+    edges = (int32 *)malloc(sizeof(int32) * (size_t)rank);
     CHECK_ALLOC(edges, "edges", "make_Ext3D_SDS");
 
     /* Set the parameters start and edges to write */

@@ -715,7 +715,7 @@ hdf_create_compat_dim_vdata(XDR *xdrs, NC *handle, NC_dim *dim, int32 dimval_ver
         HGOTO_FAIL(FAIL);
     /* create a fake one */
     /* allocate space */
-    val = malloc(dsize * sizeof(int32));
+    val = malloc((size_t)dsize * sizeof(int32));
     if (!val)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -1272,7 +1272,7 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
      * Allocate enough space in case everything is a dimension
      */
     count     = 0;
-    dimension = malloc(sizeof(NC_dim *) * Vntagrefs(vg) + 1);
+    dimension = malloc(sizeof(NC_dim *) * (size_t)Vntagrefs(vg) + 1);
     if (NULL == dimension) {
         /* replace it with NCadvice or HERROR?? */
         HGOTO_FAIL(FAIL);
@@ -1507,7 +1507,7 @@ hdf_read_attrs(XDR *xdrs, NC *handle, int32 vg)
      * Allocate enough space in case everything is an attribute
      */
     count      = 0;
-    attributes = malloc(sizeof(NC_attr *) * n + 1);
+    attributes = malloc(sizeof(NC_attr *) * (size_t)n + 1);
     if (NULL == attributes) {
         /* replace it with NCAdvice or HERROR? */
         HGOTO_FAIL(NULL);
@@ -1538,7 +1538,7 @@ hdf_read_attrs(XDR *xdrs, NC *handle, int32 vg)
                 if ((type = hdf_unmap_type(nt)) == FAIL)
                     HGOTO_FAIL(NULL);
 
-                values = malloc(vsize * attr_size + 1);
+                values = malloc((size_t)(vsize * attr_size + 1));
                 if (NULL == values)
                     HGOTO_FAIL(NULL);
 
@@ -1634,7 +1634,7 @@ hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
      * Allocate enough space in case everything is a variable
      */
     count     = 0;
-    variables = malloc(sizeof(NC_var *) * Vntagrefs(vg) + 1);
+    variables = malloc(sizeof(NC_var *) * (size_t)Vntagrefs(vg) + 1);
     if (NULL == variables) {
         HGOTO_FAIL(FAIL);
     }
@@ -1642,7 +1642,7 @@ hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
     /*
      * Allocate enough space in case lots of dimensions
      */
-    dims = malloc(sizeof(int) * Vntagrefs(vg) + 1);
+    dims = malloc(sizeof(int) * (size_t)Vntagrefs(vg) + 1);
     if (NULL == dims) {
         HGOTO_FAIL(FAIL);
     }

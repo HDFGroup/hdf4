@@ -353,7 +353,7 @@ dumpDD(void)
         printf(" size of block: %ld, number of DDs:%d, next block: %ld\n",
                (long)(NDDS_SZ + OFFSET_SZ + (n_dds * DD_SZ)), (int)n_dds, (long)next_block);
 
-        ddbuf = (uint8 *)malloc(n_dds * DD_SZ);
+        ddbuf = (uint8 *)malloc((size_t)(n_dds * DD_SZ));
         if (HI_READ(file_id, ddbuf, n_dds * DD_SZ) == FAIL) {
             printf("Error reading in file: %s\n", file_name);
             return (FAIL);

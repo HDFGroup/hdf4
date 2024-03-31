@@ -1089,7 +1089,7 @@ SDcreate(int32       fid,  /* IN: file ID */
     }
 
     /* make fake dimensions which may or may not be over-ridden later */
-    dims = malloc(rank * sizeof(int));
+    dims = malloc((size_t)rank * sizeof(int));
     if (dims == NULL) {
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     }
@@ -2957,7 +2957,7 @@ SDgetdimstrs(int32 id, /* IN:  dataset ID */
     var = NULL;
     if (handle->vars) {
         name    = dim->name->values;
-        namelen = strlen(name);
+        namelen = (int32)strlen(name);
         dp      = (NC_var **)handle->vars->values;
         for (int i = 0; i < handle->vars->count; i++, dp++) {
             /* eliminate vars with rank > 1, coord vars only have rank 1 */
@@ -4783,7 +4783,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     ndims = var->assoc->count; /* set number of dims i.e. rank */
 
     /* allocate space for chunk dimensions */
-    if ((chunk[0].pdims = malloc(ndims * sizeof(DIM_DEF))) == NULL) {
+    if ((chunk[0].pdims = malloc((size_t)ndims * sizeof(DIM_DEF))) == NULL) {
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
@@ -4824,7 +4824,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     /* allocate space for fill value whose number type is the same as
        the dataset */
     fill_val_len = var->HDFsize;
-    if ((fill_val = malloc(fill_val_len)) == NULL) {
+    if ((fill_val = malloc((size_t)fill_val_len)) == NULL) {
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
@@ -4886,7 +4886,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     if (convert && tBuf_size < fill_val_len) {
         free(tBuf);
         tBuf_size = fill_val_len;
-        tBuf      = malloc(tBuf_size);
+        tBuf      = malloc((size_t)tBuf_size);
         if (tBuf == NULL) {
             tBuf_size = 0;
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -5881,9 +5881,9 @@ int
 SDgetfilename(int32 fid, /* IN:  file ID */
               char *filename /* OUT: name of the file */)
 {
-    NC *handle = NULL;
-    int len;
-    int ret_value = SUCCEED;
+    NC    *handle = NULL;
+    size_t len;
+    int    ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -5898,7 +5898,7 @@ SDgetfilename(int32 fid, /* IN:  file ID */
         memcpy(filename, handle->path, len);
         filename[len] = '\0';
     }
-    ret_value = len;
+    ret_value = (int)len;
 
 done:
     return ret_value;

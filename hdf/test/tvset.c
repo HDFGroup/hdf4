@@ -2750,7 +2750,7 @@ test_extfile(void)
         name_len = VSgetexternalfile(vdata1_id, 0, NULL, NULL);
         VERIFY_VOID(name_len, (int)strlen(EXTERNAL_FILE), "VSgetexternalfile");
 
-        extfile_name = (char *)malloc(sizeof(char) * (name_len + 1));
+        extfile_name = (char *)malloc(sizeof(char) * (size_t)(name_len + 1));
         CHECK_ALLOC(extfile_name, "extfile_name", "test_extfile");
 
         /* Old function: Get the external file name - VSgetexternalfile
@@ -2765,7 +2765,7 @@ test_extfile(void)
     name_len = VSgetexternalinfo(vdata1_id, 0, NULL, NULL, NULL);
     VERIFY_VOID(name_len, (int)strlen(EXTERNAL_FILE), "VSgetexternalinfo");
 
-    extfile_name = (char *)malloc(sizeof(char) * (name_len + 1));
+    extfile_name = (char *)malloc(sizeof(char) * (size_t)(name_len + 1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_extfile");
 
     /* Get the external file name */
@@ -2778,13 +2778,13 @@ test_extfile(void)
        name should be truncated */
     {
         /* Make a shorter string to verify later */
-        char *short_name = (char *)malloc(sizeof(char) * (name_len));
-        memset(short_name, '\0', name_len);
+        char *short_name = (char *)malloc(sizeof(char) * (size_t)name_len);
+        memset(short_name, '\0', (size_t)name_len);
         strncpy(short_name, EXTERNAL_FILE, name_len - 2);
 
         /* Prepare buffer for external file name in the following test */
-        extfile_name = (char *)malloc(sizeof(char) * (name_len - 1));
-        memset(extfile_name, '\0', name_len - 1);
+        extfile_name = (char *)malloc(sizeof(char) * (size_t)(name_len - 1));
+        memset(extfile_name, '\0', (size_t)name_len - 1);
 
         /* Call VSgetexternalinfo again with smaller buffer size and make sure
            VSgetexternalinfo reads the name truncated to the given buffer size*/
@@ -3250,7 +3250,7 @@ test_VSofclass()
     VERIFY_VOID(n_vds, 2, "VSofclass");
 
     /* Allocate space for the ref array to pass into VSofclass. */
-    refarray = (uint16 *)malloc(sizeof(uint16) * n_vds);
+    refarray = (uint16 *)malloc(sizeof(uint16) * (size_t)n_vds);
     CHECK_ALLOC(refarray, "refarray", "test_blockinfo_multLBs");
 
     /* The following tests rely on the reference numbers of the two vdatas of

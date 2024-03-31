@@ -87,7 +87,7 @@ verify_info_data(int32 sds_id, int32 expected_dimsize, int16 *result)
     CHECK(status, FAIL, info);
 
     /* Verify read data by comparing the output buffer against expected data */
-    status = memcmp(outdata, result, edges[0] * SIZE_INT16);
+    status = memcmp(outdata, result, (size_t)(edges[0] * SIZE_INT16));
     if (status != 0)
         fprintf(stderr, "For SDS %s: Read data doesn't match input\n", ds_name);
 
@@ -453,7 +453,7 @@ test_multidim_singlevar()
     status                         = SDreaddata(dset1, start, NULL, edges, (void *)outdata);
     CHECK(status, FAIL, "SDreaddata");
 
-    status = memcmp(outdata, result, edges[0] * DIM1 * DIM2 * sizeof(int16));
+    status = memcmp(outdata, result, (size_t)(edges[0] * DIM1 * DIM2) * sizeof(int16));
     VERIFY(status, 0, "memcmp");
 
     /* Close the dataset */
@@ -496,7 +496,7 @@ test_multidim_singlevar()
     status   = SDreaddata(dset1, start, NULL, edges, (void *)outdata);
     CHECK(status, FAIL, "SDreaddata");
 
-    status = memcmp(outdata, result, edges[0] * DIM1 * DIM2 * sizeof(int16));
+    status = memcmp(outdata, result, (size_t)(edges[0] * DIM1 * DIM2) * sizeof(int16));
     VERIFY(status, 0, "memcmp");
 
     { /* Append data to the dataset at the end */
@@ -525,7 +525,7 @@ test_multidim_singlevar()
     status   = SDreaddata(dset1, start, NULL, edges, (void *)outdata);
     CHECK(status, FAIL, "SDreaddata");
 
-    status = memcmp(outdata, result, edges[0] * DIM1 * DIM2 * sizeof(int16));
+    status = memcmp(outdata, result, (size_t)(edges[0] * DIM1 * DIM2) * sizeof(int16));
     VERIFY(status, 0, "memcmp");
 
     /* data should be

@@ -271,7 +271,7 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label, char *desc)
     indesclen = DFANgetdesclen(fname, tag, ref);
     CHECK(indesclen, FAIL, "check_lab_desc: DFANgetdesclen");
     if (indesclen >= 0) {
-        indesc = (char *)malloc(indesclen + 1);
+        indesc = (char *)malloc((size_t)indesclen + 1);
         ret    = DFANgetdesc(fname, tag, ref, indesc, MAXLEN_DESC);
         CHECK(ret, FAIL, "check_lab_desc: DFANgetdesc");
 
@@ -525,10 +525,10 @@ get_ann_datainfo(int32 id, ann_type annot_type, int32 *chk_offsets, int32 *chk_l
     CHECK(num_annots, FAIL, "get_ann_datainfo: SDgetanndatainfo annot_type with NULL buffers");
 
     if (num_annots > 0) {
-        offsetarray = (int32 *)malloc(num_annots * sizeof(int32));
+        offsetarray = (int32 *)malloc((size_t)num_annots * sizeof(int32));
         if (offsetarray == NULL)
             exit(-1);
-        lengtharray = (int32 *)malloc(num_annots * sizeof(int32));
+        lengtharray = (int32 *)malloc((size_t)num_annots * sizeof(int32));
         if (lengtharray == NULL)
             exit(-1);
 
@@ -902,11 +902,11 @@ readnoHDF_char(const char *filename, const int32 offset, const int32 length, con
     }
 
     /* Allocate buffers for SDS' data */
-    readcbuf = (char *)malloc(length * sizeof(char));
+    readcbuf = (char *)malloc((size_t)length * sizeof(char));
     CHECK_ALLOC(readcbuf, "readcbuf", "readnoHDF_char");
 
     /* Read in this block of data */
-    readlen = fread((void *)readcbuf, 1, length, fd);
+    readlen = fread((void *)readcbuf, 1, (size_t)length, fd);
     if (readlen > 0) {
         /* Compare data read without HDF4 lib against the original buffer */
         if (strncmp(readcbuf, orig_buf, readlen) != 0)

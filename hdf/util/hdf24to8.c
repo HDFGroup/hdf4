@@ -78,7 +78,7 @@ main(int argc, char *argv[])
 
     size = x_dim * y_dim;
 
-    if ((r24 = (UCHAR *)malloc(size * 3)) == NULL) {
+    if ((r24 = (UCHAR *)malloc((size_t)size * 3)) == NULL) {
         fprintf(stderr, "error: malloc to hold r24 image failed\n");
         exit(-1);
     }
@@ -88,7 +88,7 @@ main(int argc, char *argv[])
         exit(-1);
     }
 
-    if ((r8 = (UCHAR *)malloc(size)) == NULL) {
+    if ((r8 = (UCHAR *)malloc((size_t)size)) == NULL) {
         fprintf(stderr, "error: malloc to hold r8 image failed\n");
         exit(-1);
     }
