@@ -24,19 +24,12 @@
  *
  * Return: index on success, -1 on failure
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 int
 dtable_search(dtable_t *table, int32 tag, int32 ref)
 {
-    uint32 i;
-
-    for (i = 0; i < table->nobjs; i++)
+    for (int i = 0; i < (int)table->nobjs; i++)
         if (table->objs[i].tag == tag && table->objs[i].ref == ref)
             return i;
 
@@ -50,13 +43,8 @@ dtable_search(dtable_t *table, int32 tag, int32 ref)
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 void
 dtable_add(dtable_t *table, int32 tag, int32 ref, char *path)
 {
@@ -86,24 +74,18 @@ dtable_add(dtable_t *table, int32 tag, int32 ref, char *path)
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 void
 dtable_init(dtable_t **tbl)
 {
-    uint32    i;
     dtable_t *table = (dtable_t *)malloc(sizeof(dtable_t));
 
     table->size  = 20;
     table->nobjs = 0;
     table->objs  = (dobj_info_t *)malloc(table->size * sizeof(dobj_info_t));
 
-    for (i = 0; i < table->size; i++) {
+    for (uint32 i = 0; i < table->size; i++) {
         table->objs[i].tag = table->objs[i].ref = -1;
         table->objs[i].flags[0] = table->objs[i].flags[1] = -1;
     }
@@ -118,13 +100,8 @@ dtable_init(dtable_t **tbl)
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 void
 dtable_free(dtable_t *table)
 {
@@ -139,18 +116,11 @@ dtable_free(dtable_t *table)
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 25, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 void
-dtable_print(dtable_t *table, char *header)
+dtable_print(dtable_t *table, const char *header)
 {
-    uint32 i;
-
     if (!table->nobjs) /* nothing to do */
         return;
 
@@ -158,7 +128,7 @@ dtable_print(dtable_t *table, char *header)
     printf("%s %5s %6s    %-15s\n", header, "Tag", "Ref", "Name");
     printf("---------------------------------------\n");
 
-    for (i = 0; i < table->nobjs; i++) {
+    for (uint32 i = 0; i < table->nobjs; i++) {
         printf("       %5d %6d    %-15s\n", table->objs[i].tag, table->objs[i].ref, table->objs[i].obj_name);
     }
 }

@@ -41,7 +41,7 @@ typedef struct match_table_t {
 /* table methods */
 void match_table_init(match_table_t **table);
 void match_table_free(match_table_t *table);
-void match_table_add(match_table_t *table, unsigned *flags, char *path, int32 tag1, int32 ref1, int32 tag2,
+void match_table_add(match_table_t *table, int *flags, char *path, int32 tag1, int32 ref1, int32 tag2,
                      int32 ref2);
 
 #ifdef __cplusplus

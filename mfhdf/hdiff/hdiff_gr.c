@@ -25,13 +25,8 @@
  *
  * Return: Number of differences found
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 27, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 uint32
 diff_gr(int32 gr1_id, int32 gr2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
 {
@@ -52,8 +47,8 @@ diff_gr(int32 gr1_id, int32 gr2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
         start[H4_MAX_VAR_DIMS],     /* read start */
         edges[H4_MAX_VAR_DIMS],     /* read edges */
         numtype,                    /* number type */
-        eltsz,                      /* element size */
-        data_size;
+        eltsz;                      /* element size */
+    size_t data_size;
     uint32 nelms; /* number of elements */
     char   gr1_name[H4_MAX_NC_NAME];
     char   gr2_name[H4_MAX_NC_NAME];
@@ -171,12 +166,12 @@ diff_gr(int32 gr1_id, int32 gr2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
     /* set edges of SDS */
     nelms = 1;
     for (i = 0; i < 2; i++) {
-        nelms *= dimsizes1[i];
+        nelms *= (uint32)dimsizes1[i];
         edges[i] = dimsizes1[i];
         start[i] = 0;
     }
 
-    data_size = dimsizes1[0] * dimsizes1[1] * ncomps1 * eltsz;
+    data_size = (size_t)(dimsizes1[0] * dimsizes1[1] * ncomps1 * eltsz);
 
     if (compare) {
 

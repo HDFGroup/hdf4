@@ -30,10 +30,6 @@ static int   insert_an_data(int32 file_id, int32 ref_in, int32 tag_in, ann_type 
  *
  * Return: number of objects in the file
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 21, 2003
- *
  * Description:
  *
  * A main loop is used to locate all the objects in the file. This loop preserves the
@@ -56,7 +52,6 @@ static int   insert_an_data(int32 file_id, int32 ref_in, int32 tag_in, ann_type 
  *
  *-------------------------------------------------------------------------
  */
-
 uint32
 hdiff_list(const char *fname, dtable_t *table, diff_dim_table_t *td1, diff_dim_table_t *td2, int *err)
 {
@@ -133,7 +128,6 @@ out:
  *
  *-------------------------------------------------------------------------
  */
-
 int
 hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identifier */
               int32             gr_id,                       /* GR interface identifier */
@@ -172,7 +166,7 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
          * use the nlones returned to allocate sufficient space for the
          * buffer ref_array to hold the reference numbers of all lone vgroups,
          */
-        ref_array = (int32 *)malloc(sizeof(int32) * nlones);
+        ref_array = (int32 *)malloc(sizeof(int32) * (size_t)nlones);
 
         /*
          * and call Vlone again to retrieve the reference numbers into
@@ -261,8 +255,8 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
             /* insert objects for this group */
             ntagrefs = Vntagrefs(vg_id);
             if (ntagrefs > 0) {
-                tags = (int32 *)malloc(sizeof(int32) * ntagrefs);
-                refs = (int32 *)malloc(sizeof(int32) * ntagrefs);
+                tags = (int32 *)malloc(sizeof(int32) * (size_t)ntagrefs);
+                refs = (int32 *)malloc(sizeof(int32) * (size_t)ntagrefs);
                 Vgettagrefs(vg_id, tags, refs, ntagrefs);
 
                 insert_vg(fname, file_id, sd_id, gr_id, vg_name, tags, refs, ntagrefs, table, td1, td2);
@@ -313,7 +307,6 @@ out:
  *
  *-------------------------------------------------------------------------
  */
-
 int
 insert_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identifier */
           int32             gr_id,                       /* GR interface identifier */
@@ -398,8 +391,8 @@ insert_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identif
                 /* get objects for this group */
                 ntagrefs = Vntagrefs(vg_id);
                 if (ntagrefs > 0) {
-                    tags = (int32 *)malloc(sizeof(int32) * ntagrefs);
-                    refs = (int32 *)malloc(sizeof(int32) * ntagrefs);
+                    tags = (int32 *)malloc(sizeof(int32) * (size_t)ntagrefs);
+                    refs = (int32 *)malloc(sizeof(int32) * (size_t)ntagrefs);
                     Vgettagrefs(vg_id, tags, refs, ntagrefs);
 
                     /* recurse */
@@ -469,7 +462,6 @@ insert_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identif
  *
  *-------------------------------------------------------------------------
  */
-
 int
 hdiff_list_gr(int32 file_id, int32 gr_id, /* GR interface identifier */
               dtable_t *table)
@@ -524,7 +516,6 @@ hdiff_list_gr(int32 file_id, int32 gr_id, /* GR interface identifier */
  *
  *-------------------------------------------------------------------------
  */
-
 int
 hdiff_list_sds(int32 file_id, int32 sd_id, /* SD interface identifier */
                dtable_t         *table,    /* all objects table */
@@ -577,7 +568,6 @@ hdiff_list_sds(int32 file_id, int32 sd_id, /* SD interface identifier */
  *
  *-------------------------------------------------------------------------
  */
-
 int
 hdiff_list_vs(int32 file_id, dtable_t *table)
 {
@@ -601,7 +591,7 @@ hdiff_list_vs(int32 file_id, dtable_t *table)
          * use the nlones returned to allocate sufficient space for the
          * buffer ref_array to hold the reference numbers of all lone vgroups,
          */
-        ref_array = (int32 *)malloc(sizeof(int32) * nlones);
+        ref_array = (int32 *)malloc(sizeof(int32) * (size_t)nlones);
 
         /*
          * and call VSlone again to retrieve the reference numbers into
@@ -646,7 +636,6 @@ hdiff_list_vs(int32 file_id, dtable_t *table)
  *
  *-------------------------------------------------------------------------
  */
-
 int
 insert_vg_attrs(int32 vg_in, char *path)
 {
@@ -677,7 +666,6 @@ insert_vg_attrs(int32 vg_in, char *path)
  *
  *-------------------------------------------------------------------------
  */
-
 int
 hdiff_list_glb(int32 sd_id, /* SD interface identifier */
                int32 gr_id) /* GR interface identifier */
@@ -715,7 +703,6 @@ hdiff_list_glb(int32 sd_id, /* SD interface identifier */
  *
  *-------------------------------------------------------------------------
  */
-
 int
 hdiff_list_an(int32 file_id)
 {
@@ -772,7 +759,6 @@ hdiff_list_an(int32 file_id)
  *
  *-------------------------------------------------------------------------
  */
-
 int
 insert_vg_an(int32 file_id, int32 vg_id, char *path)
 {
@@ -800,7 +786,6 @@ insert_vg_an(int32 file_id, int32 vg_id, char *path)
  *
  *-------------------------------------------------------------------------
  */
-
 int
 insert_vs_an(int32 file_id, int32 vdata_id, char *path)
 {
@@ -827,7 +812,6 @@ insert_vs_an(int32 file_id, int32 vdata_id, char *path)
  *
  *-------------------------------------------------------------------------
  */
-
 static int
 insert_an_data(int32 file_id, int32 ref_in, int32 tag_in, ann_type type, char *path)
 {
@@ -870,7 +854,6 @@ insert_an_data(int32 file_id, int32 ref_in, int32 tag_in, ann_type type, char *p
  *
  *-------------------------------------------------------------------------
  */
-
 int
 insert_an(int32 file_id, int32 ref_in, int32 tag_in, char *path)
 {
@@ -888,16 +871,8 @@ insert_an(int32 file_id, int32 ref_in, int32 tag_in, char *path)
  *
  * Return: 0, -1 for error
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 22, 2003
- *
- * Modifications: pvn. July the 13 (Friday), 2007
- *  Add support for lone dimensions
- *
  *-------------------------------------------------------------------------
  */
-
 int
 insert_sds(int32 file_id, int32 sd_id, int32 tag, /* tag of input SDS */
            int32             ref,                 /* ref of input SDS */
@@ -1002,7 +977,6 @@ insert_sds(int32 file_id, int32 sd_id, int32 tag, /* tag of input SDS */
  *
  *-------------------------------------------------------------------------
  */
-
 int
 insert_sds_attrs(int32 id_in, int32 nattrs)
 {
@@ -1029,7 +1003,6 @@ insert_sds_attrs(int32 id_in, int32 nattrs)
  *
  *-------------------------------------------------------------------------
  */
-
 int
 insert_gr_attrs(int32 ri_id, int32 nattrs)
 {
@@ -1056,7 +1029,6 @@ insert_gr_attrs(int32 ri_id, int32 nattrs)
  *
  *-------------------------------------------------------------------------
  */
-
 int
 insert_vs_attrs(int32 in, int32 findex, int attrindex)
 {
@@ -1076,7 +1048,6 @@ insert_vs_attrs(int32 in, int32 findex, int attrindex)
  *
  *-------------------------------------------------------------------------
  */
-
 int
 insert_gr(int32 file_id, int32 gr_in, int32 tag, /* tag of input GR */
           int32     ref,                         /* ref of input GR */
@@ -1158,7 +1129,6 @@ insert_gr(int32 file_id, int32 gr_in, int32 tag, /* tag of input GR */
  *
  *-------------------------------------------------------------------------
  */
-
 int
 insert_vs(int32 file_id, int32 ref, /* ref of input VS */
           char     *path_name,      /* absolute path for input group name */
@@ -1284,7 +1254,6 @@ out:
  *
  *-------------------------------------------------------------------------
  */
-
 static int
 is_reserved(char *vg_class)
 {
@@ -1319,7 +1288,6 @@ is_reserved(char *vg_class)
  *
  *-------------------------------------------------------------------------
  */
-
 static char *
 get_path(char *path_name, char *obj_name)
 {

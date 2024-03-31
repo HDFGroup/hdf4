@@ -41,8 +41,7 @@ typedef struct diff_match_dim_table_t {
 /* methods for diff_match_dim_table_t */
 static void diff_match_dim_table_free(diff_match_dim_table_t *table);
 static void diff_match_dim_table_init(diff_match_dim_table_t **tbl);
-static void diff_match_dim_table_add(diff_match_dim_table_t *table, unsigned *flags, char *dim_name,
-                                     int32 ref);
+static void diff_match_dim_table_add(diff_match_dim_table_t *table, int *flags, char *dim_name, int32 ref);
 
 /*-------------------------------------------------------------------------
  * Function: diff_match_dim
@@ -53,10 +52,6 @@ static void diff_match_dim_table_add(diff_match_dim_table_t *table, unsigned *fl
  *  Folk, Michael; Zoellick, Bill. (1992). File Structures. Addison-Wesley.
  *
  * Return: void
- *
- * Programmer: Pedro Vicente Nunes, pvn@hdfgroup.org
- *
- * Date: July 16, 2007
  *
  *-------------------------------------------------------------------------
  */
@@ -70,7 +65,7 @@ diff_match_dim(int32 sd1_id, int32 sd2_id, diff_dim_table_t *td1_1, diff_dim_tab
     int                     curr2;
     diff_match_dim_table_t *mattbl_file1 = NULL;
     diff_match_dim_table_t *mattbl_file2 = NULL;
-    unsigned                inlist[2];
+    int                     inlist[2];
     int                     i;
     uint32                  nfound = 0;
 
@@ -287,15 +282,10 @@ diff_match_dim(int32 sd1_id, int32 sd2_id, diff_dim_table_t *td1_1, diff_dim_tab
  *
  * Purpose: add an entry from a list of dimension names into the match table
  *
- * Programmer: Pedro Vicente, pvn@hdfgroup.org
- *
- * Date: July 16, 2007
- *
  *-------------------------------------------------------------------------
  */
-
 static void
-diff_match_dim_table_add(diff_match_dim_table_t *table, unsigned *flags, char *dim_name, int32 ref)
+diff_match_dim_table_add(diff_match_dim_table_t *table, int *flags, char *dim_name, int32 ref)
 {
     int i;
 
@@ -313,8 +303,8 @@ diff_match_dim_table_add(diff_match_dim_table_t *table, unsigned *flags, char *d
 
     if (table->nobjs == table->size) {
         table->size *= 2;
-        table->objs =
-            (diff_match_dim_name_t *)realloc(table->objs, table->size * sizeof(diff_match_dim_name_t));
+        table->objs = (diff_match_dim_name_t *)realloc(table->objs,
+                                                       (size_t)table->size * sizeof(diff_match_dim_name_t));
 
         for (i = table->nobjs; i < table->size; i++) {
             table->objs[i].ref      = -1;
@@ -336,13 +326,8 @@ diff_match_dim_table_add(diff_match_dim_table_t *table, unsigned *flags, char *d
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@hdfgroup.org
- *
- * Date: July 16, 2007
- *
  *-------------------------------------------------------------------------
  */
-
 static void
 diff_match_dim_table_init(diff_match_dim_table_t **tbl)
 {
@@ -351,7 +336,7 @@ diff_match_dim_table_init(diff_match_dim_table_t **tbl)
 
     table->size  = 20;
     table->nobjs = 0;
-    table->objs  = (diff_match_dim_name_t *)malloc(table->size * sizeof(diff_match_dim_name_t));
+    table->objs  = (diff_match_dim_name_t *)malloc((size_t)table->size * sizeof(diff_match_dim_name_t));
 
     for (i = 0; i < table->size; i++) {
         table->objs[i].ref      = -1;
@@ -368,13 +353,8 @@ diff_match_dim_table_init(diff_match_dim_table_t **tbl)
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@hdfgroup.org
- *
- * Date: July 16, 2007
- *
  *-------------------------------------------------------------------------
  */
-
 static void
 diff_match_dim_table_free(diff_match_dim_table_t *table)
 {
@@ -389,13 +369,8 @@ diff_match_dim_table_free(diff_match_dim_table_t *table)
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@hdfgroup.org
- *
- * Date: July 16, 2007
- *
  *-------------------------------------------------------------------------
  */
-
 void
 diff_dim_table_add(diff_dim_table_t *table, int ref, char *name)
 {
@@ -405,7 +380,7 @@ diff_dim_table_add(diff_dim_table_t *table, int ref, char *name)
 
     if (table->nobjs == table->size) {
         table->size *= 2;
-        table->objs = (diff_dim_name_t *)realloc(table->objs, table->size * sizeof(diff_dim_name_t));
+        table->objs = (diff_dim_name_t *)realloc(table->objs, (size_t)table->size * sizeof(diff_dim_name_t));
 
         for (i = table->nobjs; i < table->size; i++) {
             table->objs[i].ref = -1;
@@ -424,13 +399,8 @@ diff_dim_table_add(diff_dim_table_t *table, int ref, char *name)
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@hdfgroup.org
- *
- * Date: July 16, 2007
- *
  *-------------------------------------------------------------------------
  */
-
 void
 diff_dim_table_init(diff_dim_table_t **tbl)
 {
@@ -439,7 +409,7 @@ diff_dim_table_init(diff_dim_table_t **tbl)
 
     table->size  = 20;
     table->nobjs = 0;
-    table->objs  = (diff_dim_name_t *)malloc(table->size * sizeof(diff_dim_name_t));
+    table->objs  = (diff_dim_name_t *)malloc((size_t)table->size * sizeof(diff_dim_name_t));
 
     for (i = 0; i < table->size; i++) {
         table->objs[i].ref = -1;
@@ -455,13 +425,8 @@ diff_dim_table_init(diff_dim_table_t **tbl)
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@hdfgroup.org
- *
- * Date: July 16, 2007
- *
  *-------------------------------------------------------------------------
  */
-
 void
 diff_dim_table_free(diff_dim_table_t *table)
 {

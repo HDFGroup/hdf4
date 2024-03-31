@@ -32,13 +32,8 @@ static uint32 diff_sds_attrs(int32 sds1_id, int32 nattrs1, int32 sds2_id, int32 
  *
  * Return: Number of differences found
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 25, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 uint32
 diff_sds(int32 sd1_id, int32 sd2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
 {
@@ -214,8 +209,8 @@ diff_sds(int32 sd1_id, int32 sd2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
          *-------------------------------------------------------------------------
          */
 
-        fill1 = (void *)malloc(eltsz);
-        fill2 = (void *)malloc(eltsz);
+        fill1 = (void *)malloc((size_t)eltsz);
+        fill2 = (void *)malloc((size_t)eltsz);
         if (fill1 != NULL && SDgetfillvalue(sds1_id, fill1) < 0) {
             free(fill1);
             fill1 = NULL;
@@ -231,11 +226,10 @@ diff_sds(int32 sd1_id, int32 sd2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
          */
 
         nelms = 1;
-        for (i = 0; i < rank1; i++) {
-            nelms *= dimsizes1[i];
-        }
+        for (i = 0; i < rank1; i++)
+            nelms *= (uint32)dimsizes1[i];
 
-        need = (size_t)(nelms * eltsz); /* bytes needed */
+        need = nelms * (uint32)eltsz; /* bytes needed */
 
         if (need < H4TOOLS_MALLOCSIZE) {
             buf1 = (void *)malloc(need);
@@ -284,25 +278,24 @@ diff_sds(int32 sd1_id, int32 sd2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
         else /* possibly not enough memory, read/compare by hyperslabs */
 
         {
-            size_t p_type_nbytes = eltsz; /*size of type */
-            uint32 p_nelmts      = nelms; /*total selected elmts */
-            uint32 elmtno;                /*counter  */
-            int    carry;                 /*counter carry value */
+            uint32 p_nelmts = nelms; /*total selected elmts */
+            uint32 elmtno;           /*counter  */
+            int    carry;            /*counter carry value */
 
             /* stripmine info */
             int32 sm_size[H4_MAX_VAR_DIMS]; /*stripmine size */
             int32 sm_nbytes;                /*bytes per stripmine */
 
             /* hyperslab info */
-            int32 hs_offset[H4_MAX_VAR_DIMS]; /*starting offset */
-            int32 hs_size[H4_MAX_VAR_DIMS];   /*size this pass */
-            int32 hs_nelmts;                  /*elements in request */
+            int32  hs_offset[H4_MAX_VAR_DIMS]; /*starting offset */
+            int32  hs_size[H4_MAX_VAR_DIMS];   /*size this pass */
+            uint32 hs_nelmts;                  /*elements in request */
 
             /*
              * determine the strip mine size and allocate a buffer. The strip mine is
              * a hyperslab whose size is manageable.
              */
-            sm_nbytes = p_type_nbytes;
+            sm_nbytes = eltsz;
 
             for (i = rank1; i > 0; --i) {
                 sm_size[i - 1] = MIN(dimsizes1[i - 1], H4TOOLS_BUFSIZE / sm_nbytes);
@@ -321,7 +314,7 @@ diff_sds(int32 sd1_id, int32 sd2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
                 if (rank1 > 0) {
                     for (i = 0, hs_nelmts = 1; i < rank1; i++) {
                         hs_size[i] = MIN(dimsizes1[i] - hs_offset[i], sm_size[i]);
-                        hs_nelmts *= hs_size[i];
+                        hs_nelmts *= (uint32)hs_size[i];
                     }
                 }
                 else {
@@ -421,13 +414,8 @@ out:
  *
  * Purpose: compare SDS attributes
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: September 2, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 static uint32
 diff_sds_attrs(int32 sds1_id, int32 nattrs1, int32 sds2_id, int32 nattrs2, char *sds1_name, diff_opt_t *opt)
 {
@@ -464,13 +452,13 @@ diff_sds_attrs(int32 sds1_id, int32 nattrs1, int32 sds2_id, int32 nattrs2, char 
             continue;
         }
 
-        attr1_buf = (void *)malloc((unsigned)nelms1 * DFKNTsize(dtype1 | DFNT_NATIVE));
+        attr1_buf = (void *)malloc((size_t)(nelms1 * DFKNTsize(dtype1 | DFNT_NATIVE)));
         if (!attr1_buf) {
             printf("Out of memory!");
             goto out;
             ;
         }
-        attr2_buf = (void *)malloc((unsigned)nelms2 * DFKNTsize(dtype2 | DFNT_NATIVE));
+        attr2_buf = (void *)malloc((size_t)(nelms2 * DFKNTsize(dtype2 | DFNT_NATIVE)));
         if (!attr2_buf) {
             printf("Out of memory!");
             goto out;
@@ -485,7 +473,7 @@ diff_sds_attrs(int32 sds1_id, int32 nattrs1, int32 sds2_id, int32 nattrs2, char 
             goto out;
         }
 
-        cmp = memcmp(attr1_buf, attr2_buf, nelms1 * DFKNTsize(dtype1 | DFNT_NATIVE));
+        cmp = memcmp(attr1_buf, attr2_buf, (size_t)(nelms1 * DFKNTsize(dtype1 | DFNT_NATIVE)));
         if (cmp != 0) {
             printf("\n---------------------------\n");
             printf("%s:%s = \n", sds1_name, attr1_name);
@@ -517,12 +505,6 @@ out:
  * Function: print_dims
  *
  * Purpose: print dimensions
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: May 9, 2003
- *
- * Comments:
  *
  *-------------------------------------------------------------------------
  */

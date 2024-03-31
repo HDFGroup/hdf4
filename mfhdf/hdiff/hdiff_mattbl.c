@@ -29,16 +29,10 @@
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 25, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 void
-match_table_add(match_table_t *table, unsigned *flags, char *path, int32 tag1, int32 ref1, int32 tag2,
-                int32 ref2)
+match_table_add(match_table_t *table, int *flags, char *path, int32 tag1, int32 ref1, int32 tag2, int32 ref2)
 {
     uint32 i;
 
@@ -70,13 +64,8 @@ match_table_add(match_table_t *table, unsigned *flags, char *path, int32 tag1, i
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 void
 match_table_init(match_table_t **tbl)
 {
@@ -103,13 +92,8 @@ match_table_init(match_table_t **tbl)
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 void
 match_table_free(match_table_t *table)
 {

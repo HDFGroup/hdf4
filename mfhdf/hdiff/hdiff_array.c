@@ -11,15 +11,15 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <assert.h>
+#include <ctype.h>
+#include <float.h>
+#include <limits.h>
+#include <math.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <math.h>
-#include <limits.h>
-#include <float.h>
-#include <assert.h>
 
 #include "hdf.h"
 #include "mfhdf.h"
@@ -46,6 +46,10 @@
         printf("Avg Diff: %e   Max. Diff: %d\n", (d_avg_diff / n_stats), i4_max_diff);                       \
         printf("Range File1: %d/%d  File2: %d/%d\n", i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2);    \
     }
+
+/* Methods to compare the equality of floating-point values */
+#define H4_FLT_ABS_EQUAL(X, Y) (fabsf((X) - (Y)) < FLT_EPSILON)
+#define H4_DBL_ABS_EQUAL(X, Y) (fabs((X) - (Y)) < DBL_EPSILON)
 
 /*-------------------------------------------------------------------------
  * printf formatting
@@ -89,6 +93,19 @@
             not_comparable = 1;                                                                              \
     }
 
+#define PER_F(A, B)                                                                                          \
+    {                                                                                                        \
+        per            = -1.0;                                                                               \
+        not_comparable = 0;                                                                                  \
+        both_zero      = 0;                                                                                  \
+        if (H4_DBL_ABS_EQUAL((double)A, 0.0) && H4_DBL_ABS_EQUAL((double)B, 0.0))                            \
+            both_zero = 1;                                                                                   \
+        if (!H4_DBL_ABS_EQUAL((double)A, 0.0))                                                               \
+            per = (double)ABS((double)(B - A) / (double)A);                                                  \
+        else                                                                                                 \
+            not_comparable = 1;                                                                              \
+    }
+
 /*-------------------------------------------------------------------------
  * local prototypes
  *-------------------------------------------------------------------------
@@ -103,7 +120,6 @@ static void print_pos(int *ph, uint32 curr_pos, int32 *acc, int32 *pos, int rank
  *
  *-------------------------------------------------------------------------
  */
-
 uint32
 array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char *name2, int rank,
            int32 *dims, int32 type, float32 err_limit, float32 err_rel, uint32 max_err_cnt, int32 statistics,
@@ -138,6 +154,12 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
     int      both_zero;
     int      not_comparable;
     uint32   n_diff = 0;
+    bool     use_err_rel;
+
+    if (err_rel > 0.0F || err_rel < 0.0F)
+        use_err_rel = true;
+    else
+        use_err_rel = false;
 
     acc[rank - 1] = 1;
     for (j = (rank - 2); j >= 0; j--) {
@@ -247,7 +269,7 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
                  *-------------------------------------------------------------------------
                  */
 
-                if (err_rel) {
+                if (use_err_rel) {
 
                     PER(*i1ptr1, *i1ptr2);
 
@@ -330,7 +352,7 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
                  *-------------------------------------------------------------------------
                  */
 
-                if (err_rel) {
+                if (use_err_rel) {
 
                     PER(*i2ptr1, *i2ptr2);
 
@@ -380,7 +402,7 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
             i4ptr1 = (int32 *)buf1;
             i4ptr2 = (int32 *)buf2;
             for (i = 0; i < tot_cnt; i++) {
-                i4_diff  = labs(*i4ptr1 - *i4ptr2);
+                i4_diff  = abs(*i4ptr1 - *i4ptr2);
                 is_fill1 = fill1 && (*i4ptr1 == *((int32 *)fill1));
                 is_fill2 = fill2 && (*i4ptr2 == *((int32 *)fill2));
                 if (!is_fill1 && !is_fill2) {
@@ -392,7 +414,7 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
                     d_sumx2 += d_val1 * d_val1;
                     d_sumy2 += d_val2 * d_val2;
                     d_sumxy += d_val1 * d_val2;
-                    i4_max_diff = (int32)MYMAX(i4_max_diff, (float64)(i4_diff));
+                    i4_max_diff = MYMAX(i4_max_diff, i4_diff);
                     n_stats++;
                 }
                 if (!is_fill1) {
@@ -409,7 +431,7 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
                  *-------------------------------------------------------------------------
                  */
 
-                if (err_rel) {
+                if (use_err_rel) {
 
                     PER(*i4ptr1, *i4ptr2);
 
@@ -460,8 +482,8 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
             fptr2 = (float32 *)buf2;
             for (i = 0; i < tot_cnt; i++) {
                 f_diff   = (float32)fabs(*fptr1 - *fptr2);
-                is_fill1 = fill1 && (*fptr1 == *((float32 *)fill1));
-                is_fill2 = fill2 && (*fptr2 == *((float32 *)fill2));
+                is_fill1 = fill1 && H4_FLT_ABS_EQUAL(*fptr1, *((float32 *)fill1));
+                is_fill2 = fill2 && H4_FLT_ABS_EQUAL(*fptr2, *((float32 *)fill2));
                 if (debug) {
                     fprintf(fp, "%d %d %f %f\n", is_fill1, is_fill2, (double)*fptr1, (double)*fptr2);
                 }
@@ -491,9 +513,9 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
                  *-------------------------------------------------------------------------
                  */
 
-                if (err_rel) {
+                if (use_err_rel) {
 
-                    PER(*fptr1, *fptr2);
+                    PER_F(*fptr1, *fptr2);
 
                     if (not_comparable && !both_zero) /* not comparable */
                     {
@@ -541,8 +563,8 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
             dptr2 = (float64 *)buf2;
             for (i = 0; i < tot_cnt; i++) {
                 d_diff   = fabs(*dptr1 - *dptr2);
-                is_fill1 = fill1 && (*dptr1 == *((float64 *)fill1));
-                is_fill2 = fill2 && (*dptr2 == *((float64 *)fill2));
+                is_fill1 = fill1 && H4_DBL_ABS_EQUAL(*dptr1, *((float64 *)fill1));
+                is_fill2 = fill2 && H4_DBL_ABS_EQUAL(*dptr2, *((float64 *)fill2));
                 if (!is_fill1 && !is_fill2) {
                     d_avg_diff += d_diff;
                     d_val1 = (float64)(*dptr1);
@@ -569,9 +591,9 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
                  *-------------------------------------------------------------------------
                  */
 
-                if (err_rel) {
+                if (use_err_rel) {
 
-                    PER(*dptr1, *dptr2);
+                    PER_F(*dptr1, *dptr2);
 
                     if (not_comparable && !both_zero) /* not comparable */
                     {
@@ -614,7 +636,7 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
     }
     if (statistics) {
         float64 sqrt_arg;
-        if ((float64)n_stats * d_sumx2 - d_sumx * d_sumx != 0.0) {
+        if (!H4_DBL_ABS_EQUAL((float64)n_stats * d_sumx2 - d_sumx * d_sumx, 0.0)) {
             slope = ((float64)n_stats * d_sumxy - d_sumx * d_sumy) /
                     ((float64)n_stats * d_sumx2 - d_sumx * d_sumx);
             intercept = (d_sumy - slope * d_sumx) / (float64)n_stats;
@@ -642,17 +664,11 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
  *
  * Return: pos matrix array
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: May 9, 2003
- *
  *-------------------------------------------------------------------------
  */
 static void
 print_pos(int *ph, uint32 curr_pos, int32 *acc, int32 *pos, int rank, const char *obj1, const char *obj2)
 {
-    int i;
-
     /* print header */
     if (*ph == 1) {
         *ph = 0;
@@ -661,14 +677,14 @@ print_pos(int *ph, uint32 curr_pos, int32 *acc, int32 *pos, int rank, const char
         printf("------------------------------------------------------------\n");
     }
 
-    for (i = 0; i < rank; i++) {
-        pos[i] = curr_pos / acc[i];
-        curr_pos -= acc[i] * pos[i];
+    for (int i = 0; i < rank; i++) {
+        pos[i] = (int32)curr_pos / acc[i];
+        curr_pos -= (uint32)(acc[i] * pos[i]);
     }
     assert(curr_pos == 0);
 
     printf("[ ");
-    for (i = 0; i < rank; i++) {
+    for (int i = 0; i < rank; i++) {
         fprintf(stdout, "%d ", pos[i]);
     }
     printf("]");
