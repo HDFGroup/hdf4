@@ -20,9 +20,11 @@ jobs:
     name: "Intel ${{ inputs.build_mode }}"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.1
+      - name: Get Sources
+        uses: actions/checkout@v4.1.1
 
       - name: Install Dependencies
+        shell: bash
         run: |
           sudo apt-get update
           sudo apt-get install autoconf automake libtool libtool-bin libaec-dev
@@ -66,7 +68,6 @@ jobs:
             --enable-shared \
             --disable-fortran
 
-      # BUILD
       - name: Autotools Build
         run: |
           source /opt/intel/oneapi/setvars.sh
@@ -74,8 +75,6 @@ jobs:
           make -j3
         working-directory: ${{ runner.workspace }}/build
 
-      # RUN TESTS
-      # NORMAL
       - name: Autotools Run Tests
         run: |
           source /opt/intel/oneapi/setvars.sh
@@ -84,7 +83,6 @@ jobs:
           make check -j2
         working-directory: ${{ runner.workspace }}/build
 
-      # INSTALL (note that this runs even when we don't run the tests)
       - name: Autotools Install
         run: |
           source /opt/intel/oneapi/setvars.sh

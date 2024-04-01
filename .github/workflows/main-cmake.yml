@@ -114,7 +114,7 @@ jobs:
 
       - name: Install CMake Dependencies (Linux)
         run: |
-           sudo apt update
+           sudo apt-get update
            sudo apt-get install -y ninja-build libtirpc-dev graphviz
         if: matrix.os == 'ubuntu-latest'
 
