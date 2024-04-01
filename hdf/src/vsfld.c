@@ -989,7 +989,7 @@ VSfpack(int32 vsid, int packtype, const char *fields_in_buf, void *buf, int bufs
         /* memory copy fields data to vdata buf */
         for (i = 0; i < n_records; i++) {
             for (j = 0; j < ac; j++) {
-                memcpy(bufp + foffs[j], fbufps[j], fmsizes[j]);
+                memcpy(bufp + foffs[j], fbufps[j], (size_t)fmsizes[j]);
                 fbufps[j] += fmsizes[j];
             }
             bufp += b_rec_size;
@@ -998,7 +998,7 @@ VSfpack(int32 vsid, int packtype, const char *fields_in_buf, void *buf, int bufs
     else { /* unpack from buf to fields */
         for (i = 0; i < n_records; i++) {
             for (j = 0; j < ac; j++) {
-                memcpy(fbufps[j], bufp + foffs[j], fmsizes[j]);
+                memcpy(fbufps[j], bufp + foffs[j], (size_t)fmsizes[j]);
                 fbufps[j] += fmsizes[j];
             }
             bufp += b_rec_size;

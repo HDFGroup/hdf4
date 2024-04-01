@@ -1508,8 +1508,8 @@ SDsetrange(int32 sdsid, /* IN: dataset ID */
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
-    memcpy(data, pmin, sz);
-    memcpy(data + sz, pmax, sz);
+    memcpy(data, pmin, (size_t)sz);
+    memcpy(data + sz, pmax, (size_t)sz);
 
     /* call common code */
     if (SDIputattr(&var->attrs, _HDF_ValidRange, var->HDFtype, (int)2, data) == FAIL) {
@@ -2263,11 +2263,11 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
         attr = (NC_attr **)NC_findattr(&(var->attrs), _HDF_LongName);
         if (attr != NULL) {
             if ((*attr)->data->count < (unsigned)len) {
-                strncpy((char *)l, (*attr)->data->values, (*attr)->data->count);
+                strncpy((char *)l, (char *)((*attr)->data->values), (*attr)->data->count);
                 l[(*attr)->data->count] = '\0';
             }
             else
-                strncpy((char *)l, (*attr)->data->values, len);
+                strncpy((char *)l, (char *)((*attr)->data->values), (size_t)len);
         }
         else
             l[0] = '\0';
@@ -2277,11 +2277,11 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
         attr = (NC_attr **)NC_findattr(&(var->attrs), _HDF_Units);
         if (attr != NULL) {
             if ((*attr)->data->count < (unsigned)len) {
-                strncpy((char *)u, (*attr)->data->values, (*attr)->data->count);
+                strncpy((char *)u, (char *)((*attr)->data->values), (*attr)->data->count);
                 u[(*attr)->data->count] = '\0';
             }
             else
-                strncpy((char *)u, (*attr)->data->values, len);
+                strncpy((char *)u, (char *)((*attr)->data->values), (size_t)len);
         }
         else
             u[0] = '\0';
@@ -2291,11 +2291,11 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
         attr = (NC_attr **)NC_findattr(&(var->attrs), _HDF_Format);
         if (attr != NULL) {
             if ((*attr)->data->count < (unsigned)len) {
-                strncpy((char *)f, (*attr)->data->values, (*attr)->data->count);
+                strncpy((char *)f, (char *)((*attr)->data->values), (*attr)->data->count);
                 f[(*attr)->data->count] = '\0';
             }
             else
-                strncpy((char *)f, (*attr)->data->values, len);
+                strncpy((char *)f, (char *)((*attr)->data->values), (size_t)len);
         }
         else
             f[0] = '\0';
@@ -2305,11 +2305,11 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
         attr = (NC_attr **)NC_findattr(&(var->attrs), _HDF_CoordSys);
         if (attr != NULL) {
             if ((*attr)->data->count < (unsigned)len) {
-                strncpy((char *)c, (*attr)->data->values, (*attr)->data->count);
+                strncpy((char *)c, (char *)((*attr)->data->values), (*attr)->data->count);
                 c[(*attr)->data->count] = '\0';
             }
             else
-                strncpy((char *)c, (*attr)->data->values, len);
+                strncpy((char *)c, (char *)((*attr)->data->values), (size_t)len);
         }
         else
             c[0] = '\0';
@@ -2988,7 +2988,7 @@ SDgetdimstrs(int32 id, /* IN:  dataset ID */
             if (attr != NULL) {
                 int minlen;
                 minlen = ((unsigned)len > (*attr)->data->count) ? (*attr)->data->count : (unsigned)len;
-                strncpy((char *)l, (*attr)->data->values, minlen);
+                strncpy((char *)l, (char *)((*attr)->data->values), (size_t)minlen);
                 if ((*attr)->data->count < (unsigned)len)
                     l[(*attr)->data->count] = '\0';
             }
@@ -3001,7 +3001,7 @@ SDgetdimstrs(int32 id, /* IN:  dataset ID */
             if (attr != NULL) {
                 int minlen;
                 minlen = (len > (*attr)->data->count) ? (*attr)->data->count : (unsigned)len;
-                strncpy((char *)u, (*attr)->data->values, minlen);
+                strncpy((char *)u, (char *)((*attr)->data->values), (size_t)minlen);
                 if ((*attr)->data->count < (unsigned)len)
                     u[(*attr)->data->count] = '\0';
             }
@@ -3014,7 +3014,7 @@ SDgetdimstrs(int32 id, /* IN:  dataset ID */
             if (attr != NULL) {
                 int minlen;
                 minlen = (len > (*attr)->data->count) ? (*attr)->data->count : (unsigned)len;
-                strncpy((char *)f, (*attr)->data->values, minlen);
+                strncpy((char *)f, (char *)((*attr)->data->values), (size_t)minlen);
                 if ((*attr)->data->count < (unsigned)len)
                     f[(*attr)->data->count] = '\0';
             }
@@ -3258,7 +3258,7 @@ SDgetexternalinfo(int32    id,           /* IN: dataset ID */
                     actual_fname_len = (int)buf_size < tmp_len ? (int)buf_size : tmp_len;
 
                     /* Get the name */
-                    strncpy(ext_filename, info_block.path, actual_fname_len);
+                    strncpy(ext_filename, info_block.path, (size_t)actual_fname_len);
 
                     /* Get offset/length of the external data if requested */
                     if (offset != NULL)
@@ -3380,7 +3380,7 @@ SDgetexternalfile(int32  id,           /* IN: dataset ID */
                         HGOTO_ERROR(DFE_ARGS, FAIL);
 
                     /* Get the name and its length */
-                    strncpy(ext_filename, info_block.path, buf_size);
+                    strncpy(ext_filename, info_block.path, (size_t)buf_size);
                     actual_len = buf_size < ext_file_len ? buf_size : ext_file_len;
 
                     /* Get the offset in the external file if it's requested */
@@ -4780,7 +4780,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     }
 
     /* Now start setting chunk info */
-    ndims = var->assoc->count; /* set number of dims i.e. rank */
+    ndims = (int32)var->assoc->count; /* set number of dims i.e. rank */
 
     /* allocate space for chunk dimensions */
     if ((chunk[0].pdims = malloc((size_t)ndims * sizeof(DIM_DEF))) == NULL) {
@@ -4894,8 +4894,8 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     }
 
     if (convert) { /* convert fill value */
-        if (FAIL == DFKconvert(fill_val, tBuf, var->HDFtype, (uint32)(fill_val_len / var->HDFsize),
-                               DFACC_WRITE, 0, 0)) {
+        if (FAIL ==
+            DFKconvert(fill_val, tBuf, var->HDFtype, fill_val_len / var->HDFsize, DFACC_WRITE, 0, 0)) {
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
         }
 
@@ -5280,7 +5280,7 @@ SDwritechunk(int32       sdsid,  /* IN: access aid to SDS */
                 csize *= var->HDFsize;
 
                 /* figure out if data needs to be converted */
-                byte_count = csize;
+                byte_count = (uint32)csize;
 
                 if (FAIL == (platntsubclass = DFKgetPNSC(var->HDFtype, DF_MT))) {
                     HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -5313,10 +5313,16 @@ SDwritechunk(int32       sdsid,  /* IN: access aid to SDS */
                 /* Write chunk out, */
                 if (convert) {
                     /* convert it */
-                    if (FAIL == DFKconvert((void *)datap, tBuf, var->HDFtype, (byte_count / var->HDFsize),
-                                           DFACC_WRITE, 0, 0)) {
+                    H4_GCC_CLANG_DIAG_OFF("cast-qual")
+                    /* HDF4 convert functions are often bidirectional and
+                     * raise warnings when passed const pointers for writing,
+                     * even though the data will not be modified
+                     */
+                    if (FAIL == DFKconvert((void *)datap, tBuf, var->HDFtype,
+                                           (int32)byte_count / var->HDFsize, DFACC_WRITE, 0, 0)) {
                         HGOTO_ERROR(DFE_INTERNAL, FAIL);
                     }
+                    H4_GCC_CLANG_DIAG_ON("cast-qual")
 
                     /* write it out now */
                     if ((ret_value = HMCwriteChunk(var->aid, origin, tBuf)) != FAIL) {
@@ -5471,7 +5477,7 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
                 csize *= var->HDFsize;
 
                 /* figure out if data needs to be converted */
-                byte_count = csize;
+                byte_count = (uint32)csize;
 
                 if (FAIL == (platntsubclass = DFKgetPNSC(var->HDFtype, DF_MT))) {
                     HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -5504,7 +5510,7 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
                     /* read it in */
                     if ((ret_value = HMCreadChunk(var->aid, origin, tBuf)) != FAIL) {
                         /* convert chunk */
-                        if (FAIL == DFKconvert(tBuf, datap, var->HDFtype, (byte_count / var->HDFsize),
+                        if (FAIL == DFKconvert(tBuf, datap, var->HDFtype, (int32)byte_count / var->HDFsize,
                                                DFACC_READ, 0, 0)) {
                             HGOTO_ERROR(DFE_INTERNAL, FAIL);
                         }

@@ -569,7 +569,7 @@ test_special_combos()
     int32 sd_id, sds2_id, sds3_id, sds4_id;
     int32 num_sds = 0, num_attrs = 0;
     int32 ap_start[3], ap_edges[3], dim_sizes[3];
-    int32 sds2_size = 0, sds3_size = 0, sds4_size = 0, size_written = 0;
+    int32 sds2_size = 0, sds3_size = 0, sds4_size = 0;
     int   status = 0;
     int   ii, jj, kk;
     int   num_errs = 0; /* number of errors in compression test so far */

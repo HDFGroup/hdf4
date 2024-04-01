@@ -255,7 +255,7 @@ ncvardef(int cdfid, const char *name, nc_type type, int ndims, const int dims[])
     }
     else {
         /* check for name in use */
-        len = strlen(name);
+        len = (int)strlen(name);
         dp  = (NC_var **)handle->vars->values;
         for (int ii = 0; ii < handle->vars->count; ii++, dp++) {
             if (len == (*dp)->name->len && strncmp(name, (*dp)->name->values, len) == 0) {
@@ -333,7 +333,7 @@ ncvarid(int cdfid, const char *name)
         return -1;
     if (handle->vars == NULL)
         return -1;
-    len = strlen(name);
+    len = (int)strlen(name);
     dp  = (NC_var **)handle->vars->values;
     for (int ii = 0; ii < handle->vars->count; ii++, dp++) {
         if (len == (*dp)->name->len && strncmp(name, (*dp)->name->values, len) == 0) {
@@ -439,7 +439,7 @@ ncvarrename(int cdfid, int varid, const char *newname)
         return -1;
 
     /* check for name in use */
-    len = strlen(newname);
+    len = (int)strlen(newname);
     vpp = (NC_var **)handle->vars->values;
     for (int ii = 0; ii < handle->vars->count; ii++, vpp++) {
         if (len == (*vpp)->name->len && strncmp(newname, (*vpp)->name->values, len) == 0) {

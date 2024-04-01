@@ -60,13 +60,16 @@ DFCIrle(const void *buf, void *bufto, int32 len)
         }
 
         if (q - p > 2) { /* three in a row */
+            ptrdiff_t diff;
+
             if (p > begp) {
                 *cfoll = (uint8)(p - begp);
                 cfoll  = clead;
             }
             *cfoll++ = (uint8)(128 | (uint8)(q - p)); /* len of seq */
             *cfoll++ = *p;                            /* char of seq */
-            len -= q - p;                             /* subtract len of seq */
+            diff     = q - p;                         /* get len of seq */
+            len -= (int32)diff;                       /* subtract len of seq */
             p     = q;
             clead = cfoll + 1;
             begp  = p;
