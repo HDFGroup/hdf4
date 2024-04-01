@@ -293,7 +293,7 @@ DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim, const vo
     while (cinfo_ptr->next_scanline < cinfo_ptr->image_height) {
         row_pointer[0] = (JSAMPROW)(&image_buffer[(size_t)cinfo_ptr->next_scanline * (size_t)row_stride]);
         jpeg_write_scanlines(cinfo_ptr, row_pointer, 1);
-    } /* end while */
+    }
 
     /* Finish writing stuff out */
     jpeg_finish_compress(cinfo_ptr);

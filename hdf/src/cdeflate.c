@@ -166,7 +166,16 @@ HCIcdeflate_encode(compinfo_t *info, int32 length, const void *buf)
     deflate_info = &(info->cinfo.coder_info.deflate_info);
 
     /* Set up the deflation buffers to point to the user's buffer to empty */
-    deflate_info->deflate_context.next_in  = (void *)buf;
+
+    H4_GCC_CLANG_DIAG_OFF("cast-qual")
+    /* NOTE: The next_in pointer field in the z_stream struct is declared to
+     *       be z_const, which may or may not actually be const, depending on
+     *       how the deflate/zlib library was compiled. There's not much we
+     *       can do about this.
+     */
+    deflate_info->deflate_context.next_in = (void *)buf;
+    H4_GCC_CLANG_DIAG_ON("cast-qual")
+
     deflate_info->deflate_context.avail_in = (uInt)length;
     while (deflate_info->deflate_context.avail_in > 0 || deflate_info->deflate_context.avail_out == 0) {
         /* Write more bytes from the file, if we've filled our buffer */
@@ -542,7 +551,7 @@ HCPcdeflate_read(accrec_t *access_rec, int32 length, void *data)
     int32 HCPcdeflate_write(access_rec,length,data)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 length;           IN: the number of bytes to write
-    void * data;             IN: the buffer to retrieve the bytes written
+    const void * data;      IN: the buffer to retrieve the bytes written
 
  RETURNS
     Returns the number of bytes written or FAIL

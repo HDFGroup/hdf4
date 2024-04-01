@@ -4188,15 +4188,16 @@ GRgetcomptype(int32 riid, comp_coder_t *comp_type)
 
     /* Handle old compression schemes separately */
     scheme = ri_ptr->img_dim.comp_tag;
+    H4_GCC_DIAG_OFF("logical-op")
     if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5 || scheme == DFTAG_JPEG ||
         scheme == DFTAG_GREYJPEG) {
         *comp_type = COMP_CODE_JPEG;
     }
     else if (scheme == DFTAG_RLE)
         *comp_type = COMP_CODE_RLE;
+    /* Intentionally duplicated, though some compilers raise a warning */
     else if (scheme == DFTAG_IMC || scheme == DFTAG_IMCOMP)
         *comp_type = COMP_CODE_IMCOMP;
-
     /* Use lower-level routine to get the new compression type */
     else {
         comp_coder_t temp_comp_type = COMP_CODE_INVALID;
@@ -4205,6 +4206,8 @@ GRgetcomptype(int32 riid, comp_coder_t *comp_type)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
         *comp_type = temp_comp_type;
     }
+    H4_GCC_DIAG_ON("logical-op")
+
 done:
     return ret_value;
 } /* end GRgetcomptype() */
@@ -5516,10 +5519,16 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
                         if ((pixel_buf = malloc((size_t)(pixel_mem_size * csize))) == NULL)
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
+                        H4_GCC_CLANG_DIAG_OFF("cast-qual")
+                        /* HDF4 convert functions are often bidirectional and
+                         * raise warnings when passed const pointers for writing,
+                         * even though the data will not be modified
+                         */
                         if (FAIL == GRIil_convert((void *)datap, ri_ptr->img_dim.il, pixel_buf,
                                                   MFGR_INTERLACE_PIXEL, info_block.cdims,
                                                   ri_ptr->img_dim.ncomps, ri_ptr->img_dim.nt))
                             HGOTO_ERROR(DFE_INTERNAL, FAIL);
+                        H4_GCC_CLANG_DIAG_ON("cast-qual")
 
                         /* convert the pixel data into the HDF disk format */
                         if (FAIL == DFKconvert(pixel_buf, img_data, ri_ptr->img_dim.nt,
@@ -5527,12 +5536,19 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
                             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
                         free(pixel_buf);
-                    }    /* end if */
-                    else /* convert the pixel data into the HDF disk format */
-                    {
+                    }
+                    else {
+                        H4_GCC_CLANG_DIAG_OFF("cast-qual")
+                        /* convert the pixel data into the HDF disk format
+                         *
+                         * HDF4 convert functions are often bidirectional and
+                         * raise warnings when passed const pointers for writing,
+                         * even though the data will not be modified
+                         */
                         if (FAIL == DFKconvert((void *)datap, img_data, ri_ptr->img_dim.nt,
                                                ri_ptr->img_dim.ncomps * (int32)csize, DFACC_WRITE, 0, 0))
                             HGOTO_ERROR(DFE_INTERNAL, FAIL);
+                        H4_GCC_CLANG_DIAG_ON("cast-qual")
                     }
                     /* Write chunk out, */
                     if ((ret_value = HMCwriteChunk(ri_ptr->img_aid, origin, img_data)) != FAIL)

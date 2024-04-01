@@ -250,6 +250,55 @@ typedef intptr_t hdf_pint_t;
 #endif
 
 /**************************************************************************
+ *  Warning suppression macros
+ **************************************************************************/
+
+/* Macros for enabling/disabling particular GCC / clang warnings
+ *
+ * (see the following web-sites for more info:
+ *      http://www.dbp-consulting.com/tutorials/SuppressingGCCWarnings.html
+ *      http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html#Diagnostic-Pragmas
+ */
+#define H4_DIAG_JOINSTR(x, y) x y
+#define H4_DIAG_DO_PRAGMA(x)  _Pragma(#x)
+#define H4_DIAG_PRAGMA(x)     H4_DIAG_DO_PRAGMA(GCC diagnostic x)
+
+#define H4_DIAG_OFF(x) H4_DIAG_PRAGMA(push) H4_DIAG_PRAGMA(ignored H4_DIAG_JOINSTR("-W", x))
+#define H4_DIAG_ON(x)  H4_DIAG_PRAGMA(pop)
+
+/* Macros for enabling/disabling particular GCC-only warnings.
+ * These pragmas are only implemented usefully in gcc 4.6+
+ */
+#if (((__GNUC__ * 100) + __GNUC_MINOR__) >= 406)
+#define H4_GCC_DIAG_OFF(x) H4_DIAG_OFF(x)
+#define H4_GCC_DIAG_ON(x)  H4_DIAG_ON(x)
+#else
+#define H4_GCC_DIAG_OFF(x)
+#define H4_GCC_DIAG_ON(x)
+#endif
+
+/* Macros for enabling/disabling particular clang-only warnings.
+ */
+#if defined(__clang__)
+#define H4_CLANG_DIAG_OFF(x) H4_DIAG_OFF(x)
+#define H4_CLANG_DIAG_ON(x)  H4_DIAG_ON(x)
+#else
+#define H4_CLANG_DIAG_OFF(x)
+#define H4_CLANG_DIAG_ON(x)
+#endif
+
+/* Macros for enabling/disabling particular GCC / clang warnings.
+ * These macros should be used for warnings supported by both gcc and clang.
+ */
+#if (((__GNUC__ * 100) + __GNUC_MINOR__) >= 406) || defined(__clang__)
+#define H4_GCC_CLANG_DIAG_OFF(x) H4_DIAG_OFF(x)
+#define H4_GCC_CLANG_DIAG_ON(x)  H4_DIAG_ON(x)
+#else
+#define H4_GCC_CLANG_DIAG_OFF(x)
+#define H4_GCC_CLANG_DIAG_ON(x)
+#endif
+
+/**************************************************************************
  *  JPEG #define's - Look in the JPEG docs before changing - (Q)
  **************************************************************************/
 

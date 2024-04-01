@@ -29,7 +29,7 @@ NC_new_dim(const char *name, long size)
     if (ret->name == NULL)
         goto alloc_err;
 
-    ret->size  = size;
+    ret->size  = (int32)size;
     ret->vgid  = 0; /* no vgroup representing this dimension yet -BMR 2010/12/29 */
     ret->count = 1;
     /*        ret->dim00_compat = (size == NC_UNLIMITED)? 0 : 1;  */
@@ -43,8 +43,7 @@ alloc_err:
 /*
  * Free dim
  *
- * NOTE: Changed return value to return 'int'
- *       If successful returns SUCCEED else FAIL -GV 9/19/97
+ * If successful returns SUCCEED else FAIL
  */
 int
 NC_free_dim(NC_dim *dim)
@@ -127,7 +126,7 @@ ncdimdef(int cdfid, const char *name, long size)
         if (NC_incr_array(handle->dims, (uint8_t *)dim) == NULL)
             return -1;
     }
-    return handle->dims->count - 1;
+    return (int)handle->dims->count - 1;
 }
 
 int
@@ -140,7 +139,7 @@ NC_dimid(NC *handle, char *name)
     dp  = (NC_dim **)handle->dims->values;
     for (unsigned ii = 0; ii < handle->dims->count; ii++, dp++) {
         if (len == (*dp)->name->len && strncmp(name, (*dp)->name->values, len) == 0)
-            return ii;
+            return (int)ii;
     }
     NCadvise(NC_EBADDIM, "dim \"%s\" not found", name);
     return -1;
@@ -164,7 +163,7 @@ ncdimid(int cdfid, const char *name)
     dp  = (NC_dim **)handle->dims->values;
     for (unsigned ii = 0; ii < handle->dims->count; ii++, dp++) {
         if (len == (*dp)->name->len && strncmp(name, (*dp)->name->values, len) == 0)
-            return ii;
+            return (int)ii;
     }
     NCadvise(NC_EBADDIM, "dim \"%s\" not found", name);
     return -1;

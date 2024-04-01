@@ -262,7 +262,7 @@ VSread(int32 vkey,  /* IN: vdata key */
             chunk = buf_size / hsize + 1;
 
             /* get a buffer big enough to hold the values */
-            Vtbufsize = (size_t)chunk * (size_t)hsize;
+            Vtbufsize = (uint32)(chunk * hsize);
             free(Vtbuf);
             if ((Vtbuf = (uint8 *)malloc(Vtbufsize)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -294,7 +294,7 @@ VSread(int32 vkey,  /* IN: vdata key */
 
             /* CASE  (E): Only a single field in the Vdata */
             if (w->n == 1) {
-                DFKconvert(Vtbuf, Src, w->type[0], (uint32)w->order[0] * (uint32)chunk, DFACC_READ, 0, 0);
+                DFKconvert(Vtbuf, Src, w->type[0], (int32)w->order[0] * chunk, DFACC_READ, 0, 0);
             } /* case (e) */
             /* ----------------------------------------------------------------- */
             /* CASE  (C):  iu=full, iv=full */
@@ -310,7 +310,7 @@ VSread(int32 vkey,  /* IN: vdata key */
                     order = (int)w->order[i];
 
                     for (index = 0; index < order; index++) {
-                        DFKconvert(b2, b1, type, (uint32)chunk, DFACC_READ, (uint32)hsize, (uint32)uvsize);
+                        DFKconvert(b2, b1, type, chunk, DFACC_READ, hsize, uvsize);
                         b1 += (int)esize / order;
                         b2 += (int)isize / order;
                     }
@@ -333,7 +333,7 @@ VSread(int32 vkey,  /* IN: vdata key */
 
         /* alloc space (Vtbuf) for reading in the raw data from vdata */
         if (Vtbufsize < (size_t)nelt * (size_t)hsize) {
-            Vtbufsize = (size_t)nelt * (size_t)hsize;
+            Vtbufsize = (uint32)(nelt * hsize);
             free(Vtbuf);
             if ((Vtbuf = (uint8 *)malloc(Vtbufsize)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -362,7 +362,7 @@ VSread(int32 vkey,  /* IN: vdata key */
                 order = (int)w->order[i];
 
                 for (index = 0; index < order; index++) {
-                    DFKconvert(b2, b1, type, (uint32)nelt, DFACC_READ, (uint32)hsize, (uint32)esize);
+                    DFKconvert(b2, b1, type, nelt, DFACC_READ, hsize, esize);
                     b2 += isize / order;
                     b1 += esize / order;
                 }
@@ -383,7 +383,7 @@ VSread(int32 vkey,  /* IN: vdata key */
                 order = (int)w->order[i];
 
                 for (index = 0; index < order; index++) {
-                    DFKconvert(b2, b1, type, (uint32)nelt, DFACC_READ, (uint32)isize, (uint32)esize);
+                    DFKconvert(b2, b1, type, nelt, DFACC_READ, isize, esize);
                     b1 += esize / order;
                     b2 += isize / order;
                 }
@@ -409,7 +409,7 @@ VSread(int32 vkey,  /* IN: vdata key */
                 order = (int)w->order[i];
 
                 for (index = 0; index < order; index++) {
-                    DFKconvert(b2, b1, type, (uint32)nelt, DFACC_READ, (uint32)isize, (uint32)uvsize);
+                    DFKconvert(b2, b1, type, nelt, DFACC_READ, isize, uvsize);
                     b1 += esize / order;
                     b2 += isize / order;
                 }
@@ -572,7 +572,7 @@ VSwrite(int32       vkey,  /* IN: vdata key */
             chunk = buf_size / hdf_size + 1;
 
             /* get a buffer big enough to hold the values */
-            Vtbufsize = (size_t)chunk * (size_t)hdf_size;
+            Vtbufsize = (uint32)(chunk * hdf_size);
             free(Vtbuf);
             if ((Vtbuf = (uint8 *)malloc(Vtbufsize)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -606,8 +606,13 @@ VSwrite(int32       vkey,  /* IN: vdata key */
                 order = (int)w->order[j];
 
                 for (index = 0; index < order; index++) {
-                    DFKconvert((void *)src, dest, type, (uint32)chunk, DFACC_WRITE, (uint32)int_size,
-                               (uint32)hdf_size);
+                    H4_GCC_CLANG_DIAG_OFF("cast-qual")
+                    /* HDF4 convert functions are often bidirectional and
+                     * raise warnings when passed const pointers for writing,
+                     * even though the data will not be modified
+                     */
+                    DFKconvert((void *)src, dest, type, chunk, DFACC_WRITE, int_size, hdf_size);
+                    H4_GCC_CLANG_DIAG_ON("cast-qual")
                     dest += isize / order;
                     src += esize / order;
                 }
@@ -656,8 +661,13 @@ VSwrite(int32       vkey,  /* IN: vdata key */
                 order = (int)w->order[j];
 
                 for (index = 0; index < order; index++) {
-                    DFKconvert((void *)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)esize,
-                               (uint32)hdf_size);
+                    H4_GCC_CLANG_DIAG_OFF("cast-qual")
+                    /* HDF4 convert functions are often bidirectional and
+                     * raise warnings when passed const pointers for writing,
+                     * even though the data will not be modified
+                     */
+                    DFKconvert((void *)src, dest, type, nelt, DFACC_WRITE, esize, hdf_size);
+                    H4_GCC_CLANG_DIAG_ON("cast-qual")
                     src += esize / order;
                     dest += isize / order;
                 }
@@ -679,8 +689,13 @@ VSwrite(int32       vkey,  /* IN: vdata key */
                 order = (int)w->order[j];
 
                 for (index = 0; index < order; index++) {
-                    DFKconvert((void *)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)esize,
-                               (uint32)isize);
+                    H4_GCC_CLANG_DIAG_OFF("cast-qual")
+                    /* HDF4 convert functions are often bidirectional and
+                     * raise warnings when passed const pointers for writing,
+                     * even though the data will not be modified
+                     */
+                    DFKconvert((void *)src, dest, type, nelt, DFACC_WRITE, esize, isize);
+                    H4_GCC_CLANG_DIAG_ON("cast-qual")
                     dest += isize / order;
                     src += esize / order;
                 }
@@ -702,8 +717,13 @@ VSwrite(int32       vkey,  /* IN: vdata key */
                 order = (int)w->order[j];
 
                 for (index = 0; index < order; index++) {
-                    DFKconvert((void *)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)int_size,
-                               (uint32)isize);
+                    H4_GCC_CLANG_DIAG_OFF("cast-qual")
+                    /* HDF4 convert functions are often bidirectional and
+                     * raise warnings when passed const pointers for writing,
+                     * even though the data will not be modified
+                     */
+                    DFKconvert((void *)src, dest, type, nelt, DFACC_WRITE, int_size, isize);
+                    H4_GCC_CLANG_DIAG_ON("cast-qual")
                     dest += isize / order;
                     src += esize / order;
                 }

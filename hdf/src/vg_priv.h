@@ -48,10 +48,10 @@ typedef VDATA              VSUBGROUP;
  */
 
 typedef struct symdef_struct {
-    char  *name;  /* symbol name */
-    int16  type;  /* whether int, char, float etc */
-    uint16 isize; /* field size as stored in vdata */
-    uint16 order; /* order of field */
+    const char *name;  /* symbol name */
+    int16       type;  /* whether int, char, float etc */
+    uint16      isize; /* field size as stored in vdata */
+    uint16      order; /* order of field */
 } SYMDEF;
 
 typedef struct write_struct {

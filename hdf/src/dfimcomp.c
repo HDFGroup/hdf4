@@ -504,18 +504,18 @@ DFCIunimcomp(int32 xdim, int32 ydim, uint8 in[], uint8 out[])
     for (y = 0; y < (ydim / 4); y++)
         for (x = 0; x < xdim; x = x + 4) {
             k        = y * xdim + x;
-            hi_color = (unsigned char)in[k + 2];
-            lo_color = (unsigned char)in[k + 3];
+            hi_color = in[k + 2];
+            lo_color = in[k + 3];
 
-            bitmap = ((unsigned char)in[k] << 8) | (unsigned char)in[k + 1];
+            bitmap = (in[k] << 8) | in[k + 1];
 
             for (i = (y * 4); i < (y * 4 + 4); i++) {
                 temp = bitmap >> (3 + y * 4 - i) * 4;
                 for (j = x; j < (x + 4); j++) {
                     if ((temp & 8) == 8)
-                        out[i * xdim + j] = (char)hi_color;
+                        out[i * xdim + j] = hi_color;
                     else
-                        out[i * xdim + j] = (char)lo_color;
+                        out[i * xdim + j] = lo_color;
                     temp = temp << 1;
                 }
             }
@@ -953,7 +953,7 @@ find_med(struct box *ptr, int dim)
      * at least we won't segfault...
      */
     if ((NULL == ptr) || (NULL == ptr->pts))
-        return -9999999.99;
+        return -9999999.99F;
 
     rank = (int *)malloc((unsigned)ptr->nmbr_distinct * sizeof(int));
     for (i = 0; i < ptr->nmbr_distinct; i++)

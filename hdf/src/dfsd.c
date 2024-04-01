@@ -2345,9 +2345,13 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                 if (luf == (-1))
                     luf = LABEL;
 
+                /* FALLTHROUGH */
+
             case DFTAG_SDU: /* units */
                 if (luf == (-1))
                     luf = UNIT;
+
+                /* FALLTHROUGH */
 
             case DFTAG_SDF: /* formats */
                 if (luf == (-1))
