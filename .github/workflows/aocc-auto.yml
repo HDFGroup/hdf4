@@ -27,7 +27,10 @@ jobs:
         shell: bash
         run: |
           sudo apt update
-          sudo apt install -y libaec-dev zlib1g-dev automake autoconf libcurl4-openssl-dev libjpeg-dev wget curl bzip2 m4 flex bison cmake libzip-dev doxygen openssl libtool libtool-bin build-essential libncurses-dev libquadmath0 libstdc++6 libxml2
+          sudo apt install -y libaec-dev zlib1g-dev automake autoconf libcurl4-openssl-dev
+          sudo apt install -y libjpeg-dev wget curl bzip2 m4 flex bison cmake libzip-dev
+          sudo apt install -y doxygen openssl libtool libtool-bin build-essential
+          sudo apt install -y libncurses-dev libquadmath0 libstdc++6 libxml2
 
       - name: Install AOCC 4.1.0
         shell: bash
