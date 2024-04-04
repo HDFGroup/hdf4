@@ -26,7 +26,7 @@ hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_gr.c                       \
                   hrepack_opttable.c hrepack_parse.c                        \
                   hrepack_sds.c hrepack_utils.c                             \
                   hrepack_vg.c hrepack_vs.c hrepack_dim.c
-hrepack_LDADD = $(LIBMFHDF) $(LIBHDF)
+hrepack_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
 hrepack_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 
 #############################################################################
@@ -39,7 +39,7 @@ check_SCRIPTS=hrepack.sh
 check_PROGRAMS = hrepack_check test_hrepack
 
 test_hrepack_SOURCES = hrepacktst.c
-test_hrepack_LDADD = $(LIBMFHDF) $(LIBHDF) -lm
+test_hrepack_LDADD = $(LIBMFHDF) $(LIBHDF) -lm @LIBS@
 test_hrepack_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 
 hrepack_check_SOURCES = hrepack_check.c

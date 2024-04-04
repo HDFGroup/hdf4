@@ -34,6 +34,8 @@ libdf_la_SOURCES = $(CSOURCES)
 include_HEADERS = $(CHEADERS)
 endif
 
+libdf_la_LIBADD = @LIBS@
+
 # The following is a workaround. Since Fortran is included in this 
 # Makefile.am, automake will always try to use the Fortran linker, even when
 # fortran has been disabled in configure. The Fortran linker gets confused 
