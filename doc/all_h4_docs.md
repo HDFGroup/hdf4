@@ -60,7 +60,7 @@ There should also be a discussion of fill values being set by the library in the
 
 ---
 
-<h3 id="HDFFR-1287"></h3>[HDFFR-1287](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-1287"></h3>[HDFFR-1287](https://jira.hdfgroup.org/browse/HDFFR-1287)
 *Behavior of software doesn't match documentation for empty SDS datasets, and is there a default fill value?*
 
 #### Attachments
@@ -190,7 +190,7 @@ When I run h4mapwriter on the file produced I get a segfault.
 
 ---
 
-<h3 id="HDFFR-1324"></h3>[HDFFR-1324](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-1324"></h3>[HDFFR-1324](https://jira.hdfgroup.org/browse/HDFFR-1324)
 *Add details to hdp in UG*
 
 #### Description
@@ -229,7 +229,7 @@ Need RFC for new ideas first then go from there.
 
 ---
 
-<h3 id="HDFFR-1298"></h3>[HDFFR-1298](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-1298"></h3>[HDFFR-1298](https://jira.hdfgroup.org/browse/HDFFR-1298)
 *Improvements to the HDF4 docs*
 
 #### Description
@@ -252,7 +252,7 @@ Additional improvement: each UG chapter should have its own TOC.
 
 ---
 
-<h3 id="HDFFR-1296"></h3>[HDFFR-1296](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-1296"></h3>[HDFFR-1296](https://jira.hdfgroup.org/browse/HDFFR-1296)
 *Hstartread entry missing from reference manual*
 
 #### Description
@@ -275,7 +275,7 @@ We could also make a section at the end of the RM to house LL functions, then mo
 
 ---
 
-<h3 id="HDFFR-1265"></h3>[HDFFR-1265](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-1265"></h3>[HDFFR-1265](https://jira.hdfgroup.org/browse/HDFFR-1265)
 *Clear explanation regarding requirement of external file location*
 
 #### Description
@@ -302,7 +302,7 @@ So, in some ways, "kept with original file" isn't quite accurate – it need not
 
 ---
 
-<h3 id="HDFFR-1259"></h3>[HDFFR-1259](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-1259"></h3>[HDFFR-1259](https://jira.hdfgroup.org/browse/HDFFR-1259)
 *UG Section 8.6.2 has incorrect information that causes segfault*
 
 #### Description
@@ -330,7 +330,7 @@ Maybe we should fix to allow:
 
 ---
 
-<h3 id="HDFFR-996"></h3>[HDFFR-996](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-996"></h3>[HDFFR-996](https://jira.hdfgroup.org/browse/HDFFR-996)
 *Documentation text and example for interlace modes in DF24 is very confusing (and wrong?)*
 
 **Attachments:** DF24_nocomp_pixel.c     RIS24_nocomp_line.hdf     RIS24_nocomp_line.hdf     RIS24_nocomp_line2.hdf     RIS24_nocomp_pixel.hdf     RIS24_nocomp_plane.hdf     RIS24_nocomp_plane.hdf     RIS24_nocomp_plane2.hdf |
@@ -433,7 +433,7 @@ hdp dumprig doesn't report the interleave but instead reorders the data and alwa
 
 ---
 
-<h3 id="HDFFR-993"></h3>[HDFFR-993](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-993"></h3>[HDFFR-993](https://jira.hdfgroup.org/browse/HDFFR-993)
 *palette not initialized in UG 6.4.2 Ex 2*
 
 #### Description
@@ -450,7 +450,7 @@ Fix and improve the example while there.
 
 ---
 
-<h3 id="HDFFR-992"></h3>[HDFFR-992](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-992"></h3>[HDFFR-992](https://jira.hdfgroup.org/browse/HDFFR-992)
 *confusing (or incorrect) description of dim order in DFR8putimage RM page*
 
 #### Description
@@ -477,7 +477,7 @@ Will consult with Elena and make sure the terms used consistently throughout the
 
 ---
 
-<h3 id="HDFFR-734"></h3>[HDFFR-734](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-734"></h3>[HDFFR-734](https://jira.hdfgroup.org/browse/HDFFR-734)
 *Error in Spec Section 10.4 External Elements*
 
 #### Description
@@ -492,7 +492,7 @@ The File Organization documentation at the beginning of the hextelt.c file is al
 
 ---
 
-<h3 id="HDFFR-733"></h3>[HDFFR-733](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-733"></h3>[HDFFR-733](https://jira.hdfgroup.org/browse/HDFFR-733)
 *UG sections 8.11. should tell current behavior, not designed behavior*
 
 #### Description
@@ -507,7 +507,7 @@ What is allowable for palettes via the GR interface is described as **designed**
 
 ---
 
-<h3 id="HDFFR-732"></h3>[HDFFR-732](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-732"></h3>[HDFFR-732](https://jira.hdfgroup.org/browse/HDFFR-732)
 *RM entry for GRwritelut should be improved*
 
 #### Description
@@ -530,7 +530,7 @@ Need valid values for n_entries, are they \[1...256\]?
 
 ---
 
-<h3 id="HDFFR-111"></h3>[HDFFR-111](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-111"></h3>[HDFFR-111](https://jira.hdfgroup.org/browse/HDFFR-111)
 *UG: writing dimension scale w/DFSD api not clear*
 
 #### Description
@@ -546,7 +546,7 @@ spelled incorrectly as "DFSDsetdiscale".
 
 ---
 
-<h3 id="HDFFR-612"></h3>[HDFFR-612](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-612"></h3>[HDFFR-612](https://jira.hdfgroup.org/browse/HDFFR-612)
 *Add hrepack/hdiff info to documentation*
 
 **Duplicate**     |     |     |
@@ -570,7 +570,7 @@ Updated Section 15.3, hdiff, and Section 15.15, hrepack, in the HDF4 User's Guid
 
 ---
 
-<h3 id="HDFFR-157"></h3>[HDFFR-157](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-157"></h3>[HDFFR-157](https://jira.hdfgroup.org/browse/HDFFR-157)
 *GR: Add examples to doc on image store/retrieving*
 
 #### Description
@@ -590,7 +590,7 @@ Might already be added.
 
 ---
 
-<h3 id="HDFFR-208"></h3>[HDFFR-208](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-208"></h3>[HDFFR-208](https://jira.hdfgroup.org/browse/HDFFR-208)
 *Feedback on Chapter 7 of Spec (6/25/08 draft version)*
 
 #### Description
@@ -614,7 +614,7 @@ Wow - I learned a lot from this chapter!
 
 ---
 
-<h3 id="HDFFR-209"></h3>[HDFFR-209](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-209"></h3>[HDFFR-209](https://jira.hdfgroup.org/browse/HDFFR-209)
 *Feedback on Chapter 8 of Spec (6/25/08 draft)*
 
 #### Description
@@ -629,7 +629,7 @@ Some things I noticed when reading the draft.
 
 ---
 
-<h3 id="HDFFR-223"></h3>[HDFFR-223](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-223"></h3>[HDFFR-223](https://jira.hdfgroup.org/browse/HDFFR-223)
 *UG: Confusing information about supported data types*
 
 #### Description
@@ -668,7 +668,7 @@ Must find all other occurrences as well.
 
 ---
 
-<h3 id="HDFFR-731"></h3>[HDFFR-731](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-731"></h3>[HDFFR-731](https://jira.hdfgroup.org/browse/HDFFR-731)
 *compressing 8-bit raster example wrong (or confusing)*
 
 **Unanet:** ORNL ECP-SDK (14102) |
@@ -687,7 +687,7 @@ Also, the routine for reading data (DF48getimage) doesn't have any way to specif
 
 ---
 
-<h3 id="HDFFR-228"></h3>[HDFFR-228](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-228"></h3>[HDFFR-228](https://jira.hdfgroup.org/browse/HDFFR-228)
 *VSwrite in RG confusing*
 
 #### Description
@@ -706,7 +706,7 @@ This text needs to be fixed and an example would be really helpful. I **think** 
 
 ---
 
-<h3 id="HDFFR-728"></h3>[HDFFR-728](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-728"></h3>[HDFFR-728](https://jira.hdfgroup.org/browse/HDFFR-728)
 *docs mention default fill values but never say what they are*
 
 #### Description
@@ -727,7 +727,7 @@ The documents show the default fill values now, but there is some history about 
 
 ---
 
-<h3 id="HDFFR-1291"></h3>[HDFFR-1291](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-1291"></h3>[HDFFR-1291](https://jira.hdfgroup.org/browse/HDFFR-1291)
 *SDS with rank=0*
 
 #### Description
@@ -752,7 +752,7 @@ Source code will be cleaned up to resolve malloc issues when rank=0
 
 ---
 
-<h3 id="HDFFR-471"></h3>[HDFFR-471](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-471"></h3>[HDFFR-471](https://jira.hdfgroup.org/browse/HDFFR-471)
 *ug: SDsetblocksize page had errors*
 
 #### Description
@@ -778,7 +778,7 @@ It is true that the function doesn't always change the block size in the file. I
 
 ---
 
-<h3 id="HDFFR-224"></h3>[HDFFR-224](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-224"></h3>[HDFFR-224](https://jira.hdfgroup.org/browse/HDFFR-224)
 *Docs have VFfieldisize and VFfieldesize backwards*
 
 #### Description
@@ -804,7 +804,7 @@ IT would also be good to say that the size is returned in units of Bytes. And, t
 
 ---
 
-<h3 id="HDFFR-1403"></h3>[HDFFR-1403](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-1403"></h3>[HDFFR-1403](https://jira.hdfgroup.org/browse/HDFFR-1403)
 *UG issues in the List of Examples*
 
 #### Description
@@ -859,7 +859,7 @@ in Examples 2, and 3, but what is written there may be okay??
 
 ---
 
-<h3 id="HDFFR-1330"></h3>[HDFFR-1330](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-1330"></h3>[HDFFR-1330](https://jira.hdfgroup.org/browse/HDFFR-1330)
 *GrayJPEG5 (tag 16) LL Objects seen but not expected*
 
 **Attachments:** createRastersPalettes.c |
@@ -877,7 +877,7 @@ This was originally part of issue 995 (see 12/21 comment), but most of the issue
 
 ---
 
-<h3 id="HDFFR-1344"></h3>[HDFFR-1344](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-1344"></h3>[HDFFR-1344](https://jira.hdfgroup.org/browse/HDFFR-1344)
 *hdfimport documentation does not correctly reflect how to create a 2D dataset with hdfimport*
 
 #### Description
@@ -952,7 +952,7 @@ Need more time for examples.
 
 ---
 
-<h3 id="HDFFR-1386"></h3>[HDFFR-1386](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-1386"></h3>[HDFFR-1386](https://jira.hdfgroup.org/browse/HDFFR-1386)
 *Identify all the places to document this issue and document them*
 
 #### Description
@@ -963,7 +963,7 @@ Excerpt of Mike's message:
 
 ---
 
-<h3 id="HDFFR-1387"></h3>[HDFFR-1387](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-1387"></h3>[HDFFR-1387](https://jira.hdfgroup.org/browse/HDFFR-1387)
 *You cannot create an SDS with both chunking and unlimited dimension*
 
 **Attachments:** chunking_ex-unl.c |
@@ -998,7 +998,7 @@ Mentioned in Section 3.12 of the UG, need to add to the SDsetchunk RM page, then
 
 ---
 
-<h3 id="HDFFR-1392"></h3>[HDFFR-1392](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-1392"></h3>[HDFFR-1392](https://jira.hdfgroup.org/browse/HDFFR-1392)
 *Document the interpretation of ncdump output*
 
 #### Description
@@ -1008,7 +1008,7 @@ Document how the output for dimensions in ncdump are interpreted. This issue is 
 
 ---
 
-<h3 id="HDFFR-1478"></h3>[HDFFR-1478](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-1478"></h3>[HDFFR-1478](https://jira.hdfgroup.org/browse/HDFFR-1478)
 *VSinquire and vsfinq behavior*
 
 #### Description
@@ -1037,7 +1037,7 @@ We need to decide if we want to change the behavior of the Fortran wrapper and d
 
 ---
 
-<h3 id="HDFFR-1517"></h3>[HDFFR-1517](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-1517"></h3>[HDFFR-1517](https://jira.hdfgroup.org/browse/HDFFR-1517)
 *Make sure hdp commands list options correctly*
 
 #### Description
@@ -1047,7 +1047,7 @@ hdp commands don't specify flags correctly when they are mutually exclusive or n
 
 ---
 
-<h3 id="HDFFR-1518"></h3>[HDFFR-1518](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-1518"></h3>[HDFFR-1518](https://jira.hdfgroup.org/browse/HDFFR-1518)
 *RM entries need improvement and/or correction*
 
 #### Description
@@ -1064,7 +1064,7 @@ Estimate is for all entries which will be added as they are found. Each entry sh
 
 ---
 
-<h3 id="HDFFR-1523"></h3>[HDFFR-1523](https://jira.hdfgroup.org/browse/HDFFR-nnnn)
+<h3 id="HDFFR-1523"></h3>[HDFFR-1523](https://jira.hdfgroup.org/browse/HDFFR-1523)
 *Update documentation for the library code and file format, and user documentation*
 
 #### Description
