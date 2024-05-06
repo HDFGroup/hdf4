@@ -467,7 +467,7 @@ I think it would benefit from code example rather than word description "on it's
 
 I think code example in section 6.4.1 of UG is also confusing. array declared \[HEIGHT\]\[WIDTH} but then call is made WIDTH, HEIGHT. Fortran call is also WIDTH, HEIGHT. which doesn't agree w/ what RM says (to me)
 
-Trying to read doc and look at example code in UG is very confusing. Woudl be good to use consistent (and correct) terms.
+Trying to read doc and look at example code in UG is very confusing. Would be good to use consistent (and correct) terms.
 
 #### Comments
 
@@ -600,10 +600,10 @@ Here are some things I noticed when reading. Most are very minor.
 1) Fig 7a, rectangle isn't showing up around "A" in table (HDF Object)  
 2) Text after Fib 7b "In object description figures, e.g.Figure 7i" should be "In... figures, e.g., Figure 7i"  
 3) Last sentence before Fig 7d "... the H, V, and SD interfaces" should be "GR" instead of "SD"  
-4) Table 7a - I wasn't sure why "contiguous" was spelled out for SDS, but for dimension variable "default" was used. Why aren't both "continguous" or both "default". Also, The note "contiguous storage is the default layout and requires no special storage tag" has a \* but there is no \* in the table text.  
+4) Table 7a - I wasn't sure why "contiguous" was spelled out for SDS, but for dimension variable "default" was used. Why aren't both "contiguous" or both "default". Also, The note "contiguous storage is the default layout and requires no special storage tag" has a \* but there is no \* in the table text.  
 5) section 7.8 - first bullet in first list. should be ...or opened, not or open  
-6) section 7.8 4th bullet in first list. I would say "gobal attributes are set for the SD collection" (not for the file) .... but, this terminology occurs many places, not just here.  
-7) Section 7.8.1 "The objects are stored..." I wondered what objects this refered to.  
+6) section 7.8 4th bullet in first list. I would say "global attributes are set for the SD collection" (not for the file) .... but, this terminology occurs many places, not just here.  
+7) Section 7.8.1 "The objects are stored..." I wondered what objects this referred to.  
 8) Figure 7u - I would have liked to see a dimension scale also shown w/ the SDS.. the way the "dimensions" and "dimension scales" relate is still somewhat fuzzy to me.  
 9) Section 7.8.4 - another place where attributes are called "global".  
 10) Figure 7x, 7y - another place I was not sure about the dimension scale... I think there's a dimension attribute but no dimension "data" - why do we have the values & list of dim indices? Are they just empty?  
@@ -830,9 +830,9 @@ Other minor issues are included below: <=== Done (Feb 8, 2014)
 "routine" incorrectly. Also "the" before "Section" can be removed:  
 "This rouitne is described in the Section 10.6.1"
 
-(Ch 10 AN) EXAMPLE 3: Change "identifers" to "identifiers":  
+(Ch 10 AN) EXAMPLE 3: Change "identifiers" to "identifiers":  
 Second paragraph, 3rd sentence:  
-"..If there are any identifers"
+"..If there are any identifiers"
 
 (Ch 8 GR) EXAMPLE 9: (missing from source - entered [HDFFR-1402](https://jira.hdfgroup.org/browse/HDFFR-1402) for this.)
 
