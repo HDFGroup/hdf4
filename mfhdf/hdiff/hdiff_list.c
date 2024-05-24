@@ -75,7 +75,7 @@ hdiff_list(const char *fname, dtable_t *table, diff_dim_table_t *td1, diff_dim_t
         goto out;
     }
 
-    /* iterate tru HDF interfaces */
+    /* iterate through HDF interfaces */
     if (hdiff_list_vg(fname, file_id, sd_id, gr_id, table, td1, td2) < 0)
         goto out;
     if (hdiff_list_gr(file_id, gr_id, table) < 0)
@@ -175,7 +175,7 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
         nlones = Vlone(file_id, ref_array, nlones);
 
         /*
-         * iterate tru each lone vgroup.
+         * iterate through each lone vgroup.
          */
         for (i = 0; i < nlones; i++) {
 
@@ -600,7 +600,7 @@ hdiff_list_vs(int32 file_id, dtable_t *table)
         nlones = VSlone(file_id, ref_array, nlones);
 
         /*
-         * iterate tru each lone vdata.
+         * iterate through each lone vdata.
          */
         for (i = 0; i < nlones; i++) {
             /*
