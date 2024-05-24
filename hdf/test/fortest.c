@@ -128,7 +128,7 @@ main(int argc, char *argv[])
             printf("verbose   controls the amount of information displayed\n");
             printf("exclude   to exclude tests by name\n");
             printf("only      to name tests which should be run\n");
-            printf("begin     start at the name of the test givin\n");
+            printf("begin     start at the name of the test given\n");
             printf("summary   prints a summary of test results at the end\n");
             printf("cleanno   does not delete *.hdf files after execution of tests\n");
             printf("\n\n");

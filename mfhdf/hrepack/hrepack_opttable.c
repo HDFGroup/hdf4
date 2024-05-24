@@ -93,7 +93,7 @@ options_add_chunk(obj_list_t *obj_list, int n_objs, int32 *chunk_lengths, int ch
 
     /* search if this object is already in the table; "path" is the key */
     if (op_tbl->nelems > 0) {
-        /* go tru the supplied list of names */
+        /* go through the supplied list of names */
         for (j = 0; j < n_objs; j++) {
             /* linear table search */
             for (i = 0; i < op_tbl->nelems; i++) {
@@ -129,7 +129,7 @@ options_add_chunk(obj_list_t *obj_list, int n_objs, int32 *chunk_lengths, int ch
 
     /* first time insertion */
     else {
-        /* go tru the supplied list of names */
+        /* go through the supplied list of names */
         for (j = 0; j < n_objs; j++) {
             I = op_tbl->nelems + added;
             added++;
@@ -173,7 +173,7 @@ options_add_comp(obj_list_t *obj_list, int n_objs, comp_info_t comp, options_tab
 
     /* search if this object is already in the table; "path" is the key */
     if (op_tbl->nelems > 0) {
-        /* go tru the supplied list of names */
+        /* go through the supplied list of names */
         for (j = 0; j < n_objs; j++) {
             /* linear table search */
             for (i = 0; i < op_tbl->nelems; i++) {
@@ -206,7 +206,7 @@ options_add_comp(obj_list_t *obj_list, int n_objs, comp_info_t comp, options_tab
 
     /* first time insertion */
     else {
-        /* go tru the supplied list of names */
+        /* go through the supplied list of names */
         for (j = 0; j < n_objs; j++) {
             I = op_tbl->nelems + added;
             added++;
