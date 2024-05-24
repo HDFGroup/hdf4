@@ -113,7 +113,7 @@ else ()
   set (BYTESEX little-endian)
 endif ()
 configure_file (
-    ${HDF_RESOURCES_DIR}/libhdf4.settings.cmake.in
+    ${HDF4_SOURCE_DIR}/libhdf4.settings.cmake.in
     ${HDF4_BINARY_DIR}/libhdf4.settings ESCAPE_QUOTES @ONLY
 )
 install (
