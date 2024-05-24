@@ -1195,7 +1195,7 @@ esac
 
 AC_CONFIG_FILES([Makefile
                  doxygen/Doxyfile
-                 libhdf4.settings
+                 libhdf4.settings:libhdf4.settings.autotools.in
                  hdf/Makefile
                  hdf/fortran/Makefile
                  hdf/src/Makefile
