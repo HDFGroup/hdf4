@@ -27,27 +27,23 @@ jobs:
           sudo apt install libssl3 libssl-dev libcurl4 libcurl4-openssl-dev
           sudo apt install -y libaec-dev zlib1g-dev wget curl bzip2 flex bison cmake libzip-dev openssl build-essential
 
-      - name: Install AOCC 4.1.0
+      - name: Install AOCC 4.2.0
         shell: bash
         run: |
-          wget https://download.amd.com/developer/eula/aocc/aocc-4-1/aocc-compiler-4.1.0.tar
-          tar -xvf aocc-compiler-4.1.0.tar
-          cd aocc-compiler-4.1.0
+          wget https://download.amd.com/developer/eula/aocc/aocc-4-2/aocc-compiler-4.2.0.tar
+          tar -xvf aocc-compiler-4.2.0.tar
+          cd aocc-compiler-4.2.0
           bash install.sh
           source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
           which clang
           which flang
           clang -v
-          echo "CC=/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/bin/clang" >> $GITHUB_ENV
-          echo "FC=/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/bin/flang" >> $GITHUB_ENV
-          echo "LD_LIBRARY_PATH=/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/lib:/usr/local/lib" >> $GITHUB_ENV
-          echo "LD_RUN_PATH=/home/runner/work/hdf4/hdf4/aocc-compiler-4.1.0/lib:/usr/local/lib" >> $GITHUB_ENV
-          echo "DESTDIR=/tmp" >> $GITHUB_ENV
 
       - name: CMake Configure
         shell: bash
         run: |
-          source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
+          export LD_LIBRARY_PATH=/home/runner/work/hdf5/hdf5/aocc-compiler-4.2.0/lib:/home/runner/work/hdf5/hdf5/openmpi-4.1.6-install/lib:/usr/local/lib
+          export LD_RUN_PATH=/home/runner/work/hdf5/hdf5/aocc-compiler-4.2.0/lib:/home/runner/work/hdf5/hdf5/openmpi-4.1.6-install/lib:/usr/local/lib
           export PATH=/usr/local/bin:$PATH
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
@@ -65,15 +61,11 @@ jobs:
       - name: CMake Build
         shell: bash
         run: |
-          source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
-          export PATH=/usr/local/bin:$PATH
           cmake --build . --parallel 3 --config ${{ inputs.build_mode }}
         working-directory: ${{ runner.workspace }}/build
 
       - name: CMake Run Tests
         shell: bash
         run: |
-          source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
-          export PATH=/usr/local/bin:$PATH
           ctest . --parallel 2 -C ${{ inputs.build_mode }} -V
         working-directory: ${{ runner.workspace }}/build
