@@ -1,21 +1,5 @@
-cmake_minimum_required (VERSION 3.18)
-project (HDF4 C)
-
-if (POLICY CMP0074)
-  # find_package() uses <PackageName>_ROOT variables.
-  cmake_policy (SET CMP0074 NEW)
-endif ()
-
-if (POLICY CMP0083)
-  # To control generation of Position Independent Executable (PIE) or not,
-  # some flags are required at link time.
-  cmake_policy (SET CMP0083 NEW)
-endif ()
-
-# Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake 3.24:
-if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
-    cmake_policy(SET CMP0135 NEW)
-endif()
+cmake_minimum_required (VERSION 3.18...3.24)
+project (HDF4 LANGUAGES C)
 
 #-----------------------------------------------------------------------------
 # Instructions for use : Normal Build
@@ -460,7 +444,7 @@ endif ()
 
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-add_definitions (-DHAVE_CONFIG_H)
+add_compile_definitions (HAVE_CONFIG_H)
 
 #-----------------------------------------------------------------------------
 # Temporary disable optimization flag
@@ -578,7 +562,7 @@ add_subdirectory (mfhdf/src)
 # Option to build documentation
 #-----------------------------------------------------------------------------
 option (HDF4_BUILD_DOC "Build documentation" OFF)
-if (HDF4_BUILD_DOC AND EXISTS "${HDF4_DOXYGEN_DIR}" AND IS_DIRECTORY "${HDF4_DOXYGEN_DIR}")
+if (HDF4_BUILD_DOC AND IS_DIRECTORY "${HDF4_DOXYGEN_DIR}")
 # check if Doxygen is installed
   find_package(Doxygen)
   if (DOXYGEN_FOUND)
@@ -614,10 +598,10 @@ if (BUILD_TESTING)
   endif ()
 
   if (NOT HDF4_EXTERNALLY_CONFIGURED)
-    if (EXISTS "${HDF4_SOURCE_DIR}/hdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/test")
+    if (IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/test")
       add_subdirectory (hdf/test)
     endif ()
-    if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/test")
+    if (IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/test")
       add_subdirectory (mfhdf/test)
     endif ()
   endif ()
@@ -634,7 +618,7 @@ endif ()
 # Set default name mangling : overridden by Fortran detection in fortran dir
 set (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
 set (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## __")
-if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran")
+if (IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran")
   option (HDF4_BUILD_FORTRAN "Build FORTRAN support" OFF)
   if (HDF4_BUILD_FORTRAN)
     if (WIN32)
@@ -662,7 +646,7 @@ add_subdirectory (mfhdf)
 #-----------------------------------------------------------------------------
 # Option to build HDF4 Java Library
 #-----------------------------------------------------------------------------
-if (EXISTS "${HDF4_SOURCE_DIR}/java" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/java")
+if (IS_DIRECTORY "${HDF4_SOURCE_DIR}/java")
   option (HDF4_BUILD_JAVA "Build Java HDF Library" OFF)
   if (HDF4_BUILD_JAVA)
     if (NOT BUILD_SHARED_LIBS)
@@ -681,7 +665,7 @@ configure_file (${HDF_RESOURCES_DIR}/h4config.h.in ${PROJECT_BINARY_DIR}/h4confi
 #-----------------------------------------------------------------------------
 # Option to build examples
 #-----------------------------------------------------------------------------
-if (EXISTS "${HDF4_SOURCE_DIR}/HDF4Examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/HDF4Examples")
+if (IS_DIRECTORY "${HDF4_SOURCE_DIR}/HDF4Examples")
   option (HDF4_BUILD_EXAMPLES  "Build HDF4 Library Examples" ON)
   if (HDF4_BUILD_EXAMPLES)
     include (${HDF_RESOURCES_DIR}/HDF4ExampleCache.cmake)
