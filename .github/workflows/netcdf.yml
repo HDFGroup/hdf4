@@ -28,8 +28,10 @@ jobs:
       run: |
         sudo apt update
         sudo apt install -y libaec-dev zlib1g-dev automake autoconf libcurl4-openssl-dev libjpeg-dev wget curl bzip2 m4 flex bison cmake libzip-dev doxygen openssl libtool libtool-bin
+
     - name: Checkout HDF4
       uses: actions/checkout@v4.1.1
+
     - name: Install HDF4
       run: |
         ./autogen.sh
@@ -55,6 +57,7 @@ jobs:
       with:
         repository: unidata/netcdf-c
         path: netcdf-c
+
     - name: Test netCDF
       run: |
         cd netcdf-c
