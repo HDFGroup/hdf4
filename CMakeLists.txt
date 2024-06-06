@@ -444,7 +444,7 @@ endif ()
 
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-add_definitions (-DHAVE_CONFIG_H)
+add_compile_definitions (HAVE_CONFIG_H)
 
 #-----------------------------------------------------------------------------
 # Temporary disable optimization flag
