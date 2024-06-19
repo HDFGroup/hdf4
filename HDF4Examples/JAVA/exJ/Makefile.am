@@ -15,7 +15,7 @@ pkgpath = examples
 hdfjarfile = jar$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).jar
 jarfile = jar$(PACKAGE_TARNAME)examples.jar
 
-CLASSPATH_ENV=CLASSPATH=.:$(JAVAROOT):$(top_builddir)/java/src/$(hdfjarfile):$(top_srcdir)/java/lib/slf4j-api-1.7.33.jar:$(top_srcdir)/java/lib/ext/slf4j-simple-1.7.33.jar:$$CLASSPATH
+CLASSPATH_ENV=CLASSPATH=.:$(JAVAROOT):$(top_builddir)/java/src/$(hdfjarfile):$(top_srcdir)/java/lib/slf4j-api-2.0.6.jar:$(top_srcdir)/java/lib/ext/slf4j-simple-2.0.6.jar:$$CLASSPATH
 AM_JAVACFLAGS = $(H4_JAVACFLAGS) -deprecation
 
 noinst_JAVA = \
