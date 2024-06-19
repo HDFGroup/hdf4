@@ -49,6 +49,7 @@ jobs:
 
           # Windows w/ MSVC + CMake
           #
+          # No Fortran or parallel
           - name: "Windows MSVC"
             os: windows-latest
             toolchain: ""

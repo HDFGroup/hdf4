@@ -196,9 +196,9 @@ set (HDF4_JAVA_JNI_SRC_DIR         ${HDF4_SOURCE_DIR}/java/src/jni)
 set (HDF4_JAVA_HDF_SRC_DIR         ${HDF4_SOURCE_DIR}/java/src/hdf)
 set (HDF4_JAVA_TEST_SRC_DIR        ${HDF4_SOURCE_DIR}/java/test)
 set (HDF4_JAVA_LIB_DIR             ${HDF4_SOURCE_DIR}/java/lib)
-set (HDF4_JAVA_LOGGING_JAR         ${HDF4_SOURCE_DIR}/java/lib/slf4j-api-1.7.33.jar)
-set (HDF4_JAVA_LOGGING_NOP_JAR     ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-nop-1.7.33.jar)
-set (HDF4_JAVA_LOGGING_SIMPLE_JAR  ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-simple-1.7.33.jar)
+set (HDF4_JAVA_LOGGING_JAR         ${HDF4_SOURCE_DIR}/java/lib/slf4j-api-2.0.6.jar)
+set (HDF4_JAVA_LOGGING_NOP_JAR     ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-nop-2.0.6.jar)
+set (HDF4_JAVA_LOGGING_SIMPLE_JAR  ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-simple-2.0.6.jar)
 set (HDF4_DOXYGEN_DIR              ${HDF4_SOURCE_DIR}/doxygen)
 
 set (HDF4_SRC_INCLUDE_DIRS ${HDF4_HDFSOURCE_DIR} ${HDF4_MFHDFSOURCE_DIR})
@@ -215,9 +215,9 @@ string (REGEX REPLACE ".*#define[ \t]+LIBVER_MINOR[ \t]+([0-9]*).*$"
     "\\1" H4_VERS_MINOR ${_hfile_h_contents})
 string (REGEX REPLACE ".*#define[ \t]+LIBVER_RELEASE[ \t]+([0-9]*).*$"
     "\\1" H4_VERS_RELEASE ${_hfile_h_contents})
-string (REGEX REPLACE ".*#define[ \t]+LIBVER_SUBRELEASE[ \t]+\"([0-9A-Za-z.]*)\".*$"
+string (REGEX REPLACE ".*#define[ \t]+LIBVER_SUBRELEASE[ \t]+\"([0-9A-Za-z._-]*)\".*$"
     "\\1" H4_VERS_SUBRELEASE ${_hfile_h_contents})
-#message (STATUS "VERSION: ${H4_VERS_MAJOR}.${H4_VERS_MINOR}.${H4_VERS_RELEASE}-${H4_VERS_SUBRELEASE}")
+message (TRACE "VERSION: ${H4_VERS_MAJOR}.${H4_VERS_MINOR}.${H4_VERS_RELEASE}-${H4_VERS_SUBRELEASE}")
 
 #-----------------------------------------------------------------------------
 # parse the full soversion number from config/lt_vers.am and include in H4_SOVERS_INFO

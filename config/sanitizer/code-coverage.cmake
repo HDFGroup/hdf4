@@ -98,9 +98,14 @@ if(CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
   # Common Targets
   file(MAKE_DIRECTORY ${CMAKE_COVERAGE_OUTPUT_DIRECTORY})
 
-  if(CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
+  if(CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR 
+     CMAKE_CXX_COMPILER_ID MATCHES "IntelLLVM" OR 
+     CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang"
+     OR CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
+    message(STATUS "Building with llvm Code Coverage Tools")
 
-    if(CMAKE_C_COMPILER_ID MATCHES "AppleClang")
+    if(CMAKE_C_COMPILER_ID MATCHES "AppleClang" OR CMAKE_CXX_COMPILER_ID
+                                                   MATCHES "AppleClang")
       # When on macOS and using the Apple-provided toolchain, use the
       # XCode-provided llvm toolchain via `xcrun`
       message(
@@ -131,12 +136,21 @@ if(CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
     endif()
 
     # Targets
-    add_custom_target(
+    if(${CMAKE_VERSION} VERSION_LESS "3.17.0")
+      add_custom_target(
+        ccov-clean
+        COMMAND ${CMAKE_COMMAND} -E remove -f
+                ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/binaries.list
+        COMMAND ${CMAKE_COMMAND} -E remove -f
+                ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/profraw.list)
+    else()
+      add_custom_target(
         ccov-clean
         COMMAND ${CMAKE_COMMAND} -E rm -f
                 ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/binaries.list
         COMMAND ${CMAKE_COMMAND} -E rm -f
                 ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/profraw.list)
+    endif()
 
     # Used to get the shared object file list before doing the main all-
     # processing
@@ -145,7 +159,7 @@ if(CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
       COMMAND ;
       COMMENT "libs ready for coverage report.")
 
-  elseif(CMAKE_C_COMPILER_ID MATCHES "GNU")
+  elseif(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     # Messages
     message(STATUS "Building with lcov Code Coverage Tools")
 
@@ -176,7 +190,7 @@ if(CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
 
   else()
     set(CODE_COVERAGE_ADDED OFF)
-    message(FATAL_ERROR "Code coverage requires Clang or GCC. Aborting.")
+    message(STATUS "Code coverage requires Clang or GCC.(${CMAKE_C_COMPILER_ID})")
   endif()
 endif()
 
@@ -248,14 +262,19 @@ function(target_code_coverage TARGET_NAME)
   if(CODE_COVERAGE)
 
     # Add code coverage instrumentation to the target's linker command
-    if(CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
+    if(CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR 
+       CMAKE_CXX_COMPILER_ID MATCHES "IntelLLVM" OR 
+       CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang" OR 
+       CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
       target_compile_options(${TARGET_NAME} ${TARGET_VISIBILITY}
                              -fprofile-instr-generate -fcoverage-mapping)
       target_link_options(${TARGET_NAME} ${TARGET_VISIBILITY}
                           -fprofile-instr-generate -fcoverage-mapping)
-    elseif(CMAKE_C_COMPILER_ID MATCHES "GNU")
+    elseif(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES
+                                                "GNU")
       target_compile_options(
-        ${TARGET_NAME} ${TARGET_VISIBILITY} -fprofile-arcs -ftest-coverage -fno-default-inline)
+        ${TARGET_NAME} ${TARGET_VISIBILITY} -fprofile-arcs -ftest-coverage
+        $<$<COMPILE_LANGUAGE:CXX>:-fno-elide-constructors> -fno-default-inline)
       target_link_libraries(${TARGET_NAME} ${TARGET_LINK_VISIBILITY} gcov)
     endif()
 
@@ -264,7 +283,10 @@ function(target_code_coverage TARGET_NAME)
 
     # Add shared library to processing for 'all' targets
     if(target_type STREQUAL "SHARED_LIBRARY" AND target_code_coverage_ALL)
-      if(CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
+      if(CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR 
+         CMAKE_CXX_COMPILER_ID MATCHES "IntelLLVM" OR 
+         CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang" OR 
+         CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
         add_custom_target(
           ccov-run-${target_code_coverage_COVERAGE_TARGET_NAME}
           COMMAND
@@ -286,7 +308,10 @@ function(target_code_coverage TARGET_NAME)
 
     # For executables add targets to run and produce output
     if(target_type STREQUAL "EXECUTABLE")
-      if(CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
+      if(CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR 
+         CMAKE_CXX_COMPILER_ID MATCHES "IntelLLVM" OR 
+         CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang" OR 
+         CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
 
         # If there are shared objects to also work with, generate the string to
         # add them here
@@ -377,7 +402,8 @@ function(target_code_coverage TARGET_NAME)
             -format="html" ${EXCLUDE_REGEX}
           DEPENDS ccov-processing-${target_code_coverage_COVERAGE_TARGET_NAME})
 
-      elseif(CMAKE_C_COMPILER_ID MATCHES "GNU")
+      elseif(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES
+                                                  "GNU")
         set(COVERAGE_INFO
             "${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${target_code_coverage_COVERAGE_TARGET_NAME}.info"
         )
@@ -408,7 +434,22 @@ function(target_code_coverage TARGET_NAME)
         endif()
 
         # Capture coverage data
-        add_custom_target(
+        if(${CMAKE_VERSION} VERSION_LESS "3.17.0")
+          add_custom_target(
+            ccov-capture-${target_code_coverage_COVERAGE_TARGET_NAME}
+            COMMAND ${CMAKE_COMMAND} -E remove -f ${COVERAGE_INFO}
+            COMMAND ${LCOV_PATH} --directory ${CMAKE_BINARY_DIR} --zerocounters
+            COMMAND
+              ${CMAKE_CROSSCOMPILING_EMULATOR} ${target_code_coverage_PRE_ARGS}
+              $<TARGET_FILE:${TARGET_NAME}> ${target_code_coverage_ARGS}
+            COMMAND
+              ${LCOV_PATH} --directory ${CMAKE_BINARY_DIR} --base-directory
+              ${CMAKE_SOURCE_DIR} --capture ${EXTERNAL_OPTION} --output-file
+              ${COVERAGE_INFO}
+            COMMAND ${EXCLUDE_COMMAND}
+            DEPENDS ${TARGET_NAME})
+        else()
+          add_custom_target(
             ccov-capture-${target_code_coverage_COVERAGE_TARGET_NAME}
             COMMAND ${CMAKE_COMMAND} -E rm -f ${COVERAGE_INFO}
             COMMAND ${LCOV_PATH} --directory ${CMAKE_BINARY_DIR} --zerocounters
@@ -421,6 +462,7 @@ function(target_code_coverage TARGET_NAME)
               ${COVERAGE_INFO}
             COMMAND ${EXCLUDE_COMMAND}
             DEPENDS ${TARGET_NAME})
+        endif()
 
         # Generates HTML output of the coverage information for perusal
         add_custom_target(
@@ -447,7 +489,8 @@ function(target_code_coverage TARGET_NAME)
         endif()
         add_dependencies(ccov ccov-${target_code_coverage_COVERAGE_TARGET_NAME})
 
-        if(NOT CMAKE_C_COMPILER_ID MATCHES "GNU")
+        if(NOT CMAKE_C_COMPILER_ID MATCHES "GNU" AND NOT CMAKE_CXX_COMPILER_ID
+                                                     MATCHES "GNU")
           if(NOT TARGET ccov-report)
             add_custom_target(ccov-report)
           endif()
@@ -478,12 +521,17 @@ endfunction()
 # use `target_code_coverage`.
 function(add_code_coverage)
   if(CODE_COVERAGE)
-    if(CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
+    if(CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR 
+       CMAKE_CXX_COMPILER_ID MATCHES "IntelLLVM" OR 
+       CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang" OR 
+       CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
       add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
       add_link_options(-fprofile-instr-generate -fcoverage-mapping)
-    elseif(CMAKE_C_COMPILER_ID MATCHES "GNU")
+    elseif(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES
+                                                "GNU")
       add_compile_options(
-        -fprofile-arcs -ftest-coverage -fno-default-inline)
+        -fprofile-arcs -ftest-coverage
+        $<$<COMPILE_LANGUAGE:CXX>:-fno-elide-constructors> -fno-default-inline)
       link_libraries(gcov)
     endif()
   endif()
@@ -505,7 +553,10 @@ function(add_code_coverage_all_targets)
                         "${multi_value_keywords}" ${ARGN})
 
   if(CODE_COVERAGE)
-    if(CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
+    if(CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR 
+       CMAKE_CXX_COMPILER_ID MATCHES "IntelLLVM" OR 
+       CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang" OR 
+       CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
 
       # Merge the profile data for all of the run executables
       if(WIN32)
@@ -606,7 +657,7 @@ function(add_code_coverage_all_targets)
           DEPENDS ccov-all-processing)
       endif()
 
-    elseif(CMAKE_C_COMPILER_ID MATCHES "GNU")
+    elseif(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
       set(COVERAGE_INFO "${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/all-merged.info")
 
       # Nothing required for gcov
@@ -627,13 +678,23 @@ function(add_code_coverage_all_targets)
       endif()
 
       # Capture coverage data
-      add_custom_target(
+      if(${CMAKE_VERSION} VERSION_LESS "3.17.0")
+        add_custom_target(
+          ccov-all-capture
+          COMMAND ${CMAKE_COMMAND} -E remove -f ${COVERAGE_INFO}
+          COMMAND ${LCOV_PATH} --directory ${CMAKE_BINARY_DIR} --capture
+                  --output-file ${COVERAGE_INFO}
+          COMMAND ${EXCLUDE_COMMAND}
+          DEPENDS ccov-all-processing)
+      else()
+        add_custom_target(
           ccov-all-capture
           COMMAND ${CMAKE_COMMAND} -E rm -f ${COVERAGE_INFO}
           COMMAND ${LCOV_PATH} --directory ${CMAKE_BINARY_DIR} --capture
                   --output-file ${COVERAGE_INFO}
           COMMAND ${EXCLUDE_COMMAND}
           DEPENDS ccov-all-processing)
+      endif()
 
       # Generates HTML output of all targets for perusal
       add_custom_target(
