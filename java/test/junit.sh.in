@@ -292,7 +292,6 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/line [0-9]*/line (number)/' \
     -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
-    -e 's/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4.ext > JUnit-TestH4.out
 
 if diff JUnit-TestH4.out JUnit-TestH4.txt > /dev/null; then
@@ -313,7 +312,6 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/line [0-9]*/line (number)/' \
     -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
-    -e 's/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4ANparams.ext > JUnit-TestH4ANparams.out
 
 if diff JUnit-TestH4ANparams.out JUnit-TestH4ANparams.txt > /dev/null; then
@@ -334,7 +332,6 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/line [0-9]*/line (number)/' \
     -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
-    -e 's/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4DFparams.ext > JUnit-TestH4DFparams.out
 
 if diff JUnit-TestH4DFparams.out JUnit-TestH4DFparams.txt > /dev/null; then
@@ -355,7 +352,6 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/line [0-9]*/line (number)/' \
     -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
-    -e 's/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4DFPparams.ext > JUnit-TestH4DFPparams.out
 
 if diff JUnit-TestH4DFPparams.out JUnit-TestH4DFPparams.txt > /dev/null; then
@@ -376,7 +372,6 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/line [0-9]*/line (number)/' \
     -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
-    -e 's/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4DFRparams.ext > JUnit-TestH4DFRparams.out
 
 if diff JUnit-TestH4DFRparams.out JUnit-TestH4DFRparams.txt > /dev/null; then
@@ -397,7 +392,6 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/line [0-9]*/line (number)/' \
     -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
-    -e 's/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4GRparams.ext > JUnit-TestH4GRparams.out
 
 if diff JUnit-TestH4GRparams.out JUnit-TestH4GRparams.txt > /dev/null; then
@@ -418,7 +412,6 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/line [0-9]*/line (number)/' \
     -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
-    -e 's/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4HCparams.ext > JUnit-TestH4HCparams.out
 
 if diff JUnit-TestH4HCparams.out JUnit-TestH4HCparams.txt > /dev/null; then
@@ -439,7 +432,6 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/line [0-9]*/line (number)/' \
     -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
-    -e 's/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4SDparams.ext > JUnit-TestH4SDparams.out
 
 if diff JUnit-TestH4SDparams.out JUnit-TestH4SDparams.txt > /dev/null; then
@@ -460,7 +452,6 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/line [0-9]*/line (number)/' \
     -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
-    -e 's/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4Vparams.ext > JUnit-TestH4Vparams.out
 
 if diff JUnit-TestH4Vparams.out JUnit-TestH4Vparams.txt > /dev/null; then
@@ -481,7 +472,6 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/line [0-9]*/line (number)/' \
     -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
-    -e 's/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4VSparams.ext > JUnit-TestH4VSparams.out
 
 if diff JUnit-TestH4VSparams.out JUnit-TestH4VSparams.txt > /dev/null; then
