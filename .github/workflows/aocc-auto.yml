@@ -1,5 +1,6 @@
 name: hdf4 autotools aocc
 
+# Triggers the workflow on a call from another workflow
 on:
   workflow_call:
     inputs:
