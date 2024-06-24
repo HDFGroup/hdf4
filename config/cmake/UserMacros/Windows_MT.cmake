@@ -11,8 +11,8 @@
 #-----------------------------------------------------------------------------
 # Option to Build with Static CRT libraries on Windows (USE WITH CAUTION!!!)
 #-----------------------------------------------------------------------------
-option (HDF5_BUILD_STATIC_CRT_LIBS "Build With Static Windows CRT Libraries" OFF)
-mark_as_advanced (HDF5_BUILD_STATIC_CRT_LIBS)
-if (HDF5_BUILD_STATIC_CRT_LIBS)
+option (HDF4_BUILD_STATIC_CRT_LIBS "Build With Static Windows CRT Libraries" OFF)
+mark_as_advanced (HDF4_BUILD_STATIC_CRT_LIBS)
+if (HDF4_BUILD_STATIC_CRT_LIBS)
   set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif ()
