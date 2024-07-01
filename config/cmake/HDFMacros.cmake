@@ -69,6 +69,9 @@ macro (SET_HDF_BUILD_TYPE)
     else ()
       set (HDF_CFG_NAME "Release")
     endif ()
+    # Set available build types for cmake-gui/ccmake convenience
+    set_property (CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+      "Debug" "Release" "RelWithDebInfo" "MinSizeRel")
   endif ()
 endmacro ()
 
@@ -255,6 +258,8 @@ macro (TARGET_C_PROPERTIES wintarget libtype)
   if(MSVC)
     set_property(TARGET ${wintarget} APPEND PROPERTY LINK_FLAGS "${WIN_LINK_FLAGS}")
   endif()
+  #Disable UNITY_BUILD for now
+  set_property(TARGET ${wintarget} APPEND PROPERTY UNITY_BUILD OFF)
 endmacro ()
 
 #-----------------------------------------------------------------------------
@@ -390,7 +395,7 @@ macro (HDF_DIR_PATHS package_prefix)
   endif ()
 
   if (APPLE)
-    option (${package_prefix}_BUILD_FRAMEWORKS "ON to build as frameworks libraries, OFF to build according to BUILD_SHARED_LIBS" FALSE)
+    option (${package_prefix}_BUILD_FRAMEWORKS "ON to build as frameworks libraries, OFF to build according to BUILD_SHARED_LIBS" OFF)
   endif ()
 
   if (NOT ${package_prefix}_INSTALL_BIN_DIR)

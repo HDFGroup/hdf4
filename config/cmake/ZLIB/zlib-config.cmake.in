@@ -10,7 +10,6 @@ set (${ZLIB_PACKAGE_NAME}_VALID_COMPONENTS static shared)
 #-----------------------------------------------------------------------------
 # User Options
 #-----------------------------------------------------------------------------
-set (${ZLIB_PACKAGE_NAME}_BUILD_SHARED_LIBS    @BUILD_SHARED_LIBS@)
 set (${ZLIB_PACKAGE_NAME}_EXPORT_LIBRARIES     @ZLIB_LIBRARIES_TO_EXPORT@)
 
 #-----------------------------------------------------------------------------

@@ -154,6 +154,18 @@
       ]
     },
     {
+      "name": "ci-StdShar-win-Intel",
+      "configurePreset": "ci-StdShar-Intel",
+      "inherits": [
+        "ci-x64-Release-Intel"
+      ],
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
       "name": "ci-StdShar-Intel",
       "configurePreset": "ci-StdShar-Intel",
       "inherits": [
@@ -200,6 +212,14 @@
         {"type": "configure", "name": "ci-StdShar-Intel"},
         {"type": "build", "name": "ci-StdShar-Intel"},
         {"type": "test", "name": "ci-StdShar-Intel"}
+      ]
+    },
+    {
+      "name": "ci-StdShar-win-Intel",
+      "steps": [
+        {"type": "configure", "name": "ci-StdShar-Intel"},
+        {"type": "build", "name": "ci-StdShar-Intel"},
+        {"type": "test", "name": "ci-StdShar-win-Intel"}
       ]
     }
   ]
