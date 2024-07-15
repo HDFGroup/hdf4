@@ -1,12 +1,12 @@
 cmake_minimum_required (VERSION 3.18)
-PROJECT (LIBAEC C)
+project (LIBAEC C)
 
 #-----------------------------------------------------------------------------
 # Basic LIBAEC stuff here
 #-----------------------------------------------------------------------------
-set(CMAKE_C_STANDARD 99)
-set(CMAKE_C_VISIBILITY_PRESET hidden)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set (CMAKE_C_STANDARD 99)
+set (CMAKE_C_VISIBILITY_PRESET hidden)
+set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set (LIBAEC_PACKAGE_EXT ${HDF_PACKAGE_EXT})
 set (HDF_USE_GNU_DIRS ${HDF4_USE_GNU_DIRS})
@@ -22,30 +22,30 @@ if (WINDOWS)
 endif ()
 
 if (NOT WINDOWS)
-include(TestBigEndian)
-test_big_endian(WORDS_BIGENDIAN)
+  include (TestBigEndian)
+  test_big_endian (WORDS_BIGENDIAN)
 endif ()
 
 # Check for __builtin_clzll for faster decoding
-include(CheckCSourceCompiles)
+include (CheckCSourceCompiles)
 check_c_source_compiles(
   "int main(void)\n{return __builtin_clzll(1LL);}"
   HAVE_DECL___BUILTIN_CLZLL)
 
-if(NOT HAVE_DECL___BUILTIN_CLZLL)
+if (NOT HAVE_DECL___BUILTIN_CLZLL)
   # With MSVC we can use _BitScanReverse64
-  check_c_source_compiles(
+  check_c_source_compiles (
     "int main(void){unsigned long foo; unsigned __int64 bar=1LL;
 return _BitScanReverse64(&foo, bar);}"
     HAVE_BSR64)
-endif()
+endif ()
 
-include(CheckSymbolExists)
-check_symbol_exists(snprintf "stdio.h" HAVE_SNPRINTF)
-if(NOT HAVE_SNPRINTF)
-  check_symbol_exists(_snprintf "stdio.h" HAVE__SNPRINTF)
-  check_symbol_exists(_snprintf_s "stdio.h" HAVE__SNPRINTF_S)
-endif()
+include (CheckSymbolExists)
+check_symbol_exists (snprintf "stdio.h" HAVE_SNPRINTF)
+if (NOT HAVE_SNPRINTF)
+  check_symbol_exists (_snprintf "stdio.h" HAVE__SNPRINTF)
+  check_symbol_exists (_snprintf_s "stdio.h" HAVE__SNPRINTF_S)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Define some CMake variables for use later in the project
@@ -88,7 +88,6 @@ set (LIBAEC_PACKAGE_URL "http://www.hdfgroup.org")
 set (LIBAEC_PACKAGE_BUGREPORT "help@hdfgroup.org")
 set (LIBAEC_PACKAGE_SOVERSION "${libaec_VERS_MAJOR}.${libaec_VERS_MINOR}.${libaec_VERS_RELEASE}")
 set (LIBAEC_PACKAGE_SOVERSION_MAJOR "${libaec_VERS_MAJOR}")
-
 
 HDF_DIR_PATHS(${LIBAEC_PACKAGE_NAME})
 
@@ -216,6 +215,7 @@ set_target_properties (${SZIP_LIB_TARGET} PROPERTIES
     LINKER_LANGUAGE C
     INTERFACE_INCLUDE_DIRECTORIES "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
 )
+
 set_global_variable (LIBAEC_LIBRARIES_TO_EXPORT "${LIBAEC_LIBRARIES_TO_EXPORT};${SZIP_LIB_TARGET}")
 set (install_targets ${install_targets} ${SZIP_LIB_TARGET})
 
@@ -239,31 +239,6 @@ if (LIBAEC_EXPORTED_TARGETS)
 endif ()
 
 include (CMakePackageConfigHelpers)
-
-#-----------------------------------------------------------------------------
-# Add Target(s) to CMake Install for import into other projects
-#-----------------------------------------------------------------------------
-if (NOT LIBAEC_EXTERNALLY_CONFIGURED)
-  install (
-      EXPORT ${LIBAEC_EXPORTED_TARGETS}
-      DESTINATION ${LIBAEC_INSTALL_CMAKE_DIR}
-      FILE ${LIBAEC_PACKAGE}${LIBAEC_PACKAGE_EXT}-targets.cmake
-      NAMESPACE ${PACKAGE_NAMESPACE}
-      COMPONENT configinstall
-  )
-endif ()
-
-#-----------------------------------------------------------------------------
-# Export all exported targets to the build tree for use by parent project
-#-----------------------------------------------------------------------------
-if (NOT LIBAEC_EXTERNALLY_CONFIGURED)
-  export (
-      TARGETS ${LIBAEC_LIBRARIES_TO_EXPORT} ${LIBAEC_LIB_DEPENDENCIES}
-      FILE ${LIBAEC_PACKAGE}${LIBAEC_PACKAGE_EXT}-targets.cmake
-      NAMESPACE ${PACKAGE_NAMESPACE}
-  )
-  export (PACKAGE ${LIBAEC_PACKAGE}${LIBAEC_PACKAGE_EXT})
-endif ()
 
 #-----------------------------------------------------------------------------
 # Set includes needed for build
@@ -326,5 +301,30 @@ if (NOT LIBAEC_EXTERNALLY_CONFIGURED)
       DESTINATION ${LIBAEC_INSTALL_CMAKE_DIR}
       COMPONENT configinstall
   )
+endif ()
+
+#-----------------------------------------------------------------------------
+# Add Target(s) to CMake Install for import into other projects
+#-----------------------------------------------------------------------------
+if (NOT LIBAEC_EXTERNALLY_CONFIGURED)
+  install (
+      EXPORT ${LIBAEC_EXPORTED_TARGETS}
+      DESTINATION ${LIBAEC_INSTALL_CMAKE_DIR}
+      FILE ${LIBAEC_PACKAGE}${LIBAEC_PACKAGE_EXT}-targets.cmake
+      NAMESPACE ${PACKAGE_NAMESPACE}
+      COMPONENT configinstall
+  )
+endif ()
+
+#-----------------------------------------------------------------------------
+# Export all exported targets to the build tree for use by parent project
+#-----------------------------------------------------------------------------
+if (NOT LIBAEC_EXTERNALLY_CONFIGURED)
+  export (
+      TARGETS ${LIBAEC_LIBRARIES_TO_EXPORT} ${LIBAEC_LIB_DEPENDENCIES}
+      FILE ${LIBAEC_PACKAGE}${LIBAEC_PACKAGE_EXT}-targets.cmake
+      NAMESPACE ${PACKAGE_NAMESPACE}
+  )
+  export (PACKAGE ${LIBAEC_PACKAGE}${LIBAEC_PACKAGE_EXT})
 endif ()
 

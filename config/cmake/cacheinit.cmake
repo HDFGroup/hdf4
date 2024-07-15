@@ -35,6 +35,12 @@ set (ZLIB_USE_LOCALCONTENT ON CACHE BOOL "Use local file for HDF4_ZLIB FetchCont
 set (ZLIB_GIT_URL "https://github.com/madler/zlib.git" CACHE STRING "Use ZLIB from  GitHub repository" FORCE)
 set (ZLIB_GIT_BRANCH "develop" CACHE STRING "" FORCE)
 
+set (ZLIBNG_PACKAGE_NAME "zlib-ng" CACHE STRING "Name of ZLIBNG package" FORCE)
+set (ZLIBNG_TGZ_NAME "2.1.6.tar.gz" CACHE STRING "Use HDF4_ZLib from compressed file" FORCE)
+set (ZLIBNG_TGZ_ORIGPATH "https://github.com/zlib-ng/zlib-ng/archive/refs/tags" CACHE STRING "Use ZLIBNG from original location" FORCE)
+set (ZLIBNG_GIT_URL "https://github.com/zlib-ng/zlib-ng.git" CACHE STRING "Use ZLIBNG from  GitHub repository" FORCE)
+set (ZLIBNG_GIT_BRANCH "develop" CACHE STRING "" FORCE)
+
 set (LIBAEC_PACKAGE_NAME "libaec" CACHE STRING "Name of AEC SZIP package" FORCE)
 set (LIBAEC_TGZ_NAME "libaec-1.1.3.tar.gz" CACHE STRING "Use SZip AEC from compressed file" FORCE)
 set (LIBAEC_TGZ_ORIGPATH "https://github.com/MathisRosenhauer/libaec/releases/download/v1.1.3" CACHE STRING "Use LIBAEC from original location" FORCE)
