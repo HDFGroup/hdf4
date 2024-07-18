@@ -38,6 +38,13 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Corrected usage of FetchContent in the HDFLibMacros.cmake file.
+
+      CMake version 3.30 changed the behavior of the FetchContent module to deprecate
+      the use of FetchContent_Populate() in favor of FetchContent_MakeAvailable(). Therefore,
+      the copying of HDF specialized CMakeLists.txt files to the dependent project's source
+      was implemented in the FetchContent_Declare() call.
+
     - Renamed HDF4_ENABLE_USING_MEMCHECKER to HDF4_USING_ANALYSIS_TOOL
 
       The HDF4_USING_ANALYSIS_TOOL is used to indicate to test macros that
