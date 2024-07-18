@@ -2,6 +2,7 @@
 #-----------------------------------------------------------------------------
 # Options for HDF4 Filters
 #-----------------------------------------------------------------------------
+option (HDF4_USE_ZLIB_NG "Use zlib-ng library as zlib library" OFF)
 option (HDF4_USE_LIBAEC_STATIC "Use static AEC library " OFF)
 option (JPEG_USE_EXTERNAL "Use External Library Building for JPEG" OFF)
 option (ZLIB_USE_EXTERNAL "Use External Library Building for ZLIB" OFF)
@@ -15,9 +16,17 @@ endif ()
 message (VERBOSE "Filter JPEG file is ${JPEG_URL}")
 
 if (NOT ZLIB_USE_LOCALCONTENT)
-  set (ZLIB_URL ${ZLIB_TGZ_ORIGPATH}/${ZLIB_TGZ_NAME})
+  if (HDF4_USE_ZLIB_NG)
+    set (ZLIB_URL ${ZLIBNG_TGZ_ORIGPATH}/${ZLIBNG_TGZ_NAME})
+  else ()
+    set (ZLIB_URL ${ZLIB_TGZ_ORIGPATH}/${ZLIB_TGZ_NAME})
+  endif ()
 else ()
-  set (ZLIB_URL ${TGZPATH}/${ZLIB_TGZ_NAME})
+  if (HDF4_USE_ZLIB_NG)
+    set (ZLIB_URL ${TGZPATH}/${ZLIBNG_TGZ_NAME})
+  else ()
+    set (ZLIB_URL ${TGZPATH}/${ZLIB_TGZ_NAME})
+  endif ()
 endif ()
 message (VERBOSE "Filter ZLIB file is ${ZLIB_URL}")
 
@@ -126,8 +135,13 @@ set (HDF4_ENABLE_Z_LIB_SUPPORT ON) #Enable libzlib required
 if (HDF4_ENABLE_Z_LIB_SUPPORT)
   if (NOT H4_ZLIB_HEADER)
     if (NOT ZLIB_USE_EXTERNAL)
+      if (HDF4_USE_ZLIB_NG)
+        set (PACKAGE_NAME ${ZLIBNG_PACKAGE_NAME}${HDF_PACKAGE_EXT})
+      else ()
+        set (PACKAGE_NAME ${ZLIB_PACKAGE_NAME}${HDF_PACKAGE_EXT})
+      endif ()
       set(ZLIB_FOUND FALSE)
-      find_package (ZLIB NAMES ${ZLIB_PACKAGE_NAME}${HDF_PACKAGE_EXT} COMPONENTS static shared)
+      find_package (ZLIB NAMES ${PACKAGE_NAME}${HDF_PACKAGE_EXT} COMPONENTS static shared)
       if (NOT ZLIB_FOUND)
         find_package (ZLIB) # Legacy find
       endif ()

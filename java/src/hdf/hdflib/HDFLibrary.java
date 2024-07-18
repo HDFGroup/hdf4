@@ -146,7 +146,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HDFLibrary implements java.io.Serializable {
     /**
-     *
+     * Serialization ID
      */
     private static final long serialVersionUID = -1695429510319126910L;
 
