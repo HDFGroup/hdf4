@@ -33,7 +33,7 @@ macro (BASIC_SETTINGS varname)
   #-----------------------------------------------------------------------------
   # Compiler specific flags : Shouldn't there be compiler tests for these
   #-----------------------------------------------------------------------------
-  if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
     set (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -std=c99 -fomit-frame-pointer -finline-functions -fno-common")
   endif ()
   if (CMAKE_CXX_COMPILER_LOADED AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
