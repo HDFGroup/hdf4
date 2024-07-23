@@ -86,16 +86,30 @@ jobs:
           cmake --workflow --preset=${{ inputs.preset_name }}-MSVC --fresh
         shell: bash
 
-      - name: Publish binary (Windows)
-        id: publish-ctest-binary
+      - name: Create build folders (Windows)
         run: |
           mkdir "${{ runner.workspace }}/build"
           mkdir "${{ runner.workspace }}/build/hdf4"
+        shell: bash
+
+      - name: Publish binary (Windows)
+        id: publish-ctest-binary
+        run: |
           Copy-Item -Path ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/COPYING -Destination ${{ runner.workspace }}/build/hdf4/
           Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-MSVC/README.txt -Destination ${{ runner.workspace }}/build/hdf4/
           Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-MSVC/* -Destination ${{ runner.workspace }}/build/hdf4/ -Include *.zip
           cd "${{ runner.workspace }}/build"
           7z a -tzip ${{ steps.set-file-base.outputs.FILE_BASE }}-win-vs2022_cl.zip hdf4
+        shell: pwsh
+
+      - name: Publish binary (Windows)
+        id: publish-ctest-binary
+        run: |
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/COPYING -Destination ${{ runner.workspace }}/build/hdf4/
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-MSVC/README.txt -Destination ${{ runner.workspace }}/build/hdf4/
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-MSVC/* -Destination ${{ runner.workspace }}/build/hdf4/ -Include *.msi
+          cd "${{ runner.workspace }}/build"
+          7z a -tzip ${{ steps.set-file-base.outputs.FILE_BASE }}-win-vs2022_msi.zip hdf4
         shell: pwsh
 
       - name: List files in the space (Windows)
@@ -380,16 +394,30 @@ jobs:
           cmake --workflow --preset=${{ inputs.preset_name }}-win-Intel --fresh
         shell: pwsh
 
-      - name: Publish binary (Windows_intel)
-        id: publish-ctest-binary
+      - name: Create build folders (Windows_intel)
         run: |
           mkdir "${{ runner.workspace }}/build"
           mkdir "${{ runner.workspace }}/build/hdf4"
+        shell: bash
+
+      - name: Publish binary (Windows_intel)
+        id: publish-ctest-binary
+        run: |
           Copy-Item -Path ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/COPYING -Destination ${{ runner.workspace }}/build/hdf4/
           Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/README.txt -Destination ${{ runner.workspace }}/build/hdf4/
           Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/* -Destination ${{ runner.workspace }}/build/hdf4/ -Include *.zip
           cd "${{ runner.workspace }}/build"
           7z a -tzip ${{ steps.set-file-base.outputs.FILE_BASE }}-win-vs2022_intel.zip hdf4
+        shell: pwsh
+
+      - name: Publish binary (Windows_intel)
+        id: publish-ctest-binary
+        run: |
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/COPYING -Destination ${{ runner.workspace }}/build/hdf4/
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/README.txt -Destination ${{ runner.workspace }}/build/hdf4/
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/* -Destination ${{ runner.workspace }}/build/hdf4/ -Include *.msi
+          cd "${{ runner.workspace }}/build"
+          7z a -tzip ${{ steps.set-file-base.outputs.FILE_BASE }}-win-vs2022_intel_msi.zip hdf4
         shell: pwsh
 
       - name: List files in the space (Windows_intel)
