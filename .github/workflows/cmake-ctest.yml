@@ -103,7 +103,7 @@ jobs:
         shell: pwsh
 
       - name: Publish binary (Windows)
-        id: publish-ctest-binary
+        id: publish-ctest-msi-binary
         run: |
           Copy-Item -Path ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/COPYING -Destination ${{ runner.workspace }}/build/hdf4/
           Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-MSVC/README.txt -Destination ${{ runner.workspace }}/build/hdf4/
@@ -253,7 +253,7 @@ jobs:
   # MacOS w/ Clang + CMake
   #
     name: "MacOS Clang CMake"
-    runs-on: macos-13
+    runs-on: macos-latest
     steps:
       - name: Install Dependencies (MacOS)
         run: brew install ninja

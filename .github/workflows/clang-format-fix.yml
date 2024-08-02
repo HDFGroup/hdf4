@@ -11,8 +11,10 @@ name: clang-format Commit Changes
 on: 
   workflow_dispatch:
   push:
+
 permissions:
   contents: read
+
 jobs:
   formatting-check:
     name: Commit Format Changes
