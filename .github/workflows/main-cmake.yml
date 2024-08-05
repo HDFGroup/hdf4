@@ -36,6 +36,7 @@ jobs:
         name:
           - "Windows MSVC"
           - "Ubuntu gcc"
+          - "MacOS-13 Clang"
           - "MacOS Clang"
 
         # This is where we list the bulk of the options for each configuration.
@@ -77,13 +78,29 @@ jobs:
             generator: "-G Ninja"
             run_tests: true
 
+          # MacOS w/ Clang + CMake
+          #
+          # We could also build with the Autotools via brew installing them,
+          # but that seems unnecessary
+          - name: "MacOS-13 Clang"
+            os: macos-13
+            fortran: OFF
+            java: ON
+            docs: ON
+            localjpeg: OFF
+            locallibaec: OFF
+            localzlib: OFF
+            toolchain: "-DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/config/toolchain/clang.cmake"
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
+            generator: "-G Ninja"
+            run_tests: true
 
           # MacOS w/ Clang + CMake
           #
           # We could also build with the Autotools via brew installing them,
           # but that seems unnecessary
           - name: "MacOS Clang"
-            os: macos-13
+            os: macos-latest
             fortran: OFF
             java: ON
             docs: ON
@@ -122,7 +139,7 @@ jobs:
 
       - name: Install Dependencies (macOS)
         run: brew install ninja
-        if: matrix.os == 'macos-13'
+        if: ${{ matrix.os == 'macos-13' || matrix.os == 'macos-latest' }}
 
       - name: Install Dependencies
         uses: ssciwr/doxygen-install@v1
@@ -210,7 +227,15 @@ jobs:
       - name: Save published binary (Mac)
         uses: actions/upload-artifact@v4
         with:
-              name: tgz-osx-${{ inputs.build_mode }}-binary
+              name: tgz-osx13-${{ inputs.build_mode }}-binary
               path: ${{ runner.workspace }}/build/HDF-*-Darwin.tar.gz
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
         if: ${{ (matrix.os == 'macos-13') && (inputs.netcdf == 'true') && (inputs.shared == 'true') }}
+
+      - name: Save published binary (Mac_latest)
+        uses: actions/upload-artifact@v4
+        with:
+              name: tgz-osx-${{ inputs.build_mode }}-binary
+              path: ${{ runner.workspace }}/build/HDF-*-Darwin.tar.gz
+              if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+        if: ${{ (matrix.os == 'macos-latest') && (inputs.netcdf == 'true') && (inputs.shared == 'true') }}
