@@ -146,9 +146,9 @@ jobs:
         with:
           version: "1.9.7"
 
-     - name: Set up JDK 19
-       uses: actions/setup-java@v4
-       with:
+      - name: Set up JDK 19
+        uses: actions/setup-java@v4
+        with:
           java-version: '19'
           distribution: 'temurin'
 
