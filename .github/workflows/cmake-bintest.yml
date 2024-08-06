@@ -219,7 +219,7 @@ jobs:
           name: tgz-osx-${{ inputs.build_mode }}-binary
           path: ${{ github.workspace }}
 
-      - name: Uncompress hdf5 binary (MacOS_latest)
+      - name: Uncompress hdf4 binary (MacOS_latest)
         run:  |
           cd "${{ github.workspace }}"
           tar -zxvf ${{ github.workspace }}/HDF-*-Darwin.tar.gz --strip-components 1
