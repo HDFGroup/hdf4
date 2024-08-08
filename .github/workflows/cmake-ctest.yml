@@ -4,11 +4,6 @@ name: hdf4 dev ctest runs
 on:
   workflow_call:
     inputs:
-      bin_sign:
-        description: 'Skip signing the binaries'
-        type: string
-        required: false
-        default: true
       snap_name:
         description: 'The name in the source tarballs'
         type: string
@@ -61,6 +56,18 @@ jobs:
 
       - name: Enable Developer Command Prompt
         uses: ilammy/msvc-dev-cmd@v1.13.0
+
+      - name: Check Secrets exists
+        id: set-signing-state
+        env: 
+            super_secret: ${{ secrets.AZURE_ENDPOINT }}
+        run: |
+          if [[ '${{ env.super_secret }}' == '' ]]
+          then
+            echo "BINSIGN=false" >> $GITHUB_OUTPUT
+          else
+            echo "BINSIGN=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: Set file base name (Windows)
         id: set-file-base
@@ -118,17 +125,13 @@ jobs:
           file-digest: SHA256
           timestamp-rfc3161: http://timestamp.acs.microsoft.com
           timestamp-digest: SHA256
-        if: ${{ inputs.bin_sign == 'true' }}
-
-      - name: Create build folders (Windows)
-        run: |
-          mkdir "${{ runner.workspace }}/build"
-          mkdir "${{ runner.workspace }}/build/hdf4"
-        shell: bash
+        if: ${{ steps.set-signing-state.BINSIGN == 'true' }}
 
       - name: Publish binary (Windows)
         id: publish-ctest-binary
         run: |
+          mkdir "${{ runner.workspace }}/build"
+          mkdir "${{ runner.workspace }}/build/hdf4"
           Copy-Item -Path ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/COPYING -Destination ${{ runner.workspace }}/build/hdf4/
           Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-MSVC/README.txt -Destination ${{ runner.workspace }}/build/hdf4/
           Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-MSVC/* -Destination ${{ runner.workspace }}/build/hdf4/ -Include *.zip
@@ -139,10 +142,12 @@ jobs:
       - name: Publish msi binary (Windows)
         id: publish-ctest-msi-binary
         run: |
-          Copy-Item -Path ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/COPYING -Destination ${{ runner.workspace }}/build/hdf4/
-          Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-MSVC/README.txt -Destination ${{ runner.workspace }}/build/hdf4/
-          Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-MSVC/* -Destination ${{ runner.workspace }}/build/hdf4/ -Include *.msi
-          cd "${{ runner.workspace }}/build"
+          mkdir "${{ runner.workspace }}/buildmsi"
+          mkdir "${{ runner.workspace }}/buildmsi/hdf4"
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/COPYING -Destination ${{ runner.workspace }}/buildmsi/hdf4/
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-MSVC/README.txt -Destination ${{ runner.workspace }}/buildmsi/hdf4/
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-MSVC/* -Destination ${{ runner.workspace }}/buildmsi/hdf4/ -Include *.msi
+          cd "${{ runner.workspace }}/buildmsi"
           7z a -tzip ${{ steps.set-file-base.outputs.FILE_BASE }}-win-vs2022_cl.msi.zip hdf4
         shell: pwsh
 
@@ -266,7 +271,6 @@ jobs:
               path: ${{ runner.workspace }}/build/${{ steps.set-file-base.outputs.FILE_BASE }}-ubuntu-2204_gcc.tar.gz
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
-      # Save files created by ctest script
       - name: Save published binary deb (Linux)
         uses: actions/upload-artifact@v4
         with:
@@ -274,7 +278,6 @@ jobs:
               path: ${{ runner.workspace }}/builddeb/${{ steps.set-file-base.outputs.FILE_BASE }}-ubuntu-2204_gcc.deb.tar.gz
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
-      # Save files created by ctest script
       - name: Save published binary rpm (Linux)
         uses: actions/upload-artifact@v4
         with:
@@ -368,12 +371,13 @@ jobs:
       - name: Publish dmg binary (MacOS_latest)
         id: publish-ctest-dmg-binary
         run: |
-          mkdir "${{ runner.workspace }}/build/hdf4dmg"
-          cp ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/COPYING ${{ runner.workspace }}/build/hdf4dmg
-          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Clang/README.txt ${{ runner.workspace }}/build/hdf4dmg
-          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Clang/*.tar.gz ${{ runner.workspace }}/build/hdf4dmg
-          cd "${{ runner.workspace }}/build"
-          tar -zcvf ${{ steps.set-file-base.outputs.FILE_BASE }}-osx.tar.gz hdf4dmg
+          mkdir "${{ runner.workspace }}/builddmg"
+          mkdir "${{ runner.workspace }}/builddmg/hdf4"
+          cp ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/COPYING ${{ runner.workspace }}/builddmg/hdf4
+          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Clang/README.txt ${{ runner.workspace }}/builddmg/hdf4
+          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Clang/*.dmg ${{ runner.workspace }}/builddmg/hdf4
+          cd "${{ runner.workspace }}/builddmg"
+          tar -zcvf ${{ steps.set-file-base.outputs.FILE_BASE }}-osx.dmg.tar.gz hdf4
         shell: bash
 
       - name: List files in the space (MacOS_latest)
@@ -405,6 +409,18 @@ jobs:
     steps:
       - name: Install Dependencies (Windows_intel)
         run: choco install ninja
+
+      - name: Check Secrets exists
+        id: set-signing-state
+        env: 
+            super_secret: ${{ secrets.AZURE_ENDPOINT }}
+        run: |
+          if [[ '${{ env.super_secret }}' == '' ]]
+          then
+            echo "BINSIGN=false" >> $GITHUB_OUTPUT
+          else
+            echo "BINSIGN=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: add oneAPI to env
         uses: fortran-lang/setup-fortran@v1
@@ -479,7 +495,7 @@ jobs:
           file-digest: SHA256
           timestamp-rfc3161: http://timestamp.acs.microsoft.com
           timestamp-digest: SHA256
-        if: ${{ inputs.bin_sign == 'true' }}
+        if: ${{ steps.set-signing-state.BINSIGN == 'true' }}
 
       - name: Publish binary (Windows_intel)
         id: publish-ctest-binary
