@@ -417,14 +417,14 @@ jobs:
         env: 
             super_secret: ${{ secrets.AZURE_ENDPOINT }}
         run: |
-        if [[ '${{ env.super_secret }}' == '' ]]
-        then
-          SIGN_VAL=$(echo "false")
-        else
-          SIGN_VAL=$(echo "true")
-        fi
-        echo "BINSIGN=$SIGN_VAL" >> $GITHUB_OUTPUT
-      shell: bash
+          if [[ '${{ env.super_secret }}' == '' ]]
+          then
+            SIGN_VAL=$(echo "false")
+          else
+            SIGN_VAL=$(echo "true")
+          fi
+          echo "BINSIGN=$SIGN_VAL" >> $GITHUB_OUTPUT
+        shell: bash
 
       - name: add oneAPI to env
         uses: fortran-lang/setup-fortran@v1
