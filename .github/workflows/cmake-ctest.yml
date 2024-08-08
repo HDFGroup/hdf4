@@ -475,12 +475,6 @@ jobs:
           cmake --workflow --preset=${{ inputs.preset_name }}-win-Intel --fresh
         shell: pwsh
 
-      - name: Create build folders (Windows_intel)
-        run: |
-          mkdir "${{ runner.workspace }}/build"
-          mkdir "${{ runner.workspace }}/build/hdf4"
-        shell: bash
-
       - name: Sign files with Trusted Signing (Windows_intel)
         uses: azure/trusted-signing-action@v0.4.0
         with:
@@ -500,6 +494,8 @@ jobs:
       - name: Publish binary (Windows_intel)
         id: publish-ctest-binary
         run: |
+          mkdir "${{ runner.workspace }}/build"
+          mkdir "${{ runner.workspace }}/build/hdf4"
           Copy-Item -Path ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/COPYING -Destination ${{ runner.workspace }}/build/hdf4/
           Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/README.txt -Destination ${{ runner.workspace }}/build/hdf4/
           Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/* -Destination ${{ runner.workspace }}/build/hdf4/ -Include *.zip
@@ -510,10 +506,12 @@ jobs:
       - name: Publish msi binary (Windows_intel)
         id: publish-ctest-msi-binary
         run: |
-          Copy-Item -Path ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/COPYING -Destination ${{ runner.workspace }}/build/hdf4/
-          Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/README.txt -Destination ${{ runner.workspace }}/build/hdf4/
-          Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/* -Destination ${{ runner.workspace }}/build/hdf4/ -Include *.msi
-          cd "${{ runner.workspace }}/build"
+          mkdir "${{ runner.workspace }}/buildmsi"
+          mkdir "${{ runner.workspace }}/buildmsi/hdf4"
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/COPYING -Destination ${{ runner.workspace }}/buildmsi/hdf4/
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/README.txt -Destination ${{ runner.workspace }}/buildmsi/hdf4/
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/* -Destination ${{ runner.workspace }}/buildmsi/hdf4/ -Include *.msi
+          cd "${{ runner.workspace }}/buildmsi"
           7z a -tzip ${{ steps.set-file-base.outputs.FILE_BASE }}-win-vs2022_intel.msi.zip hdf4
         shell: pwsh
 
