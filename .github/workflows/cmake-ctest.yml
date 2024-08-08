@@ -64,10 +64,12 @@ jobs:
         run: |
           if [[ '${{ env.super_secret }}' == '' ]]
           then
-            echo "BINSIGN=false" >> $GITHUB_OUTPUT
+            SIGN_VAL=$(echo "false")
           else
-            echo "BINSIGN=true" >> $GITHUB_OUTPUT
+            SIGN_VAL=$(echo "true")
           fi
+          echo "BINSIGN=$SIGN_VAL" >> $GITHUB_OUTPUT
+        shell: bash
 
       - name: Set file base name (Windows)
         id: set-file-base
