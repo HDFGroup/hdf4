@@ -22,6 +22,19 @@ on:
         type: string
         required: true
         default: snapshots
+    secrets:
+        AZURE_TENANT_ID:
+            required: true
+        AZURE_CLIENT_ID:
+            required: true
+        AZURE_CLIENT_SECRET:
+            required: true
+        AZURE_ENDPOINT:
+            required: true
+        AZURE_CODE_SIGNING_NAME:
+            required: true
+        AZURE_CERT_PROFILE_NAME:
+            required: true
 
 permissions:
   contents: read
@@ -85,6 +98,21 @@ jobs:
           cd "${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}"
           cmake --workflow --preset=${{ inputs.preset_name }}-MSVC --fresh
         shell: bash
+
+      - name: Sign files with Trusted Signing
+        uses: azure/trusted-signing-action@v0.4.0
+        with:
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          endpoint: ${{ secrets.AZURE_ENDPOINT }}
+          trusted-signing-account-name: ${{ secrets.AZURE_CODE_SIGNING_NAME }}
+          certificate-profile-name: ${{ secrets.AZURE_CERT_PROFILE_NAME }}
+          files-folder: ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-MSVC
+          files-folder-filter: zip,msi
+          file-digest: SHA256
+          timestamp-rfc3161: http://timestamp.acs.microsoft.com
+          timestamp-digest: SHA256
 
       - name: Create build folders (Windows)
         run: |
