@@ -34,7 +34,7 @@ jobs:
             version: 'tags/${{ inputs.use_tag }}'
             regex: true
             target: 'HDF4/'
-            file: '${{ inputs.use_hdf }}-*.*'
+            file: '${{ inputs.use_tag }}-*.*'
 
         - name: Setup AWS CLI
           uses: aws-actions/configure-aws-credentials@v4
@@ -48,9 +48,9 @@ jobs:
                 aws s3 sync ./HDF4 s3://${{ secrets.AWS_S3_BUCKET }}/${{ vars.TARGET_PATH }}/${{ inputs.target_dir }}/downloads --delete
 
         - name: Uncompress source (Linux)
-          run: unzipf ${{ github.workspace }}/HDF4/${{ inputs.use_hdf }}.doxygen.zip
+          run: unzipf ${{ github.workspace }}/HDF4/${{ inputs.use_tag }}.doxygen.zip
 
         - name: Sync userguide to S3 bucket
           run: |
-                aws s3 sync ./${{ inputs.use_hdf }}.doxygen s3://${{ secrets.AWS_S3_BUCKET }}/${{ vars.TARGET_PATH }}/${{ inputs.target_dir }}/documentation/doxygen --delete
+                aws s3 sync ./${{ inputs.use_tag }}.doxygen s3://${{ secrets.AWS_S3_BUCKET }}/${{ vars.TARGET_PATH }}/${{ inputs.target_dir }}/documentation/doxygen --delete
 
