@@ -4,6 +4,11 @@ name: hdf4 dev ctest runs
 on:
   workflow_call:
     inputs:
+      bin_sign:
+        description: 'Skip signing the binaries'
+        type: string
+        required: false
+        default: true
       snap_name:
         description: 'The name in the source tarballs'
         type: string
@@ -109,10 +114,11 @@ jobs:
           trusted-signing-account-name: ${{ secrets.AZURE_CODE_SIGNING_NAME }}
           certificate-profile-name: ${{ secrets.AZURE_CERT_PROFILE_NAME }}
           files-folder: ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-MSVC
-          files-folder-filter: zip,msi
+          files-folder-filter: msi
           file-digest: SHA256
           timestamp-rfc3161: http://timestamp.acs.microsoft.com
           timestamp-digest: SHA256
+        if: ${{ inputs.bin_sign == 'true' }}
 
       - name: Create build folders (Windows)
         run: |
@@ -458,6 +464,22 @@ jobs:
           mkdir "${{ runner.workspace }}/build"
           mkdir "${{ runner.workspace }}/build/hdf4"
         shell: bash
+
+      - name: Sign files with Trusted Signing (Windows_intel)
+        uses: azure/trusted-signing-action@v0.4.0
+        with:
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          endpoint: ${{ secrets.AZURE_ENDPOINT }}
+          trusted-signing-account-name: ${{ secrets.AZURE_CODE_SIGNING_NAME }}
+          certificate-profile-name: ${{ secrets.AZURE_CERT_PROFILE_NAME }}
+          files-folder: ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-MSVC
+          files-folder-filter: msi
+          file-digest: SHA256
+          timestamp-rfc3161: http://timestamp.acs.microsoft.com
+          timestamp-digest: SHA256
+        if: ${{ inputs.bin_sign == 'true' }}
 
       - name: Publish binary (Windows_intel)
         id: publish-ctest-binary
