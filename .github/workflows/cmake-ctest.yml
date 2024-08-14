@@ -53,9 +53,9 @@ jobs:
         run: |
           if [[ '${{ env.signing_secret }}' == '' ]]
           then
-            SIGN_VAL=$(echo false)
+            SIGN_VAL=$(echo 'notexists')
           else
-            SIGN_VAL=$(echo true)
+            SIGN_VAL=$(echo 'exists')
           fi
           echo "SIGN_VAL is $SIGN_VAL."
           echo "BINSIGN='$SIGN_VAL'" >> $GITHUB_OUTPUT
