@@ -58,7 +58,7 @@ jobs:
             SIGN_VAL=$(echo 'exists')
           fi
           echo "SIGN_VAL is $SIGN_VAL."
-          echo "BINSIGN='$SIGN_VAL'" >> $GITHUB_OUTPUT
+          echo "BINSIGN=$SIGN_VAL" >> $GITHUB_OUTPUT
           echo "BINSIGN is $BINSIGN."
         shell: bash
 
