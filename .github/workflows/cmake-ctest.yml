@@ -44,7 +44,7 @@ jobs:
     name: Check Secrets exists
     runs-on: ubuntu-latest
     outputs:
-      sign-state: ${{ steps.set-signing-state.BINSIGN }}
+      sign-state: ${{ steps.set-signing-state.ouputs.BINSIGN }}
     steps:
       - name: Identify Signing Status
         id: set-signing-state
@@ -57,12 +57,10 @@ jobs:
           else
             SIGN_VAL=$(echo 'exists')
           fi
-          echo "SIGN_VAL is $SIGN_VAL."
           echo "BINSIGN=$SIGN_VAL" >> $GITHUB_OUTPUT
-          echo "BINSIGN is $BINSIGN."
         shell: bash
 
-      - run: echo "signing is ${{ steps.set-signing-state.BINSIGN }}."
+      - run: echo "signing is ${{ steps.set-signing-state.ouputs.BINSIGN }}."
 
   build_and_test_win:
   # Windows w/ MSVC + CMake
