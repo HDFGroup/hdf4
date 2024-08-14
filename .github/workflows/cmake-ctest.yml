@@ -44,7 +44,7 @@ jobs:
     name: Check Secrets exists
     runs-on: ubuntu-latest
     outputs:
-      sign-state: ${{ steps.set-signing-state.BINSIGN }}
+      sign-state: ${{ steps.set-signing-state.outputs.BINSIGN }}
     steps:
       - name: Identify Signing Status
         id: set-signing-state
@@ -53,12 +53,14 @@ jobs:
         run: |
           if [[ '${{ env.signing_secret }}' == '' ]]
           then
-            SIGN_VAL=$(echo "false")
+            SIGN_VAL=$(echo 'notexists')
           else
-            SIGN_VAL=$(echo "true")
+            SIGN_VAL=$(echo 'exists')
           fi
           echo "BINSIGN=$SIGN_VAL" >> $GITHUB_OUTPUT
         shell: bash
+
+      - run: echo "signing is ${{ steps.set-signing-state.outputs.BINSIGN }}."
 
   build_and_test_win:
   # Windows w/ MSVC + CMake
@@ -134,7 +136,7 @@ jobs:
           file-digest: SHA256
           timestamp-rfc3161: http://timestamp.acs.microsoft.com
           timestamp-digest: SHA256
-        if: ${{ needs.check-secret.outputs.sign-state == 'true' }}
+        if: ${{ needs.check-secret.outputs.sign-state == 'exists' }}
 
       - name: Publish binary (Windows)
         id: publish-ctest-binary
@@ -489,7 +491,7 @@ jobs:
           file-digest: SHA256
           timestamp-rfc3161: http://timestamp.acs.microsoft.com
           timestamp-digest: SHA256
-        if: ${{ needs.check-secret.outputs.sign-state == 'true' }}
+        if: ${{ needs.check-secret.outputs.sign-state == 'exists' }}
 
       - name: Publish binary (Windows_intel)
         id: publish-ctest-binary
