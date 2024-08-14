@@ -60,6 +60,8 @@ jobs:
           echo "BINSIGN=$SIGN_VAL" >> $GITHUB_OUTPUT
         shell: bash
 
+      - run: echo "signing is ${{ steps.set-signing-state.BINSIGN }}."
+
   build_and_test_win:
   # Windows w/ MSVC + CMake
   #
