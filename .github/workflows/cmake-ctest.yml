@@ -23,6 +23,12 @@ on:
         required: true
         default: snapshots
     secrets:
+        APPLE_CERTS_BASE64:
+            required: true
+        APPLE_CERTS_BASE64_PASSWD:
+            required: true
+        KEYCHAIN_PASSWD:
+            required: true
         AZURE_TENANT_ID:
             required: true
         AZURE_CLIENT_ID:
@@ -320,6 +326,28 @@ jobs:
         with:
           version: "1.10.0"
 
+      - name: Install the Apple certificate and provisioning profile
+        shell: bash
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTS_BASE64 }}
+          P12_PASSWORD: ${{ secrets.APPLE_CERTS_BASE64_PASSWD }}
+          KEYCHAIN_PASSWD: ${{ secrets.KEYCHAIN_PASSWD }}
+        run: |
+            # create variables
+            CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+            KEYCHAIN_FILE=${{ vars.KEYCHAIN_NAME }}.keychain
+            # import certificate from secrets
+            echo $BUILD_CERTIFICATE_BASE64 | base64 --decode > $CERTIFICATE_PATH
+            security -v create-keychain -p $KEYCHAIN_PASSWD $KEYCHAIN_FILE
+            security -v list-keychain -d user -s $KEYCHAIN_FILE
+            security -v list-keychains
+            security -v set-keychain-settings -lut 21600 $KEYCHAIN_FILE
+            security -v unlock-keychain -p $KEYCHAIN_PASSWD $KEYCHAIN_FILE
+            # import certificate to keychain
+            security -v import $CERTIFICATE_PATH -P $P12_PASSWORD -A -t cert -f pkcs12 -k $KEYCHAIN_FILE
+            security -v set-key-partition-list -S apple-tool:,codesign:,apple: -k $KEYCHAIN_PASSWD $KEYCHAIN_FILE
+        if: ${{ needs.check-secret.outputs.sign-state == 'exists' }}
+
       - name: Set up JDK 19
         uses: actions/setup-java@v4
         with:
@@ -367,6 +395,32 @@ jobs:
         run: |
           cd "${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}"
           cmake --workflow --preset=${{ inputs.preset_name }}-MACOS-Clang --fresh
+        shell: bash
+
+      - name: Sign dmg (MacOS_latest)
+        id: sign-dmg
+        env:
+          KEYCHAIN_PASSWD: ${{ secrets.KEYCHAIN_PASSWD }}
+          KEYCHAIN_NAME: ${{ vars.KEYCHAIN_NAME }}
+          SIGNER: ${{ vars.SIGNER }}
+          NOTARY_USER: ${{ vars.NOTARY_USER }}
+          NOTARY_KEY: ${{ vars.NOTARY_KEY }}
+        run: |
+          /usr/bin/codesign --force --timestamp --options runtime --verbose=4 --strict --sign ${{ env.SIGNER }} --deep ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Clang/*.dmg
+        if: ${{ needs.check-secret.outputs.sign-state == 'exists' }}
+        shell: bash
+
+      - name: Notarize dmg (MacOS_latest)
+        id: notarize-dmg
+        env:
+          KEYCHAIN_PASSWD: ${{ secrets.KEYCHAIN_PASSWD }}
+          KEYCHAIN_NAME: ${{ vars.KEYCHAIN_NAME }}
+          SIGNER: ${{ vars.SIGNER }}
+          NOTARY_USER: ${{ vars.NOTARY_USER }}
+          NOTARY_KEY: ${{ vars.NOTARY_KEY }}
+        run: |
+          /usr/bin/xcrun notarytool submit --wait --output-format json --apple-id" ${{ env.NOTARY_USER }} --password ${{ env.NOTARY_KEY }} --team-id ${{ env.SIGNER }} ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Clang/*.dmg
+        if: ${{ needs.check-secret.outputs.sign-state == 'exists' }}
         shell: bash
 
       - name: Publish binary (MacOS_latest)
