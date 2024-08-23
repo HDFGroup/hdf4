@@ -394,7 +394,7 @@ jobs:
         id: run-ctest
         run: |
           cd "${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}"
-          cmake --workflow --preset=${{ inputs.preset_name }}-MACOS-Clang --fresh
+          cmake --workflow --preset=${{ inputs.preset_name }}-macos-Clang --fresh
         shell: bash
 
       - name: Sign dmg (MacOS_latest)
