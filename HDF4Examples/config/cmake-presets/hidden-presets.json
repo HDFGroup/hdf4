@@ -67,9 +67,6 @@
     {
       "name": "ci-macos",
       "hidden": true,
-      "cacheVariables": {
-        "CMAKE_OSX_ARCHITECTURES": "arm64;x86_64"
-      },
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
