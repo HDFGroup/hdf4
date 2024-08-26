@@ -424,6 +424,10 @@ jobs:
         if: ${{ needs.check-secret.outputs.sign-state == 'exists' }}
         shell: bash
 
+      - run: echo "notary result is ${{ steps.notarize-dmg.outputs.jsonout }}."
+        if: ${{ needs.check-secret.outputs.sign-state == 'exists' }}
+        shell: bash
+
       - name: Staple dmg (MacOS_latest)
         id: staple-dmg
         env:
