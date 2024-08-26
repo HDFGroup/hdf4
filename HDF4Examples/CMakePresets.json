@@ -65,6 +65,24 @@
       ]
     },
     {
+      "name": "ci-StdShar-macos-Clang",
+      "description": "Clang Standard Config for macos (Release)",
+      "inherits": [
+        "ci-macos-Release-Clang",
+        "ci-StdJava",
+        "ci-StdShar"
+      ]
+    },
+    {
+      "name": "ci-StdShar-macos-GNUC",
+      "description": "GNUC Standard Config for macos (Release)",
+      "inherits": [
+        "ci-macos-Release-GNUC",
+        "ci-StdJava",
+        "ci-StdShar"
+      ]
+    },
+    {
       "name": "ci-StdShar-Intel",
       "description": "Intel Standard Config for x64 (Release)",
       "inherits": [
@@ -101,6 +119,23 @@
       ]
     },
     {
+      "name": "ci-StdShar-macos-Clang",
+      "description": "Clang Standard Build for macos (Release)",
+      "configurePreset": "ci-StdShar-macos-Clang",
+      "inherits": [
+        "ci-macos-Release-Clang"
+      ]
+    },
+    {
+      "name": "ci-StdShar-macos-GNUC",
+      "description": "GNUC Standard Build for macos (Release)",
+      "configurePreset": "ci-StdShar-macos-GNUC",
+      "verbose": true,
+      "inherits": [
+        "ci-macos-Release-GNUC"
+      ]
+    },
+    {
       "name": "ci-StdShar-Intel",
       "description": "Intel Standard Build for x64 (Release)",
       "configurePreset": "ci-StdShar-Intel",
@@ -126,21 +161,23 @@
       ]
     },
     {
-      "name": "ci-StdShar-MACOS-Clang",
-      "configurePreset": "ci-StdShar-Clang",
+      "name": "ci-StdShar-macos-Clang",
+      "configurePreset": "ci-StdShar-macos-Clang",
       "inherits": [
-        "ci-x64-Release-Clang"
+        "ci-macos-Release-Clang"
       ],
       "execution": {
         "noTestsAction": "error",
         "timeout": 180,
         "jobs": 2
-      },
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Darwin"
       }
+    },
+    {
+      "name": "ci-StdShar-macos-GNUC",
+      "configurePreset": "ci-StdShar-macos-GNUC",
+      "inherits": [
+        "ci-macos-Release-GNUC"
+      ]
     },
     {
       "name": "ci-StdShar-GNUC",
@@ -187,11 +224,11 @@
       ]
     },
     {
-      "name": "ci-StdShar-MACOS-Clang",
+      "name": "ci-StdShar-macos-Clang",
       "steps": [
-        {"type": "configure", "name": "ci-StdShar-Clang"},
-        {"type": "build", "name": "ci-StdShar-Clang"},
-        {"type": "test", "name": "ci-StdShar-MACOS-Clang"}
+        {"type": "configure", "name": "ci-StdShar-macos-Clang"},
+        {"type": "build", "name": "ci-StdShar-macos-Clang"},
+        {"type": "test", "name": "ci-StdShar-macos-Clang"}
       ]
     },
     {
@@ -200,6 +237,14 @@
         {"type": "configure", "name": "ci-StdShar-GNUC"},
         {"type": "build", "name": "ci-StdShar-GNUC"},
         {"type": "test", "name": "ci-StdShar-GNUC"}
+      ]
+    },
+    {
+      "name": "ci-StdShar-macos-GNUC",
+      "steps": [
+        {"type": "configure", "name": "ci-StdShar-macos-GNUC"},
+        {"type": "build", "name": "ci-StdShar-macos-GNUC"},
+        {"type": "test", "name": "ci-StdShar-macos-GNUC"}
       ]
     },
     {
