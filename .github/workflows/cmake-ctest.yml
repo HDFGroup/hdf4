@@ -432,7 +432,7 @@ jobs:
           NOTARY_KEY: ${{ vars.NOTARY_KEY }}
         run: |
           jsonout=$(/usr/bin/xcrun notarytool submit --wait --output-format json --apple-id ${{ env.NOTARY_USER }} --password ${{ env.NOTARY_KEY }} --team-id ${{ env.SIGNER }} ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-macos-Clang/*.dmg)
-          token=${{ fromJSON($jsonout).id }})
+          token=${{ fromJSON($jsonout).id }}
           echo "ID_TOKEN=$token" >> "$GITHUB_ENV"          
         if: ${{ needs.check-secret.outputs.sign-state == 'exists' }}
         shell: bash
