@@ -440,7 +440,7 @@ jobs:
         id: get-id-token
         run: |
           echo "notary result is ${{ fromJson(steps.notarize-dmg.outputs.JSONOUT) }}"
-          token=${{ fromJson(${{ steps.notarize-dmg.outputs.JSONOUT }}).id }}
+          token=${{ fromJson(steps.notarize-dmg.outputs.JSONOUT).id }}
           echo "ID_TOKEN=$token" >> "$GITHUB_ENV"          
         if: ${{ needs.check-secret.outputs.sign-state == 'exists' }}
         shell: bash
