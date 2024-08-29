@@ -216,6 +216,7 @@ if (HDF4_EXPORTED_TARGETS)
       FRAMEWORK DESTINATION ${HDF4_INSTALL_FWRK_DIR} COMPONENT libraries
       INCLUDES DESTINATION include
   )
+  set (HDF4_INSTALL_TARGETS ${HDF4_INSTALL_TARGETS} ${install_targets} PARENT_SCOPE)
 endif ()
 
 #-----------------------------------------------------------------------------
