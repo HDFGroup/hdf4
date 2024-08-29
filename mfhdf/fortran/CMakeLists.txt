@@ -171,6 +171,7 @@ install (
     FRAMEWORK DESTINATION ${HDF4_INSTALL_FWRK_DIR} COMPONENT fortlibraries
     INCLUDES DESTINATION include
 )
+  set (HDF4_INSTALL_TARGETS ${HDF4_INSTALL_TARGETS} ${install_targets} PARENT_SCOPE)
 
 #-----------------------------------------------------------------------------
 # Create pkgconfig files
