@@ -5,7 +5,7 @@ foreach (target "${CPACK_EXPORT_LIBRARIES}")
         # Sign the targets
         execute_process(COMMAND $ENV{SIGNTOOLDIR}/signtool
           sign /v /debug /fd SHA256 /tr http://timestamp.acs.microsoft.com /td SHA256
-          /dlib "Microsoft.Trusted.Signing.Client\bin\x64\Azure.CodeSigning.Dlib.dll" /dmdf ${CMAKE_CURRENT_SOURCE_DIR}\credentials.json
+          /dlib "Microsoft.Trusted.Signing.Client/bin/x64/Azure.CodeSigning.Dlib.dll" /dmdf ${CMAKE_CURRENT_SOURCE_DIR}/credentials.json
           $<TARGET_FILE:${target}>
           WORKING_DIRECTORY ${CPACK_TEMPORARY_INSTALL_DIRECTORY}/ALL_COMPONENTS_IN_ONE/${CPACK_PACKAGE_INSTALL_DIRECTORY}/lib
         )
@@ -30,7 +30,7 @@ foreach (target "${CPACK_EXPORT_UTILS}")
         # Sign the targets
         execute_process(COMMAND $ENV{SIGNTOOLDIR}/signtool
           sign /v /debug /fd SHA256 /tr http://timestamp.acs.microsoft.com /td SHA256
-          /dlib "Microsoft.Trusted.Signing.Client\bin\x64\Azure.CodeSigning.Dlib.dll" /dmdf ${CMAKE_CURRENT_SOURCE_DIR}\credentials.json
+          /dlib "Microsoft.Trusted.Signing.Client/bin/x64/Azure.CodeSigning.Dlib.dll" /dmdf ${CMAKE_CURRENT_SOURCE_DIR}/credentials.json
           $<TARGET_FILE:${target}>
           WORKING_DIRECTORY ${CPACK_TEMPORARY_INSTALL_DIRECTORY}/ALL_COMPONENTS_IN_ONE/${CPACK_PACKAGE_INSTALL_DIRECTORY}/bin
         )

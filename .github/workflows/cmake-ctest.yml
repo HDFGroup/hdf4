@@ -135,6 +135,7 @@ jobs:
         uses: jsdaniell/create-json@v1.2.3
         with:
             name: "credentials.json"
+            dir: '${{ runner.workspace }}/hdf4/hdfsrc'
             json: '{"Endpoint": "${{ secrets.AZURE_ENDPOINT }}","CodeSigningAccountName": "${{ secrets.AZURE_CODE_SIGNING_NAME }}","CertificateProfileName": "${{ secrets.AZURE_CERT_PROFILE_NAME }}"}'
         if: ${{ needs.check-secret.outputs.sign-state == 'exists' }}
 
@@ -503,6 +504,7 @@ jobs:
           /usr/bin/xcrun stapler staple ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-macos-Clang/*.dmg
         if: ${{ needs.check-secret.outputs.sign-state == 'exists' }}
         shell: bash
+        continue-on-error: true
 
       - name: Publish binary (MacOS_latest)
         id: publish-ctest-binary
