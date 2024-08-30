@@ -294,7 +294,7 @@ foreach (req
 endforeach ()
 
 ## -- set output to english
-set($ENV{LC_MESSAGES}  "en_EN")
+set (ENV{LC_MESSAGES} "en_EN")
 
 #-----------------------------------------------------------------------------
 # Initialize the CTEST commands
