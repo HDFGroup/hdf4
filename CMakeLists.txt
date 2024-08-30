@@ -376,8 +376,6 @@ endif ()
 #-----------------------------------------------------------------------------
 set_global_variable (HDF4_LIBRARIES_TO_EXPORT "")
 set_global_variable (HDF4_UTILS_TO_EXPORT "")
-# List of targets to be signed for packaging
-set_global_variable (HDF4_INSTALL_TARGETS "")
 
 set (EXTERNAL_HEADER_LIST "")
 set (EXTERNAL_LIBRARY_LIST "")
