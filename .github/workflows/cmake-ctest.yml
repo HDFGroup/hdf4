@@ -135,7 +135,7 @@ jobs:
         uses: jsdaniell/create-json@v1.2.3
         with:
             name: "credentials.json"
-            dir: '${{ runner.workspace }}/hdf4/hdfsrc'
+            dir: 'hdfsrc'
             json: '{"Endpoint": "${{ secrets.AZURE_ENDPOINT }}","CodeSigningAccountName": "${{ secrets.AZURE_CODE_SIGNING_NAME }}","CertificateProfileName": "${{ secrets.AZURE_CERT_PROFILE_NAME }}"}'
         if: ${{ needs.check-secret.outputs.sign-state == 'exists' }}
 
