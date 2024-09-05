@@ -1,5 +1,5 @@
 # This script signs the targets for the package
-message(STATUS "Signing script for ${CPACK_EXPORT_LIBRARIES} in ${CPACK_TEMPORARY_INSTALL_DIRECTORY}/${CPACK_PACKAGE_INSTALL_DIRECTORY}")
+message(STATUS "Signing script in ${CPACK_TEMPORARY_INSTALL_DIRECTORY} and ${CPACK_PACKAGE_INSTALL_DIRECTORY}")
 
 # RPM needs ALL_COMPONENTS_IN_ONE added to path between ${CPACK_TEMPORARY_INSTALL_DIRECTORY} and ${CPACK_PACKAGE_INSTALL_DIRECTORY}
 if (CPACK_GENERATOR MATCHES "RPM")
@@ -11,13 +11,13 @@ elseif (CPACK_GENERATOR MATCHES "ZIP")
 else ()
     set (CPACK_TARGET_FILE_DIRECTORY "${CPACK_TEMPORARY_INSTALL_DIRECTORY}/${CPACK_PACKAGE_INSTALL_DIRECTORY}")
 endif ()
-file (GLOB target_list LIST_DIRECTORIES false "${CPACK_TARGET_FILE_DIRECTORY}/lib/*.*" "${CPACK_TARGET_FILE_DIRECTORY}/bin/*.*")
+file (GLOB target_list LIST_DIRECTORIES false "${CPACK_TARGET_FILE_DIRECTORY}/lib/*" "${CPACK_TARGET_FILE_DIRECTORY}/bin/*")
 foreach (targetfile IN LISTS target_list)
     if (WIN32)
         # Sign the targets
         execute_process (COMMAND $ENV{SIGNTOOLDIR}/signtool
           sign /v /debug /fd SHA256 /tr http://timestamp.acs.microsoft.com /td SHA256
-          /dlib "Microsoft.Trusted.Signing.Client/bin/x64/Azure.CodeSigning.Dlib.dll" /dmdf ${CMAKE_CURRENT_SOURCE_DIR}/credentials.json
+          /dlib "Microsoft.Trusted.Signing.Client/bin/x64/Azure.CodeSigning.Dlib.dll" /dmdf ${CPACK_ORIG_SOURCE_DIR}/credentials.json
           ${targetfile}
         )
         execute_process (
@@ -26,7 +26,7 @@ foreach (targetfile IN LISTS target_list)
     elseif (APPLE)
         # Sign the targets
         execute_process (COMMAND codesign
-          --force --timestamp --options runtime --entitlements ${CMAKE_CURRENT_SOURCE_DIR}/config/cmake/distribution.entitlements 
+          --force --timestamp --options runtime --entitlements ${CPACK_ORIG_SOURCE_DIR}/config/cmake/distribution.entitlements 
           --verbose=4 --strict --sign "$ENV{SIGNER}"
           ${targetfile}
         )
