@@ -23,7 +23,8 @@ jobs:
     permissions:
         contents: write # In order to allow EndBug/add-and-commit to commit changes
     steps:
-    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    - uses: actions/checkout@v4.1.7
+
     - name: Fix C and Java formatting issues detected by clang-format
       uses: DoozyX/clang-format-lint-action@v0.18.2
       with:
@@ -33,6 +34,7 @@ jobs:
         inplace: True
         style: file
         exclude: './config ./mfhdf/ncgen/ncgenyy.c ./mfhdf/ncgen/ncgentab.c ./mfhdf/ncgen/ncgentab.h'
+
     - uses: EndBug/add-and-commit@a94899bca583c204427a224a7af87c02f9b325d5 # v9.1.4
       with:
           author_name: github-actions
