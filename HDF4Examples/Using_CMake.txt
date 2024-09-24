@@ -45,7 +45,7 @@ I. Preconditions
       (Note there are no quote characters used on Windows and all platforms
       use forward slashes)
 
-   4. Created separate source and build directories.
+   4. Create separate source and build directories.
       (CMake commands are executed in the build directory)
 
 

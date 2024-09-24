@@ -8,7 +8,7 @@
       "generator": "Ninja",
       "hidden": true,
       "cacheVariables": {
-        H4EX_BUILD_C": "ON"
+        "H4EX_BUILD_C": "ON"
       },
       "binaryDir": "${sourceParentDir}/build/${presetName}",
       "installDir": "${sourceParentDir}/install/${presetName}"
@@ -67,6 +67,9 @@
     {
       "name": "ci-macos",
       "hidden": true,
+      "cacheVariables": {
+        "CMAKE_OSX_ARCHITECTURES": "arm64;x86_64"
+      },
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -100,11 +103,20 @@
       "name": "ci-Fortran",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": "config/toolchain/intel.cmake"
+        "H4EX_BUILD_FORTRAN": "ON"
+      }
+    },
+    {
+      "name": "ci-Fortran-Clang",
+      "hidden": true,
+      "inherits": "ci-Fortran",
+      "cacheVariables": {
+        "CMAKE_Fortran_COMPILER":  {"type": "FILEPATH", "value": "gfortran"}
       },
-      "toolset": {
-        "value": "host=x64",
-        "strategy": "external"
+      "condition": {
+        "type": "matches",
+        "string": "${presetName}",
+        "regex": ".*-Clang"
       }
     },
     {
@@ -245,52 +257,6 @@
         "ci-Release",
         "ci-Intel"
       ]
-    },
-    {
-      "name": "ci-x64-Debug-MSVC-asan",
-      "description": "x64-Debug-MSVC with /fsanitize=address",
-      "hidden": true,
-      "inherits": "ci-x64-Debug-MSVC",
-      "cacheVariables": {
-        "USE_SANITIZER": "Address",
-        "HDF4_ENABLE_SANITIZERS": "ON"
-      }
-    },
-    {
-      "name": "ci-x64-Debug-GNUC-asan",
-      "hidden": true,
-      "inherits": "ci-x64-Debug-GNUC",
-      "cacheVariables": {
-        "USE_SANITIZER": "Address",
-        "HDF4_ENABLE_SANITIZERS": "ON"
-      }
-    },
-    {
-      "name": "ci-x64-Debug-GNUC-tsan",
-      "hidden": true,
-      "inherits": "ci-x64-Debug-GNUC",
-      "cacheVariables": {
-        "USE_SANITIZER": "Thread",
-        "HDF4_ENABLE_SANITIZERS": "ON"
-      }
-    },
-    {
-      "name": "ci-x64-Debug-GNUC-lsan",
-      "hidden": true,
-      "inherits": "ci-x64-Debug-GNUC",
-      "cacheVariables": {
-        "USE_SANITIZER": "Leak",
-        "HDF4_ENABLE_SANITIZERS": "ON"
-      }
-    },
-    {
-      "name": "ci-x64-Debug-GNUC-ubsan",
-      "hidden": true,
-      "inherits": "ci-x64-Debug-GNUC",
-      "cacheVariables": {
-        "USE_SANITIZER": "Undefined",
-        "HDF4_ENABLE_SANITIZERS": "ON"
-      }
     }
   ],
   "buildPresets": [
