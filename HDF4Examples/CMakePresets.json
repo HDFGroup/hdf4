@@ -18,14 +18,14 @@
       "name": "ci-StdJava",
       "hidden": true,
       "cacheVariables": {
-        "HDF_BUILD_JAVA": "ON"
+        "H4EX_BUILD_JAVA": "ON"
       }
     },
     {
       "name": "ci-StdFortran",
       "hidden": true,
       "cacheVariables": {
-        "HDF_BUILD_FORTRAN": "OFF"
+        "H4EX_BUILD_FORTRAN": "OFF"
       }
     },
     {

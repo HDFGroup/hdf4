@@ -6,7 +6,7 @@ set (CMAKE_VERBOSE_MAKEFILE 1)
 #-----------------------------------------------------------------------------
 # Define Sources
 #-----------------------------------------------------------------------------
-set (HDF_JAVA_EXAMPLES
+set (H4EX_JAVA_EXAMPLES
     HDF4FileCreate.java
     HDF4GroupCreate.java
     HDF4DatasetCreate.java
@@ -36,7 +36,7 @@ foreach (HCP_JAR ${HDF4_JAVA_INCLUDE_DIRS})
   set (HDFJAVA_CLASSJARS "${_HCP_FILE} ${HDFJAVA_CLASSJARS}")
 endforeach ()
 
-foreach (example ${HDF_JAVA_EXAMPLES})
+foreach (example ${H4EX_JAVA_EXAMPLES})
   get_filename_component (example_name ${example} NAME_WE)
   file (WRITE ${PROJECT_BINARY_DIR}/${example_name}_Manifest.txt
   "Main-Class: ${example_name}
@@ -75,7 +75,7 @@ if (H4EX_BUILD_TESTING)
     set (last_test "${EXAMPLE_VARNAME}_jnative-h4-${resultfile}")
   endmacro ()
 
-  foreach (example ${HDF_JAVA_EXAMPLES})
+  foreach (example ${H4EX_JAVA_EXAMPLES})
     get_filename_component (example_name ${example} NAME_WE)
     add_test (
         NAME ${EXAMPLE_VARNAME}_jnative-h4-${example_name}-clearall-objects

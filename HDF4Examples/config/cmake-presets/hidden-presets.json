@@ -8,7 +8,7 @@
       "generator": "Ninja",
       "hidden": true,
       "cacheVariables": {
-        "HDF_BUILD_C": "ON"
+        H4EX_BUILD_C": "ON"
       },
       "binaryDir": "${sourceParentDir}/build/${presetName}",
       "installDir": "${sourceParentDir}/install/${presetName}"
@@ -111,7 +111,7 @@
       "name": "ci-Java",
       "hidden": true,
       "cacheVariables": {
-        "HDF_BUILD_JAVA": "ON"
+        "H4EX_BUILD_JAVA": "ON"
       }
     },
     {

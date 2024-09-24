@@ -13,7 +13,7 @@ set (H4EX_JAVA_DIR           ${H4EXAMPLES_SOURCE_DIR}/JAVA)
 # Basic HDF4Examples stuff here
 #-----------------------------------------------------------------------------
 if (NOT EXAMPLES_EXTERNALLY_CONFIGURED)
-  set (H4EX_RESOURCES_DIR       ${H4EXAMPLES_SOURCE_DIR}/config/cmake)
+  set (H4EX_RESOURCES_DIR      ${H4EXAMPLES_SOURCE_DIR}/config/cmake)
 
   include (${H4EX_RESOURCES_DIR}/HDFMacros.cmake)
   include (${H4EX_RESOURCES_DIR}/HDFExampleMacros.cmake)
@@ -33,8 +33,8 @@ message (STATUS "HDF4 link libs: ${H4EX_HDF4_LINK_LIBS}")
 #-----------------------------------------------------------------------------
 # Option to build JAVA examples
 #-----------------------------------------------------------------------------
-option (HDF_BUILD_JAVA "Build JAVA support" OFF)
-if (HDF_BUILD_JAVA)
+option (H4EX_BUILD_JAVA "Build JAVA support" OFF)
+if (H4EX_BUILD_JAVA)
   find_package (Java)
 
   include (${H4EX_RESOURCES_DIR}/UseJava.cmake)
@@ -76,8 +76,8 @@ endif ()
 set (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
 set (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## __")
 if (IS_DIRECTORY "${H4EXAMPLES_SOURCE_DIR}/mfhdf/FORTRAN")
-  option (HDF_BUILD_FORTRAN "Build FORTRAN support" OFF)
-  if (HDF_BUILD_FORTRAN AND HDF4_BUILD_FORTRAN)
+  option (H4EX_BUILD_FORTRAN "Build FORTRAN support" OFF)
+  if (H4EX_BUILD_FORTRAN AND HDF4_BUILD_FORTRAN)
     set (H4EX_LINK_Fortran_LIBS ${H4EX_HDF4_LINK_LIBS})
 
     if (WIN32)
@@ -85,30 +85,30 @@ if (IS_DIRECTORY "${H4EXAMPLES_SOURCE_DIR}/mfhdf/FORTRAN")
       set (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) NAME")
     endif ()
   else ()
-    set (HDF_BUILD_FORTRAN OFF CACHE BOOL "Build examples FORTRAN support" FORCE)
+    set (H4EX_BUILD_FORTRAN OFF CACHE BOOL "Build examples FORTRAN support" FORCE)
   endif ()
 else ()
-  set (HDF_BUILD_FORTRAN OFF CACHE BOOL "Build examples FORTRAN support" FORCE)
+  set (H4EX_BUILD_FORTRAN OFF CACHE BOOL "Build examples FORTRAN support" FORCE)
 endif ()
 
 #-----------------------------------------------------------------------------
 # Option to build JAVA examples
 #-----------------------------------------------------------------------------
 if (IS_DIRECTORY "${H4EXAMPLES_SOURCE_DIR}/JAVA")
-  option (HDF_BUILD_JAVA "Build JAVA support" OFF)
+  option (H4EX_BUILD_JAVA "Build JAVA support" OFF)
 else ()
-  set (HDF_BUILD_JAVA OFF CACHE BOOL "Build examples JAVA support" FORCE)
+  set (H4EX_BUILD_JAVA OFF CACHE BOOL "Build examples JAVA support" FORCE)
 endif ()
 
 #-----------------------------------------------------------------------------
 # Build examples
 #-----------------------------------------------------------------------------
-if (HDF_BUILD_C)
+if (H4EX_BUILD_C)
   add_subdirectory (C)
 endif ()
-if (HDF_BUILD_FORTRAN AND HDF4_BUILD_FORTRAN)
+if (H4EX_BUILD_FORTRAN AND HDF4_BUILD_FORTRAN)
     add_subdirectory (FORTRAN)
 endif ()
-if (HDF_BUILD_JAVA AND HDF4_BUILD_JAVA)
+if (H4EX_BUILD_JAVA AND HDF4_BUILD_JAVA)
   add_subdirectory (JAVA)
 endif ()
