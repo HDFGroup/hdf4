@@ -78,36 +78,33 @@ jobs:
 
       - name: Copy script files for the space (Windows)
         run: |
-          Copy-Item -Path ${{ runner.workspace }}/hdf5/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/CTestScript.cmake -Destination ${{ runner.workspace }}/hdf5/
-          Copy-Item -Path ${{ runner.workspace }}/hdf5/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/HDF5config.cmake -Destination ${{ runner.workspace }}/hdf5/
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/CTestScript.cmake -Destination ${{ runner.workspace }}/hdf4/
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/HDF4config.cmake -Destination ${{ runner.workspace }}/hdf4/
         shell: pwsh
 
-      - name: List files for the hdf5 (Windows)
+      - name: List files for the hdf4 (Windows)
         run: |
-          Get-ChildItem -Path ${{ runner.workspace }}/hdf5
+          Get-ChildItem -Path ${{ runner.workspace }}/hdf4
         shell: pwsh
 
       - name: Create options file (Windows)
         uses: "DamianReeves/write-file-action@master"
         with:
-            path: ${{ runner.workspace }}/hdf5/HDF5options.cmake
+            path: ${{ runner.workspace }}/hdf4/HDF4options.cmake
             write-mode: overwrite
             contents: |
               set (CTEST_DROP_SITE_INIT "my.cdash.org")
               # Change following line to submit to your CDash dashboard to a different CDash project
               #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF4")
-              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_BUILD_JAVA:BOOL=ON")
-              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_BUILD_CPP_LIB:BOOL=ON")
-              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_BUILD_FORTRAN:BOOL=OFF")
-              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=ON")
-              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=ON")
-              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_SZIP_ENCODING:BOOL=ON")
-              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_PLUGIN_SUPPORT:BOOL=ON")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=ON")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=ON")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=ON")
 
       - name: Run ctest script (Windows)
         run: |
-          cd "${{ runner.workspace }}/hdf5"
-          ctest -S HDF5config.cmake,CTEST_SITE_EXT=GH,LOCAL_SUBMIT=ON,BUILD_GENERATOR=VS202264,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf5.log
+          cd "${{ runner.workspace }}/hdf4"
+          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH,LOCAL_SUBMIT=ON,BUILD_GENERATOR=VS202264,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
         shell: bash
         continue-on-error: true
 
@@ -116,7 +113,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: cl-win-log
-          path: ${{ runner.workspace }}/hdf5/hdf5.log
+          path: ${{ runner.workspace }}/hdf4/hdf4.log
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
   build_and_test_linux:
@@ -165,34 +162,31 @@ jobs:
 
       - name: Copy script files for the space (Linux)
         run: |
-          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/CTestScript.cmake ${{ runner.workspace }}/hdf5
-          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/HDF5config.cmake ${{ runner.workspace }}/hdf5
+          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/CTestScript.cmake ${{ runner.workspace }}/hdf4
+          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/HDF4config.cmake ${{ runner.workspace }}/hdf4
 
-      - name: List files for the hdf5 (Linux)
+      - name: List files for the hdf4 (Linux)
         run: |
-            ls ${{ runner.workspace }}/hdf5
+            ls ${{ runner.workspace }}/hdf4
 
       - name: Create options file (Linux)
         uses: "DamianReeves/write-file-action@master"
         with:
-          path: ${{ runner.workspace }}/hdf5/HDF5options.cmake
+          path: ${{ runner.workspace }}/hdf4/HDF4options.cmake
           write-mode: overwrite
           contents: |
             set (CTEST_DROP_SITE_INIT "my.cdash.org")
             # Change following line to submit to your CDash dashboard to a different CDash project
-            #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF5")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_BUILD_JAVA:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_BUILD_CPP_LIB:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_BUILD_FORTRAN:BOOL=OFF")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_SZIP_ENCODING:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_PLUGIN_SUPPORT:BOOL=ON")
+            #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF4")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=ON")
 
       - name: Run ctest (Linux)
         run: |
-          cd "${{ runner.workspace }}/hdf5"
-          ctest -S HDF5config.cmake,CTEST_SITE_EXT=GH-GCC,LOCAL_SUBMIT=ON,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf5.log
+          cd "${{ runner.workspace }}/hdf4"
+          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-GCC,LOCAL_SUBMIT=ON,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
         shell: bash
         continue-on-error: true
 
@@ -201,7 +195,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
             name: gcc-ubuntu-log
-            path: ${{ runner.workspace }}/hdf5/hdf5.log
+            path: ${{ runner.workspace }}/hdf4/hdf4.log
             if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
   build_and_test_mac_latest:
@@ -254,8 +248,8 @@ jobs:
 
       - name: Copy script files for the space (MacOS_latest)
         run: |
-          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/CTestScript.cmake ${{ runner.workspace }}/hdf5
-          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/HDF5config.cmake ${{ runner.workspace }}/hdf5
+          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/CTestScript.cmake ${{ runner.workspace }}/hdf4
+          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/HDF4config.cmake ${{ runner.workspace }}/hdf4
 
       # symlinks the compiler executables to a common location 
       - name: Setup GNU Fortran
@@ -265,32 +259,29 @@ jobs:
           compiler: gcc
           version: 14
 
-      - name: List files for the hdf5 (MacOS_latest)
+      - name: List files for the hdf4 (MacOS_latest)
         run: |
-              ls ${{ runner.workspace }}/hdf5
+              ls ${{ runner.workspace }}/hdf4
 
       - name: Create options file (MacOS_latest)
         uses: "DamianReeves/write-file-action@master"
         with:
-          path: ${{ runner.workspace }}/hdf5/HDF5options.cmake
+          path: ${{ runner.workspace }}/hdf4/HDF4options.cmake
           write-mode: overwrite
           contents: |
             set (CTEST_DROP_SITE_INIT "my.cdash.org")
             # Change following line to submit to your CDash dashboard to a different CDash project
-            #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF5")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_BUILD_JAVA:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_BUILD_CPP_LIB:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_BUILD_FORTRAN:BOOL=OFF")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_SZIP_ENCODING:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_PLUGIN_SUPPORT:BOOL=ON")
+            #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF4")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=ON")
 
       - name: Run ctest (MacOS_latest)
         id: run-ctest
         run: |
-          cd "${{ runner.workspace }}/hdf5"
-          ctest -S HDF5config.cmake,CTEST_SITE_EXT=GH-Clang,LOCAL_SUBMIT=ON,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf5.log
+          cd "${{ runner.workspace }}/hdf4"
+          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-Clang,LOCAL_SUBMIT=ON,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
         shell: bash
         continue-on-error: true
 
@@ -299,7 +290,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macos-log
-          path: ${{ runner.workspace }}/hdf5/hdf5.log
+          path: ${{ runner.workspace }}/hdf4/hdf4.log
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
   build_and_test_S3_linux:
@@ -344,34 +335,31 @@ jobs:
 
       - name: Copy script files for the space (Linux S3)
         run: |
-          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/CTestScript.cmake ${{ runner.workspace }}/hdf5
-          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/HDF5config.cmake ${{ runner.workspace }}/hdf5
+          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/CTestScript.cmake ${{ runner.workspace }}/hdf4
+          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/HDF4config.cmake ${{ runner.workspace }}/hdf4
 
-      - name: List files for the hdf5 (Linux S3)
+      - name: List files for the hdf4 (Linux S3)
         run: |
-              ls ${{ runner.workspace }}/hdf5
+              ls ${{ runner.workspace }}/hdf4
 
       - name: Create options file (Linux S3)
         uses: "DamianReeves/write-file-action@master"
         with:
-          path: ${{ runner.workspace }}/hdf5/HDF5options.cmake
+          path: ${{ runner.workspace }}/hdf4/HDF4options.cmake
           write-mode: overwrite
           contents: |
             set (CTEST_DROP_SITE_INIT "my.cdash.org")
             # Change following line to submit to your CDash dashboard to a different CDash project
-            #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF5")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_BUILD_JAVA:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_BUILD_CPP_LIB:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_BUILD_FORTRAN:BOOL=OFF")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_SZIP_ENCODING:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_PLUGIN_SUPPORT:BOOL=ON")
+            #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF4")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=ON")
 
       - name: Run ctest (Linux S3)
         run: |
-          cd "${{ runner.workspace }}/hdf5"
-          ctest -S HDF5config.cmake,CTEST_SITE_EXT=GH-S3,LOCAL_SUBMIT=ON,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf5.log
+          cd "${{ runner.workspace }}/hdf4"
+          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-S3,LOCAL_SUBMIT=ON,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
         shell: bash
         continue-on-error: true
 
@@ -380,7 +368,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: s3-ubuntu-log
-          path: ${{ runner.workspace }}/hdf5/hdf5.log
+          path: ${{ runner.workspace }}/hdf4/hdf4.log
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
 ####### intel builds
@@ -438,32 +426,29 @@ jobs:
 
       - name: Copy script files for the space (Windows_intel)
         run: |
-          Copy-Item -Path ${{ runner.workspace }}/hdf5/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/CTestScript.cmake -Destination ${{ runner.workspace }}/hdf5/
-          Copy-Item -Path ${{ runner.workspace }}/hdf5/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/HDF5config.cmake -Destination ${{ runner.workspace }}/hdf5/
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/CTestScript.cmake -Destination ${{ runner.workspace }}/hdf4/
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/HDF4config.cmake -Destination ${{ runner.workspace }}/hdf4/
         shell: pwsh
 
-      - name: List files for the hdf5 (Windows_intel)
+      - name: List files for the hdf4 (Windows_intel)
         run: |
-              Get-ChildItem -Path ${{ runner.workspace }}/hdf5
+              Get-ChildItem -Path ${{ runner.workspace }}/hdf4
         shell: pwsh
 
       - name: Create options file (Windows_intel)
         uses: "DamianReeves/write-file-action@master"
         with:
-          path: ${{ runner.workspace }}/hdf5/HDF5options.cmake
+          path: ${{ runner.workspace }}/hdf4/HDF4options.cmake
           write-mode: overwrite
           contents: |
             set (CTEST_DROP_SITE_INIT "my.cdash.org")
             # Change following line to submit to your CDash dashboard to a different CDash project
-            #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF5")
+            #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF4")
             #set (CMAKE_GENERATOR_TOOLSET "Intel C++ Compiler 2024,fortran=ifx")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_BUILD_JAVA:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_BUILD_CPP_LIB:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_BUILD_FORTRAN:BOOL=OFF")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_SZIP_ENCODING:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_PLUGIN_SUPPORT:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=ON")
 
       - name: Run ctest (Windows_intel) with oneapi
         env:
@@ -473,8 +458,8 @@ jobs:
           BINSIGN: ${{ needs.check-secret.outputs.sign-state }}
           SIGNTOOLDIR: ${{ github.workspace }}/Microsoft.Windows.SDK.BuildTools/bin/10.0.22621.0/x64
         run: |
-          cd "${{ runner.workspace }}/hdf5"
-          ctest -S HDF5config.cmake,CTEST_SITE_EXT=GH-Intel,LOCAL_SUBMIT=ON,BUILD_GENERATOR=VS202264,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf5.log
+          cd "${{ runner.workspace }}/hdf4"
+          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-Intel,LOCAL_SUBMIT=ON,BUILD_GENERATOR=VS202264,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
         shell: pwsh
         continue-on-error: true
 
@@ -483,7 +468,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: intel-win-log
-          path: ${{ runner.workspace }}/hdf5/hdf5.log
+          path: ${{ runner.workspace }}/hdf4/hdf4.log
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
   build_and_test_linux_intel:
@@ -534,29 +519,26 @@ jobs:
 
       - name: Copy script files for the space (Linux_intel)
         run: |
-          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/CTestScript.cmake ${{ runner.workspace }}/hdf5
-          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/HDF5config.cmake ${{ runner.workspace }}/hdf5
+          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/CTestScript.cmake ${{ runner.workspace }}/hdf4
+          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/HDF4config.cmake ${{ runner.workspace }}/hdf4
 
-      - name: List files for the hdf5 (Linux_Linux)
+      - name: List files for the hdf4 (Linux_Linux)
         run: |
-          ls ${{ runner.workspace }}/hdf5
+          ls ${{ runner.workspace }}/hdf4
 
       - name: Create options file (Linux_intel)
         uses: "DamianReeves/write-file-action@master"
         with:
-          path: ${{ runner.workspace }}/hdf5/HDF5options.cmake
+          path: ${{ runner.workspace }}/hdf4/HDF4options.cmake
           write-mode: overwrite
           contents: |
             set (CTEST_DROP_SITE_INIT "my.cdash.org")
             # Change following line to submit to your CDash dashboard to a different CDash project
-            #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF5")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_BUILD_JAVA:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_BUILD_CPP_LIB:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_BUILD_FORTRAN:BOOL=OFF")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_SZIP_ENCODING:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ENABLE_PLUGIN_SUPPORT:BOOL=ON")
+            #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF4")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=ON")
 
       - name: Run ctest (Linux_intel)
         env:
@@ -564,8 +546,8 @@ jobs:
           CC: ${{ steps.setup-fortran.outputs.cc }}
           CXX: ${{ steps.setup-fortran.outputs.cxx }}
         run: |
-          cd "${{ runner.workspace }}/hdf5"
-          ctest -S HDF5config.cmake,CTEST_SITE_EXT=GH-Intel,LOCAL_SUBMIT=ON,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf5.log
+          cd "${{ runner.workspace }}/hdf4"
+          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-Intel,LOCAL_SUBMIT=ON,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
         shell: bash
         continue-on-error: true
 
@@ -574,5 +556,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: intel-ubuntu-log
-          path: ${{ runner.workspace }}/hdf5/hdf5.log
+          path: ${{ runner.workspace }}/hdf4/hdf4.log
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
