@@ -12,16 +12,19 @@ if (NOT SITE_OS_NAME)
   ## -- set hostname
   ## --------------------------
   find_program (HOSTNAME_CMD NAMES hostname)
-  exec_program (${HOSTNAME_CMD} ARGS OUTPUT_VARIABLE HOSTNAME)
+  execute_process (COMMAND ${HOSTNAME_CMD} OUTPUT_VARIABLE HOSTNAME OUTPUT_STRIP_TRAILING_WHITESPACE)
   set (CTEST_SITE  "${HOSTNAME}${CTEST_SITE_EXT}")
   find_program (UNAME NAMES uname)
   macro (getuname name flag)
-    exec_program ("${UNAME}" ARGS "${flag}" OUTPUT_VARIABLE "${name}")
+    execute_process (COMMAND "${UNAME}" "${flag}" OUTPUT_VARIABLE "${name}" OUTPUT_STRIP_TRAILING_WHITESPACE)
   endmacro ()
 
   getuname (osname -s)
+  string(STRIP ${osname} osname)
   getuname (osrel  -r)
+  string(STRIP ${osrel} osrel)
   getuname (cpu    -m)
+  string(STRIP ${cpu} cpu)
   message (STATUS "Dashboard script uname output: ${osname}-${osrel}-${cpu}\n")
 
   set (CTEST_BUILD_NAME  "${osname}-${osrel}-${cpu}")

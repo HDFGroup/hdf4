@@ -35,7 +35,7 @@ jobs:
       - name: Install Dependencies
         uses: ssciwr/doxygen-install@v1
         with:
-          version: "1.9.7"
+          version: "1.10.0"
 
       - name: Enable Developer Command Prompt
         uses: ilammy/msvc-dev-cmd@v1.13.0
@@ -100,6 +100,9 @@ jobs:
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=ON")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=ON")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DJPEG_USE_LOCALCONTENT:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DZLIB_USE_LOCALCONTENT:BOOL=OFF")
 
       - name: Run ctest script (Windows)
         run: |
@@ -130,7 +133,7 @@ jobs:
       - name: Install Dependencies
         uses: ssciwr/doxygen-install@v1
         with:
-          version: "1.9.7"
+          version: "1.10.0"
 
       - name: Set file base name (Linux)
         id: set-file-base
@@ -154,8 +157,8 @@ jobs:
 
       - name: List files for the space (Linux)
         run: |
-            ls -l ${{ github.workspace }}
-            ls ${{ runner.workspace }}
+              ls -l ${{ github.workspace }}
+              ls ${{ runner.workspace }}
 
       - name: Uncompress source (Linux)
         run: tar -zxvf ${{ github.workspace }}/${{ steps.set-file-base.outputs.FILE_BASE }}.tar.gz
@@ -182,6 +185,9 @@ jobs:
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=ON")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DJPEG_USE_LOCALCONTENT:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DZLIB_USE_LOCALCONTENT:BOOL=OFF")
 
       - name: Run ctest (Linux)
         run: |
@@ -210,12 +216,12 @@ jobs:
       - name: Install Dependencies
         uses: ssciwr/doxygen-install@v1
         with:
-          version: "1.9.7"
+          version: "1.10.0"
 
       - name: Set up JDK 19
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '19'
           distribution: 'temurin'
 
       - name: Set file base name (MacOS_latest)
@@ -276,6 +282,9 @@ jobs:
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=ON")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DJPEG_USE_LOCALCONTENT:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DZLIB_USE_LOCALCONTENT:BOOL=OFF")
 
       - name: Run ctest (MacOS_latest)
         id: run-ctest
@@ -290,84 +299,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macos-log
-          path: ${{ runner.workspace }}/hdf4/hdf4.log
-          if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
-
-  build_and_test_S3_linux:
-  # Linux S3 (Ubuntu) w/ gcc + CMake
-  #
-    name: "Ubuntu gcc CMake S3"
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install CMake Dependencies (Linux S3)
-        run: |
-          sudo apt-get update
-          sudo apt-get install ninja-build doxygen graphviz curl
-          sudo apt install libssl3 libssl-dev libcurl4 libcurl4-openssl-dev
-
-      - name: Set file base name (Linux S3)
-        id: set-file-base
-        run: |
-          FILE_NAME_BASE=$(echo "${{ inputs.file_base }}")
-          echo "FILE_BASE=$FILE_NAME_BASE" >> $GITHUB_OUTPUT
-          if [[ '${{ inputs.use_environ }}' == 'release' ]]
-          then
-            SOURCE_NAME_BASE=$(echo "${{ inputs.snap_name }}")
-          else
-            SOURCE_NAME_BASE=$(echo "hdfsrc")
-          fi
-          echo "SOURCE_BASE=$SOURCE_NAME_BASE" >> $GITHUB_OUTPUT
-
-      # Get files created by release script
-      - name: Get tgz-tarball (Linux S3)
-        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
-        with:
-              name: tgz-tarball
-              path: ${{ github.workspace }}
-
-      - name: List files for the space (Linux S3)
-        run: |
-              ls -l ${{ github.workspace }}
-              ls ${{ runner.workspace }}
-
-      - name: Uncompress source (Linux S3)
-        run: tar -zxvf ${{ github.workspace }}/${{ steps.set-file-base.outputs.FILE_BASE }}.tar.gz
-
-      - name: Copy script files for the space (Linux S3)
-        run: |
-          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/CTestScript.cmake ${{ runner.workspace }}/hdf4
-          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/HDF4config.cmake ${{ runner.workspace }}/hdf4
-
-      - name: List files for the hdf4 (Linux S3)
-        run: |
-              ls ${{ runner.workspace }}/hdf4
-
-      - name: Create options file (Linux S3)
-        uses: "DamianReeves/write-file-action@master"
-        with:
-          path: ${{ runner.workspace }}/hdf4/HDF4options.cmake
-          write-mode: overwrite
-          contents: |
-            set (CTEST_DROP_SITE_INIT "my.cdash.org")
-            # Change following line to submit to your CDash dashboard to a different CDash project
-            #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF4")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=ON")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=ON")
-
-      - name: Run ctest (Linux S3)
-        run: |
-          cd "${{ runner.workspace }}/hdf4"
-          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-S3,LOCAL_SUBMIT=ON,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
-        shell: bash
-        continue-on-error: true
-
-      # Save log files created by ctest script
-      - name: Save log (Linux S3)
-        uses: actions/upload-artifact@v4
-        with:
-          name: s3-ubuntu-log
           path: ${{ runner.workspace }}/hdf4/hdf4.log
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
@@ -449,6 +380,9 @@ jobs:
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=ON")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DJPEG_USE_LOCALCONTENT:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DZLIB_USE_LOCALCONTENT:BOOL=OFF")
 
       - name: Run ctest (Windows_intel) with oneapi
         env:
@@ -539,6 +473,9 @@ jobs:
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=ON")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DJPEG_USE_LOCALCONTENT:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DZLIB_USE_LOCALCONTENT:BOOL=OFF")
 
       - name: Run ctest (Linux_intel)
         env:
