@@ -19,7 +19,7 @@ jobs:
     name: Ubuntu PowerPC Autotools
 
     steps:
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4.2.0
 
       - uses: uraimo/run-on-arch-action@v2
         name: Run commands
@@ -59,7 +59,7 @@ jobs:
     name: Ubuntu PowerPC CMake
 
     steps:
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4.2.0
 
       - uses: uraimo/run-on-arch-action@v2
         name: Run commands
