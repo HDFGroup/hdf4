@@ -72,12 +72,12 @@ sub do_help {
     print "\t\tFor example: 'Wunused-dummy-argument' or 'Wunused-dummy-argument,Wunused-variable'\n";
     print "\t-S <file string list>\tDisplay warnings for files which contain a string, <file string list>\n";
     print "\t\t<file string list> is a comma separated list, with no spaces\n";
-    print "\t\tFor example: 'H5Fint' or 'H5Fint,H5Gnode'\n";
+    print "\t\tFor example: 'H4Fint' or 'H4Fint,H4Gnode'\n";
     print "\t-l\tDisplay line numbers for file/warning\n";
     print "\t-u\tLeave 'unique' types in warnings, instead of genericizing them\n";
     print "\t-i <name list>\tIgnore named files, <name list>\n";
     print "\t\t<name list> is a comma separated list, with no spaces\n";
-    print "\t\tFor example: 'H5LTparse' or 'H5LTparse,H5LTanalyze'\n";
+    print "\t\tFor example: 'H4LTparse' or 'H4LTparse,H4LTanalyze'\n";
     print "\tfile\tFilename containing build output\n";
     print "\t\tIf no file is given, standard input is used.\n";
     exit;

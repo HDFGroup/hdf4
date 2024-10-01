@@ -90,11 +90,11 @@ The config/cacheinit.cmake file in the examples source changes the defaults
 of the CMake options. If the CTest script mode, as described above, is not used
 note that the following options will not be changed.
     BUILD_SHARED_LIBS     OFF     CACHE BOOL   "Build Shared Libraries"
-    HDF_BUILD_C           ON      CACHE BOOL   "Build C support"
-    HDF_BUILD_FORTRAN     OFF     CACHE BOOL   "Build FORTRAN support"
-    HDF_BUILD_JAVA        ON      CACHE BOOL   "Build Java support"
+    H4EX_BUILD_C          ON      CACHE BOOL   "Build C support"
+    H4EX_BUILD_FORTRAN    OFF     CACHE BOOL   "Build FORTRAN support"
+    H4EX_BUILD_JAVA       ON      CACHE BOOL   "Build Java support"
     BUILD_TESTING         ON      CACHE BOOL   "Build HDF4 Unit Testing"
-    COMPARE_TESTING       ON      CACHE BOOL   "Compare HDF4 Unit Testing to Reference"
+    H4EXCOMPARE_TESTING   ON      CACHE BOOL   "Compare HDF4 Unit Testing to Reference"
     HDF4_PACKAGE_NAME     "hdf4"  CACHE STRING "Name of HDF4 package"
     PACK_EXAMPLE_SOURCE   ON      CACHE BOOL   "Package the source"
     CPACK_PACKAGE_VERSION "0.3.9" CACHE STRING "Version of HDF4 source package"

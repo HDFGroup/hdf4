@@ -73,7 +73,7 @@ the <a href="https://www.oreilly.com/library/view/97-things-every/9780596809515/
    - The function in context and action, usually a (Doxygen) snippet.
      \verbatim
      * \par Example
-     * \snippet H5F_examples.c minimal
+     * \snippet H4F_examples.c minimal
      \endverbatim
 10. Instruction (attention, note, warning)
    - Behaviors, features, side-effects, etc. the user should be aware of

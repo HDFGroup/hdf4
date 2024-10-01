@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 macro (EXTERNAL_ZLIB_LIBRARY compress_type)
-  if (HDF5_USE_ZLIB_NG)
+  if (HDF4_USE_ZLIB_NG)
     set (zlib_folder "ZLIBNG")
   else ()
     set (zlib_folder "ZLIB")

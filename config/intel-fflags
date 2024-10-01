@@ -33,7 +33,7 @@ load_intel_arguments()
 #   f9x_version:   Version number: 8.0
 #
 if test X = "X$f9x_flags_set"; then
-    f9x_version="`$FC $FCFLAGS $H5_FCFLAGS -V 2>&1 |grep '^Intel'`"
+    f9x_version="`$FC $FCFLAGS $H4_FCFLAGS -V 2>&1 |grep '^Intel'`"
     if test X != "X$f9x_version"; then
         f9x_vendor=ifort
         f9x_version="`echo $f9x_version |sed 's/.*Version \([-a-z0-9\.\-]*\).*/\1/'`"
@@ -118,8 +118,8 @@ if test "X-ifort" = "X-$f9x_vendor"; then
     # General #
     ###########
 
-    H5_FCFLAGS="$H5_FCFLAGS -free"
-    H5_FCFLAGS="$H5_FCFLAGS $(load_intel_arguments classic/ifort-general)"
+    H4_FCFLAGS="$H4_FCFLAGS -free"
+    H4_FCFLAGS="$H4_FCFLAGS $(load_intel_arguments classic/ifort-general)"
 
     #############################
     # Version-specific warnings #
