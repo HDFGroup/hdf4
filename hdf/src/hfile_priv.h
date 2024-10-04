@@ -336,7 +336,7 @@ typedef struct funclist_t {
                      int32 *poffset, int32 *pposn, int16 *paccess, int16 *pspecial);
     int32 (*read)(accrec_t *access_rec, int32 length, void *data);
     int32 (*write)(accrec_t *access_rec, int32 length, const void *data);
-    int   (*endaccess)(accrec_t *access_rec);
+    int (*endaccess)(accrec_t *access_rec);
     int32 (*info)(accrec_t *access_rec, sp_info_block_t *info);
     int32 (*reset)(accrec_t *access_rec, sp_info_block_t *info);
 } funclist_t;

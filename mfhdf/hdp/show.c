@@ -27,16 +27,16 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
     uint8          *bb = NULL;
     uint8          *b  = NULL;
     DYN_VWRITELIST *w  = NULL;
-    int             (*vfmtfn[VSFIELDMAX])(void *, file_format_t ff, FILE *);
-    int32           off[VSFIELDMAX];
-    int32           order[VSFIELDMAX];
-    int32           nattrs[VSFIELDMAX];
-    size_t          bufsize; /* size of the buffer we are using */
-    int32           chunk;   /* number of rows that will fit in the buffer */
-    int32           done;    /* number of rows we have done */
-    int32           count;   /* number of rows to do this time through
-                                        the loop */
-    int32 nf;                /* number of fields in this Vdata */
+    int (*vfmtfn[VSFIELDMAX])(void *, file_format_t ff, FILE *);
+    int32  off[VSFIELDMAX];
+    int32  order[VSFIELDMAX];
+    int32  nattrs[VSFIELDMAX];
+    size_t bufsize; /* size of the buffer we are using */
+    int32  chunk;   /* number of rows that will fit in the buffer */
+    int32  done;    /* number of rows we have done */
+    int32  count;   /* number of rows to do this time through
+                               the loop */
+    int32 nf;       /* number of fields in this Vdata */
     int32 x, display;
     int32 temp;
     int32 addr_width = 0;
@@ -455,7 +455,7 @@ dumpattr(int32 vid, int32 findex, int isvs, file_format_t ff, FILE *fp)
     int32  off;
     uint8 *buf = NULL;
     uint8 *ptr = NULL;
-    int    (*vfmtfn)(void *, file_format_t ff, FILE *);
+    int (*vfmtfn)(void *, file_format_t ff, FILE *);
     int    status;
     int    ret_value = SUCCEED;
     char   name[FIELDNAMELENMAX + 1];

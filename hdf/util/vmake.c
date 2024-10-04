@@ -410,8 +410,8 @@ inpdata(unsigned char **bp)
     int32          totalsize, nread, t, i, j, k;
     unsigned char *b;
     int32          maxrec;
-    int32          (*inpfn[MAXVAR])(void *);
-    int32          inpsiz[MAXVAR];
+    int32 (*inpfn[MAXVAR])(void *);
+    int32 inpsiz[MAXVAR];
 
     for (i = 0; i < ntotal; i++) {
         switch (fmts[i]) {

@@ -276,11 +276,11 @@ RETURNS
 ******************************************************************************/
 void
 mcache_filter(MCACHE *mp, /* IN: MCACHE cookie */
-              int32   (*pgin)(void   */* cookie */, int32 /* pgno */,
-                            void   */* page */), /* IN: page in filter */
-              int32   (*pgout)(void   */* cookie */, int32 /* pgno */,
-                             const void   */*page */), /* IN: page out filter */
-              void   *pgcookie /* IN: filter cookie */)
+              int32 (*pgin)(void * /* cookie */, int32 /* pgno */,
+                            void * /* page */), /* IN: page in filter */
+              int32 (*pgout)(void * /* cookie */, int32 /* pgno */,
+                             const void * /*page */), /* IN: page out filter */
+              void *pgcookie /* IN: filter cookie */)
 {
     mp->pgin     = pgin;
     mp->pgout    = pgout;

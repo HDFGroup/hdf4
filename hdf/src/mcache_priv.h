@@ -149,11 +149,11 @@ HDFLIBAPI MCACHE *mcache_open(void *key,       /* IN:byte string used as handle 
                               int32 npages,    /* IN: number of chunks currently in object */
                               int32 flags /* IN: 0= object exists, 1= does not exist */);
 
-HDFLIBAPI void mcache_filter(MCACHE *mp,                                            /* IN: MCACHE cookie */
-                             int32   (*pgin)(void *cookie, int32 pgno, void *page), /* IN: page in filter */
-                             int32   (*pgout)(void *cookie, int32 pgno,
+HDFLIBAPI void mcache_filter(MCACHE *mp,                                          /* IN: MCACHE cookie */
+                             int32 (*pgin)(void *cookie, int32 pgno, void *page), /* IN: page in filter */
+                             int32 (*pgout)(void *cookie, int32 pgno,
                                             const void *page), /* IN: page out filter */
-                             void   *pgcookie /* IN: filter cookie */);
+                             void *pgcookie /* IN: filter cookie */);
 
 HDFLIBAPI void *mcache_new(MCACHE *mp,       /* IN: MCACHE cookie */
                            int32  *pgnoaddr, /* IN/OUT: address of newly create page */

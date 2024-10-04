@@ -353,9 +353,9 @@ done:
 int
 NC_xlen_array(NC_array *array)
 {
-    int      len = 8;
-    int      rem;
-    int      (*xlen_funct)() = NULL;
+    int len = 8;
+    int rem;
+    int (*xlen_funct)() = NULL;
     uint8_t *vp;
 
     if (array != NULL) {
@@ -441,7 +441,7 @@ NC_copy_arrayvals(char *target, NC_array *array)
 bool_t
 xdr_NC_array(XDR *xdrs, NC_array **app)
 {
-    bool_t    (*xdr_NC_fnct)();
+    bool_t (*xdr_NC_fnct)();
     unsigned  count      = 0;
     unsigned *countp     = NULL;
     unsigned  temp_count = 0;
