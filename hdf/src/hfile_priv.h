@@ -64,7 +64,7 @@
 /* using C buffered file I/O routines to access files */
 #include <stdio.h>
 typedef FILE *hdf_file_t;
-#define HI_OPEN(p, a)     (((a)&DFACC_WRITE) ? fopen((p), "rb+") : fopen((p), "rb"))
+#define HI_OPEN(p, a)     (((a) & DFACC_WRITE) ? fopen((p), "rb+") : fopen((p), "rb"))
 #define HI_CREATE(p)      (fopen((p), "wb+"))
 #define HI_READ(f, b, n)  (((size_t)(n) == (size_t)fread((b), 1, (size_t)(n), (f))) ? SUCCEED : FAIL)
 #define HI_WRITE(f, b, n) (((size_t)(n) == (size_t)fwrite((b), 1, (size_t)(n), (f))) ? SUCCEED : FAIL)
@@ -80,7 +80,7 @@ typedef FILE *hdf_file_t;
 #if (FILELIB == UNIXUNBUFIO)
 /* using UNIX unbuffered file I/O routines to access files */
 typedef int hdf_file_t;
-#define HI_OPEN(p, a)     (((a)&DFACC_WRITE) ? open((p), O_RDWR) : open((p), O_RDONLY))
+#define HI_OPEN(p, a)     (((a) & DFACC_WRITE) ? open((p), O_RDWR) : open((p), O_RDONLY))
 #define HI_CREATE(p)      (open((p), O_RDWR | O_CREAT | O_TRUNC, 0666))
 #define HI_CLOSE(f)       (((f = ((close(f) == 0) ? -1 : f)) == -1) ? SUCCEED : FAIL)
 #define HI_FLUSH(f)       (SUCCEED)
@@ -336,7 +336,7 @@ typedef struct funclist_t {
                      int32 *poffset, int32 *pposn, int16 *paccess, int16 *pspecial);
     int32 (*read)(accrec_t *access_rec, int32 length, void *data);
     int32 (*write)(accrec_t *access_rec, int32 length, const void *data);
-    int (*endaccess)(accrec_t *access_rec);
+    int   (*endaccess)(accrec_t *access_rec);
     int32 (*info)(accrec_t *access_rec, sp_info_block_t *info);
     int32 (*reset)(accrec_t *access_rec, sp_info_block_t *info);
 } funclist_t;
@@ -383,11 +383,11 @@ typedef struct functab_t {
 #define MKSPECIALTAG(t) (HDmake_special_tag(t))
 #else
 /* This macro converts a (potentially) special tag into a normal tag */
-#define BASETAG(t)      (uint16)((~(t)&0x8000) ? ((t) & ~0x4000) : (t))
+#define BASETAG(t)      (uint16)((~(t) & 0x8000) ? ((t) & ~0x4000) : (t))
 /* This macro checks if a tag is special */
-#define SPECIALTAG(t)   (uint16)((~(t)&0x8000) && ((t)&0x4000))
+#define SPECIALTAG(t)   (uint16)((~(t) & 0x8000) && ((t) & 0x4000))
 /* This macro (potentially) converts a regular tag into a special tag */
-#define MKSPECIALTAG(t) (uint16)((~(t)&0x8000) ? ((t) | 0x4000) : DFTAG_NULL)
+#define MKSPECIALTAG(t) (uint16)((~(t) & 0x8000) ? ((t) | 0x4000) : DFTAG_NULL)
 #endif /*SPECIAL_TABLE */
 
 /* -------------------------- H-Layer Prototypes -------------------------- */

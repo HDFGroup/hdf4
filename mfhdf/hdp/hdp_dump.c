@@ -24,7 +24,7 @@
 #define HORIZONTAL_TAB  9
 
 typedef int (*fmtfunct_t)(void *, file_format_t, FILE *);
-fmtfunct_t select_func(int32 nt);
+fmtfunct_t  select_func(int32 nt);
 
 /*
  * printing functions copied from vshow.c and used by sdsdumpfull().

@@ -88,8 +88,8 @@ typedef struct tbbt_node_private {
 typedef struct tbbt_tree_private {
     unsigned long count;        /* The number of nodes in the tree currently */
     unsigned      fast_compare; /* Use a faster in-line compare (with casts) instead of function call */
-    int (*compar)(void *k1, void *k2, int cmparg);
-    int cmparg;
+    int           (*compar)(void *k1, void *k2, int cmparg);
+    int           cmparg;
 } TBBT_TREE_PRIV;
 
 /* Pointer to the tbbt node free list */

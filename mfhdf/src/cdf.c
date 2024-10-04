@@ -2362,9 +2362,9 @@ xdr_2shorts(XDR *xdrs, short *sp)
 bool_t
 xdr_NC_fill(XDR *xdrs, NC_var *vp)
 {
-    char   fillp[2 * sizeof(double)];
-    bool_t stat;
-    bool_t (*xdr_NC_fnct)();
+    char          fillp[2 * sizeof(double)];
+    bool_t        stat;
+    bool_t        (*xdr_NC_fnct)();
     unsigned long alen = vp->len;
     NC_attr     **attr = NULL;
 

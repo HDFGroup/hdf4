@@ -1440,9 +1440,9 @@ static bool_t
 xdr_NCvdata(XDR *xdrs, unsigned long where, nc_type type, unsigned count, uint8_t *values)
 {
     unsigned long rem = 0;
-    bool_t (*xdr_NC_fnct)();
-    bool_t stat;
-    size_t szof;
+    bool_t        (*xdr_NC_fnct)();
+    bool_t        stat;
+    size_t        szof;
 
     switch (type) {
         case NC_BYTE:

@@ -122,7 +122,7 @@ nctypelen(nc_type type)
 #ifdef H4_WORDS_BIGENDIAN
 union xdr_f_union xdr_f_infs = {0x7f, 0x80, 0x00, 0x00};
 #else
-union xdr_f_union xdr_f_infs        = {0x00, 0x00, 0x80, 0x7f};
+union xdr_f_union xdr_f_infs = {0x00, 0x00, 0x80, 0x7f};
 #endif /* H4_WORDS_BIGENDIAN */
 #endif /* USE_F_UNION */
 
@@ -130,7 +130,7 @@ union xdr_f_union xdr_f_infs        = {0x00, 0x00, 0x80, 0x7f};
 #ifdef H4_WORDS_BIGENDIAN
 union xdr_d_union xdr_d_infs = {0x7f, 0xf0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 #else
-union xdr_d_union xdr_d_infs        = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x7f};
+union xdr_d_union xdr_d_infs = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x7f};
 #endif /* H4_WORDS_BIGENDIAN */
 #endif /* USE_D_UNION */
 
@@ -142,7 +142,7 @@ nclong xdr_f_infinity = 0x7f800000;
 #ifdef H4_WORDS_BIGENDIAN
 nclong xdr_d_infinity[2] = {0x7ff00000, 0x00000000};
 #else
-nclong            xdr_d_infinity[2] = {0x00000000, 0x7ff00000};
+nclong xdr_d_infinity[2] = {0x00000000, 0x7ff00000};
 #endif /* H4_WORDS_BIGENDIAN */
 #endif /* USE_D_LONG_PUN */
 
@@ -353,9 +353,9 @@ done:
 int
 NC_xlen_array(NC_array *array)
 {
-    int len = 8;
-    int rem;
-    int (*xlen_funct)() = NULL;
+    int      len = 8;
+    int      rem;
+    int      (*xlen_funct)() = NULL;
     uint8_t *vp;
 
     if (array != NULL) {
@@ -441,7 +441,7 @@ NC_copy_arrayvals(char *target, NC_array *array)
 bool_t
 xdr_NC_array(XDR *xdrs, NC_array **app)
 {
-    bool_t (*xdr_NC_fnct)();
+    bool_t    (*xdr_NC_fnct)();
     unsigned  count      = 0;
     unsigned *countp     = NULL;
     unsigned  temp_count = 0;

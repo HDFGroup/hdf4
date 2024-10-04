@@ -30,7 +30,7 @@ jobs:
       with:
         source: '.'
         extensions: 'c,h,cpp,hpp,java'
-        clangFormatVersion: 13
+        clangFormatVersion: 17
         inplace: True
         style: file
         exclude: './config ./mfhdf/ncgen/ncgenyy.c ./mfhdf/ncgen/ncgentab.c ./mfhdf/ncgen/ncgentab.h'

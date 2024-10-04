@@ -350,9 +350,9 @@ vsdumpfull(int32 vs)
     int32           j, i, t, interlace, nv, vsize;
     uint8          *bb, *b;
     DYN_VWRITELIST *w;
-    int32 (*fmtfn[VSFIELDMAX])(char *);
-    int32 off[VSFIELDMAX];
-    int32 order[VSFIELDMAX];
+    int32           (*fmtfn[VSFIELDMAX])(char *);
+    int32           off[VSFIELDMAX];
+    int32           order[VSFIELDMAX];
 
     int32 bufsize; /* size of the buffer we are using */
     int32 chunk;   /* number of rows that will fit in the buffer */
@@ -495,11 +495,11 @@ dumpattr(int32 vid, int full, int isvs)
     vs_attr_t    *vs_alist;
     vg_attr_t    *v_alist;
     int32         i_type, i_count, i_size, off;
-    uint8        *buf      = NULL, *ptr;
-    int32 (*fmtfn)(char *) = NULL;
-    char  name[FIELDNAMELENMAX + 1];
-    int   ret_val = SUCCEED;
-    uint8 attrbuf[BUFFER];
+    uint8        *buf              = NULL, *ptr;
+    int32         (*fmtfn)(char *) = NULL;
+    char          name[FIELDNAMELENMAX + 1];
+    int           ret_val = SUCCEED;
+    uint8         attrbuf[BUFFER];
 
     if (isvs) {
         vs_inst = (vsinstance_t *)HAatom_object(vid);
