@@ -375,10 +375,6 @@ main(void)
     if (id == -1)
         exit(errno);
 
-#ifdef NOBUF
-    cdf_assert(ncnobuf(id) != 1);
-#endif /* NOBUF */
-
     cdf_assert(ncattput(id, NC_GLOBAL, "TITLE", NC_CHAR, 12, "another name") != -1);
     cdf_assert(ncattget(id, NC_GLOBAL, "TITLE", (ncvoid *)new) != -1);
     /*	printf("title 1 \"%s\"\n", new) ; */
@@ -456,10 +452,6 @@ main(void)
         exit(1);
     }
     printf("reopen id = %d for filename %s\n", (int)id, fname);
-
-#ifdef NOBUF
-    cdf_assert(ncnobuf(id) != 1);
-#endif /* NOBUF */
 
     /*	NC	*/
     printf("NC ");

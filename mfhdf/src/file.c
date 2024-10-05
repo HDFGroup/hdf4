@@ -499,23 +499,6 @@ ncabort(int cdfid)
 } /* ncabort */
 
 /*
- * Deprecated function ;
- */
-int
-ncnobuf(int cdfid)
-{
-    NC *handle;
-
-    cdf_routine_name = "ncnobuf";
-
-    handle = NC_check_id(cdfid);
-    if (handle == NULL)
-        return -1;
-    /* NOOP */
-    return 0;
-}
-
-/*
  * Given the path to a file "proto",
  * we replace the filename component with
  * a name like one would get from tmpnam(3S).

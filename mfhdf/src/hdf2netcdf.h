@@ -69,7 +69,6 @@
 #define ncrecinq    HNAME(ncrecinq)
 #define ncrecget    HNAME(ncrecget)
 #define ncrecput    HNAME(ncrecput)
-#define ncnobuf     HNAME(ncnobuf) /* no prototype for this one */
 
 #endif /* !H4_HAVE_NETCDF i.e NOT USING HDF version of netCDF API */
 

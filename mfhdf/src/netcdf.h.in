@@ -340,9 +340,6 @@ HDFLIBAPI int ncsync    (
 HDFLIBAPI int ncabort    (
     int        cdfid
 );
-HDFLIBAPI int ncnobuf    (
-    int        cdfid
-);
 HDFLIBAPI int ncdimdef    (
     int        cdfid,
     const char*    name,
