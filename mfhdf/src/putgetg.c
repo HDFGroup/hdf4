@@ -140,7 +140,7 @@ carry:
  */
 int
 ncvarputg(int cdfid, int varid, const long *start, const long *count, const long *stride, const long *imap,
-          ncvoid *values)
+          void *values)
 {
     NC *handle;
 
@@ -164,7 +164,7 @@ ncvarputg(int cdfid, int varid, const long *start, const long *count, const long
  */
 int
 ncvargetg(int cdfid, int varid, const long *start, const long *count, const long *stride, const long *imap,
-          ncvoid *values)
+          void *values)
 {
     NC *handle;
 
@@ -183,7 +183,7 @@ ncvargetg(int cdfid, int varid, const long *start, const long *count, const long
  * Stride-oriented hyperslab output.
  */
 int
-ncvarputs(int cdfid, int varid, const long *start, const long *count, const long *stride, ncvoid *values)
+ncvarputs(int cdfid, int varid, const long *start, const long *count, const long *stride, void *values)
 {
     NC *handle;
 
@@ -206,7 +206,7 @@ ncvarputs(int cdfid, int varid, const long *start, const long *count, const long
  * Stride-oriented hyperslab input.
  */
 int
-ncvargets(int cdfid, int varid, const long *start, const long *count, const long *stride, ncvoid *values)
+ncvargets(int cdfid, int varid, const long *start, const long *count, const long *stride, void *values)
 {
     NC *handle;
 

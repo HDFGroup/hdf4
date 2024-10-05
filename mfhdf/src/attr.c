@@ -243,7 +243,7 @@ NC_aput(int cdfid, NC_array **ap, const char *name, nc_type datatype, unsigned c
 }
 
 int
-ncattput(int cdfid, int varid, const char *name, nc_type datatype, int count, const ncvoid *values)
+ncattput(int cdfid, int varid, const char *name, nc_type datatype, int count, const void *values)
 {
     NC_array **ap;
 

@@ -24,21 +24,6 @@
 #include "H4api_adpt.h"
 
 /*
- * The definitions ncvoid and MAX_NC_OPEN, may need to be set
- * properly for your installation.
- */
-
-/*
- * Argument type in user functions (deprecated, backward compatibility)
- */
-#ifndef UD_NO_VOID
-#define ncvoid    void
-#else
-/* system doesn't have void type */
-#define ncvoid    char
-#endif
-
-/*
  * The following macro is provided for backward compatibility only.  If you
  * are a new user of netCDF, then you may safely ignore it.  If, however,
  * you have an existing archive of netCDF files that use default

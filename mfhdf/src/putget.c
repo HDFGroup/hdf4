@@ -1398,7 +1398,7 @@ NCvar1io(NC *handle, int varid, const long *coords, uint8_t *value)
 }
 
 int
-ncvarput1(int cdfid, int varid, const long *coords, const ncvoid *value)
+ncvarput1(int cdfid, int varid, const long *coords, const void *value)
 {
     NC *handle;
 
@@ -1418,7 +1418,7 @@ ncvarput1(int cdfid, int varid, const long *coords, const ncvoid *value)
 }
 
 int
-ncvarget1(int cdfid, int varid, const long *coords, ncvoid *value)
+ncvarget1(int cdfid, int varid, const long *coords, void *value)
 {
     NC *handle;
 
@@ -1773,7 +1773,7 @@ NCvario(NC *handle, int varid, const long *start, const long *edges, void *value
 }
 
 int
-ncvarput(int cdfid, int varid, const long *start, const long *edges, ncvoid *values)
+ncvarput(int cdfid, int varid, const long *start, const long *edges, void *values)
 {
     NC *handle;
 
@@ -1852,7 +1852,7 @@ NC_fill_buffer(NC *handle, int varid, const long *edges, void *values)
  *  -BMR, 2013/8/29
  */
 int
-ncvarget(int cdfid, int varid, const long *start, const long *edges, ncvoid *values)
+ncvarget(int cdfid, int varid, const long *start, const long *edges, void *values)
 {
     NC *handle;
     int status = 0;
