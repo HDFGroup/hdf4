@@ -17,9 +17,7 @@
 /* Formerly used to divide up the HDF and netCDF code. The symbol is retained
  * since it's technically in the public API.
  */
-#ifndef HDF
 #define HDF 1
-#endif
 
 #include "hdf.h"
 
