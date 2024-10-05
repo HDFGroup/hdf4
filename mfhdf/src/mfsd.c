@@ -711,9 +711,9 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
         }
     }
 #else
-    Start        = (long *)start;
-    End          = (long *)end;
-    Stride       = (long *)stride;
+    Start  = (long *)start;
+    End    = (long *)end;
+    Stride = (long *)stride;
 #endif
 
     /* Validate stride value if given - make sure we don't try to "stride" */
@@ -1935,9 +1935,9 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
             Stride[i] = (long)stride[i];
     }
 #else
-    Start        = (long *)start;
-    End          = (long *)end;
-    Stride       = (long *)stride;
+    Start  = (long *)start;
+    End    = (long *)end;
+    Stride = (long *)stride;
 #endif
 
     /* Check if this data is being written out to a newly created dataset */

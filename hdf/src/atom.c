@@ -48,7 +48,7 @@ FILE
 
 /* Combine a Group number and an atom index into an atom */
 #define MAKE_ATOM(g, i)                                                                                      \
-    ((((atom_t)(g)&GROUP_MASK) << ((sizeof(atom_t) * 8) - GROUP_BITS)) | ((atom_t)(i)&ATOM_MASK))
+    ((((atom_t)(g) & GROUP_MASK) << ((sizeof(atom_t) * 8) - GROUP_BITS)) | ((atom_t)(i) & ATOM_MASK))
 
 /* # of previous atoms cached, change HAatom_object & SWAP_CACHE if this changes */
 #define ATOM_CACHE_SIZE 4

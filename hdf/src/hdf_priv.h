@@ -141,7 +141,7 @@ typedef intptr_t hdf_pint_t;
     {                                                                                                        \
         *(p) = (uint8)(((unsigned)(i) >> 8) & 0xff);                                                         \
         (p)++;                                                                                               \
-        *(p) = (uint8)((unsigned)(i)&0xff);                                                                  \
+        *(p) = (uint8)((unsigned)(i) & 0xff);                                                                \
         (p)++;                                                                                               \
     }
 
@@ -149,7 +149,7 @@ typedef intptr_t hdf_pint_t;
     {                                                                                                        \
         *(p) = (uint8)(((unsigned)(i) >> 8) & 0xff);                                                         \
         (p)++;                                                                                               \
-        *(p) = (uint8)((i)&0xff);                                                                            \
+        *(p) = (uint8)((i) & 0xff);                                                                          \
         (p)++;                                                                                               \
     }
 
@@ -161,7 +161,7 @@ typedef intptr_t hdf_pint_t;
         (p)++;                                                                                               \
         *(p) = (uint8)(((uint32)(i) >> 8) & 0xff);                                                           \
         (p)++;                                                                                               \
-        *(p) = (uint8)((uint32)(i)&0xff);                                                                    \
+        *(p) = (uint8)((uint32)(i) & 0xff);                                                                  \
         (p)++;                                                                                               \
     }
 
@@ -173,7 +173,7 @@ typedef intptr_t hdf_pint_t;
         (p)++;                                                                                               \
         *(p) = (uint8)(((i) >> 8) & 0xff);                                                                   \
         (p)++;                                                                                               \
-        *(p) = (uint8)((i)&0xff);                                                                            \
+        *(p) = (uint8)((i) & 0xff);                                                                          \
         (p)++;                                                                                               \
     }
 
@@ -193,41 +193,41 @@ typedef intptr_t hdf_pint_t;
 
 #define INT16DECODE(p, i)                                                                                    \
     {                                                                                                        \
-        (i) = (int16)((*(p)&0x80) ? ~0xffff : 0x00) | ((int16)(*(p)&0xff) << 8);                             \
+        (i) = (int16)((*(p) & 0x80) ? ~0xffff : 0x00) | ((int16)(*(p) & 0xff) << 8);                         \
         (p)++;                                                                                               \
-        (i) |= (int16)((*(p)&0xff));                                                                         \
+        (i) |= (int16)((*(p) & 0xff));                                                                       \
         (p)++;                                                                                               \
     }
 
 #define UINT16DECODE(p, i)                                                                                   \
     {                                                                                                        \
-        (i) = (uint16)((*(p)&0xff) << 8);                                                                    \
+        (i) = (uint16)((*(p) & 0xff) << 8);                                                                  \
         (p)++;                                                                                               \
-        (i) |= (uint16)(*(p)&0xff);                                                                          \
+        (i) |= (uint16)(*(p) & 0xff);                                                                        \
         (p)++;                                                                                               \
     }
 
 #define INT32DECODE(p, i)                                                                                    \
     {                                                                                                        \
-        (i) = ((int32)(((*(p)&0x80) ? ~0xffffffffULL : 0x0ULL)) | ((*(p) & (unsigned)0xff) << 24));          \
+        (i) = ((int32)(((*(p) & 0x80) ? ~0xffffffffULL : 0x0ULL)) | ((*(p) & (unsigned)0xff) << 24));        \
         (p)++;                                                                                               \
-        (i) |= ((int32)(*(p)&0xff) << 16);                                                                   \
+        (i) |= ((int32)(*(p) & 0xff) << 16);                                                                 \
         (p)++;                                                                                               \
-        (i) |= ((int32)(*(p)&0xff) << 8);                                                                    \
+        (i) |= ((int32)(*(p) & 0xff) << 8);                                                                  \
         (p)++;                                                                                               \
-        (i) |= (*(p)&0xff);                                                                                  \
+        (i) |= (*(p) & 0xff);                                                                                \
         (p)++;                                                                                               \
     }
 
 #define UINT32DECODE(p, i)                                                                                   \
     {                                                                                                        \
-        (i) = ((uint32)(*(p)&0xff) << 24);                                                                   \
+        (i) = ((uint32)(*(p) & 0xff) << 24);                                                                 \
         (p)++;                                                                                               \
-        (i) |= ((uint32)(*(p)&0xff) << 16);                                                                  \
+        (i) |= ((uint32)(*(p) & 0xff) << 16);                                                                \
         (p)++;                                                                                               \
-        (i) |= ((uint32)(*(p)&0xff) << 8);                                                                   \
+        (i) |= ((uint32)(*(p) & 0xff) << 8);                                                                 \
         (p)++;                                                                                               \
-        (i) |= (uint32)(*(p)&0xff);                                                                          \
+        (i) |= (uint32)(*(p) & 0xff);                                                                        \
         (p)++;                                                                                               \
     }
 

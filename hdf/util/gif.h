@@ -27,7 +27,7 @@ typedef char   CHAR;
 typedef uint8  boolean;
 
 #define false 0;
-#define true 1;
+#define true  1;
 
 /* Set the EndianOrder.
 ** The GIF Reader file should do this.

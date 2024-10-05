@@ -74,7 +74,7 @@ int copyFile(char *from, char *to);
 
 char *copyStr(char *str);
 
-int delete (int curr);
+int delete(int curr);
 
 void deleteCmd(HE_CMD *cmd);
 

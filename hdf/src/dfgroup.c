@@ -37,9 +37,9 @@ typedef struct DIlist_struct {
 
 static DIlist_ptr Group_list[MAX_GROUPS] = {NULL};
 
-#define GSLOT2ID(s) ((((uint32)GROUPTYPE & 0xffff) << 16) | ((s)&0xffff))
-#define VALIDGID(i) (((((uint32)(i) >> 16) & 0xffff) == GROUPTYPE) && (((uint32)(i)&0xffff) < MAX_GROUPS))
-#define GID2REC(i)  ((VALIDGID(i) ? (Group_list[(uint32)(i)&0xffff]) : NULL))
+#define GSLOT2ID(s) ((((uint32)GROUPTYPE & 0xffff) << 16) | ((s) & 0xffff))
+#define VALIDGID(i) (((((uint32)(i) >> 16) & 0xffff) == GROUPTYPE) && (((uint32)(i) & 0xffff) < MAX_GROUPS))
+#define GID2REC(i)  ((VALIDGID(i) ? (Group_list[(uint32)(i) & 0xffff]) : NULL))
 
 /*-----------------------------------------------------------------------------
  * Name:    setgroupREC
