@@ -21,11 +21,7 @@ CSOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c	\
            globdef.c mfsd.c mfdatainfo.c nssdc.c putget.c putgetg.c		\
            sharray.c string.c var.c h4_xdr.c
 
-if HDF_BUILD_NETCDF
-FSOURCES = $(top_builddir)/mfhdf/fortran/jackets.c $(top_srcdir)/mfhdf/fortran/mfsdf.c $(top_srcdir)/mfhdf/fortran/mfsdff.f
-else
 FSOURCES = $(top_srcdir)/mfhdf/fortran/mfsdf.c $(top_srcdir)/mfhdf/fortran/mfsdff.f
-endif
 
 if HDF_BUILD_FORTRAN
 libmfhdf_la_SOURCES = $(CSOURCES) $(FSOURCES)
@@ -35,11 +31,7 @@ endif
 
 libmfhdf_la_LIBADD = $(top_builddir)/hdf/src/libdf.la
 
-if HDF_BUILD_NETCDF
-include_HEADERS = hdf2netcdf.h mfhdf.h netcdf.h mfdatainfo.h
-else
 include_HEADERS = hdf2netcdf.h mfhdf.h hdf4_netcdf.h mfdatainfo.h
-endif
 
 # The following is a workaround. Since Fortran is included in this 
 # Makefile.am, automake will always try to use the Fortran linker, even when

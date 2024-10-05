@@ -1206,9 +1206,6 @@ AC_CONFIG_FILES([Makefile
                  hdf/util/h4fc
                  hdf/util/h4redeploy
                  hdf/util/testutil.sh
-                 mfhdf/fortran/ftest.f
-                 mfhdf/fortran/jackets.c
-                 mfhdf/fortran/netcdf.inc
                  mfhdf/src/netcdf.h
                  mfhdf/Makefile
                  mfhdf/hdp/Makefile
