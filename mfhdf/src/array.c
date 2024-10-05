@@ -90,7 +90,7 @@ NC_typelen(nc_type type)
  *  this is how much space is required by the user, as in
  *
  *   vals = malloc(nel * nctypelen(var.type));
- *   ncvarget (cdfid, varid, cor, edg, vals);
+ *   ncvarget(cdfid, varid, cor, edg, vals);
  *
  */
 int
@@ -114,40 +114,8 @@ nctypelen(nc_type type)
     }
 }
 
-/* See nc_priv.h for explanation of these initializations */
-/* assert( !(USE_F_UNION && USE_F_LONG_PUN) ) ; */
-/* assert( !(USE_D_UNION && USE_D_LONG_PUN) ) ; */
-
-#ifdef USE_F_UNION
-#ifdef H4_WORDS_BIGENDIAN
-union xdr_f_union xdr_f_infs = {0x7f, 0x80, 0x00, 0x00};
-#else
-union xdr_f_union xdr_f_infs = {0x00, 0x00, 0x80, 0x7f};
-#endif /* H4_WORDS_BIGENDIAN */
-#endif /* USE_F_UNION */
-
-#ifdef USE_D_UNION
-#ifdef H4_WORDS_BIGENDIAN
-union xdr_d_union xdr_d_infs = {0x7f, 0xf0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-#else
-union xdr_d_union xdr_d_infs = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x7f};
-#endif /* H4_WORDS_BIGENDIAN */
-#endif /* USE_D_UNION */
-
-#ifdef USE_F_LONG_PUN
-nclong xdr_f_infinity = 0x7f800000;
-#endif
-
-#ifdef USE_D_LONG_PUN
-#ifdef H4_WORDS_BIGENDIAN
-nclong xdr_d_infinity[2] = {0x7ff00000, 0x00000000};
-#else
-nclong xdr_d_infinity[2] = {0x00000000, 0x7ff00000};
-#endif /* H4_WORDS_BIGENDIAN */
-#endif /* USE_D_LONG_PUN */
-
 /*
- *    Fill an array region with an appropriate special value
+ * Fill an array region with an appropriate special value
  */
 void
 NC_arrayfill(void *low, size_t len, nc_type type)
@@ -273,8 +241,7 @@ NC_re_array(NC_array *old, nc_type type, unsigned count, const void *values)
 /*
  * Free array, and, if needed, its values.
  *
- * NOTE: Changed return value to return 'int'
- *       If successful returns SUCCEED else FAIL -GV 9/19/97
+ * If successful returns SUCCEED else FAIL
  */
 int
 NC_free_array(NC_array *array)

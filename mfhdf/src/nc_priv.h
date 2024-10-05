@@ -185,7 +185,7 @@ typedef int nc_type;
 #define NC_BYTE        1
 #define NC_CHAR        2
 #define NC_SHORT       3
-#define NC_LONG        4
+#define NC_LONG        4 /* Use int32_t on modern systems */
 #define NC_FLOAT       5
 #define NC_DOUBLE      6
 /* private */
