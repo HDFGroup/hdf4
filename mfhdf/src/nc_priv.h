@@ -235,7 +235,6 @@ extern "C" {
 #define NC_xlen_iarray    HNAME(NC_xlen_iarray)
 #define NC_xlen_string    HNAME(NC_xlen_string)
 #define NC_xlen_var       HNAME(NC_xlen_var)
-#define NCmemset          HNAME(NCmemset)
 #define NC_arrayfill      HNAME(NC_arrayfill)
 #define NC_copy_arrayvals HNAME(NC_copy_arrayvals)
 #define NC_free_array     HNAME(NC_free_array)
@@ -261,7 +260,6 @@ extern "C" {
 #define xdr_NC_var        HNAME(xdr_NC_var)
 #define NC_typelen        HNAME(NC_typelen)
 #define NC_check_id       HNAME(NC_check_id)
-#define NC_dup_cdf        HNAME(NC_dup_cdf)
 #define NC_new_cdf        HNAME(NC_new_cdf)
 #define NC_new_array      HNAME(NC_new_array)
 #define NC_re_array       HNAME(NC_re_array)
@@ -277,7 +275,6 @@ extern "C" {
 #define NCcoordck         HNAME(NCcoordck)
 #define xdr_NCvshort      HNAME(xdr_NCvshort)
 #define NC_dcpy           HNAME(NC_dcpy)
-#define NCxdrfile_sync    HNAME(NCxdrfile_sync)
 #define NCxdrfile_create  HNAME(NCxdrfile_create)
 #define NCgenio           HNAME(NCgenio)      /* from putgetg.c */
 #define NC_var_shape      HNAME(NC_var_shape) /* from var.c */
@@ -294,8 +291,6 @@ HDFLIBAPI int NC_xlen_dim(NC_dim **dpp);
 HDFLIBAPI int NC_xlen_iarray(NC_iarray *iarray);
 HDFLIBAPI int NC_xlen_string(NC_string *cdfstr);
 HDFLIBAPI int NC_xlen_var(NC_var **vpp);
-
-HDFLIBAPI char *NCmemset(char *s, int c, int n);
 
 HDFLIBAPI void NC_arrayfill(void *lo, size_t len, nc_type type);
 HDFLIBAPI void NC_copy_arrayvals(char *target, NC_array *array);
@@ -326,7 +321,6 @@ HDFLIBAPI bool_t xdr_NC_var(XDR *xdrs, NC_var **vpp);
 HDFLIBAPI size_t NC_typelen(nc_type type);
 
 HDFLIBAPI NC        *NC_check_id(int cdfid);
-HDFLIBAPI NC        *NC_dup_cdf(const char *name, int mode, NC *old);
 HDFLIBAPI NC        *NC_new_cdf(const char *name, int mode);
 HDFLIBAPI NC_array  *NC_new_array(nc_type type, unsigned count, const void *values);
 HDFLIBAPI NC_array  *NC_re_array(NC_array *old, nc_type type, unsigned count, const void *values);
@@ -342,7 +336,6 @@ HDFLIBAPI int        NCvario(NC *handle, int varid, const long *start, const lon
 HDFLIBAPI bool_t     NCcoordck(NC *handle, NC_var *vp, const long *coords);
 HDFLIBAPI bool_t     xdr_NCvshort(XDR *xdrs, unsigned which, short *values);
 HDFLIBAPI bool_t     NC_dcpy(XDR *target, XDR *source, long nbytes);
-HDFLIBAPI int        NCxdrfile_sync(XDR *xdrs);
 
 HDFLIBAPI int NCxdrfile_create(XDR *xdrs, const char *path, int ncmode);
 
@@ -407,7 +400,6 @@ HDFLIBAPI int NC_get_systemlimit(void);
 
 HDFLIBAPI int NC_get_numopencdfs(void);
 
-/* CDF stuff. don't need anymore? -GV */
 HDFLIBAPI nc_type cdf_unmap_type(int type);
 
 HDFLIBAPI bool_t nssdc_read_cdf(XDR *xdrs, NC **handlep);

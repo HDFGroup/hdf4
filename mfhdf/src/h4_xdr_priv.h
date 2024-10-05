@@ -111,7 +111,6 @@ HDFLIBAPI bool_t h4_xdr_double(XDR *, double *);
 
 /* XDR file manipulation */
 HDFLIBAPI int  h4_xdr_create(XDR *xdrs, int fd, int fmode, enum xdr_op op);
-HDFLIBAPI int  h4_xdr_sync(XDR *xdrs);
 HDFLIBAPI void h4_xdr_destroy(XDR *);
 
 HDFLIBAPI void h4_xdr_setup_nofile(XDR *xdrs, int ncop);

@@ -367,63 +367,6 @@ done:
     return ret_value;
 } /* NC_new_cdf */
 
-/*
- * Duplicate a description structure.
- * Can only be called for 'old' extant on disk, eg, old in DATA mode.
- */
-NC *
-NC_dup_cdf(const char *name, int mode, NC *old)
-{
-    NC *cdf       = NULL;
-    NC *ret_value = NULL;
-
-    cdf = malloc(sizeof(NC));
-    if (cdf == NULL) {
-        nc_serror("NC_dup_cdf");
-        HGOTO_FAIL(NULL);
-    }
-
-    cdf->flags = old->flags | NC_INDEF;
-
-    cdf->xdrs = malloc(sizeof(XDR));
-    if (cdf->xdrs == NULL) {
-        nc_serror("NC_dup_cdf: xdrs");
-        HGOTO_FAIL(NULL);
-    }
-
-    cdf->dims      = NULL;
-    cdf->attrs     = NULL;
-    cdf->vars      = NULL;
-    cdf->begin_rec = 0;
-    cdf->recsize   = 0;
-    cdf->numrecs   = 0;
-
-    cdf->file_type = old->file_type;
-
-    if (NCxdrfile_create(cdf->xdrs, name, mode) < 0)
-        HGOTO_FAIL(NULL);
-
-    old->xdrs->x_op = XDR_DECODE;
-    if (!xdr_cdf(old->xdrs, &cdf))
-        HGOTO_FAIL(NULL);
-    if (NC_computeshapes(cdf) == -1)
-        HGOTO_FAIL(NULL);
-
-    ret_value = cdf;
-
-done:
-    if (ret_value == NULL) {
-        if (cdf != NULL) { /* free up allocated structures */
-            free(cdf->xdrs);
-
-            NC_free_xcdf(cdf); /* don't catch error here */
-            free(cdf);
-        }
-    }
-
-    return ret_value;
-}
-
 bool_t
 xdr_cdf(XDR *xdrs, NC **handlep)
 {

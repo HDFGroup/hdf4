@@ -882,12 +882,6 @@ ncsetfill(int id, int fillmode)
 }
 
 int
-NCxdrfile_sync(XDR *xdrs)
-{
-    return h4_xdr_sync(xdrs);
-}
-
-int
 NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
 {
     int         fmode;

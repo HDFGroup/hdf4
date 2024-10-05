@@ -668,28 +668,6 @@ h4_xdr_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
 }
 
 /*
- * Flush the I/O buffer to the file
- */
-int
-h4_xdr_sync(XDR *xdrs)
-{
-    biobuf *biop = (biobuf *)xdrs->x_private;
-    if (biop->isdirty) {
-        /* Flush */
-        if (bio_write_page(biop) < 0)
-            return -1;
-    }
-
-    biop->nwrote = 0; /* Force seek in bio_read_page */
-
-    /* Read it in */
-    if (bio_read_page(biop) < 0)
-        return -1;
-
-    return biop->cnt;
-}
-
-/*
  * Destroy a POSIX XDR stream
  *
  * Cleans up after h4_xdr_create()
