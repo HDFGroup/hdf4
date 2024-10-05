@@ -461,8 +461,7 @@ xdr_NCv1data(XDR *xdrs, unsigned long where, nc_type type, uint8_t *values)
         case NC_SHORT:
             return xdr_NCvshort(xdrs, (unsigned)rem / 2, (short *)values);
         case NC_LONG:
-            /* nclong is defined to a 32-bit integer type in nc_priv.h */
-            return h4_xdr_int(xdrs, (nclong *)values);
+            return h4_xdr_int(xdrs, (int32_t *)values);
         case NC_FLOAT:
             return h4_xdr_float(xdrs, (float *)values);
         case NC_DOUBLE:
@@ -1498,7 +1497,7 @@ xdr_NCvdata(XDR *xdrs, unsigned long where, nc_type type, unsigned count, uint8_
             return TRUE;
         case NC_LONG:
             xdr_NC_fnct = h4_xdr_int;
-            szof        = sizeof(nclong);
+            szof        = sizeof(int32_t);
             break;
         case NC_FLOAT:
             xdr_NC_fnct = h4_xdr_float;

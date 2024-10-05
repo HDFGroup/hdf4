@@ -66,7 +66,7 @@ NC_typelen(nc_type type)
         case NC_SHORT:
             return sizeof(short);
         case NC_LONG:
-            return sizeof(nclong);
+            return sizeof(int32_t);
         case NC_FLOAT:
             return sizeof(float);
         case NC_DOUBLE:
@@ -103,7 +103,7 @@ nctypelen(nc_type type)
         case NC_SHORT:
             return sizeof(short);
         case NC_LONG:
-            return sizeof(nclong);
+            return sizeof(int32_t);
         case NC_FLOAT:
             return sizeof(float);
         case NC_DOUBLE:
@@ -141,8 +141,8 @@ NC_arrayfill(void *low, size_t len, nc_type type)
             break;
         case NC_LONG:
             while (lo < hi) {
-                *((nclong *)lo) = FILL_LONG;
-                lo += sizeof(nclong);
+                *((int32_t *)lo) = FILL_LONG;
+                lo += sizeof(int32_t);
             }
             break;
         case NC_FLOAT:

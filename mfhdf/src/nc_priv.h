@@ -185,7 +185,7 @@ typedef int nc_type;
 #define NC_BYTE        1
 #define NC_CHAR        2
 #define NC_SHORT       3
-#define NC_LONG        4 /* Use int32_t on modern systems */
+#define NC_LONG        4 /* Maps to a 32-bit signed integer (int32_t) */
 #define NC_FLOAT       5
 #define NC_DOUBLE      6
 /* private */
@@ -195,12 +195,6 @@ typedef int nc_type;
 #define NC_DIMENSION 10
 #define NC_VARIABLE  11
 #define NC_ATTRIBUTE 12
-
-/*
- * Variables/attributes of type NC_LONG should use the C type 'nclong',
- * which must map to a 32-bit integer.
- */
-typedef int32_t nclong;
 
 /*
  * Global NetCDF error status variable
