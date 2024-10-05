@@ -318,23 +318,10 @@ HDFLIBAPI int ncopen    (
     const char*    path,
     int        mode
 );
-HDFLIBAPI int ncredef    (
-    int        cdfid
-);
 HDFLIBAPI int ncendef    (
     int        cdfid
 );
 HDFLIBAPI int ncclose    (
-    int        cdfid
-);
-HDFLIBAPI int ncinquire    (
-    int        cdfid,
-    int*    ndims,
-    int*    nvars,
-    int*    natts,
-    int*    recdim
-);
-HDFLIBAPI int ncsync    (
     int        cdfid
 );
 HDFLIBAPI int ncabort    (
@@ -345,20 +332,11 @@ HDFLIBAPI int ncdimdef    (
     const char*    name,
     long    length
 );
-HDFLIBAPI int ncdimid    (
-    int        cdfid,
-    const char*    name
-);
 HDFLIBAPI int ncdiminq    (
     int        cdfid,
     int        dimid,
     char*    name,
     long*    length
-);
-HDFLIBAPI int ncdimrename    (
-    int        cdfid,
-    int        dimid,
-    const char*    name
 );
 HDFLIBAPI int ncvardef    (
     int        cdfid,
@@ -440,11 +418,6 @@ HDFLIBAPI int ncvargetg    (
     const long*    imap,
     void*    values
 );
-HDFLIBAPI int ncvarrename    (
-    int        cdfid,
-    int        varid,
-    const char*    name
-);
 HDFLIBAPI int ncattput    (
     int        cdfid,
     int        varid,
@@ -452,43 +425,6 @@ HDFLIBAPI int ncattput    (
     nc_type    datatype,
     int        len,
     const void*    value
-);
-HDFLIBAPI int ncattinq    (
-    int        cdfid,
-    int        varid,
-    const char*    name,
-    nc_type*    datatype,
-    int*    len
-);
-HDFLIBAPI int ncattget    (
-    int        cdfid,
-    int        varid,
-    const char*    name,
-    void*    value
-);
-HDFLIBAPI int ncattcopy    (
-    int        incdf,
-    int        invar,
-    const char*    name,
-    int        outcdf,
-    int        outvar
-);
-HDFLIBAPI int ncattname    (
-    int        cdfid,
-    int        varid,
-    int        attnum,
-    char*    name
-);
-HDFLIBAPI int ncattrename    (
-    int        cdfid,
-    int        varid,
-    const char*    name,
-    const char*    newname
-);
-HDFLIBAPI int ncattdel    (
-    int        cdfid,
-    int        varid,
-    const char*    name
 );
 HDFLIBAPI int nctypelen    (
     nc_type    datatype

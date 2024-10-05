@@ -424,47 +424,6 @@ done:
     return ret_value;
 }
 
-int
-ncinquire(int cdfid, int *ndimsp, int *nvarsp, int *nattrsp, int *xtendimp)
-{
-    NC *handle;
-
-    cdf_routine_name = "ncinquire";
-
-    handle = NC_check_id(cdfid);
-    if (handle == NULL)
-        return -1;
-
-    if (nvarsp != NULL)
-        *nvarsp = (handle->vars != NULL) ? handle->vars->count : 0;
-    if (nattrsp != NULL)
-        *nattrsp = (handle->attrs != NULL) ? handle->attrs->count : 0;
-    if (handle->dims != NULL) {
-        NC_dim **dp;
-
-        if (ndimsp != NULL)
-            *ndimsp = handle->dims->count;
-        if (xtendimp != NULL) {
-            *xtendimp = -1;
-
-            dp = (NC_dim **)handle->dims->values;
-            for (unsigned ii = 0; ii < handle->dims->count; ii++, dp++) {
-                if ((*dp)->size == NC_UNLIMITED) {
-                    *xtendimp = ii;
-                }
-            }
-        }
-    }
-    else {
-        if (ndimsp != NULL)
-            *ndimsp = 0;
-        if (xtendimp != NULL)
-            *xtendimp = -1;
-    }
-
-    return cdfid;
-}
-
 bool_t
 xdr_cdf(XDR *xdrs, NC **handlep)
 {

@@ -34,16 +34,13 @@
 /* API calls */
 #define nccreate    HNAME(nccreate)         /* used in src - mfsd.c */
 #define ncopen      HNAME(ncopen)           /* used in src - mfsd.c */
-#define ncredef     HNAME(ncredef)          
 #define ncendef     HNAME(ncendef)
 #define ncclose     HNAME(ncclose)          /* used in src - mfsd.c */
-#define ncinquire   HNAME(ncinquire)
-#define ncsync      HNAME(ncsync)
 #define ncabort     HNAME(ncabort)          /* used in src - file.c */
 #define ncdimdef    HNAME(ncdimdef)
-#define ncdimid     HNAME(ncdimid)
 #define ncdiminq    HNAME(ncdiminq)
-#define ncdimrename HNAME(ncdimrename)
+
+/* The ncvar* calls are used in a bunch of tests - can these be removed? */
 #define ncvardef    HNAME(ncvardef)
 #define ncvarid     HNAME(ncvarid)
 #define ncvarinq    HNAME(ncvarinq)
@@ -55,14 +52,8 @@
 #define ncvargets   HNAME(ncvargets)
 #define ncvarputg   HNAME(ncvarputg)
 #define ncvargetg   HNAME(ncvargetg)
-#define ncvarrename HNAME(ncvarrename)
+
 #define ncattput    HNAME(ncattput)
-#define ncattinq    HNAME(ncattinq)
-#define ncattget    HNAME(ncattget)
-#define ncattcopy   HNAME(ncattcopy)
-#define ncattname   HNAME(ncattname)
-#define ncattrename HNAME(ncattrename)
-#define ncattdel    HNAME(ncattdel)
 #define nctypelen   HNAME(nctypelen)        /* used in src - array.c, nssdc.c, putget.c */
 #define ncsetfill   HNAME(ncsetfill)        /* used in src - mfsd.c */
 
