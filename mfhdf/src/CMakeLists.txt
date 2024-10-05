@@ -27,7 +27,6 @@ set (HDF4_MFHDF_SRC_CSRCS
 )
 
 set (HDF4_MFHDF_SRC_INSTALL_CHDRS
-    ${HDF4_MFHDF_SRC_SOURCE_DIR}/hdf2netcdf.h
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/hdf4_netcdf.h
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/mfdatainfo.h
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/mfhdf.h

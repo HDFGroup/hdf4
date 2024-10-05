@@ -85,9 +85,8 @@ fi
 
 include_file=(
 dffunc.f90 dffunc.inc H4api_adpt.h df.h h4config.h hbitio.h hcomp.h hdatainfo.h
-hdf2netcdf.h hdf.f90 hdf.h hdf.inc herr.h hfile.h hlimits.h hntdefs.h hproto_fortran.h hproto.h
-htags.h mfan.h mfdatainfo.h mffunc.f90 mffunc.inc mfgr.h mfhdf.h netcdf.f90 netcdf.h
-netcdf.inc vg.h)
+hdf.f90 hdf.h hdf.inc herr.h hfile.h hlimits.h hntdefs.h hproto_fortran.h hproto.h
+htags.h mfan.h mfdatainfo.h mffunc.f90 mffunc.inc mfgr.h mfhdf.h netcdf.f90 vg.h)
 
 lib_file=(libdf.a libdf.la libhdf4.settings libmfhdf.a libmfhdf.la)
 
