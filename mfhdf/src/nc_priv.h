@@ -14,18 +14,21 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef MFH4_LOCAL_NC_H
-#define MFH4_LOCAL_NC_H
+#ifndef MFH4_NC_PRIV_H
+#define MFH4_NC_PRIV_H
 
 #include <inttypes.h>
 
 #include "hdf_priv.h"
 #include "H4api_adpt.h"
 
-/* Prepend 'sd_' to all NetCDF function names to avoid name clash when the
+/* Prepend 'H4_' to all NetCDF function names to avoid name clash when the
  * HDF and NetCDF headers are included in the same application.
+ *
+ * These could be manually renamed and the HNAME macro eliminated, but that
+ * would just make the code harder to read.
  */
-#define HNAME(x) sd_##x
+#define HNAME(x) H4_##x
 
 /* Variables */
 #define ncerr       HNAME(ncerr)
@@ -513,86 +516,54 @@ HDFLIBAPI int        NCvario(NC *handle, int varid, const long *start, const lon
 HDFLIBAPI bool_t     NCcoordck(NC *handle, NC_var *vp, const long *coords);
 HDFLIBAPI bool_t     xdr_NCvshort(XDR *xdrs, unsigned which, short *values);
 HDFLIBAPI bool_t     NC_dcpy(XDR *target, XDR *source, long nbytes);
+HDFLIBAPI int        NCxdrfile_create(XDR *xdrs, const char *path, int ncmode);
 
-HDFLIBAPI int NCxdrfile_create(XDR *xdrs, const char *path, int ncmode);
-
-HDFLIBAPI int hdf_fill_array(uint8_t *storage, int32 len, uint8_t *value, int32 type);
-
-HDFLIBAPI int hdf_get_data(NC *handle, NC_var *vp);
-
-HDFLIBAPI int32 hdf_get_vp_aid(NC *handle, NC_var *vp);
-
-HDFLIBAPI int hdf_map_type(nc_type);
-
-HDFLIBAPI nc_type hdf_unmap_type(int);
-
-HDFLIBAPI int hdf_get_ref(NC *, int);
-
-HDFLIBAPI int hdf_create_dim_vdata(XDR *, NC *, NC_dim *);
-
-HDFLIBAPI int hdf_create_compat_dim_vdata(XDR *xdrs, NC *handle, NC_dim *dim, int32 dimval_ver);
-
-HDFLIBAPI int hdf_write_attr(XDR *, NC *, NC_attr **);
-
-HDFLIBAPI int32 hdf_write_dim(XDR *, NC *, NC_dim **, int32);
-
-HDFLIBAPI int32 hdf_write_var(XDR *, NC *, NC_var **);
-
-HDFLIBAPI int hdf_write_xdr_cdf(XDR *, NC **);
-
-HDFLIBAPI int hdf_conv_scales(NC **);
-
-HDFLIBAPI int hdf_read_dims(XDR *, NC *, int32);
-
+HDFLIBAPI int       hdf_fill_array(uint8_t *storage, int32 len, uint8_t *value, int32 type);
+HDFLIBAPI int       hdf_get_data(NC *handle, NC_var *vp);
+HDFLIBAPI int32     hdf_get_vp_aid(NC *handle, NC_var *vp);
+HDFLIBAPI int       hdf_map_type(nc_type);
+HDFLIBAPI nc_type   hdf_unmap_type(int);
+HDFLIBAPI int       hdf_get_ref(NC *, int);
+HDFLIBAPI int       hdf_create_dim_vdata(XDR *, NC *, NC_dim *);
+HDFLIBAPI int       hdf_create_compat_dim_vdata(XDR *xdrs, NC *handle, NC_dim *dim, int32 dimval_ver);
+HDFLIBAPI int       hdf_write_attr(XDR *, NC *, NC_attr **);
+HDFLIBAPI int32     hdf_write_dim(XDR *, NC *, NC_dim **, int32);
+HDFLIBAPI int32     hdf_write_var(XDR *, NC *, NC_var **);
+HDFLIBAPI int       hdf_write_xdr_cdf(XDR *, NC **);
+HDFLIBAPI int       hdf_conv_scales(NC **);
+HDFLIBAPI int       hdf_read_dims(XDR *, NC *, int32);
 HDFLIBAPI NC_array *hdf_read_attrs(XDR *, NC *, int32);
-
-HDFLIBAPI int hdf_read_vars(XDR *, NC *, int32);
-
-HDFLIBAPI int hdf_read_xdr_cdf(XDR *, NC **);
-
-HDFLIBAPI int hdf_xdr_cdf(XDR *, NC **);
-
-HDFLIBAPI int hdf_vg_clobber(NC *, int);
-
-HDFLIBAPI int hdf_cdf_clobber(NC *);
-
-HDFLIBAPI int hdf_close(NC *);
-
-HDFLIBAPI int hdf_read_sds_dims(NC *);
-
-HDFLIBAPI int hdf_read_sds_cdf(XDR *, NC **);
+HDFLIBAPI int       hdf_read_vars(XDR *, NC *, int32);
+HDFLIBAPI int       hdf_read_xdr_cdf(XDR *, NC **);
+HDFLIBAPI int       hdf_xdr_cdf(XDR *, NC **);
+HDFLIBAPI int       hdf_vg_clobber(NC *, int);
+HDFLIBAPI int       hdf_cdf_clobber(NC *);
+HDFLIBAPI int       hdf_close(NC *);
+HDFLIBAPI int       hdf_read_sds_dims(NC *);
+HDFLIBAPI int       hdf_read_sds_cdf(XDR *, NC **);
 
 HDFLIBAPI int SDPfreebuf(void);
 
 HDFLIBAPI int NCgenio(NC *handle, int varid, const long *start, const long *count, const long *stride,
                       const long *imap, void *values);
-
 HDFLIBAPI int NC_var_shape(NC_var *var, NC_array *dims);
-
 HDFLIBAPI int NC_reset_maxopenfiles(int req_max);
-
 HDFLIBAPI int NC_get_maxopenfiles(void);
-
 HDFLIBAPI int NC_get_systemlimit(void);
-
 HDFLIBAPI int NC_get_numopencdfs(void);
 
 HDFLIBAPI nc_type cdf_unmap_type(int type);
 
 HDFLIBAPI bool_t nssdc_read_cdf(XDR *xdrs, NC **handlep);
-
 HDFLIBAPI bool_t nssdc_write_cdf(XDR *xdrs, NC **handlep);
-
 HDFLIBAPI bool_t nssdc_xdr_cdf(XDR *xdrs, NC **handlep);
 
 HDFLIBAPI int HDiscdf(const char *filename);
-
 HDFLIBAPI int HDisnetcdf(const char *filename);
-
 HDFLIBAPI int HDisnetcdf64(const char *filename);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* MFH4_LOCAL_NC_H */
+#endif /* MFH4_NC_PRIV_H */
