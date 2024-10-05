@@ -1223,7 +1223,6 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/hrepack/hrepack.sh
                  mfhdf/hrepack/hrepack_all.sh
                  mfhdf/src/Makefile
-                 mfhdf/nctest/Makefile
                  mfhdf/test/Makefile
                  mfhdf/test/srcdir_str.h
                  java/Makefile
