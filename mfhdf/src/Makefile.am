@@ -30,7 +30,7 @@ endif
 
 libmfhdf_la_LIBADD = $(top_builddir)/hdf/src/libdf.la
 
-include_HEADERS = mfhdf.h hdf4_netcdf.h mfdatainfo.h
+include_HEADERS = mfhdf.h mfdatainfo.h
 
 # The following is a workaround. Since Fortran is included in this 
 # Makefile.am, automake will always try to use the Fortran linker, even when

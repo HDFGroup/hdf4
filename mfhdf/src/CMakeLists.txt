@@ -11,6 +11,7 @@ set (HDF4_MFHDF_SRC_CSRCS
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/cdf.c
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/dim.c
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/file.c
+    ${HDF4_MFHDF_SRC_SOURCE_DIR}/h4_xdr.c
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/hdfsds.c
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/iarray.c
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/error.c
@@ -23,11 +24,9 @@ set (HDF4_MFHDF_SRC_CSRCS
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/sharray.c
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/string.c
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/var.c
-    ${HDF4_MFHDF_SRC_SOURCE_DIR}/h4_xdr.c
 )
 
 set (HDF4_MFHDF_SRC_INSTALL_CHDRS
-    ${HDF4_MFHDF_SRC_SOURCE_DIR}/hdf4_netcdf.h
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/mfdatainfo.h
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/mfhdf.h
 )
@@ -36,6 +35,7 @@ set (HDF4_MFHDF_SRC_CHDRS
     ${HDF4_MFHDF_SRC_INSTALL_CHDRS}
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/error_priv.h
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/h4_xdr_priv.h
+    ${HDF4_MFHDF_SRC_SOURCE_DIR}/hdf4_netcdf.h
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/mf_priv.h
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/nc_priv.h
 )
