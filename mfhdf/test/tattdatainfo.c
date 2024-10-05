@@ -149,7 +149,7 @@ test_attrs()
 
     for (ii = 0; ii < LENGTH2_X; ii++)
         for (jj = 0; jj < LENGTH2_Y; jj++)
-            data2[ii][jj] = 500.50F * (ii + jj);
+            data2[ii][jj] = 500.50F * (float)(ii + jj);
 
     starts[0] = 0;
     starts[1] = 0;
@@ -228,7 +228,7 @@ test_attrs()
 /* to generate data set's data */
 static void gen2Dfloat(int height, int width, float *data);
 /* to verify data of labels and descriptions */
-static int check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label, char *desc);
+static int check_lab_desc(const char *fname, uint16 tag, uint16 ref, char *label, char *desc);
 
 /****************************************************************
 **
@@ -255,7 +255,7 @@ gen2Dfloat(int height, int width, float *data)
 **
 ****************************************************************/
 static int
-check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label, char *desc)
+check_lab_desc(const char *fname, uint16 tag, uint16 ref, char *label, char *desc)
 {
     int32 inlablen, indesclen, ret;
     char  inlabel[MAXLEN_LAB], *indesc;
@@ -335,7 +335,7 @@ add_sdfile_annotations()
 
     ret = DFANgetfidlen(file_id, ISFIRST);
     CHECK(ret, FAIL, "DFANgetfidlen");
-    VERIFY(ret, strlen(labels[0]), "DFANgetfidlen first file label");
+    VERIFY(ret, (int)strlen(labels[0]), "DFANgetfidlen first file label");
 
     ret = DFANgetfid(file_id, tempstr, MAXLEN_LAB, ISFIRST);
     CHECK(ret, FAIL, "DFANgetfid");
@@ -343,7 +343,7 @@ add_sdfile_annotations()
 
     ret = DFANgetfidlen(file_id, NOTFIRST);
     CHECK(ret, FAIL, "DFANgetfidlen");
-    VERIFY(ret, strlen(labels[1]), "DFANgetfidlen second file label");
+    VERIFY(ret, (int)strlen(labels[1]), "DFANgetfidlen second file label");
 
     ret = DFANgetfid(file_id, tempstr, MAXLEN_LAB, NOTFIRST);
     CHECK(ret, FAIL, "DFANgetfid");
@@ -353,7 +353,7 @@ add_sdfile_annotations()
 
     ret = DFANgetfdslen(file_id, ISFIRST);
     CHECK(ret, FAIL, "DFANgetfdslen");
-    VERIFY(ret, strlen(descs[0]), "DFANgetfdslen first file description");
+    VERIFY(ret, (int)strlen(descs[0]), "DFANgetfdslen first file description");
 
     ret = DFANgetfds(file_id, tempstr, MAXLEN_DESC, ISFIRST);
     CHECK(ret, FAIL, "DFANgetfds");
@@ -361,7 +361,7 @@ add_sdfile_annotations()
 
     ret = DFANgetfdslen(file_id, NOTFIRST);
     CHECK(ret, FAIL, "DFANgetfdslen");
-    VERIFY(ret, strlen(descs[1]), "DFANgetfdslen second file description");
+    VERIFY(ret, (int)strlen(descs[1]), "DFANgetfdslen second file description");
 
     ret = DFANgetfds(file_id, tempstr, MAXLEN_DESC, NOTFIRST);
     CHECK(ret, FAIL, "DFANgetfds");
@@ -532,7 +532,7 @@ get_ann_datainfo(int32 id, ann_type annot_type, int32 *chk_offsets, int32 *chk_l
         if (lengtharray == NULL)
             exit(-1);
 
-        num_annots = SDgetanndatainfo(id, annot_type, num_annots, offsetarray, lengtharray);
+        num_annots = SDgetanndatainfo(id, annot_type, (unsigned)num_annots, offsetarray, lengtharray);
         CHECK(num_annots, FAIL, "get_ann_datainfo: SDgetanndatainfo");
 
         /* Verify offsets and lengths of annotations */
@@ -722,6 +722,11 @@ test_dfsdattrs()
     uncomment these when the calls to DFSDsetdimscale are uncommented.
     */
 
+    /* Temp strings to avoid const warnings */
+    char temp_HDF_LongName[] = _HDF_LongName;
+    char temp_HDF_Format[]   = _HDF_Format;
+    char temp_HDF_CoordSys[] = _HDF_CoordSys;
+
     rank    = 2;
     dims[0] = XX;
     dims[1] = YY;
@@ -809,7 +814,7 @@ test_dfsdattrs()
     CHECK(sdsid, FAIL, "SDselect");
 
     /* Test SDgetoldattdatainfo with dataset's attribute string _HDF_LongName */
-    info_count = SDgetoldattdatainfo(0, sdsid, _HDF_LongName, &offset, &length);
+    info_count = SDgetoldattdatainfo(0, sdsid, temp_HDF_LongName, &offset, &length);
     CHECK(info_count, FAIL, "SDgetoldattdatainfo");
     status = readnoHDF_char(OLDATTFILE, offset, length, datalabel);
     CHECK(status, FAIL, "readnoHDF_char");
@@ -817,7 +822,7 @@ test_dfsdattrs()
     /* Test with attribute string _HDF_LongName of dataset's first dimension */
     dimid = SDgetdimid(sdsid, 0);
     CHECK(dimid, FAIL, "SDgetdimid");
-    info_count = SDgetoldattdatainfo(dimid, sdsid, _HDF_LongName, &offset, &length);
+    info_count = SDgetoldattdatainfo(dimid, sdsid, temp_HDF_LongName, &offset, &length);
     CHECK(info_count, FAIL, "SDgetoldattdatainfo");
     /* This dimension doesn't have an _HDF_LongName attribute, so length must be 0,
         and readnoHDF_char will not be needed to verify the attribute values */
@@ -826,13 +831,13 @@ test_dfsdattrs()
     /* Test with attribute string _HDF_Format of dataset's second dimension */
     dimid = SDgetdimid(sdsid, 1);
     CHECK(dimid, FAIL, "SDgetdimid");
-    info_count = SDgetoldattdatainfo(dimid, sdsid, _HDF_Format, &offset, &length);
+    info_count = SDgetoldattdatainfo(dimid, sdsid, temp_HDF_Format, &offset, &length);
     CHECK(info_count, FAIL, "SDgetoldattdatainfo");
     status = readnoHDF_char(OLDATTFILE, offset, length, dimfmts[1]);
     CHECK(status, FAIL, "readnoHDF_char");
 
     /* Test with dataset's attribute string _HDF_CoordSys */
-    info_count = SDgetoldattdatainfo(0, sdsid, _HDF_CoordSys, &offset, &length);
+    info_count = SDgetoldattdatainfo(0, sdsid, temp_HDF_CoordSys, &offset, &length);
     CHECK(info_count, FAIL, "SDgetoldattdatainfo");
     status = readnoHDF_char(OLDATTFILE, offset, length, coordsys);
     CHECK(status, FAIL, "readnoHDF_char");
