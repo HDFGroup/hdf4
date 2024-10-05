@@ -42,8 +42,8 @@
  */
 #define NC_OLD_FILLVALUES    0
 
-/*
- *     Fill values
+/* Fill values
+ *
  * These values are stuffed into newly allocated space as appropriate.
  * The hope is that one might use these to notice that a particular datum
  * has not been set.
@@ -51,7 +51,7 @@
 
 #define FILL_BYTE    ((char)-127)        /* Largest Negative value */
 #define FILL_CHAR    ((char)0)
-#define FILL_SHORT    ((short)-32767)
+#define FILL_SHORT   ((short)-32767)
 #define FILL_LONG    ((long)-2147483647)
 
 #if !NC_OLD_FILLVALUES
@@ -90,49 +90,24 @@
  *      alignment rules.
  */
 
-    /* Direct assignment. All cases should be mutually exclusive */
+/* Direct assignment. All cases should be mutually exclusive */
 
-#ifdef notdef /* you might want to try these, on an IEEE machine */
-#define XDR_D_INFINITY    1.797693134862315900e+308
-#define XDR_F_INFINITY    3.40282357e+38
-#endif
-
-#ifdef __STDC__
-    /* Use of a union, assumes IEEE representation and 1 byte unsigned char */
-
-#ifndef    XDR_D_INFINITY
+/* Use of a union, assumes IEEE representation and 1 byte unsigned char */
+#ifndef XDR_D_INFINITY
 #define USE_D_UNION
      union xdr_d_union {unsigned char bb[8]; double dd;} ;
      extern union xdr_d_union xdr_d_infs ;  /* instantiated in array.c */
 #define XDR_D_INFINITY    (xdr_d_infs.dd)
 #endif /* !XDR_D_INFINITY */
 
-#ifndef    XDR_F_INFINITY
+#ifndef XDR_F_INFINITY
 #define USE_F_UNION
      union xdr_f_union {unsigned char bb[4]; float ff;} ;
      extern union xdr_f_union xdr_f_infs ;  /* instantiated in array.c */
 #define  XDR_F_INFINITY    (xdr_f_infs.ff)
 #endif /* !XDR_F_INFINITY */
 
-
-#else /* __STDC__ */
-    /* Use of a pointer pun, assumes IEEE representation, 4 byte long */
-
-#ifndef    XDR_D_INFINITY
-#define USE_D_LONG_PUN
-     extern long xdr_d_infinity[] ;  /* instantiated in array.c */
-#define XDR_D_INFINITY *(double *)xdr_d_infinity
-#endif /* !XDR_D_INFINITY */
-
-#ifndef    XDR_F_INFINITY
-#define USE_F_LONG_PUN
-     extern long xdr_f_infinity ;  /* instantiated in array.c */
-#define XDR_F_INFINITY *((float *)&xdr_f_infinity)
-#endif /* !XDR_F_INFINITY */
-
-#endif /* __STDC__ */
-
-/* End of INFINITY           section */
+/* End of INFINITY section */
 
 #define FILL_FLOAT    XDR_F_INFINITY    /* IEEE Infinity */
 #define FILL_DOUBLE    XDR_D_INFINITY
