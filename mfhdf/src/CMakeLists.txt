@@ -3,12 +3,7 @@ project (HDF4_MFHDF_SRC C)
 
 if (WIN32)
   set (H4_WINDOWS_INCLUDE_FILE "#include <hdf.h>")
-  set (NETCDF_EXTERN HDFLIBAPI)
-else ()
-  set (NETCDF_EXTERN extern)
 endif ()
-
-set (NC_OLD_FILLVALUES 0)
 
 set (HDF4_MFHDF_SRC_CSRCS
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/array.c

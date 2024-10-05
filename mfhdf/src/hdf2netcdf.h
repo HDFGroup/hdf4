@@ -16,16 +16,10 @@
 
 #include "hdf.h"
 
-/* If we disable the HDF version of the netCDF API (ncxxx interface)
- * we need to rename all the relevant function names
- * In this version we exclude renaming the netCDF fortran API so
- * the MFHDF side must be compiled without fortran support.
+/* Prepend 'sd_' to all NetCDF function names to avoid name clash when the
+ * HDF and NetCDF headers are included in the same application.
  */
-#define HNAME(x) sd_##x /* pre-append 'sd_' to all netCDF fcn names */
-
-/* If using the real netCDF library and API (use --disable-netcdf configure flag))
-   need to mangle the HDF versions of netCDF API function names
-   to not conflict w/ original netCDF ones */
+#define HNAME(x) sd_##x 
 
 /* Variables */
 #define ncerr       HNAME(ncerr)

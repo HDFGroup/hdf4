@@ -22,25 +22,6 @@
 
 #include "H4api_adpt.h"
 
-/*
- * The following macro is provided for backward compatibility only.  If you
- * are a new user of netCDF, then you may safely ignore it.  If, however,
- * you have an existing archive of netCDF files that use default
- * floating-point fill values, then you should know that the definition of
- * the default floating-point fill values changed with version 2.3 of the
- * netCDF package.  Prior to this release, the default floating-point fill
- * values were not very portable:  their correct behavior depended not only
- * upon the particular platform, but also upon the compilation
- * environment.  This led to the definition of new, default floating-point
- * fill values that are portable across all platforms and compilation
- * environments.  If you wish, however, to obtain the old, non-portable
- * floating-point fill values, then the following macro should have a true
- * value PRIOR TO BUILDING THE netCDF LIBRARY.
- *
- * Implementation details are contained in the section below on fill values.
- */
-#define NC_OLD_FILLVALUES 0
-
 /* Fill values
  *
  * These values are stuffed into newly allocated space as appropriate.
@@ -53,71 +34,8 @@
 #define FILL_SHORT ((short)-32767)
 #define FILL_LONG  ((long)-2147483647)
 
-#if !NC_OLD_FILLVALUES
-
 #define FILL_FLOAT  9.9692099683868690e+36F /* near 15 * 2^119 */
 #define FILL_DOUBLE 9.9692099683868690e+36
-
-#else /* NC_OLD_FILLVALUES below */
-
-/*
- * This section is provided for backward compatibility only.  Using
- * XDR infinities for floating-point fill values has caused more problems
- * than it has solved.  We encourage you to define your own data-specific
- * fill values rather than use default ones (see `_FillValue' below).
- * If, however, you *must* use default fill values, then you should use
- * the above fill values rather than the ones in this section.
- */
-
-/*
- * XDR_F_INFINITY is a float value whose EXTERNAL (xdr)
- * representation is ieee floating infinity.
- * XDR_D_INFINITY is a double value whose EXTERNAL (xdr)
- * representation is ieee double floating point infinity.
- * These are used as default fill values below.
- *
- * This section shows three techniques for setting these:
- *  Direct assignment (vax, cray) - works for non IEEE machines
- *        Doesn't work when IEEE machines don't allow
- *      float or double constants whose values are infinity.
- *  Use of a union (preferred portable method) - should work on
- *      any ANSI compiler with IEEE floating point representations,
- *      modulo byte order and sizeof() considerations.
- *  Use of pointer puns - may work with many older compilers
- *      which don't allow initialization of unions.
- *      Often doesn't work with compilers which have strict
- *      alignment rules.
- */
-
-/* Direct assignment. All cases should be mutually exclusive */
-
-/* Use of a union, assumes IEEE representation and 1 byte unsigned char */
-#ifndef XDR_D_INFINITY
-#define USE_D_UNION
-union xdr_d_union {
-    unsigned char bb[8];
-    double        dd;
-};
-extern union xdr_d_union xdr_d_infs; /* instantiated in array.c */
-#define XDR_D_INFINITY (xdr_d_infs.dd)
-#endif /* !XDR_D_INFINITY */
-
-#ifndef XDR_F_INFINITY
-#define USE_F_UNION
-union xdr_f_union {
-    unsigned char bb[4];
-    float         ff;
-};
-extern union xdr_f_union xdr_f_infs; /* instantiated in array.c */
-#define XDR_F_INFINITY (xdr_f_infs.ff)
-#endif /* !XDR_F_INFINITY */
-
-/* End of INFINITY section */
-
-#define FILL_FLOAT  XDR_F_INFINITY /* IEEE Infinity */
-#define FILL_DOUBLE XDR_D_INFINITY
-
-#endif /* NC_OLD_FILLVALUES above */
 
 /*
  *  masks for the struct NC flags field; passed in as 'mode' arg to
