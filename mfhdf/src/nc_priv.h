@@ -39,33 +39,33 @@
 #define HNAME(x) H4_##x
 
 /* Variables */
-#define ncerr       HNAME(ncerr)
-#define ncopts      HNAME(ncopts)
+#define ncerr  HNAME(ncerr)
+#define ncopts HNAME(ncopts)
 
 /* Former public API calls */
-#define nccreate    HNAME(nccreate)         /* used in src - mfsd.c */
-#define ncopen      HNAME(ncopen)           /* used in src - mfsd.c */
-#define ncendef     HNAME(ncendef)
-#define ncclose     HNAME(ncclose)          /* used in src - mfsd.c */
-#define ncabort     HNAME(ncabort)          /* used in src - file.c */
-#define ncdimdef    HNAME(ncdimdef)
-#define ncdiminq    HNAME(ncdiminq)
+#define nccreate HNAME(nccreate) /* used in src - mfsd.c */
+#define ncopen   HNAME(ncopen)   /* used in src - mfsd.c */
+#define ncendef  HNAME(ncendef)
+#define ncclose  HNAME(ncclose) /* used in src - mfsd.c */
+#define ncabort  HNAME(ncabort) /* used in src - file.c */
+#define ncdimdef HNAME(ncdimdef)
+#define ncdiminq HNAME(ncdiminq)
 
-#define ncvardef    HNAME(ncvardef)
-#define ncvarid     HNAME(ncvarid)
-#define ncvarinq    HNAME(ncvarinq)
-#define ncvarput1   HNAME(ncvarput1)
-#define ncvarget1   HNAME(ncvarget1)
-#define ncvarput    HNAME(ncvarput)
-#define ncvarget    HNAME(ncvarget)         /* used in src - array.c */
-#define ncvarputs   HNAME(ncvarputs)
-#define ncvargets   HNAME(ncvargets)
-#define ncvarputg   HNAME(ncvarputg)
-#define ncvargetg   HNAME(ncvargetg)
+#define ncvardef  HNAME(ncvardef)
+#define ncvarid   HNAME(ncvarid)
+#define ncvarinq  HNAME(ncvarinq)
+#define ncvarput1 HNAME(ncvarput1)
+#define ncvarget1 HNAME(ncvarget1)
+#define ncvarput  HNAME(ncvarput)
+#define ncvarget  HNAME(ncvarget) /* used in src - array.c */
+#define ncvarputs HNAME(ncvarputs)
+#define ncvargets HNAME(ncvargets)
+#define ncvarputg HNAME(ncvarputg)
+#define ncvargetg HNAME(ncvargetg)
 
-#define ncattput    HNAME(ncattput)
-#define nctypelen   HNAME(nctypelen)        /* used in src - array.c, nssdc.c, putget.c */
-#define ncsetfill   HNAME(ncsetfill)        /* used in src - mfsd.c */
+#define ncattput  HNAME(ncattput)
+#define nctypelen HNAME(nctypelen) /* used in src - array.c, nssdc.c, putget.c */
+#define ncsetfill HNAME(ncsetfill) /* used in src - mfsd.c */
 
 /* Internal API calls */
 #define nc_serror         HNAME(nc_serror)
