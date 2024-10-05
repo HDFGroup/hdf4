@@ -56,7 +56,6 @@ jobs:
           cd "${{ runner.workspace }}/build"
           $GITHUB_WORKSPACE/configure \
             ${{ inputs.build_option }} \
-            --enable-netcdf \
             --enable-shared \
             --disable-fortran \
             LDFLAGS="-L/home/runner/work/hdf4/hdf4/aocc-compiler-4.2.0/lib"
@@ -121,7 +120,6 @@ jobs:
           cd "${{ runner.workspace }}/build"
           $GITHUB_WORKSPACE/configure \
             ${{ inputs.build_option }} \
-            --enable-netcdf \
             --disable-shared \
             --enable-fortran \
             LDFLAGS="-L/home/runner/work/hdf4/hdf4/aocc-compiler-4.2.0/lib"

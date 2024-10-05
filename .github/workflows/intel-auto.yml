@@ -49,7 +49,6 @@ jobs:
           cd "${{ runner.workspace }}/build"
           $GITHUB_WORKSPACE/configure \
             ${{ inputs.build_option }} \
-            --enable-netcdf \
             --enable-shared \
             --disable-fortran
 
