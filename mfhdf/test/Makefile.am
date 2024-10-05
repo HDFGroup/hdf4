@@ -15,11 +15,8 @@ AM_CPPFLAGS=$(test_INCLUDES) $(DEFINES)
 ##                              Testing                                    ##
 #############################################################################
 
-TEST_PROG = cdftest hdfnctest hdftest
-check_PROGRAMS = cdftest hdfnctest hdftest
-
-cdftest_SOURCES = cdftest.c
-cdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
+TEST_PROG = hdfnctest hdftest
+check_PROGRAMS = hdfnctest hdftest
 
 hdfnctest_SOURCES = hdfnctest.c tutils.c tncvargetfill.c tunlim.c	\
 		    tncunlim.c
