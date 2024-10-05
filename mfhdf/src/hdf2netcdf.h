@@ -17,20 +17,15 @@
 #include "hdf.h"
 
 /* If we disable the HDF version of the netCDF API (ncxxx interface)
-   (--disable-netcdf configure flag; the old way was to use -DHAVE_NETCDF compilation flag)
- ) we need to rename all the relevant function names
-   In this version we exclude renaming the netCDF fortran API so
-   the MFHDF side must be compiled without fortran support. */
-#ifndef H4_HAVE_NETCDF
+ * we need to rename all the relevant function names
+ * In this version we exclude renaming the netCDF fortran API so
+ * the MFHDF side must be compiled without fortran support.
+ */
 #define HNAME(x) sd_##x /* pre-append 'sd_' to all netCDF fcn names */
-#else                   /* !H4_HAVE_NETCDF i.e NOT USING HDF NETCDF */
-#define HNAME(x) x
-#endif /* H4_HAVE_NETCDF i.e. USING HDF NETCDF */
 
 /* If using the real netCDF library and API (use --disable-netcdf configure flag))
    need to mangle the HDF versions of netCDF API function names
    to not conflict w/ original netCDF ones */
-#ifndef H4_HAVE_NETCDF
 #define ncerr       HNAME(ncerr)
 #define ncopts      HNAME(ncopts)
 #define nccreate    HNAME(nccreate)
@@ -66,7 +61,5 @@
 #define ncattdel    HNAME(ncattdel)
 #define nctypelen   HNAME(nctypelen)
 #define ncsetfill   HNAME(ncsetfill)
-
-#endif /* !H4_HAVE_NETCDF i.e NOT USING HDF version of netCDF API */
 
 #endif /* MFH4_HDF_2_NETCDF_H */

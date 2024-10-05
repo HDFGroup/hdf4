@@ -39,11 +39,7 @@ static char mrcsid[] = "Id: cdftest.c,v 1.11 1994/01/10 23:07:27 chouck Exp ";
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef H4_HAVE_NETCDF
-#include "netcdf.h"
-#else
 #include "hdf4_netcdf.h"
-#endif
 
 #define CDFMAXSHORT 32767
 #define CDFMAXLONG  2147483647

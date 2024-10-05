@@ -23,11 +23,7 @@
 
 #include "hdf.h"
 
-#ifdef H4_HAVE_NETCDF
-#include "netcdf.h"
-#else
 #include "hdf4_netcdf.h"
-#endif
 
 #define SD_UNLIMITED        NC_UNLIMITED /* use this as marker for unlimited dimension */
 #define SD_NOFILL           NC_NOFILL

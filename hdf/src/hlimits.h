@@ -195,14 +195,12 @@ changing the class name variable declaration much easier - BMR 4/1/02*/
    constants were modified with H4 prefix to avoid conflicts with the
    real NetCDF-3 library   - EIP 9/5/07                                     */
 
-#ifdef H4_HAVE_NETCDF
 #define MAX_NC_OPEN  H4_MAX_NC_OPEN
 #define MAX_NC_DIMS  H4_MAX_NC_DIMS
 #define MAX_NC_VARS  H4_MAX_NC_VARS
 #define MAX_NC_NAME  H4_MAX_NC_NAME
 #define MAX_NC_CLASS H4_MAX_NC_CLASS
 #define MAX_VAR_DIMS H4_MAX_VAR_DIMS
-#endif
 
 /* ----------------- Constants for MFGR interface --------------------- */
 #define H4_MAX_GR_NAME 256 /* max length of a name */

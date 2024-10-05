@@ -30,11 +30,8 @@
 /* HDF4's stripped-down XDR implementation */
 #include "h4_xdr_priv.h"
 
-#ifdef H4_HAVE_NETCDF
-#include "netcdf.h" /* needed for defs of nc_type, ncvoid, ... */
-#else
+/* HDF4's name-mangled NetCDF equivalents */
 #include "hdf4_netcdf.h"
-#endif
 
 /* Constants for sizes of NC types */
 #define NC_BYTE_SIZE        1
@@ -227,7 +224,6 @@ extern "C" {
  * need to mangle the HDF versions of netCDF API function names
  * to not conflict w/ original netCDF ones
  */
-#ifndef H4_HAVE_NETCDF
 #define nc_serror         HNAME(nc_serror)
 #define NCadvise          HNAME(NCadvise)
 #define NC_computeshapes  HNAME(NC_computeshapes)
@@ -285,7 +281,6 @@ extern "C" {
 #define NCxdrfile_create  HNAME(NCxdrfile_create)
 #define NCgenio           HNAME(NCgenio)      /* from putgetg.c */
 #define NC_var_shape      HNAME(NC_var_shape) /* from var.c */
-#endif /* !H4_HAVE_NETCDF ie. NOT USING HDF version of netCDF ncxxx API */
 
 HDFLIBAPI void nc_serror(const char *fmt, ...);
 HDFLIBAPI void NCadvise(int err, const char *fmt, ...);

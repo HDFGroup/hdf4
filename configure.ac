@@ -230,37 +230,6 @@ if test "X$host_config" != "Xnone"; then
 fi
 
 ## ======================================================================
-## Checks for netCDF-2.3.2 support
-## ======================================================================
-
-# NOTE!     We disable Fortran netCDF APIs and their testing when
-#           --disable-netcdf is used to avoid conflicts
-
-AC_ARG_ENABLE([netcdf],
-              [AS_HELP_STRING([--enable-netcdf],
-                              [HDF4 builds replacement netCDF 2.3.2 API calls that are exported (e.g., ncopen()).
-                               Enabling this option uses the original netCDF names when building these functions.
-                               Disable prefixes them with 'sd_' to avoid name clashes.
-                               This does NOT disable any HDF4 functionality - this option only affects
-                               API call names.
-                               Disabling this option disables building the netCDF Fortran wrappers (they
-                               will not be built with either the original or sd_ prefixed names).
-                               [default=yes (HDF4-built netCDF API calls will be exported undecorated)]])],,
-              [enableval="yes"])
-
-case "$enableval" in
-  yes)
-    BUILD_NETCDF="yes"
-    AC_DEFINE([HAVE_NETCDF], [1], [Define if we export HDF4-built unmangled netCDF 2.3.2 API calls])
-    ;;
-  no)
-    BUILD_NETCDF="no"
-    ;;
-esac
-AM_CONDITIONAL([HDF_BUILD_NETCDF], [test "X$BUILD_NETCDF" = "Xyes"])
-AC_SUBST([BUILD_NETCDF])
-
-## ======================================================================
 ## Checks for programs
 ## ======================================================================
 
@@ -1231,10 +1200,8 @@ AC_OUTPUT
 ## Moved it here after AC_CONFIG_FILES(... mfhdf/src/netcdf.h ).
 ## Need a better and correct solution.
 ##
-if test "X$BUILD_NETCDF" != "Xyes"; then
-    echo "Renaming \"mfhdf/src/netcdf.h\" to \"mfhdf/src/hdf4_netcdf.h\" ."
-    mv mfhdf/src/netcdf.h mfhdf/src/hdf4_netcdf.h
-fi
+echo "Renaming \"mfhdf/src/netcdf.h\" to \"mfhdf/src/hdf4_netcdf.h\" ."
+mv mfhdf/src/netcdf.h mfhdf/src/hdf4_netcdf.h
 
 chmod 755 hdf/util/h4cc hdf/util/h4redeploy
 
