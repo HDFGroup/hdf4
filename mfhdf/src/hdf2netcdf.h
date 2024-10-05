@@ -66,9 +66,6 @@
 #define ncattdel    HNAME(ncattdel)
 #define nctypelen   HNAME(nctypelen)
 #define ncsetfill   HNAME(ncsetfill)
-#define ncrecinq    HNAME(ncrecinq)
-#define ncrecget    HNAME(ncrecget)
-#define ncrecput    HNAME(ncrecput)
 
 #endif /* !H4_HAVE_NETCDF i.e NOT USING HDF version of netCDF API */
 

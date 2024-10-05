@@ -497,22 +497,6 @@ HDFLIBAPI int ncsetfill    (
     int        cdfid,
     int        fillmode
 );
-HDFLIBAPI int ncrecinq        (
-    int        cdfid,
-    int*    nrecvars,
-    int*    recvarids,
-    long*    recsizes
-);
-HDFLIBAPI int ncrecget        (
-    int        cdfid,
-    long    recnum,
-    void**    datap
-);
-HDFLIBAPI int ncrecput        (
-    int        cdfid,
-    long    recnum,
-    void* * datap
-);
 #ifdef __cplusplus
 }
 #endif
