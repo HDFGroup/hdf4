@@ -31,7 +31,7 @@ hdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
 ##                          And the cleanup                                ##
 #############################################################################
 
-CHECK_CLEANFILES += *.new *.hdf *.cdf *.cdl netcdf.h This* onedimmultivars.nc \
+CHECK_CLEANFILES += *.new *.hdf *.cdf *.cdl This* onedimmultivars.nc \
                onedimonevar.nc multidimvar.nc SD_externals
 
 DISTCLEANFILES =

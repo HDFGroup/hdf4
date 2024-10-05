@@ -1,4 +1,3 @@
-/* Generated automatically from netcdf.h.in by configure. */
 /*
  *    Copyright 1993, University Corporation for Atmospheric Research
  *
@@ -16,8 +15,8 @@
  *
  */
 
-#ifndef _NETCDF_
-#define _NETCDF_
+#ifndef MFH4_HDF4_NETCDF_H
+#define MFH4_HDF4_NETCDF_H
 
 #include <inttypes.h>
 
@@ -366,4 +365,4 @@ HDFLIBAPI int ncsetfill    (
 }
 #endif
 
-#endif /* _NETCDF_ */
+#endif /* MFH4_HDF4_NETCDF_H */

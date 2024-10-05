@@ -1168,7 +1168,6 @@ AC_CONFIG_FILES([Makefile
                  hdf/util/h4fc
                  hdf/util/h4redeploy
                  hdf/util/testutil.sh
-                 mfhdf/src/netcdf.h
                  mfhdf/Makefile
                  mfhdf/hdp/Makefile
                  mfhdf/hdp/testhdp.sh
@@ -1194,14 +1193,6 @@ AC_CONFIG_COMMANDS([.classes], [], [$MKDIR_P java/src/.classes;
                 $MKDIR_P java/test/.classes])
 
 AC_OUTPUT
-
-## A temporary patch. These code were after where it did
-## cp config/netcdf-XXX.h netcdf.h before.
-## Moved it here after AC_CONFIG_FILES(... mfhdf/src/netcdf.h ).
-## Need a better and correct solution.
-##
-echo "Renaming \"mfhdf/src/netcdf.h\" to \"mfhdf/src/hdf4_netcdf.h\" ."
-mv mfhdf/src/netcdf.h mfhdf/src/hdf4_netcdf.h
 
 chmod 755 hdf/util/h4cc hdf/util/h4redeploy
 
