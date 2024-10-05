@@ -2,7 +2,6 @@
 # Tests for the Fortran interfaces
 
 srcdir=@srcdir@
-TEST_FORTRAN_NETCDF="@TEST_FORTRAN_NETCDF@"
 CMP='cmp -s'
 DIFF='diff -c'
 
@@ -74,18 +73,6 @@ RUN() {
    if [ $RET -eq 1 ]; then
       echo "*FAILED*"
       nerrors="`expr $nerrors + 1`"
-   fi
-
-   if test $TEST_FORTRAN_NETCDF = "yes"; then
-      MESG 0 "HDF-NetCDF Fortran interfaces tests"
-      ${TESTS_ENVIRONMENT} ./ftest
-      RET=$?
-      if [ $RET -eq 1 ]; then
-         echo "*FAILED*"
-         nerrors="`expr $nerrors + 1`"
-      fi
-   else
-      MESG 0 "HDF-NetCDF Fortran interfaces are disabled when library is built with --disable-netcdf"
    fi
 
    MESG 0 "SZIP Fortran interfaces tests"
