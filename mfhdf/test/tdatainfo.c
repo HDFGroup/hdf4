@@ -390,8 +390,8 @@ test_nonspecial_SDSs()
         readlen = read(fd, (void *)readibuf, (size_t)sds1_info.lengths[0]);
         CHECK(readlen, FAIL, "DFKconvert");
 
-        ret32 = DFKconvert(readibuf, readibuf_swapped, sds1_info.numtype, sds1_info.n_values,
-                           DFACC_WRITE, 0, 0);
+        ret32 =
+            DFKconvert(readibuf, readibuf_swapped, sds1_info.numtype, sds1_info.n_values, DFACC_WRITE, 0, 0);
         CHECK(ret32, FAIL, "DFKconvert");
 
         if (ret32 > 0) {
@@ -419,8 +419,8 @@ test_nonspecial_SDSs()
         readlen = read(fd, (void *)readfbuf, (size_t)sds2_info.lengths[0]);
         CHECK(readlen, FAIL, "DFKconvert");
 
-        ret32 = DFKconvert(readfbuf, readfbuf_swapped, sds2_info.numtype, sds2_info.n_values,
-                           DFACC_WRITE, 0, 0);
+        ret32 =
+            DFKconvert(readfbuf, readfbuf_swapped, sds2_info.numtype, sds2_info.n_values, DFACC_WRITE, 0, 0);
         CHECK(ret32, FAIL, "DFKconvert");
 
         /* Compare data read without SD API against the original buffer */
@@ -451,8 +451,8 @@ test_nonspecial_SDSs()
         readlen = read(fd, (void *)readibuf, (size_t)sds3_info.lengths[0]);
         CHECK(readlen, FAIL, "DFKconvert");
 
-        ret32 = DFKconvert(readibuf, readibuf_swapped, sds3_info.numtype, sds3_info.n_values,
-                           DFACC_WRITE, 0, 0);
+        ret32 =
+            DFKconvert(readibuf, readibuf_swapped, sds3_info.numtype, sds3_info.n_values, DFACC_WRITE, 0, 0);
         CHECK(ret32, FAIL, "DFKconvert");
 
         if (ret32 > 0) {
@@ -518,7 +518,7 @@ test_compressed_SDSs()
     int              ii, jj;
     int              num_errs = 0; /* number of errors so far */
 #ifdef H4_HAVE_SZIP_ENCODER
-    int32            pixels_per_scanline;
+    int32 pixels_per_scanline;
 #endif
 
     /* Create the file and initialize the SD interface */
@@ -1331,7 +1331,8 @@ test_chkcmp_SDSs()
     /* Record number of values the SDS can have */
     cmpsds_info.n_values = comp_n_values(rank, cmpsds_info.dimsizes);
 
-    status = SDgetdatainfo(cmpsds_id, chk_coord, 0, (unsigned)info_count, cmpsds_info.offsets, cmpsds_info.lengths);
+    status = SDgetdatainfo(cmpsds_id, chk_coord, 0, (unsigned)info_count, cmpsds_info.offsets,
+                           cmpsds_info.lengths);
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDgetdatainfo");
 
     free_info(&cmpsds_info);
