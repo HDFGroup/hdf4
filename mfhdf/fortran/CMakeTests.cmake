@@ -132,9 +132,7 @@ add_test (
         test_file34.hdf
         test_file35.hdf
 )
-if (HDF4_ENABLE_NETCDF)
-  set_tests_properties (MFHDF_FORTRAN-clearall-objects PROPERTIES DEPENDS ftest LABELS ${PROJECT_NAME})
-endif ()
+set_tests_properties (MFHDF_FORTRAN-clearall-objects PROPERTIES DEPENDS ftest LABELS ${PROJECT_NAME})
 
 add_test (NAME f_hdftest COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:f_hdftest>)
 set (passRegex "Total errors : [ ]+0")

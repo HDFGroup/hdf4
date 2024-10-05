@@ -693,7 +693,6 @@ HDF4_BUILD_EXAMPLES        "Build HDF4 Library Examples"              OFF
 HDF4_BUILD_FORTRAN         "Build FORTRAN support"                    OFF
 HDF4_BUILD_TOOLS           "Build HDF4 Tools"                         ON
 HDF4_BUILD_UTILS           "Build HDF4 Utilities"                     OFF
-HDF4_ENABLE_NETCDF         "Build HDF4 versions of NetCDF-3 APIS"     ON
 HDF4_BUILD_JAVA            "Build Java HDF Library"                   OFF
 HDF4_BUILD_STATIC_TOOLS    "Build Static Tools Not Shared Tools"      OFF
 
@@ -736,7 +735,6 @@ if (APPLE)
     HDF4_BUILD_WITH_INSTALL_NAME "Build with library install_name set to the installation path"  OFF
 if (WIN32)
     HDF_LEGACY_NAMING          "Use Legacy Names for Libraries and Programs"   OFF
-HDF4_ENABLE_NETCDF             "Build HDF4 versions of NetCDF-3 APIS"          ON
 HDF4_BUILD_DOC                 "Build documentation"                           OFF
 HDF4_ENABLE_DOXY_WARNINGS      "Enable fail if doxygen parsing has warnings."  OFF
 HDF4_USING_ANALYSIS_TOOL       "Indicate that an analysis checker is used"     ON

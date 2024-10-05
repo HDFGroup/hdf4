@@ -48,13 +48,8 @@ set (HDF4_MFHDF_SRC_CHDRS
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/nc_priv.h
 )
 
-if (HDF4_ENABLE_NETCDF)
-  configure_file (${HDF4_MFHDF_SRC_SOURCE_DIR}/netcdf.h.in ${HDF4_BINARY_DIR}/netcdf.h)
-  set (HDF4_MFHDF_SRC_XCHDRS ${HDF4_BINARY_DIR}/netcdf.h)
-else ()
-  configure_file (${HDF4_MFHDF_SRC_SOURCE_DIR}/netcdf.h.in ${HDF4_BINARY_DIR}/hdf4_netcdf.h)
-  set (HDF4_MFHDF_SRC_XCHDRS ${HDF4_BINARY_DIR}/hdf4_netcdf.h)
-endif ()
+configure_file (${HDF4_MFHDF_SRC_SOURCE_DIR}/netcdf.h.in ${HDF4_BINARY_DIR}/hdf4_netcdf.h)
+set (HDF4_MFHDF_SRC_XCHDRS ${HDF4_BINARY_DIR}/hdf4_netcdf.h)
 
 if (BUILD_STATIC_LIBS)
   add_library (${HDF4_MF_LIB_TARGET} STATIC ${HDF4_MFHDF_SRC_CSRCS} ${HDF4_MFHDF_SRC_CHDRS})
