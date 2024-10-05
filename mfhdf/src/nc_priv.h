@@ -22,6 +22,14 @@
 #include "hdf_priv.h"
 #include "H4api_adpt.h"
 
+/* NetCDF functionality used in HDF4
+ *
+ * The multi-file interface was built on NetCDF 2.3.2 and HDF4 originally
+ * exported a NetCDF interface. The public NetCDF interface has been removed
+ * and all NetCDF API calls, types, etc. are now assembled in this private
+ * header file.
+ */
+
 /* Prepend 'H4_' to all NetCDF function names to avoid name clash when the
  * HDF and NetCDF headers are included in the same application.
  *
@@ -115,10 +123,6 @@
 #define NCgenio           HNAME(NCgenio)      /* from putgetg.c */
 #define NC_var_shape      HNAME(NC_var_shape) /* from var.c */
 
-/*
- *    netcdf library 'private' data structures, objects and interfaces
- */
-
 #ifndef FILENAME_MAX
 #define FILENAME_MAX 255
 #endif
@@ -136,9 +140,8 @@
 #define NC_UNSPECIFIED_SIZE 0
 
 /*
- *  masks for the struct NC flags field; passed in as 'mode' arg to
+ * Masks for the struct NC flags field; passed in as 'mode' arg to
  * nccreate and ncopen.
- *
  */
 #define NC_RDWR   1      /* read/write, 0 => readonly */
 #define NC_CREAT  2      /* in create phase, cleared by ncendef */
@@ -167,7 +170,7 @@
 #define NC_UNLIMITED 0L
 
 /*
- * attribute id to put/get a global attribute
+ * Attribute id to put/get a global attribute
  */
 #define NC_GLOBAL -1
 
@@ -194,25 +197,14 @@ typedef int nc_type;
 #define NC_ATTRIBUTE 12
 
 /*
- * C data types corresponding to netCDF data types:
- */
-/* Don't use these or the C++ interface gets confused
-typedef char  ncchar;
-typedef char  ncbyte;
-typedef short ncshort;
-typedef float ncfloat;
-typedef double        ncdouble;
-*/
-
-/*
  * Variables/attributes of type NC_LONG should use the C type 'nclong',
- * which should map to a 32-bit integer.
+ * which must map to a 32-bit integer.
  */
 typedef int32_t nclong;
 
 /*
- * Global netcdf error status variable
- *  Initialized in error.c
+ * Global NetCDF error status variable
+ * Initialized in error.c
  */
 #define NC_NOERR        0           /* No Error */
 #define NC_EBADID       1           /* Not a netcdf id */
@@ -246,7 +238,7 @@ HDFLIBAPI int ncerr;
 
 /*
  * Global options variable. Used to determine behavior of error handler.
- *  Initialized in error.c
+ * Initialized in error.c
  */
 #define NC_FATAL   1
 #define NC_VERBOSE 2
@@ -254,7 +246,7 @@ HDFLIBAPI int ncerr;
 HDFLIBAPI int ncopts; /* default is (NC_FATAL | NC_VERBOSE) */
 
 /*
- * Include HDF stuff
+ * HDF headers
  */
 
 #include "vg.h"
@@ -288,7 +280,7 @@ typedef struct vix_t_def {
     struct vix_t_def *next;                      /* next one in line */
 } vix_t;
 
-/* netCDF array type */
+/* NetCDF array type */
 typedef struct {
     nc_type  type;   /* the discriminant */
     size_t   len;    /* the total length originally allocated */
@@ -297,15 +289,14 @@ typedef struct {
     uint8_t *values; /* the actual data */
 } NC_array;
 
-/* Counted string for names and such */
-/*
+/* Counted string for names and such
+ *
+ * count is the actual size of the buffer for the string
+ * len is the length of the string in the buffer
+ *
+ * count != len when a string is resized to something smaller
+ */
 
-  count is the actual size of the buffer for the string
-  len is the length of the string in the buffer
-
-  count != len when a string is resized to something smaller
-
-*/
 #define NC_compare_string(s1, s2) ((s1)->hash != (s2)->hash ? 1 : strcmp((s1)->values, (s2)->values))
 
 typedef struct {
