@@ -146,26 +146,6 @@ NC_findattr(NC_array **ap, const char *name)
 }
 
 /*
- * Look up by cdfid, varid and name, return NULL if not found
- */
-static NC_attr **
-NC_lookupattr(int cdfid, int varid, const char *name, bool_t verbose)
-/* name - attribute name */
-{
-    NC_array **ap;
-    NC_attr  **attr;
-
-    ap = NC_attrarray(cdfid, varid);
-    if (ap == NULL)
-        return NULL;
-
-    attr = NC_findattr(ap, name);
-    if (verbose && attr == NULL)
-        NCadvise(NC_ENOTATT, "attribute \"%s\" not found", name);
-    return attr;
-}
-
-/*
  * Common code for attput and attcopy
  */
 static int
