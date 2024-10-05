@@ -15,7 +15,7 @@
 #include <string.h>
 
 #include "mfhdf.h"
-
+#include "nc_priv.h"
 #include "hdftest.h"
 
 #define NBITFILE "nbit.hdf"

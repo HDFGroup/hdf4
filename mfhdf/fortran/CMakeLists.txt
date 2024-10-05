@@ -7,7 +7,8 @@ set (HDF4_MFHDF_SRC_CSTUB_FSRCS ${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/mfsdf.c)
 
 set (HDF4_MFHDF_SRC_CSTUB_FHDRS
     ${HDF4_MFHDFSOURCE_DIR}/mfhdf.h
-    ${HDF4_MFHDFSOURCE_DIR}/hdf4_netcdf.h
+    # nc_priv.h may not be necessary...
+    ${HDF4_MFHDFSOURCE_DIR}/nc_priv.h
 )
 set_source_files_properties (${HDF4_MFHDF_SRC_CSTUB_FSRCS} PROPERTIES LANGUAGE C)
 

@@ -21,8 +21,6 @@
 
 #include "nc_priv.h"
 
-#include "hdf4_netcdf.h"
-
 int ncerr = NC_NOERR;
 
 /*

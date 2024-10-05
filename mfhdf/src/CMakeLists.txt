@@ -35,7 +35,6 @@ set (HDF4_MFHDF_SRC_CHDRS
     ${HDF4_MFHDF_SRC_INSTALL_CHDRS}
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/error_priv.h
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/h4_xdr_priv.h
-    ${HDF4_MFHDF_SRC_SOURCE_DIR}/hdf4_netcdf.h
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/mf_priv.h
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/nc_priv.h
 )

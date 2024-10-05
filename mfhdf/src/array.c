@@ -114,7 +114,7 @@ nctypelen(nc_type type)
     }
 }
 
-/* See hdf4_netcdf.h for explanation of these initializations */
+/* See nc_priv.h for explanation of these initializations */
 /* assert( !(USE_F_UNION && USE_F_LONG_PUN) ) ; */
 /* assert( !(USE_D_UNION && USE_D_LONG_PUN) ) ; */
 
