@@ -26,16 +26,20 @@
 /* If using the real netCDF library and API (use --disable-netcdf configure flag))
    need to mangle the HDF versions of netCDF API function names
    to not conflict w/ original netCDF ones */
+
+/* Variables */
 #define ncerr       HNAME(ncerr)
 #define ncopts      HNAME(ncopts)
-#define nccreate    HNAME(nccreate)
-#define ncopen      HNAME(ncopen)
-#define ncredef     HNAME(ncredef)
+
+/* API calls */
+#define nccreate    HNAME(nccreate)         /* used in src - mfsd.c */
+#define ncopen      HNAME(ncopen)           /* used in src - mfsd.c */
+#define ncredef     HNAME(ncredef)          
 #define ncendef     HNAME(ncendef)
-#define ncclose     HNAME(ncclose)
+#define ncclose     HNAME(ncclose)          /* used in src - mfsd.c */
 #define ncinquire   HNAME(ncinquire)
 #define ncsync      HNAME(ncsync)
-#define ncabort     HNAME(ncabort)
+#define ncabort     HNAME(ncabort)          /* used in src - file.c */
 #define ncdimdef    HNAME(ncdimdef)
 #define ncdimid     HNAME(ncdimid)
 #define ncdiminq    HNAME(ncdiminq)
@@ -46,7 +50,7 @@
 #define ncvarput1   HNAME(ncvarput1)
 #define ncvarget1   HNAME(ncvarget1)
 #define ncvarput    HNAME(ncvarput)
-#define ncvarget    HNAME(ncvarget)
+#define ncvarget    HNAME(ncvarget)         /* used in src - array.c */
 #define ncvarputs   HNAME(ncvarputs)
 #define ncvargets   HNAME(ncvargets)
 #define ncvarputg   HNAME(ncvarputg)
@@ -59,7 +63,7 @@
 #define ncattname   HNAME(ncattname)
 #define ncattrename HNAME(ncattrename)
 #define ncattdel    HNAME(ncattdel)
-#define nctypelen   HNAME(nctypelen)
-#define ncsetfill   HNAME(ncsetfill)
+#define nctypelen   HNAME(nctypelen)        /* used in src - array.c, nssdc.c, putget.c */
+#define ncsetfill   HNAME(ncsetfill)        /* used in src - mfsd.c */
 
 #endif /* MFH4_HDF_2_NETCDF_H */
