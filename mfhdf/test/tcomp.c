@@ -64,7 +64,7 @@ test_various_comps()
     int32     data[Y_LENGTH][X_LENGTH];
     int       num_errs = 0; /* number of errors in compression test so far */
 #ifdef H4_HAVE_SZIP_ENCODER
-    int32     pixels_per_scanline;
+    int32 pixels_per_scanline;
 #endif
 
     /* Buffer array data and define array dimensions. */

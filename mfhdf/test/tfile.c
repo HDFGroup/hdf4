@@ -177,8 +177,8 @@ test_file_inuse()
 static int
 test_max_open_files()
 {
-    int32 *fids = NULL;               /* holds IDs of opened files */
-    char  **filenames = NULL;         /* holds generated file names */
+    int32 *fids      = NULL;          /* holds IDs of opened files */
+    char **filenames = NULL;          /* holds generated file names */
     char   readfname[H4_MAX_NC_NAME]; /* file name retrieved from file id */
     int    index, status, curr_max,   /* curr maximum number of open files allowed in HDF */
         sys_limit,                    /* maximum number of open files allowed by system */
