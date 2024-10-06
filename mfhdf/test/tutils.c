@@ -351,7 +351,7 @@ append_Data2SDS(int32 sd_id, char *sds_name, int32 *start, int32 *edges, void *a
 
 *********************************************************************/
 int
-verify_datasize(int32 sds_id, int32 data_size, char *sds_name)
+verify_datasize(int32 sds_id, int32 data_size, const char *sds_name)
 {
     int32 comp_size = 0, uncomp_size = 0;
     char  msg[80];
