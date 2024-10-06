@@ -45,6 +45,8 @@ static char mrcsid[] = "Id: cdftest.c,v 1.11 1994/01/10 23:07:27 chouck Exp ";
 #include "hdf4_netcdf.h"
 #endif
 
+#include "hdftest.h"
+
 #define CDFMAXSHORT 32767
 #define CDFMAXLONG  2147483647
 #define CDFMAXBYTE  127
@@ -109,10 +111,10 @@ chkgot(nc_type type, union getret got, double check)
             cdf_assert((nclong)check == got.lng[0]);
             break;
         case NC_FLOAT:
-            cdf_assert((float)check == got.fl[0]);
+            cdf_assert(H4_FLT_ABS_EQUAL((float)check, got.fl[0]));
             break;
         case NC_DOUBLE:
-            cdf_assert(check == got.dbl);
+            cdf_assert(H4_DBL_ABS_EQUAL(check, got.dbl));
             break;
     }
 }
@@ -229,12 +231,12 @@ createtestvars(int id, struct tcdfvar *testvars, int count)
     for (ii = 0; ii < count; ii++, vp++) {
         cdf_assert(ncvardef(id, vp->mnem, vp->type, vp->ndims, vp->dims) == ii);
 
-        cdf_assert(ncattput(id, ii, reqattr[0], NC_CHAR, strlen(vp->units), vp->units) == 0);
+        cdf_assert(ncattput(id, ii, reqattr[0], NC_CHAR, (int)strlen(vp->units), vp->units) == 0);
         cdf_assert(ncattput(id, ii, reqattr[1], NC_DOUBLE, 1, (ncvoid *)&(vp->validmin)) == 1);
         cdf_assert(ncattput(id, ii, reqattr[2], NC_DOUBLE, 1, (ncvoid *)&(vp->validmax)) == 2);
         cdf_assert(ncattput(id, ii, reqattr[3], NC_DOUBLE, 1, (ncvoid *)&(vp->scalemin)) == 3);
         cdf_assert(ncattput(id, ii, reqattr[4], NC_DOUBLE, 1, (ncvoid *)&(vp->scalemax)) == 4);
-        cdf_assert(ncattput(id, ii, reqattr[5], NC_CHAR, strlen(vp->fieldnam), vp->fieldnam) == 5);
+        cdf_assert(ncattput(id, ii, reqattr[5], NC_CHAR, (int)strlen(vp->fieldnam), vp->fieldnam) == 5);
     }
 }
 
@@ -253,7 +255,7 @@ fill_seq(int id)
     long  vindices[NUM_DIMS];
     long *cc, *mm;
     float val;
-    int   ii = 0;
+    float ii = 0.0F;
 
     sizes_g[0] = NUM_RECS;
     /* zero the indices */
@@ -275,7 +277,7 @@ fill_seq(int id)
 #endif
                 cdf_assert(ncvarput1(id, Float_id, vindices, (ncvoid *)&val) != -1);
                 (*cc)++;
-                ii++;
+                ii += 1.0F;
                 continue;
             }
             cc++;
@@ -296,7 +298,7 @@ check_fill_seq(int id)
     long         vindices[NUM_DIMS];
     long        *cc, *mm;
     union getret got;
-    int          ii = 0;
+    float        ii = 0.0F;
     float        val;
 
     sizes_g[0] = NUM_RECS;
@@ -313,12 +315,12 @@ check_fill_seq(int id)
                 if (ncvarget1(id, Float_id, vindices, (ncvoid *)&got) == -1)
                     goto bad_ret;
                 val = ii;
-                if (val != got.fl[0]) {
+                if (!H4_FLT_ABS_EQUAL(val, got.fl[0])) {
                     parray("indices", (unsigned)NUM_DIMS, vindices);
                     printf("\t%f != %f\n", (double)val, (double)got.fl[0]);
                 }
                 (*cc)++;
-                ii++;
+                ii += 1.0F;
                 continue;
             }
             cc++;
@@ -382,12 +384,12 @@ main(void)
     cdf_assert(ncattput(id, NC_GLOBAL, "TITLE", NC_CHAR, 12, "another name") != -1);
     cdf_assert(ncattget(id, NC_GLOBAL, "TITLE", (ncvoid *)new) != -1);
     /*	printf("title 1 \"%s\"\n", new) ; */
-    cdf_assert(ncattput(id, NC_GLOBAL, "TITLE", NC_CHAR, strlen(fname), fname) != -1);
+    cdf_assert(ncattput(id, NC_GLOBAL, "TITLE", NC_CHAR, (int)strlen(fname), fname) != -1);
     cdf_assert(ncattget(id, NC_GLOBAL, "TITLE", (ncvoid *)new) != -1);
     new[strlen(fname)] = 0;
     /*	printf("title 2 \"%s\"\n", new) ; */
     cdf_assert(strcmp(fname, new) == 0);
-    cdf_assert(ncattput(id, NC_GLOBAL, "RCSID", NC_CHAR, strlen(mrcsid), (ncvoid *)mrcsid) != -1);
+    cdf_assert(ncattput(id, NC_GLOBAL, "RCSID", NC_CHAR, (int)strlen(mrcsid), (ncvoid *)mrcsid) != -1);
 
     createtestdims(id, NUM_DIMS, sizes_g, dim_names_g);
     testdims(id, NUM_DIMS, sizes_g, dim_names_g);
@@ -480,7 +482,7 @@ main(void)
     cdf_assert(strcmp("TITLE", adesc->mnem) == 0);
     cdf_assert(ncattinq(id, NC_GLOBAL, adesc->mnem, &(adesc->type), &(adesc->len)) != -1);
     cdf_assert(adesc->type == NC_CHAR);
-    cdf_assert(adesc->len == strlen(fname));
+    cdf_assert(adesc->len == (int)strlen(fname));
     cdf_assert(ncattget(id, NC_GLOBAL, "TITLE", (ncvoid *)new) != -1);
     new[adesc->len] = 0;
     cdf_assert(strcmp(fname, new) == 0);
@@ -490,7 +492,7 @@ main(void)
     cdf_assert(strcmp("RCSID", adesc->mnem) == 0);
     cdf_assert(ncattinq(id, NC_GLOBAL, adesc->mnem, &(adesc->type), &(adesc->len)) != -1);
     cdf_assert(adesc->type == NC_CHAR);
-    cdf_assert(adesc->len == strlen(mrcsid));
+    cdf_assert(adesc->len == (int)strlen(mrcsid));
     cdf_assert(ncattget(id, NC_GLOBAL, "RCSID", (ncvoid *)new) != -1);
     new[adesc->len] = 0;
     cdf_assert(strcmp(mrcsid, new) == 0);
@@ -532,7 +534,7 @@ main(void)
 
         if (ncattinq(id, ii, reqattr[0], &(adesc->type), &(adesc->len)) != -1) {
             cdf_assert(adesc->type == NC_CHAR);
-            cdf_assert(adesc->len == strlen(tvp->units));
+            cdf_assert(adesc->len == (int)strlen(tvp->units));
             cdf_assert(ncattget(id, ii, reqattr[0], (ncvoid *)new) != -1);
             new[adesc->len] = 0;
             cdf_assert(strcmp(tvp->units, new) == 0);
@@ -568,7 +570,7 @@ main(void)
 
         if (ncattinq(id, ii, reqattr[5], &(adesc->type), &(adesc->len)) != -1) {
             cdf_assert(adesc->type == NC_CHAR);
-            cdf_assert(adesc->len == strlen(tvp->fieldnam));
+            cdf_assert(adesc->len == (int)strlen(tvp->fieldnam));
             cdf_assert(ncattget(id, ii, reqattr[5], (ncvoid *)new) != -1);
             new[adesc->len] = 0;
             cdf_assert(strcmp(tvp->fieldnam, new) == 0);
