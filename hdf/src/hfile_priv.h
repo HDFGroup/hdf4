@@ -403,7 +403,7 @@ extern "C" {
 #endif
 
 #if (FILELIB == UNIXBUFIO)
-HDFLIBAPI int hi_close(FILE **f);
+HDFLIBAPI int hi_close_stdio(FILE **f);
 #endif
 
 #ifdef DISKBLOCK_DEBUG
