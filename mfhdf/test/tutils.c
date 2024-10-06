@@ -19,10 +19,10 @@
 #include "srcdir_str.h"
 
 /* Buffer to construct path in and return pointer to */
-static char srcdir_path[1024];
+static char srcdir_path_g[1024];
 
 /* Buffer to construct file in and return pointer to */
-static char srcdir_testpath[1024];
+static char srcdir_testpath_g[1024];
 
 /*-------------------------------------------------------------------------
  * Function:    get_srcdir_filename
@@ -42,10 +42,17 @@ get_srcdir_filename(const char *filename)
     if (NULL == srcdir)
         return NULL;
 
+    memset(srcdir_testpath_g, 0, sizeof(srcdir_testpath_g));
+
     /* Build path to test file */
-    if ((strlen(srcdir) + strlen(filename) + 1) < sizeof(srcdir_testpath)) {
-        snprintf(srcdir_testpath, sizeof(srcdir_testpath), "%s/%s", srcdir, filename);
-        return srcdir_testpath;
+    if ((strlen(srcdir) + strlen(filename) + 1) < sizeof(srcdir_testpath_g)) {
+        int n = snprintf(srcdir_testpath_g, sizeof(srcdir_testpath_g), "%s/%s", srcdir, filename);
+
+        /* Check for truncation */
+        if (n < (int)strlen(srcdir) + (int)strlen(filename) + 1)
+            return NULL;
+        else
+            return srcdir_testpath_g;
     }
 
     /* If not enough space, just return NULL */
@@ -70,10 +77,17 @@ get_srcdir(void)
     if (NULL == srcdir)
         srcdir = config_srcdir;
 
+    memset(srcdir_path_g, 0, sizeof(srcdir_path_g));
+
     /* Build path to all test files */
-    if ((strlen(srcdir) + 2) < sizeof(srcdir_path)) {
-        snprintf(srcdir_path, sizeof(srcdir_path), "%s/", srcdir);
-        return (srcdir_path);
+    if ((strlen(srcdir) + 2) < sizeof(srcdir_path_g)) {
+        int n = snprintf(srcdir_path_g, sizeof(srcdir_path_g), "%s/", srcdir);
+
+        /* Check for truncation */
+        if (n < (int)strlen(srcdir) + 1)
+            return NULL;
+        else
+            return srcdir_path_g;
     }
     else
         return NULL;
