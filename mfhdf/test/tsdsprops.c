@@ -612,10 +612,28 @@ test_valid_args2()
     int32   d1count[1], d2count[2], d3count[3];
     int32   d1stride[1], d2stride[2], d3stride[3];
     float32 data1 = 32.0F, outdata1;
-    int32   data2[D2_X][D2_Y], outdata2[D2_X][D2_Y];
-    int16   data3[D3_X][D3_Y][D3_Z], outdata3[D3_X][D3_Y][D3_Z];
-    int     i, j, k, status;
-    int     num_errs = 0; /* number of errors so far */
+
+    int32 *data2    = NULL;
+    int32 *outdata2 = NULL;
+    int16 *data3    = NULL;
+    int16 *outdata3 = NULL;
+
+    int32 *ptr32;
+    int16 *ptr16;
+
+    int status;
+    int i, j, k;
+    int num_errs = 0; /* number of errors so far */
+
+    /* Allocate memory for data buffers */
+    data2    = calloc(D2_X * D2_Y, sizeof(int32));
+    outdata2 = calloc(D2_X * D2_Y, sizeof(int32));
+    data3    = calloc(D3_X * D3_Y * D3_Z, sizeof(int16));
+    outdata3 = calloc(D3_X * D3_Y * D3_Z, sizeof(int16));
+    CHECK_ALLOC(data2, "data2", "test_valid_args2");
+    CHECK_ALLOC(outdata2, "outdata2", "test_valid_args2");
+    CHECK_ALLOC(data3, "data3", "test_valid_args2");
+    CHECK_ALLOC(outdata3, "outdata3", "test_valid_args2");
 
     /* Create and open the file and initiate the SD interface. */
     sd_id = SDstart("b150.hdf", DFACC_CREATE);
@@ -635,9 +653,9 @@ test_valid_args2()
     d2start[0] = d2start[1] = 0;
     d2count[0]              = dims2[0];
     d2count[1]              = dims2[1];
-    for (i = 0; i < D2_X; i++)
+    for (i = 0, ptr32 = data2; i < D2_X; i++)
         for (j = 0; j < D2_Y; j++)
-            data2[i][j] = i * j;
+            *ptr32++ = i * j;
 
     status = makeSDS(sd_id, "data2", DFNT_INT32, 2, dims2, d2start, NULL, d2count, data2);
     CHECK(status, FAIL, "makeSDS data2");
@@ -650,10 +668,10 @@ test_valid_args2()
     d3count[0]                           = dims3[0];
     d3count[1]                           = dims3[1];
     d3count[2]                           = dims3[2];
-    for (i = 0; i < D3_X; i++)
+    for (i = 0, ptr16 = data3; i < D3_X; i++)
         for (j = 0; j < D3_Y; j++)
             for (k = 0; k < D3_Z; k++)
-                data3[i][j][k] = (int16)(i * j * k);
+                *ptr16++ = (int16)(i * j * k);
 
     status = makeSDS(sd_id, "data3", DFNT_INT16, 3, dims3, d3start, NULL, d3count, data3);
     CHECK(status, FAIL, "makeSDS data3");
@@ -698,13 +716,13 @@ test_valid_args2()
     d2stride[1]             = D2_Y; /* should be D2_Y - 1 */
     d2count[0]              = D2_X;
     d2count[1]              = 2;
-    status                  = SDreaddata(sds_id, d2start, d2stride, d2count, (void *)outdata2);
+    status                  = SDreaddata(sds_id, d2start, d2stride, d2count, outdata2);
     VERIFY(status, FAIL, "SDreaddata");
 
     /* Read second dataset with too many values requested */
     d2stride[1] = D2_Y - 1;
     d2count[1]  = 3; /* should be 2 */
-    status      = SDreaddata(sds_id, d2start, d2stride, d2count, (void *)outdata2);
+    status      = SDreaddata(sds_id, d2start, d2stride, d2count, outdata2);
     VERIFY(status, FAIL, "SDreaddata");
 
     /* Terminate access to the second dataset */
@@ -721,7 +739,7 @@ test_valid_args2()
     d3count[0]              = 4; /* should be 3 max or smaller stride */
     d3count[1]              = 2;
     d3count[2]              = 2;
-    status                  = SDreaddata(sds_id, d3start, d3stride, d3count, (void *)outdata3);
+    status                  = SDreaddata(sds_id, d3start, d3stride, d3count, outdata3);
     VERIFY(status, FAIL, "SDreaddata");
 
     /* Read again with "correct" arguments */
@@ -733,7 +751,7 @@ test_valid_args2()
     d3count[0]              = 3;
     d3count[1]              = 2;
     d3count[2]              = 2;
-    status                  = SDreaddata(sds_id, d3start, d3stride, d3count, (void *)outdata3);
+    status                  = SDreaddata(sds_id, d3start, d3stride, d3count, outdata3);
     CHECK(status, FAIL, "SDreaddata");
 
     /* Terminate access to the third dataset */
@@ -743,6 +761,12 @@ test_valid_args2()
     /* Terminate access to the SD interface and close the file. */
     status = SDend(sd_id);
     CHECK(status, FAIL, "SDend");
+
+    /* Free memory for data buffers */
+    free(data2);
+    free(outdata2);
+    free(data3);
+    free(outdata3);
 
     /* Return the number of errors that's been kept track of, so far */
     return num_errs;
