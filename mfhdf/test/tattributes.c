@@ -372,13 +372,15 @@ test_attribute_ops()
     /* Get the info about the first attribute of this dimension  */
     status = SDattrinfo(dimid, (int32)0, name, &nt, &count);
     CHECK(status, FAIL, "SDattrinfo");
+    if (count < 0)
+        count = 0;
 
     /* Read first attribute in, assume CHAR here. */
     status = SDreadattr(dimid, 0, text);
     CHECK(status, FAIL, "SDreadattr");
 
     /* Compare value retrieved to what was written */
-    if (strncmp(text, "TRUE", count)) {
+    if ((status != FAIL) && strncmp(text, "TRUE", (size_t)count)) {
         fprintf(stderr, "SDreadattr: Invalid dimension attribute read <%s>\n", text);
         num_errs++;
     }
@@ -613,12 +615,14 @@ test_attribute_ops()
     /* Get info about the global attribute just created */
     status = SDattrinfo(fid1, (int32)0, name, &nt, &count);
     CHECK(status, FAIL, "SDattrinfo");
+    if (count < 0)
+        count = 0;
 
     /* Read this global attribute back in and verify the values */
     status = SDreadattr(fid1, 0, text);
     CHECK(status, FAIL, "SDreadattr");
 
-    if (strncmp(text, "globulator", count)) {
+    if ((status != FAIL) && strncmp(text, "globulator", (size_t)count)) {
         fprintf(stderr, "Invalid global attribute read <%s>\n", text);
         num_errs++;
     }
