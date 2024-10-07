@@ -137,11 +137,12 @@ endif ()
 #-----------------------------------------------------------------------------
 # Compiler specific flags : Shouldn't there be compiler tests for these
 #-----------------------------------------------------------------------------
+set (JPEG_CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS}")
 if (CMAKE_COMPILER_IS_GNUCC)
-  set (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -Wno-strict-prototypes")
+  set (JPEG_CMAKE_C_FLAGS "${JPEG_CMAKE_C_FLAGS} -Wno-strict-prototypes")
 endif ()
 if (CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
-   set (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -Wno-deprecated-non-prototype -Wno-strict-prototypes")
+   set (JPEG_CMAKE_C_FLAGS "${JPEG_CMAKE_C_FLAGS} -Wno-deprecated-non-prototype -Wno-strict-prototypes")
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -149,7 +150,7 @@ endif ()
 # and code blocks parse the compiler errors and warnings better.
 #-----------------------------------------------------------------------------
 if (CMAKE_COMPILER_IS_GNUCC)
-  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fmessage-length=0")
+  set (JPEG_CMAKE_C_FLAGS "${JPEG_CMAKE_C_FLAGS} -fmessage-length=0")
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -231,6 +232,7 @@ set (JPEG_PUBLIC_HEADERS
 
 add_library (${JPEG_LIB_TARGET} STATIC ${JPEG_SRCS} ${JPEG_HDRS} ${JPEG_PUBLIC_HEADERS})
 target_include_directories(${JPEG_LIB_TARGET} PRIVATE "${JPEG_SRC_DIR};${CMAKE_BINARY_DIR}")
+target_compile_options(${JPEG_LIB_TARGET} PRIVATE "${JPEG_CMAKE_C_FLAGS}")
 TARGET_C_PROPERTIES (${JPEG_LIB_TARGET} STATIC)
 target_link_libraries (${JPEG_LIB_TARGET} PRIVATE ${LINK_LIBS})
 H4_SET_LIB_OPTIONS (${JPEG_LIB_TARGET} ${JPEG_LIB_NAME} STATIC 0)
