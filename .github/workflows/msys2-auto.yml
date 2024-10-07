@@ -53,7 +53,6 @@ jobs:
           cd "$GITHUB_WORKSPACE/build"
           LDFLAGS="-lws2_32" $GITHUB_WORKSPACE/configure \
             ${{ inputs.build_option }} \
-            --disable-netcdf \
             --enable-static-exec
 
       - name: Autotools Build

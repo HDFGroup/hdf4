@@ -66,7 +66,7 @@ NC_typelen(nc_type type)
         case NC_SHORT:
             return sizeof(short);
         case NC_LONG:
-            return sizeof(nclong);
+            return sizeof(int32_t);
         case NC_FLOAT:
             return sizeof(float);
         case NC_DOUBLE:
@@ -90,7 +90,7 @@ NC_typelen(nc_type type)
  *  this is how much space is required by the user, as in
  *
  *   vals = malloc(nel * nctypelen(var.type));
- *   ncvarget (cdfid, varid, cor, edg, vals);
+ *   ncvarget(cdfid, varid, cor, edg, vals);
  *
  */
 int
@@ -103,7 +103,7 @@ nctypelen(nc_type type)
         case NC_SHORT:
             return sizeof(short);
         case NC_LONG:
-            return sizeof(nclong);
+            return sizeof(int32_t);
         case NC_FLOAT:
             return sizeof(float);
         case NC_DOUBLE:
@@ -114,40 +114,8 @@ nctypelen(nc_type type)
     }
 }
 
-/* See netcdf.h for explanation of these initializations */
-/* assert( !(USE_F_UNION && USE_F_LONG_PUN) ) ; */
-/* assert( !(USE_D_UNION && USE_D_LONG_PUN) ) ; */
-
-#ifdef USE_F_UNION
-#ifdef H4_WORDS_BIGENDIAN
-union xdr_f_union xdr_f_infs = {0x7f, 0x80, 0x00, 0x00};
-#else
-union xdr_f_union xdr_f_infs = {0x00, 0x00, 0x80, 0x7f};
-#endif /* H4_WORDS_BIGENDIAN */
-#endif /* USE_F_UNION */
-
-#ifdef USE_D_UNION
-#ifdef H4_WORDS_BIGENDIAN
-union xdr_d_union xdr_d_infs = {0x7f, 0xf0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-#else
-union xdr_d_union xdr_d_infs = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x7f};
-#endif /* H4_WORDS_BIGENDIAN */
-#endif /* USE_D_UNION */
-
-#ifdef USE_F_LONG_PUN
-nclong xdr_f_infinity = 0x7f800000;
-#endif
-
-#ifdef USE_D_LONG_PUN
-#ifdef H4_WORDS_BIGENDIAN
-nclong xdr_d_infinity[2] = {0x7ff00000, 0x00000000};
-#else
-nclong xdr_d_infinity[2] = {0x00000000, 0x7ff00000};
-#endif /* H4_WORDS_BIGENDIAN */
-#endif /* USE_D_LONG_PUN */
-
 /*
- *    Fill an array region with an appropriate special value
+ * Fill an array region with an appropriate special value
  */
 void
 NC_arrayfill(void *low, size_t len, nc_type type)
@@ -173,8 +141,8 @@ NC_arrayfill(void *low, size_t len, nc_type type)
             break;
         case NC_LONG:
             while (lo < hi) {
-                *((nclong *)lo) = FILL_LONG;
-                lo += sizeof(nclong);
+                *((int32_t *)lo) = FILL_LONG;
+                lo += sizeof(int32_t);
             }
             break;
         case NC_FLOAT:
@@ -273,8 +241,7 @@ NC_re_array(NC_array *old, nc_type type, unsigned count, const void *values)
 /*
  * Free array, and, if needed, its values.
  *
- * NOTE: Changed return value to return 'int'
- *       If successful returns SUCCEED else FAIL -GV 9/19/97
+ * If successful returns SUCCEED else FAIL
  */
 int
 NC_free_array(NC_array *array)
@@ -470,13 +437,13 @@ xdr_NC_array(XDR *xdrs, NC_array **app)
             break;
     }
 
-    if (!h4_xdr_int(xdrs, &type)) {
-        NCadvise(NC_EXDR, "xdr_NC_array:h4_xdr_int (enum)");
+    if (!hdf_xdr_int(xdrs, &type)) {
+        NCadvise(NC_EXDR, "xdr_NC_array:hdf_xdr_int (enum)");
         return FALSE;
     }
 
-    if (!h4_xdr_u_int(xdrs, &temp_count)) {
-        NCadvise(NC_EXDR, "xdr_NC_array:h4_xdr_u_int");
+    if (!hdf_xdr_u_int(xdrs, &temp_count)) {
+        NCadvise(NC_EXDR, "xdr_NC_array:hdf_xdr_u_int");
         return FALSE;
     }
     *countp = temp_count;
@@ -499,19 +466,19 @@ xdr_NC_array(XDR *xdrs, NC_array **app)
         case NC_UNSPECIFIED:
         case NC_BYTE:
         case NC_CHAR:
-            xdr_NC_fnct = h4_xdr_opaque;
+            xdr_NC_fnct = hdf_xdr_opaque;
             goto func;
         case NC_SHORT:
             xdr_NC_fnct = xdr_shorts;
             goto func;
         case NC_LONG:
-            xdr_NC_fnct = h4_xdr_int;
+            xdr_NC_fnct = hdf_xdr_int;
             goto loop;
         case NC_FLOAT:
-            xdr_NC_fnct = h4_xdr_float;
+            xdr_NC_fnct = hdf_xdr_float;
             goto loop;
         case NC_DOUBLE:
-            xdr_NC_fnct = h4_xdr_double;
+            xdr_NC_fnct = hdf_xdr_double;
             goto loop;
             /* private types */
         case NC_STRING:

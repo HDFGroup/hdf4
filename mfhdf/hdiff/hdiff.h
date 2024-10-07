@@ -8,6 +8,7 @@
 
 #include "hdf.h"
 #include "mfhdf.h"
+#include "nc_priv.h"
 #include "hdiff_table.h"
 
 /* Maximum value for max_err_cnt */

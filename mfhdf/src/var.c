@@ -422,69 +422,6 @@ ncvarinq(int cdfid, int varid, char *name, nc_type *typep, int *ndimsp, int dims
     return varid;
 }
 
-int
-ncvarrename(int cdfid, int varid, const char *newname)
-{
-    NC        *handle;
-    NC_var   **vpp;
-    int        len;
-    NC_string *old, *new;
-
-    cdf_routine_name = "ncvarrename";
-
-    handle = NC_check_id(cdfid);
-    if (handle == NULL)
-        return -1;
-    if (!(handle->flags & NC_RDWR))
-        return -1;
-
-    /* check for name in use */
-    len = (int)strlen(newname);
-    vpp = (NC_var **)handle->vars->values;
-    for (int ii = 0; ii < handle->vars->count; ii++, vpp++) {
-        if (len == (*vpp)->name->len && strncmp(newname, (*vpp)->name->values, len) == 0) {
-            NCadvise(NC_ENAMEINUSE, "variable name \"%s\" in use with index %d", (*vpp)->name->values, ii);
-            return -1;
-        }
-    }
-
-    if (varid == NC_GLOBAL) /* Global is error in this context */
-    {
-        NCadvise(NC_EGLOBAL, "action prohibited on NC_GLOBAL varid");
-        return -1;
-    }
-    else if (handle->vars != NULL && varid >= 0 && varid < handle->vars->count) {
-        vpp = (NC_var **)handle->vars->values;
-        vpp += varid;
-    }
-    else {
-        NCadvise(NC_ENOTVAR, "%d is not a valid variable id", varid);
-        return -1;
-    }
-
-    old = (*vpp)->name;
-    if (NC_indefine(cdfid, TRUE)) {
-        new = NC_new_string((unsigned)strlen(newname), newname);
-        if (new == NULL)
-            return -1;
-        (*vpp)->name = new;
-        NC_free_string(old);
-        return varid;
-    }
-    new = NC_re_string(old, (unsigned)strlen(newname), newname);
-    if (new == NULL)
-        return -1;
-    if (handle->flags & NC_HSYNC) {
-        handle->xdrs->x_op = XDR_ENCODE;
-        if (!xdr_cdf(handle->xdrs, &handle))
-            return -1;
-        handle->flags &= ~(NC_NDIRTY | NC_HDIRTY);
-    }
-    else
-        handle->flags |= NC_HDIRTY;
-    return varid;
-}
-
 bool_t
 xdr_NC_var(XDR *xdrs, NC_var **vpp)
 {
@@ -512,12 +449,12 @@ xdr_NC_var(XDR *xdrs, NC_var **vpp)
     if (!xdr_NC_array(xdrs, &((*vpp)->attrs)))
         return FALSE;
 
-    if (!h4_xdr_int(xdrs, &temp_type)) {
+    if (!hdf_xdr_int(xdrs, &temp_type)) {
         return FALSE;
     }
     (*vpp)->type = (nc_type)temp_type;
 
-    if (!h4_xdr_u_int(xdrs, &temp_len)) {
+    if (!hdf_xdr_u_int(xdrs, &temp_len)) {
         return FALSE;
     }
     (*vpp)->len = (unsigned long)temp_len;
@@ -527,7 +464,7 @@ xdr_NC_var(XDR *xdrs, NC_var **vpp)
 
     if (xdrs->x_op == XDR_ENCODE)
         begin = (*vpp)->begin;
-    if (!h4_xdr_u_int(xdrs, &begin))
+    if (!hdf_xdr_u_int(xdrs, &begin))
         return FALSE;
     if (xdrs->x_op == XDR_DECODE)
         (*vpp)->begin = begin;

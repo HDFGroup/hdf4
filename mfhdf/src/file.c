@@ -349,59 +349,6 @@ ncopen(const char *path, int mode)
     return NC_open(path, mode);
 }
 
-int
-ncsync(int cdfid)
-{
-    NC *handle;
-
-    cdf_routine_name = "ncsync";
-
-    handle = NC_check_id(cdfid);
-    if (handle == NULL)
-        return -1;
-
-    if (handle->flags & NC_INDEF) {
-        NCadvise(NC_EINDEFINE, "Unfinished definition");
-        return -1;
-    }
-
-    if (handle->flags & NC_RDWR) {
-        handle->xdrs->x_op = XDR_ENCODE;
-        if (handle->flags & NC_HDIRTY) {
-            if (!xdr_cdf(handle->xdrs, &handle))
-                return -1;
-            handle->flags &= ~(NC_NDIRTY | NC_HDIRTY);
-        }
-        else if (handle->flags & NC_NDIRTY) {
-            if (!xdr_numrecs(handle->xdrs, handle))
-                return -1;
-            if (handle->file_type != HDF_FILE)
-                handle->flags &= ~(NC_NDIRTY);
-        }
-    }
-    else /* read only */
-    {
-        /* assert(handle->xdrs->x_op == XDR_DECODE) ; */
-        /* free the stuff in handle that xdr_cdf allocates */
-        handle->xdrs->x_op = XDR_FREE;
-        (void)xdr_cdf(handle->xdrs, &handle);
-        handle->xdrs->x_op = XDR_DECODE;
-
-        if (!xdr_cdf(handle->xdrs, &handle)) {
-            nc_serror("xdr_cdf");
-            NC_free_cdf(handle); /* ?? what should we do now? */
-
-            return -1;
-        }
-        if (NC_computeshapes(handle) == -1)
-            return -1;
-    }
-
-    (void)NCxdrfile_sync(handle->xdrs);
-
-    return 0;
-}
-
 /*
  *  In data mode, same as ncclose ;
  * In define mode, restore previous definition ;
@@ -499,167 +446,6 @@ ncabort(int cdfid)
 } /* ncabort */
 
 /*
- * Deprecated function ;
- */
-int
-ncnobuf(int cdfid)
-{
-    NC *handle;
-
-    cdf_routine_name = "ncnobuf";
-
-    handle = NC_check_id(cdfid);
-    if (handle == NULL)
-        return -1;
-    /* NOOP */
-    return 0;
-}
-
-/*
- * Given the path to a file "proto",
- * we replace the filename component with
- * a name like one would get from tmpnam(3S).
- * (Many implementations of tmpnam insist on giving us
- * a directory like /usr/tmp as well. Since we are making a copy which we
- * will eventually rename() back to proto, we want the return of NCtempname
- * and proto to dwell on the same filesystem.)
- */
-static char *
-NCtempname(const char *proto)
-{
-#define TN_NACCES  1
-#define TN_NDIGITS 4
-    unsigned int pid; /* OS/2 DOS (MicroSoft Lib) allows "negative" int pids */
-
-    static char seed[] = {'a', 'a', 'a', '\0'};
-#define TN_NSEED (sizeof(seed) - 1)
-    static char tnbuf[FILENAME_MAX + 1];
-    char       *begin, *cp, *sp;
-
-    /* assert(TN_NSEED > 0) ; */
-    strcpy(tnbuf, proto);
-
-#ifdef SEP
-    if ((begin = strrchr(tnbuf, SEP)) == NULL)
-        begin = tnbuf;
-    else
-        begin++;
-
-    if (&tnbuf[FILENAME_MAX] - begin <= TN_NSEED + TN_NACCES + TN_NDIGITS) {
-        /* not big enough */
-        tnbuf[0] = '\0';
-        return tnbuf;
-    }
-#else
-    begin = tnbuf;
-#endif /* SEP */
-
-    *begin = '\0';
-    (void)strcat(begin, seed);
-
-    cp  = begin + TN_NSEED + TN_NACCES + TN_NDIGITS;
-    *cp = '\0';
-    pid = getpid();
-    while (--cp >= begin + TN_NSEED + TN_NACCES) {
-        *cp = (pid % 10) + '0';
-        pid /= 10;
-    }
-
-    /* update seed for next call */
-    sp = seed;
-    while (*sp == 'z')
-        *sp++ = 'a';
-    if (*sp != '\0')
-        ++*sp;
-
-    for (*cp = 'a'; access(tnbuf, 0) == 0;) {
-        if (++*cp > 'z') {
-            /* ran out of tries */
-            tnbuf[0] = '\0';
-            return tnbuf;
-        }
-    }
-
-    return tnbuf;
-}
-
-int
-ncredef(int cdfid)
-{
-    NC *handle;
-    NC *new;
-    int   id;
-    char *scratchfile;
-
-    cdf_routine_name = "ncredef";
-
-    handle = NC_check_id(cdfid);
-    if (handle == NULL)
-        return -1;
-    if (handle->flags & NC_INDEF) /* in define mode already */
-    {
-        NC *stash = STASH(cdfid);
-        if (stash)
-            NCadvise(NC_EINDEFINE, "%s: in define mode already", stash->path);
-        return -1;
-    }
-    if (!(handle->flags & NC_RDWR)) {
-        NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path);
-        return -1;
-    }
-
-    if (handle->file_type == HDF_FILE) {
-        handle->flags |= NC_INDEF;
-        handle->redefid = TRUE;
-        return 0;
-    }
-
-    /* find first available id */
-    for (id = 0; id < _ncdf; id++)
-        if (_cdfs[id] == NULL)
-            break;
-
-    if (id == _ncdf && _ncdf >= max_NC_open) /* will need a new one */
-    {
-        NCadvise(NC_ENFILE, "maximum number of open cdfs %d exceeded", _ncdf);
-        return -1;
-    }
-
-    if (ncopts & NC_NOFILL) {
-        /* fill last record */
-        handle->xdrs->x_op = XDR_ENCODE;
-        if (handle->flags & NC_NDIRTY) {
-            if (!xdr_numrecs(handle->xdrs, handle))
-                return -1;
-            handle->flags &= ~(NC_NDIRTY);
-        }
-    }
-
-    scratchfile = NCtempname(handle->path);
-
-    new = NC_dup_cdf(scratchfile, NC_NOCLOBBER, handle);
-    if (new == NULL) {
-        return -1;
-    }
-
-    handle->flags |= NC_INDEF;
-    (void)strncpy(new->path, scratchfile, FILENAME_MAX);
-
-    /* put the old handle in the new id */
-    _cdfs[id] = handle;
-    if (id == _ncdf)
-        _ncdf++;
-    _curr_opened++;
-
-    /* put the new handle in old id */
-    _cdfs[cdfid] = new;
-
-    new->redefid = id;
-
-    return 0;
-}
-
-/*
  * Compute offsets and put into the header
  */
 static void
@@ -721,16 +507,16 @@ NC_dcpy(XDR *target, XDR *source, long nbytes)
     char buf[NC_DCP_BUFSIZE];
 
     while (nbytes > sizeof(buf)) {
-        if (!h4_xdr_getbytes(source, buf, sizeof(buf)))
+        if (!hdf_xdr_getbytes(source, buf, sizeof(buf)))
             goto err;
-        if (!h4_xdr_putbytes(target, buf, sizeof(buf)))
+        if (!hdf_xdr_putbytes(target, buf, sizeof(buf)))
             goto err;
         nbytes -= sizeof(buf);
     }
     /* we know nbytes <= sizeof(buf) at this point */
-    if (!h4_xdr_getbytes(source, buf, nbytes))
+    if (!hdf_xdr_getbytes(source, buf, nbytes))
         goto err;
-    if (!h4_xdr_putbytes(target, buf, nbytes))
+    if (!hdf_xdr_putbytes(target, buf, nbytes))
         goto err;
     return TRUE;
 err:
@@ -748,8 +534,8 @@ NC_vcpy(XDR *target, NC *old, int varid)
     vpp = (NC_var **)old->vars->values;
     vpp += varid;
 
-    if (!h4_xdr_setpos(old->xdrs, (*vpp)->begin)) {
-        NCadvise(NC_EXDR, "NC_vcpy: h4_xdr_setpos");
+    if (!hdf_xdr_setpos(old->xdrs, (*vpp)->begin)) {
+        NCadvise(NC_EXDR, "NC_vcpy: hdf_xdr_setpos");
         return FALSE;
     }
 
@@ -766,8 +552,8 @@ NC_reccpy(XDR *target, NC *old, int varid, int recnum)
     vpp = (NC_var **)old->vars->values;
     vpp += varid;
 
-    if (!h4_xdr_setpos(old->xdrs, (*vpp)->begin + old->recsize * recnum)) {
-        NCadvise(NC_EXDR, "NC_reccpy: h4_xdr_setpos");
+    if (!hdf_xdr_setpos(old->xdrs, (*vpp)->begin + old->recsize * recnum)) {
+        NCadvise(NC_EXDR, "NC_reccpy: hdf_xdr_setpos");
         return FALSE;
     }
 
@@ -859,7 +645,7 @@ NC_endef(int cdfid, NC *handle)
         /* close stash */
 /*                NC_free_cdf(stash) ; */
 #ifdef H4_HAVE_WIN32_API
-        h4_xdr_destroy(handle->xdrs); /* close handle */
+        hdf_xdr_destroy(handle->xdrs); /* close handle */
         if (remove(realpath) != 0)
             nc_serror("couldn't remove filename \"%s\"", realpath);
 #endif
@@ -1028,12 +814,6 @@ ncsetfill(int id, int fillmode)
 }
 
 int
-NCxdrfile_sync(XDR *xdrs)
-{
-    return h4_xdr_sync(xdrs);
-}
-
-int
 NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
 {
     int         fmode;
@@ -1076,7 +856,7 @@ NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
         op = XDR_DECODE;
     }
 
-    if (h4_xdr_create(xdrs, fd, fmode, op) < 0)
+    if (hdf_xdr_create(xdrs, fd, fmode, op) < 0)
         return -1;
     else
         return fd;

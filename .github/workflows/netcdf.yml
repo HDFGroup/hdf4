@@ -36,7 +36,7 @@ jobs:
     - name: Install HDF4
       run: |
         ./autogen.sh
-        ./configure --prefix=/usr/local --disable-netcdf --enable-shared --with-szlib
+        ./configure --prefix=/usr/local --enable-shared --with-szlib
         make -j
         sudo make install -j
 

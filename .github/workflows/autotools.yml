@@ -8,20 +8,18 @@ permissions:
   contents: read
 
 jobs:
-    call-debug-netcdf-autotools:
-      name: "Autotools Debug NetCDF Workflows"
+    call-debug-autotools:
+      name: "Autotools Debug Workflows"
       uses: ./.github/workflows/main-auto.yml
       with:
-            netcdf: enable
             shared: enable
             build_mode: "debug"
             build_option: "--disable-production"
 
-    call-release-netcdf-autotools:
-      name: "Autotools Release NetCDF Workflows"
+    call-release-autotools:
+      name: "Autotools Release Workflows"
       uses: ./.github/workflows/main-auto.yml
       with:
-            netcdf: enable
             shared: enable
             build_mode: "production"
             build_option: "--enable-production"
@@ -30,7 +28,6 @@ jobs:
       name: "Autotools Debug Static Workflows"
       uses: ./.github/workflows/main-auto.yml
       with:
-            netcdf: disable
             shared: disable
             build_mode: "debug"
             build_option: "--disable-production"
@@ -39,7 +36,6 @@ jobs:
       name: "Autotools Release Static Workflows"
       uses: ./.github/workflows/main-auto.yml
       with:
-            netcdf: disable
             shared: disable
             build_mode: "production"
             build_option: "--enable-production"

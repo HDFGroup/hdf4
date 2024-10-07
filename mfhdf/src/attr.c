@@ -146,26 +146,6 @@ NC_findattr(NC_array **ap, const char *name)
 }
 
 /*
- * Look up by cdfid, varid and name, return NULL if not found
- */
-static NC_attr **
-NC_lookupattr(int cdfid, int varid, const char *name, bool_t verbose)
-/* name - attribute name */
-{
-    NC_array **ap;
-    NC_attr  **attr;
-
-    ap = NC_attrarray(cdfid, varid);
-    if (ap == NULL)
-        return NULL;
-
-    attr = NC_findattr(ap, name);
-    if (verbose && attr == NULL)
-        NCadvise(NC_ENOTATT, "attribute \"%s\" not found", name);
-    return attr;
-}
-
-/*
  * Common code for attput and attcopy
  */
 static int
@@ -243,7 +223,7 @@ NC_aput(int cdfid, NC_array **ap, const char *name, nc_type datatype, unsigned c
 }
 
 int
-ncattput(int cdfid, int varid, const char *name, nc_type datatype, int count, const ncvoid *values)
+ncattput(int cdfid, int varid, const char *name, nc_type datatype, int count, const void *values)
 {
     NC_array **ap;
 
@@ -262,175 +242,6 @@ ncattput(int cdfid, int varid, const char *name, nc_type datatype, int count, co
         return -1;
 
     return NC_aput(cdfid, ap, name, datatype, (unsigned)count, values);
-}
-
-int
-ncattname(int cdfid, int varid, int attnum, char *name)
-{
-    NC_array **ap;
-    NC_attr  **attr;
-
-    cdf_routine_name = "ncattname";
-
-    ap = NC_attrarray(cdfid, varid);
-    if (ap == NULL || *ap == NULL)
-        return -1;
-
-    if (attnum < 0 || attnum >= (int)(*ap)->count) {
-        NCadvise(NC_ENOTATT, "%d is not a valid attribute id", attnum);
-        return -1;
-    }
-
-    attr = (NC_attr **)(*ap)->values;
-    attr += attnum;
-    (void)memcpy(name, (*attr)->name->values, (*attr)->name->len);
-    name[(*attr)->name->len] = 0;
-
-    return attnum;
-}
-
-int
-ncattinq(int cdfid, int varid, const char *name, nc_type *datatypep, int *countp)
-/* name - input, attribute name */
-{
-    NC_attr **attr;
-
-    cdf_routine_name = "ncattinq";
-
-    attr = NC_lookupattr(cdfid, varid, name, TRUE);
-    if (attr == NULL)
-        return -1;
-
-    if (datatypep != 0)
-        *datatypep = (*attr)->data->type;
-    if (countp != 0)
-        *countp = (int)(*attr)->data->count;
-    return 1;
-}
-
-int
-ncattrename(int cdfid, int varid, const char *name, const char *newname)
-{
-    NC       *handle;
-    NC_attr **attr;
-    NC_string *new, *old;
-
-    cdf_routine_name = "cdfattrrename";
-
-    handle = NC_check_id(cdfid);
-    if (handle == NULL)
-        return -1;
-    if (!(handle->flags & NC_RDWR))
-        return -1;
-
-    attr = NC_lookupattr(cdfid, varid, name, TRUE);
-    if (attr == NULL)
-        return -1;
-
-    if (NC_lookupattr(cdfid, varid, newname, FALSE) != NULL) /* name in use */
-        return -1;
-
-    old = (*attr)->name;
-    if (NC_indefine(cdfid, FALSE)) {
-        new = NC_new_string((unsigned)strlen(newname), newname);
-        if (new == NULL)
-            return -1;
-        (*attr)->name = new;
-        NC_free_string(old);
-        return 1;
-    } /* else */
-    new = NC_re_string(old, (unsigned)strlen(newname), newname);
-    if (new == NULL)
-        return -1;
-    (*attr)->name = new;
-    if (handle->flags & NC_HSYNC) {
-        handle->xdrs->x_op = XDR_ENCODE;
-        if (!xdr_cdf(handle->xdrs, &handle))
-            return -1;
-        handle->flags &= ~(NC_NDIRTY | NC_HDIRTY);
-    }
-    else
-        handle->flags |= NC_HDIRTY;
-    return 1;
-}
-
-int
-ncattcopy(int incdf, int invar, const char *name, int outcdf, int outname)
-{
-    NC_attr  **attr;
-    NC_array **ap;
-
-    cdf_routine_name = "ncattcopy";
-
-    attr = NC_lookupattr(incdf, invar, name, TRUE);
-    if (attr == NULL)
-        return -1;
-
-    ap = NC_attrarray(outcdf, outname);
-    if (ap == NULL)
-        return -1;
-
-    return NC_aput(outcdf, ap, name, (*attr)->data->type, (*attr)->data->count, (*attr)->data->values);
-}
-
-int
-ncattdel(int cdfid, int varid, const char *name)
-{
-    NC_array **ap;
-    NC_attr  **attr;
-    NC_attr   *old = NULL;
-    unsigned   attrid;
-    size_t     len;
-
-    cdf_routine_name = "ncattdel";
-
-    if (!NC_indefine(cdfid, TRUE))
-        return -1;
-
-    ap = NC_attrarray(cdfid, varid);
-    if (ap == NULL || *ap == NULL)
-        return -1;
-
-    attr = (NC_attr **)(*ap)->values;
-
-    len = strlen(name);
-    for (attrid = 0; attrid < (*ap)->count; attrid++, attr++) {
-        if (len == (*attr)->name->len && strncmp(name, (*attr)->name->values, len) == 0) {
-            old = *attr;
-            break;
-        }
-    }
-    if (attrid == (*ap)->count) {
-        NCadvise(NC_ENOTATT, "attribute \"%s\" not found", name);
-        return -1;
-    }
-    /* shuffle down */
-    for (attrid++; attrid < (*ap)->count; attrid++) {
-        *attr = *(attr + 1);
-        attr++;
-    }
-    /* decrement count */
-    (*ap)->count--;
-
-    NC_free_attr(old);
-
-    return 1;
-}
-
-int
-ncattget(int cdfid, int varid, const char *name, ncvoid *values)
-{
-    NC_attr **attr;
-
-    cdf_routine_name = "ncattget";
-
-    attr = NC_lookupattr(cdfid, varid, name, TRUE);
-    if (attr == NULL)
-        return -1;
-
-    NC_copy_arrayvals((char *)values, (*attr)->data);
-
-    return 1;
 }
 
 bool_t

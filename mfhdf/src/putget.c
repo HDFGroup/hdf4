@@ -32,8 +32,6 @@ static const long *NCvcmaxcontig(NC *, NC_var *, const long *, const long *);
 
 int NC_fill_buffer(NC *handle, int varid, const long *edges, void *values);
 
-#define xdr_NCsetpos(xdrs, pos) h4_xdr_setpos((xdrs), (pos))
-
 /*
  * Check if an ncxxx function has called the current function
  */
@@ -236,7 +234,7 @@ NCcoordck(NC *handle, NC_var *vp, const long *coords)
         }
         else {
             /* fill out new records */
-            if (!xdr_NCsetpos(handle->xdrs, handle->begin_rec + handle->recsize * handle->numrecs)) {
+            if (!hdf_xdr_setpos(handle->xdrs, handle->begin_rec + handle->recsize * handle->numrecs)) {
                 nc_serror("NCcoordck seek, var %s", vp->name->values);
                 return FALSE;
             }
@@ -351,13 +349,13 @@ xdr_NCvbyte(XDR *xdrs, unsigned rem, unsigned count, char *values)
          * Since we only read/write multiples of four bytes,
          * We will read in the word to change one byte in it.
          */
-        origin = h4_xdr_getpos(xdrs);
+        origin = hdf_xdr_getpos(xdrs);
 
         /* Next op is a get */
         xdrs->x_op = XDR_DECODE;
     }
 
-    if (!h4_xdr_opaque(xdrs, buf, 4)) {
+    if (!hdf_xdr_opaque(xdrs, buf, 4)) {
         /* Get failed, assume we are trying to read off the end */
         memset(buf, 0, sizeof(buf));
     }
@@ -376,9 +374,9 @@ xdr_NCvbyte(XDR *xdrs, unsigned rem, unsigned count, char *values)
     }
 
     if (x_op == XDR_ENCODE) {
-        if (!h4_xdr_setpos(xdrs, origin))
+        if (!hdf_xdr_setpos(xdrs, origin))
             return FALSE;
-        if (!h4_xdr_opaque(xdrs, buf, 4))
+        if (!hdf_xdr_opaque(xdrs, buf, 4))
             return FALSE;
     }
 
@@ -397,13 +395,13 @@ xdr_NCvshort(XDR *xdrs, unsigned which, short *values)
     enum xdr_op   x_op   = xdrs->x_op; /* save state */
 
     if (x_op == XDR_ENCODE) {
-        origin = h4_xdr_getpos(xdrs);
+        origin = hdf_xdr_getpos(xdrs);
 
         /* Next op is a get */
         xdrs->x_op = XDR_DECODE;
     }
 
-    if (!h4_xdr_opaque(xdrs, (char *)buf, 4)) {
+    if (!hdf_xdr_opaque(xdrs, (char *)buf, 4)) {
         /* Get failed, assume we are trying to read off the end */
         memset(buf, 0, sizeof(buf));
     }
@@ -418,9 +416,9 @@ xdr_NCvshort(XDR *xdrs, unsigned which, short *values)
         buf[which + 1] = *values % 256;
         buf[which]     = (*values >> 8);
 
-        if (!h4_xdr_setpos(xdrs, origin))
+        if (!hdf_xdr_setpos(xdrs, origin))
             return FALSE;
-        if (!h4_xdr_opaque(xdrs, (char *)buf, 4))
+        if (!hdf_xdr_opaque(xdrs, (char *)buf, 4))
             return FALSE;
     }
     else {
@@ -451,7 +449,7 @@ xdr_NCv1data(XDR *xdrs, unsigned long where, nc_type type, uint8_t *values)
         default:
             break;
     }
-    if (!xdr_NCsetpos(xdrs, where))
+    if (!hdf_xdr_setpos(xdrs, where))
         return FALSE;
 
     switch (type) {
@@ -461,12 +459,11 @@ xdr_NCv1data(XDR *xdrs, unsigned long where, nc_type type, uint8_t *values)
         case NC_SHORT:
             return xdr_NCvshort(xdrs, (unsigned)rem / 2, (short *)values);
         case NC_LONG:
-            /* nclong is defined to a 32-bit integer type in netcdf.h */
-            return h4_xdr_int(xdrs, (nclong *)values);
+            return hdf_xdr_int(xdrs, (int32_t *)values);
         case NC_FLOAT:
-            return h4_xdr_float(xdrs, (float *)values);
+            return hdf_xdr_float(xdrs, (float *)values);
         case NC_DOUBLE:
-            return h4_xdr_double(xdrs, (double *)values);
+            return hdf_xdr_double(xdrs, (double *)values);
         default:
             break;
     }
@@ -1398,7 +1395,7 @@ NCvar1io(NC *handle, int varid, const long *coords, uint8_t *value)
 }
 
 int
-ncvarput1(int cdfid, int varid, const long *coords, const ncvoid *value)
+ncvarput1(int cdfid, int varid, const long *coords, const void *value)
 {
     NC *handle;
 
@@ -1418,7 +1415,7 @@ ncvarput1(int cdfid, int varid, const long *coords, const ncvoid *value)
 }
 
 int
-ncvarget1(int cdfid, int varid, const long *coords, ncvoid *value)
+ncvarget1(int cdfid, int varid, const long *coords, void *value)
 {
     NC *handle;
 
@@ -1454,7 +1451,7 @@ xdr_NCvdata(XDR *xdrs, unsigned long where, nc_type type, unsigned count, uint8_
         default:
             break;
     }
-    if (!xdr_NCsetpos(xdrs, where))
+    if (!hdf_xdr_setpos(xdrs, where))
         return FALSE;
 
     switch (type) {
@@ -1470,7 +1467,7 @@ xdr_NCvdata(XDR *xdrs, unsigned long where, nc_type type, unsigned count, uint8_
 
             rem = count % 4; /* tail remainder */
             count -= rem;
-            if (!h4_xdr_opaque(xdrs, values, count))
+            if (!hdf_xdr_opaque(xdrs, values, count))
                 return FALSE;
 
             if (rem != 0) {
@@ -1497,15 +1494,15 @@ xdr_NCvdata(XDR *xdrs, unsigned long where, nc_type type, unsigned count, uint8_
             }
             return TRUE;
         case NC_LONG:
-            xdr_NC_fnct = h4_xdr_int;
-            szof        = sizeof(nclong);
+            xdr_NC_fnct = hdf_xdr_int;
+            szof        = sizeof(int32_t);
             break;
         case NC_FLOAT:
-            xdr_NC_fnct = h4_xdr_float;
+            xdr_NC_fnct = hdf_xdr_float;
             szof        = sizeof(float);
             break;
         case NC_DOUBLE:
-            xdr_NC_fnct = h4_xdr_double;
+            xdr_NC_fnct = hdf_xdr_double;
             szof        = sizeof(double);
             break;
         default:
@@ -1773,7 +1770,7 @@ NCvario(NC *handle, int varid, const long *start, const long *edges, void *value
 }
 
 int
-ncvarput(int cdfid, int varid, const long *start, const long *edges, ncvoid *values)
+ncvarput(int cdfid, int varid, const long *start, const long *edges, void *values)
 {
     NC *handle;
 
@@ -1852,7 +1849,7 @@ NC_fill_buffer(NC *handle, int varid, const long *edges, void *values)
  *  -BMR, 2013/8/29
  */
 int
-ncvarget(int cdfid, int varid, const long *start, const long *edges, ncvoid *values)
+ncvarget(int cdfid, int varid, const long *start, const long *edges, void *values)
 {
     NC *handle;
     int status = 0;
@@ -1873,193 +1870,4 @@ ncvarget(int cdfid, int varid, const long *start, const long *edges, ncvoid *val
     handle->xdrs->x_op = XDR_DECODE;
 
     return NCvario(handle, varid, start, edges, (uint8_t *)values);
-}
-
-/* Begin recio */
-
-/*
- * Returns number of record variables in an open netCDF file,
- * Optionally fills an array of record variable handles.
- * Optionally fills an array of record variable ids.
- * Returns -1 on error.
- */
-static int
-NCnumrecvars(NC *handle, NC_var **vpp, int *recvarids)
-{
-    NC_var **dp;
-    int      nrecvars = 0;
-
-    if (handle->vars == NULL)
-        return -1;
-
-    dp = (NC_var **)handle->vars->values;
-    for (int ii = 0; ii < handle->vars->count; ii++, dp++) {
-        if (IS_RECVAR((*dp))) {
-            if (vpp != NULL)
-                vpp[nrecvars] = *dp;
-            if (recvarids != NULL)
-                recvarids[nrecvars] = ii;
-            nrecvars++;
-        }
-    }
-    return nrecvars;
-}
-
-static long
-NCelemsPerRec(NC_var *vp)
-{
-    long nelems = 1;
-
-    for (int jj = 1; jj < vp->assoc->count; jj++)
-        nelems *= vp->shape[jj];
-
-    return nelems;
-}
-
-/*
- * Retrieves the number of record variables, the record variable ids, and the
- * record size of each record variable.  If any pointer to info to be returned
- * is null, the associated information is not returned.  Returns -1 on error.
- */
-int
-ncrecinq(int cdfid, int *nrecvars, int *recvarids, long *recsizes)
-{
-    NC     *handle;
-    int     nrvars;
-    NC_var *rvp[H4_MAX_NC_VARS];
-
-    cdf_routine_name = "ncrecinq";
-
-    handle = NC_check_id(cdfid);
-    if (handle == NULL)
-        return -1;
-
-    nrvars = NCnumrecvars(handle, rvp, recvarids);
-    if (nrvars == -1)
-        return -1;
-
-    if (nrecvars != NULL)
-        *nrecvars = nrvars;
-
-    if (recsizes != NULL) {
-        for (int ii = 0; ii < nrvars; ii++) {
-            recsizes[ii] = nctypelen(rvp[ii]->type) * NCelemsPerRec(rvp[ii]);
-        }
-    }
-    return nrvars;
-}
-
-static int
-NCrecio(NC *handle, long recnum, uint8_t **datap)
-{
-    int           nrvars;
-    NC_var       *rvp[H4_MAX_NC_VARS];
-    long          coords[H4_MAX_VAR_DIMS];
-    unsigned long offset;
-    unsigned      iocount;
-
-    nrvars = NCnumrecvars(handle, rvp, (int *)NULL);
-    if (nrvars == -1)
-        return -1;
-
-    memset(coords, 0, sizeof(coords));
-    coords[0] = recnum;
-    for (int ii = 0; ii < nrvars; ii++) {
-        if (datap[ii] == NULL)
-            continue;
-
-        offset  = NC_varoffset(handle, rvp[ii], coords);
-        iocount = NCelemsPerRec(rvp[ii]);
-
-        switch (handle->file_type) {
-            case HDF_FILE:
-                DFKsetNT(rvp[ii]->HDFtype);
-                if (FAIL ==
-                    hdf_xdr_NCvdata(handle, rvp[ii], offset, rvp[ii]->type, (uint32)iocount, datap[ii]))
-                    return -1;
-                break;
-            case CDF_FILE:
-                DFKsetNT(rvp[ii]->HDFtype);
-                if (!nssdc_xdr_NCvdata(handle, rvp[ii], offset, rvp[ii]->type, (uint32)iocount, datap[ii]))
-                    return -1;
-                break;
-            case netCDF_FILE:
-                if (!xdr_NCvdata(handle->xdrs, offset, rvp[ii]->type, iocount, datap[ii]))
-                    return -1;
-                break;
-        }
-    }
-    return 0;
-}
-
-/*
- * Write one record's worth of data, except don't write to variables for which
- * the address of the data to be written is null.  Return -1 on error.
- */
-int
-ncrecput(int cdfid, long recnum, ncvoid **datap)
-{
-    NC  *handle;
-    long unfilled;
-
-    cdf_routine_name = "ncrecput";
-
-    handle = NC_check_id(cdfid);
-    if (handle == NULL)
-        return -1;
-    if (handle->flags & NC_INDEF)
-        return -1;
-
-    if ((unfilled = recnum - handle->numrecs) >= 0) {
-        handle->flags |= NC_NDIRTY;
-        if (handle->flags & NC_NOFILL) {
-            /* Go directly to jail, do not pass go */
-            handle->numrecs = recnum + 1;
-        }
-        else {
-            /* fill out new records */
-            if (!xdr_NCsetpos(handle->xdrs, handle->begin_rec + handle->recsize * handle->numrecs)) {
-                nc_serror("seek, rec %ld", handle->numrecs);
-                return FALSE;
-            }
-            for (; unfilled >= 0; unfilled--, handle->numrecs++) {
-                if (!NCfillrecord(handle->xdrs, (NC_var **)handle->vars->values, handle->vars->count)) {
-                    nc_serror("NCfillrec, rec %ld", handle->numrecs);
-                    return FALSE;
-                }
-            }
-        }
-        if (handle->flags & NC_NSYNC) /* write out header->numrecs NOW */
-        {
-            if (!xdr_numrecs(handle->xdrs, handle))
-                return FALSE;
-            handle->flags &= ~NC_NDIRTY;
-        }
-    }
-
-    handle->xdrs->x_op = XDR_ENCODE;
-
-    return NCrecio(handle, recnum, (uint8_t **)datap);
-}
-
-/*
- * Read one record's worth of data, except don't read from variables for which
- * the address of the data to be read is null.  Return -1 on error;
- */
-int
-ncrecget(int cdfid, long recnum, ncvoid **datap)
-{
-    NC *handle;
-
-    cdf_routine_name = "ncrecget";
-
-    handle = NC_check_id(cdfid);
-    if (handle == NULL)
-        return -1;
-    if (handle->flags & NC_INDEF)
-        return -1;
-
-    handle->xdrs->x_op = XDR_DECODE;
-
-    return NCrecio(handle, recnum, (uint8_t **)datap);
 }

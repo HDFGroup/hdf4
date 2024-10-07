@@ -37,7 +37,7 @@ NCxdr_shortsb(XDR *xdrs, short *sp, unsigned nshorts)
         }
     }
 
-    if (!h4_xdr_opaque(xdrs, (char *)buf, nbytes))
+    if (!hdf_xdr_opaque(xdrs, (char *)buf, nbytes))
         return FALSE;
 
     if (xdrs->x_op == XDR_DECODE) {

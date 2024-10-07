@@ -37,5 +37,4 @@ Languages:
 Features:
 ---------
                SZIP compression: @SZIP_INFO@
- Export HDF4-built netCDF-2 API: @BUILD_NETCDF@ (yes: export undecorated netCDF names, no: prefix with 'sd_')
  With deprecated public symbols: @DEPRECATED_SYMBOLS@

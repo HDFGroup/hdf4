@@ -17,24 +17,31 @@
 /* Formerly used to divide up the HDF and netCDF code. The symbol is retained
  * since it's technically in the public API.
  */
-#ifndef HDF
 #define HDF 1
-#endif
 
 #include "hdf.h"
 
-#ifdef H4_HAVE_NETCDF
-#include "netcdf.h"
-#else
-#include "hdf4_netcdf.h"
-#endif
-
-#define SD_UNLIMITED        NC_UNLIMITED /* use this as marker for unlimited dimension */
-#define SD_NOFILL           NC_NOFILL
-#define SD_FILL             NC_FILL
+#define SD_UNLIMITED        0L    /* Same as NC_UNLIMITED, use this as marker for unlimited dimension */
+#define SD_NOFILL           0x100 /* Same as NC_NOFILL */
+#define SD_FILL             0     /* Same as NC_FILL */
 #define SD_DIMVAL_BW_COMP   1
 #define SD_DIMVAL_BW_INCOMP 0
-#define SD_RAGGED           -1 /* marker for ragged dimension */
+#define SD_RAGGED           -1 /* Marker for ragged dimension */
+
+/* Fill values
+ *
+ * These values are stuffed into newly allocated space as appropriate.
+ * The hope is that one might use these to notice that a particular datum
+ * has not been set.
+ */
+
+#define FILL_BYTE  ((char)-127) /* Largest Negative value */
+#define FILL_CHAR  ((char)0)
+#define FILL_SHORT ((short)-32767)
+#define FILL_LONG  ((long)-2147483647)
+
+#define FILL_FLOAT  9.9692099683868690e+36F /* near 15 * 2^119 */
+#define FILL_DOUBLE 9.9692099683868690e+36
 
 /* enumerated type used to specify whether a variable is an SDS, coordinate
  * variable, or its type is unknown because it was created before HDF4.2r2

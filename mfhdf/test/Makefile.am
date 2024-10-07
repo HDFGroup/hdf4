@@ -8,18 +8,14 @@ include $(top_srcdir)/config/commence.am
 test_INCLUDES=-I$(top_srcdir)/hdf/src         \
               -I$(top_srcdir)/mfhdf/src       \
               -I$(top_builddir)/mfhdf/src
-DEFINES=-DHDF
-AM_CPPFLAGS=$(test_INCLUDES) $(DEFINES)
+AM_CPPFLAGS=$(test_INCLUDES)
 
 #############################################################################
 ##                              Testing                                    ##
 #############################################################################
 
-TEST_PROG = cdftest hdfnctest hdftest
-check_PROGRAMS = cdftest hdfnctest hdftest
-
-cdftest_SOURCES = cdftest.c
-cdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
+TEST_PROG = hdfnctest hdftest
+check_PROGRAMS = hdfnctest hdftest
 
 hdfnctest_SOURCES = hdfnctest.c tutils.c tncvargetfill.c tunlim.c	\
 		    tncunlim.c
@@ -35,7 +31,7 @@ hdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
 ##                          And the cleanup                                ##
 #############################################################################
 
-CHECK_CLEANFILES += *.new *.hdf *.cdf *.cdl netcdf.h This* onedimmultivars.nc \
+CHECK_CLEANFILES += *.new *.hdf *.cdf *.cdl This* onedimmultivars.nc \
                onedimonevar.nc multidimvar.nc SD_externals
 
 DISTCLEANFILES =

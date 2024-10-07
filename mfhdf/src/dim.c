@@ -146,30 +146,6 @@ NC_dimid(NC *handle, char *name)
 }
 
 int
-ncdimid(int cdfid, const char *name)
-{
-    NC      *handle;
-    NC_dim **dp;
-    size_t   len;
-
-    cdf_routine_name = "ncdimid";
-
-    handle = NC_check_id(cdfid);
-    if (handle == NULL)
-        return -1;
-    if (handle->dims == NULL)
-        return -1;
-    len = strlen(name);
-    dp  = (NC_dim **)handle->dims->values;
-    for (unsigned ii = 0; ii < handle->dims->count; ii++, dp++) {
-        if (len == (*dp)->name->len && strncmp(name, (*dp)->name->values, len) == 0)
-            return (int)ii;
-    }
-    NCadvise(NC_EBADDIM, "dim \"%s\" not found", name);
-    return -1;
-}
-
-int
 ncdiminq(int cdfid, int dimid, char *name, long *sizep)
 {
     NC      *handle;
@@ -201,62 +177,6 @@ ncdiminq(int cdfid, int dimid, char *name, long *sizep)
     return dimid;
 }
 
-int
-ncdimrename(int cdfid, int dimid, const char *newname)
-{
-    NC        *handle;
-    NC_dim   **dp;
-    NC_string *old, *new;
-    size_t     len;
-
-    cdf_routine_name = "ncdimrename";
-
-    handle = NC_check_id(cdfid);
-
-    if (handle == NULL)
-        return -1;
-    if (!(handle->flags & NC_RDWR))
-        return -1;
-    if (handle->dims == NULL)
-        return -1;
-
-    /* check for name in use */
-    len = strlen(newname);
-    dp  = (NC_dim **)handle->dims->values;
-    for (unsigned ii = 0; ii < handle->dims->count; ii++, dp++) {
-        if (len == (*dp)->name->len && strncmp(newname, (*dp)->name->values, len) == 0) {
-            NCadvise(NC_ENAMEINUSE, "dimension \"%s\" in use with index %d", (*dp)->name->values, ii);
-            return -1;
-        }
-    }
-
-    dp = (NC_dim **)handle->dims->values;
-    dp += dimid;
-
-    old = (*dp)->name;
-    if (NC_indefine(cdfid, FALSE)) {
-        new = NC_new_string((unsigned)strlen(newname), newname);
-        if (new == NULL)
-            return -1;
-        (*dp)->name = new;
-        NC_free_string(old);
-        return dimid;
-    }
-    new = NC_re_string(old, (unsigned)strlen(newname), newname);
-    if (new == NULL)
-        return -1;
-    (*dp)->name = new;
-    if (handle->flags & NC_HSYNC) {
-        handle->xdrs->x_op = XDR_ENCODE;
-        if (!xdr_cdf(handle->xdrs, &handle))
-            return -1;
-        handle->flags &= ~(NC_NDIRTY | NC_HDIRTY);
-    }
-    else
-        handle->flags |= NC_HDIRTY;
-    return dimid;
-}
-
 bool_t
 xdr_NC_dim(XDR *xdrs, NC_dim **dpp)
 {
@@ -279,7 +199,7 @@ xdr_NC_dim(XDR *xdrs, NC_dim **dpp)
 
     if (!xdr_NC_string(xdrs, &((*dpp)->name)))
         return FALSE;
-    return h4_xdr_int(xdrs, &((*dpp)->size));
+    return hdf_xdr_int(xdrs, &((*dpp)->size));
 }
 
 /*

@@ -7,9 +7,9 @@ FORTRAN_DIR =
 endif
 
 # src folder in root Makefile, build other folders now
-SUBDIRS = src $(FORTRAN_DIR) test nctest hdp hdfimport hdiff hrepack
+SUBDIRS = src $(FORTRAN_DIR) test hdp hdfimport hdiff hrepack
 
-DIST_SUBDIRS = src fortran test nctest hdp hdfimport hdiff hrepack
+DIST_SUBDIRS = src fortran test hdp hdfimport hdiff hrepack
 
 # 'make install-all'
 install-all:

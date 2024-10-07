@@ -8,41 +8,30 @@ permissions:
   contents: read
 
 jobs:
-    call-workflow-nonetcdf-cmake:
-        name: "CMake Release NetCDF Off Workflows"
-        uses: ./.github/workflows/main-cmake.yml
-        with:
-            netcdf: "false"
-            shared: "true"
-            build_mode: "Release"
-
-    call-release-netcdf-cmake-mingw:
-        name: "CMake Release NetCDF MinGW Workflows"
+    call-release-cmake-mingw:
+        name: "CMake Release MinGW Workflows"
         uses: ./.github/workflows/mingw-cmake.yml
         with:
-            netcdf: "true"
             shared: "true"
             build_mode: "Release"
 
-    call-debug-netcdf-cmake:
-        name: "CMake Debug NetCDF Workflows"
+    call-debug-cmake:
+        name: "CMake Debug Workflows"
         uses: ./.github/workflows/main-cmake.yml
         with:
-            netcdf: "true"
             shared: "true"
             build_mode: "Debug"
 
-    call-release-netcdf-cmake:
-        name: "CMake Release NetCDF Workflows"
+    call-release-cmake:
+        name: "CMake Release Workflows"
         uses: ./.github/workflows/main-cmake.yml
         with:
-            netcdf: "true"
             shared: "true"
             build_mode: "Release"
 
     call-release-bintest:
         name: "CMake Test Release Binaries"
-        needs: call-release-netcdf-cmake
+        needs: call-release-cmake
         uses: ./.github/workflows/cmake-bintest.yml
         with:
             build_mode: "Release"
@@ -51,7 +40,6 @@ jobs:
         name: "CMake Debug Static Workflows"
         uses: ./.github/workflows/main-cmake.yml
         with:
-            netcdf: "false"
             shared: "false"
             build_mode: "Debug"
 
@@ -59,7 +47,6 @@ jobs:
         name: "CMake Release Static Workflows"
         uses: ./.github/workflows/main-cmake.yml
         with:
-            netcdf: "false"
             shared: "false"
             build_mode: "Release"
 

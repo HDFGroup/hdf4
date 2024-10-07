@@ -1,17 +1,9 @@
 cmake_minimum_required (VERSION 3.18)
 project (HDF4_MFHDF_SRC C)
 
-#-----------------------------------------------------------------------------
-# Generate the netcdf.h file containing user settings needed by compilation
-#-----------------------------------------------------------------------------
 if (WIN32)
   set (H4_WINDOWS_INCLUDE_FILE "#include <hdf.h>")
-  set (NETCDF_EXTERN HDFLIBAPI)
-else ()
-  set (NETCDF_EXTERN extern)
 endif ()
-
-set (NC_OLD_FILLVALUES 0)
 
 set (HDF4_MFHDF_SRC_CSRCS
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/array.c
@@ -19,6 +11,7 @@ set (HDF4_MFHDF_SRC_CSRCS
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/cdf.c
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/dim.c
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/file.c
+    ${HDF4_MFHDF_SRC_SOURCE_DIR}/hdf_xdr.c
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/hdfsds.c
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/iarray.c
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/error.c
@@ -31,11 +24,9 @@ set (HDF4_MFHDF_SRC_CSRCS
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/sharray.c
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/string.c
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/var.c
-    ${HDF4_MFHDF_SRC_SOURCE_DIR}/h4_xdr.c
 )
 
 set (HDF4_MFHDF_SRC_INSTALL_CHDRS
-    ${HDF4_MFHDF_SRC_SOURCE_DIR}/hdf2netcdf.h
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/mfdatainfo.h
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/mfhdf.h
 )
@@ -43,18 +34,10 @@ set (HDF4_MFHDF_SRC_INSTALL_CHDRS
 set (HDF4_MFHDF_SRC_CHDRS
     ${HDF4_MFHDF_SRC_INSTALL_CHDRS}
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/error_priv.h
-    ${HDF4_MFHDF_SRC_SOURCE_DIR}/h4_xdr_priv.h
+    ${HDF4_MFHDF_SRC_SOURCE_DIR}/hdf_xdr_priv.h
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/mf_priv.h
     ${HDF4_MFHDF_SRC_SOURCE_DIR}/nc_priv.h
 )
-
-if (HDF4_ENABLE_NETCDF)
-  configure_file (${HDF4_MFHDF_SRC_SOURCE_DIR}/netcdf.h.in ${HDF4_BINARY_DIR}/netcdf.h)
-  set (HDF4_MFHDF_SRC_XCHDRS ${HDF4_BINARY_DIR}/netcdf.h)
-else ()
-  configure_file (${HDF4_MFHDF_SRC_SOURCE_DIR}/netcdf.h.in ${HDF4_BINARY_DIR}/hdf4_netcdf.h)
-  set (HDF4_MFHDF_SRC_XCHDRS ${HDF4_BINARY_DIR}/hdf4_netcdf.h)
-endif ()
 
 if (BUILD_STATIC_LIBS)
   add_library (${HDF4_MF_LIB_TARGET} STATIC ${HDF4_MFHDF_SRC_CSRCS} ${HDF4_MFHDF_SRC_CHDRS})
@@ -112,7 +95,7 @@ endif ()
 #-----------------------------------------------------------------------------
 install (
     FILES
-        ${HDF4_MFHDF_SRC_INSTALL_CHDRS} ${HDF4_MFHDF_SRC_XCHDRS}
+        ${HDF4_MFHDF_SRC_INSTALL_CHDRS}
     DESTINATION
         ${HDF4_INSTALL_INCLUDE_DIR}
     COMPONENT

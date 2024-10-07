@@ -38,6 +38,207 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - The NetCDF interface has been removed from both C and Fortran
+
+      The HDF4 multi-file interface is built on NetCDF 2.3.2, which was
+      copied and modified instead of used as a library. HDF4 then exported
+      this API for public use.
+
+      This exported NetCDF API causes conflicts when both HDF4 and NetCDF
+      are used in the same application, so name-mangling hacks were added to
+      hide the NetCDF symbols. Since most people now enable the name mangling
+      scheme (via --disable-netcdf, etc.) and get their NetCDF API from
+      Unidata, the HDF4 NetCDF 2.3.2 API has been removed from both the C
+      and Fortran exported API.
+
+      Autotools:
+        * The --enable-netcdf option has been removed
+      
+      CMake:
+        * The HDF4_ENABLE_NETCDF option has been removed
+
+      C API:
+        * The hdf2netcdf.h and hdf4_netcdf.h header files are no longer
+          distributed with the library
+
+        * The following variables have been removed:
+            - ncerr
+            - ncopts
+
+        * The following functions have been removed:
+            - nccreate
+            - ncopen
+            - ncredef
+            - ncendef
+            - ncclose
+            - ncinquire
+            - ncsync
+            - ncabort
+            - ncdimdef
+            - ncdimid
+            - ncdiminq
+            - ncdimrename
+            - ncvardef
+            - ncvarid
+            - ncvarinq
+            - ncvarput1
+            - ncvarget1
+            - ncvarput
+            - ncvarget
+            - ncvarputs
+            - ncvargets
+            - ncvarputg
+            - ncvargetg
+            - ncvarrename
+            - ncattput
+            - ncattinq
+            - ncattget
+            - ncattcopy
+            - ncattname
+            - ncattrename
+            - ncattdel
+            - nctypelen
+            - ncsetfill
+            - ncrecinq
+            - ncrecget
+            - ncrecput
+            - ncnobuf
+
+        * The following typedefs have been removed:
+            - nc_type
+            - nclong
+
+        * The following #defined symbols have been removed:
+            - NC_RDWR
+            - NC_CREAT
+            - NC_EXCL
+            - NC_INDEF
+            - NC_NSYNC
+            - NC_HSYNC
+            - NC_NDIRTY
+            - NC_HDIRTY
+            - NC_NOFILL
+            - NC_LINK
+            - NC_FILL
+            - NC_NOWRITE
+            - NC_WRITE
+            - NC_CLOBBER
+            - NC_NOCLOBBER
+            - NC_UNLIMITED
+            - NC_GLOBAL
+            - NC_UNSPECIFIED
+            - NC_BYTE
+            - NC_CHAR
+            - NC_SHORT
+            - NC_LONG
+            - NC_FLOAT
+            - NC_DOUBLE
+            - NC_BITFIELD
+            - NC_STRING
+            - NC_IARRAY
+            - NC_DIMENSION
+            - NC_VARIABLE
+            - NC_ATTRIBUTE
+            - NC_NOERR
+            - NC_EBADID
+            - NC_ENFILE
+            - NC_EEXIST
+            - NC_EINVAL
+            - NC_EPERM
+            - NC_ENOTINDEFINE
+            - NC_EINDEFINE
+            - NC_EINVALCOORDS
+            - NC_EMAXDIMS
+            - NC_ENAMEINUSE
+            - NC_ENOTATT
+            - NC_EMAXATTS
+            - NC_EBADTYPE
+            - NC_EBADDIM
+            - NC_EUNLIMPOS
+            - NC_EMAXVARS
+            - NC_ENOTVAR
+            - NC_EGLOBAL
+            - NC_ENOTNC
+            - NC_ESTS
+            - NC_EMAXNAME
+            - NC_ENTOOL
+            - NC_EUNLIMIT
+            - NC_EXDR
+            - NC_SYSERR
+            - NC_FATAL
+            - NC_VERBOSE
+
+        * The following #defined symbols were moved to mfhdf.h from hdf4_netcdf.h:
+            - FILL_BYTE
+            - FILL_CHAR
+            - FILL_SHORT
+            - FILL_LONG
+            - FILL_FLOAT
+            - FILL_DOUBLE
+
+      Fortran API:
+        * The netcdf.inc and netcdf.f90 files are no longer distributed with the library
+
+        * The following functions have been removed:
+            - nccre
+            - ncopn
+            - ncddef
+            - ncdid
+            - ncvdef
+            - ncvid
+            - nctlen
+            - ncsfil
+
+        * The following variables have been removed:
+            - NCRDWR
+            - NCCREAT
+            - NCEXCL
+            - NCINDEF
+            - NCNSYNC
+            - NCHSYNC
+            - NCNDIRTY
+            - NCHDIRTY
+            - NCLINK
+            - NCNOWRIT
+            - NCWRITE
+            - NCCLOB
+            - NCNOCLOB
+            - NCGLOBAL
+            - NCFILL
+            - NCNOFILL
+            - MAXNCOP
+            - MAXNCDIM
+            - MAXNCATT
+            - MAXNCVAR
+            - MAXNCNAM
+            - MAXVDIMS
+            - NCNOERR
+            - NCEBADID
+            - NCENFILE
+            - NCEEXIST
+            - NCEINVAL
+            - NCEPERM
+            - NCENOTIN
+            - NCEINDEF
+            - NCECOORD
+            - NCEMAXDS
+            - NCENAME
+            - NCENOATT
+            - NCEMAXAT
+            - NCEBADTY
+            - NCEBADD
+            - NCESTS
+            - NCEUNLIM
+            - NCEMAXVS
+            - NCENOTVR
+            - NCEGLOB
+            - NCENOTNC
+            - NCFOOBAR
+            - NCSYSERR
+            - NCFATAL
+            - NCVERBOS
+            - NCENTOOL
+
     - Corrected usage of FetchContent in the HDFLibMacros.cmake file.
 
       CMake version 3.30 changed the behavior of the FetchContent module to deprecate

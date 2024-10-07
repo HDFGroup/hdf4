@@ -30,10 +30,6 @@
 
 /**************************************************************************
  *  Generally useful macro definitions
- *   (These are copied from hdf_priv.h and should remain included in both files
- *       because hlimits.h is included from netcdf.h which is used in some
- *       netCDF utilities which don't need or want the rest of the HDF header
- *       files. -QAK - 2/17/99 )
  **************************************************************************/
 #ifndef MIN
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
@@ -163,7 +159,7 @@
 #define ERR_STRING_SIZE 512
 #endif
 
-/* ----------------- Constants for NETCDF interface(netcdf.h) ---------------- */
+/* ----------------- Constants for NetCDF interface ---------------- */
 /*
  * This can be as large as the maximum number of stdio streams
  * you can have open on your system.
@@ -195,14 +191,12 @@ changing the class name variable declaration much easier - BMR 4/1/02*/
    constants were modified with H4 prefix to avoid conflicts with the
    real NetCDF-3 library   - EIP 9/5/07                                     */
 
-#ifdef H4_HAVE_NETCDF
 #define MAX_NC_OPEN  H4_MAX_NC_OPEN
 #define MAX_NC_DIMS  H4_MAX_NC_DIMS
 #define MAX_NC_VARS  H4_MAX_NC_VARS
 #define MAX_NC_NAME  H4_MAX_NC_NAME
 #define MAX_NC_CLASS H4_MAX_NC_CLASS
 #define MAX_VAR_DIMS H4_MAX_VAR_DIMS
-#endif
 
 /* ----------------- Constants for MFGR interface --------------------- */
 #define H4_MAX_GR_NAME 256 /* max length of a name */

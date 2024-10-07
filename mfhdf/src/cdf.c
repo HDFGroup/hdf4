@@ -62,7 +62,7 @@ NC_free_cdf(NC *handle)
             HGOTO_FAIL(FAIL);
 
         /* destroy xdr struct */
-        h4_xdr_destroy(handle->xdrs);
+        hdf_xdr_destroy(handle->xdrs);
         free(handle->xdrs);
         handle->xdrs = NULL;
 
@@ -245,7 +245,7 @@ NC_new_cdf(const char *name, int mode)
      */
     switch (cdf->file_type) {
         case HDF_FILE:
-            h4_xdr_setup_nofile(cdf->xdrs, mode); /* return type is 'void' */
+            hdf_xdr_setup_nofile(cdf->xdrs, mode); /* return type is 'void' */
             break;
         case netCDF_FILE:
             if (NCxdrfile_create(cdf->xdrs, name, mode) < 0)
@@ -254,7 +254,7 @@ NC_new_cdf(const char *name, int mode)
         case CDF_FILE:
             /* CDF_xdrfile_create(); */
             /* try this, I bet it will be sufficient */
-            h4_xdr_setup_nofile(cdf->xdrs, mode);
+            hdf_xdr_setup_nofile(cdf->xdrs, mode);
             break;
     }
 
@@ -357,7 +357,7 @@ done:
         if (cdf != NULL) {
             NC_free_xcdf(cdf); /* no point in catching error here */
             if (cdf->xdrs != NULL) {
-                h4_xdr_destroy(cdf->xdrs);
+                hdf_xdr_destroy(cdf->xdrs);
                 free(cdf->xdrs);
             }
             free(cdf);
@@ -366,104 +366,6 @@ done:
 
     return ret_value;
 } /* NC_new_cdf */
-
-/*
- * Duplicate a description structure.
- * Can only be called for 'old' extant on disk, eg, old in DATA mode.
- */
-NC *
-NC_dup_cdf(const char *name, int mode, NC *old)
-{
-    NC *cdf       = NULL;
-    NC *ret_value = NULL;
-
-    cdf = malloc(sizeof(NC));
-    if (cdf == NULL) {
-        nc_serror("NC_dup_cdf");
-        HGOTO_FAIL(NULL);
-    }
-
-    cdf->flags = old->flags | NC_INDEF;
-
-    cdf->xdrs = malloc(sizeof(XDR));
-    if (cdf->xdrs == NULL) {
-        nc_serror("NC_dup_cdf: xdrs");
-        HGOTO_FAIL(NULL);
-    }
-
-    cdf->dims      = NULL;
-    cdf->attrs     = NULL;
-    cdf->vars      = NULL;
-    cdf->begin_rec = 0;
-    cdf->recsize   = 0;
-    cdf->numrecs   = 0;
-
-    cdf->file_type = old->file_type;
-
-    if (NCxdrfile_create(cdf->xdrs, name, mode) < 0)
-        HGOTO_FAIL(NULL);
-
-    old->xdrs->x_op = XDR_DECODE;
-    if (!xdr_cdf(old->xdrs, &cdf))
-        HGOTO_FAIL(NULL);
-    if (NC_computeshapes(cdf) == -1)
-        HGOTO_FAIL(NULL);
-
-    ret_value = cdf;
-
-done:
-    if (ret_value == NULL) {
-        if (cdf != NULL) { /* free up allocated structures */
-            free(cdf->xdrs);
-
-            NC_free_xcdf(cdf); /* don't catch error here */
-            free(cdf);
-        }
-    }
-
-    return ret_value;
-}
-
-int
-ncinquire(int cdfid, int *ndimsp, int *nvarsp, int *nattrsp, int *xtendimp)
-{
-    NC *handle;
-
-    cdf_routine_name = "ncinquire";
-
-    handle = NC_check_id(cdfid);
-    if (handle == NULL)
-        return -1;
-
-    if (nvarsp != NULL)
-        *nvarsp = (handle->vars != NULL) ? handle->vars->count : 0;
-    if (nattrsp != NULL)
-        *nattrsp = (handle->attrs != NULL) ? handle->attrs->count : 0;
-    if (handle->dims != NULL) {
-        NC_dim **dp;
-
-        if (ndimsp != NULL)
-            *ndimsp = handle->dims->count;
-        if (xtendimp != NULL) {
-            *xtendimp = -1;
-
-            dp = (NC_dim **)handle->dims->values;
-            for (unsigned ii = 0; ii < handle->dims->count; ii++, dp++) {
-                if ((*dp)->size == NC_UNLIMITED) {
-                    *xtendimp = ii;
-                }
-            }
-        }
-    }
-    else {
-        if (ndimsp != NULL)
-            *ndimsp = 0;
-        if (xtendimp != NULL)
-            *xtendimp = -1;
-    }
-
-    return cdfid;
-}
 
 bool_t
 xdr_cdf(XDR *xdrs, NC **handlep)
@@ -499,21 +401,21 @@ NC_xdr_cdf(XDR *xdrs, NC **handlep)
         return TRUE;
     }
 
-    if (h4_xdr_getpos(xdrs) != 0) {
-        if (!h4_xdr_setpos(xdrs, 0)) {
+    if (hdf_xdr_getpos(xdrs) != 0) {
+        if (!hdf_xdr_setpos(xdrs, 0)) {
             nc_serror("Can't set position to begin");
             return FALSE;
         }
     }
 
     /* magic number */
-    if (!h4_xdr_u_int(xdrs, &magic)) {
+    if (!hdf_xdr_u_int(xdrs, &magic)) {
         if (xdrs->x_op == XDR_DECODE) {
             NCadvise(NC_ENOTNC, "Not a netcdf file (Can't read magic number)");
         }
         else {
             /* write error */
-            nc_serror("xdr_cdf: h4_xdr_u_int");
+            nc_serror("xdr_cdf: hdf_xdr_u_int");
         }
         return FALSE;
     }
@@ -2336,20 +2238,20 @@ xdr_numrecs(XDR *xdrs, NC *handle)
          * record so we can successfully read back the
          * entire last record.
          */
-        if (!h4_xdr_setpos(xdrs, handle->begin_rec + handle->numrecs * handle->recsize)) {
+        if (!hdf_xdr_setpos(xdrs, handle->begin_rec + handle->numrecs * handle->recsize)) {
             nc_serror("Can't set position to EOF");
             return FALSE;
         }
 
-        if (!h4_xdr_u_int(xdrs, &(handle->numrecs)))
+        if (!hdf_xdr_u_int(xdrs, &(handle->numrecs)))
             return FALSE;
     }
 
-    if (!h4_xdr_setpos(xdrs, RECPOS)) {
+    if (!hdf_xdr_setpos(xdrs, RECPOS)) {
         nc_serror("Can't set position to RECPOS");
         return FALSE;
     }
-    return h4_xdr_u_int(xdrs, &(handle->numrecs));
+    return hdf_xdr_u_int(xdrs, &(handle->numrecs));
 }
 
 static bool_t
@@ -2395,7 +2297,7 @@ xdr_NC_fill(XDR *xdrs, NC_var *vp)
         case NC_BYTE:
         case NC_CHAR:
             alen /= 4;
-            xdr_NC_fnct = h4_xdr_bytes;
+            xdr_NC_fnct = hdf_xdr_bytes;
             break;
         case NC_SHORT:
             alen /= 4;
@@ -2403,15 +2305,15 @@ xdr_NC_fill(XDR *xdrs, NC_var *vp)
             break;
         case NC_LONG:
             alen /= 4;
-            xdr_NC_fnct = h4_xdr_int;
+            xdr_NC_fnct = hdf_xdr_int;
             break;
         case NC_FLOAT:
             alen /= 4;
-            xdr_NC_fnct = h4_xdr_float;
+            xdr_NC_fnct = hdf_xdr_float;
             break;
         case NC_DOUBLE:
             alen /= 8;
-            xdr_NC_fnct = h4_xdr_double;
+            xdr_NC_fnct = hdf_xdr_double;
             break;
         default:
             NCadvise(NC_EBADTYPE, "bad type %d", vp->type);

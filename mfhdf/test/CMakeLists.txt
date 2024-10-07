@@ -41,18 +41,6 @@ else ()
 endif ()
 set_target_properties (hdftest PROPERTIES FOLDER test COMPILE_DEFINITIONS "HDF")
 
-#-- Adding test for cdftest
-add_executable (cdftest ${HDF4_MFHDF_TEST_SOURCE_DIR}/cdftest.c)
-target_include_directories(cdftest PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_BINARY_DIR}")
-if (NOT BUILD_SHARED_LIBS)
-  TARGET_C_PROPERTIES (cdftest STATIC)
-  target_link_libraries (cdftest PRIVATE ${HDF4_MF_LIB_TARGET})
-else ()
-  TARGET_C_PROPERTIES (cdftest SHARED)
-  target_link_libraries (cdftest PRIVATE ${HDF4_MF_LIBSH_TARGET})
-endif ()
-set_target_properties (cdftest PROPERTIES FOLDER test COMPILE_DEFINITIONS "HDF")
-
 #-- Adding test for hdfnctest
 set (hdfnctest_SRCS
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/hdfnctest.c

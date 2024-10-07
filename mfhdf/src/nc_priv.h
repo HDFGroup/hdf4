@@ -14,27 +14,121 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef MFH4_LOCAL_NC_H
-#define MFH4_LOCAL_NC_H
+#ifndef MFH4_NC_PRIV_H
+#define MFH4_NC_PRIV_H
+
+#include <inttypes.h>
 
 #include "hdf_priv.h"
+#include "H4api_adpt.h"
 
-/*
- *    netcdf library 'private' data structures, objects and interfaces
+/* NetCDF functionality used in HDF4
+ *
+ * The multi-file interface was built on NetCDF 2.3.2 and HDF4 originally
+ * exported a NetCDF interface. The public NetCDF interface has been removed
+ * and all NetCDF API calls, types, etc. are now assembled in this private
+ * header file.
  */
+
+/* Prepend 'H4_' to all NetCDF function names to avoid name clash when the
+ * HDF and NetCDF headers are included in the same application.
+ *
+ * These could be manually renamed and the HNAME macro eliminated, but that
+ * would just make the code harder to read.
+ */
+#define HNAME(x) H4_##x
+
+/* Variables */
+#define ncerr  HNAME(ncerr)
+#define ncopts HNAME(ncopts)
+
+/* Former public API calls */
+#define nccreate HNAME(nccreate) /* used in src - mfsd.c */
+#define ncopen   HNAME(ncopen)   /* used in src - mfsd.c */
+#define ncendef  HNAME(ncendef)
+#define ncclose  HNAME(ncclose) /* used in src - mfsd.c */
+#define ncabort  HNAME(ncabort) /* used in src - file.c */
+#define ncdimdef HNAME(ncdimdef)
+#define ncdiminq HNAME(ncdiminq)
+
+#define ncvardef  HNAME(ncvardef)
+#define ncvarid   HNAME(ncvarid)
+#define ncvarinq  HNAME(ncvarinq)
+#define ncvarput1 HNAME(ncvarput1)
+#define ncvarget1 HNAME(ncvarget1)
+#define ncvarput  HNAME(ncvarput)
+#define ncvarget  HNAME(ncvarget) /* used in src - array.c */
+#define ncvarputs HNAME(ncvarputs)
+#define ncvargets HNAME(ncvargets)
+#define ncvarputg HNAME(ncvarputg)
+#define ncvargetg HNAME(ncvargetg)
+
+#define ncattput  HNAME(ncattput)
+#define nctypelen HNAME(nctypelen) /* used in src - array.c, nssdc.c, putget.c */
+#define ncsetfill HNAME(ncsetfill) /* used in src - mfsd.c */
+
+/* Internal API calls */
+#define nc_serror         HNAME(nc_serror)
+#define NCadvise          HNAME(NCadvise)
+#define NC_computeshapes  HNAME(NC_computeshapes)
+#define NC_xtypelen       HNAME(NC_xtypelen)
+#define NC_xlen_array     HNAME(NC_xlen_array)
+#define NC_xlen_attr      HNAME(NC_xlen_attr)
+#define NC_xlen_cdf       HNAME(NC_xlen_cdf)
+#define NC_xlen_dim       HNAME(NC_xlen_dim)
+#define NC_xlen_iarray    HNAME(NC_xlen_iarray)
+#define NC_xlen_string    HNAME(NC_xlen_string)
+#define NC_xlen_var       HNAME(NC_xlen_var)
+#define NC_arrayfill      HNAME(NC_arrayfill)
+#define NC_copy_arrayvals HNAME(NC_copy_arrayvals)
+#define NC_free_array     HNAME(NC_free_array)
+#define NC_free_attr      HNAME(NC_free_attr)
+#define NC_free_cdf       HNAME(NC_free_cdf)
+#define NC_free_dim       HNAME(NC_free_dim)
+#define NC_free_iarray    HNAME(NC_free_iarray)
+#define NC_free_string    HNAME(NC_free_string)
+#define NC_free_var       HNAME(NC_free_var)
+#define NC_incr_array     HNAME(NC_incr_array)
+#define NC_dimid          HNAME(NC_dimid)
+#define NCcktype          HNAME(NCcktype)
+#define NC_indefine       HNAME(NC_indefine)
+#define xdr_cdf           HNAME(xdr_cdf)
+#define xdr_numrecs       HNAME(xdr_numrecs)
+#define xdr_shorts        HNAME(xdr_shorts)
+#define xdr_NC_array      HNAME(xdr_NC_array)
+#define xdr_NC_attr       HNAME(xdr_NC_attr)
+#define xdr_NC_dim        HNAME(xdr_NC_dim)
+#define xdr_NC_fill       HNAME(xdr_NC_fill)
+#define xdr_NC_iarray     HNAME(xdr_NC_iarray)
+#define xdr_NC_string     HNAME(xdr_NC_string)
+#define xdr_NC_var        HNAME(xdr_NC_var)
+#define NC_typelen        HNAME(NC_typelen)
+#define NC_check_id       HNAME(NC_check_id)
+#define NC_new_cdf        HNAME(NC_new_cdf)
+#define NC_new_array      HNAME(NC_new_array)
+#define NC_re_array       HNAME(NC_re_array)
+#define NC_new_attr       HNAME(NC_new_attr)
+#define NC_findattr       HNAME(NC_findattr)
+#define NC_new_dim        HNAME(NC_new_dim)
+#define NC_new_iarray     HNAME(NC_new_iarray)
+#define NC_new_string     HNAME(NC_new_string)
+#define NC_re_string      HNAME(NC_re_string)
+#define NC_hlookupvar     HNAME(NC_hlookupvar)
+#define NC_new_var        HNAME(NC_new_var)
+#define NCvario           HNAME(NCvario)
+#define NCcoordck         HNAME(NCcoordck)
+#define xdr_NCvshort      HNAME(xdr_NCvshort)
+#define NC_dcpy           HNAME(NC_dcpy)
+#define NCxdrfile_create  HNAME(NCxdrfile_create)
+#define NCgenio           HNAME(NCgenio)      /* from putgetg.c */
+#define NC_var_shape      HNAME(NC_var_shape) /* from var.c */
 
 #ifndef FILENAME_MAX
 #define FILENAME_MAX 255
 #endif
 
 /* HDF4's stripped-down XDR implementation */
-#include "h4_xdr_priv.h"
-
-#ifdef H4_HAVE_NETCDF
-#include "netcdf.h" /* needed for defs of nc_type, ncvoid, ... */
-#else
-#include "hdf4_netcdf.h"
-#endif
+#include "hdf_xdr_priv.h"
 
 /* Constants for sizes of NC types */
 #define NC_BYTE_SIZE        1
@@ -46,7 +140,107 @@
 #define NC_UNSPECIFIED_SIZE 0
 
 /*
- * Include HDF stuff
+ * Masks for the struct NC flags field; passed in as 'mode' arg to
+ * nccreate and ncopen.
+ */
+#define NC_RDWR   1      /* read/write, 0 => readonly */
+#define NC_CREAT  2      /* in create phase, cleared by ncendef */
+#define NC_EXCL   4      /* on create, don't destroy existing file */
+#define NC_INDEF  8      /* in define mode, cleared by ncendef */
+#define NC_NSYNC  0x10   /* synchronise numrecs on change */
+#define NC_HSYNC  0x20   /* synchronise whole header on change */
+#define NC_NDIRTY 0x40   /* numrecs has changed */
+#define NC_HDIRTY 0x80   /* header info has changed */
+#define NC_NOFILL 0x100  /* Don't fill vars on endef and increase of record */
+#define NC_LINK   0x8000 /* isa link */
+
+#define NC_FILL 0 /* argument to ncsetfill to clear NC_NOFILL */
+
+/*
+ * 'mode' arguments for nccreate and ncopen
+ */
+#define NC_NOWRITE   0
+#define NC_WRITE     NC_RDWR
+#define NC_CLOBBER   (NC_INDEF | NC_CREAT | NC_RDWR)
+#define NC_NOCLOBBER (NC_INDEF | NC_EXCL | NC_CREAT | NC_RDWR)
+
+/*
+ * 'size' argument to ncdimdef for an unlimited dimension
+ */
+#define NC_UNLIMITED 0L
+
+/*
+ * Attribute id to put/get a global attribute
+ */
+#define NC_GLOBAL -1
+
+#include "hlimits.h"
+
+/* This type used to be defined as an enum, but the C standard is a bit
+ * vague as to which integer type you actually get to represent your enum
+ * and passing that through a pointer caused failures on MacOS.
+ */
+typedef int nc_type;
+#define NC_UNSPECIFIED 0 /* private */
+#define NC_BYTE        1
+#define NC_CHAR        2
+#define NC_SHORT       3
+#define NC_LONG        4 /* Maps to a 32-bit signed integer (int32_t) */
+#define NC_FLOAT       5
+#define NC_DOUBLE      6
+/* private */
+#define NC_BITFIELD  7
+#define NC_STRING    8
+#define NC_IARRAY    9
+#define NC_DIMENSION 10
+#define NC_VARIABLE  11
+#define NC_ATTRIBUTE 12
+
+/*
+ * Global NetCDF error status variable
+ * Initialized in error.c
+ */
+#define NC_NOERR        0           /* No Error */
+#define NC_EBADID       1           /* Not a netcdf id */
+#define NC_ENFILE       2           /* Too many netcdfs open */
+#define NC_EEXIST       3           /* netcdf file exists && NC_NOCLOBBER */
+#define NC_EINVAL       4           /* Invalid Argument */
+#define NC_EPERM        5           /* Write to read only */
+#define NC_ENOTINDEFINE 6           /* Operation not allowed in data mode */
+#define NC_EINDEFINE    7           /* Operation not allowed in define mode */
+#define NC_EINVALCOORDS 8           /* Coordinates out of Domain */
+#define NC_EMAXDIMS     9           /* MAX_NC_DIMS exceeded */
+#define NC_ENAMEINUSE   10          /* String match to name in use */
+#define NC_ENOTATT      11          /* Attribute not found */
+#define NC_EMAXATTS     12          /* MAX_NC_ATTRS exceeded */
+#define NC_EBADTYPE     13          /* Not a netcdf data type */
+#define NC_EBADDIM      14          /* Invalid dimension id */
+#define NC_EUNLIMPOS    15          /* NC_UNLIMITED in the wrong index */
+#define NC_EMAXVARS     16          /* MAX_NC_VARS exceeded */
+#define NC_ENOTVAR      17          /* Variable not found */
+#define NC_EGLOBAL      18          /* Action prohibited on NC_GLOBAL varid */
+#define NC_ENOTNC       19          /* Not a netcdf file */
+#define NC_ESTS         20          /* In Fortran, string too short */
+#define NC_EMAXNAME     21          /* MAX_NC_NAME exceeded */
+#define NC_ENTOOL       NC_EMAXNAME /* Backward compatibility */
+#define NC_EUNLIMIT     22          /* NC_UNLIMITED size already in use */
+
+#define NC_EXDR   32 /* */
+#define NC_SYSERR -1
+
+HDFLIBAPI int ncerr;
+
+/*
+ * Global options variable. Used to determine behavior of error handler.
+ * Initialized in error.c
+ */
+#define NC_FATAL   1
+#define NC_VERBOSE 2
+
+HDFLIBAPI int ncopts; /* default is (NC_FATAL | NC_VERBOSE) */
+
+/*
+ * HDF headers
  */
 
 #include "vg.h"
@@ -80,7 +274,7 @@ typedef struct vix_t_def {
     struct vix_t_def *next;                      /* next one in line */
 } vix_t;
 
-/* netCDF array type */
+/* NetCDF array type */
 typedef struct {
     nc_type  type;   /* the discriminant */
     size_t   len;    /* the total length originally allocated */
@@ -89,15 +283,14 @@ typedef struct {
     uint8_t *values; /* the actual data */
 } NC_array;
 
-/* Counted string for names and such */
-/*
+/* Counted string for names and such
+ *
+ * count is the actual size of the buffer for the string
+ * len is the length of the string in the buffer
+ *
+ * count != len when a string is resized to something smaller
+ */
 
-  count is the actual size of the buffer for the string
-  len is the length of the string in the buffer
-
-  count != len when a string is resized to something smaller
-
-*/
 #define NC_compare_string(s1, s2) ((s1)->hash != (s2)->hash ? 1 : strcmp((s1)->values, (s2)->values))
 
 typedef struct {
@@ -223,170 +416,34 @@ HDFLIBAPI const char *cdf_routine_name; /* defined in lerror.c */
 extern "C" {
 #endif
 
-/* If using the real netCDF library and API (when --disable-netcdf configure flag is used)
- * need to mangle the HDF versions of netCDF API function names
- * to not conflict w/ original netCDF ones
- */
-#ifndef H4_HAVE_NETCDF
-#define nc_serror         HNAME(nc_serror)
-#define NCadvise          HNAME(NCadvise)
-#define NC_computeshapes  HNAME(NC_computeshapes)
-#define NC_xtypelen       HNAME(NC_xtypelen)
-#define NC_xlen_array     HNAME(NC_xlen_array)
-#define NC_xlen_attr      HNAME(NC_xlen_attr)
-#define NC_xlen_cdf       HNAME(NC_xlen_cdf)
-#define NC_xlen_dim       HNAME(NC_xlen_dim)
-#define NC_xlen_iarray    HNAME(NC_xlen_iarray)
-#define NC_xlen_string    HNAME(NC_xlen_string)
-#define NC_xlen_var       HNAME(NC_xlen_var)
-#define NCmemset          HNAME(NCmemset)
-#define NC_arrayfill      HNAME(NC_arrayfill)
-#define NC_copy_arrayvals HNAME(NC_copy_arrayvals)
-#define NC_free_array     HNAME(NC_free_array)
-#define NC_free_attr      HNAME(NC_free_attr)
-#define NC_free_cdf       HNAME(NC_free_cdf)
-#define NC_free_dim       HNAME(NC_free_dim)
-#define NC_free_iarray    HNAME(NC_free_iarray)
-#define NC_free_string    HNAME(NC_free_string)
-#define NC_free_var       HNAME(NC_free_var)
-#define NC_incr_array     HNAME(NC_incr_array)
-#define NC_dimid          HNAME(NC_dimid)
-#define NCcktype          HNAME(NCcktype)
-#define NC_indefine       HNAME(NC_indefine)
-#define xdr_cdf           HNAME(xdr_cdf)
-#define xdr_numrecs       HNAME(xdr_numrecs)
-#define xdr_shorts        HNAME(xdr_shorts)
-#define xdr_NC_array      HNAME(xdr_NC_array)
-#define xdr_NC_attr       HNAME(xdr_NC_attr)
-#define xdr_NC_dim        HNAME(xdr_NC_dim)
-#define xdr_NC_fill       HNAME(xdr_NC_fill)
-#define xdr_NC_iarray     HNAME(xdr_NC_iarray)
-#define xdr_NC_string     HNAME(xdr_NC_string)
-#define xdr_NC_var        HNAME(xdr_NC_var)
-#define NC_typelen        HNAME(NC_typelen)
-#define NC_check_id       HNAME(NC_check_id)
-#define NC_dup_cdf        HNAME(NC_dup_cdf)
-#define NC_new_cdf        HNAME(NC_new_cdf)
-#define NC_new_array      HNAME(NC_new_array)
-#define NC_re_array       HNAME(NC_re_array)
-#define NC_new_attr       HNAME(NC_new_attr)
-#define NC_findattr       HNAME(NC_findattr)
-#define NC_new_dim        HNAME(NC_new_dim)
-#define NC_new_iarray     HNAME(NC_new_iarray)
-#define NC_new_string     HNAME(NC_new_string)
-#define NC_re_string      HNAME(NC_re_string)
-#define NC_hlookupvar     HNAME(NC_hlookupvar)
-#define NC_new_var        HNAME(NC_new_var)
-#define NCvario           HNAME(NCvario)
-#define NCcoordck         HNAME(NCcoordck)
-#define xdr_NCvshort      HNAME(xdr_NCvshort)
-#define NC_dcpy           HNAME(NC_dcpy)
-#define NCxdrfile_sync    HNAME(NCxdrfile_sync)
-#define NCxdrfile_create  HNAME(NCxdrfile_create)
-#define NCgenio           HNAME(NCgenio)      /* from putgetg.c */
-#define NC_var_shape      HNAME(NC_var_shape) /* from var.c */
-#endif /* !H4_HAVE_NETCDF ie. NOT USING HDF version of netCDF ncxxx API */
+/* Former public API calls */
+HDFLIBAPI int nccreate(const char *path, int cmode);
+HDFLIBAPI int ncopen(const char *path, int mode);
+HDFLIBAPI int ncendef(int cdfid);
+HDFLIBAPI int ncclose(int cdfid);
+HDFLIBAPI int ncabort(int cdfid);
+HDFLIBAPI int ncdimdef(int cdfid, const char *name, long length);
+HDFLIBAPI int ncdiminq(int cdfid, int dimid, char *name, long *length);
+HDFLIBAPI int ncvardef(int cdfid, const char *name, nc_type datatype, int ndims, const int *dim);
+HDFLIBAPI int ncvarid(int cdfid, const char *name);
+HDFLIBAPI int ncvarinq(int cdfid, int varid, char *name, nc_type *datatype, int *ndims, int *dim, int *natts);
+HDFLIBAPI int ncvarput1(int cdfid, int varid, const long *coords, const void *value);
+HDFLIBAPI int ncvarget1(int cdfid, int varid, const long *coords, void *value);
+HDFLIBAPI int ncvarput(int cdfid, int varid, const long *start, const long *count, void *value);
+HDFLIBAPI int ncvarget(int cdfid, int varid, const long *start, const long *count, void *value);
+HDFLIBAPI int ncvarputs(int cdfid, int varid, const long *start, const long *count, const long *stride,
+                        void *values);
+HDFLIBAPI int ncvargets(int cdfid, int varid, const long *start, const long *count, const long *stride,
+                        void *values);
+HDFLIBAPI int ncvarputg(int cdfid, int varid, const long *start, const long *count, const long *stride,
+                        const long *imap, void *values);
+HDFLIBAPI int ncvargetg(int cdfid, int varid, const long *start, const long *count, const long *stride,
+                        const long *imap, void *values);
+HDFLIBAPI int ncattput(int cdfid, int varid, const char *name, nc_type datatype, int len, const void *value);
+HDFLIBAPI int nctypelen(nc_type datatype);
+HDFLIBAPI int ncsetfill(int cdfid, int fillmode);
 
-#define nncpopt H4_F77_FUNC(ncpopt, NCPOPT)
-#define nncgopt H4_F77_FUNC(ncgopt, NCGOPT)
-#define nnccre  H4_F77_FUNC(nccre, NCCRE)
-#define nncopn  H4_F77_FUNC(ncopn, NCOPN)
-#define nncddef H4_F77_FUNC(ncddef, NCDDEF)
-#define nncdid  H4_F77_FUNC(ncdid, NCDID)
-#define nncvdef H4_F77_FUNC(ncvdef, NCVDEF)
-#define nncvid  H4_F77_FUNC(ncvid, NCVID)
-#define nnctlen H4_F77_FUNC(nctlen, NCTLEN)
-#define nncclos H4_F77_FUNC(ncclos, NCCLOS)
-#define nncredf H4_F77_FUNC(ncredf, NCREDF)
-#define nncendf H4_F77_FUNC(ncendf, NCENDF)
-#define nncinq  H4_F77_FUNC(ncinq, NCINQ)
-#define nncsnc  H4_F77_FUNC(ncsnc, NCSNC)
-#define nncabor H4_F77_FUNC(ncabor, NCABOR)
-#define nncdinq H4_F77_FUNC(ncdinq, NCDINQ)
-#define nncdren H4_F77_FUNC(ncdren, NCDREN)
-#define nncvinq H4_F77_FUNC(ncvinq, NCVINQ)
-#define nncvpt1 H4_F77_FUNC(ncvpt1, NCVPT1)
-#define nncvp1c H4_F77_FUNC(ncvp1c, NCVP1C)
-#define nncvpt  H4_F77_FUNC(ncvpt, NCVPT)
-#define nncvptc H4_F77_FUNC(ncvptc, NCVPTC)
-#define nncvptg H4_F77_FUNC(ncvptg, NCVPTG)
-#define nncvpgc H4_F77_FUNC(ncvpgc, NCVPGC)
-#define nncvgt1 H4_F77_FUNC(ncvgt1, NCVGT1)
-#define nncvg1c H4_F77_FUNC(ncvg1c, NCVG1C)
-#define nncvgt  H4_F77_FUNC(ncvgt, NCVGT)
-#define nncvgtc H4_F77_FUNC(ncvgtc, NCVGTC)
-#define nncvgtg H4_F77_FUNC(ncvgtg, NCVGTG)
-#define nncvggc H4_F77_FUNC(ncvggc, NCVGGC)
-#define nncvren H4_F77_FUNC(ncvren, NCVREN)
-#define nncapt  H4_F77_FUNC(ncapt, NCAPT)
-#define nncaptc H4_F77_FUNC(ncaptc, NCAPTC)
-#define nncainq H4_F77_FUNC(ncainq, NCAINQ)
-#define nncagt  H4_F77_FUNC(ncagt, NCAGT)
-#define nncagtc H4_F77_FUNC(ncagtc, NCAGTC)
-#define nncacpy H4_F77_FUNC(ncacpy, NCACPY)
-#define nncanam H4_F77_FUNC(ncanam, NCANAM)
-#define nncaren H4_F77_FUNC(ncaren, NCAREN)
-#define nncadel H4_F77_FUNC(ncadel, NCADEL)
-#define nncsfil H4_F77_FUNC(ncsfil, NCSFIL)
-
-#ifdef WIN32
-HDFFCLIBAPI void nncpopt(int *val);
-HDFFCLIBAPI void nncgopt(int *val);
-HDFFCLIBAPI int  nnccre(char *pathname, int *clobmode, int *rcode, int pathnamelen);
-HDFFCLIBAPI int  nncopn(char *pathname, int *rwmode, int *rcode, int pathnamelen);
-HDFFCLIBAPI int  nncddef(int *cdfid, char *dimname, int *dimlen, int *rcode, int dimnamelen);
-HDFFCLIBAPI int  nncdid(int *cdfid, char *dimname, int *rcode, int dimnamelen);
-HDFFCLIBAPI int  nncvdef(int *cdfid, char *varname, int *datatype, int *ndims, int *dimarray, int *rcode,
-                         int varnamelen);
-HDFFCLIBAPI int  nncvid(int *cdfid, char *varname, int *rcode, int varnamelen);
-HDFFCLIBAPI int  nnctlen(int *datatype, int *rcode);
-HDFFCLIBAPI void nncclos(int *cdfid, int *rcode);
-HDFFCLIBAPI void nncredf(int *cdfid, int *rcode);
-HDFFCLIBAPI void nncendf(int *cdfid, int *rcode);
-HDFFCLIBAPI void nncinq(int *cdfid, int *ndims, int *nvars, int *natts, int *recdim, int *rcode);
-HDFFCLIBAPI void nncsnc(int *cdfid, int *rcode);
-HDFFCLIBAPI void nncabor(int *cdfid, int *rcode);
-HDFFCLIBAPI void nncdinq(int *cdfid, int *dimid, char *dimname, int *size, int *rcode, int dimnamelen);
-HDFFCLIBAPI void nncdren(int *cdfid, int *dimid, char *dimname, int *rcode, int dimnamelen);
-HDFFCLIBAPI void nncvinq(int *cdfid, int *varid, char *varname, int *datatype, int *ndims, int *dimarray,
-                         int *natts, int *rcode, int varnamelen);
-HDFFCLIBAPI void nncvpt1(int *cdfid, int *varid, int *indices, void *value, int *rcode);
-HDFFCLIBAPI void nncvp1c(int *cdfid, int *varid, int *indices, char *chval, int *rcode, int chvallen);
-HDFFCLIBAPI void nncvpt(int *cdfid, int *varid, int *start, int *count, void *value, int *rcode);
-HDFFCLIBAPI void nncvptc(int *cdfid, int *varid, int *start, int *count, char *string, int *lenstr,
-                         int *rcode, int stringlen);
-HDFFCLIBAPI void nncvptg(int *cdfid, int *varid, int *start, int *count, int *stride, int *basis, void *value,
-                         int *rcode);
-HDFFCLIBAPI void nncvpgc(int *cdfid, int *varid, int *start, int *count, int *stride, int *basis,
-                         char *string, int *rcode, int stringlen);
-HDFFCLIBAPI void nncvgt1(int *cdfid, int *varid, int *indices, void *value, int *rcode);
-HDFFCLIBAPI void nncvg1c(int *cdfid, int *varid, int *indices, char *chval, int *rcode, int chvallen);
-HDFFCLIBAPI void nncvgt(int *cdfid, int *varid, int *start, int *count, void *value, int *rcode);
-HDFFCLIBAPI void nncvgtc(int *cdfid, int *varid, int *start, int *count, char *string, int *lenstr,
-                         int *rcode, int stringlen);
-HDFFCLIBAPI void nncvgtg(int *cdfid, int *varid, int *start, int *count, int *stride, int *basis, void *value,
-                         int *rcode);
-HDFFCLIBAPI void nncvggc(int *cdfid, int *varid, int *start, int *count, int *stride, int *basis,
-                         char *string, int *rcode, int stringlen);
-HDFFCLIBAPI void nncvren(int *cdfid, int *varid, char *varname, int *rcode, int varnamelen);
-HDFFCLIBAPI void nncapt(int *cdfid, int *varid, char *attname, int *datatype, int *attlen, void *value,
-                        int *rcode, int attnamelen);
-HDFFCLIBAPI void nncaptc(int *cdfid, int *varid, char *attname, int *datatype, int *lenstr, char *string,
-                         int *rcode, int attnamelen, int stringlen);
-HDFFCLIBAPI void nncainq(int *cdfid, int *varid, char *attname, int *datatype, int *attlen, int *rcode,
-                         int attnamelen);
-HDFFCLIBAPI void nncagt(int *cdfid, int *varid, char *attname, void *value, int *rcode, int attnamelen);
-HDFFCLIBAPI void nncagtc(int *cdfid, int *varid, char *attname, char *string, int *lenstr, int *rcode,
-                         int attnamelen, int stringlen);
-HDFFCLIBAPI void nncacpy(int *incdfid, int *invarid, char *attname, int *outcdfid, int *outvarid, int *rcode,
-                         int attnamelen);
-HDFFCLIBAPI void nncanam(int *cdfid, int *varid, int *attnum, char *attname, int *rcode, int attnamelen);
-HDFFCLIBAPI void nncaren(int *cdfid, int *varid, char *attname, char *newname, int *rcode, int attnamelen,
-                         int newnamelen);
-HDFFCLIBAPI void nncadel(int *cdfid, int *varid, char *attname, int *rcode, int attnamelen);
-HDFFCLIBAPI int  nncsfil(int *cdfid, int *fillmode, int *rcode);
-#endif
-
+/* Internal API calls */
 HDFLIBAPI void nc_serror(const char *fmt, ...);
 HDFLIBAPI void NCadvise(int err, const char *fmt, ...);
 
@@ -399,8 +456,6 @@ HDFLIBAPI int NC_xlen_dim(NC_dim **dpp);
 HDFLIBAPI int NC_xlen_iarray(NC_iarray *iarray);
 HDFLIBAPI int NC_xlen_string(NC_string *cdfstr);
 HDFLIBAPI int NC_xlen_var(NC_var **vpp);
-
-HDFLIBAPI char *NCmemset(char *s, int c, int n);
 
 HDFLIBAPI void NC_arrayfill(void *lo, size_t len, nc_type type);
 HDFLIBAPI void NC_copy_arrayvals(char *target, NC_array *array);
@@ -431,7 +486,6 @@ HDFLIBAPI bool_t xdr_NC_var(XDR *xdrs, NC_var **vpp);
 HDFLIBAPI size_t NC_typelen(nc_type type);
 
 HDFLIBAPI NC        *NC_check_id(int cdfid);
-HDFLIBAPI NC        *NC_dup_cdf(const char *name, int mode, NC *old);
 HDFLIBAPI NC        *NC_new_cdf(const char *name, int mode);
 HDFLIBAPI NC_array  *NC_new_array(nc_type type, unsigned count, const void *values);
 HDFLIBAPI NC_array  *NC_re_array(NC_array *old, nc_type type, unsigned count, const void *values);
@@ -447,88 +501,54 @@ HDFLIBAPI int        NCvario(NC *handle, int varid, const long *start, const lon
 HDFLIBAPI bool_t     NCcoordck(NC *handle, NC_var *vp, const long *coords);
 HDFLIBAPI bool_t     xdr_NCvshort(XDR *xdrs, unsigned which, short *values);
 HDFLIBAPI bool_t     NC_dcpy(XDR *target, XDR *source, long nbytes);
-HDFLIBAPI int        NCxdrfile_sync(XDR *xdrs);
+HDFLIBAPI int        NCxdrfile_create(XDR *xdrs, const char *path, int ncmode);
 
-HDFLIBAPI int NCxdrfile_create(XDR *xdrs, const char *path, int ncmode);
-
-HDFLIBAPI int hdf_fill_array(uint8_t *storage, int32 len, uint8_t *value, int32 type);
-
-HDFLIBAPI int hdf_get_data(NC *handle, NC_var *vp);
-
-HDFLIBAPI int32 hdf_get_vp_aid(NC *handle, NC_var *vp);
-
-HDFLIBAPI int hdf_map_type(nc_type);
-
-HDFLIBAPI nc_type hdf_unmap_type(int);
-
-HDFLIBAPI int hdf_get_ref(NC *, int);
-
-HDFLIBAPI int hdf_create_dim_vdata(XDR *, NC *, NC_dim *);
-
-HDFLIBAPI int hdf_create_compat_dim_vdata(XDR *xdrs, NC *handle, NC_dim *dim, int32 dimval_ver);
-
-HDFLIBAPI int hdf_write_attr(XDR *, NC *, NC_attr **);
-
-HDFLIBAPI int32 hdf_write_dim(XDR *, NC *, NC_dim **, int32);
-
-HDFLIBAPI int32 hdf_write_var(XDR *, NC *, NC_var **);
-
-HDFLIBAPI int hdf_write_xdr_cdf(XDR *, NC **);
-
-HDFLIBAPI int hdf_conv_scales(NC **);
-
-HDFLIBAPI int hdf_read_dims(XDR *, NC *, int32);
-
+HDFLIBAPI int       hdf_fill_array(uint8_t *storage, int32 len, uint8_t *value, int32 type);
+HDFLIBAPI int       hdf_get_data(NC *handle, NC_var *vp);
+HDFLIBAPI int32     hdf_get_vp_aid(NC *handle, NC_var *vp);
+HDFLIBAPI int       hdf_map_type(nc_type);
+HDFLIBAPI nc_type   hdf_unmap_type(int);
+HDFLIBAPI int       hdf_get_ref(NC *, int);
+HDFLIBAPI int       hdf_create_dim_vdata(XDR *, NC *, NC_dim *);
+HDFLIBAPI int       hdf_create_compat_dim_vdata(XDR *xdrs, NC *handle, NC_dim *dim, int32 dimval_ver);
+HDFLIBAPI int       hdf_write_attr(XDR *, NC *, NC_attr **);
+HDFLIBAPI int32     hdf_write_dim(XDR *, NC *, NC_dim **, int32);
+HDFLIBAPI int32     hdf_write_var(XDR *, NC *, NC_var **);
+HDFLIBAPI int       hdf_write_xdr_cdf(XDR *, NC **);
+HDFLIBAPI int       hdf_conv_scales(NC **);
+HDFLIBAPI int       hdf_read_dims(XDR *, NC *, int32);
 HDFLIBAPI NC_array *hdf_read_attrs(XDR *, NC *, int32);
-
-HDFLIBAPI int hdf_read_vars(XDR *, NC *, int32);
-
-HDFLIBAPI int hdf_read_xdr_cdf(XDR *, NC **);
-
-HDFLIBAPI int hdf_xdr_cdf(XDR *, NC **);
-
-HDFLIBAPI int hdf_vg_clobber(NC *, int);
-
-HDFLIBAPI int hdf_cdf_clobber(NC *);
-
-HDFLIBAPI int hdf_close(NC *);
-
-HDFLIBAPI int hdf_read_sds_dims(NC *);
-
-HDFLIBAPI int hdf_read_sds_cdf(XDR *, NC **);
+HDFLIBAPI int       hdf_read_vars(XDR *, NC *, int32);
+HDFLIBAPI int       hdf_read_xdr_cdf(XDR *, NC **);
+HDFLIBAPI int       hdf_xdr_cdf(XDR *, NC **);
+HDFLIBAPI int       hdf_vg_clobber(NC *, int);
+HDFLIBAPI int       hdf_cdf_clobber(NC *);
+HDFLIBAPI int       hdf_close(NC *);
+HDFLIBAPI int       hdf_read_sds_dims(NC *);
+HDFLIBAPI int       hdf_read_sds_cdf(XDR *, NC **);
 
 HDFLIBAPI int SDPfreebuf(void);
 
 HDFLIBAPI int NCgenio(NC *handle, int varid, const long *start, const long *count, const long *stride,
                       const long *imap, void *values);
-
 HDFLIBAPI int NC_var_shape(NC_var *var, NC_array *dims);
-
 HDFLIBAPI int NC_reset_maxopenfiles(int req_max);
-
 HDFLIBAPI int NC_get_maxopenfiles(void);
-
 HDFLIBAPI int NC_get_systemlimit(void);
-
 HDFLIBAPI int NC_get_numopencdfs(void);
 
-/* CDF stuff. don't need anymore? -GV */
 HDFLIBAPI nc_type cdf_unmap_type(int type);
 
 HDFLIBAPI bool_t nssdc_read_cdf(XDR *xdrs, NC **handlep);
-
 HDFLIBAPI bool_t nssdc_write_cdf(XDR *xdrs, NC **handlep);
-
 HDFLIBAPI bool_t nssdc_xdr_cdf(XDR *xdrs, NC **handlep);
 
 HDFLIBAPI int HDiscdf(const char *filename);
-
 HDFLIBAPI int HDisnetcdf(const char *filename);
-
 HDFLIBAPI int HDisnetcdf64(const char *filename);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* MFH4_LOCAL_NC_H */
+#endif /* MFH4_NC_PRIV_H */

@@ -1,29 +1,15 @@
 cmake_minimum_required (VERSION 3.18)
 project (HDF4_MFHDF_FORTRAN C Fortran)
 
-if (HDF4_ENABLE_NETCDF)
-  configure_file (${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/ftest.f.in ${HDF4_BINARY_DIR}/ftest.f)
-  configure_file (${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/jackets.c.in ${HDF4_BINARY_DIR}/jackets.c)
-endif ()
-configure_file (${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/netcdf.inc.in ${HDF4_BINARY_DIR}/netcdf.inc)
-set (HDF4_MFHDF_FORTRAN_XFHDRS ${HDF4_BINARY_DIR}/netcdf.inc ${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/mffunc.inc)
+set (HDF4_MFHDF_FORTRAN_XFHDRS ${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/mffunc.inc)
 
-if (HDF4_ENABLE_NETCDF)
-  set (HDF4_MFHDF_SRC_CSTUB_FSRCS ${HDF4_BINARY_DIR}/jackets.c ${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/mfsdf.c)
-else ()
-  set (HDF4_MFHDF_SRC_CSTUB_FSRCS ${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/mfsdf.c)
-endif ()
+set (HDF4_MFHDF_SRC_CSTUB_FSRCS ${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/mfsdf.c)
 
 set (HDF4_MFHDF_SRC_CSTUB_FHDRS
-    ${HDF4_MFHDFSOURCE_DIR}/hdf2netcdf.h
     ${HDF4_MFHDFSOURCE_DIR}/mfhdf.h
+    # nc_priv.h may not be necessary...
+    ${HDF4_MFHDFSOURCE_DIR}/nc_priv.h
 )
-if (HDF4_ENABLE_NETCDF)
-#  set (HDF4_MFHDF_SRC_CSTUB_FSRCS ${HDF4_MFHDF_SRC_CSTUB_FSRCS} ${HDF4_BINARY_DIR}/jackets.c)
-  set (HDF4_MFHDF_SRC_CSTUB_FHDRS ${HDF4_MFHDF_SRC_CSTUB_FHDRS} ${HDF4_BINARY_DIR}/netcdf.h)
-else ()
-  set (HDF4_MFHDF_SRC_CSTUB_FHDRS ${HDF4_MFHDF_SRC_CSTUB_FHDRS} ${HDF4_BINARY_DIR}/hdf4_netcdf.h)
-endif ()
 set_source_files_properties (${HDF4_MFHDF_SRC_CSTUB_FSRCS} PROPERTIES LANGUAGE C)
 
 set (FORTRAN_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})

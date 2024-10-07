@@ -10,37 +10,6 @@ file (MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/testdir)
 #-----------------------------------------------------------------------------
 # test programs
 #-----------------------------------------------------------------------------
-if (HDF4_ENABLE_NETCDF)
-  #-- Adding test for ftest
-  add_executable (ftest ${HDF4_BINARY_DIR}/ftest.f ${HDF4_HDF_TESTSOURCE_DIR}/forsupff.f ${HDF4_BINARY_DIR}/netcdf.inc)
-  target_include_directories (ftest
-      PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_BINARY_DIR};${HDF4_MFHDF_FORTRAN_BINARY_DIR};${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_HDF_TESTSOURCE_DIR}"
-  )
-  target_compile_options(ftest
-      PRIVATE $<$<STREQUAL:"x${CMAKE_Fortran_SIMULATE_ID}","xMSVC">:${WIN_COMPILE_FLAGS}>
-  )
-  if(MSVC)
-    set_property(TARGET ftest PROPERTY LINK_FLAGS "/SUBSYSTEM:CONSOLE ${WIN_LINK_FLAGS}")
-  endif()
-  set_target_properties (ftest PROPERTIES LINKER_LANGUAGE Fortran)
-  if (NOT BUILD_SHARED_LIBS)
-    target_link_libraries (ftest PRIVATE ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_HDF_TEST_FCSTUB_LIB_TARGET})
-  else ()
-    target_link_libraries (ftest PRIVATE ${HDF4_MF_FORTRAN_LIBSH_TARGET} ${HDF4_HDF_TEST_FCSTUB_LIB_TARGET})
-  endif ()
-
-  #-- Copy all the dat files from the test directory into the source directory
-  set (HDF4_REFERENCE_TEST_FILES
-    test_nc.cdl
-    test_nc.nc
-  )
-  foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
-    HDFTEST_COPY_FILE("${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/${h4_file}" "${PROJECT_BINARY_DIR}/${h4_file}" "netcdf_files")
-  endforeach ()
-  add_custom_target(netcdf_files ALL COMMENT "Copying files needed by netcdf tests" DEPENDS ${netcdf_files_list})
-
-  add_test (NAME ftest COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:ftest>)
-endif ()
 
 #-- Adding test for f_hdftest
 add_executable (f_hdftest hdftest.f)
@@ -163,9 +132,7 @@ add_test (
         test_file34.hdf
         test_file35.hdf
 )
-if (HDF4_ENABLE_NETCDF)
-  set_tests_properties (MFHDF_FORTRAN-clearall-objects PROPERTIES DEPENDS ftest LABELS ${PROJECT_NAME})
-endif ()
+set_tests_properties (MFHDF_FORTRAN-clearall-objects PROPERTIES DEPENDS ftest LABELS ${PROJECT_NAME})
 
 add_test (NAME f_hdftest COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:f_hdftest>)
 set (passRegex "Total errors : [ ]+0")

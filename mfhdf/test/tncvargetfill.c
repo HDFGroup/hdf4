@@ -33,6 +33,7 @@
 #include <string.h>
 
 #include "mfhdf.h"
+#include "nc_priv.h"
 #include "hdftest.h"
 
 /* Used to declare a larger buffer for when attempting to read past the

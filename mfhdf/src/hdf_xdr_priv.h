@@ -32,8 +32,8 @@
  * Copyright (C) 1984, Sun Microsystems, Inc.
  */
 
-#ifndef H4_XDR_PRIV_H
-#define H4_XDR_PRIV_H
+#ifndef HDF_XDR_PRIV_H
+#define HDF_XDR_PRIV_H
 
 #include "nc_priv.h"
 
@@ -90,34 +90,33 @@ extern "C" {
 /*
  * Operations defined on an XDR handle
  */
-HDFLIBAPI bool_t h4_xdr_getbytes(XDR *, char *, unsigned);
-HDFLIBAPI bool_t h4_xdr_putbytes(XDR *, const char *, unsigned);
+HDFLIBAPI bool_t hdf_xdr_getbytes(XDR *, char *, unsigned);
+HDFLIBAPI bool_t hdf_xdr_putbytes(XDR *, const char *, unsigned);
 
-HDFLIBAPI unsigned h4_xdr_getpos(XDR *);
-HDFLIBAPI bool_t   h4_xdr_setpos(XDR *, unsigned);
+HDFLIBAPI unsigned hdf_xdr_getpos(XDR *);
+HDFLIBAPI bool_t   hdf_xdr_setpos(XDR *, unsigned);
 
 /*
  * "Data type" XDR routines that read/write/free depending on the op
  * parameter of the XDR struct
  */
-HDFLIBAPI bool_t h4_xdr_int(XDR *, int *);
-HDFLIBAPI bool_t h4_xdr_u_int(XDR *, unsigned *);
+HDFLIBAPI bool_t hdf_xdr_int(XDR *, int *);
+HDFLIBAPI bool_t hdf_xdr_u_int(XDR *, unsigned *);
 
-HDFLIBAPI bool_t h4_xdr_bytes(XDR *, char **, unsigned *, unsigned);
-HDFLIBAPI bool_t h4_xdr_opaque(XDR *, char *, unsigned);
+HDFLIBAPI bool_t hdf_xdr_bytes(XDR *, char **, unsigned *, unsigned);
+HDFLIBAPI bool_t hdf_xdr_opaque(XDR *, char *, unsigned);
 
-HDFLIBAPI bool_t h4_xdr_float(XDR *, float *);
-HDFLIBAPI bool_t h4_xdr_double(XDR *, double *);
+HDFLIBAPI bool_t hdf_xdr_float(XDR *, float *);
+HDFLIBAPI bool_t hdf_xdr_double(XDR *, double *);
 
 /* XDR file manipulation */
-HDFLIBAPI int  h4_xdr_create(XDR *xdrs, int fd, int fmode, enum xdr_op op);
-HDFLIBAPI int  h4_xdr_sync(XDR *xdrs);
-HDFLIBAPI void h4_xdr_destroy(XDR *);
+HDFLIBAPI int  hdf_xdr_create(XDR *xdrs, int fd, int fmode, enum xdr_op op);
+HDFLIBAPI void hdf_xdr_destroy(XDR *);
 
-HDFLIBAPI void h4_xdr_setup_nofile(XDR *xdrs, int ncop);
+HDFLIBAPI void hdf_xdr_setup_nofile(XDR *xdrs, int ncop);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* H4_XDR_PRIV_H */
+#endif /* HDF_XDR_PRIV_H */

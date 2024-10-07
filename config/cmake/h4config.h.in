@@ -50,9 +50,6 @@
 /* Define to 1 if you have the `z' library (-lz). */
 #cmakedefine H4_HAVE_LIBZ @H4_HAVE_LIBZ@
 
-/* Define if we export HDF4-built unmangled netCDF 2.3.2 API calls */
-#cmakedefine H4_HAVE_NETCDF @H4_HAVE_NETCDF@
-
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #cmakedefine H4_HAVE_NETINET_IN_H @H4_HAVE_NETINET_IN_H@
 

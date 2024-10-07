@@ -544,15 +544,6 @@ include (CMakeFilters.cmake)
 option (HDF4_BUILD_TOOLS  "Build HDF4 Tools" ON)
 
 #-----------------------------------------------------------------------------
-# Option to Build HDF4 versions of NetCDF-3 APIS
-#-----------------------------------------------------------------------------
-option (HDF4_ENABLE_NETCDF "Build HDF4 versions of NetCDF-3 APIS" ON)
-if (HDF4_ENABLE_NETCDF)
-  set (${HDF_PREFIX}_HAVE_NETCDF 1)
-  set (${HDF_PREFIX}_BUILD_NETCDF 1)
-endif ()
-
-#-----------------------------------------------------------------------------
 # Add the HDF4 Library Target to the build
 #-----------------------------------------------------------------------------
 add_subdirectory (hdf/src)
