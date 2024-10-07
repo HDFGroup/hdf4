@@ -160,7 +160,7 @@ int32 make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 
 int32 append_Data2SDS(int32 sd_id, char *sds_name, int32 *start, int32 *edges, void *ap_data);
 
 /* Calls SDgetdatasize then verify the size against data_size */
-int verify_datasize(int32 sds_id, int32 data_size, char *sds_name);
+int verify_datasize(int32 sds_id, int32 data_size, const char *sds_name);
 
 /* Verifies the unlimited dimension's size and the variable's data. */
 int verify_info_data(int32 sds_id, int32 expected_dimsize, int16 *result);

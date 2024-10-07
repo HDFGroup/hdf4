@@ -68,7 +68,7 @@ typedef FILE *hdf_file_t;
 #define HI_CREATE(p)      (fopen((p), "wb+"))
 #define HI_READ(f, b, n)  (((size_t)(n) == (size_t)fread((b), 1, (size_t)(n), (f))) ? SUCCEED : FAIL)
 #define HI_WRITE(f, b, n) (((size_t)(n) == (size_t)fwrite((b), 1, (size_t)(n), (f))) ? SUCCEED : FAIL)
-#define HI_CLOSE(f)       (((f = ((fclose(f) == 0) ? NULL : f)) == NULL) ? SUCCEED : FAIL)
+#define HI_CLOSE(f)       hi_close_stdio(&f)
 #define HI_FLUSH(f)       (fflush(f) == 0 ? SUCCEED : FAIL)
 #define HI_SEEK(f, o)     (fseek((f), (long)(o), SEEK_SET) == 0 ? SUCCEED : FAIL)
 #define HI_SEEK_CUR(f, o) (fseek((f), (long)(o), SEEK_CUR) == 0 ? SUCCEED : FAIL)
@@ -400,6 +400,10 @@ typedef struct functab_t {
 
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+#if (FILELIB == UNIXBUFIO)
+HDFLIBAPI int hi_close_stdio(FILE **f);
 #endif
 
 #ifdef DISKBLOCK_DEBUG

@@ -56,23 +56,20 @@
 static int
 test_various_comps()
 {
-    /************************* Variable declaration **************************/
-
     int32     sd_id, sds_id;
     int       status;
     int32     comp_type; /* Compression flag */
     comp_info c_info;    /* Compression structure */
     int32     start[2], edges[2], dim_sizes[2];
     int32     data[Y_LENGTH][X_LENGTH];
-    int32     pixels_per_scanline;
     int       num_errs = 0; /* number of errors in compression test so far */
-    int       i, j;
-
-    /********************* End of variable declaration ***********************/
+#ifdef H4_HAVE_SZIP_ENCODER
+    int32 pixels_per_scanline;
+#endif
 
     /* Buffer array data and define array dimensions. */
-    for (j = 0; j < Y_LENGTH; j++) {
-        for (i = 0; i < X_LENGTH; i++)
+    for (int j = 0; j < Y_LENGTH; j++) {
+        for (int i = 0; i < X_LENGTH; i++)
             data[j][i] = (i + j) + 1;
     }
     dim_sizes[0] = Y_LENGTH;
@@ -126,7 +123,10 @@ test_various_comps()
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-#ifdef H4_HAVE_SZIP_ENCODER /* we have szip library with encoder */
+#ifdef H4_HAVE_SZIP_ENCODER
+
+    /* We have an szip library with encoder */
+
     /* Create 3rd data set for SZIP compression. */
     sds_id = SDcreate(sd_id, SDS3_NAME, DFNT_INT32, RANK, dim_sizes);
     CHECK(sds_id, FAIL, "SDcreate");
@@ -135,7 +135,7 @@ test_various_comps()
     comp_type           = COMP_CODE_SZIP;
     pixels_per_scanline = dim_sizes[1];
     c_info.szip.pixels  = dim_sizes[0] * dim_sizes[1];
-    ;
+
     c_info.szip.pixels_per_block = 2;
     if (pixels_per_scanline >= 2048)
         c_info.szip.pixels_per_scanline = 512;

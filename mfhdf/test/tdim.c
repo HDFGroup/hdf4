@@ -65,7 +65,6 @@ test_basic_dim()
     int32 dims[2], start[2], edges[2], rank;
     int16 array1_data[LENGTH0][LENGTH1]; /* data for first SDS */
     int32 dim_sizes[H4_MAX_VAR_DIMS];    /* read dimensions */
-    int   i, j;
     int32 array_rank, num_type, attributes;
     char  dim_name[H4_MAX_NC_NAME], name[H4_MAX_NC_NAME];
     uint8 scale0[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 255};
@@ -121,12 +120,12 @@ test_basic_dim()
      */
 
     /* Fill the buffer with values. */
-    for (j = 0; j < LENGTH0; j++) {
-        for (i = 0; i < LENGTH1; i++)
-            array1_data[j][i] = (i + j) + 1;
+    for (int j = 0; j < LENGTH0; j++) {
+        for (int i = 0; i < LENGTH1; i++)
+            array1_data[j][i] = (int16)(i + j) + 1;
     }
     /* Define the area for writing to the dataset */
-    for (i = 0; i < rank; i++) {
+    for (int i = 0; i < rank; i++) {
         start[i] = 0;
         edges[i] = dims[i];
     }
@@ -198,7 +197,7 @@ test_basic_dim()
     dims[0] = LENGTH2;
     dims[1] = LENGTH3;
 
-    for (i = 0; i < rank; i++)
+    for (int i = 0; i < rank; i++)
         edges[i] = dims[i];
 
     /* Create the data set */
@@ -278,7 +277,6 @@ test_dim_scales()
     int16   array1_data[LENGTH0][LENGTH1]; /* data for first SDS */
     uint32  array2_data[LENGTH2][LENGTH3]; /* data for second SDS */
     int32   dim_sizes[H4_MAX_VAR_DIMS];    /* read dimensions */
-    int     i, j;
     int32   array_rank, num_type, attributes;
     char    dim_name[H4_MAX_NC_NAME], name[H4_MAX_NC_NAME];
     uint8   scale0[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 255};
@@ -323,12 +321,12 @@ test_dim_scales()
      */
 
     /* Fill the buffer with values. */
-    for (j = 0; j < LENGTH0; j++) {
-        for (i = 0; i < LENGTH1; i++)
-            array1_data[j][i] = (i + j) + 1;
+    for (int j = 0; j < LENGTH0; j++) {
+        for (int i = 0; i < LENGTH1; i++)
+            array1_data[j][i] = (int16)(i + j) + 1;
     }
     /* Define the area for writing to the dataset */
-    for (i = 0; i < rank; i++) {
+    for (int i = 0; i < rank; i++) {
         start[i] = 0;
         edges[i] = dims[i];
     }
@@ -407,7 +405,7 @@ test_dim_scales()
     dims[0] = LENGTH2;
     dims[1] = LENGTH3;
 
-    for (i = 0; i < rank; i++)
+    for (int i = 0; i < rank; i++)
         edges[i] = dims[i];
 
     /* Create the data set */
@@ -415,9 +413,9 @@ test_dim_scales()
     CHECK(sds_id, FAIL, "SDcreate");
 
     /* Fill the stored-data array with values. */
-    for (j = 0; j < LENGTH2; j++) {
-        for (i = 0; i < LENGTH3; i++)
-            array2_data[j][i] = 10 * (j + i);
+    for (int j = 0; j < LENGTH2; j++) {
+        for (int i = 0; i < LENGTH3; i++)
+            array2_data[j][i] = 10 * (uint32)(j + i);
     }
 
     /* Write the data stored in the array 'array2_data' to the dataset */
@@ -472,7 +470,7 @@ test_dim_scales()
     /* Read dimension scale values and verify them */
     status = SDgetdimscale(dim0_id, (void *)scale2_out);
     CHECK(status, FAIL, "SDgetdimscale");
-    for (i = 0; i < LENGTH2; i++)
+    for (int i = 0; i < LENGTH2; i++)
         VERIFY(scale2_out[i], scale2[i], "SDgetdimscale");
 
     /* Terminate access to the array. */
@@ -528,7 +526,6 @@ test_dim_strs()
     int16  array1_data[LENGTH0][LENGTH1]; /* data for first SDS */
     uint32 array2_data[LENGTH2][LENGTH3]; /* data for second SDS */
     int32  dim_sizes[H4_MAX_VAR_DIMS];    /* read dimensions */
-    int    i, j;
     int32  array_rank, num_type, attributes;
     char   dim_name[H4_MAX_NC_NAME], name[H4_MAX_NC_NAME];
     char8  scale2[] = {'d', 'i', 'm', '2'};
@@ -578,13 +575,13 @@ test_dim_strs()
      */
 
     /* Fill the buffer with values. */
-    for (j = 0; j < LENGTH0; j++) {
-        for (i = 0; i < LENGTH1; i++)
-            array1_data[j][i] = (i + j) + 1;
+    for (int j = 0; j < LENGTH0; j++) {
+        for (int i = 0; i < LENGTH1; i++)
+            array1_data[j][i] = (int16)(i + j) + 1;
     }
 
     /* Define the area for writing to the dataset */
-    for (i = 0; i < rank; i++) {
+    for (int i = 0; i < rank; i++) {
         start[i] = 0;
         edges[i] = dims[i];
     }
@@ -687,9 +684,9 @@ test_dim_strs()
     CHECK(sds_id, FAIL, "SDcreate");
 
     /* Fill the stored-data array with values. */
-    for (j = 0; j < LENGTH2; j++) {
-        for (i = 0; i < LENGTH3; i++)
-            array2_data[j][i] = 10 * (j + i);
+    for (int j = 0; j < LENGTH2; j++) {
+        for (int i = 0; i < LENGTH3; i++)
+            array2_data[j][i] = 10 * (uint32)(j + i);
     }
 
     /* Write the data stored in the array 'array2_data' to the dataset */
