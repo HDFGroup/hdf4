@@ -81,7 +81,7 @@ static void   init_coder_info(comp_coder_t c_type, comp_info *c_info, int32 test
 static void   allocate_buffers(void);
 static void   init_buffers(void);
 static void   free_buffers(void);
-static uint16 write_data(int32 fid, comp_model_t m_type, model_info *m_info, comp_coder_t c_type,
+static int  write_data(int32 fid, comp_model_t m_type, model_info *m_info, comp_coder_t c_type,
                          comp_info *c_info, int test_num, int32 ntype);
 static void   read_data(int32 fid, uint16 ref_num, int test_num, int32 ntype);
 
@@ -231,7 +231,7 @@ free_buffers(void)
     free(inbuf_uint32);
 } /* free_buffers() */
 
-static uint16
+static int
 write_data(int32 fid, comp_model_t m_type, model_info *m_info, comp_coder_t c_type, comp_info *c_info,
            int test_num, int32 ntype)
 {
@@ -403,7 +403,7 @@ test_comp(void)
                      coder_num++) {
                     init_coder_info(test_coders[coder_num], &c_info, test_ntypes[ntype_num]);
 
-                    ref_num = write_data(fid, test_models[model_num], &m_info, test_coders[coder_num],
+                    ref_num = (uint16)write_data(fid, test_models[model_num], &m_info, test_coders[coder_num],
                                          &c_info, test_num, test_ntypes[ntype_num]);
                     read_data(fid, ref_num, test_num, test_ntypes[ntype_num]);
                     MESSAGE(6, {

@@ -154,7 +154,7 @@ test_simple_vs()
     VERIFY_VOID(n_blocks, 1, "VSgetdatainfo");
 
     /* Get the offset/length of the data, should be 294/20 */
-    n_blocks = VSgetdatainfo(vsid, 0, n_blocks, &offset, &length);
+    n_blocks = VSgetdatainfo(vsid, 0, (unsigned)n_blocks, &offset, &length);
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
 
     /* Verify offset/length */
@@ -239,7 +239,7 @@ test_simple_vs()
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
     VERIFY_VOID(n_blocks, 1, "VSgetdatainfo");
 
-    n_blocks = VSgetdatainfo(vsid, 0, n_blocks, &offset, &length);
+    n_blocks = VSgetdatainfo(vsid, 0, (unsigned)n_blocks, &offset, &length);
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
 
     /* Verify offset/length */
@@ -263,7 +263,7 @@ test_simple_vs()
     VERIFY_VOID(n_blocks, 1, "VSgetdatainfo NONSPECIAL_VS");
 
     /* Get offset/length */
-    n_blocks = VSgetdatainfo(vsid, 0, n_blocks, &offset, &length);
+    n_blocks = VSgetdatainfo(vsid, 0, (unsigned)n_blocks, &offset, &length);
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
 
     /* Close everything */
@@ -394,11 +394,11 @@ test_append_vs()
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
 
     /* Allocate space to record the vdata's data info */
-    if (alloc_info(&vs_info, n_blocks) == -1)
+    if (alloc_info(&vs_info, (unsigned)n_blocks) == -1)
         exit(1);
 
     /* Get offset and lengths of the data */
-    n_blocks = VSgetdatainfo(apvsid, 0, n_blocks, vs_info.offsets, vs_info.lengths);
+    n_blocks = VSgetdatainfo(apvsid, 0, (unsigned)n_blocks, vs_info.offsets, vs_info.lengths);
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
     free_info(&vs_info);
 
@@ -440,7 +440,7 @@ test_append_vs()
     VERIFY_VOID(n_blocks, 3, "VSgetdatainfo");
 
     /* Allocate space to record the vdata's data info */
-    if (alloc_info(&vs_info, n_blocks) == -1)
+    if (alloc_info(&vs_info, (unsigned)n_blocks) == -1)
         exit(1);
 
     /* Record various info to be used in verifying data later */
@@ -448,7 +448,7 @@ test_append_vs()
     vs_info.numtype  = DFNT_INT32;
 
     /* Get and verify offsets and lengths of data */
-    n_blocks = VSgetdatainfo(apvsid, 0, n_blocks, vs_info.offsets, vs_info.lengths);
+    n_blocks = VSgetdatainfo(apvsid, 0, (unsigned)n_blocks, vs_info.offsets, vs_info.lengths);
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
 
     {
@@ -839,7 +839,7 @@ make_comp_image(int32 grid, const char *img_name,
        given by the caller  */
     for (ii = 0; ii < WIDTH; ii++)
         for (jj = 0; jj < LENGTH; jj++)
-            image0[ii][jj] = start_char + jj;
+            image0[ii][jj] = start_char + (char)jj;
 
     /* Create the image with 1 component, type char, pixel interlace, and
        dimension WIDTHxLENGTH */
@@ -969,7 +969,7 @@ test_oneblock_ri()
             char buffer[WIDTH][LENGTH], check_image[WIDTH * LENGTH];
             for (kk = 0; kk < WIDTH; kk++)
                 for (jj = 0; jj < LENGTH; jj++)
-                    buffer[kk][jj] = 'n' + jj;
+                    buffer[kk][jj] = 'n' + (char)jj;
 
             /* Work around to pass check_image into readnoHDF_char w/o warning*/
             memcpy(check_image, buffer, WIDTH * LENGTH);
@@ -1068,7 +1068,7 @@ test_dfr8_24()
 
         /* Get offset/length of the image and verify with pre-determined
            values */
-        info_count = GRgetdatainfo(riid, 0, info_count, &offset, &length);
+        info_count = GRgetdatainfo(riid, 0, (unsigned)info_count, &offset, &length);
         CHECK_VOID(info_count, FAIL, "GRgetdatainfo");
         VERIFY_VOID(offset, image_data_offsets[ii], "GRgetdatainfo");
         VERIFY_VOID(length, image_data_lengths[ii], "GRgetdatainfo");
@@ -1195,8 +1195,8 @@ test_getpalinfo()
     /* Fill the image data buffer with values */
     for (ii = 0; ii < WIDTH; ii++) {
         for (jj = 0; jj < LENGTH; jj++) {
-            image_buf[ii][jj][0] = (ii + jj) + 1;
-            image_buf[ii][jj][1] = (ii + jj) + 2;
+            image_buf[ii][jj][0] = (uint8)(ii + jj) + 1;
+            image_buf[ii][jj][1] = (uint8)(ii + jj) + 2;
         }
     }
 
@@ -1210,7 +1210,7 @@ test_getpalinfo()
 
     /* Initialize the palette data */
     for (ii = 0; ii < N_ENTRIES; ii++) {
-        palette_buf1[ii][0] = ii;
+        palette_buf1[ii][0] = (uint8)ii;
         palette_buf1[ii][1] = 0;
         palette_buf1[ii][2] = 8;
     }
@@ -1362,7 +1362,7 @@ test_getpalinfo()
         palinfo_array = (hdf_ddinfo_t *)malloc((size_t)n_pals * sizeof(hdf_ddinfo_t));
         CHECK_ALLOC(palinfo_array, "palinfo_array", "test_getpalinfo");
 
-        n_pals = GRgetpalinfo(grid, n_pals, palinfo_array);
+        n_pals = GRgetpalinfo(grid, (unsigned)n_pals, palinfo_array);
         CHECK_VOID(n_pals, FAIL, "GRgetpalinfo");
 
         /* Read and verify data of the first palette which is pointed to by both

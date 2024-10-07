@@ -193,7 +193,7 @@ test_chunks(void)
 
     /* initialize out buffer */
     for (i = 0; i < BUFSIZE; i++)
-        outbuf[i] = (char)(i % 256);
+        outbuf[i] = (uint8)(i % 256);
 
     /* allocate space for chunk dimensions */
     if ((chunk[0].pdims = (DIM_DEF *)malloc(5 * sizeof(DIM_DEF))) == NULL) {

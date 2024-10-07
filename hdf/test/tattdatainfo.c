@@ -448,7 +448,7 @@ test_vgmixedattrs()
                 /* Get and verify values of an int attribute */
                 status = Vgetattr2(vgroup_id, ii, (void *)ivalues);
                 for (jj = 0; jj < acount; jj++)
-                    VERIFY_VOID(ivalues[jj], attr1[jj], "Vgetattr2 int");
+                    VERIFY_VOID(ivalues[jj], (int32)attr1[jj], "Vgetattr2 int");
                 break;
             default:
                 fprintf(stderr, "type %d is not handled!\n", atype);
@@ -541,7 +541,8 @@ test_grattrs()
     /* Fill the image data buffer with values. */
     for (ii = 0; ii < Y_LENGTH; ii++) {
         for (jj = 0; jj < X_LENGTH; jj++) {
-            image_buf[ii][jj][0] = (ii + jj) + 1; /* first component */
+            /* X_LENGTH * Y_LENGTH = 50, so int8 cast is okay */
+            image_buf[ii][jj][0] = (int8)(ii + jj) + 1; /* first component */
         }
     }
 
