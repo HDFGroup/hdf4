@@ -196,7 +196,7 @@ jobs:
             set (SITE_BUILDNAME_SUFFIX "${{ steps.set-file-base.outputs.FILE_BASE }}")
             set (NO_MAC_FORTRAN "ON")
             set (LOCAL_MEMCHECK_TEST "TRUE")
-            set (CTEST_MEMORYCHECK_TYPE "LeakSanitizer"")
+            set (CTEST_MEMORYCHECK_TYPE "LeakSanitizer")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} --log-level=VERBOSE")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_SHARED_LIBS:BOOL=ON")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_STATIC_LIBS:BOOL=OFF")
@@ -222,7 +222,7 @@ jobs:
       - name: Save log (MacOS_latest)
         uses: actions/upload-artifact@v4
         with:
-          name: macos-log
+          name: leak-macos-log
           path: ${{ runner.workspace }}/hdf4/hdf4.log
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
@@ -301,7 +301,7 @@ jobs:
               set (SITE_BUILDNAME_SUFFIX "${{ steps.set-file-base.outputs.FILE_BASE }}")
               #set (CMAKE_GENERATOR_TOOLSET "ClangCL")
               set (LOCAL_MEMCHECK_TEST "TRUE")
-              set (CTEST_MEMORYCHECK_TYPE "LeakSanitizer"")
+              set (CTEST_MEMORYCHECK_TYPE "LeakSanitizer")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} --log-level=VERBOSE")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_SHARED_LIBS:BOOL=ON")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_STATIC_LIBS:BOOL=OFF")
@@ -329,7 +329,7 @@ jobs:
       - name: Save log (Windows_clang)
         uses: actions/upload-artifact@v4
         with:
-          name: clang-win-log
+          name: leak-win-log
           path: ${{ runner.workspace }}/hdf4/hdf4.log
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
@@ -400,7 +400,7 @@ jobs:
               #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF4")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} --log-level=VERBOSE")
               set (LOCAL_MEMCHECK_TEST "TRUE")
-              set (CTEST_MEMORYCHECK_TYPE "LeakSanitizer"")
+              set (CTEST_MEMORYCHECK_TYPE "LeakSanitizer")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} --log-level=VERBOSE")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_SHARED_LIBS:BOOL=ON")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_STATIC_LIBS:BOOL=OFF")
@@ -425,6 +425,6 @@ jobs:
       - name: Save log (Linux_clang)
         uses: actions/upload-artifact@v4
         with:
-          name: clang-ubuntu-log
+          name: leak-ubuntu-log
           path: ${{ runner.workspace }}/hdf4/hdf4.log
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
