@@ -4195,7 +4195,7 @@ test_mgr_chunkwr_pixelone()
         index, i;
     int32         start[2], stride[2], edge[2];
     int16         data_out[3 * Y_LENGTH * X_LENGTH];
-    const char *image_name[] = {"Image_NO", "Image_RL", "Image_Sk", "Image_DF"};
+    const char   *image_name[] = {"Image_NO", "Image_RL", "Image_Sk", "Image_DF"};
     HDF_CHUNK_DEF chunk_def;
     int16         chunk_buf[18];
 
