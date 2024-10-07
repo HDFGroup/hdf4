@@ -135,25 +135,6 @@ if (MSVC)
 endif ()
 
 #-----------------------------------------------------------------------------
-# Compiler specific flags : Shouldn't there be compiler tests for these
-#-----------------------------------------------------------------------------
-set (JPEG_CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS}")
-if (CMAKE_COMPILER_IS_GNUCC)
-  set (JPEG_CMAKE_C_FLAGS "${JPEG_CMAKE_C_FLAGS} -Wno-strict-prototypes")
-endif ()
-if (CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
-   set (JPEG_CMAKE_C_FLAGS "${JPEG_CMAKE_C_FLAGS} -Wno-deprecated-non-prototype -Wno-strict-prototypes")
-endif ()
-
-#-----------------------------------------------------------------------------
-# This is in here to help some of the GCC based IDES like Eclipse
-# and code blocks parse the compiler errors and warnings better.
-#-----------------------------------------------------------------------------
-if (CMAKE_COMPILER_IS_GNUCC)
-  set (JPEG_CMAKE_C_FLAGS "${JPEG_CMAKE_C_FLAGS} -fmessage-length=0")
-endif ()
-
-#-----------------------------------------------------------------------------
 set (MEMORYMGR jmemnobs)
 option (ENABLE_MEMORYMGR "Select memory manager" OFF)
 if (ENABLE_MEMORYMGR)
@@ -232,7 +213,15 @@ set (JPEG_PUBLIC_HEADERS
 
 add_library (${JPEG_LIB_TARGET} STATIC ${JPEG_SRCS} ${JPEG_HDRS} ${JPEG_PUBLIC_HEADERS})
 target_include_directories(${JPEG_LIB_TARGET} PRIVATE "${JPEG_SRC_DIR};${CMAKE_BINARY_DIR}")
-target_compile_options(${JPEG_LIB_TARGET} PRIVATE "${JPEG_CMAKE_C_FLAGS}")
+if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
+  target_compile_options(${JPEG_LIB_TARGET} PRIVATE -Wno-strict-prototypes)
+endif ()
+if (CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
+  target_compile_options(${JPEG_LIB_TARGET} PRIVATE -Wno-deprecated-non-prototype -Wno-strict-prototypes)
+endif ()
+if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
+  target_compile_options(${JPEG_LIB_TARGET} PRIVATE -fmessage-length=0)
+endif ()
 TARGET_C_PROPERTIES (${JPEG_LIB_TARGET} STATIC)
 target_link_libraries (${JPEG_LIB_TARGET} PRIVATE ${LINK_LIBS})
 H4_SET_LIB_OPTIONS (${JPEG_LIB_TARGET} ${JPEG_LIB_NAME} STATIC 0)
