@@ -655,7 +655,7 @@ test_multidims()
 
 *********************************************************************/
 static int
-test_readings(long max_numrecs)
+test_readings(int32 max_numrecs)
 {
     int   ncid;           /* file id */
     int   var1id, var2id; /* variable ids */

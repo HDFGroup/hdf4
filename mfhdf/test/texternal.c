@@ -343,7 +343,7 @@ test_getexternal()
         char *null_buffer = NULL;
         int   ret_code    = 0;
 
-        ret_code = SDgetexternalinfo(sds_id, name_len + 1, null_buffer, &offset, &length);
+        ret_code = SDgetexternalinfo(sds_id, (unsigned)name_len + 1, null_buffer, &offset, &length);
         VERIFY(ret_code, FAIL, "SDgetexternalinfo");
     }
 
@@ -353,7 +353,7 @@ test_getexternal()
     memset(extfile_name, '\0', (size_t)name_len + 1);
 
     /* Call SDgetexternalinfo again and get the external file info */
-    name_len = SDgetexternalinfo(sds_id, name_len + 1, extfile_name, &offset, &length);
+    name_len = SDgetexternalinfo(sds_id, (unsigned)name_len + 1, extfile_name, &offset, &length);
     VERIFY(name_len, (int)strlen(EXTFILE), "SDgetexternalinfo");
     VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalinfo");
 
@@ -369,7 +369,7 @@ test_getexternal()
         /* Call SDgetexternalinfo again with smaller buffer size and verify
            that SDgetexternalinfo reads the name truncated to the given
            buffer size*/
-        name_len = SDgetexternalinfo(sds_id, name_len - 2, extfile_name, &offset, &length);
+        name_len = SDgetexternalinfo(sds_id, (unsigned)name_len - 2, extfile_name, &offset, &length);
         VERIFY(name_len, (int)strlen(extfile_name), "SDgetexternalinfo");
         VERIFY_CHAR(short_name, extfile_name, "SDgetexternalinfo");
         free(short_name);
@@ -398,7 +398,7 @@ test_getexternal()
     {
         char *null_buffer = NULL;
         int   ret_code    = 0;
-        ret_code          = SDgetexternalinfo(sds_id, name_len + 1, null_buffer, &offset, &length);
+        ret_code          = SDgetexternalinfo(sds_id, (unsigned)name_len + 1, null_buffer, &offset, &length);
         VERIFY(ret_code, FAIL, "SDgetexternalinfo");
     }
 
@@ -407,7 +407,7 @@ test_getexternal()
     memset(extfile_name, '\0', (size_t)name_len + 1);
 
     /* Call SDgetexternalinfo again and get the external file info */
-    name_len = SDgetexternalinfo(sds_id, name_len + 1, extfile_name, &offset, &length);
+    name_len = SDgetexternalinfo(sds_id, (unsigned)name_len + 1, extfile_name, &offset, &length);
     VERIFY(name_len, (int)strlen(EXTFILE), "SDgetexternalinfo");
     VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalinfo");
     free(extfile_name);
@@ -463,6 +463,10 @@ test_mult_setexternal()
     int   status       = SUCCEED;
     int   num_errs     = 0; /* number of errors in compression test so far */
 
+    /* Non-const copies to avoid warnings */
+    char temp_SDS1[]     = SDS1;
+    char temp_EXTFILE2[] = EXTFILE2;
+
     /* Create the file and initialize the SD interface */
     sd_id = SDstart(EXTTST, DFACC_CREATE);
     CHECK(status, FAIL, "SDstart");
@@ -473,8 +477,8 @@ test_mult_setexternal()
 
     /* Create data set SDS1 and write data to the external file; the returned
        value is the size of the data had been written for this sds */
-    size_written =
-        make_Ext3D_SDS(sd_id, SDS1, DFNT_INT32, 3, dim_sizes, (void *)written_data, OFFSET, EXTFILE2);
+    size_written = make_Ext3D_SDS(sd_id, temp_SDS1, DFNT_INT32, 3, dim_sizes, (void *)written_data, OFFSET,
+                                  temp_EXTFILE2);
     CHECK(size_written, FAIL, "make_Ext3D_SDS");
 
     /* Close the file to flush */
@@ -513,7 +517,7 @@ test_mult_setexternal()
     memset(extfile_name, '\0', (size_t)name_len + 1);
 
     /* Call SDgetexternalinfo again and get the external file info */
-    name_len = SDgetexternalinfo(sds1_id, name_len + 1, extfile_name, NULL, NULL);
+    name_len = SDgetexternalinfo(sds1_id, (unsigned)name_len + 1, extfile_name, NULL, NULL);
     VERIFY(name_len, (int)strlen(EXTFILE2), "SDgetexternalinfo");
     VERIFY_CHAR(EXTFILE2, extfile_name, "SDgetexternalinfo");
 
@@ -574,6 +578,9 @@ test_special_combos()
     int   ii, jj, kk;
     int   num_errs = 0; /* number of errors in compression test so far */
 
+    /* Non-const copies to avoid warnings */
+    char temp_SDS2[] = SDS2;
+
     /* Create the file and initialize the SD interface */
     sd_id = SDstart(EXTTST, DFACC_CREATE);
     CHECK(status, FAIL, "SDstart");
@@ -610,7 +617,7 @@ test_special_combos()
 
     /* Append data to the unlimited-dimension data set SDS2.  This should */
     /* produce a linked-block element, because SDS3 had been written */
-    sds2_size = append_Data2SDS(sd_id, SDS2, ap_start, ap_edges, (void *)ap_data);
+    sds2_size = append_Data2SDS(sd_id, temp_SDS2, ap_start, ap_edges, (void *)ap_data);
     CHECK(sds2_size, FAIL, "append_Data2SDS");
 
     /* Select the named data set, id is checked by callee */
@@ -1087,7 +1094,7 @@ verify_data(int32 sd_id, int32 sds_ind)
         num_elems = Z_LENGTH * Y_LENGTH * X_LENGTH;
 
         /* Size of data written */
-        data_size = num_elems * sizeof(int);
+        data_size = num_elems * (int)sizeof(int);
         edges[0]  = Z_LENGTH;
     }
 

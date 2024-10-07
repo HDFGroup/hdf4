@@ -177,15 +177,26 @@ test_file_inuse()
 static int
 test_max_open_files()
 {
-    int32 fids[NUM_FILES_HI];         /* holds IDs of opened files */
-    char  filename[NUM_FILES_HI][10]; /* holds generated file names */
-    char  readfname[H4_MAX_NC_NAME];  /* file name retrieved from file id */
-    int   index, status, curr_max,    /* curr maximum number of open files allowed in HDF */
+    int32 *fids      = NULL;          /* holds IDs of opened files */
+    char **filenames = NULL;          /* holds generated file names */
+    char   readfname[H4_MAX_NC_NAME]; /* file name retrieved from file id */
+    int    index, status, curr_max,   /* curr maximum number of open files allowed in HDF */
         sys_limit,                    /* maximum number of open files allowed by system */
         curr_max_bk,                  /* back up of curr_max */
         curr_opened,                  /* number of files currently being opened */
         temp_limit,                   /* temp var - num of files to be opened in this test */
         num_errs = 0;                 /* number of errors so far */
+
+    /* Allocate memory for arrays */
+    fids = calloc(NUM_FILES_HI, sizeof(int32));
+    CHECK_ALLOC(fids, "fids", "test_max_open_files");
+
+    filenames = calloc(NUM_FILES_HI, sizeof(char *));
+    CHECK_ALLOC(filenames, "filenames", "test_max_open_files");
+    for (int i = 0; i < NUM_FILES_HI; i++) {
+        filenames[i] = calloc(10, sizeof(char));
+        CHECK_ALLOC(filenames[i], "filenames[]", "test_max_open_files");
+    }
 
     /* Get the current max and system limit */
     status = SDget_maxopenfiles(&curr_max, &sys_limit);
@@ -200,8 +211,8 @@ test_max_open_files()
        all should succeed */
     for (index = 0; index < NUM_FILES_LOW; index++) {
         /* Create a file */
-        sprintf(filename[index], "file%i", index);
-        fids[index] = SDstart(filename[index], DFACC_CREATE);
+        sprintf(filenames[index], "file%i", index);
+        fids[index] = SDstart(filenames[index], DFACC_CREATE);
         CHECK(fids[index], FAIL, "test_maxopenfiles: SDstart");
     }
     /* Get the current max and system limit, the current max should now be at system limit */
@@ -228,11 +239,11 @@ test_max_open_files()
     VERIFY(curr_max, sys_limit, "test_maxopenfiles: SDreset_maxopenfiles");
 
     /* Reopen the 3 files above, and check the number of opened files again */
-    fids[5] = SDstart(filename[5], DFACC_RDWR);
+    fids[5] = SDstart(filenames[5], DFACC_RDWR);
     CHECK(fids[5], FAIL, "test_maxopenfiles: SDstart");
-    fids[15] = SDstart(filename[15], DFACC_RDWR);
+    fids[15] = SDstart(filenames[15], DFACC_RDWR);
     CHECK(fids[15], FAIL, "test_maxopenfiles: SDstart");
-    fids[25] = SDstart(filename[25], DFACC_RDWR);
+    fids[25] = SDstart(filenames[25], DFACC_RDWR);
     CHECK(fids[25], FAIL, "test_maxopenfiles: SDstart");
     curr_opened = SDget_numopenfiles();
     VERIFY(curr_opened, NUM_FILES_LOW, "test_maxopenfiles: SDget_numopenfiles");
@@ -255,8 +266,8 @@ test_max_open_files()
     temp_limit = temp_limit > NUM_FILES_HI ? NUM_FILES_HI : temp_limit;
     for (index = NUM_FILES_LOW; index < temp_limit; index++) {
         /* Create a file */
-        sprintf(filename[index], "file%i", index);
-        fids[index] = SDstart(filename[index], DFACC_CREATE);
+        sprintf(filenames[index], "file%i", index);
+        fids[index] = SDstart(filenames[index], DFACC_CREATE);
 
         /* if SDstart fails due to "too many open files," then adjust
            temp_limit so that further failure can be prevented, i.e.
@@ -276,7 +287,7 @@ test_max_open_files()
         status = SDend(fids[index]);
         CHECK(status, FAIL, "test_maxopenfiles: SDend");
 
-        fids[index] = SDstart(filename[index], DFACC_RDWR);
+        fids[index] = SDstart(filenames[index], DFACC_RDWR);
         CHECK(fids[index], FAIL, "test_maxopenfiles: SDstart");
     }
 
@@ -286,9 +297,9 @@ test_max_open_files()
         CHECK(status, FAIL, "test_maxopenfiles: SDgetfilename");
 
         /* Verify the file name retrieved against the original */
-        if (strcmp(readfname, filename[index])) {
+        if (strcmp(readfname, filenames[index])) {
             fprintf(stderr, "SDgetfilename: incorrect file being opened - expected <%s>, retrieved <%s>\n",
-                    filename[index], readfname);
+                    filenames[index], readfname);
         }
     }
 
@@ -296,8 +307,15 @@ test_max_open_files()
     for (index = 0; index < temp_limit; index++) {
         status = SDend(fids[index]);
         CHECK(status, FAIL, "test_maxopenfiles: SDend");
-        remove(filename[index]);
+        remove(filenames[index]);
     }
+
+    /* Free memory */
+    free(fids);
+    for (int i = 0; i < NUM_FILES_HI; i++)
+        free(filenames[i]);
+    free(filenames);
+
     return num_errs;
 }
 

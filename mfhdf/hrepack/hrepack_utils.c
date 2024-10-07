@@ -439,6 +439,10 @@ set_szip(int        pixels_per_block, /*in */
 
     return 0;
 #else
+    (void)pixels_per_block;
+    (void)compression_mode;
+    (void)c_info;
+
     printf("Warning: SZIP compression is not available\n");
     return -1;
 #endif
