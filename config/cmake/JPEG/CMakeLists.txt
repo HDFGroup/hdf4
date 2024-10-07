@@ -24,8 +24,8 @@ CHECK_INCLUDE_FILE_CONCAT ("stddef.h"        HAVE_STDDEF_H)
 #----------------------------------------------------------------
 # JPEG special check
 #----------------------------------------------------------------
-CHECK_TYPE_SIZE ("unsigned char"           UNSIGNED_CHAR)
-CHECK_TYPE_SIZE ("unsigned short"          UNSIGNED_SHORT)
+CHECK_TYPE_SIZE ("unsigned char"           HAVE_UNSIGNED_CHAR)
+CHECK_TYPE_SIZE ("unsigned short"          HAVE_UNSIGNED_SHORT)
 
 CHECK_INCLUDE_FILE_CONCAT ("string.h"        HAVE_STRING_H)
 CHECK_INCLUDE_FILE_CONCAT ("strings.h"       HAVE_STRINGS_H)

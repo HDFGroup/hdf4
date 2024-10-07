@@ -1,0 +1,430 @@
+name: hdf4 dev ctest script runs
+
+# Triggers the workflow on a call from another workflow
+on:
+  workflow_call:
+    inputs:
+      snap_name:
+        description: 'The name in the source tarballs'
+        type: string
+        required: false
+        default: hdfsrc
+      file_base:
+        description: "The common base name of the source tarballs"
+        required: true
+        type: string
+      use_environ:
+        description: 'Environment to locate files'
+        type: string
+        required: true
+        default: snapshots
+
+permissions:
+  contents: read
+
+jobs:
+  coverage_test_linux_clang:
+  # Linux (Ubuntu) w/ clang + CMake
+  #
+    name: "Ubuntu Clang CMake"
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install CMake Dependencies (Linux_coverage)
+      run: |
+        sudo apt-get update
+        sudo apt-get install ninja-build doxygen graphviz curl libncurses5 llvm-cov gcov
+
+    - name: add clang to env
+      uses: KyleMayes/install-llvm-action@v2.0.5
+      id: setup-clang
+      with:
+        env: true
+        version: '18'
+
+    - name: Set file base name (Linux_coverage)
+      id: set-file-base
+      run: |
+        FILE_NAME_BASE=$(echo "${{ inputs.file_base }}")
+        echo "FILE_BASE=$FILE_NAME_BASE" >> $GITHUB_OUTPUT
+        if [[ '${{ inputs.use_environ }}' == 'release' ]]
+        then
+          SOURCE_NAME_BASE=$(echo "${{ inputs.snap_name }}")
+        else
+          SOURCE_NAME_BASE=$(echo "hdfsrc")
+        fi
+        echo "SOURCE_BASE=$SOURCE_NAME_BASE" >> $GITHUB_OUTPUT
+
+    # Get files created by release script
+    - name: Get tgz-tarball (Linux_coverage)
+      uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+      with:
+        name: tgz-tarball
+        path: ${{ github.workspace }}
+
+    - name: List files for the space (Linux_coverage)
+      run: |
+        ls -l ${{ github.workspace }}
+        ls ${{ runner.workspace }}
+
+    - name: Uncompress source (Linux_coverage)
+      run: tar -zxvf ${{ github.workspace }}/${{ steps.set-file-base.outputs.FILE_BASE }}.tar.gz
+
+    - name: Copy script files for the space (Linux_coverage)
+      run: |
+        cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/CTestScript.cmake ${{ runner.workspace }}/hdf4
+        cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/HDF4config.cmake ${{ runner.workspace }}/hdf4
+
+    - name: List files for the hdf4 (Linux_coverage)
+      run: |
+        ls ${{ runner.workspace }}/hdf4
+
+    - name: Create options file (Linux_coverage)
+      uses: "DamianReeves/write-file-action@master"
+      with:
+        path: ${{ runner.workspace }}/hdf4/HDF4options.cmake
+        write-mode: overwrite
+        contents: |
+            set (CTEST_DROP_SITE_INIT "my.cdash.org")
+            # Change following line to submit to your CDash dashboard to a different CDash project
+            set (SITE_BUILDNAME_SUFFIX "${{ steps.set-file-base.outputs.FILE_BASE }}")
+            #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF4")
+            set (LOCAL_COVERAGE_TEST "TRUE")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} --log-level=VERBOSE")
+            #set (CMAKE_GENERATOR_TOOLSET "clang")
+            #set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCMAKE_TOOLCHAIN_FILE:STRING=config/toolchain/clang.cmake")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_SHARED_LIBS:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_STATIC_LIBS:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_COVERAGE:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCODE_COVERAGE:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DJPEG_USE_LOCALCONTENT:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DZLIB_USE_LOCALCONTENT:BOOL=OFF")
+
+    - name: Run ctest (Linux_coverage)
+      run: |
+        cd "${{ runner.workspace }}/hdf4"
+        ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH,LOCAL_SUBMIT=ON,NINJA=TRUE,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Debug -VV -O hdf4.log
+      shell: bash
+      continue-on-error: true
+
+    # Save log files created by ctest script
+    - name: Save log (Linux_coverage)
+      uses: actions/upload-artifact@v4
+      with:
+        name: clang-coverage-log
+        path: ${{ runner.workspace }}/hdf4/hdf4.log
+        if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+
+  build_and_test_mac_latest:
+  # MacOS w/ Clang + CMake
+  #
+    name: "MacOS Clang CMake"
+    runs-on: macos-latest
+    steps:
+      - name: Install Dependencies (MacOS_latest)
+        run: brew install ninja curl
+
+      - name: Install Dependencies
+        uses: ssciwr/doxygen-install@v1
+        with:
+          version: "1.10.0"
+
+      - name: Set up JDK 19
+        uses: actions/setup-java@v4
+        with:
+          java-version: '19'
+          distribution: 'temurin'
+
+      - name: Set file base name (MacOS_latest)
+        id: set-file-base
+        run: |
+          FILE_NAME_BASE=$(echo "${{ inputs.file_base }}")
+          echo "FILE_BASE=$FILE_NAME_BASE" >> $GITHUB_OUTPUT
+          if [[ '${{ inputs.use_environ }}' == 'release' ]]
+          then
+            SOURCE_NAME_BASE=$(echo "${{ inputs.snap_name }}")
+          else
+            SOURCE_NAME_BASE=$(echo "hdfsrc")
+          fi
+          echo "SOURCE_BASE=$SOURCE_NAME_BASE" >> $GITHUB_OUTPUT
+
+      # Get files created by release script
+      - name: Get tgz-tarball (MacOS_latest)
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+              name: tgz-tarball
+              path: ${{ github.workspace }}
+
+      - name: List files for the space (MacOS_latest)
+        run: |
+              ls ${{ github.workspace }}
+              ls ${{ runner.workspace }}
+
+      - name: Uncompress source (MacOS_latest)
+        run: tar -zxvf ${{ github.workspace }}/${{ steps.set-file-base.outputs.FILE_BASE }}.tar.gz
+
+      - name: Copy script files for the space (MacOS_latest)
+        run: |
+          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/CTestScript.cmake ${{ runner.workspace }}/hdf4
+          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/HDF4config.cmake ${{ runner.workspace }}/hdf4
+
+      # symlinks the compiler executables to a common location 
+      - name: Setup GNU Fortran
+        uses: fortran-lang/setup-fortran@v1
+        id: setup-fortran
+        with:
+          compiler: gcc
+          version: 14
+
+      - name: List files for the hdf4 (MacOS_latest)
+        run: |
+              ls ${{ runner.workspace }}/hdf4
+
+      - name: Create options file (MacOS_latest)
+        uses: "DamianReeves/write-file-action@master"
+        with:
+          path: ${{ runner.workspace }}/hdf4/HDF4options.cmake
+          write-mode: overwrite
+          contents: |
+            set (CTEST_DROP_SITE_INIT "my.cdash.org")
+            # Change following line to submit to your CDash dashboard to a different CDash project
+            #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF4")
+            set (SITE_BUILDNAME_SUFFIX "${{ steps.set-file-base.outputs.FILE_BASE }}")
+            set (NO_MAC_FORTRAN "ON")
+            set (LOCAL_MEMCHECK_TEST "TRUE")
+            set (CTEST_MEMORYCHECK_TYPE "LeakSanitizer"")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} --log-level=VERBOSE")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_SHARED_LIBS:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_STATIC_LIBS:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SANITIZERS:BOOL=ON")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DUSE_SANITIZER:STRING=Leak")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DJPEG_USE_LOCALCONTENT:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF")
+            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DZLIB_USE_LOCALCONTENT:BOOL=OFF")
+
+      - name: Run ctest (MacOS_latest)
+        id: run-ctest
+        run: |
+          cd "${{ runner.workspace }}/hdf4"
+          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-LEAK,LOCAL_SUBMIT=ON,NINJA=TRUE,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
+        shell: bash
+        continue-on-error: true
+
+      # Save log files created by ctest script
+      - name: Save log (MacOS_latest)
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-log
+          path: ${{ runner.workspace }}/hdf4/hdf4.log
+          if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+
+  build_and_test_win_clang:
+  # Windows w/ clang + CMake
+  #
+    name: "Windows ClangCL CTest"
+    runs-on: windows-latest
+    steps:
+      - name: Install Dependencies (Windows_clang)
+        run: choco install ninja
+
+      - name: add clang to env
+        uses: KyleMayes/install-llvm-action@v2.0.5
+        id: setup-clang
+        with:
+          env: true
+          version: '18'
+
+      - name: Set file base name (Windows_clang)
+        id: set-file-base
+        run: |
+          FILE_NAME_BASE=$(echo "${{ inputs.file_base }}")
+          echo "FILE_BASE=$FILE_NAME_BASE" >> $GITHUB_OUTPUT
+          if [[ '${{ inputs.use_environ }}' == 'release' ]]
+          then
+            SOURCE_NAME_BASE=$(echo "${{ inputs.snap_name }}")
+          else
+            SOURCE_NAME_BASE=$(echo "hdfsrc")
+          fi
+          echo "SOURCE_BASE=$SOURCE_NAME_BASE" >> $GITHUB_OUTPUT
+        shell: bash
+
+      # Get files created by release script
+      - name: Get zip-tarball (Windows_clang)
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: zip-tarball
+          path: ${{ github.workspace }}
+
+      - name: using powershell
+        shell: pwsh
+        run: Get-Location
+
+      - name: List files for the space (Windows_clang)
+        run: |
+          Get-ChildItem -Path ${{ github.workspace }}
+          Get-ChildItem -Path ${{ runner.workspace }}
+        shell: pwsh
+
+      - name: Uncompress source (Windows_clang)
+        working-directory: ${{ github.workspace }}
+        run: 7z x ${{ steps.set-file-base.outputs.FILE_BASE }}.zip
+        shell: bash
+
+      - name: Copy script files for the space (Windows_clang)
+        run: |
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/CTestScript.cmake -Destination ${{ runner.workspace }}/hdf4/
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/HDF4config.cmake -Destination ${{ runner.workspace }}/hdf4/
+        shell: pwsh
+
+      - name: List files for the hdf4 (Windows_clang)
+        run: |
+          Get-ChildItem -Path ${{ runner.workspace }}/hdf4
+        shell: pwsh
+
+      - name: Create options file (Windows_clang)
+        uses: "DamianReeves/write-file-action@master"
+        with:
+          path: ${{ runner.workspace }}/hdf4/HDF4options.cmake
+          write-mode: overwrite
+          contents: |
+              set (CTEST_DROP_SITE_INIT "my.cdash.org")
+              # Change following line to submit to your CDash dashboard to a different CDash project
+              #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF4")
+              set (SITE_BUILDNAME_SUFFIX "${{ steps.set-file-base.outputs.FILE_BASE }}")
+              #set (CMAKE_GENERATOR_TOOLSET "ClangCL")
+              set (LOCAL_MEMCHECK_TEST "TRUE")
+              set (CTEST_MEMORYCHECK_TYPE "LeakSanitizer"")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} --log-level=VERBOSE")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_SHARED_LIBS:BOOL=ON")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_STATIC_LIBS:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SANITIZERS:BOOL=ON")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DUSE_SANITIZER:STRING=Leak")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DJPEG_USE_LOCALCONTENT:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DZLIB_USE_LOCALCONTENT:BOOL=OFF")
+
+      - name: Run ctest (Windows_clang) with clang
+        env:
+          BINSIGN: ${{ needs.check-secret.outputs.sign-state }}
+          SIGNTOOLDIR: ${{ github.workspace }}/Microsoft.Windows.SDK.BuildTools/bin/10.0.22621.0/x64
+        run: |
+          cd "${{ runner.workspace }}/hdf4"
+          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-LEAK,LOCAL_SUBMIT=ON,NINJA=TRUE,BUILD_GENERATOR=VS202264,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
+        shell: pwsh
+        continue-on-error: true
+
+      # Save log files created by ctest script
+      - name: Save log (Windows_clang)
+        uses: actions/upload-artifact@v4
+        with:
+          name: clang-win-log
+          path: ${{ runner.workspace }}/hdf4/hdf4.log
+          if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+
+  build_and_test_linux_clang:
+  # Linux (Ubuntu) w/ clang + CMake
+  #
+    name: "Ubuntu Clang CMake"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install CMake Dependencies (Linux_clang)
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build doxygen graphviz curl libncurses5
+
+      - name: add clang to env
+        uses: KyleMayes/install-llvm-action@v2.0.5
+        id: setup-clang
+        with:
+          env: true
+          version: '18'
+
+      - name: Set file base name (Linux_clang)
+        id: set-file-base
+        run: |
+          FILE_NAME_BASE=$(echo "${{ inputs.file_base }}")
+          echo "FILE_BASE=$FILE_NAME_BASE" >> $GITHUB_OUTPUT
+          if [[ '${{ inputs.use_environ }}' == 'release' ]]
+          then
+            SOURCE_NAME_BASE=$(echo "${{ inputs.snap_name }}")
+          else
+            SOURCE_NAME_BASE=$(echo "hdfsrc")
+          fi
+          echo "SOURCE_BASE=$SOURCE_NAME_BASE" >> $GITHUB_OUTPUT
+
+      # Get files created by release script
+      - name: Get tgz-tarball (Linux_clang)
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: tgz-tarball
+          path: ${{ github.workspace }}
+
+      - name: List files for the space (Linux_clang)
+        run: |
+          ls -l ${{ github.workspace }}
+          ls ${{ runner.workspace }}
+
+      - name: Uncompress source (Linux_clang)
+        run: tar -zxvf ${{ github.workspace }}/${{ steps.set-file-base.outputs.FILE_BASE }}.tar.gz
+
+      - name: Copy script files for the space (Linux_clang)
+        run: |
+          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/CTestScript.cmake ${{ runner.workspace }}/hdf4
+          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/HDF4config.cmake ${{ runner.workspace }}/hdf4
+
+      - name: List files for the hdf4 (Linux_clang)
+        run: |
+          ls ${{ runner.workspace }}/hdf4
+
+      - name: Create options file (Linux_clang)
+        uses: "DamianReeves/write-file-action@master"
+        with:
+          path: ${{ runner.workspace }}/hdf4/HDF4options.cmake
+          write-mode: overwrite
+          contents: |
+              set (CTEST_DROP_SITE_INIT "my.cdash.org")
+              # Change following line to submit to your CDash dashboard to a different CDash project
+              set (SITE_BUILDNAME_SUFFIX "${{ steps.set-file-base.outputs.FILE_BASE }}")
+              #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF4")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} --log-level=VERBOSE")
+              set (LOCAL_MEMCHECK_TEST "TRUE")
+              set (CTEST_MEMORYCHECK_TYPE "LeakSanitizer"")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} --log-level=VERBOSE")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_SHARED_LIBS:BOOL=ON")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_STATIC_LIBS:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SANITIZERS:BOOL=ON")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DUSE_SANITIZER:STRING=Leak")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DJPEG_USE_LOCALCONTENT:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DZLIB_USE_LOCALCONTENT:BOOL=OFF")
+
+      - name: Run ctest (Linux_clang)
+        run: |
+          cd "${{ runner.workspace }}/hdf4"
+          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-LEAK,LOCAL_SUBMIT=ON,NINJA=TRUE,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
+        shell: bash
+        continue-on-error: true
+
+      # Save log files created by ctest script
+      - name: Save log (Linux_clang)
+        uses: actions/upload-artifact@v4
+        with:
+          name: clang-ubuntu-log
+          path: ${{ runner.workspace }}/hdf4/hdf4.log
+          if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
