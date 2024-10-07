@@ -9,6 +9,7 @@ cmake_minimum_required (VERSION 3.18)
 # Usage:
 #     ctest -S HDF4config.cmake,OPTION=VALUE -C Release -VV -O test.log
 # where valid options for OPTION are:
+#     NINJA           - Use Ninja build system
 #     BUILD_GENERATOR - The cmake build generator:
 #            MinGW     * MinGW Makefiles
 #            Unix      * Unix Makefiles
@@ -203,6 +204,10 @@ else ()
     set (CTEST_USE_LAUNCHERS        1)
   endif ()
 endif ()
+if (DEFINED NINJA)
+    set (CTEST_CMAKE_GENERATOR "Ninja")
+endif ()
+
 ###################################################################
 
 ###################################################################

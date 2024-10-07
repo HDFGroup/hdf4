@@ -385,7 +385,7 @@ jobs:
             set (SITE_BUILDNAME_SUFFIX "${{ steps.set-file-base.outputs.FILE_BASE }}")
             #set (CMAKE_GENERATOR_TOOLSET "Intel C++ Compiler 2024,fortran=ifx")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} --log-level=VERBOSE")
-            set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCMAKE_TOOLCHAIN_FILE:STRING=config/toolchain/intel.cmake")
+            #set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCMAKE_TOOLCHAIN_FILE:STRING=config/toolchain/intel.cmake")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=ON")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=ON")
@@ -607,7 +607,7 @@ jobs:
       - name: Save log (Windows_clang)
         uses: actions/upload-artifact@v4
         with:
-          name: intel-win-log
+          name: clang-win-log
           path: ${{ runner.workspace }}/hdf4/hdf4.log
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
@@ -677,7 +677,8 @@ jobs:
               set (SITE_BUILDNAME_SUFFIX "${{ steps.set-file-base.outputs.FILE_BASE }}")
               #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF4")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} --log-level=VERBOSE")
-              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCMAKE_TOOLCHAIN_FILE:STRING=config/toolchain/clang.cmake")
+              #set (CMAKE_GENERATOR_TOOLSET "clang")
+              #set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCMAKE_TOOLCHAIN_FILE:STRING=config/toolchain/clang.cmake")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=ON")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=ON")
@@ -697,6 +698,6 @@ jobs:
       - name: Save log (Linux_clang)
         uses: actions/upload-artifact@v4
         with:
-          name: intel-ubuntu-log
+          name: clang-ubuntu-log
           path: ${{ runner.workspace }}/hdf4/hdf4.log
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
