@@ -109,7 +109,7 @@ jobs:
       - name: Run ctest script (Windows)
         run: |
           cd "${{ runner.workspace }}/hdf4"
-          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH,LOCAL_SUBMIT=ON,NINJA,BUILD_GENERATOR=VS202264,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
+          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH,LOCAL_SUBMIT=ON,NINJA=TRUE,BUILD_GENERATOR=VS202264,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
         shell: bash
         continue-on-error: true
 
@@ -196,7 +196,7 @@ jobs:
       - name: Run ctest (Linux)
         run: |
           cd "${{ runner.workspace }}/hdf4"
-          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-GCC,LOCAL_SUBMIT=ON,NINJA,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
+          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-GCC,LOCAL_SUBMIT=ON,NINJA=TRUE,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
         shell: bash
         continue-on-error: true
 
@@ -297,7 +297,7 @@ jobs:
         id: run-ctest
         run: |
           cd "${{ runner.workspace }}/hdf4"
-          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-Clang,LOCAL_SUBMIT=ON,NINJA,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
+          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-Clang,LOCAL_SUBMIT=ON,NINJA=TRUE,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
         shell: bash
         continue-on-error: true
 
@@ -403,7 +403,7 @@ jobs:
           SIGNTOOLDIR: ${{ github.workspace }}/Microsoft.Windows.SDK.BuildTools/bin/10.0.22621.0/x64
         run: |
           cd "${{ runner.workspace }}/hdf4"
-          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-Intel,LOCAL_SUBMIT=ON,NINJA,BUILD_GENERATOR=VS202264,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
+          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-Intel,LOCAL_SUBMIT=ON,NINJA=TRUE,BUILD_GENERATOR=VS202264,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
         shell: pwsh
         continue-on-error: true
 
@@ -496,7 +496,7 @@ jobs:
           CXX: ${{ steps.setup-fortran.outputs.cxx }}
         run: |
           cd "${{ runner.workspace }}/hdf4"
-          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-Intel,LOCAL_SUBMIT=ON,NINJA,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
+          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-Intel,LOCAL_SUBMIT=ON,NINJA=TRUE,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
         shell: bash
         continue-on-error: true
 
@@ -599,7 +599,7 @@ jobs:
           SIGNTOOLDIR: ${{ github.workspace }}/Microsoft.Windows.SDK.BuildTools/bin/10.0.22621.0/x64
         run: |
           cd "${{ runner.workspace }}/hdf4"
-          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-Clang,LOCAL_SUBMIT=ON,NINJA,BUILD_GENERATOR=VS202264,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
+          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-Clang,LOCAL_SUBMIT=ON,NINJA=TRUE,BUILD_GENERATOR=VS202264,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
         shell: pwsh
         continue-on-error: true
 
@@ -690,7 +690,7 @@ jobs:
       - name: Run ctest (Linux_clang)
         run: |
           cd "${{ runner.workspace }}/hdf4"
-          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-Clang,LOCAL_SUBMIT=ON,NINJA,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
+          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-Clang,LOCAL_SUBMIT=ON,NINJA=TRUE,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
         shell: bash
         continue-on-error: true
 
