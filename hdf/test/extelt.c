@@ -48,7 +48,7 @@ test_hextelt(void)
 
     /* Initialize buffer */
     for (i = 0; i < BUF_SIZE; i++)
-        outbuf[i] = (char)(i % 256);
+        outbuf[i] = (uint8)(i % 256);
 
     /* Create header file */
     MESSAGE(5, printf("Creating base file %s\n", TESTFILE_NAME););

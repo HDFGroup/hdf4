@@ -76,9 +76,9 @@ write_vset_stuff(void)
     int32       vg1, vg2;
     int32       vs1;
     int32       count, i, j, num, max_order;
-    int32       ibuf[2000];   /* integer buffer */
-    float32     fbuf[2000];   /* floating point buffer */
-    char        gbuf[2000];   /* generic buffer */
+    int32      *ibuf  = NULL; /* integer buffer */
+    float32    *fbuf  = NULL; /* floating point buffer */
+    char       *gbuf  = NULL; /* generic buffer */
     uint8      *gbuf1 = NULL; /* buffer for uint8 */
     float32    *gbuf2 = NULL; /* buffer for float32 */
     const char *name;
@@ -86,15 +86,16 @@ write_vset_stuff(void)
     char8       c;
     float32     f;
 
-    /* allocate these buffers dynamically and not off the stack
-       as they were previously handled */
-    if (gbuf1 == NULL) {
-        gbuf1 = (uint8 *)malloc(sizeof(uint8) * 65536);
-    }
-
-    if (gbuf2 == NULL) {
-        gbuf2 = (float32 *)malloc(sizeof(float32) * 20000);
-    }
+    ibuf  = (int32 *)malloc(sizeof(float32) * 2000);
+    fbuf  = (float32 *)malloc(sizeof(float32) * 2000);
+    gbuf  = (char *)malloc(sizeof(char) * 2000);
+    gbuf1 = (uint8 *)malloc(sizeof(uint8) * 65536);
+    gbuf2 = (float32 *)malloc(sizeof(float32) * 20000);
+    CHECK_ALLOC(ibuf, "ibuf", "write_vset_stuff");
+    CHECK_ALLOC(fbuf, "fbuf", "write_vset_stuff");
+    CHECK_ALLOC(gbuf, "gbuf", "write_vset_stuff");
+    CHECK_ALLOC(gbuf1, "gbuf1", "write_vset_stuff");
+    CHECK_ALLOC(gbuf2, "gbuf2", "write_vset_stuff");
 
     fid = Hopen(FNAME0, DFACC_CREATE, 100);
     if (fid == FAIL) {
@@ -536,6 +537,9 @@ write_vset_stuff(void)
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose:vs1");
 
+    free(ibuf);
+    free(fbuf);
+    free(gbuf);
     free(gbuf1);
     free(gbuf2);
 
@@ -547,22 +551,29 @@ write_vset_stuff(void)
 static int32
 read_vset_stuff(void)
 {
-    int32   ibuf[2000]; /* integer buffer */
-    float32 fbuf[2000]; /* floating point buffer */
-    char    gbuf[2000]; /* generic buffer */
-    int32   list[50];
-    int32   tags[100], refs[100], tag, ref;
-    char    vsname[512], vsclass[512], fields[512];
-    char   *vgname, *vgclass;
-    char   *p;
-    int32   fid;
-    int32   vg1;
-    int32   vs1;
-    int32   status, num, i, count, intr, sz;
-    float32 fl_expected;
-    int32   in_expected;
-    char8   c_expected;
-    uint16  name_len;
+    int32   *ibuf = NULL; /* integer buffer */
+    float32 *fbuf = NULL; /* floating point buffer */
+    char    *gbuf = NULL; /* generic buffer */
+    int32    list[50];
+    int32    tags[100], refs[100], tag, ref;
+    char     vsname[512], vsclass[512], fields[512];
+    char    *vgname, *vgclass;
+    char    *p;
+    int32    fid;
+    int32    vg1;
+    int32    vs1;
+    int32    status, num, i, count, intr, sz;
+    float32  fl_expected;
+    int32    in_expected;
+    char8    c_expected;
+    uint16   name_len;
+
+    ibuf = (int32 *)malloc(sizeof(float32) * 2000);
+    fbuf = (float32 *)malloc(sizeof(float32) * 2000);
+    gbuf = (char *)malloc(sizeof(char) * 2000);
+    CHECK_ALLOC(ibuf, "ibuf", "write_vset_stuff");
+    CHECK_ALLOC(fbuf, "fbuf", "write_vset_stuff");
+    CHECK_ALLOC(gbuf, "gbuf", "write_vset_stuff");
 
     fid = Hopen(FNAME0, DFACC_RDONLY, 0);
     if (fid == FAIL) {
@@ -1183,6 +1194,10 @@ read_vset_stuff(void)
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose:fid");
 
+    free(ibuf);
+    free(fbuf);
+    free(gbuf);
+
     return SUCCEED;
 } /* read_vset_stuff */
 
@@ -1598,7 +1613,13 @@ test_emptyvdata(void)
     int32 fid;    /* File ID */
     int32 vs1;    /* Vdata ID */
     int32 ref;    /* Vdata ref */
-    char  vsname[VSNAMELENMAX], fields[FIELDNAMELENMAX * VSFIELDMAX];
+    char *vsname = NULL;
+    char *fields = NULL;
+
+    vsname = (char *)malloc(sizeof(char) * VSNAMELENMAX);
+    fields = (char *)malloc(sizeof(char) * FIELDNAMELENMAX * VSFIELDMAX);
+    CHECK_ALLOC(vsname, "vsname", "test_emptyvdata");
+    CHECK_ALLOC(fields, "fields", "test_emptyvdata");
 
     /* Open the HDF file. */
     fid = Hopen(EMPTYNM, DFACC_CREATE, 0);
@@ -1750,6 +1771,9 @@ test_emptyvdata(void)
 
     status = Hclose(fid);
     CHECK_VOID(status, FAIL, "Hclose");
+
+    free(vsname);
+    free(fields);
 
 } /* test_emptyvdata() */
 
@@ -1914,15 +1938,15 @@ test_getvgroups(void)
 {
     int32 fid; /* File ID */
     int32 vgroup_id, vgroup0_id, vgroup1_id, vgroup2_id, vgroup3_id, vgroup4_id,
-        vgroup5_id;      /* Various vgroup IDs */
-    int32    vgroup_ref; /* Vgroup ref */
-    unsigned n_vgs = 0;
-    uint16  *refarray;
-    int32    ref_list[NUM_VGROUPS];
-    char     vgclass[20];
-    int      ii;
-    int32    status;   /* Status values from routines */
-    int      status_n; /* returned status for functions returning an int  */
+        vgroup5_id;     /* Various vgroup IDs */
+    int32   vgroup_ref; /* Vgroup ref */
+    int     n_vgs = 0;
+    uint16 *refarray;
+    int32   ref_list[NUM_VGROUPS];
+    char    vgclass[20];
+    int     ii;
+    int32   status;   /* Status values from routines */
+    int     status_n; /* returned status for functions returning an int  */
 
     /* Create HDF file and initialize the interface. */
     fid = Hopen(USERVGROUPS, DFACC_CREATE, 0);
@@ -2003,10 +2027,10 @@ test_getvgroups(void)
     VERIFY_VOID(n_vgs, NUM_VGROUPS, "Vgetvgroups fid");
 
     /* Allocate space to retrieve the reference numbers of n_vgs vgroups */
-    refarray = (uint16 *)malloc(sizeof(uint16) * n_vgs);
+    refarray = (uint16 *)malloc(sizeof(uint16) * (size_t)n_vgs);
 
     /* Get all the vgroups in the file */
-    n_vgs = Vgetvgroups(fid, 0, n_vgs, refarray);
+    n_vgs = Vgetvgroups(fid, 0, (unsigned)n_vgs, refarray);
     CHECK_VOID(n_vgs, FAIL, "Vgetvgroups fid");
     VERIFY_VOID(n_vgs, NUM_VGROUPS, "Vgetvgroups fid");
 
@@ -2043,7 +2067,7 @@ test_getvgroups(void)
     VERIFY_VOID(n_vgs, 2, "Vgetvgroups vgroup0_id");
 
     /* Get all the vgroups in vgroup0_id (refarray already allocated to max */
-    n_vgs = Vgetvgroups(vgroup0_id, 0, n_vgs, refarray);
+    n_vgs = Vgetvgroups(vgroup0_id, 0, (unsigned)n_vgs, refarray);
     CHECK_VOID(n_vgs, FAIL, "Vgetvgroups vgroup0_id");
     VERIFY_VOID(n_vgs, 2, "Vgetvgroups vgroup0_id");
 
@@ -2063,7 +2087,7 @@ test_getvgroups(void)
     VERIFY_VOID(n_vgs, 3, "Vgetvgroups vgroup1_id");
 
     /* Get all the vgroups in vgroup1_id */
-    n_vgs = Vgetvgroups(vgroup1_id, 0, n_vgs, refarray);
+    n_vgs = Vgetvgroups(vgroup1_id, 0, (unsigned)n_vgs, refarray);
     CHECK_VOID(n_vgs, FAIL, "Vgetvgroups vgroup1_id");
     VERIFY_VOID(n_vgs, 3, "Vgetvgroups vgroup1_id");
 
@@ -2121,7 +2145,7 @@ test_getvgroups(void)
     VERIFY_VOID(n_vgs, 8, "Vgetvgroups fid");
 
     /* Get these vgroups */
-    n_vgs = Vgetvgroups(fid, 0, n_vgs, refarray);
+    n_vgs = Vgetvgroups(fid, 0, (unsigned)n_vgs, refarray);
     CHECK_VOID(n_vgs, FAIL, "Vgetvgroups fid");
     VERIFY_VOID(n_vgs, 8, "Vgetvgroups fid");
 
@@ -2157,7 +2181,7 @@ test_getvgroups(void)
     CHECK_VOID(n_vgs, FAIL, "Vgetvgroups vgroup0_id");
     VERIFY_VOID(n_vgs, 2, "Vgetvgroups vgroup0_id");
 
-    n_vgs = Vgetvgroups(vgroup0_id, 0, n_vgs, refarray);
+    n_vgs = Vgetvgroups(vgroup0_id, 0, (unsigned)n_vgs, refarray);
     CHECK_VOID(n_vgs, FAIL, "Vgetvgroups vgroup0_id");
     VERIFY_VOID(n_vgs, 2, "Vgetvgroups vgroup0_id");
 
@@ -2214,13 +2238,13 @@ test_getvgroups(void)
 int
 check_vgs(int32 id, unsigned start_vg, unsigned n_vgs,
           const char *ident_text,  /* just for debugging, remove when done */
-          unsigned    resultcount, /* expected number of vgroups */
+          int         resultcount, /* expected number of vgroups */
           uint16     *resultarray)     /* array containing expected values */
 {
-    uint16  *refarray = NULL;
-    unsigned count    = 0, ii;
-    char     message[30];
-    int      ret_value = SUCCEED;
+    uint16 *refarray = NULL;
+    int     count    = 0, ii;
+    char    message[30];
+    int     ret_value = SUCCEED;
 
     strcpy(message, "Vgetvgroups: ");
     strcat(message, ident_text);
@@ -2231,14 +2255,14 @@ check_vgs(int32 id, unsigned start_vg, unsigned n_vgs,
     VERIFY(count, resultcount, "Vgetvgroups");
 
     /* Allocate space to retrieve the reference numbers of 'count' vgroups */
-    refarray = (uint16 *)malloc(sizeof(uint16) * count);
+    refarray = (uint16 *)malloc(sizeof(uint16) * (size_t)count);
     if (refarray == NULL) {
         fprintf(stderr, "check_vgs: Allocation refarray failed\n");
         return -1;
     }
 
     /* Get all the vgroups in the file */
-    count = Vgetvgroups(id, start_vg, count, refarray);
+    count = Vgetvgroups(id, start_vg, (unsigned)count, refarray);
     CHECK(count, FAIL, "Vgetvgroups");
     VERIFY(count, resultcount, "Vgetvgroups");
 
@@ -2255,13 +2279,13 @@ check_vgs(int32 id, unsigned start_vg, unsigned n_vgs,
 static int
 check_vds(int32 id, unsigned start_vd, unsigned n_vds,
           const char *ident_text,  /* just for debugging, remove when done */
-          unsigned    resultcount, /* expected number of vdatas */
+          int         resultcount, /* expected number of vdatas */
           uint16     *resultarray)     /* array containing expected values */
 {
-    uint16  *refarray = NULL;
-    unsigned count    = 0, ii;
-    char     message[30];
-    int      ret_value = SUCCEED;
+    uint16 *refarray = NULL;
+    int     count    = 0, ii;
+    char    message[30];
+    int     ret_value = SUCCEED;
 
     strcpy(message, "VSgetvdatas: ");
     strcat(message, ident_text);
@@ -2272,14 +2296,14 @@ check_vds(int32 id, unsigned start_vd, unsigned n_vds,
     VERIFY(count, resultcount, message);
 
     /* Allocate space to retrieve the reference numbers of 'count' vdatas */
-    refarray = (uint16 *)malloc(sizeof(uint16) * count);
+    refarray = (uint16 *)malloc(sizeof(uint16) * (size_t)count);
     if (refarray == NULL) {
         fprintf(stderr, "check_vds: Allocation refarray failed\n");
         return -1;
     }
 
     /* Get all the vdatas in the file */
-    count = VSgetvdatas(id, start_vd, count, refarray);
+    count = VSgetvdatas(id, start_vd, (unsigned)count, refarray);
     CHECK(count, FAIL, message);
     VERIFY(count, resultcount, message);
 
@@ -2306,12 +2330,12 @@ test_getvdatas(void)
     int32 vgroup0_id, vgroup1_id, vgroup2_id, vgroup4_id, vgroup6_id, vgroup7_id,
         vgroup9_id; /* Various vgroup IDs */
     int32 vdata1_id, vdata2_id, vdata3_id, vdata4_id, vdata5_id, vdata6_id, vdata7_id; /* Various vdata IDs */
-    unsigned n_vgs = 0;
-    int32    ref_list[NUM_VGROUPS], vdref_list[NUM_VDATAS];
-    char     vgclass[20];
-    int      ii;
-    int32    status;   /* Status values from routines */
-    int      status_n; /* returned status for functions returning an int  */
+    int   n_vgs = 0;
+    int32 ref_list[NUM_VGROUPS], vdref_list[NUM_VDATAS];
+    char  vgclass[20];
+    int   ii;
+    int32 status;   /* Status values from routines */
+    int   status_n; /* returned status for functions returning an int  */
 
     /* Create HDF file and initialize the interface. */
     fid = Hopen(USERVDATAS, DFACC_CREATE, 0);
@@ -2755,7 +2779,7 @@ test_extfile(void)
 
         /* Old function: Get the external file name - VSgetexternalfile
            is deprecated as of 4.2.7 */
-        name_len = VSgetexternalfile(vdata1_id, name_len + 1, extfile_name, &offset);
+        name_len = VSgetexternalfile(vdata1_id, (unsigned)name_len + 1, extfile_name, &offset);
         VERIFY_VOID(name_len, (int)strlen(EXTERNAL_FILE), "VSgetexternalfile");
         VERIFY_CHAR_VOID(extfile_name, EXTERNAL_FILE, "VSgetexternalfile");
         free(extfile_name);
@@ -2769,7 +2793,7 @@ test_extfile(void)
     CHECK_ALLOC(extfile_name, "extfile_name", "test_extfile");
 
     /* Get the external file name */
-    name_len = VSgetexternalinfo(vdata1_id, name_len + 1, extfile_name, &offset, &length);
+    name_len = VSgetexternalinfo(vdata1_id, (unsigned)name_len + 1, extfile_name, &offset, &length);
     VERIFY_VOID(name_len, (int)strlen(EXTERNAL_FILE), "VSgetexternalinfo");
     VERIFY_CHAR_VOID(extfile_name, EXTERNAL_FILE, "VSgetexternalinfo");
     free(extfile_name);
@@ -2780,7 +2804,7 @@ test_extfile(void)
         /* Make a shorter string to verify later */
         char *short_name = (char *)malloc(sizeof(char) * (size_t)name_len);
         memset(short_name, '\0', (size_t)name_len);
-        strncpy(short_name, EXTERNAL_FILE, name_len - 2);
+        strncpy(short_name, EXTERNAL_FILE, (size_t)name_len - 2);
 
         /* Prepare buffer for external file name in the following test */
         extfile_name = (char *)malloc(sizeof(char) * (size_t)(name_len - 1));
@@ -2788,7 +2812,7 @@ test_extfile(void)
 
         /* Call VSgetexternalinfo again with smaller buffer size and make sure
            VSgetexternalinfo reads the name truncated to the given buffer size*/
-        name_len = VSgetexternalinfo(vdata1_id, name_len - 2, extfile_name, &offset, &length);
+        name_len = VSgetexternalinfo(vdata1_id, (unsigned)name_len - 2, extfile_name, &offset, &length);
         VERIFY_VOID(name_len, (int)strlen(extfile_name), "VSgetexternalinfo");
         VERIFY_CHAR_VOID(extfile_name, short_name, "VSgetexternalinfo");
         free(short_name);
@@ -3257,7 +3281,7 @@ test_VSofclass()
        class CLASS_NAME.  If data is added to the file before these vdatas,
        the reference numbers (2 and 3 below) need to be adjusted accordingly or
        tests will fail -BMR (will have a better tests later) */
-    n_vds = VSofclass(fid, CLASS_NAME, 0, n_vds, refarray);
+    n_vds = VSofclass(fid, CLASS_NAME, 0, (unsigned)n_vds, refarray);
     VERIFY_VOID(refarray[0], 2, "VSofclass");
     VERIFY_VOID(refarray[1], 3, "VSofclass");
 
@@ -3266,7 +3290,7 @@ test_VSofclass()
     VERIFY_VOID(refarray[0], 2, "VSofclass");
     VERIFY_VOID(refarray[1], 0, "VSofclass");
 
-    n_vds = VSofclass(fid, CLASS_NAME, 1, n_vds, refarray);
+    n_vds = VSofclass(fid, CLASS_NAME, 1, (unsigned)n_vds, refarray);
     VERIFY_VOID(refarray[0], 3, "VSofclass");
     VERIFY_VOID(refarray[1], 0, "VSofclass");
 
