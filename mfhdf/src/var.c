@@ -449,12 +449,12 @@ xdr_NC_var(XDR *xdrs, NC_var **vpp)
     if (!xdr_NC_array(xdrs, &((*vpp)->attrs)))
         return FALSE;
 
-    if (!h4_xdr_int(xdrs, &temp_type)) {
+    if (!hdf_xdr_int(xdrs, &temp_type)) {
         return FALSE;
     }
     (*vpp)->type = (nc_type)temp_type;
 
-    if (!h4_xdr_u_int(xdrs, &temp_len)) {
+    if (!hdf_xdr_u_int(xdrs, &temp_len)) {
         return FALSE;
     }
     (*vpp)->len = (unsigned long)temp_len;
@@ -464,7 +464,7 @@ xdr_NC_var(XDR *xdrs, NC_var **vpp)
 
     if (xdrs->x_op == XDR_ENCODE)
         begin = (*vpp)->begin;
-    if (!h4_xdr_u_int(xdrs, &begin))
+    if (!hdf_xdr_u_int(xdrs, &begin))
         return FALSE;
     if (xdrs->x_op == XDR_DECODE)
         (*vpp)->begin = begin;

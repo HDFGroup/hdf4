@@ -128,7 +128,7 @@
 #endif
 
 /* HDF4's stripped-down XDR implementation */
-#include "h4_xdr_priv.h"
+#include "hdf_xdr_priv.h"
 
 /* Constants for sizes of NC types */
 #define NC_BYTE_SIZE        1

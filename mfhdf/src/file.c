@@ -507,16 +507,16 @@ NC_dcpy(XDR *target, XDR *source, long nbytes)
     char buf[NC_DCP_BUFSIZE];
 
     while (nbytes > sizeof(buf)) {
-        if (!h4_xdr_getbytes(source, buf, sizeof(buf)))
+        if (!hdf_xdr_getbytes(source, buf, sizeof(buf)))
             goto err;
-        if (!h4_xdr_putbytes(target, buf, sizeof(buf)))
+        if (!hdf_xdr_putbytes(target, buf, sizeof(buf)))
             goto err;
         nbytes -= sizeof(buf);
     }
     /* we know nbytes <= sizeof(buf) at this point */
-    if (!h4_xdr_getbytes(source, buf, nbytes))
+    if (!hdf_xdr_getbytes(source, buf, nbytes))
         goto err;
-    if (!h4_xdr_putbytes(target, buf, nbytes))
+    if (!hdf_xdr_putbytes(target, buf, nbytes))
         goto err;
     return TRUE;
 err:
@@ -534,8 +534,8 @@ NC_vcpy(XDR *target, NC *old, int varid)
     vpp = (NC_var **)old->vars->values;
     vpp += varid;
 
-    if (!h4_xdr_setpos(old->xdrs, (*vpp)->begin)) {
-        NCadvise(NC_EXDR, "NC_vcpy: h4_xdr_setpos");
+    if (!hdf_xdr_setpos(old->xdrs, (*vpp)->begin)) {
+        NCadvise(NC_EXDR, "NC_vcpy: hdf_xdr_setpos");
         return FALSE;
     }
 
@@ -552,8 +552,8 @@ NC_reccpy(XDR *target, NC *old, int varid, int recnum)
     vpp = (NC_var **)old->vars->values;
     vpp += varid;
 
-    if (!h4_xdr_setpos(old->xdrs, (*vpp)->begin + old->recsize * recnum)) {
-        NCadvise(NC_EXDR, "NC_reccpy: h4_xdr_setpos");
+    if (!hdf_xdr_setpos(old->xdrs, (*vpp)->begin + old->recsize * recnum)) {
+        NCadvise(NC_EXDR, "NC_reccpy: hdf_xdr_setpos");
         return FALSE;
     }
 
@@ -645,7 +645,7 @@ NC_endef(int cdfid, NC *handle)
         /* close stash */
 /*                NC_free_cdf(stash) ; */
 #ifdef H4_HAVE_WIN32_API
-        h4_xdr_destroy(handle->xdrs); /* close handle */
+        hdf_xdr_destroy(handle->xdrs); /* close handle */
         if (remove(realpath) != 0)
             nc_serror("couldn't remove filename \"%s\"", realpath);
 #endif
@@ -856,7 +856,7 @@ NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
         op = XDR_DECODE;
     }
 
-    if (h4_xdr_create(xdrs, fd, fmode, op) < 0)
+    if (hdf_xdr_create(xdrs, fd, fmode, op) < 0)
         return -1;
     else
         return fd;
