@@ -554,23 +554,23 @@ read_vset_stuff(void)
     int32   *ibuf = NULL; /* integer buffer */
     float32 *fbuf = NULL; /* floating point buffer */
     char    *gbuf = NULL; /* generic buffer */
-    int32   list[50];
-    int32   tags[100], refs[100], tag, ref;
-    char    vsname[512], vsclass[512], fields[512];
-    char   *vgname, *vgclass;
-    char   *p;
-    int32   fid;
-    int32   vg1;
-    int32   vs1;
-    int32   status, num, i, count, intr, sz;
-    float32 fl_expected;
-    int32   in_expected;
-    char8   c_expected;
-    uint16  name_len;
+    int32    list[50];
+    int32    tags[100], refs[100], tag, ref;
+    char     vsname[512], vsclass[512], fields[512];
+    char    *vgname, *vgclass;
+    char    *p;
+    int32    fid;
+    int32    vg1;
+    int32    vs1;
+    int32    status, num, i, count, intr, sz;
+    float32  fl_expected;
+    int32    in_expected;
+    char8    c_expected;
+    uint16   name_len;
 
-    ibuf  = (int32 *)malloc(sizeof(float32) * 2000);
-    fbuf  = (float32 *)malloc(sizeof(float32) * 2000);
-    gbuf  = (char *)malloc(sizeof(char) * 2000);
+    ibuf = (int32 *)malloc(sizeof(float32) * 2000);
+    fbuf = (float32 *)malloc(sizeof(float32) * 2000);
+    gbuf = (char *)malloc(sizeof(char) * 2000);
     CHECK_ALLOC(ibuf, "ibuf", "write_vset_stuff");
     CHECK_ALLOC(fbuf, "fbuf", "write_vset_stuff");
     CHECK_ALLOC(gbuf, "gbuf", "write_vset_stuff");
@@ -1613,8 +1613,8 @@ test_emptyvdata(void)
     int32 fid;    /* File ID */
     int32 vs1;    /* Vdata ID */
     int32 ref;    /* Vdata ref */
-    char  *vsname = NULL;
-    char  *fields = NULL;
+    char *vsname = NULL;
+    char *fields = NULL;
 
     vsname = (char *)malloc(sizeof(char) * VSNAMELENMAX);
     fields = (char *)malloc(sizeof(char) * FIELDNAMELENMAX * VSFIELDMAX);
@@ -1938,15 +1938,15 @@ test_getvgroups(void)
 {
     int32 fid; /* File ID */
     int32 vgroup_id, vgroup0_id, vgroup1_id, vgroup2_id, vgroup3_id, vgroup4_id,
-        vgroup5_id;      /* Various vgroup IDs */
-    int32    vgroup_ref; /* Vgroup ref */
-    int      n_vgs = 0;
-    uint16  *refarray;
-    int32    ref_list[NUM_VGROUPS];
-    char     vgclass[20];
-    int      ii;
-    int32    status;   /* Status values from routines */
-    int      status_n; /* returned status for functions returning an int  */
+        vgroup5_id;     /* Various vgroup IDs */
+    int32   vgroup_ref; /* Vgroup ref */
+    int     n_vgs = 0;
+    uint16 *refarray;
+    int32   ref_list[NUM_VGROUPS];
+    char    vgclass[20];
+    int     ii;
+    int32   status;   /* Status values from routines */
+    int     status_n; /* returned status for functions returning an int  */
 
     /* Create HDF file and initialize the interface. */
     fid = Hopen(USERVGROUPS, DFACC_CREATE, 0);
@@ -2238,13 +2238,13 @@ test_getvgroups(void)
 int
 check_vgs(int32 id, unsigned start_vg, unsigned n_vgs,
           const char *ident_text,  /* just for debugging, remove when done */
-          int    resultcount, /* expected number of vgroups */
+          int         resultcount, /* expected number of vgroups */
           uint16     *resultarray)     /* array containing expected values */
 {
-    uint16  *refarray = NULL;
-    int      count    = 0, ii;
-    char     message[30];
-    int      ret_value = SUCCEED;
+    uint16 *refarray = NULL;
+    int     count    = 0, ii;
+    char    message[30];
+    int     ret_value = SUCCEED;
 
     strcpy(message, "Vgetvgroups: ");
     strcat(message, ident_text);
@@ -2279,13 +2279,13 @@ check_vgs(int32 id, unsigned start_vg, unsigned n_vgs,
 static int
 check_vds(int32 id, unsigned start_vd, unsigned n_vds,
           const char *ident_text,  /* just for debugging, remove when done */
-          int    resultcount, /* expected number of vdatas */
+          int         resultcount, /* expected number of vdatas */
           uint16     *resultarray)     /* array containing expected values */
 {
-    uint16  *refarray = NULL;
-    int count    = 0, ii;
-    char     message[30];
-    int      ret_value = SUCCEED;
+    uint16 *refarray = NULL;
+    int     count    = 0, ii;
+    char    message[30];
+    int     ret_value = SUCCEED;
 
     strcpy(message, "VSgetvdatas: ");
     strcat(message, ident_text);
@@ -2330,12 +2330,12 @@ test_getvdatas(void)
     int32 vgroup0_id, vgroup1_id, vgroup2_id, vgroup4_id, vgroup6_id, vgroup7_id,
         vgroup9_id; /* Various vgroup IDs */
     int32 vdata1_id, vdata2_id, vdata3_id, vdata4_id, vdata5_id, vdata6_id, vdata7_id; /* Various vdata IDs */
-    int n_vgs = 0;
-    int32    ref_list[NUM_VGROUPS], vdref_list[NUM_VDATAS];
-    char     vgclass[20];
-    int      ii;
-    int32    status;   /* Status values from routines */
-    int      status_n; /* returned status for functions returning an int  */
+    int   n_vgs = 0;
+    int32 ref_list[NUM_VGROUPS], vdref_list[NUM_VDATAS];
+    char  vgclass[20];
+    int   ii;
+    int32 status;   /* Status values from routines */
+    int   status_n; /* returned status for functions returning an int  */
 
     /* Create HDF file and initialize the interface. */
     fid = Hopen(USERVDATAS, DFACC_CREATE, 0);
