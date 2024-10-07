@@ -70,7 +70,7 @@ test_hfile(void)
     CHECK_ALLOC(inbuf, "outbuf", "test_hfile");
 
     for (i = 0; i < BUF_SIZE; i++)
-        outbuf[i] = (char)(i % 256);
+        outbuf[i] = (uint8)(i % 256);
 
     MESSAGE(5, printf("Creating a file %s\n", TESTFILE_NAME););
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);

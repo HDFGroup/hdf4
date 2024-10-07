@@ -378,7 +378,7 @@ test_vdatavgroups()
     CHECK_ALLOC(refarray, "refarray", "test_vdatavgroups");
 
     /* Now, get the user-created vgroup refs */
-    status = Vgetvgroups(fid, 0, num_vgroups, refarray);
+    status = Vgetvgroups(fid, 0, (unsigned)num_vgroups, refarray);
     CHECK(status, FAIL, "Vgetvgroups");
     VERIFY(status, num_vgroups, "Vgetvgroups");
 
@@ -418,7 +418,7 @@ test_vdatavgroups()
     CHECK_ALLOC(refarray, "refarray", "test_vdatavgroups");
 
     /* Now, get the user-created vdata refs */
-    status = VSgetvdatas(fid, 0, num_vdatas, refarray);
+    status = VSgetvdatas(fid, 0, (unsigned)num_vdatas, refarray);
     CHECK(num_vdatas, FAIL, "VSgetvdatas");
     VERIFY(status, num_vdatas, "VSgetvdatas");
 

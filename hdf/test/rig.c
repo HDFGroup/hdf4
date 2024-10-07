@@ -1030,13 +1030,13 @@ test_r24_jpeg(void)
 
         /* Read the block of data from the HDF file using offset/length returned by
            GRgetdatainfo and verify that the specified length of data was read */
-        read_len = read_binary_block(JPEGFILE, offset, length, hdf_buffer);
+        read_len = read_binary_block(JPEGFILE, offset, (size_t)length, hdf_buffer);
         VERIFY_VOID(read_len, (size_t)length, "read_binary_block");
 
         /* Read the block of data from the non-HDF file using nonhdf_offset and
            the length returned by GRgetdatainfo and verify that the specified
            length of data was read */
-        read_len = read_binary_block(NONHDF_JPEGFILE, nonhdf_offset, length, nonhdf_buffer);
+        read_len = read_binary_block(NONHDF_JPEGFILE, nonhdf_offset, (size_t)length, nonhdf_buffer);
         VERIFY_VOID(read_len, (size_t)length, "read_binary_block");
 
         /* Compare compressed data from the HDF file against that from the

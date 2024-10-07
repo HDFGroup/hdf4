@@ -43,7 +43,9 @@ static int32 HCIcszip_init(accrec_t *access_rec);
 
 static int32 HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf);
 
+#ifdef H4_HAVE_LIBSZ
 static int32 HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf);
+#endif
 
 static int32 HCIcszip_term(compinfo_t *info);
 
@@ -332,6 +334,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
  DESCRIPTION
     Common code called to encode SZIP data into a file.
 --------------------------------------------------------------------------*/
+#ifdef H4_HAVE_LIBSZ
 static int32
 HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
 {
@@ -377,6 +380,7 @@ HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
 #endif /* H4_HAVE_SZIP_ENCODER */
 
 } /* end HCIcszip_encode() */
+#endif /* H4_HAVE_LIBSZ */
 
 /*--------------------------------------------------------------------------
  NAME

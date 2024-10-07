@@ -825,14 +825,14 @@ test6:
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     status    = SDgetcomptype(newsds6, &comp_type);
     CHECK(status, FAIL, "Chunk Test 6. SDgetcomptype");
-    VERIFY(comp_type, chunk_def.comp.comp_type, "Chunk Test 6. SDgetcomptype");
+    VERIFY((int)comp_type, chunk_def.comp.comp_type, "Chunk Test 6. SDgetcomptype");
 
     /* Retrieve and verify the compression info - bug# 307 and bugzilla# 130 */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompinfo(newsds6, &comp_type, &cinfo);
     CHECK(status, FAIL, "Chunk Test 6. SDgetcompinfo");
-    VERIFY(comp_type, chunk_def.comp.comp_type, "Chunk Test 6. SDgetcompinfo");
+    VERIFY((int)comp_type, chunk_def.comp.comp_type, "Chunk Test 6. SDgetcompinfo");
     VERIFY(cinfo.skphuff.skp_size, chunk_def.comp.cinfo.skphuff.skp_size, "Chunk Test 6. SDgetcompinfo");
 
     /* Write data use SDwriteChunk */
@@ -1036,7 +1036,7 @@ test6:
     c_flags_out = 0;
     status      = SDgetchunkinfo(newsds6, &chunk_def_out, &c_flags_out);
     CHECK(status, FAIL, "Chunk Test 6. SDgetchunkinfo");
-    VERIFY(chunk_def_out.comp.comp_type, comp_type, "Chunk Test 6. SDgetchunkinfo");
+    VERIFY((int)comp_type, chunk_def_out.comp.comp_type, "Chunk Test 6. SDgetchunkinfo");
     VERIFY(chunk_def_out.comp.cinfo.skphuff.skp_size, chunk_def.comp.cinfo.skphuff.skp_size,
            "Chunk Test 6. chunkinfo_new");
     VERIFY(c_flags_out, (HDF_CHUNK | HDF_COMP), "Chunk Test 6. SDgetchunkinfo");
@@ -1204,14 +1204,14 @@ test7:
     memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompinfo(newsds7, &comp_type, &cinfo);
     CHECK(status, FAIL, "Chunk Test 6. SDgetcompinfo");
-    VERIFY(comp_type, chunk_def.comp.comp_type, "Chunk Test 6. SDgetcompinfo");
+    VERIFY((int)comp_type, chunk_def.comp.comp_type, "Chunk Test 6. SDgetcompinfo");
     VERIFY(cinfo.deflate.level, chunk_def.comp.cinfo.deflate.level, "Chunk Test 6. SDgetcompinfo");
 
     /* Retrieve and verify the compression type */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     status    = SDgetcomptype(newsds7, &comp_type);
     CHECK(status, FAIL, "Chunk Test 7. SDgetcomptype");
-    VERIFY(comp_type, chunk_def.comp.comp_type, "Chunk Test 7. SDgetcomptype");
+    VERIFY((int)comp_type, chunk_def.comp.comp_type, "Chunk Test 7. SDgetcomptype");
 
     /* Close down SDS*/
     status = SDendaccess(newsds7);

@@ -3324,9 +3324,9 @@ test_mgr_lut_b(int flag)
 
     /* Initialize the palette to grayscale. */
     for (i = 0; i < 256; i++) {
-        palette_data[i * 3]     = i;
-        palette_data[i * 3 + 1] = i;
-        palette_data[i * 3 + 2] = i;
+        palette_data[i * 3]     = (uint8)i;
+        palette_data[i * 3 + 1] = (uint8)i;
+        palette_data[i * 3 + 2] = (uint8)i;
     }
 
     /* Set palette characteristics. */
@@ -3954,7 +3954,7 @@ test_mgr_r24_a(int flag)
         for (i = 0; i < GR_R24YDIM; i++)
             for (j = 0; j < GR_R24XDIM; j++)
                 for (k = 0; k < 3; k++)
-                    image[i][j][k] = (k + 1) * j;
+                    image[i][j][k] = (uint8)((k + 1) * j);
 
         /* Get the first image in this file */
         riid = GRselect(grid, 0);
@@ -4042,14 +4042,14 @@ test_mgr_r8_a(int flag)
     /* initialize the palette */
     for (i = 0; i < 256; i++) {
         for (j = 0; j < 3; j++) {
-            palette[i][j] = i;
+            palette[i][j] = (uint8)i;
         }
     }
 
     /* initialize the image */
     for (j = 0; j < GR_R8XDIM; j++) {
         for (i = 0; i < GR_R8YDIM; i++) {
-            picture[i][j] = i + j;
+            picture[i][j] = (uint8)(i + j);
         }
     }
 
@@ -4086,7 +4086,7 @@ test_mgr_r8_a(int flag)
         /* Initialize data we are expecting to read in */
         for (i = 0; i < GR_R8YDIM; i++)
             for (j = 0; j < GR_R8XDIM; j++)
-                image[i][j] = i + j;
+                image[i][j] = (uint8)(i + j);
 
         /* Get the first image in this file */
         riid = GRselect(grid, 0);
@@ -4195,7 +4195,7 @@ test_mgr_chunkwr_pixelone()
         index, i;
     int32         start[2], stride[2], edge[2];
     int16         data_out[3 * Y_LENGTH * X_LENGTH];
-    char         *image_name[] = {"Image_NO", "Image_RL", "Image_Sk", "Image_DF"};
+    const char   *image_name[] = {"Image_NO", "Image_RL", "Image_Sk", "Image_DF"};
     HDF_CHUNK_DEF chunk_def;
     int16         chunk_buf[18];
 

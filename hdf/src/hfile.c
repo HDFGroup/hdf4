@@ -3550,3 +3550,15 @@ Hgetntinfo(const int32 numbertype, hdf_ntinfo_t *nt_info)
     } /* end switch */
     return SUCCEED;
 } /* Hgetntinfo */
+
+/* Used in the HI_CLOSE macro in hfile_priv.h */
+#if (FILELIB == UNIXBUFIO)
+int
+hi_close_stdio(FILE **f)
+{
+    if (EOF == fclose(*f))
+        return FAIL;
+    *f = NULL;
+    return SUCCEED;
+}
+#endif
