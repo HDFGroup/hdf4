@@ -96,7 +96,7 @@ typedef struct tbbt_tree_private {
 static TBBT_NODE *tbbt_free_list = NULL;
 
 #define KEYcmp(k1, k2, a)                                                                                    \
-    ((NULL != compar) ? (*compar)(k1, k2, a) : memcmp(k1, k2, 0 < (a) ? (a) : (int)strlen(k1)))
+    ((NULL != compar) ? (*compar)(k1, k2, a) : memcmp(k1, k2, 0 < (a) ? (size_t)(a) : strlen(k1)))
 
 void tbbt1dump(TBBT_NODE *node, int method);
 
