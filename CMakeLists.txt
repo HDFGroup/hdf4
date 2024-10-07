@@ -242,17 +242,6 @@ if (H4_MF_SOVERS_EXISTS)
   math (EXPR H4_MF_SOVERS_MAJOR ${H4_MF_SOVERS_INTERFACE}-${H4_MF_SOVERS_RELEASE})
   message (VERBOSE "MFHDFSOVERSION: ${H4_MF_SOVERS_MAJOR}.${H4_MF_SOVERS_RELEASE}.${H4_MF_SOVERS_MINOR}")
 endif ()
-string (REGEX MATCH ".*LT_XDR_VERS_INTERFACE[ \t]+=[ \t]+([0-9]*).*$" H4_XDR_SOVERS_EXISTS ${_lt_vers_am_contents})
-if (H4_XDR_SOVERS_EXISTS)
-  string (REGEX REPLACE ".*LT_XDR_VERS_INTERFACE[ \t]+=[ \t]+([0-9]*).*$"
-      "\\1" H4_XDR_SOVERS_INTERFACE ${_lt_vers_am_contents})
-  string (REGEX REPLACE ".*LT_XDR_VERS_REVISION[ \t]+=[ \t]+([0-9]*).*$"
-      "\\1" H4_XDR_SOVERS_MINOR ${_lt_vers_am_contents})
-  string (REGEX REPLACE ".*LT_XDR_VERS_AGE[ \t]+=[ \t]+([0-9]*).*$"
-      "\\1" H4_XDR_SOVERS_RELEASE ${_lt_vers_am_contents})
-  math (EXPR H4_XDR_SOVERS_MAJOR ${H4_XDR_SOVERS_INTERFACE}-${H4_XDR_SOVERS_RELEASE})
-  message (VERBOSE "SOVERSION_XDR: ${H4_XDR_SOVERS_MAJOR}.${H4_XDR_SOVERS_RELEASE}.${H4_XDR_SOVERS_MINOR}")
-endif ()
 string (REGEX MATCH ".*LT_F_VERS_INTERFACE[ \t]+=[ \t]+([0-9]*).*$" H4_F_SOVERS_EXISTS ${_lt_vers_am_contents})
 if (H4_F_SOVERS_EXISTS)
   string (REGEX REPLACE ".*LT_F_VERS_INTERFACE[ \t]+=[ \t]+([0-9]*).*$"
