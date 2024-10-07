@@ -53,8 +53,6 @@ main(int argc, char *argv[])
 {
     int         CLLoop; /* Command Line Loop */
     int         Loop, Loop1;
-    int         Summary   = 0;
-    int         CleanUp   = 1;
     int         num_tests = 0;
     FILE       *cmdfile;
     const char *cmdfilename = "fortest.arg";
@@ -113,17 +111,11 @@ main(int argc, char *argv[])
                 Verbosity = atoi(argv[CLLoop + 1]);
             fprintf(cmdfile, "%s %d\n", VERBOSITY_STR, Verbosity);
         }
-        if ((argc > CLLoop) &&
-            ((strcmp(argv[CLLoop], "-summary") == 0) || (strcmp(argv[CLLoop], "-s") == 0))) {
-            Summary = 1;
-        }
         if ((argc > CLLoop) && (strcmp(argv[CLLoop], "-help") == 0)) {
             printf("Usage: fortest [-v[erbose] (l[ow]|m[edium]|h[igh]|0-9)] \n");
             printf("               [-[e]x[clude] name+] \n");
             printf("               [-o[nly] name+] \n");
             printf("               [-b[egin] name] \n");
-            printf("               [-s[ummary]]  \n");
-            printf("               [-c[leanno]]  \n");
             printf("\n\n");
             printf("verbose   controls the amount of information displayed\n");
             printf("exclude   to exclude tests by name\n");
@@ -140,11 +132,6 @@ main(int argc, char *argv[])
             }
             printf("\n\n");
             exit(0);
-        }
-        if ((argc > CLLoop) &&
-            ((strcmp(argv[CLLoop], "-cleanno") == 0) || (strcmp(argv[CLLoop], "-c") == 0))) {
-            CleanUp = 0;
-            fprintf(cmdfile, "%s %s\n", CLEAN_STR, "No");
         }
         if ((argc > CLLoop + 1) &&
             ((strcmp(argv[CLLoop], "-exclude") == 0) || (strcmp(argv[CLLoop], "-x") == 0))) {
