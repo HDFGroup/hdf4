@@ -33,6 +33,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install ninja-build doxygen graphviz curl libncurses5
+        sudo apt-get install gcov -q -y
         sudo apt-get install lcov -q -y
 
     - name: Set file base name (Linux_coverage)
@@ -114,13 +115,13 @@ jobs:
         path: ${{ runner.workspace }}/hdf4/hdf4.log
         if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
-  build_and_test_linux_clang:
+  build_and_test_linux_LeakSanitizer:
   # Linux (Ubuntu) w/ clang + LeakSanitizer
   #
-    name: "Ubuntu Clang CMake"
+    name: "Ubuntu Clang LeakSanitizer"
     runs-on: ubuntu-latest
     steps:
-      - name: Install CMake Dependencies (Linux_clang)
+      - name: Install CMake Dependencies (Linux_Leak)
         run: |
           sudo apt-get update
           sudo apt-get install ninja-build doxygen graphviz curl libncurses5
@@ -132,7 +133,7 @@ jobs:
           env: true
           version: '18'
 
-      - name: Set file base name (Linux_clang)
+      - name: Set file base name (Linux_Leak)
         id: set-file-base
         run: |
           FILE_NAME_BASE=$(echo "${{ inputs.file_base }}")
@@ -146,30 +147,30 @@ jobs:
           echo "SOURCE_BASE=$SOURCE_NAME_BASE" >> $GITHUB_OUTPUT
 
       # Get files created by release script
-      - name: Get tgz-tarball (Linux_clang)
+      - name: Get tgz-tarball (Linux_Leak)
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
           name: tgz-tarball
           path: ${{ github.workspace }}
 
-      - name: List files for the space (Linux_clang)
+      - name: List files for the space (Linux_Leak)
         run: |
           ls -l ${{ github.workspace }}
           ls ${{ runner.workspace }}
 
-      - name: Uncompress source (Linux_clang)
+      - name: Uncompress source (Linux_Leak)
         run: tar -zxvf ${{ github.workspace }}/${{ steps.set-file-base.outputs.FILE_BASE }}.tar.gz
 
-      - name: Copy script files for the space (Linux_clang)
+      - name: Copy script files for the space (Linux_Leak)
         run: |
           cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/CTestScript.cmake ${{ runner.workspace }}/hdf4
           cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/HDF4config.cmake ${{ runner.workspace }}/hdf4
 
-      - name: List files for the hdf4 (Linux_clang)
+      - name: List files for the hdf4 (Linux_Leak)
         run: |
           ls ${{ runner.workspace }}/hdf4
 
-      - name: Create options file (Linux_clang)
+      - name: Create options file (Linux_Leak)
         uses: "DamianReeves/write-file-action@master"
         with:
           path: ${{ runner.workspace }}/hdf4/HDF4options.cmake
@@ -195,7 +196,7 @@ jobs:
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DZLIB_USE_LOCALCONTENT:BOOL=OFF")
 
-      - name: Run ctest (Linux_clang)
+      - name: Run ctest (Linux_Leak)
         run: |
           cd "${{ runner.workspace }}/hdf4"
           ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-LEAK,LOCAL_SUBMIT=ON,NINJA=TRUE,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Debug -VV -O hdf4.log
@@ -203,9 +204,105 @@ jobs:
         continue-on-error: true
 
       # Save log files created by ctest script
-      - name: Save log (Linux_clang)
+      - name: Save log (Linux_Leak)
         uses: actions/upload-artifact@v4
         with:
           name: leak-ubuntu-log
+          path: ${{ runner.workspace }}/hdf4/hdf4.log
+          if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+
+  build_and_test_linux_AddressSanitizer:
+  # Linux (Ubuntu) w/ clang + AddressSanitizer
+  #
+    name: "Ubuntu Clang AddressSanitizer"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install CMake Dependencies (Linux_Address)
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build doxygen graphviz curl libncurses5
+
+      - name: add clang to env
+        uses: KyleMayes/install-llvm-action@v2.0.5
+        id: setup-clang
+        with:
+          env: true
+          version: '18'
+
+      - name: Set file base name (Linux_Address)
+        id: set-file-base
+        run: |
+          FILE_NAME_BASE=$(echo "${{ inputs.file_base }}")
+          echo "FILE_BASE=$FILE_NAME_BASE" >> $GITHUB_OUTPUT
+          if [[ '${{ inputs.use_environ }}' == 'release' ]]
+          then
+            SOURCE_NAME_BASE=$(echo "${{ inputs.snap_name }}")
+          else
+            SOURCE_NAME_BASE=$(echo "hdfsrc")
+          fi
+          echo "SOURCE_BASE=$SOURCE_NAME_BASE" >> $GITHUB_OUTPUT
+
+      # Get files created by release script
+      - name: Get tgz-tarball (Linux_Address)
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: tgz-tarball
+          path: ${{ github.workspace }}
+
+      - name: List files for the space (Linux_Address)
+        run: |
+          ls -l ${{ github.workspace }}
+          ls ${{ runner.workspace }}
+
+      - name: Uncompress source (Linux_Address)
+        run: tar -zxvf ${{ github.workspace }}/${{ steps.set-file-base.outputs.FILE_BASE }}.tar.gz
+
+      - name: Copy script files for the space (Linux_Address)
+        run: |
+          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/CTestScript.cmake ${{ runner.workspace }}/hdf4
+          cp ${{ github.workspace }}/${{ steps.set-file-base.outputs.SOURCE_BASE }}/config/cmake/scripts/HDF4config.cmake ${{ runner.workspace }}/hdf4
+
+      - name: List files for the hdf4 (Linux_Address)
+        run: |
+          ls ${{ runner.workspace }}/hdf4
+
+      - name: Create options file (Linux_Address)
+        uses: "DamianReeves/write-file-action@master"
+        with:
+          path: ${{ runner.workspace }}/hdf4/HDF4options.cmake
+          write-mode: overwrite
+          contents: |
+              set (CTEST_DROP_SITE_INIT "my.cdash.org")
+              # Change following line to submit to your CDash dashboard to a different CDash project
+              set (SITE_BUILDNAME_SUFFIX "${{ steps.set-file-base.outputs.FILE_BASE }}")
+              #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF4")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} --log-level=VERBOSE")
+              set (LOCAL_MEMCHECK_TEST "TRUE")
+              set (CTEST_MEMORYCHECK_TYPE "AddressSanitizer")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} --log-level=VERBOSE")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_SHARED_LIBS:BOOL=ON")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_STATIC_LIBS:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SANITIZERS:BOOL=ON")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DUSE_SANITIZER:STRING=Address")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DJPEG_USE_LOCALCONTENT:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DZLIB_USE_LOCALCONTENT:BOOL=OFF")
+
+      - name: Run ctest (Linux_Address)
+        run: |
+          cd "${{ runner.workspace }}/hdf4"
+          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-LEAK,LOCAL_SUBMIT=ON,NINJA=TRUE,BUILD_GENERATOR=Unix,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Debug -VV -O hdf4.log
+        shell: bash
+        continue-on-error: true
+
+      # Save log files created by ctest script
+      - name: Save log (Linux_Address)
+        uses: actions/upload-artifact@v4
+        with:
+          name: address-ubuntu-log
           path: ${{ runner.workspace }}/hdf4/hdf4.log
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
