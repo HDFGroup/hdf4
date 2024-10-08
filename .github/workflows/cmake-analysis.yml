@@ -83,6 +83,7 @@ jobs:
             set (SITE_BUILDNAME_SUFFIX "${{ steps.set-file-base.outputs.FILE_BASE }}")
             #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF4")
             set (LOCAL_COVERAGE_TEST "TRUE")
+            set (LOCAL_USE_GCOV "TRUE")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} --log-level=VERBOSE")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_SHARED_LIBS:BOOL=OFF")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_STATIC_LIBS:BOOL=ON")
