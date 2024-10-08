@@ -81,9 +81,13 @@ option(
 
 # Programs
 find_program(LLVM_COV_PATH llvm-cov)
+message(VERBOSE "program llvm-cov=${LLVM_COV_PATH}")
 find_program(LLVM_PROFDATA_PATH llvm-profdata)
+message(VERBOSE "program llvm-profdata=${LLVM_PROFDATA_PATH}")
 find_program(LCOV_PATH lcov)
+message(VERBOSE "program lcov=${LCOV_PATH}")
 find_program(GENHTML_PATH genhtml)
+message(VERBOSE "program genhtml=${GENHTML_PATH}")
 # Hide behind the 'advanced' mode flag for GUI/ccmake
 mark_as_advanced(FORCE LLVM_COV_PATH LLVM_PROFDATA_PATH LCOV_PATH GENHTML_PATH)
 
@@ -100,6 +104,8 @@ if(CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
 
   if(CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR 
      CMAKE_CXX_COMPILER_ID MATCHES "IntelLLVM" OR 
+     CMAKE_C_COMPILER_ID MATCHES "[Cc]lang" OR 
+     CMAKE_CXX_COMPILER_ID MATCHES "[Cc]lang" OR 
      CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang"
      OR CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
     message(STATUS "Building with llvm Code Coverage Tools")
@@ -264,6 +270,8 @@ function(target_code_coverage TARGET_NAME)
     # Add code coverage instrumentation to the target's linker command
     if(CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR 
        CMAKE_CXX_COMPILER_ID MATCHES "IntelLLVM" OR 
+       CMAKE_C_COMPILER_ID MATCHES "[Cc]lang" OR 
+       CMAKE_CXX_COMPILER_ID MATCHES "[Cc]lang" OR 
        CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang" OR 
        CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
       target_compile_options(${TARGET_NAME} ${TARGET_VISIBILITY}
@@ -285,6 +293,8 @@ function(target_code_coverage TARGET_NAME)
     if(target_type STREQUAL "SHARED_LIBRARY" AND target_code_coverage_ALL)
       if(CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR 
          CMAKE_CXX_COMPILER_ID MATCHES "IntelLLVM" OR 
+         CMAKE_C_COMPILER_ID MATCHES "[Cc]lang" OR 
+         CMAKE_CXX_COMPILER_ID MATCHES "[Cc]lang" OR 
          CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang" OR 
          CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
         add_custom_target(
@@ -310,6 +320,8 @@ function(target_code_coverage TARGET_NAME)
     if(target_type STREQUAL "EXECUTABLE")
       if(CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR 
          CMAKE_CXX_COMPILER_ID MATCHES "IntelLLVM" OR 
+         CMAKE_C_COMPILER_ID MATCHES "[Cc]lang" OR 
+         CMAKE_CXX_COMPILER_ID MATCHES "[Cc]lang" OR 
          CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang" OR 
          CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
 
@@ -523,6 +535,8 @@ function(add_code_coverage)
   if(CODE_COVERAGE)
     if(CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR 
        CMAKE_CXX_COMPILER_ID MATCHES "IntelLLVM" OR 
+       CMAKE_C_COMPILER_ID MATCHES "[Cc]lang" OR 
+       CMAKE_CXX_COMPILER_ID MATCHES "[Cc]lang" OR 
        CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang" OR 
        CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
       add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
@@ -555,6 +569,8 @@ function(add_code_coverage_all_targets)
   if(CODE_COVERAGE)
     if(CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR 
        CMAKE_CXX_COMPILER_ID MATCHES "IntelLLVM" OR 
+       CMAKE_C_COMPILER_ID MATCHES "[Cc]lang" OR 
+       CMAKE_CXX_COMPILER_ID MATCHES "[Cc]lang" OR 
        CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang" OR 
        CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
 

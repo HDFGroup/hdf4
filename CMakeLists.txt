@@ -471,8 +471,10 @@ option (HDF4_ENABLE_COVERAGE "Enable code coverage for Libraries and Programs" O
 if (HDF4_ENABLE_COVERAGE)
   include (${HDF4_SOURCE_DIR}/config/sanitizer/code-coverage.cmake)
   if(CODE_COVERAGE AND CODE_COVERAGE_ADDED)
+    message(VERBOSE "Add instrumentation to all targets")
     add_code_coverage () # Adds instrumentation to all targets
   else ()
+    message(VERBOSE "Use --coverage option")
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 --coverage -fprofile-arcs -ftest-coverage")
     if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
       set (LDFLAGS "${LDFLAGS} -fprofile-arcs -ftest-coverage")
