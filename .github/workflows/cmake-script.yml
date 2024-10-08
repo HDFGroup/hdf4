@@ -399,8 +399,6 @@ jobs:
           FC: ${{ steps.setup-fortran.outputs.fc }}
           CC: ${{ steps.setup-fortran.outputs.cc }}
           CXX: ${{ steps.setup-fortran.outputs.cxx }}
-          BINSIGN: ${{ needs.check-secret.outputs.sign-state }}
-          SIGNTOOLDIR: ${{ github.workspace }}/Microsoft.Windows.SDK.BuildTools/bin/10.0.22621.0/x64
         run: |
           cd "${{ runner.workspace }}/hdf4"
           ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-Intel,LOCAL_SUBMIT=ON,NINJA=TRUE,BUILD_GENERATOR=VS202264,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
@@ -478,8 +476,8 @@ jobs:
           contents: |
             set (CTEST_DROP_SITE_INIT "my.cdash.org")
             # Change following line to submit to your CDash dashboard to a different CDash project
-            set (SITE_BUILDNAME_SUFFIX "${{ steps.set-file-base.outputs.FILE_BASE }}")
             #set (CTEST_DROP_LOCATION_INIT "/submit.php?project=HDF4")
+            set (SITE_BUILDNAME_SUFFIX "${{ steps.set-file-base.outputs.FILE_BASE }}")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} --log-level=VERBOSE")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=ON")
             set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
@@ -594,9 +592,6 @@ jobs:
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DZLIB_USE_LOCALCONTENT:BOOL=OFF")
 
       - name: Run ctest (Windows_clang) with clang
-        env:
-          BINSIGN: ${{ needs.check-secret.outputs.sign-state }}
-          SIGNTOOLDIR: ${{ github.workspace }}/Microsoft.Windows.SDK.BuildTools/bin/10.0.22621.0/x64
         run: |
           cd "${{ runner.workspace }}/hdf4"
           ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-Clang,LOCAL_SUBMIT=ON,NINJA=TRUE,BUILD_GENERATOR=VS202264,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log

@@ -1,4 +1,4 @@
-name: hdf4 dev ctest script runs
+name: hdf4 dev ctest analysis runs
 
 # Triggers the workflow on a call from another workflow
 on:
@@ -139,7 +139,7 @@ jobs:
             SOURCE_NAME_BASE=$(echo "${{ inputs.snap_name }}")
           else
             SOURCE_NAME_BASE=$(echo "hdfsrc")
-          fiMake
+          fi
           echo "SOURCE_BASE=$SOURCE_NAME_BASE" >> $GITHUB_OUTPUT
 
       # Get files created by release script
