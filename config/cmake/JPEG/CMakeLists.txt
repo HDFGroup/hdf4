@@ -24,8 +24,8 @@ CHECK_INCLUDE_FILE_CONCAT ("stddef.h"        HAVE_STDDEF_H)
 #----------------------------------------------------------------
 # JPEG special check
 #----------------------------------------------------------------
-CHECK_TYPE_SIZE ("unsigned char"           UNSIGNED_CHAR)
-CHECK_TYPE_SIZE ("unsigned short"          UNSIGNED_SHORT)
+CHECK_TYPE_SIZE ("unsigned char"           HAVE_UNSIGNED_CHAR)
+CHECK_TYPE_SIZE ("unsigned short"          HAVE_UNSIGNED_SHORT)
 
 CHECK_INCLUDE_FILE_CONCAT ("string.h"        HAVE_STRING_H)
 CHECK_INCLUDE_FILE_CONCAT ("strings.h"       HAVE_STRINGS_H)
@@ -135,24 +135,6 @@ if (MSVC)
 endif ()
 
 #-----------------------------------------------------------------------------
-# Compiler specific flags : Shouldn't there be compiler tests for these
-#-----------------------------------------------------------------------------
-if (CMAKE_COMPILER_IS_GNUCC)
-  set (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -Wno-strict-prototypes")
-endif ()
-if (CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
-   set (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -Wno-deprecated-non-prototype -Wno-strict-prototypes")
-endif ()
-
-#-----------------------------------------------------------------------------
-# This is in here to help some of the GCC based IDES like Eclipse
-# and code blocks parse the compiler errors and warnings better.
-#-----------------------------------------------------------------------------
-if (CMAKE_COMPILER_IS_GNUCC)
-  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fmessage-length=0")
-endif ()
-
-#-----------------------------------------------------------------------------
 set (MEMORYMGR jmemnobs)
 option (ENABLE_MEMORYMGR "Select memory manager" OFF)
 if (ENABLE_MEMORYMGR)
@@ -231,6 +213,18 @@ set (JPEG_PUBLIC_HEADERS
 
 add_library (${JPEG_LIB_TARGET} STATIC ${JPEG_SRCS} ${JPEG_HDRS} ${JPEG_PUBLIC_HEADERS})
 target_include_directories(${JPEG_LIB_TARGET} PRIVATE "${JPEG_SRC_DIR};${CMAKE_BINARY_DIR}")
+if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
+  target_compile_options(${JPEG_LIB_TARGET} PRIVATE -Wno-strict-prototypes)
+endif ()
+if (CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
+  target_compile_options(${JPEG_LIB_TARGET} PRIVATE -Wno-deprecated-non-prototype -Wno-strict-prototypes)
+endif ()
+if (WIN32 AND CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
+  target_compile_options(${JPEG_LIB_TARGET} PRIVATE -Wno-implicit-function-declaration -Wno-typedef-redefinition)
+endif ()
+if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
+  target_compile_options(${JPEG_LIB_TARGET} PRIVATE -fmessage-length=0)
+endif ()
 TARGET_C_PROPERTIES (${JPEG_LIB_TARGET} STATIC)
 target_link_libraries (${JPEG_LIB_TARGET} PRIVATE ${LINK_LIBS})
 H4_SET_LIB_OPTIONS (${JPEG_LIB_TARGET} ${JPEG_LIB_NAME} STATIC 0)
