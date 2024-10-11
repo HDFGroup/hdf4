@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.1-a994de3</span>
+   &#160;<span id="projectnumber">4.3.1-673df46</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -159,7 +159,7 @@ Macros</h2></td></tr>
 <tr class="separator:a56f8e75d6ce827dcee2b97f88852f991"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4292387367d272a89bfe9be891b6c9cd" id="r_a4292387367d272a89bfe9be891b6c9cd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4292387367d272a89bfe9be891b6c9cd">INVALID_LENGTH</a>&#160;&#160;&#160;-1</td></tr>
 <tr class="separator:a4292387367d272a89bfe9be891b6c9cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeed893b60201be53236d078dee3e2a20" id="r_aeed893b60201be53236d078dee3e2a20"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeed893b60201be53236d078dee3e2a20">HI_OPEN</a>(p,  a)&#160;&#160;&#160;(((a)&amp;<a class="el" href="hdf_8h.html#a9ad485c46cae9899e1d8a1ebe96b4582">DFACC_WRITE</a>) ? fopen((p), &quot;rb+&quot;) : fopen((p), &quot;rb&quot;))</td></tr>
+<tr class="memitem:aeed893b60201be53236d078dee3e2a20" id="r_aeed893b60201be53236d078dee3e2a20"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeed893b60201be53236d078dee3e2a20">HI_OPEN</a>(p,  a)&#160;&#160;&#160;(((a) &amp; <a class="el" href="hdf_8h.html#a9ad485c46cae9899e1d8a1ebe96b4582">DFACC_WRITE</a>) ? fopen((p), &quot;rb+&quot;) : fopen((p), &quot;rb&quot;))</td></tr>
 <tr class="separator:aeed893b60201be53236d078dee3e2a20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1ca7ea8ab2a17551f625ae0a7a950a4" id="r_ad1ca7ea8ab2a17551f625ae0a7a950a4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad1ca7ea8ab2a17551f625ae0a7a950a4">HI_CREATE</a>(p)&#160;&#160;&#160;(fopen((p), &quot;wb+&quot;))</td></tr>
 <tr class="separator:ad1ca7ea8ab2a17551f625ae0a7a950a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -167,7 +167,7 @@ Macros</h2></td></tr>
 <tr class="separator:abdba19ddec5128371a71ac9244382152"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe1da7d175ecd87fcc983151a3778a6f" id="r_afe1da7d175ecd87fcc983151a3778a6f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe1da7d175ecd87fcc983151a3778a6f">HI_WRITE</a>(<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>,  b,  <a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>)&#160;&#160;&#160;(((size_t)(<a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>) == (size_t)fwrite((b), 1, (size_t)(<a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>), (<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>))) ? <a class="el" href="hdf_8h.html#a82bc06cf44e2201df39aa76de6019980">SUCCEED</a> : <a class="el" href="hdf_8h.html#abb508ea8227673f419e9fe3a86c30d8e">FAIL</a>)</td></tr>
 <tr class="separator:afe1da7d175ecd87fcc983151a3778a6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac6b5350962c26e43ee43c96afc6643bc" id="r_ac6b5350962c26e43ee43c96afc6643bc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac6b5350962c26e43ee43c96afc6643bc">HI_CLOSE</a>(<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>)&#160;&#160;&#160;(((<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a> = ((fclose(<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>) == 0) ? NULL : <a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>)) == NULL) ? <a class="el" href="hdf_8h.html#a82bc06cf44e2201df39aa76de6019980">SUCCEED</a> : <a class="el" href="hdf_8h.html#abb508ea8227673f419e9fe3a86c30d8e">FAIL</a>)</td></tr>
+<tr class="memitem:ac6b5350962c26e43ee43c96afc6643bc" id="r_ac6b5350962c26e43ee43c96afc6643bc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac6b5350962c26e43ee43c96afc6643bc">HI_CLOSE</a>(<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>)&#160;&#160;&#160;<a class="el" href="#a1734771efbd761517b94ad67e79e653a">hi_close_stdio</a>(&amp;<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>)</td></tr>
 <tr class="separator:ac6b5350962c26e43ee43c96afc6643bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac43ed141d2dbff0780568ccf1c7f04bf" id="r_ac43ed141d2dbff0780568ccf1c7f04bf"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac43ed141d2dbff0780568ccf1c7f04bf">HI_FLUSH</a>(<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>)&#160;&#160;&#160;(fflush(<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>) == 0 ? <a class="el" href="hdf_8h.html#a82bc06cf44e2201df39aa76de6019980">SUCCEED</a> : <a class="el" href="hdf_8h.html#abb508ea8227673f419e9fe3a86c30d8e">FAIL</a>)</td></tr>
 <tr class="separator:ac43ed141d2dbff0780568ccf1c7f04bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -209,11 +209,11 @@ Macros</h2></td></tr>
 <tr class="separator:a3c335b4efca39c0c18176cc416cc0be8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f22a816b08a920b26fbe7c8ea9eba1f" id="r_a6f22a816b08a920b26fbe7c8ea9eba1f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6f22a816b08a920b26fbe7c8ea9eba1f">BADFREC</a>(r)&#160;&#160;&#160;((r) == NULL || (r)-&gt;refcount == 0)</td></tr>
 <tr class="separator:a6f22a816b08a920b26fbe7c8ea9eba1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4bf512c5850f11b6abd89368dc985586" id="r_a4bf512c5850f11b6abd89368dc985586"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4bf512c5850f11b6abd89368dc985586">BASETAG</a>(t)&#160;&#160;&#160;(<a class="el" href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)((~(t)&amp;0x8000) ? ((t) &amp; ~0x4000) : (t))</td></tr>
+<tr class="memitem:a4bf512c5850f11b6abd89368dc985586" id="r_a4bf512c5850f11b6abd89368dc985586"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4bf512c5850f11b6abd89368dc985586">BASETAG</a>(t)&#160;&#160;&#160;(<a class="el" href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)((~(t) &amp; 0x8000) ? ((t) &amp; ~0x4000) : (t))</td></tr>
 <tr class="separator:a4bf512c5850f11b6abd89368dc985586"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a17f44ffa7436a4d9fcedcae5e2bf4825" id="r_a17f44ffa7436a4d9fcedcae5e2bf4825"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a17f44ffa7436a4d9fcedcae5e2bf4825">SPECIALTAG</a>(t)&#160;&#160;&#160;(<a class="el" href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)((~(t)&amp;0x8000) &amp;&amp; ((t)&amp;0x4000))</td></tr>
+<tr class="memitem:a17f44ffa7436a4d9fcedcae5e2bf4825" id="r_a17f44ffa7436a4d9fcedcae5e2bf4825"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a17f44ffa7436a4d9fcedcae5e2bf4825">SPECIALTAG</a>(t)&#160;&#160;&#160;(<a class="el" href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)((~(t) &amp; 0x8000) &amp;&amp; ((t) &amp; 0x4000))</td></tr>
 <tr class="separator:a17f44ffa7436a4d9fcedcae5e2bf4825"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f3e576461ae4096c93c3a2c2bced856" id="r_a2f3e576461ae4096c93c3a2c2bced856"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f3e576461ae4096c93c3a2c2bced856">MKSPECIALTAG</a>(t)&#160;&#160;&#160;(<a class="el" href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)((~(t)&amp;0x8000) ? ((t) | 0x4000) : <a class="el" href="htags_8h.html#a325077acdd8be4acd001a4da65aa6834">DFTAG_NULL</a>)</td></tr>
+<tr class="memitem:a2f3e576461ae4096c93c3a2c2bced856" id="r_a2f3e576461ae4096c93c3a2c2bced856"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f3e576461ae4096c93c3a2c2bced856">MKSPECIALTAG</a>(t)&#160;&#160;&#160;(<a class="el" href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)((~(t) &amp; 0x8000) ? ((t) | 0x4000) : <a class="el" href="htags_8h.html#a325077acdd8be4acd001a4da65aa6834">DFTAG_NULL</a>)</td></tr>
 <tr class="separator:a2f3e576461ae4096c93c3a2c2bced856"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
@@ -232,6 +232,8 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a1734771efbd761517b94ad67e79e653a" id="r_a1734771efbd761517b94ad67e79e653a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1734771efbd761517b94ad67e79e653a">hi_close_stdio</a> (FILE **<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>)</td></tr>
+<tr class="separator:a1734771efbd761517b94ad67e79e653a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab61fe4f273dfc6c6c3a7ea5b8f532ccb" id="r_ab61fe4f273dfc6c6c3a7ea5b8f532ccb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structaccrec__t.html">accrec_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab61fe4f273dfc6c6c3a7ea5b8f532ccb">HIget_access_rec</a> (void)</td></tr>
 <tr class="separator:ab61fe4f273dfc6c6c3a7ea5b8f532ccb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a642e82bf99e3153b1d86c2a98868806e" id="r_a642e82bf99e3153b1d86c2a98868806e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a642e82bf99e3153b1d86c2a98868806e">HIrelease_accrec_node</a> (<a class="el" href="structaccrec__t.html">accrec_t</a> *acc)</td></tr>
@@ -431,7 +433,7 @@ Functions</h2></td></tr>
           <td class="memname">#define BASETAG</td>
           <td>(</td>
           <td class="paramtype"></td>          <td class="paramname"><span class="paramname">t</span></td><td>)</td>
-          <td>&#160;&#160;&#160;(<a class="el" href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)((~(t)&amp;0x8000) ? ((t) &amp; ~0x4000) : (t))</td>
+          <td>&#160;&#160;&#160;(<a class="el" href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)((~(t) &amp; 0x8000) ? ((t) &amp; ~0x4000) : (t))</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -588,7 +590,7 @@ Functions</h2></td></tr>
           <td class="memname">#define HI_CLOSE</td>
           <td>(</td>
           <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a></span></td><td>)</td>
-          <td>&#160;&#160;&#160;(((<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a> = ((fclose(<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>) == 0) ? NULL : <a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>)) == NULL) ? <a class="el" href="hdf_8h.html#a82bc06cf44e2201df39aa76de6019980">SUCCEED</a> : <a class="el" href="hdf_8h.html#abb508ea8227673f419e9fe3a86c30d8e">FAIL</a>)</td>
+          <td>&#160;&#160;&#160;<a class="el" href="#a1734771efbd761517b94ad67e79e653a">hi_close_stdio</a>(&amp;<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -643,7 +645,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">a</span>&#160;)&#160;&#160;&#160;(((a)&amp;<a class="el" href="hdf_8h.html#a9ad485c46cae9899e1d8a1ebe96b4582">DFACC_WRITE</a>) ? fopen((p), &quot;rb+&quot;) : fopen((p), &quot;rb&quot;))</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">a</span>&#160;)&#160;&#160;&#160;(((a) &amp; <a class="el" href="hdf_8h.html#a9ad485c46cae9899e1d8a1ebe96b4582">DFACC_WRITE</a>) ? fopen((p), &quot;rb+&quot;) : fopen((p), &quot;rb&quot;))</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -830,7 +832,7 @@ Functions</h2></td></tr>
           <td class="memname">#define MKSPECIALTAG</td>
           <td>(</td>
           <td class="paramtype"></td>          <td class="paramname"><span class="paramname">t</span></td><td>)</td>
-          <td>&#160;&#160;&#160;(<a class="el" href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)((~(t)&amp;0x8000) ? ((t) | 0x4000) : <a class="el" href="htags_8h.html#a325077acdd8be4acd001a4da65aa6834">DFTAG_NULL</a>)</td>
+          <td>&#160;&#160;&#160;(<a class="el" href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)((~(t) &amp; 0x8000) ? ((t) | 0x4000) : <a class="el" href="htags_8h.html#a325077acdd8be4acd001a4da65aa6834">DFTAG_NULL</a>)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -920,7 +922,7 @@ Functions</h2></td></tr>
           <td class="memname">#define SPECIALTAG</td>
           <td>(</td>
           <td class="paramtype"></td>          <td class="paramname"><span class="paramname">t</span></td><td>)</td>
-          <td>&#160;&#160;&#160;(<a class="el" href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)((~(t)&amp;0x8000) &amp;&amp; ((t)&amp;0x4000))</td>
+          <td>&#160;&#160;&#160;(<a class="el" href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)((~(t) &amp; 0x8000) &amp;&amp; ((t) &amp; 0x4000))</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1693,6 +1695,31 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="structsp__info__block__t.html">sp_info_block_t</a> *</td>          <td class="paramname"><span class="paramname"><em>info_block</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1734771efbd761517b94ad67e79e653a" name="a1734771efbd761517b94ad67e79e653a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1734771efbd761517b94ad67e79e653a">&#9670;&#160;</a></span>hi_close_stdio()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int hi_close_stdio </td>
+          <td>(</td>
+          <td class="paramtype">FILE **</td>          <td class="paramname"><span class="paramname"><em>f</em></span></td><td>)</td>
+          <td></td>
         </tr>
       </table>
   </td>

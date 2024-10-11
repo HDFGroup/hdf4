@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.1-a994de3</span>
+   &#160;<span id="projectnumber">4.3.1-673df46</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -163,8 +163,8 @@ Functions</h2></td></tr>
 <tr class="separator:a21bc0315913079c526229e5e78077c1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a388d98f55d98fd15ae66d601dc1cd202" id="r_a388d98f55d98fd15ae66d601dc1cd202"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a388d98f55d98fd15ae66d601dc1cd202">append_Data2SDS</a> (<a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> sd_id, char *sds_name, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *<a class="el" href="hproto__fortran_8h.html#a9b5a1e76b086e1f02f877026d9ae40a4">start</a>, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *edges, void *ap_data)</td></tr>
 <tr class="separator:a388d98f55d98fd15ae66d601dc1cd202"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8111616dd9c018b63fbbe3eb006b4c7" id="r_ab8111616dd9c018b63fbbe3eb006b4c7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab8111616dd9c018b63fbbe3eb006b4c7">verify_datasize</a> (<a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> sds_id, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> data_size, char *sds_name)</td></tr>
-<tr class="separator:ab8111616dd9c018b63fbbe3eb006b4c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5de212419fd0ceeedeb8da533ed8347" id="r_af5de212419fd0ceeedeb8da533ed8347"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af5de212419fd0ceeedeb8da533ed8347">verify_datasize</a> (<a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> sds_id, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> data_size, const char *sds_name)</td></tr>
+<tr class="separator:af5de212419fd0ceeedeb8da533ed8347"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1847d7673525d96fedf9d5260f90bf22" id="r_a1847d7673525d96fedf9d5260f90bf22"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1847d7673525d96fedf9d5260f90bf22">verify_info_data</a> (<a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> sds_id, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> expected_dimsize, <a class="el" href="hdf_8h.html#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a> *result)</td></tr>
 <tr class="separator:a1847d7673525d96fedf9d5260f90bf22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f2da95646f43da7fa2fa893f731144f" id="r_a3f2da95646f43da7fa2fa893f731144f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3f2da95646f43da7fa2fa893f731144f">get_SDSbyName</a> (<a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> sd_id, const char *sds_name)</td></tr>
@@ -830,8 +830,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ab8111616dd9c018b63fbbe3eb006b4c7" name="ab8111616dd9c018b63fbbe3eb006b4c7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab8111616dd9c018b63fbbe3eb006b4c7">&#9670;&#160;</a></span>verify_datasize()</h2>
+<a id="af5de212419fd0ceeedeb8da533ed8347" name="af5de212419fd0ceeedeb8da533ed8347"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5de212419fd0ceeedeb8da533ed8347">&#9670;&#160;</a></span>verify_datasize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -849,7 +849,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>sds_name</em></span>&#160;)</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>sds_name</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">

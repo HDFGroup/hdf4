@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.1-a994de3</span>
+   &#160;<span id="projectnumber">4.3.1-673df46</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -113,7 +113,6 @@ $(function(){initNavTree('mfhdf_8h.html',''); initResizable(); });
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="hdf_8h.html">hdf.h</a>&quot;</code><br />
-<code>#include &quot;hdf4_netcdf.h&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
@@ -124,18 +123,30 @@ Data Structures</h2></td></tr>
 Macros</h2></td></tr>
 <tr class="memitem:a3dd2fb328405946c0e1220e530423264" id="r_a3dd2fb328405946c0e1220e530423264"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3dd2fb328405946c0e1220e530423264">HDF</a>&#160;&#160;&#160;1</td></tr>
 <tr class="separator:a3dd2fb328405946c0e1220e530423264"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a613bd8a66671ccf3dc31f9992251c5e1" id="r_a613bd8a66671ccf3dc31f9992251c5e1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a613bd8a66671ccf3dc31f9992251c5e1">SD_UNLIMITED</a>&#160;&#160;&#160;NC_UNLIMITED /* use this as marker for unlimited dimension */</td></tr>
+<tr class="memitem:a613bd8a66671ccf3dc31f9992251c5e1" id="r_a613bd8a66671ccf3dc31f9992251c5e1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a613bd8a66671ccf3dc31f9992251c5e1">SD_UNLIMITED</a>&#160;&#160;&#160;0L    /* Same as <a class="el" href="nc__priv_8h.html#a150c8e8ddcc4a9df4b804f2be4700cb9">NC_UNLIMITED</a>, use this as marker for unlimited dimension */</td></tr>
 <tr class="separator:a613bd8a66671ccf3dc31f9992251c5e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a678128a2d748df00e0e4462a342a006d" id="r_a678128a2d748df00e0e4462a342a006d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a678128a2d748df00e0e4462a342a006d">SD_NOFILL</a>&#160;&#160;&#160;NC_NOFILL</td></tr>
+<tr class="memitem:a678128a2d748df00e0e4462a342a006d" id="r_a678128a2d748df00e0e4462a342a006d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a678128a2d748df00e0e4462a342a006d">SD_NOFILL</a>&#160;&#160;&#160;0x100 /* Same as <a class="el" href="nc__priv_8h.html#a9bf8fd7e5fee98395811d6c5fd528d88">NC_NOFILL</a> */</td></tr>
 <tr class="separator:a678128a2d748df00e0e4462a342a006d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0e68d619f8b5bd1f7fa692c3244655f" id="r_ad0e68d619f8b5bd1f7fa692c3244655f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0e68d619f8b5bd1f7fa692c3244655f">SD_FILL</a>&#160;&#160;&#160;NC_FILL</td></tr>
+<tr class="memitem:ad0e68d619f8b5bd1f7fa692c3244655f" id="r_ad0e68d619f8b5bd1f7fa692c3244655f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0e68d619f8b5bd1f7fa692c3244655f">SD_FILL</a>&#160;&#160;&#160;0     /* Same as <a class="el" href="nc__priv_8h.html#a2b5dac7ffdb432566f72bab96ecb5c0d">NC_FILL</a> */</td></tr>
 <tr class="separator:ad0e68d619f8b5bd1f7fa692c3244655f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6cb99d3456494abc472514e1214a868d" id="r_a6cb99d3456494abc472514e1214a868d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6cb99d3456494abc472514e1214a868d">SD_DIMVAL_BW_COMP</a>&#160;&#160;&#160;1</td></tr>
 <tr class="separator:a6cb99d3456494abc472514e1214a868d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad2511319be8a03b7f565bc679f5f03f8" id="r_ad2511319be8a03b7f565bc679f5f03f8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad2511319be8a03b7f565bc679f5f03f8">SD_DIMVAL_BW_INCOMP</a>&#160;&#160;&#160;0</td></tr>
 <tr class="separator:ad2511319be8a03b7f565bc679f5f03f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53a1731c3eb8f14f9e258837acc65fdc" id="r_a53a1731c3eb8f14f9e258837acc65fdc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a53a1731c3eb8f14f9e258837acc65fdc">SD_RAGGED</a>&#160;&#160;&#160;-1 /* marker for ragged dimension */</td></tr>
+<tr class="memitem:a53a1731c3eb8f14f9e258837acc65fdc" id="r_a53a1731c3eb8f14f9e258837acc65fdc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a53a1731c3eb8f14f9e258837acc65fdc">SD_RAGGED</a>&#160;&#160;&#160;-1 /* Marker for ragged dimension */</td></tr>
 <tr class="separator:a53a1731c3eb8f14f9e258837acc65fdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed747105ccaf2d97d28348011a53bde9" id="r_aed747105ccaf2d97d28348011a53bde9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aed747105ccaf2d97d28348011a53bde9">FILL_BYTE</a>&#160;&#160;&#160;((char)-127) /* Largest Negative value */</td></tr>
+<tr class="separator:aed747105ccaf2d97d28348011a53bde9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff95b03d90aea646cc034a4bf274c0b3" id="r_aff95b03d90aea646cc034a4bf274c0b3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aff95b03d90aea646cc034a4bf274c0b3">FILL_CHAR</a>&#160;&#160;&#160;((char)0)</td></tr>
+<tr class="separator:aff95b03d90aea646cc034a4bf274c0b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a652e948403ea7ac3b32fb90e57eb5aee" id="r_a652e948403ea7ac3b32fb90e57eb5aee"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a652e948403ea7ac3b32fb90e57eb5aee">FILL_SHORT</a>&#160;&#160;&#160;((short)-32767)</td></tr>
+<tr class="separator:a652e948403ea7ac3b32fb90e57eb5aee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8320f3360f291596498668456ff0e58" id="r_aa8320f3360f291596498668456ff0e58"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8320f3360f291596498668456ff0e58">FILL_LONG</a>&#160;&#160;&#160;((long)-2147483647)</td></tr>
+<tr class="separator:aa8320f3360f291596498668456ff0e58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad43393d9c9b139ac5a2fbb72ed75d075" id="r_ad43393d9c9b139ac5a2fbb72ed75d075"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad43393d9c9b139ac5a2fbb72ed75d075">FILL_FLOAT</a>&#160;&#160;&#160;9.9692099683868690e+36F /* near 15 * 2^119 */</td></tr>
+<tr class="separator:ad43393d9c9b139ac5a2fbb72ed75d075"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e7d4422cb5941e91e7b65eb301c198d" id="r_a3e7d4422cb5941e91e7b65eb301c198d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3e7d4422cb5941e91e7b65eb301c198d">FILL_DOUBLE</a>&#160;&#160;&#160;9.9692099683868690e+36</td></tr>
+<tr class="separator:a3e7d4422cb5941e91e7b65eb301c198d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -289,6 +300,90 @@ Functions</h2></td></tr>
 <tr class="separator:a7695dece84c730d11201c8028511d85a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="aed747105ccaf2d97d28348011a53bde9" name="aed747105ccaf2d97d28348011a53bde9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed747105ccaf2d97d28348011a53bde9">&#9670;&#160;</a></span>FILL_BYTE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FILL_BYTE&#160;&#160;&#160;((char)-127) /* Largest Negative value */</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aff95b03d90aea646cc034a4bf274c0b3" name="aff95b03d90aea646cc034a4bf274c0b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff95b03d90aea646cc034a4bf274c0b3">&#9670;&#160;</a></span>FILL_CHAR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FILL_CHAR&#160;&#160;&#160;((char)0)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3e7d4422cb5941e91e7b65eb301c198d" name="a3e7d4422cb5941e91e7b65eb301c198d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e7d4422cb5941e91e7b65eb301c198d">&#9670;&#160;</a></span>FILL_DOUBLE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FILL_DOUBLE&#160;&#160;&#160;9.9692099683868690e+36</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad43393d9c9b139ac5a2fbb72ed75d075" name="ad43393d9c9b139ac5a2fbb72ed75d075"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad43393d9c9b139ac5a2fbb72ed75d075">&#9670;&#160;</a></span>FILL_FLOAT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FILL_FLOAT&#160;&#160;&#160;9.9692099683868690e+36F /* near 15 * 2^119 */</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa8320f3360f291596498668456ff0e58" name="aa8320f3360f291596498668456ff0e58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8320f3360f291596498668456ff0e58">&#9670;&#160;</a></span>FILL_LONG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FILL_LONG&#160;&#160;&#160;((long)-2147483647)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a652e948403ea7ac3b32fb90e57eb5aee" name="a652e948403ea7ac3b32fb90e57eb5aee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a652e948403ea7ac3b32fb90e57eb5aee">&#9670;&#160;</a></span>FILL_SHORT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FILL_SHORT&#160;&#160;&#160;((short)-32767)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a3dd2fb328405946c0e1220e530423264" name="a3dd2fb328405946c0e1220e530423264"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3dd2fb328405946c0e1220e530423264">&#9670;&#160;</a></span>HDF</h2>
 
@@ -338,7 +433,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define SD_FILL&#160;&#160;&#160;NC_FILL</td>
+          <td class="memname">#define SD_FILL&#160;&#160;&#160;0     /* Same as <a class="el" href="nc__priv_8h.html#a2b5dac7ffdb432566f72bab96ecb5c0d">NC_FILL</a> */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -352,7 +447,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define SD_NOFILL&#160;&#160;&#160;NC_NOFILL</td>
+          <td class="memname">#define SD_NOFILL&#160;&#160;&#160;0x100 /* Same as <a class="el" href="nc__priv_8h.html#a9bf8fd7e5fee98395811d6c5fd528d88">NC_NOFILL</a> */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -366,7 +461,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define SD_RAGGED&#160;&#160;&#160;-1 /* marker for ragged dimension */</td>
+          <td class="memname">#define SD_RAGGED&#160;&#160;&#160;-1 /* Marker for ragged dimension */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -380,7 +475,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define SD_UNLIMITED&#160;&#160;&#160;NC_UNLIMITED /* use this as marker for unlimited dimension */</td>
+          <td class="memname">#define SD_UNLIMITED&#160;&#160;&#160;0L    /* Same as <a class="el" href="nc__priv_8h.html#a150c8e8ddcc4a9df4b804f2be4700cb9">NC_UNLIMITED</a>, use this as marker for unlimited dimension */</td>
         </tr>
       </table>
 </div><div class="memdoc">
