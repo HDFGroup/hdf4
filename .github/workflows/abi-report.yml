@@ -82,8 +82,8 @@ jobs:
         run: |
           mkdir "${{ github.workspace }}/hdf4R"
           cd "${{ github.workspace }}/hdf4R"
-          wget -q https://github.com/HDFGroup/hdf4/releases/download/hdf${{ inputs.file_ref }}/hdf${{ inputs.file_ref }}-ubuntu-2204_gcc.tar.gz
-          tar zxf hdf${{ inputs.file_ref }}-ubuntu-2204_gcc.tar.gz
+          wget -q https://github.com/HDFGroup/hdf4/releases/download/hdf${{ inputs.file_ref }}/hdf${{ inputs.file_ref }}-ubuntu-2404_gcc.tar.gz
+          tar zxf hdf${{ inputs.file_ref }}-ubuntu-2404_gcc.tar.gz
 
       - name: List files for the space (Linux)
         run: |

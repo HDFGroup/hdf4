@@ -664,7 +664,7 @@ if (IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran")
       set (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) NAME")
     endif ()
     message (VERBOSE "Fortran compiler ID is ${CMAKE_Fortran_COMPILER_ID}")
-    include (${HDF_RESOURCES_DIR}/HDFCompilerFortranFlags.cmake)
+    #include (${HDF_RESOURCES_DIR}/HDFCompilerFortranFlags.cmake)
     include (${HDF_RESOURCES_DIR}/HDF4UseFortran.cmake)
 
     if (CMAKE_Fortran_COMPILER_ID STREQUAL "GNU" AND NOT CMAKE_Fortran_COMPILER_VERSION VERSION_LESS 10.0)
