@@ -162,6 +162,7 @@ jobs:
             -DZLIB_USE_LOCALCONTENT:BOOL=${{ matrix.localzlib }} \
             -DHDF4_PACK_EXAMPLES:BOOL=ON \
             -DHDF4_PACKAGE_EXTLIBS:BOOL=ON \
+            -DHDF4_PACK_MACOSX_DMG:BOOL=OFF \
             $GITHUB_WORKSPACE
         shell: bash
 
