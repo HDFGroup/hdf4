@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.18)
 ########################################################
-# For any comments please contact cdashhelp@hdfgroup.org
+# For any comments please contact help@hdfgroup.org
 #
 ########################################################
 # -----------------------------------------------------------

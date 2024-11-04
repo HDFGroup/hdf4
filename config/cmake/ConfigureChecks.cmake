@@ -28,6 +28,7 @@ endif ()
 # does, it appends library to the list.
 #-----------------------------------------------------------------------------
 set (LINK_LIBS "")
+set (LINK_PUB_LIBS "")
 macro (CHECK_LIBRARY_EXISTS_CONCAT LIBRARY SYMBOL VARIABLE)
   CHECK_LIBRARY_EXISTS ("${LIBRARY};${LINK_LIBS}" ${SYMBOL} "" ${VARIABLE})
   if (${VARIABLE})
@@ -56,6 +57,8 @@ if (WIN32 AND NOT MINGW)
       set (${HDF_PREFIX}_HAVE_VISUAL_STUDIO 1)
     endif ()
   endif ()
+  message (TRACE "MSVC=${MSVC}")
+  message (TRACE "HAVE_VISUAL_STUDIO=${${HDF_PREFIX}_HAVE_VISUAL_STUDIO}")
 endif ()
 
 if (WINDOWS)
@@ -69,7 +72,7 @@ if (WINDOWS)
 endif ()
 
 # ----------------------------------------------------------------------
-# END of WINDOWS hard-coded values
+# END of WINDOWS Hard code Values
 # ----------------------------------------------------------------------
 
 if (NOT WINDOWS)
@@ -123,7 +126,7 @@ if (WINDOWS)
 endif ()
 
 #-----------------------------------------------------------------------------
-#  Extra POSIX things
+#  Platform-specific flags
 #-----------------------------------------------------------------------------
 
 set (HDF_EXTRA_C_FLAGS)
@@ -152,7 +155,7 @@ endif ()
 add_definitions (${HDF_EXTRA_FLAGS})
 
 #-----------------------------------------------------------------------------
-#  Check the size in bytes of types
+#  Check the size in bytes of all the int and float types
 #-----------------------------------------------------------------------------
 macro (HDF_CHECK_TYPE_SIZE type var)
   set (aType ${type})

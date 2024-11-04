@@ -67,9 +67,3 @@ jobs:
         uses: ./.github/workflows/aocc-cmake.yml
         with:
             build_mode: "Release"
-
-    call-release-cmake-cygwin:
-        name: "CMake Cygwin Workflows"
-        uses: ./.github/workflows/cygwin-cmake.yml
-        with:
-            build_mode: "Release"

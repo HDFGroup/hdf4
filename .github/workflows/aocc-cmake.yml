@@ -48,8 +48,7 @@ jobs:
           export PATH=/usr/local/bin:$PATH
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
-          cmake -C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake \
-            -G Ninja \
+          cmake -C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake -G Ninja \
             --log-level=VERBOSE \
             -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
             -DJPEG_USE_LOCALCONTENT=OFF \

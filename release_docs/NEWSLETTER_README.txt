@@ -1,10 +1,10 @@
 INTRODUCTION
 ============
 
-This purpose of the NEWSLETTER document is to contain entries that can be
-used to quickly produce a release newsletter and GitHub release notes. When
-something is added to the library that is "newsletter worthy" (i.e., new
-feature, CVE fix, etc.) a summary note should be added there.
+This purpose of this document is to contain entries that can be used to quickly
+produce a release newsletter. When something is added to the library that is
+"newsletter worthy" (i.e., new feature, CVE fix, etc.) a summary note should
+be added here.
 
 The format should look like this:
 
@@ -20,6 +20,6 @@ The GitHub #s could be relevant issues or PRs. They will probably not appear
 in the final newsletter, but are so that the person writing the newsletter
 has easy access to context if they have questions.
 
-Every entry in RELEASE.txt does NOT require an entry in the newsletter. The
-newsletter is for communicating major changes that are of interest to anyone.
-Minor bugfixes, memory leak fixes, etc. do not require entries.
+Every entry in RELEASE.txt does NOT require an entry here. The newsletter is
+for communicating major changes that are of interest to anyone. Minor bugfixes,
+memory leak fixes, etc. do not require entries.

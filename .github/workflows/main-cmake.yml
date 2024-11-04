@@ -141,9 +141,7 @@ jobs:
       - name: Get Sources
         uses: actions/checkout@v4.1.7
 
-      #
       # CMAKE CONFIGURE
-      #
       - name: CMake Configure
         run: |
           mkdir "${{ runner.workspace }}/build"
@@ -167,16 +165,12 @@ jobs:
             $GITHUB_WORKSPACE
         shell: bash
 
-      #
       # BUILD
-      #
       - name: CMake Build
         run: cmake --build . --parallel 3 --config ${{ inputs.build_mode }}
         working-directory: ${{ runner.workspace }}/build
 
-      #
       # RUN TESTS
-      #
       - name: CMake Run Tests
         run: ctest . --parallel 2 -C ${{ inputs.build_mode }} -V
         working-directory: ${{ runner.workspace }}/build
@@ -202,7 +196,7 @@ jobs:
       - name: Save published binary (linux)
         uses: actions/upload-artifact@v4
         with:
-              name: tgz-ubuntu-2204_gcc-${{ inputs.build_mode }}-binary
+              name: tgz-ubuntu-2404_gcc-${{ inputs.build_mode }}-binary
               path: ${{ runner.workspace }}/build/HDF-*-Linux.tar.gz
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
         if:  ${{ (matrix.os == 'ubuntu-latest') && (matrix.name != 'Ubuntu mingw CMake') && (inputs.shared == 'true') }}

@@ -14,6 +14,19 @@
 #set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_SHARED_LIBS:BOOL=ON")
 
 #############################################################################################
+####      maximum parallel processor count for build and test       ####
+#set(MAX_PROC_COUNT 8)
+
+#############################################################################################
+####      alternate toolsets (Windows usually)        ####
+#set(CMAKE_GENERATOR_TOOLSET "Intel C++ Compiler 17.0")
+
+#############################################################################################
+### use a toolchain file (supported everywhere)       ####
+#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCMAKE_TOOLCHAIN_FILE:STRING=config/toolchain/clang.cmake")
+#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCMAKE_TOOLCHAIN_FILE:STRING=config/toolchain/intel.cmake")
+
+#############################################################################################
 ####      languages       ####
 ### disable C builds
 #set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DH4EX_BUILD_C:BOOL=OFF")
@@ -25,7 +38,7 @@
 #set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DH4EX_BUILD_JAVA:BOOL=OFF")
 
 #############################################################################################
-### match the hdf45 library namespace
+### match the hdf4 library namespace
 set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_NAMESPACE:STRING=hdf4::")
 
 #############################################################################################
