@@ -71,6 +71,6 @@ jobs:
       run: |
         mkdir "netcdf-c/build"
         cd "netcdf-c/build"
-        cmake .. -DNETCDF_ENABLE_NETCDF_4=ON -DUILD_SHARED_LIBS=ON -DUSE_HDF5=OFF -DUSE_HDF4=ON -DUSE_HDF4_FILE_TESTS=ON
+        cmake .. -DUILD_SHARED_LIBS=ON -DUSE_HDF5=OFF -DUSE_HDF4=ON -DUSE_HDF4_FILE_TESTS=ON
         make
         make test
