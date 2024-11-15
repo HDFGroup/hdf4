@@ -40,19 +40,6 @@ jobs:
         make -j
         sudo make install -j
 
-    - name: Checkout HDF5
-      uses: actions/checkout@v4.1.7
-      with:
-        repository: HDFGroup/hdf5
-        path: hdf5
-    - name: Install HDF5
-      run: |
-        cd hdf5
-        ./autogen.sh
-        ./configure --prefix=/usr/local --disable-tests --disable-static --enable-shared --enable-hl --with-szlib
-        make -j
-        sudo make install -j
-
     - name: Checkout netCDF
       uses: actions/checkout@v4.1.7
       with:
@@ -63,7 +50,7 @@ jobs:
       run: |
         cd netcdf-c
         autoreconf -if
-        CFLAGS=${CFLAGS} LDFLAGS=${LDFLAGS} LD_LIBRARY_PATH=${LD_LIBRARY_PATH} ./configure --enable-hdf5 --enable-hdf4 --enable-hdf4-file-tests --enable-dap --disable-dap-remote-tests --enable-external-server-tests
+        CFLAGS=${CFLAGS} LDFLAGS=${LDFLAGS} LD_LIBRARY_PATH=${LD_LIBRARY_PATH} ./configure --disable-hdf5 --enable-hdf4 --enable-hdf4-file-tests --enable-dap --disable-dap-remote-tests --enable-external-server-tests
         cat config.log
         cat libnetcdf.settings
         CFLAGS=${CFLAGS} LDFLAGS=${LDFLAGS} LD_LIBRARY_PATH=${LD_LIBRARY_PATH} make -j
