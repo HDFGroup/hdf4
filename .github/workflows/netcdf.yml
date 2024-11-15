@@ -45,6 +45,8 @@ jobs:
       with:
         repository: HDFGroup/hdf5
         path: hdf5
+        ref: hdf5_1.14.5
+
     - name: Install HDF5
       run: |
         cd hdf5
