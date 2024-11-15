@@ -35,7 +35,7 @@ jobs:
     - name: Checkout HDF4
       uses: actions/checkout@v4.1.7
 
-    - name: CMake Configure
+    - name: CMake Configure HDF4
       run: |
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
@@ -44,15 +44,17 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release \
             -DHDF4_BUILD_FORTRAN:BOOL=OFF \
             -DHDF4_BUILD_JAVA:BOOL=OFF \
+            -DHDF4_BUILD_EXAMPLES:BOOL=OFF \
             -DJPEG_USE_LOCALCONTENT:BOOL=OFF \
             -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF \
             -DZLIB_USE_LOCALCONTENT:BOOL=OFF \
             -DBUILD_TESTING:BOOL=OFF \
+            -DBUILD_STATIC_LIBS:BOOL=OFF \
             -DCMAKE_INSTALL_PREFIX:PATH=/usr/local \
             $GITHUB_WORKSPACE
       shell: bash
 
-    - name: CMake Build
+    - name: CMake Build HDF4
       run: cmake --build . --parallel 3 --config Release
       working-directory: ${{ runner.workspace }}/build
 
@@ -60,6 +62,40 @@ jobs:
       run: |
         sudo cmake --install . --config Release --prefix="/usr/local"
       working-directory: ${{ runner.workspace }}/build
+
+    - name: Checkout HDF5
+      uses: actions/checkout@v4.1.7
+      with:
+        repository: HDFGroup/hdf5
+        path: hdf5
+        ref: hdf5_1.14.5
+
+    - name: CMake Configure HDF5
+      run: |
+          mkdir "${{ runner.workspace }}/build5"
+          cd "${{ runner.workspace }}/build5"
+          cmake -C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DHDF5_BUILD_FORTRAN:BOOL=OFF \
+            -DHDF5_BUILD_JAVA:BOOL=OFF \
+            -DHDF5_BUILD_EXAMPLES:BOOL=OFF \
+            -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF \
+            -DZLIB_USE_LOCALCONTENT:BOOL=OFF \
+            -DBUILD_TESTING:BOOL=OFF \
+            -DBUILD_STATIC_LIBS:BOOL=OFF \
+            -DCMAKE_INSTALL_PREFIX:PATH=/usr/local \
+            $GITHUB_WORKSPACE
+      shell: bash
+
+    - name: CMake Build HDF5
+      run: cmake --build . --parallel 3 --config Release
+      working-directory: ${{ runner.workspace }}/build5
+
+    - name: Install HDF5
+      run: |
+        sudo cmake --install . --config Release --prefix="/usr/local"
+      working-directory: ${{ runner.workspace }}/build5
 
     - name: Checkout netCDF
       uses: actions/checkout@v4.1.7
@@ -71,6 +107,6 @@ jobs:
       run: |
         mkdir "netcdf-c/build"
         cd "netcdf-c/build"
-        cmake .. -DUILD_SHARED_LIBS=ON -DNETCDF_ENABLE_HDF5=OFF -DNETCDF_ENABLE_HDF4=ON
+        cmake .. -DUILD_SHARED_LIBS=ON -DNETCDF_ENABLE_HDF5=ON -DNETCDF_ENABLE_HDF4=ON
         make
         make test
