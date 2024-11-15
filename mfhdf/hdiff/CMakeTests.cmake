@@ -9,7 +9,7 @@
 # This executable is used to generate test files for the hdiff tests.
 # It should only be run during development when new test files are needed
 # --------------------------------------------------------------------
-if (HDF4_BUILD_GENERATORS AND NOT ONLY_SHARED_LIBS)
+if (HDF4_BUILD_GENERATORS AND NOT HDF4_ONLY_SHARED_LIBS)
   set (hdifftst_SRCS
       ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdifftst.c
   )

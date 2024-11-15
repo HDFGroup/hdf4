@@ -43,15 +43,13 @@ jobs:
         run: |
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
-          cmake -C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake \
-            -G Ninja \
-            --log-level=VERBOSE \
+          cmake -C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake -G Ninja --log-level=VERBOSE \
             -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
-            -DJPEG_USE_LOCALCONTENT=OFF \
-            -DLIBAEC_USE_LOCALCONTENT=OFF \
-            -DZLIB_USE_LOCALCONTENT=OFF \
-            -DHDF4_BUILD_FORTRAN=OFF \
-            $GITHUB_WORKSPACE
+            -DHDF4_BUILD_FORTRAN:BOOL=OFF \
+            -DJPEG_USE_LOCALCONTENT:BOOL=OFF \
+            -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF \
+            -DZLIB_USE_LOCALCONTENT:BOOL=OFF \
+            ${{ github.workspace }}
 
       - name: CMake Build (Linux)
         shell: bash

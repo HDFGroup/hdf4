@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get Sources
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4.2.1
 
       - name: Install Dependencies
         shell: bash
@@ -53,9 +53,9 @@ jobs:
             -G Ninja \
             --log-level=VERBOSE \
             -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
-            -DJPEG_USE_LOCALCONTENT=OFF \
-            -DLIBAEC_USE_LOCALCONTENT=OFF \
-            -DZLIB_USE_LOCALCONTENT=OFF \
+            -DJPEG_USE_LOCALCONTENT:BOOL=OFF \
+            -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF \
+            -DZLIB_USE_LOCALCONTENT:BOOL=OFF \
             -DHDF4_BUILD_FORTRAN:BOOL=ON \
             -DHDF4_BUILD_JAVA:BOOL=OFF \
             $GITHUB_WORKSPACE

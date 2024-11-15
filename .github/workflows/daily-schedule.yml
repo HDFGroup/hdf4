@@ -7,7 +7,7 @@ on:
     - cron: "6 0 * * *"
 
 permissions:
-  contents: write # In order to allow tag creation and file deletion
+    contents: write # In order to allow tag creation and file deletion
 
 jobs:
   daily-build:

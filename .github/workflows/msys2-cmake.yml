@@ -1,5 +1,6 @@
 name: hdf4 CMake MSys2
 
+# Triggers the workflow on a call from another workflow
 on:
   workflow_call:
     inputs:
@@ -12,7 +13,10 @@ permissions:
   contents: read
 
 jobs:
-  msys2_build_and_test:
+
+  CMake_build_and_test:
+
+    # The type of runner that the job will run on
     runs-on: windows-latest
     strategy:
       matrix:
@@ -21,26 +25,34 @@ jobs:
           - { icon: '🟦', sys: mingw64 }
           - { icon: '🟨', sys: ucrt64  }
           - { icon: '🟧', sys: clang64 }
-    name: ${{ matrix.icon }} msys2-${{ matrix.sys }}-${{ inputs.build_mode }}
+    name: ${{ matrix.icon }} MSYS2-${{ matrix.sys }}-${{ inputs.build_mode }}
     defaults:
       run:
         shell: msys2 {0}
-    steps:
-      - name: Get Sources
-        uses: actions/checkout@v4.1.7
 
+    steps:
       - name: '${{ matrix.icon }} Setup MSYS2'
         uses: msys2/setup-msys2@v2
         with:
           msystem: ${{matrix.sys}}
           update: true
           install: >-
+           base-devel
            git
+           gcc
            make
+           development
           pacboy: >-
            toolchain:p
            cmake:p
            ninja:p
+
+      - name: Set git to use LF
+        run: |
+          git config --global core.autocrlf input
+
+      - name: Get Sources
+        uses: actions/checkout@v4.1.1
 
       - name: CMake Configure
         run: |
@@ -49,12 +61,12 @@ jobs:
           cmake -C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake \
             -G Ninja \
             -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
-            -DCMAKE_TOOLCHAIN_FILE="" \
-            -DJPEG_USE_LOCALCONTENT=OFF \
-            -DLIBAEC_USE_LOCALCONTENT=OFF \
-            -DZLIB_USE_LOCALCONTENT=OFF \
-            -DHDF4_BUILD_FORTRAN=OFF \
-            -DHDF4_BUILD_JAVA=OFF \
+            -DCMAKE_TOOLCHAIN_FILE:BOOL="" \
+            -DJPEG_USE_LOCALCONTENT:BOOL=OFF \
+            -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF \
+            -DZLIB_USE_LOCALCONTENT:BOOL=OFF \
+            -DHDF4_BUILD_FORTRAN:BOOL=OFF \
+            -DHDF4_BUILD_JAVA:BOOL=OFF \
             $GITHUB_WORKSPACE
 
       - name: CMake Build

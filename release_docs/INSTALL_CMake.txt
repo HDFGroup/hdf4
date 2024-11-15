@@ -402,10 +402,8 @@ IV. Further considerations
 Notes: CMake and HDF4
 
    1. Using CMake for building and using HDF4 is under active development.
-      While we have attempted to provide error-free files, please
-      understand that development with CMake has not been extensively
-      tested outside of HDF. The CMake specific files may change
-      before the next release.
+      We have attempted to provide error-free files. The CMake specific
+      files may change before the next release.
 
    2. CMake support for HDF4 development should be usable on any
       system where CMake is supported. Please send us any comments on
@@ -519,19 +517,24 @@ These five steps are described in detail below.
         # compression options
         ########################
         set (ZLIB_PACKAGE_NAME "zlib" CACHE STRING "Name of ZLIB package" FORCE)
-        set (ZLIB_TGZ_NAME "zlib-1.3.tar.gz" CACHE STRING "Use HDF4_ZLib from compressed file" FORCE)
-        set (ZLIB_TGZ_ORIGPATH "https://github.com/madler/zlib/releases/download/v1.3" CACHE STRING "Use HDF4_ZLIB from original location" FORCE)
-        set (ZLIB_USE_LOCALCONTENT ON CACHE BOOL "Use local file for HDF4_ZLIB FetchContent" FORCE)
+        set (ZLIB_TGZ_NAME "zlib-1.3.1.tar.gz" CACHE STRING "Use HDF5_ZLib from compressed file" FORCE)
+        set (ZLIB_TGZ_ORIGPATH "https://github.com/madler/zlib/releases/download/v1.3.1" CACHE STRING "Use ZLIB from original location" FORCE)
+        set (ZLIB_USE_LOCALCONTENT ON CACHE BOOL "Use local file for ZLIB FetchContent" FORCE)
         set (ZLIB_GIT_URL "https://github.com/madler/zlib.git" CACHE STRING "Use ZLIB from  GitHub repository" FORCE)
         set (ZLIB_GIT_BRANCH "develop" CACHE STRING "" FORCE)
-        
+        set (HDF5_USE_ZLIB_NG OFF CACHE BOOL "Use zlib-ng library as zlib library" FORCE)
+        set (ZLIBNG_PACKAGE_NAME "zlib-ng" CACHE STRING "Name of ZLIBNG package" FORCE)
+        set (ZLIBNG_TGZ_NAME "2.2.2.tar.gz" CACHE STRING "Use HDF5_ZLib from compressed file" FORCE)
+        set (ZLIBNG_TGZ_ORIGPATH "https://github.com/zlib-ng/zlib-ng/archive/refs/tags" CACHE STRING "Use ZLIBNG from original location" FORCE)
+        set (ZLIBNG_GIT_URL "https://github.com/zlib-ng/zlib-ng.git" CACHE STRING "Use ZLIBNG from  GitHub repository" FORCE)
+        set (ZLIBNG_GIT_BRANCH "develop" CACHE STRING "" FORCE)
         set (LIBAEC_PACKAGE_NAME "libaec" CACHE STRING "Name of AEC SZIP package" FORCE)
-        set (LIBAEC_TGZ_NAME "libaec-1.0.6.tar.gz" CACHE STRING "Use SZip AEC from compressed file" FORCE)
-        set (LIBAEC_TGZ_ORIGPATH "https://github.com/MathisRosenhauer/libaec/releases/download/v1.0.6" CACHE STRING "Use LIBAEC from original location" FORCE)
+        set (LIBAEC_TGZ_NAME "libaec-1.1.3.tar.gz" CACHE STRING "Use SZip AEC from compressed file" FORCE)
+        set (LIBAEC_TGZ_ORIGPATH "https://github.com/MathisRosenhauer/libaec/releases/download/v1.1.3" CACHE STRING "Use LIBAEC from original location" FORCE)
         set (LIBAEC_USE_LOCALCONTENT ON CACHE BOOL "Use local file for LIBAEC FetchContent" FORCE)
         set (LIBAEC_GIT_URL "https://github.com/MathisRosenhauer/libaec.git" CACHE STRING "Use LIBAEC from  GitHub repository" FORCE)
-        set (LIBAEC_GIT_BRANCH "v1.0.6" CACHE STRING "" FORCE)
-        
+        set (LIBAEC_GIT_BRANCH "v1.1.3" CACHE STRING "" FORCE)
+
         set (JPEG_PACKAGE_NAME "jpeg" CACHE STRING "Name of JPEG package" FORCE)
         set (JPEG_TGZ_ORIGPATH "https://www.ijg.org/filesz" CACHE STRING "Use JPEG from original location" FORCE)
         set (JPEG_TGZ_NAME "jpegsrc.v9e.tar.gz" CACHE STRING "Use JPEG from original compressed file" FORCE)
@@ -721,7 +724,7 @@ HDF4_INSTALL_DATA_DIR     "share"
 HDF4_INSTALL_DOC_DIR      "HDF4_INSTALL_DATA_DIR/doc/hdf"
 
 ---------------- HDF4 Advanced Options ---------------------
-ONLY_SHARED_LIBS               "Only Build Shared Libraries"                                     OFF
+HDF4_ONLY_SHARED_LIBS               "Only Build Shared Libraries"                                     OFF
 HDF4_DISABLE_COMPILER_WARNINGS "Disable compiler warnings"                                       OFF
 HDF4_ENABLE_COVERAGE           "Enable code coverage for Libraries and Programs"                 OFF
 HDF4_ENABLE_DEPRECATED_SYMBOLS "Enable deprecated public API symbols"                            ON
@@ -748,18 +751,24 @@ JPEG_TGZ_ORIGPATH              "Use JPEG from original location"         "https:
 JPEG_TGZ_NAME                  "Use JPEG from original compressed file"  "jpegsrc.v9e.tar.gz"
 JPEG_USE_LOCALCONTENT          "Use local file for JPEG FetchContent"    OFF
 
-ZLIB_USE_EXTERNAL              "Use External Library Building for ZLIB"  OFF
-ZLIB_TGZ_ORIGPATH              "Use ZLIB from original location"         "https://github.com/madler/zlib/releases/download/v1.2.13"
-ZLIB_TGZ_NAME                  "Use ZLIB from original compressed file"  "zlib-1.3.tar.gz"
-ZLIB_USE_LOCALCONTENT          "Use local file for ZLIB FetchContent"     OFF
+if (HDF4_USE_ZLIB_NG)
+    ZLIBNG_USE_EXTERNAL     "Use External Library Building for ZLIBNG"      OFF
+    ZLIBNG_TGZ_ORIGPATH     "Use ZLIBNG from original location"             "https://github.com/zlib-ng/zlib-ng/releases/tag/2.2.2"
+    ZLIBNG_TGZ_NAME         "Use ZLIBNG from original compressed file"      "2.2.2.tar.gz"
+else
+    ZLIB_USE_EXTERNAL       "Use External Library Building for ZLIB"        OFF
+    ZLIB_TGZ_ORIGPATH       "Use ZLIB from original location"               "https://github.com/madler/zlib/releases/download/v1.3.1"
+    ZLIB_TGZ_NAME           "Use ZLIB from original compressed file"        "zlib-1.3.1.tar.gz"
+ZLIB_USE_LOCALCONTENT       "Use local file for ZLIB FetchContent"          ON
+HDF4_USE_ZLIB_STATIC        "Find static zlib library"                      OFF
 
-SZIP_USE_EXTERNAL              "Use External Library Building for SZIP"   OFF
+SZIP_USE_EXTERNAL           "Use External Library Building for SZIP"        OFF
 if (HDF4_ENABLE_SZIP_SUPPORT)
-    HDF4_ENABLE_SZIP_ENCODING  "Use SZip Encoding"                        OFF
-USE_LIBAEC_STATIC              "Use static AEC library"                   OFF
-LIBAEC_TGZ_ORIGPATH            "Use LIBAEC from original location"        "https://github.com/MathisRosenhauer/libaec/releases/download/v1.0.6"
-LIBAEC_TGZ_NAME                "Use LIBAEC from original compressed file" "libaec-1.0.6.tar.gz"
-LIBAEC_USE_LOCALCONTENT        "Use local file for LIBAEC FetchContent"   OFF
+    HDF4_ENABLE_SZIP_ENCODING "Use SZip Encoding"                           OFF
+LIBAEC_TGZ_ORIGPATH         "Use LIBAEC from original location"             "https://github.com/MathisRosenhauer/libaec/releases/download/v1.1.3"
+LIBAEC_TGZ_NAME             "Use LIBAEC from original compressed file"      "libaec-1.1.3.tar.gz"
+LIBAEC_USE_LOCALCONTENT     "Use local file for LIBAEC FetchContent"        ON
+HDF4_USE_LIBAEC_STATIC      "Find static AEC library"                       OFF
 
 NOTE:
   The HDF4_USE_GNU_DIRS option is usually recommended for linux platforms, but may
@@ -770,13 +779,11 @@ VII. User Defined Options for HDF4 Libraries with CMake
 ========================================================================
 
 Support for User Defined macros and options has been added. The file
-UserMacros.cmake has an example of the technique. In the folder,
-config/cmake/UserMacros, is an implementation for Windows Visual Studio
-users for linking libraries to the static CRT - Windows_MT.cmake.
+UserMacros.cmake has an example of the technique.
 
-Copy the contents of the file, both macro and option, into the
-UserMacros.cmake file. Then enable the option to the CMake configuration,
-build and test process.
+Replace the template code with your macro in the UserMacros.cmake file.
+Then enable the option to the CMake configuration, build and test process.
+
 
 ========================================================================
 VIII:    Using CMakePresets.json for compiling
@@ -813,7 +820,7 @@ Using individual command presets (where <compiler-type> is  GNUC or MSVC or Clan
     cpack --preset ci-StdShar-<compiler-type>
 
 
-Using the workflow preset to configure, build, test and package the standard configuration is:
+Using the workflow preset to configure, build, test and package the standard configuration:
     change directory to the hdf4 source folder
     execute "cmake --workflow --preset ci-StdShar-<compiler-type> --fresh"
           where <compiler-type> is  GNUC or MSVC or Clang
@@ -873,7 +880,7 @@ See RELEASE.txt in the release_docs/ directory for the list of platforms
 tested for this release.
 
 Instructions for building and testing HDF4 using autotools can be found in the
-INSTALL_Auto.txt file found in this folder.
+INSTALL_Autotools.txt file found in this folder.
 
 
 ========================================================================
