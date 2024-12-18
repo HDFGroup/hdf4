@@ -41,7 +41,7 @@ jobs:
            sudo apt-get update
            sudo apt install gcc-12 g++-12 gfortran-12
            sudo apt install automake autoconf libtool libtool-bin
-           sudo apt install libaec0 libaec-dev
+           sudo apt install libjpeg-dev libaec0 libaec-dev
            echo "CC=gcc-12" >> $GITHUB_ENV
            echo "CXX=g++-12" >> $GITHUB_ENV
 
