@@ -28,7 +28,8 @@ jobs:
     - name: Install System dependencies
       run: |
         sudo apt update
-        sudo apt install -y libaec-dev zlib1g-dev automake autoconf libcurl4-openssl-dev libjpeg-dev wget curl bzip2 m4 flex bison cmake libzip-dev doxygen openssl libtool libtool-bin
+        sudo apt install -y libaec-dev zlib1g-dev automake autoconf libcurl4-openssl-dev libjpeg-dev wget curl
+        sudo apt install -y bzip2 m4 flex bison libzip-dev doxygen openssl libtool libtool-bin
 
     - name: Checkout HDF4
       uses: actions/checkout@v4.1.7

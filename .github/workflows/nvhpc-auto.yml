@@ -28,7 +28,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install autoconf automake libtool libtool-bin libaec-dev
+          sudo apt-get install autoconf automake libtool libtool-bin libaec-dev libjpeg-dev
 
       - name: Install NVHPC
         shell: bash
