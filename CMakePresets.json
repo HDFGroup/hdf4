@@ -42,7 +42,7 @@
         "HDF5_USE_ZLIB_NG": "OFF",
         "JPEG_USE_LOCALCONTENT": "OFF",
         "ZLIB_USE_LOCALCONTENT": "OFF",
-        "LIBAEC_USE_LOCALCONTENT": "OFF"
+        "LIBAEC_USE_LOCALCONTENT": "OFF",
         "HDF5_USE_ZLIB_STATIC": "ON",
         "HDF5_USE_LIBAEC_STATIC": "ON"
       }
