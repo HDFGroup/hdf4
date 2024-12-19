@@ -61,7 +61,7 @@ jobs:
           cmake -C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake \
             -G Ninja \
             -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
-            -DCMAKE_TOOLCHAIN_FILE:BOOL="" \
+            -DCMAKE_TOOLCHAIN_FILE="" \
             -DJPEG_USE_LOCALCONTENT:BOOL=OFF \
             -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF \
             -DZLIB_USE_LOCALCONTENT:BOOL=OFF \
