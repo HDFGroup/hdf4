@@ -58,8 +58,6 @@ jobs:
 
           # Linux (Ubuntu) w/ gcc + CMake
           #
-          # We might think about adding Clang, but MacOS already tests that
-          # so it's not critical
           - name: "Ubuntu gcc"
             os: ubuntu-latest
             fortran: OFF
@@ -75,8 +73,6 @@ jobs:
 
           # MacOS w/ Clang + CMake
           #
-          # We could also build with the Autotools via brew installing them,
-          # but that seems unnecessary
           - name: "MacOS Clang"
             os: macos-latest
             fortran: OFF

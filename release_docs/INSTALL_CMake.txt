@@ -65,8 +65,9 @@ Configuration files from https://github.com/HDFGroup/hdf4/tree/master/config/cma
 
 External compression szip, jpeg, and zlib libraries:
     JPEG          "https://www.ijg.org/filesz"/jpegsrc.v9e.tar.gz"
-    ZLIB          "https://github.com/madler/zlib/releases/download/v1.2.13/zlib-1.3.tar.gz"
-    LIBAEC        "https://github.com/MathisRosenhauer/libaec/releases/download/v1.0.6/libaec-1.0.6.tar.gz"
+    ZLIB          "https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz"
+    ZLIBNG        "https://github.com/zlib-ng/zlib-ng/archive/refs/tags/2.2.2.tar.gz"
+    LIBAEC        "https://github.com/MathisRosenhauer/libaec/releases/download/v1.1.3/libaec-1.1.3.tar.gz"
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
 
@@ -278,7 +279,7 @@ IV. Further considerations
       web site. The HDF 4.3"X" product requires a minimum CMake version 3.18.
       If you are using VS2022, the CMake minimum version is 3.21.
 
-   2. HDF4 requires Zlib and JPEG. Szip is optional:
+   2. HDF4 requires Zlib and JPEG. Szip (aka libaec) is optional:
       A. Download the binary packages and install them in a central location.
          For example on Windows, create a folder extlibs and install the
          packages there. Add the following CMake options:
@@ -288,14 +289,20 @@ IV. Further considerations
             -DZLIB_LIBRARY:FILEPATH=some_location/lib/zlib.lib
             -DZLIB_INCLUDE_DIR:PATH=some_location/include
             -DZLIB_USE_EXTERNAL:BOOL=OFF
-            -DSZIP_LIBRARY:FILEPATH=some_location/lib/szlib.lib
+            -DSZIP_LIBRARY:FILEPATH=some_location/lib/libszaec.lib
             -DSZIP_INCLUDE_DIR:PATH=some_location/include
+            -Dlibaec_LIBRARY:FILEPATH=some_location/lib/libaec.lib
+            -Dlibaec_INCLUDE_DIR:PATH=some_location/include
             -DSZIP_USE_EXTERNAL:BOOL=OFF
          where "some_location" is the full path to the extlibs folder.
-         Also the appropriate environment variable must be set;
+         Also if the appropriate environment variable is set, the above options are not required;
             set(ENV{JPEG_ROOT} "some_location")
             set(ENV{ZLIB_ROOT} "some_location")
             set(ENV{SZIP_ROOT} "some_location")
+            set(ENV{libaec_ROOT} "some_location")
+
+        Note that if there is a problem finding the libraries, try adding the
+        CMake variable CMAKE_FIND_DEBUG_MODE:BOOL=ON to the command line.
 
       B. Use source packages from an GIT server by adding the following CMake
          options:
@@ -306,6 +313,8 @@ IV. Further considerations
             ZLIB_GIT_BRANCH="some_branch"
             SZIP_GIT_URL:STRING="https://some_location/szip"
             SZIP_GIT_BRANCH="some_branch"
+            LIBAEC_GIT_URL:STRING="https://some_location/libaec"
+            LIBAEC_GIT_BRANCH="some_branch"
          where "some_location" is the URL to the GIT repository and "some_branch" is
          a branch in the repository, usually the default. Also set
          CMAKE_BUILD_TYPE to the configuration type.
@@ -490,6 +499,8 @@ These five steps are described in detail below.
         <options> is:
             * SZIP_INCLUDE_DIR:PATH=<path to szip includes directory>
             * SZIP_LIBRARY:FILEPATH=<path to szip/library file>
+            * libaec_INCLUDE_DIR:PATH=<path to libaec includes directory>
+            * libaec_LIBRARY:FILEPATH=<path to libaec/library file>
             * ZLIB_INCLUDE_DIR:PATH=<path to zlib includes directory>
             * ZLIB_LIBRARY:FILEPATH=<path to zlib/library file>
             * JPEG_INCLUDE_DIR:PATH=<path to jpeg includes directory>
@@ -548,7 +559,7 @@ These five steps are described in detail below.
 
       2.1  Visual CMake users, click the Configure button. If this is the first time you are
            running cmake-gui in this directory, you will be prompted for the
-           generator you wish to use (for example on Windows, Visual Studio 12).
+           generator you wish to use (for example on Windows, Visual Studio 14).
            CMake will read in the CMakeLists.txt files from the source directory and
            display options for the HDF4 project. After the first configure you
            can adjust the cache settings and/or specify the locations of other programs.
@@ -594,7 +605,7 @@ These five steps are described in detail below.
            Release and build the solution.
 
       3.2.1  The external libraries (zlib, szip, and jpeg) can be configured
-           to allow building the libraries by downloading from an GIT repository.
+           to allow building the libraries by downloading from a GIT repository.
            The option is 'HDF4_ALLOW_EXTERNAL_SUPPORT'; by adding the following
            configuration option:
                -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING="GIT"
@@ -606,6 +617,8 @@ These five steps are described in detail below.
                ZLIB_GIT_BRANCH="${git_branch}"
                SZIP_GIT_URL:STRING="https://${git_url}/szip"
                SZIP_GIT_BRANCH="${git_branch}"
+               LIBAEC_GIT_URL:STRING="https://${git_url}/libaec"
+               LIBAEC_GIT_BRANCH="${git_branch}"
            ${git_url} should be changed to your location and ${git_branch} is
            your branch in the repository. Also define CMAKE_BUILD_TYPE
            to be the configuration type.
@@ -818,7 +831,6 @@ Using individual command presets (where <compiler-type> is  GNUC or MSVC or Clan
     cmake --build --preset ci-StdShar-<compiler-type>
     ctest --preset ci-StdShar-<compiler-type>
     cpack --preset ci-StdShar-<compiler-type>
-
 
 Using the workflow preset to configure, build, test and package the standard configuration:
     change directory to the hdf4 source folder

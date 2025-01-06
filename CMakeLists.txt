@@ -583,6 +583,9 @@ include (UserMacros.cmake)
 #-----------------------------------------------------------------------------
 # Include filter (zlib, szip, etc.) macros
 #-----------------------------------------------------------------------------
+set (HDF4_ENABLE_JPEG_LIB_SUPPORT ON) #Enable libjpeg required
+option (HDF4_ENABLE_SZIP_SUPPORT "Use SZip Filter" OFF) #SZip is optional
+set (HDF4_ENABLE_Z_LIB_SUPPORT ON) #Enable libzlib required
 include (CMakeFilters.cmake)
 
 #-----------------------------------------------------------------------------
@@ -611,10 +614,10 @@ if (HDF4_BUILD_DOC AND IS_DIRECTORY "${HDF4_DOXYGEN_DIR}")
     else ()
       set (HDF4_DOXY_WARNINGS "NO")
     endif ()
-    message(STATUS "Doxygen version: ${DOXYGEN_VERSION}")
+    message(VERBOSE "Doxygen version: ${DOXYGEN_VERSION}")
     add_subdirectory (doxygen)
   else ()
-    message(STATUS "Doxygen needs to be installed to generate the doxygen documentation")
+    message(WARNING "Doxygen needs to be installed to generate the doxygen documentation")
   endif ()
 endif ()
 
@@ -707,7 +710,7 @@ configure_file (${HDF_RESOURCES_DIR}/h4config.h.in ${PROJECT_BINARY_DIR}/h4confi
 #-----------------------------------------------------------------------------
 if (IS_DIRECTORY "${HDF4_SOURCE_DIR}/HDF4Examples")
   option (HDF4_BUILD_EXAMPLES  "Build HDF4 Library Examples" ON)
-  if (HDF4_BUILD_EXAMPLES)
+  if (HDF4_BUILD_EXAMPLES AND NOT HDF4_USE_SANITIZER)
     include (${HDF_RESOURCES_DIR}/HDF4ExampleCache.cmake)
     set (HDF4_VERSION ${HDF4_PACKAGE_VERSION})
     add_subdirectory (HDF4Examples)

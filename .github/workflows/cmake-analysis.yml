@@ -119,19 +119,19 @@ jobs:
   # Linux (Ubuntu) w/ clang + LeakSanitizer
   #
     name: "Ubuntu Clang LeakSanitizer"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Install CMake Dependencies (Linux_Leak)
         run: |
           sudo apt update
-          sudo apt-get install ninja-build doxygen graphviz curl
+          sudo apt-get install ninja-build doxygen graphviz curl libtinfo5
 
       - name: add clang to env
         uses: KyleMayes/install-llvm-action@v2.0.5
         id: setup-clang
         with:
           env: true
-          version: '18'
+          version: '18.1'
 
       - name: Set file base name (Linux_Leak)
         id: set-file-base
@@ -191,7 +191,7 @@ jobs:
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=OFF")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SANITIZERS:BOOL=ON")
-              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DUSE_SANITIZER:STRING=Leak")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_USE_SANITIZER:STRING=Leak")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=OFF")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DJPEG_USE_LOCALCONTENT:BOOL=OFF")
@@ -217,19 +217,19 @@ jobs:
   # Linux (Ubuntu) w/ clang + AddressSanitizer
   #
     name: "Ubuntu Clang AddressSanitizer"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Install CMake Dependencies (Linux_Address)
         run: |
           sudo apt update
-          sudo apt-get install ninja-build doxygen graphviz curl
+          sudo apt-get install ninja-build doxygen graphviz curl libtinfo5
 
       - name: add clang to env
         uses: KyleMayes/install-llvm-action@v2.0.5
         id: setup-clang
         with:
           env: true
-          version: '18'
+          version: '18.1'
 
       - name: Set file base name (Linux_Address)
         id: set-file-base
@@ -289,7 +289,7 @@ jobs:
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=OFF")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SANITIZERS:BOOL=ON")
-              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DUSE_SANITIZER:STRING=Address")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_USE_SANITIZER:STRING=Address")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=OFF")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DJPEG_USE_LOCALCONTENT:BOOL=OFF")
@@ -315,19 +315,19 @@ jobs:
   # Linux (Ubuntu) w/ clang + UndefinedBehaviorSanitizer
   #
     name: "Ubuntu Clang UndefinedBehaviorSanitizer"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Install CMake Dependencies (Linux_UndefinedBehavior)
         run: |
           sudo apt update
-          sudo apt-get install ninja-build doxygen graphviz curl
+          sudo apt-get install ninja-build doxygen graphviz curl libtinfo5
 
       - name: add clang to env
         uses: KyleMayes/install-llvm-action@v2.0.5
         id: setup-clang
         with:
           env: true
-          version: '18'
+          version: '18.1'
 
       - name: Set file base name (Linux_UndefinedBehavior)
         id: set-file-base
@@ -387,7 +387,7 @@ jobs:
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=OFF")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SANITIZERS:BOOL=ON")
-              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DUSE_SANITIZER:STRING=Undefined")
+              set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_USE_SANITIZER:STRING=Undefined")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_SZIP_ENCODING:BOOL=OFF")
               set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DJPEG_USE_LOCALCONTENT:BOOL=OFF")
