@@ -24,9 +24,10 @@ jobs:
         shell: bash
         run: |
           sudo apt update
-          sudo apt-get install ninja-build doxygen graphviz
+          sudo apt-get install cmake ninja-build doxygen graphviz
           sudo apt install libssl3 libssl-dev libcurl4 libcurl4-openssl-dev
-          sudo apt install -y libaec-dev zlib1g-dev wget curl bzip2 flex bison cmake libzip-dev openssl build-essential
+          sudo apt install -y zlib1g-dev libaec-dev libjpeg-dev
+          sudo apt install -y wget curl bzip2 flex bison libzip-dev openssl build-essential
 
       - name: Install AOCC 4.2.0
         shell: bash
