@@ -38,6 +38,8 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Removed support for autotools build system.
+
     - The NetCDF interface has been removed from both C and Fortran
 
       The HDF4 multi-file interface is built on NetCDF 2.3.2, which was

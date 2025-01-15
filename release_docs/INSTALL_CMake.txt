@@ -12,7 +12,6 @@ Section V:    Options for building HDF4 Libraries with CMake command line
 Section VI:   CMake option defaults for HDF4
 Section VII:  User Defined Options for HDF4 Libraries with CMake
 Section VIII: Using CMakePresets.json for compiling
-Section IX:   Autotools Configuration and Build
 
 ************************************************************************
 
@@ -886,18 +885,6 @@ Then you can change or add options for your specific case.
 
 
 ========================================================================
-III. Autotools Configuration and Build
-========================================================================
-See RELEASE.txt in the release_docs/ directory for the list of platforms 
-tested for this release.
-
-Instructions for building and testing HDF4 using autotools can be found in the
-INSTALL_Autotools.txt file found in this folder.
-
-
-========================================================================
 For further assistance, send email to help@hdfgroup.org
 ========================================================================
-
-
 
