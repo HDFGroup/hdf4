@@ -14,14 +14,12 @@
 /CTestDriver.cmake
 /HDF4-C-Trunk.cmake
 /atbuild
-/autom4te.cache
 /build
 /build*
 /buildat
 /buildstatic
 /cmake*.sh
 /config*.sh
-/redeploy*.sh
 /CMakeUserPresets.json
 HDF4Examples/CMakeUserPresets.json
 /log.txt
