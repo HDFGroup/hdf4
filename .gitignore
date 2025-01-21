@@ -1,8 +1,5 @@
 # .gitignore file for HDF4
 
-# Makefile.in files
-**/Makefile.in
-
 # Backup files
 # Editor-specific extensions should go in your ~/.gitconfig, but we
 # include the standard Unix backup '~' extension since autoheader

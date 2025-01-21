@@ -1,6 +1,5 @@
 ## config/lt_vers.am
-## (Use double hashes for copyright notice so that automake treats it as
-## comments and does not pass it to Makefile.in)
+## (Use double hashes for copyright notice)
 ## Copyright by The HDF Group.
 ## All rights reserved.
 ##
@@ -13,8 +12,6 @@
 ##
 # Add libtool shared library version numbers to the HDF4 library
 # See libtool versioning documentation online.
-# After making changes, run bin/reconfigure to update other configure related
-# files like Makefile.in.
 LT_VERS_INTERFACE = 10
 LT_VERS_AGE = 0
 LT_VERS_REVISION = 0
