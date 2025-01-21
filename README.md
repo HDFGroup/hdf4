@@ -107,8 +107,6 @@ Source Distribution Layout
 
    java   -- The Java HDF JNI library
 
-   m4     -- Autotools macros and libtool files for building with autotools.
-
    mfhdf  -- The netCDF(mfhdf) part of the HDF/mfhdf distribution and
              additional HDF utilities, such as hdp, hrepack, hdfimport, etc.
 

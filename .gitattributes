@@ -64,19 +64,12 @@ hdf/util/testfiles/test.cdf -text
 hdf/util/testfiles/test.hdf -text
 hdf/util/testfiles/tvattr.hdf -text
 java/CMakeLists.txt -text
-java/Makefile.am -text
-java/Makefile.in -text
 java/lib/ext/slf4j-nop-2.0.6.jar -text svneol=unset#application/zip
 java/lib/ext/slf4j-simple-2.0.6.jar -text svneol=unset#application/zip
 java/lib/hamcrest-core.jar -text svneol=unset#application/java-archive
 java/lib/junit.jar -text svneol=unset#application/java-archive
 java/lib/simplelogger.properties -text
 java/lib/slf4j-api-2.0.6.jar -text svneol=unset#application/zip
-java/src/CMakeLists.txt -text
-java/src/Makefile.am -text
-java/src/Makefile.in -text
-java/src/hdf/CMakeLists.txt -text
-java/src/hdf/hdflib/CMakeLists.txt -text
 java/src/hdf/hdflib/HDFArray.java -text
 java/src/hdf/hdflib/HDFChunkInfo.java -text
 java/src/hdf/hdflib/HDFCompInfo.java -text
@@ -99,34 +92,7 @@ java/src/hdf/hdflib/HDFRLECompInfo.java -text
 java/src/hdf/hdflib/HDFSKPHUFFCompInfo.java -text
 java/src/hdf/hdflib/HDFSZIPCompInfo.java -text
 java/src/hdf/overview.html -text
-java/src/jni/CMakeLists.txt -text
-java/src/jni/Makefile.am -text
-java/src/jni/Makefile.in -text
-java/src/jni/h4jni.h -text
-java/src/jni/hdfImp.c -text
-java/src/jni/hdfanImp.c -text
-java/src/jni/hdfdfpalImp.c -text
-java/src/jni/hdfdfuImp.c -text
-java/src/jni/hdfexceptionImp.c -text
-java/src/jni/hdfgrImp.c -text
-java/src/jni/hdfheImp.c -text
-java/src/jni/hdfhxImp.c -text
-java/src/jni/hdfnativeImp.c -text
-java/src/jni/hdfr24Imp.c -text
-java/src/jni/hdfr8Imp.c -text
-java/src/jni/hdfsdsImp.c -text
-java/src/jni/hdfstructsutil.c -text
-java/src/jni/hdfvdataImp.c -text
-java/src/jni/hdfvfImp.c -text
-java/src/jni/hdfvgroupImp.c -text
-java/src/jni/hdfvhImp.c -text
-java/src/jni/hdfvqImp.c -text
-java/src/jni/hdfvsqImp.c -text
-java/test/CMakeLists.txt -text
 java/test/JUnit-interface.ert -text
-java/test/JUnit-interface.txt -text
-java/test/Makefile.am -text
-java/test/Makefile.in -text
 java/test/TestAll.java -text
 java/test/TestH4.java -text
 java/test/TestH4ANparams.java -text
@@ -139,24 +105,6 @@ java/test/TestH4SDparams.java -text
 java/test/TestH4VSparams.java -text
 java/test/TestH4Vparams.java -text
 java/test/junit.sh.in -text
-m4/ax_check_class.m4 -text
-m4/ax_check_classpath.m4 -text
-m4/ax_check_java_home.m4 -text
-m4/ax_check_junit.m4 -text
-m4/ax_check_rqrd_class.m4 -text
-m4/ax_java_check_class.m4 -text
-m4/ax_java_options.m4 -text
-m4/ax_jni_include_dir.m4 -text
-m4/ax_prog_jar.m4 -text
-m4/ax_prog_java.m4 -text
-m4/ax_prog_java_cc.m4 -text
-m4/ax_prog_java_works.m4 -text
-m4/ax_prog_javac.m4 -text
-m4/ax_prog_javac_works.m4 -text
-m4/ax_prog_javadoc.m4 -text
-m4/ax_prog_javah.m4 -text
-m4/ax_try_compile_java.m4 -text
-m4/ax_try_run_java.m4 -text
 mfhdf/dumper/testfiles/Example6.hdf -text
 mfhdf/dumper/testfiles/IMCOMP.hdf -text
 mfhdf/dumper/testfiles/Image_with_Palette.hdf -text
