@@ -4556,7 +4556,7 @@ done:
 
       } HDF_CHUNK_DEF
 
-      The variable agruement 'flags' is a bit-or'd value which can currently be
+      The variable argument 'flags' is a bit-or'd value which can currently be
       'HDF_CHUNK' or 'HDF_CHUNK | HDF_COMP'.
 
       The simplest is the 'chunk_lengths' array specifying chunk
