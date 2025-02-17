@@ -146,12 +146,12 @@ if (BUILD_STATIC_LIBS)
       INTERFACE_INCLUDE_DIRECTORIES "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
   )
   set (install_targets ${HDF4_SRC_LIB_TARGET})
-#  add_custom_command(OUTPUT ${HDF4_SRC_LIB_TARGET} POST_BUILD
-#       COMMAND ${CMAKE_COMMAND} -E create_symlink $<TARGET_FILE:${HDF4_SRC_LIB_TARGET}> $<TARGET_FILE_DIR:${HDF4_SRC_LIB_TARGET}>/$<TARGET_FILE_NAME:${HDF4_SRC_LIB_SYM_TARGET}>
-#       DEPENDS ${HDF4_SRC_LIB_TARGET}
-#  )
-#  install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink $<TARGET_FILE:${HDF4_SRC_LIB_TARGET}> $<TARGET_FILE_DIR:${HDF4_SRC_LIB_TARGET}>/lib${HDF4_SRC_LIB_SYM_NAME}.a)" COMPONENT libraries)
-#  set (install_targets ${install_targets} ${HDF4_SRC_LIB_SYM_TARGET})
+  install(CODE "execute_process(
+           COMMAND ${CMAKE_COMMAND} -E create_symlink \"./$<TARGET_FILE_NAME:${HDF4_SRC_LIB_TARGET}>\" $<TARGET_FILE_PREFIX:${HDF4_SRC_LIB_TARGET}>${HDF4_SRC_LIB_SYM_NAME}$<TARGET_FILE_SUFFIX:${HDF4_SRC_LIB_TARGET}>
+           WORKING_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${HDF4_INSTALL_LIB_DIR}
+       )"
+      COMPONENT libraries
+  )
 endif ()
 
 if (BUILD_SHARED_LIBS)
@@ -180,12 +180,12 @@ if (BUILD_SHARED_LIBS)
       INTERFACE_COMPILE_DEFINITIONS H4_BUILT_AS_DYNAMIC_LIB=1
   )
   set (install_targets ${install_targets} ${HDF4_SRC_LIBSH_TARGET})
-#
-#  add_custom_command(TARGET ${HDF4_SRC_LIBSH_TARGET}
-#       COMMAND ${CMAKE_COMMAND} -E create_symlink $<TARGET_FILE_NAME:HDF4_SRC_LIBSH_TARGET> $<TARGET_FILE_NAME:HDF4_SRC_LIBSH_SYM_TARGET>
-#       DEPENDS $<TARGET_FILE_NAME:HDF4_SRC_LIBSH_TARGET>
-#  )
-#  set (install_targets ${install_targets} ${HDF4_SRC_LIBSH_SYM_TARGET})
+  install(CODE "execute_process(
+           COMMAND ${CMAKE_COMMAND} -E create_symlink \"./$<TARGET_FILE_NAME:${HDF4_SRC_LIBSH_TARGET}>\" $<TARGET_FILE_PREFIX:${HDF4_SRC_LIBSH_TARGET}>${HDF4_SRC_LIB_SYM_NAME}$<TARGET_FILE_SUFFIX:${HDF4_SRC_LIBSH_TARGET}>
+           WORKING_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${HDF4_INSTALL_LIB_DIR}
+       )"
+      COMPONENT libraries
+  )
 endif ()
 
 #-----------------------------------------------------------------------------
