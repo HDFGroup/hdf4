@@ -59,12 +59,13 @@ are tentative.
 | HDF4 3.1 | Fix memory issues and update documentation to match the software
 | HDF4 4.0 | Drop FORTRAN 77 support, Drop netCDF 2.3.2 API + tools, Unified library (maybe) |
 
-HDF4 4.0 (February 2025)
+HDF4 3.1 is scheduled to be released at the end of May, 2025.
+HDF4 4.0 (TBD, maybe 2026)
 * We will drop support for FORTRAN 77 and move to modern Fortran (2003 or 2008)
-* HDF4 includes an ancient netCDF 2.3.2 API along with HDF4-built ncdump and ncgen tools. Support for these will be dropped in 4.4.0. netCDF APIs and tools should be obtained from Unidata.
+* HDF4 includes an ancient netCDF 2.3.2 API along with HDF4-built ncdump and ncgen tools. Support for these will be dropped in 4.0. netCDF APIs and tools should be obtained from Unidata.
 * (maybe) libdf and libmfhdf will be merged into a single libhdf4 library, Fortran will be built as a separate library
 
-The goal of the HDF 4.4.0 release is to address long-standing deficiencies
+The goal of the HDF4 4.0 release is to address long-standing deficiencies
 and bring HDF4 in line with HDF5's build practices. This should allow HDF4
 to work better with modern systems and compilers and be more easily
 maintained.
