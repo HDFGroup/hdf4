@@ -54,22 +54,23 @@ new features and bug fixes, though we try to have at least one release of each
 maintenance branch per year. Future HDF4 releases indicated on this schedule
 are tentative.
 
-| Release | New Features |
-| ------- | ------------ |
-| 4.4.0 | Drop FORTRAN 77 support, Drop netCDF 2.3.2 API + tools, Unified library (maybe) |
+| Release  | New Features |
+| -------- | ------------ |
+| HDF4 3.1 | Fix memory issues and update documentation to match the software
+| HDF4 4.0 | Drop FORTRAN 77 support, Drop netCDF 2.3.2 API + tools, Unified library (maybe) |
 
-HDF 4.4.0 (February 2025)
+HDF4 3.1 is scheduled to be released at the end of May, 2025.
+HDF4 4.0 (Tentatively Feb, 2026)
 * We will drop support for FORTRAN 77 and move to modern Fortran (2003 or 2008)
-* HDF4 includes an ancient netCDF 2.3.2 API along with HDF4-built ncdump and ncgen tools. Support for these will be dropped in 4.4.0. netCDF APIs and tools should be obtained from Unidata.
+* HDF4 includes an ancient netCDF 2.3.2 API along with HDF4-built ncdump and ncgen tools. These will be removed in 4.0 and are available by installing the [netCDF-C library](https://github.com/Unidata/netcdf-c).
 * (maybe) libdf and libmfhdf will be merged into a single libhdf4 library, Fortran will be built as a separate library
 
-The goal of the HDF 4.4.0 release is to address long-standing deficiencies
+The goal of the HDF4 4.0 release is to address long-standing deficiencies
 and bring HDF4 in line with HDF5's build practices. This should allow HDF4
 to work better with modern systems and compilers and be more easily
 maintained.
 
-The 4.3 maintenance line will be retired when 4.4.0 releases. There are no
-more planned HDF 4.3.x releases.
+There will be one more release in the HDF4 3.x series, 3.1, then the 4.3 maintenance line will be retired when HDF4 4.0 releases.
 
 
 SNAPSHOTS, PREVIOUS RELEASES AND SOURCE CODE
@@ -129,4 +130,4 @@ System Requirements
  To build the HDF library from source, you need:
 
    * C and Fortran compilers. For a list of the supported compilers,
-     see release_docs/RELEASE.txt file.
+     see release_docs/RELEASE.txt file or [RELEASE.txt](https://github.com/HDFGroup/hdf4/blob/hdf4.3.0/release_notes/RELEASE.txt) on GitHub.

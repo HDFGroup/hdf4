@@ -5,18 +5,20 @@ title HDF4 Release Schedule
 projectscale monthly
 Project starts 2023-01-01
 
-[4.2] starts 2022-01-01 and lasts 61 weeks
+[4.2] starts 2022-01-01 and lasts 39 weeks
 [4.2.16] happens 2023-02-28
 [4.2.16-2] happens 2023-06-30
 [4.2.16-2] displays on same row as [4.2.16]
 [4.2] is colored in #2EDB54
 
-[4.3] starts 2024-02-28 and lasts 52 weeks
-[4.3.0] happens 2024-02-28
+[4.3] starts 2023-10-01 and lasts 87 weeks
+[4.3.0] happens 2024-02-29
+[4.3.1] happens 2025-05-30
+[4.3.1] displays on same row as [4.3.0]
 [4.3] is colored in #3385FF
 
-[4.4] starts 2025-02-28 and lasts 44 weeks
-[4.4.0] happens 2025-02-28
-[4.4] is colored in #E66DCB
+[4.4] starts 2025-01-01 and lasts 65 weeks
+[4.4.0] happens 2026-02-28
+[4.4] is colored in #700DCB
 
 @endgantt
