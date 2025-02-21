@@ -50,7 +50,6 @@ jobs:
                 -DCMAKE_TOOLCHAIN_FILE=../config/toolchain/gcc.cmake \
                 -DBUILD_SHARED_LIBS:BOOL=ON \
                 -DHDF4_BUILD_EXAMPLES=ON \
-                -DBUILD_JPEG_WITH_PIC:BOOL=ON \
                 -DHDF4_BUILD_FORTRAN=OFF \
                 -DHDF4_BUILD_JAVA=OFF \
                 -DHDF4_BUILD_DOC=OFF \
