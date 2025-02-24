@@ -48,7 +48,7 @@ typedef enum {
     DFE_SEEKERROR,  /* There was a seek error */
     DFE_RDONLY,     /* The DF is read only */
     DFE_BADSEEK,    /* Attempt to seek past end of element */
-    DFE_INVFILE,    /* File is neither hdf, cdf, netcdf */
+    DFE_INVFILE,    /* File is neither HDF, CDF, nor NetCDF */
 
     /* Low-level HDF I/O errors */
     DFE_PUTELEM,  /* Hputelement failed in some way */
