@@ -40,7 +40,7 @@
 *                  2            2             2     2      2
 *        more  flags  < nattrs  attr0_tag/ref attr1_tag/ref ...>
 *         2      4         4         2/2            2/2
-*        <other new featrues >  version  more extra_byte
+*        <other new features >  version  more extra_byte
 *                                 2       2      1
 *
 *      o To make version number accessible without parsing the

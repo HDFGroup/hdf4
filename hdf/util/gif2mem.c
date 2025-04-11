@@ -27,7 +27,7 @@
 **                                                                          **
 **  GIFHEAD displays all real information contained within a GIF image      **
 **  file, including all color tables and extension block information.       **
-**  GIFHEAD reads both GIF 87a abd 89a-format files.                        **
+**  GIFHEAD reads both GIF 87a and 89a-format files.                        **
 **                                                                          **
 **  Copyright (C) 1991-92 by Graphics Software Labs.  All rights reserved.  **
 \****************************************************************************/
