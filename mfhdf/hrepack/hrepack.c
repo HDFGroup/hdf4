@@ -103,7 +103,7 @@ hrepack_addcomp(const char *str, options_t *options)
     if ((obj_list = parse_comp(str, &n_objs, &comp)) == NULL)
         return FAIL;
 
-    /* searh for the "*" all objects character */
+    /* search for the "*" all objects character */
     for (i = 0; i < n_objs; i++) {
         if (strcmp("*", obj_list[i].obj) == 0) {
             /* if we are compressing all set the global comp type */
@@ -165,7 +165,7 @@ hrepack_addchunk(const char *str, options_t *options)
     if ((obj_list = parse_chunk(str, &n_objs, chunk_lengths, &chunk_rank)) == NULL)
         return FAIL;
 
-    /* searh for the "*" all objects character */
+    /* search for the "*" all objects character */
     for (i = 0; i < n_objs; i++) {
         if (strcmp("*", obj_list[i].obj) == 0) {
             /* if we are chunking all set the global chunking type */

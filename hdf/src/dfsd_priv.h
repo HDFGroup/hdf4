@@ -41,7 +41,7 @@ typedef struct DFSsdg {
     char  **dimluf[3];   /* label/unit/format for each dim */
     uint8 **dimscales;   /* scales for each dimension */
     uint8   max_min[16]; /* max, min values of data, */
-    /*  currently atmost 8 bytes each   */
+    /*  currently at most 8 bytes each   */
     int32   numbertype;                   /* default is float32      */
     uint8   filenumsubclass;              /* number format in the file, default is IEEE */
     int32   aid;                          /* access id     */

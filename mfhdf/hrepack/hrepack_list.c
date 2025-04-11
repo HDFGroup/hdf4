@@ -366,7 +366,7 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
         nlones = Vlone(infile_id, ref_array, nlones);
 
         /*
-         * iterate tru each lone vgroup.
+         * iterate through each lone vgroup.
          */
         for (i = 0; i < nlones; i++) {
 
@@ -992,7 +992,7 @@ list_vs(int32 infile_id, int32 outfile_id, list_table_t *list_tbl, options_t *op
         nlones = VSlone(infile_id, ref_array, nlones);
 
         /*
-         * iterate tru each lone vdata.
+         * iterate through each lone vdata.
          */
         for (i = 0; i < nlones; i++) {
             /*

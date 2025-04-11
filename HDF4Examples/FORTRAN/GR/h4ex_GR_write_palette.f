@@ -86,7 +86,7 @@ C     Write the data in the buffer into the image array.
 C
       status = mgwcimg(ri_id, start, stride, edges, image_buf)
 C
-C     Initilaize the palette buffer to grayscale.
+C     Initialize the palette buffer to grayscale.
 C
       do 40 i = 1, N_ENTRIES
           do 30 j = 1, N_COMPS_PAL
