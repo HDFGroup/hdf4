@@ -75,7 +75,7 @@ TEST()
   shift
 
   # print a id banner
-  # MESG 6 "$@"
+  MESG 6 "$@"
 
   # run the test
   ( 
