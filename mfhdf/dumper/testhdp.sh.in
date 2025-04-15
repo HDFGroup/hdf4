@@ -74,6 +74,9 @@ TEST()
   expected="$srcdir/testfiles/$1"
   shift
 
+  # print a id banner
+  MESG 6 "$@"
+
   # run the test
   ( 
     cd $srcdir/testfiles
