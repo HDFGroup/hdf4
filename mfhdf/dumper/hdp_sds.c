@@ -970,7 +970,7 @@ printSDS_ASCII(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* index
                     status = sdsdumpfull(sds_id, dumpsds_opts, rank, dimsizes, nt, fp);
                     if (FAIL == status)
                         ERROR_BREAK_3("in %s: %s failed for %d'th SDS", "printSDS_ASCII", "sdsdumpfull",
-                                     (int)sds_index, FAIL);
+                                      (int)sds_index, FAIL);
                 }
             }
             break;
