@@ -969,7 +969,8 @@ printSDS_ASCII(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* index
                 if (!isdimvar || nt != 0) { /* no dump if dimvar w/o scale values */
                     status = sdsdumpfull(sds_id, dumpsds_opts, rank, dimsizes, nt, fp);
                     if (FAIL == status)
-                        ERROR_BREAK_3("in %s: %s failed for %d'th SDS", "printSDS_ASCII", "sdsdumpfull", (int)sds_index, FAIL);
+                        ERROR_BREAK_3("in %s: %s failed for %d'th SDS", "printSDS_ASCII", "sdsdumpfull",
+                                     (int)sds_index, FAIL);
                 }
             }
             break;
