@@ -1,0 +1,31 @@
+File name: var3D_empty.nc 
+
+Variable Name = Variable with rank 0
+	 Index = 0
+	 Type= 32-bit floating point
+	 Rank = 0
+	 Number of attributes = 0
+
+Variable Name = Variable 1
+	 Index = 1
+	 Type= 32-bit floating point
+	 Rank = 3
+	 Number of attributes = 1
+	 Dim0: Name=Record dimension
+		 Size = UNLIMITED (currently 0)
+		 Scale Type = number-type not set
+		 Number of attributes = 0
+	 Dim1: Name=X dimension
+		 Size = 2
+		 Scale Type = number-type not set
+		 Number of attributes = 0
+	 Dim2: Name=Y dimension
+		 Size = 4
+		 Scale Type = number-type not set
+		 Number of attributes = 0
+	 Attr0: Name = units
+		 Type = 8-bit signed char 
+		 Count= 3
+		 Value = hPa
+	 Data : 
+                No data written.
