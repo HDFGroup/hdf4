@@ -38,6 +38,8 @@ set (HDF4_REFERENCE_TEST_FILES
       VGlongname.hdf
       vslongname.hdf
       Roy.nc
+      Roy-64.nc
+      var3D_empty.nc
 )
 
 set (HDF4_REFERENCE_FILES
@@ -78,6 +80,8 @@ set (HDF4_REFERENCE_FILES
       dumpsds-16.out
       dumpsds-17.out
       dumpsds-18.out
+      dumpsds-19.out
+      dumpsds-20.out
       dumpsds-2.out
       dumpsds-3.out
       dumpsds-4.out
@@ -248,6 +252,13 @@ ADD_H4_TEST (dumpsds-17 0 dumpsds -k -h -i 39,36 -n data34,data27 -r 36,37 -i 0,
 
 # Test 18 reads a few small datasets in a netCDF file
 ADD_H4_TEST (dumpsds-18 0 dumpsds -i 0,1,2 Roy.nc)
+
+# Test 19 displays a message when the file is a netCDF 64-bit file
+ADD_H4_TEST (dumpsds-19 0 dumpsds Roy-64.nc)
+
+# Test 20 detects empty variable in a netCDF file and displays info when a
+# netCDF variable has rank = 0
+ADD_H4_TEST (dumpsds-20 0 dumpsds var3D_empty.nc)
 
 ADD_H4_TEST (dumprig-1 0 dumprig tdf24.hdf)
 ADD_H4_TEST (dumprig-2 0 dumprig -i 1,2 tdf24.hdf)

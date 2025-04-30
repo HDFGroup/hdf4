@@ -259,6 +259,10 @@ TEST dumpsds-18.out dumpsds -i 0,1,2 Roy.nc
 # Test 19 displays a message when the file is a netCDF 64-bit file
 TEST dumpsds-19.out dumpsds Roy-64.nc
 
+# Test 20 detects empty variable in a netCDF file and displays info when a
+# netCDF variable has rank = 0
+TEST dumpsds-20.out dumpsds var3D_empty.nc
+
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi
