@@ -231,20 +231,22 @@ sdsdumpfull(int32 sds_id, dump_info_t *dumpsds_opts, int32 rank, int32 dimsizes[
     edge[rank - 1] = dimsizes[rank - 1];
 
     /* check if the SDS has data before proceeding if the file is HDF file */
-    /* see bug HDFFR- regarding non-HDF files */
     if (dumpsds_opts->file_type == HDF_FILE) {
         status32 = SDcheckempty(sds_id, &emptySDS);
         if (status32 == FAIL)
             ERROR_GOTO_2("in %s: SDcheckempty failed for sds_id(%d)", "sdsdumpfull", (int)sds_id);
-        if (emptySDS) {
-            if (ff == DASCII) /* what about binary??? - BMR */
-                fprintf(fp, "                No data written.\n");
-            HGOTO_DONE(SUCCEED); /* because the dump for this SDS is */
-                                 /* successful although it's empty -> next SDS */
-        }
     } /* file is HDF */
+    else {
+        if (dimsizes[0] > 0) /* some records had been written */
+            emptySDS = FALSE;
+    } /* file is netCDF or CDF */
 
-    /* Should handle the case of rank==0 here. -BMR */
+    /* if the SDS is empty, display a message for ASCII output, nothing for binary */
+    if (emptySDS) {
+        if (ff == DASCII)
+            fprintf(fp, "                No data written.\n");
+        HGOTO_DONE(SUCCEED); /* successful although empty, go to next SDS */
+    }
 
     if (rank == 1) { /* If there is only one dimension, then dump the data
                                and the job is done. */
@@ -279,7 +281,7 @@ sdsdumpfull(int32 sds_id, dump_info_t *dumpsds_opts, int32 rank, int32 dimsizes[
     else if (rank > 1) {
         done = 0;
 
-        /* In each iteration, a row in dumped and "left[]" is modified
+        /* In each iteration, a row is dumped and "left[]" is modified
           accordingly(?) */
         while (!done) {
             if (FAIL == SDreaddata(sds_id, start, NULL, edge, buf)) {
@@ -903,6 +905,11 @@ printSDS_ASCII(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* index
             }
             fprintf(fp, "\t Rank = %d\n\t Number of attributes = %d\n", (int)rank, (int)nattrs);
 
+            /* if the SDS has rank 0, skip to the next SDS */
+            if (rank == 0) {
+                break;
+            }
+
             /* print each dimension of the current SDS */
             for (j = 0; j < rank; j++) {
                 int32 size; /* size of the current dimension */
@@ -919,7 +926,8 @@ printSDS_ASCII(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* index
                                   "SDdiminfo", j, (int)sds_index, FAIL);
 
                 fprintf(fp, "\t Dim%d: Name=%s\n", (int)j, dim_nm);
-                if (size == 0) {
+                /* "size" was provided at creation time, "dimsizes" has actual sizes */
+                if (size == NC_UNLIMITED) {
                     fprintf(fp, "\t\t Size = UNLIMITED ");
                     fprintf(fp, "(currently %d)\n", (int)dimsizes[j]);
                 }
@@ -958,13 +966,11 @@ printSDS_ASCII(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* index
                 fprintf(fp, "\t\t <Unable to read SZIP compressed data>\n");
             }
             else {
-                if (rank > 0 && dimsizes[0] != 0) {
-                    if (!isdimvar || nt != 0) { /* no dump if dimvar w/o scale values */
-                        status = sdsdumpfull(sds_id, dumpsds_opts, rank, dimsizes, nt, fp);
-                        if (FAIL == status)
-                            ERROR_BREAK_3("in %s: %s failed for %d'th SDS", "printSDS_ASCII", "sdsdumpfull",
-                                          (int)sds_index, FAIL);
-                    }
+                if (!isdimvar || nt != 0) { /* no dump if dimvar w/o scale values */
+                    status = sdsdumpfull(sds_id, dumpsds_opts, rank, dimsizes, nt, fp);
+                    if (FAIL == status)
+                        ERROR_BREAK_3("in %s: %s failed for %d'th SDS", "printSDS_ASCII", "sdsdumpfull",
+                                      (int)sds_index, FAIL);
                 }
             }
             break;
