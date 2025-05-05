@@ -3,7 +3,7 @@
 
 #include "hdf.h"
 
-#define FILE_NAME      "General_Vdatas.hdf"
+#define FILE_NAME      "General_Vdatas3.hdf"
 #define VDATA_NAME     "Solid Particle"
 #define N_RECORDS      5                      /* number of records the vdata contains */
 #define RECORD_INDEX   3                      /* position where reading starts - 4th record */
@@ -48,8 +48,10 @@ main()
      * Attach to the vdata for reading if it is found, otherwise
      * exit the program.
      */
-    if (vdata_ref == 0)
-        return 0;
+    if (vdata_ref == 0) {
+        printf("*** vdata %s is not found in file %s\n", VDATA_NAME, FILE_NAME);
+        return (1);
+    }
     vdata_id = VSattach(file_id, vdata_ref, "r");
 
     /*
