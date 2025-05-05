@@ -48,10 +48,9 @@ main()
      * Attach to the vdata for reading if it is found, otherwise
      * exit the program.
      */
-    if (vdata_ref == 0)
-    {
+    if (vdata_ref == 0) {
         printf("*** vdata %s is not found in file %s\n", VDATA_NAME, FILE_NAME);
-        return(1);
+        return (1);
     }
     vdata_id = VSattach(file_id, vdata_ref, "r");
 
