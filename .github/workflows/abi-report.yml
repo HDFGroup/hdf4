@@ -1,5 +1,6 @@
 name: hdf4 Check Application Binary Interface (ABI)
 
+# Triggers the workflow on a call from another workflow
 on:
   workflow_call:
     inputs:
@@ -43,12 +44,12 @@ jobs:
           FILE_DOTS=$(echo "${{ inputs.file_ref }}" | sed -r "s/([0-9]+)\_([0-9]+)\_([0-9]+)\-([0-9]+).*/\1\.\2\.\3\-\4/")
           echo "HDF4R_DOTS=$FILE_DOTS" >> $GITHUB_OUTPUT
 
-      - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v4.1.7
 
       - name: Get published binary (Linux)
-        uses: actions/download-artifact@f44cd7b40bfd40b6aa1cc1b9b5b7bf03d3c67110 # v4.1.0
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
-            name: tgz-ubuntu-2204_gcc-binary
+            name: tgz-ubuntu-2404_gcc-binary
             path: ${{ github.workspace }}
 
       - name: List files for the space (Linux)
@@ -56,7 +57,7 @@ jobs:
           ls -l ${{ github.workspace }}
 
       - name: Uncompress gh binary (Linux)
-        run: tar -zxvf ${{ github.workspace }}/${{ inputs.file_base }}-ubuntu-2204_gcc.tar.gz
+        run: tar -zxvf ${{ github.workspace }}/${{ inputs.file_base }}-ubuntu-2404_gcc.tar.gz
 
       - name: Uncompress hdf4 binary (Linux)
         run:  |
@@ -73,7 +74,7 @@ jobs:
         run: |
           HDF4DIR=${{ github.workspace }}/hdf4/HDF_Group/HDF/
           FILE_NAME_HDF4=$(ls ${{ github.workspace }}/hdf4/HDF_Group/HDF)
-          FILE_VERS=$(echo "$FILE_NAME_HDF4" | sed -r "s/([0-9]+\.[0-9]+\.[0-9]+\-[0-9]+)\..*/\1/")
+          FILE_VERS=$(echo "$FILE_NAME_HDF4" | sed -r "s/([0-9]+\.[0-9]+\.[0-9]+).*/\1/")
           echo "HDF4_ROOT=$HDF4DIR$FILE_NAME_HDF4" >> $GITHUB_OUTPUT
           echo "HDF4_VERS=$FILE_VERS" >> $GITHUB_OUTPUT
 
@@ -81,8 +82,10 @@ jobs:
         run: |
           mkdir "${{ github.workspace }}/hdf4R"
           cd "${{ github.workspace }}/hdf4R"
-          wget -q https://github.com/HDFGroup/hdf4/releases/download/hdf-${{ inputs.file_ref }}/hdf-${{ inputs.file_ref }}-ubuntu-2204.tar.gz
-          tar zxf hdf-${{ inputs.file_ref }}-ubuntu-2204.tar.gz
+          #wget -q https://github.com/HDFGroup/hdf4/releases/download/hdf${{ inputs.file_ref }}/hdf${{ inputs.file_ref }}-ubuntu-2404_gcc.tar.gz
+          #tar zxf hdf${{ inputs.file_ref }}-ubuntu-2404_gcc.tar.gz
+          wget -q https://github.com/HDFGroup/hdf4/releases/download/hdf${{ inputs.file_ref }}/hdf${{ inputs.file_ref }}-ubuntu-2204_gcc.tar.gz
+          tar zxf hdf${{ inputs.file_ref }}-ubuntu-2204_gcc.tar.gz
 
       - name: List files for the space (Linux)
         run: |
@@ -113,7 +116,7 @@ jobs:
 
       - name: Run Java API report
         run: |
-          japi-compliance-checker ${{ steps.set-hdf4lib-refname.outputs.HDF5R_ROOT }}/lib/jarhdf4-${{ steps.convert-hdf4lib-refname.outputs.HDF4R_DOTS }}.jar ${{ steps.set-hdf4lib-name.outputs.HDF4_ROOT }}/lib/jarhdf4-${{ steps.set-hdf4lib-name.outputs.HDF4_VERS }}.jar
+          japi-compliance-checker ${{ steps.set-hdf4lib-refname.outputs.HDF4R_ROOT }}/lib/jarhdf-${{ steps.convert-hdf4lib-refname.outputs.HDF4R_DOTS }}.jar ${{ steps.set-hdf4lib-name.outputs.HDF4_ROOT }}/lib/jarhdf-${{ steps.set-hdf4lib-name.outputs.HDF4_VERS }}.jar
 
       - name: Run hdf ABI report
         run: |
@@ -131,7 +134,7 @@ jobs:
 
       - name: Copy ABI reports
         run: |
-          cp compat_reports/jarhdf4-/${{ steps.set-hdf4lib-refname.outputs.HDF5R_VERS }}_to_${{ steps.set-hdf4lib-name.outputs.HDF4_VERS }}/compat_report.html ${{ inputs.file_base }}-java_compat_report.html
+          cp compat_reports/jarhdf/${{ steps.set-hdf4lib-refname.outputs.HDF4R_VERS }}_to_${{ steps.set-hdf4lib-name.outputs.HDF4_VERS }}/compat_report.html ${{ inputs.file_base }}-java_compat_report.html
           ls -l compat_reports/${{ inputs.file_base }}-hdf/X_to_Y
           cp compat_reports/${{ inputs.file_base }}-hdf/X_to_Y/compat_report.html ${{ inputs.file_base }}-hdf_compat_report.html
           ls -l compat_reports/${{ inputs.file_base }}-mfhdf/X_to_Y
@@ -142,11 +145,21 @@ jobs:
           ls -l compat_reports
           ls -l *.html
 
+      - name: Publish ABI reports
+        id: publish-abi-reports
+        run: |
+          mkdir "${{ runner.workspace }}/buildabi"
+          mkdir "${{ runner.workspace }}/buildabi/hdf4"
+          cp ${{ inputs.file_base }}-hdf_compat_report.html ${{ runner.workspace }}/buildabi/hdf4
+          cp ${{ inputs.file_base }}-hdf_compat_report.html ${{ runner.workspace }}/buildabi/hdf4
+          cp ${{ inputs.file_base }}-java_compat_report.html ${{ runner.workspace }}/buildabi/hdf4
+          cd "${{ runner.workspace }}/buildabi"
+          tar -zcvf ${{ inputs.file_base }}.html.abi.reports.tar.gz hdf4
+        shell: bash
+
       - name: Save output as artifact
         uses: actions/upload-artifact@v4
         with:
           name: abi-reports
           path: |
-            ${{ inputs.file_base }}-hdf_compat_report.html
-            ${{ inputs.file_base }}-mfhdf_compat_report.html
-            ${{ inputs.file_base }}-java_compat_report.html
+            ${{ runner.workspace }}/buildabi/${{ inputs.file_base }}.html.abi.reports.tar.gz

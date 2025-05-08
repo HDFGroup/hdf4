@@ -42,15 +42,15 @@ endif ()
 set (BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DSITE:STRING=${CTEST_SITE} -DBUILDNAME:STRING=${CTEST_BUILD_NAME}")
 
 # Launchers work only with Makefile and Ninja generators.
-if(NOT "${CTEST_CMAKE_GENERATOR}" MATCHES "Make|Ninja" OR LOCAL_SKIP_TEST)
-  set(CTEST_USE_LAUNCHERS 0)
-  set(ENV{CTEST_USE_LAUNCHERS_DEFAULT} 0)
-  set(BUILD_OPTIONS "${BUILD_OPTIONS} -DCTEST_USE_LAUNCHERS:BOOL=OFF")
-else()
-  set(CTEST_USE_LAUNCHERS 1)
-  set(ENV{CTEST_USE_LAUNCHERS_DEFAULT} 1)
-  set(BUILD_OPTIONS "${BUILD_OPTIONS} -DCTEST_USE_LAUNCHERS:BOOL=ON")
-endif()
+if (NOT "${CTEST_CMAKE_GENERATOR}" MATCHES "Make|Ninja" OR LOCAL_SKIP_TEST)
+  set (CTEST_USE_LAUNCHERS 0)
+  set (ENV{CTEST_USE_LAUNCHERS_DEFAULT} 0)
+  set (BUILD_OPTIONS "${BUILD_OPTIONS} -DCTEST_USE_LAUNCHERS:BOOL=OFF")
+else ()
+  set (CTEST_USE_LAUNCHERS 1)
+  set (ENV{CTEST_USE_LAUNCHERS_DEFAULT} 1)
+  set (BUILD_OPTIONS "${BUILD_OPTIONS} -DCTEST_USE_LAUNCHERS:BOOL=ON")
+endif ()
 
 #-----------------------------------------------------------------------------
 # MacOS machines need special options
@@ -74,7 +74,6 @@ endif ()
 set (NEED_REPOSITORY_CHECKOUT 0)
 set (CTEST_CMAKE_COMMAND "\"${CMAKE_COMMAND}\"")
 if (CTEST_USE_TAR_SOURCE)
-  ## Uncompress source if tar or zip file provided
   ## --------------------------
   if (WIN32 AND NOT MINGW)
     message (STATUS "extracting... [${CMAKE_EXECUTABLE_NAME} -E tar -xvf ${CTEST_DASHBOARD_ROOT}\\${CTEST_USE_TAR_SOURCE}.zip]")
@@ -95,10 +94,10 @@ endif ()
 ## Clear the build directory
 ## --------------------------
 set (CTEST_START_WITH_EMPTY_BINARY_DIRECTORY TRUE)
-if (EXISTS "${CTEST_BINARY_DIRECTORY}" AND IS_DIRECTORY "${CTEST_BINARY_DIRECTORY}")
-  ctest_empty_binary_directory (${CTEST_BINARY_DIRECTORY})
-else ()
+if (NOT EXISTS "${CTEST_BINARY_DIRECTORY}")
   file (MAKE_DIRECTORY "${CTEST_BINARY_DIRECTORY}")
+else ()
+  ctest_empty_binary_directory (${CTEST_BINARY_DIRECTORY})
 endif ()
 
 # Use multiple CPU cores to build
@@ -119,13 +118,15 @@ endif ()
 #-----------------------------------------------------------------------------
 # Initialize the CTEST commands
 #------------------------------
-set(CTEST_CONFIGURE_TOOLSET  "")
-if(CMAKE_GENERATOR_TOOLSET)
-  set(CTEST_CONFIGURE_TOOLSET  "-T${CMAKE_GENERATOR_TOOLSET}")
+if (CMAKE_GENERATOR_TOOLSET)
+  set (CTEST_CONFIGURE_TOOLSET  "\"-T${CMAKE_GENERATOR_TOOLSET}\"")
+else ()
+  set (CTEST_CONFIGURE_TOOLSET)
 endif()
-set(CTEST_CONFIGURE_ARCHITECTURE  "")
-if(CMAKE_GENERATOR_ARCHITECTURE)
-  set(CTEST_CONFIGURE_ARCHITECTURE  "-A${CMAKE_GENERATOR_ARCHITECTURE}")
+if (CMAKE_GENERATOR_ARCHITECTURE)
+  set (CTEST_CONFIGURE_ARCHITECTURE  "\"-A${CMAKE_GENERATOR_ARCHITECTURE}\"")
+else ()
+  set (CTEST_CONFIGURE_ARCHITECTURE)
 endif()
 set (CTEST_CONFIGURE_COMMAND
     "${CTEST_CMAKE_COMMAND} -C \"${CTEST_SOURCE_DIRECTORY}/config/cmake/cacheinit.cmake\" -DCMAKE_BUILD_TYPE:STRING=${CTEST_CONFIGURATION_TYPE} ${BUILD_OPTIONS} \"-G${CTEST_CMAKE_GENERATOR}\" \"${CTEST_CONFIGURE_ARCHITECTURE}\" \"${CTEST_CONFIGURE_TOOLSET}\" \"${CTEST_SOURCE_DIRECTORY}\""
@@ -134,7 +135,7 @@ set (CTEST_CONFIGURE_COMMAND
 
 #-----------------------------------------------------------------------------
 ## -- set output to english
-set ($ENV{LC_MESSAGES}  "en_EN")
+set (ENV{LC_MESSAGES} "en_EN")
 
 #-----------------------------------------------------------------------------
   configure_file(${CTEST_SOURCE_DIRECTORY}/config/cmake/CTestCustom.cmake ${CTEST_BINARY_DIRECTORY}/CTestCustom.cmake)

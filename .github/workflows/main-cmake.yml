@@ -1,6 +1,6 @@
 name: hdf4 dev CMake CI
 
-# Controls when the action will run. Triggers the workflow on a call
+# Triggers the workflow on a call from another workflow
 on:
   workflow_call:
     inputs:
@@ -20,9 +20,6 @@ on:
 permissions:
   contents: read
 
-# A workflow run is made up of one or more jobs that can run sequentially or
-# in parallel. We just have one job, but the matrix items defined below will
-# run in parallel.
 jobs:
 
   # A workflow that builds the library and runs all the tests
@@ -42,13 +39,13 @@ jobs:
           - "MacOS Clang"
 
         # This is where we list the bulk of the options for each configuration.
-        # The key-value pair values are usually appropriate for being CMake or
-        # Autotools configure values, so be aware of that.
+        # The key-value pair values are usually appropriate for being CMake.
 
         include:
 
           # Windows w/ MSVC + CMake
           #
+          # No Fortran or parallel
           - name: "Windows MSVC"
             os: windows-latest
             toolchain: ""
@@ -64,8 +61,6 @@ jobs:
 
           # Linux (Ubuntu) w/ gcc + CMake
           #
-          # We might think about adding Clang, but MacOS already tests that
-          # so it's not critical
           - name: "Ubuntu gcc"
             os: ubuntu-latest
             fortran: OFF
@@ -74,25 +69,22 @@ jobs:
             localjpeg: OFF
             locallibaec: OFF
             localzlib: OFF
-            toolchain: "-DCMAKE_TOOLCHAIN_FILE=config/toolchain/gcc.cmake"
+            toolchain: "-DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/config/toolchain/gcc.cmake"
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
             run_tests: true
 
-
           # MacOS w/ Clang + CMake
           #
-          # We could also build with the Autotools via brew installing them,
-          # but that seems unnecessary
           - name: "MacOS Clang"
-            os: macos-13
+            os: macos-latest
             fortran: OFF
             java: ON
             docs: ON
             localjpeg: OFF
             locallibaec: OFF
             localzlib: OFF
-            toolchain: "-DCMAKE_TOOLCHAIN_FILE=config/toolchain/clang.cmake"
+            toolchain: "-DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/config/toolchain/clang.cmake"
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
             run_tests: true
@@ -108,18 +100,13 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-
-      #
-      # SETUP
-      #
-
       #Useful for debugging
       - name: Dump matrix context
         run: echo '${{ toJSON(matrix) }}'
 
       - name: Install CMake Dependencies (Linux)
         run: |
-           sudo apt update
+           sudo apt-get update
            sudo apt-get install -y ninja-build libtirpc-dev graphviz
         if: matrix.os == 'ubuntu-latest'
 
@@ -129,12 +116,18 @@ jobs:
 
       - name: Install Dependencies (macOS)
         run: brew install ninja
-        if: matrix.os == 'macos-13'
+        if: ${{ matrix.os == 'macos-latest' }}
 
       - name: Install Dependencies
         uses: ssciwr/doxygen-install@v1
         with:
           version: "1.9.7"
+
+      - name: Set up JDK 19
+        uses: actions/setup-java@v4
+        with:
+          java-version: '19'
+          distribution: 'temurin'
 
       - name: Set environment for MSVC (Windows)
         run: |
@@ -145,12 +138,9 @@ jobs:
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Get Sources
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.7
 
-      #
       # CMAKE CONFIGURE
-      #
-
       - name: CMake Configure
         run: |
           mkdir "${{ runner.workspace }}/build"
@@ -172,22 +162,16 @@ jobs:
             -DZLIB_USE_LOCALCONTENT:BOOL=${{ matrix.localzlib }} \
             -DHDF4_PACK_EXAMPLES:BOOL=ON \
             -DHDF4_PACKAGE_EXTLIBS:BOOL=ON \
+            -DHDF4_PACK_MACOSX_DMG:BOOL=OFF \
             $GITHUB_WORKSPACE
         shell: bash
 
-
-      #
       # BUILD
-      #
-
       - name: CMake Build
         run: cmake --build . --parallel 3 --config ${{ inputs.build_mode }}
         working-directory: ${{ runner.workspace }}/build
 
-      #
       # RUN TESTS
-      #
-
       - name: CMake Run Tests
         run: ctest . --parallel 2 -C ${{ inputs.build_mode }} -V
         working-directory: ${{ runner.workspace }}/build
@@ -208,20 +192,20 @@ jobs:
               name: zip-vs2022_cl-${{ inputs.build_mode }}-binary
               path: ${{ runner.workspace }}/build/HDF-*-win64.zip
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
-        if:  ${{ (matrix.os == 'windows-latest') && (matrix.name != 'Ubuntu mingw CMake') && (inputs.netcdf == 'true') && (inputs.shared == 'true') }}
+        if:  ${{ (matrix.os == 'windows-latest') && (matrix.name != 'Ubuntu mingw CMake') && (inputs.shared == 'true') }}
 
       - name: Save published binary (linux)
         uses: actions/upload-artifact@v4
         with:
-              name: tgz-ubuntu-2204_gcc-${{ inputs.build_mode }}-binary
+              name: tgz-ubuntu-2404_gcc-${{ inputs.build_mode }}-binary
               path: ${{ runner.workspace }}/build/HDF-*-Linux.tar.gz
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
-        if:  ${{ (matrix.os == 'ubuntu-latest') && (matrix.name != 'Ubuntu mingw CMake') && (inputs.netcdf == 'true') && (inputs.shared == 'true') }}
+        if:  ${{ (matrix.os == 'ubuntu-latest') && (matrix.name != 'Ubuntu mingw CMake') && (inputs.shared == 'true') }}
 
-      - name: Save published binary (Mac)
+      - name: Save published binary (Mac_latest)
         uses: actions/upload-artifact@v4
         with:
-              name: tgz-osx12-${{ inputs.build_mode }}-binary
+              name: tgz-macos14_clang-${{ inputs.build_mode }}-binary
               path: ${{ runner.workspace }}/build/HDF-*-Darwin.tar.gz
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
-        if: ${{ (matrix.os == 'macos-13') && (inputs.netcdf == 'true') && (inputs.shared == 'true') }}
+        if: ${{ (matrix.os == 'macos-latest') && (inputs.shared == 'true') }}

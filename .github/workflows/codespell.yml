@@ -10,8 +10,8 @@ jobs:
     name: Check for spelling errors
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v4.1.7
       - uses: codespell-project/actions-codespell@master
         with:
-          skip: ./config/sanitizer/sanitizers.cmake,./hdf/util/testfiles/*.raw,./hdf/util/testfiles/head.r8,./mfhdf/ncdump/*,./mfhdf/ncgen/*,./mfhdf/nctest/*,./mfhdf/README,./mfhdf/THANKS,./mfhdf/FAQ,./configure,./bin/ltmain.sh,./bin/depcomp,./bin/config.guess,./bin/config.sub,./autom4te.cache,./m4/libtool.m4
-          ignore_words_list: acount,anid,ans,clude,isnt,inout,fo,msdos,nam,nd,pres,sav,shs,siz,varn,vlone
+          skip: ./config/sanitizer/sanitizers.cmake,./hdf/util/testfiles/*.raw,./hdf/util/testfiles/head.r8,./mfhdf/ncdump/*,./mfhdf/ncgen/*,./mfhdf/nctest/*,./mfhdf/README,./mfhdf/THANKS,./mfhdf/FAQ
+          ignore_words_list: acount,anid,ans,clude,fillin,indx,isnt,inout,fo,msdos,nam,nd,pres,sav,shs,siz,varn,vlone

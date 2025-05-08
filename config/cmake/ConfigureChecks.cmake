@@ -28,6 +28,7 @@ endif ()
 # does, it appends library to the list.
 #-----------------------------------------------------------------------------
 set (LINK_LIBS "")
+set (LINK_PUB_LIBS "")
 macro (CHECK_LIBRARY_EXISTS_CONCAT LIBRARY SYMBOL VARIABLE)
   CHECK_LIBRARY_EXISTS ("${LIBRARY};${LINK_LIBS}" ${SYMBOL} "" ${VARIABLE})
   if (${VARIABLE})

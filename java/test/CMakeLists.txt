@@ -35,6 +35,13 @@ foreach (test_file ${HDF4_JAVA_TEST_SOURCES})
 
   add_dependencies (${HDF4_JAVA_TEST_LIB_TARGET}_${test_file} ${HDF4_JAVA_HDF_LIB_TARGET})
   set_target_properties (${HDF4_JAVA_TEST_LIB_TARGET}_${test_file} PROPERTIES FOLDER test/java)
+
+  #-----------------------------------------------------------------------------
+  # Add Target to clang-format
+  #-----------------------------------------------------------------------------
+  if (HDF4_ENABLE_FORMATTERS)
+    clang_format (HDF4_JAVA_TEST_${test_file}_SRC_FORMAT ${test_file}.java)
+  endif ()
 endforeach ()
 
 foreach (h4_file ${HDF4_JAVA_TEST_SOURCES})

@@ -1,14 +1,19 @@
 name: hdf4 dev tarball
 
-# Controls when the action will run. Triggers the workflow on a schedule
+# Triggers the workflow on a call from another workflow
 on:
   workflow_call:
     inputs:
-#      use_tag:
-#        description: 'Release version tag'
-#        type: string
-#        required: false
-#        default: snapshot
+      use_ignore:
+        description: 'Ignore has_changes check'
+        type: string
+        required: false
+        default: check
+      use_tag:
+        description: 'Release version tag'
+        type: string
+        required: false
+        default: snapshot
       use_environ:
         description: 'Environment to locate files'
         type: string
@@ -18,6 +23,9 @@ on:
       has_changes:
         description: "Whether there were changes the previous day"
         value: ${{ jobs.check_commits.outputs.has_changes }}
+      source_base:
+        description: "The common base name of the source tarballs"
+        value: ${{ jobs.create_tarball.outputs.source_base }}
       file_base:
         description: "The common base name of the source tarballs"
         value: ${{ jobs.create_tarball.outputs.file_base }}
@@ -31,8 +39,6 @@ on:
 permissions:
   contents: read
 
-# A workflow run is made up of one or more jobs that can run sequentially or
-# in parallel
 jobs:
   check_commits:
     name: Check for recent commits
@@ -42,6 +48,8 @@ jobs:
       branch_ref: ${{ steps.get-branch-name.outputs.BRANCH_REF }}
       branch_sha: ${{ steps.get-branch-sha.outputs.BRANCH_SHA }}
     steps:
+    - uses: actions/checkout@v4
+
     - name: Get branch name
       id: get-branch-name
       env:
@@ -66,7 +74,7 @@ jobs:
       with:
         seconds: 86400 # One day in seconds
         branch: '${{ steps.get-branch-name.outputs.branch_ref }}'
-      if: ${{ inputs.use_environ == 'snapshots' }}
+      if: ${{ (inputs.use_environ == 'snapshots' && inputs.use_ignore == 'check') }}
 
     - run: echo "You have ${{ steps.check-new-commits.outputs.new-commits-number }} new commit(s) in ${{ steps.get-branch-name.outputs.BRANCH_REF }} ✅!"
       if: ${{ steps.check-new-commits.outputs.has-new-commits == 'true' }}
@@ -77,42 +85,49 @@ jobs:
     name: Create a source tarball
     runs-on: ubuntu-latest
     needs: check_commits
-    if: ${{ ((inputs.use_environ == 'snapshots') && (needs.check_commits.outputs.has_changes == 'true')) || (inputs.use_environ  == 'release') }}
+    if: ${{ ((inputs.use_environ == 'snapshots') && ((needs.check_commits.outputs.has_changes == 'true') || (inputs.use_ignore == 'ignore'))) || (inputs.use_environ  == 'release') }}
     outputs:
       file_base: ${{ steps.set-file-base.outputs.FILE_BASE }}
+      source_base: ${{ steps.version.outputs.SOURCE_TAG }}
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Get Sources
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.7
         with:
           path: hdfsrc
+          ref: '${{needs.check_commits.outputs.branch_ref }}'
 
-      - name: Install Autotools Dependencies (Linux, serial)
+      - name: Install Dependencies (Linux, serial)
         run: |
              sudo apt update
-             sudo apt install automake autoconf libtool libtool-bin gzip dos2unix
+             sudo apt install gzip dos2unix
 
       - name: Retrieve version
         id: version
         run: |
           cd "$GITHUB_WORKSPACE/hdfsrc"
-          echo "TAG_VERSION=$(bin/h4vers)" >> $GITHUB_OUTPUT
+          echo "SOURCE_TAG=$(bin/h4vers)" >> $GITHUB_OUTPUT
 
       - name: Set file base name
         id: set-file-base
         run: |
-          if [[ '${{ inputs.use_environ }}' == 'snapshots' && '${{ needs.check_commits.outputs.has_changes }}' == 'true' ]]
+          if [[ '${{ inputs.use_environ }}' == 'snapshots' ]]
           then
             FILE_NAME_BASE=$(echo "hdf4-${{ needs.check_commits.outputs.branch_ref }}-${{ needs.check_commits.outputs.branch_sha }}")
           else
-            FILE_NAME_BASE=$(echo "hdf4-${{ steps.version.outputs.TAG_VERSION }}")
+            if [[ '${{ inputs.use_tag }}' == 'snapshot' ]]
+            then
+              FILE_NAME_BASE=$(echo "snapshot")
+            else
+              FILE_NAME_BASE=$(echo "hdf-${{ steps.version.outputs.SOURCE_TAG }}")
+            fi
           fi
           echo "FILE_BASE=$FILE_NAME_BASE" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Create snapshot file base name
         id: create-file-base
-        if: ${{ (inputs.use_environ == 'snapshots') && (needs.check_commits.outputs.has_changes == 'true') }}
+        if: ${{ (inputs.use_environ == 'snapshots') }}
         run: |
           cd "$GITHUB_WORKSPACE/hdfsrc"
           bin/release -d $GITHUB_WORKSPACE --branch ${{ needs.check_commits.outputs.branch_ref }} --revision gzip zip
@@ -123,7 +138,23 @@ jobs:
         if: ${{ (inputs.use_environ == 'release') }}
         run: |
           cd "$GITHUB_WORKSPACE/hdfsrc"
-          bin/release -d $GITHUB_WORKSPACE gzip zip cmake-tgz cmake-zip 
+          bin/release -d $GITHUB_WORKSPACE gzip zip 
+        shell: bash
+
+      - name: Rename release file base name
+        id: ren-basename
+        if: ${{ (inputs.use_environ == 'release') && (inputs.use_tag  == 'snapshot') }}
+        run: |
+          mv hdf-${{ steps.version.outputs.SOURCE_TAG }}.tar.gz ${{ inputs.use_tag }}.tar.gz
+          mv hdf-${{ steps.version.outputs.SOURCE_TAG }}.zip ${{ inputs.use_tag }}.zip
+        shell: bash
+
+      - name: Copy the release file source to a non-versioned file name
+        id: cp-to-non-versioned
+        if: ${{ (inputs.use_environ == 'release') }}
+        run: |
+          cp ${{ inputs.use_tag }}.tar.gz hdf.tar.gz
+          cp ${{ inputs.use_tag }}.zip hdf.zip
         shell: bash
 
       - name: List files in the repository
@@ -144,4 +175,27 @@ jobs:
         with:
               name: zip-tarball
               path: ${{ steps.set-file-base.outputs.FILE_BASE }}.zip
+              if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+
+      - name: Save tgz-tarball-nover
+        if: ${{ (inputs.use_environ == 'release') }}
+        uses: actions/upload-artifact@v4
+        with:
+              name: tgz-tarball-nover
+              path: hdf.tar.gz
+              if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+
+      - name: Save zip-tarball-nover
+        if: ${{ (inputs.use_environ == 'release') }}
+        uses: actions/upload-artifact@v4
+        with:
+              name: zip-tarball-nover
+              path: hdf.zip
+              if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+
+      - name: Save NEWSLETTER
+        uses: actions/upload-artifact@v4
+        with:
+              name: NEWSLETTER
+              path: ./hdfsrc/release_docs/NEWSLETTER.txt
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`

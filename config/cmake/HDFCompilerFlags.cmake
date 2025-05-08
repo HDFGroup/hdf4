@@ -25,6 +25,7 @@ if (MSVC OR _INTEL_WINDOWS OR _CLANG_MSVC_WINDOWS)
 endif ()
 
 if (MSVC)
+  add_definitions (-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
   set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stack:10000000")
 endif ()
 
@@ -86,7 +87,7 @@ if (CMAKE_C_COMPILER_ID STREQUAL "NVHPC" )
   set (CMAKE_C_FLAGS_RELWITHDEBINFO "${cmake_c_flags_relwithdebinfo_edited}")
 endif ()
 
-if (CMAKE_COMPILER_IS_GNUCC)
+if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
   set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
   if (${HDF_CFG_NAME} MATCHES "Debug" OR ${HDF_CFG_NAME} MATCHES "Developer")
     if (NOT CMAKE_C_COMPILER_VERSION VERSION_LESS 5.0)
@@ -348,7 +349,7 @@ endif ()
 # This is in here to help some of the GCC based IDES like Eclipse
 # and code blocks parse the compiler errors and warnings better.
 #-----------------------------------------------------------------------------
-if (CMAKE_COMPILER_IS_GNUCC)
+if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
   set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fmessage-length=0")
 endif ()
 

@@ -1,5 +1,7 @@
 # grepTest.cmake executes a command and captures the output in a file. File is then compared
 # against a reference file. Exit status of command can also be compared.
+cmake_policy(SET CMP0007 NEW)
+cmake_policy(SET CMP0053 NEW)
 
 # arguments checking
 if (NOT TEST_PROGRAM)
@@ -103,6 +105,7 @@ if (TEST_ERRREF)
     if (EXISTS "${TEST_FOLDER}/${TEST_REFERENCE}")
       file (READ ${TEST_FOLDER}/${TEST_REFERENCE} TEST_STREAM)
       list (LENGTH TEST_STREAM test_len)
+      # verify there is text output in the reference file
       if (test_len GREATER 0)
         if (WIN32)
           configure_file(${TEST_FOLDER}/${TEST_REFERENCE} ${TEST_FOLDER}/${TEST_REFERENCE}.tmp NEWLINE_STYLE CRLF)

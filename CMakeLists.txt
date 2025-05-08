@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.18)
-project (HDF4 C)
+project (HDF4 LANGUAGES C)
 
 if (POLICY CMP0074)
   # find_package() uses <PackageName>_ROOT variables.
@@ -247,9 +247,9 @@ string (REGEX REPLACE ".*#define[ \t]+LIBVER_MINOR[ \t]+([0-9]*).*$"
     "\\1" H4_VERS_MINOR ${_hfile_h_contents})
 string (REGEX REPLACE ".*#define[ \t]+LIBVER_RELEASE[ \t]+([0-9]*).*$"
     "\\1" H4_VERS_RELEASE ${_hfile_h_contents})
-string (REGEX REPLACE ".*#define[ \t]+LIBVER_SUBRELEASE[ \t]+\"([0-9A-Za-z.]*)\".*$"
+string (REGEX REPLACE ".*#define[ \t]+LIBVER_SUBRELEASE[ \t]+\"([0-9A-Za-z._-]*)\".*$"
     "\\1" H4_VERS_SUBRELEASE ${_hfile_h_contents})
-#message (STATUS "VERSION: ${H4_VERS_MAJOR}.${H4_VERS_MINOR}.${H4_VERS_RELEASE}-${H4_VERS_SUBRELEASE}")
+message (TRACE "VERSION: ${H4_VERS_MAJOR}.${H4_VERS_MINOR}.${H4_VERS_RELEASE}-${H4_VERS_SUBRELEASE}")
 
 #-----------------------------------------------------------------------------
 # parse the full soversion number from config/lt_vers.am and include in H4_SOVERS_INFO
@@ -476,7 +476,7 @@ endif ()
 
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-add_definitions (-DHAVE_CONFIG_H)
+add_compile_definitions (HAVE_CONFIG_H)
 
 #-----------------------------------------------------------------------------
 # Temporary disable optimization flag
@@ -570,12 +570,10 @@ include (UserMacros.cmake)
 #-----------------------------------------------------------------------------
 # Include filter (zlib, szip, etc.) macros
 #-----------------------------------------------------------------------------
-option (HDF4_ENABLE_JPEG_SUPPORT "Use JPEG Filter" OFF)
-option (HDF4_ENABLE_SZIP_SUPPORT "Use SZip Filter" OFF)
-option (HDF4_ENABLE_ZLIB_SUPPORT "Enable Zlib Filters" OFF)
-if (HDF4_ENABLE_JPEG_SUPPORT OR HDF4_ENABLE_ZLIB_SUPPORT OR HDF4_ENABLE_SZIP_SUPPORT)
-  include (CMakeFilters.cmake)
-endif ()
+set (HDF4_ENABLE_JPEG_LIB_SUPPORT ON) #Enable libjpeg required
+option (HDF4_ENABLE_SZIP_SUPPORT "Use SZip Filter" OFF) #SZip is optional
+set (HDF4_ENABLE_Z_LIB_SUPPORT ON) #Enable libzlib required
+include (CMakeFilters.cmake)
 
 #-----------------------------------------------------------------------------
 # Options to build tools
@@ -602,7 +600,7 @@ add_subdirectory (mfhdf/libsrc)
 # Option to build documentation
 #-----------------------------------------------------------------------------
 option (HDF4_BUILD_DOC "Build documentation" OFF)
-if (HDF4_BUILD_DOC AND EXISTS "${HDF4_DOXYGEN_DIR}" AND IS_DIRECTORY "${HDF4_DOXYGEN_DIR}")
+if (HDF4_BUILD_DOC AND IS_DIRECTORY "${HDF4_DOXYGEN_DIR}")
 # check if Doxygen is installed
   find_package(Doxygen)
   if (DOXYGEN_FOUND)
@@ -638,10 +636,10 @@ if (BUILD_TESTING)
   endif ()
 
   if (NOT HDF4_EXTERNALLY_CONFIGURED)
-    if (EXISTS "${HDF4_SOURCE_DIR}/hdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/test")
+    if (IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/test")
       add_subdirectory (hdf/test)
     endif ()
-    if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/test")
+    if (IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/test")
       add_subdirectory (mfhdf/test)
     endif ()
   endif ()
@@ -658,13 +656,15 @@ endif ()
 # Set default name mangling : overridden by Fortran detection in fortran dir
 set (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
 set (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## __")
-if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran")
+if (IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran")
   option (HDF4_BUILD_FORTRAN "Build FORTRAN support" OFF)
   if (HDF4_BUILD_FORTRAN)
     if (WIN32)
       set (H4_F77_FUNC "H4_F77_FUNC(name,NAME) NAME")
       set (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) NAME")
     endif ()
+    message (VERBOSE "Fortran compiler ID is ${CMAKE_Fortran_COMPILER_ID}")
+    #include (${HDF_RESOURCES_DIR}/HDFCompilerFortranFlags.cmake)
     include (${HDF_RESOURCES_DIR}/HDF4UseFortran.cmake)
 
     if (CMAKE_Fortran_COMPILER_ID STREQUAL "GNU" AND NOT CMAKE_Fortran_COMPILER_VERSION VERSION_LESS 10.0)
@@ -686,7 +686,7 @@ add_subdirectory (mfhdf)
 #-----------------------------------------------------------------------------
 # Option to build HDF4 Java Library
 #-----------------------------------------------------------------------------
-if (EXISTS "${HDF4_SOURCE_DIR}/java" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/java")
+if (IS_DIRECTORY "${HDF4_SOURCE_DIR}/java")
   option (HDF4_BUILD_JAVA "Build Java HDF Library" OFF)
   if (HDF4_BUILD_JAVA)
     if (NOT BUILD_SHARED_LIBS)
@@ -705,7 +705,7 @@ configure_file (${HDF_RESOURCES_DIR}/h4config.h.in ${PROJECT_BINARY_DIR}/h4confi
 #-----------------------------------------------------------------------------
 # Option to build examples
 #-----------------------------------------------------------------------------
-if (EXISTS "${HDF4_SOURCE_DIR}/HDF4Examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/HDF4Examples")
+if (IS_DIRECTORY "${HDF4_SOURCE_DIR}/HDF4Examples")
   option (HDF4_BUILD_EXAMPLES  "Build HDF4 Library Examples" ON)
   if (HDF4_BUILD_EXAMPLES AND NOT HDF4_USE_SANITIZER)
     include (${HDF_RESOURCES_DIR}/HDF4ExampleCache.cmake)

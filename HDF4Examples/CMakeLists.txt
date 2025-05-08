@@ -49,7 +49,7 @@ endif ()
 #-----------------------------------------------------------------------------
 # All examples need the main include directories
 #-----------------------------------------------------------------------------
-set_directory_properties(PROPERTIES INCLUDE_DIRECTORIES 
+set_directory_properties(PROPERTIES INCLUDE_DIRECTORIES
     "${H4EX_HDF4_INCLUDE_DIRS}"
 )
 
@@ -75,8 +75,8 @@ endif ()
 # Set default name mangling : overridden by Fortran detection in fortran dir
 set (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
 set (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## __")
-if (EXISTS "${H4EXAMPLES_SOURCE_DIR}/mfhdf/FORTRAN" AND IS_DIRECTORY "${H4EXAMPLES_SOURCE_DIR}/mfhdf/FORTRAN")
-  option (H4EX_BUILD_FORTRAN "Build examples FORTRAN support" OFF)
+if (IS_DIRECTORY "${H4EXAMPLES_SOURCE_DIR}/mfhdf/FORTRAN")
+  option (H4EX_BUILD_FORTRAN "Build FORTRAN support" OFF)
   if (H4EX_BUILD_FORTRAN AND HDF4_BUILD_FORTRAN)
     set (H4EX_LINK_Fortran_LIBS ${H4EX_HDF4_LINK_LIBS})
 
@@ -94,7 +94,7 @@ endif ()
 #-----------------------------------------------------------------------------
 # Option to build JAVA examples
 #-----------------------------------------------------------------------------
-if (EXISTS "${H4EXAMPLES_SOURCE_DIR}/JAVA" AND IS_DIRECTORY "${H4EXAMPLES_SOURCE_DIR}/JAVA")
+if (IS_DIRECTORY "${H4EXAMPLES_SOURCE_DIR}/JAVA")
   option (H4EX_BUILD_JAVA "Build JAVA support" OFF)
 else ()
   set (H4EX_BUILD_JAVA OFF CACHE BOOL "Build examples JAVA support" FORCE)
@@ -110,4 +110,3 @@ endif ()
 if (H4EX_BUILD_JAVA AND HDF4_BUILD_JAVA)
   add_subdirectory (JAVA)
 endif ()
-

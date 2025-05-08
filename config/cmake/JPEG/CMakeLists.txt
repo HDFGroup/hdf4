@@ -24,8 +24,8 @@ CHECK_INCLUDE_FILE_CONCAT ("stddef.h"        HAVE_STDDEF_H)
 #----------------------------------------------------------------
 # JPEG special check
 #----------------------------------------------------------------
-CHECK_TYPE_SIZE ("unsigned char"           UNSIGNED_CHAR)
-CHECK_TYPE_SIZE ("unsigned short"          UNSIGNED_SHORT)
+CHECK_TYPE_SIZE ("unsigned char"           HAVE_UNSIGNED_CHAR)
+CHECK_TYPE_SIZE ("unsigned short"          HAVE_UNSIGNED_SHORT)
 
 CHECK_INCLUDE_FILE_CONCAT ("string.h"        HAVE_STRING_H)
 CHECK_INCLUDE_FILE_CONCAT ("strings.h"       HAVE_STRINGS_H)
@@ -125,31 +125,13 @@ set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 set (EXE_EXT "")
 if (WIN32)
   set (EXE_EXT ".exe")
-  add_definitions (-D_BIND_TO_CURRENT_VCLIBS_VERSION=1)
-  add_definitions (-D_CRT_SECURE_NO_WARNINGS)
-  add_definitions (-D_CONSOLE)
+  add_compile_definitions (_BIND_TO_CURRENT_VCLIBS_VERSION=1)
+  add_compile_definitions (_CRT_SECURE_NO_WARNINGS)
+  add_compile_definitions (_CONSOLE)
 endif ()
 
 if (MSVC)
   set (CMAKE_MFC_FLAG 0)
-endif ()
-
-#-----------------------------------------------------------------------------
-# Compiler specific flags : Shouldn't there be compiler tests for these
-#-----------------------------------------------------------------------------
-if (CMAKE_COMPILER_IS_GNUCC)
-  set (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -Wno-strict-prototypes")
-endif ()
-if (CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
-   set (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -Wno-deprecated-non-prototype -Wno-strict-prototypes")
-endif ()
-
-#-----------------------------------------------------------------------------
-# This is in here to help some of the GCC based IDES like Eclipse
-# and code blocks parse the compiler errors and warnings better.
-#-----------------------------------------------------------------------------
-if (CMAKE_COMPILER_IS_GNUCC)
-  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fmessage-length=0")
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -162,7 +144,7 @@ endif ()
 #-----------------------------------------------------------------------------
 # All libs/tests/examples need the main include directories
 #-----------------------------------------------------------------------------
-set_directory_properties(PROPERTIES INCLUDE_DIRECTORIES 
+set_directory_properties(PROPERTIES INCLUDE_DIRECTORIES
     "${JPEG_BINARY_DIR};${JPEG_SOURCE_DIR};${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
 )
 
@@ -231,6 +213,18 @@ set (JPEG_PUBLIC_HEADERS
 
 add_library (${JPEG_LIB_TARGET} STATIC ${JPEG_SRCS} ${JPEG_HDRS} ${JPEG_PUBLIC_HEADERS})
 target_include_directories(${JPEG_LIB_TARGET} PRIVATE "${JPEG_SRC_DIR};${CMAKE_BINARY_DIR}")
+if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
+  target_compile_options(${JPEG_LIB_TARGET} PRIVATE -Wno-strict-prototypes)
+endif ()
+if (CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
+  target_compile_options(${JPEG_LIB_TARGET} PRIVATE -Wno-deprecated-non-prototype -Wno-strict-prototypes)
+endif ()
+if (WIN32 AND CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
+  target_compile_options(${JPEG_LIB_TARGET} PRIVATE -Wno-implicit-function-declaration -Wno-typedef-redefinition)
+endif ()
+if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
+  target_compile_options(${JPEG_LIB_TARGET} PRIVATE -fmessage-length=0)
+endif ()
 TARGET_C_PROPERTIES (${JPEG_LIB_TARGET} STATIC)
 target_link_libraries (${JPEG_LIB_TARGET} PRIVATE ${LINK_LIBS})
 H4_SET_LIB_OPTIONS (${JPEG_LIB_TARGET} ${JPEG_LIB_NAME} STATIC 0)

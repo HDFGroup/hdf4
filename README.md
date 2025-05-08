@@ -55,22 +55,23 @@ new features and bug fixes, though we try to have at least one release of each
 maintenance branch per year. Future HDF4 releases indicated on this schedule
 are tentative.
 
-| Release | New Features |
-| ------- | ------------ |
-| 4.3.0 | Remove XDR, Stop deploying internal header files |
-| 4.4.0 | Drop FORTRAN 77 support, Unified library, Drop netCDF 2.3.2 API + tools |
+| Release  | New Features |
+| -------- | ------------ |
+| HDF4 3.1 | Fix memory issues and update documentation to match the software
+| HDF4 4.0 | Drop FORTRAN 77 support, Drop netCDF 2.3.2 API + tools, Unified library (maybe) |
 
-HDF 4.3.0 (February 2024)
-* Minimum XDR functionality will be built into the library, so linking to TI-RPC, etc. will not be necessary
-* We will no longer deploy undocumented, internal header files (the public, documented HDF4 API will not be affected)
-
-The 4.2 maintenance line will be retired when 4.3.0 releases. There are no
-more planned HDF 4.2.x releases.
-
-HDF 4.4.0 (February 2025)
+HDF4 3.1 is scheduled to be released at the end of May, 2025.
+HDF4 4.0 (Tentatively Feb, 2026)
 * We will drop support for FORTRAN 77 and move to modern Fortran (2003 or 2008)
-* libdf and libmfhdf will be merged into a single libhdf4 library, Fortran will be built as a separate library
-* HDF4 includes an ancient netCDF 2.3.2 API along with the ncdump and ncgen tools. It would be nice to drop this and just have people get their netCDF API from the actual netCDF library.
+* HDF4 includes an ancient netCDF 2.3.2 API along with HDF4-built ncdump and ncgen tools. These will be removed in 4.0 and are available by installing the [netCDF-C library](https://github.com/Unidata/netcdf-c).
+* (maybe) libdf and libmfhdf will be merged into a single libhdf4 library, Fortran will be built as a separate library
+
+The goal of the HDF4 4.0 release is to address long-standing deficiencies
+and bring HDF4 in line with HDF5's build practices. This should allow HDF4
+to work better with modern systems and compilers and be more easily
+maintained.
+
+There will be one more release in the HDF4 3.x series, 3.1, then the 4.3 maintenance line will be retired when HDF4 4.0 releases.
 
 
 SNAPSHOTS, PREVIOUS RELEASES AND SOURCE CODE
@@ -98,11 +99,13 @@ Source Distribution Layout
 
    config -- Configuration files to be used by configure script.
 
-   hdf    -- The source code for the HDF 'base library', the multi-file 
-             annotation interface, the multi-file raster image interface, 
-             HDF command line utilities, and a test suite. 
-             Please see the README in each directory for further 
-             information on each package. 
+   doc    -- HDF 4.2 to 4.3 Migration Guide
+
+   hdf    -- The source code for the HDF 'base library', the multi-file
+             annotation interface, the multi-file raster image interface,
+             HDF command line utilities, and a test suite.
+             Please see the README in each directory for further
+             information on each package.
 
    java   -- The Java HDF JNI library
 
@@ -122,7 +125,7 @@ Third Party Software Requirements
 ---------------------------------
   * JPEG distribution release 6b or later.
 
-  * ZLIB 1.1.4(libz.a) or later. 
+  * ZLIB 1.1.4(libz.a) or later.
 
 
 System Requirements

@@ -1,6 +1,6 @@
-name: hdf4 dev CMake MSys2 CI
+name: hdf4 CMake MSys2
 
-# Controls when the action will run. Triggers the workflow on a call
+# Triggers the workflow on a call from another workflow
 on:
   workflow_call:
     inputs:
@@ -13,7 +13,10 @@ permissions:
   contents: read
 
 jobs:
-  Msys2_build_and_test:
+
+  CMake_build_and_test:
+
+    # The type of runner that the job will run on
     runs-on: windows-latest
     strategy:
       matrix:
@@ -26,22 +29,30 @@ jobs:
     defaults:
       run:
         shell: msys2 {0}
-    steps:
-      - name: Get Sources
-        uses: actions/checkout@v4.1.1
 
+    steps:
       - name: '${{ matrix.icon }} Setup MSYS2'
         uses: msys2/setup-msys2@v2
         with:
           msystem: ${{matrix.sys}}
           update: true
           install: >-
+           base-devel
            git
+           gcc
            make
+           development
           pacboy: >-
            toolchain:p
            cmake:p
            ninja:p
+
+      - name: Set git to use LF
+        run: |
+          git config --global core.autocrlf input
+
+      - name: Get Sources
+        uses: actions/checkout@v4.1.1
 
       - name: CMake Configure
         run: |
@@ -51,19 +62,18 @@ jobs:
             -G Ninja \
             -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
             -DCMAKE_TOOLCHAIN_FILE="" \
-            -DJPEG_USE_LOCALCONTENT=OFF \
-            -DLIBAEC_USE_LOCALCONTENT=OFF \
-            -DZLIB_USE_LOCALCONTENT=OFF \
-            -DHDF4_BUILD_FORTRAN=OFF \
-            -DHDF4_BUILD_JAVA=OFF \
+            -DJPEG_USE_LOCALCONTENT:BOOL=OFF \
+            -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF \
+            -DZLIB_USE_LOCALCONTENT:BOOL=OFF \
+            -DHDF4_BUILD_FORTRAN:BOOL=OFF \
+            -DHDF4_BUILD_JAVA:BOOL=OFF \
             $GITHUB_WORKSPACE
-      # BUILD
+
       - name: CMake Build
         run: |
           cmake --build . --parallel 3 --config ${{ inputs.build_mode }}
         working-directory: ${{ runner.workspace }}/build
 
-      # RUN TESTS
       - name: CMake Run Tests
         run: |
           ctest . --parallel 2 -C ${{ inputs.build_mode }} -V
