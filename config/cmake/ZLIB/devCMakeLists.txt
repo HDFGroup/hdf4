@@ -1,8 +1,12 @@
 cmake_minimum_required (VERSION 3.18)
-set (CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
-project (ZLIB C)
 
-set(VERSION "1.3.1")
+project(
+    ZLIB
+    LANGUAGES C
+    VERSION 1.4.1.1
+    HOMEPAGE_URL "https://zlib.net/"
+    DESCRIPTION "a general-purpose lossless data-compression library")
+set (CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 
 #-----------------------------------------------------------------------------
 # Basic ZLIB stuff here
@@ -21,50 +25,111 @@ if (WINDOWS)
   set (HAVE_STDDEF_H 1)
   set (HAVE_SYS_TYPES_H 1)
 endif ()
+# ============================================================================
+# configuration
+# ============================================================================
 
-include (CheckTypeSize)
-include (CheckFunctionExists)
-include (CheckIncludeFile)
-include (CheckCSourceCompiles)
+option(ZLIB_BUILD_TESTING "Enable Zlib Examples as tests" OFF)
+option(ZLIB_BUILD_SHARED "Enable building zlib shared library" OFF)
+option(ZLIB_BUILD_STATIC "Enable building zlib static library" ON)
+option(ZLIB_BUILD_MINIZIP "Enable building libminizip contrib library" OFF)
+option(ZLIB_INSTALL "Enable installation of zlib" OFF)
+option(ZLIB_PREFIX "prefix for all types and library functions, see zconf.h.in"
+       OFF)
+mark_as_advanced(ZLIB_PREFIX)
 
-check_include_file (sys/types.h HAVE_SYS_TYPES_H)
-check_include_file (stdint.h    HAVE_STDINT_H)
-check_include_file (stddef.h    HAVE_STDDEF_H)
+if(WIN32)
+    option(ZLIB_INSTALL_COMPAT_DLL "Install a copy as zlib1.dll" ON)
+endif(WIN32)
+
+get_property(IS_MULTI GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+
+if(NOT DEFINED CMAKE_BUILD_TYPE AND NOT IS_MULTI)
+    message(STATUS "No CMAKE_BUILD_TYPE set -- using Release")
+    set(CMAKE_BUILD_TYPE Release)
+endif(NOT DEFINED CMAKE_BUILD_TYPE AND NOT IS_MULTI)
+
+include(CheckCSourceCompiles)
+include(CheckFunctionExists)
+include(CheckIncludeFile)
+include(CMakePackageConfigHelpers)
+include(CheckTypeSize)
+include(CPack)
+include(GNUInstallDirs)
+
+set(CPACK_INCLUDED FALSE)
+
+if(NOT ZLIB_CONF_WRITTEN)
+    set(Z_PREFIX ${ZLIB_PREFIX})
+    set(CONF_OUT_FILE ${ZLIB_BINARY_DIR}/zconf.h.cmakein)
+    file(READ ${ZLIB_SOURCE_DIR}/zconf.h ZCONF_CONTENT LIMIT 245)
+    file(WRITE ${CONF_OUT_FILE} ${ZCONF_CONTENT})
+    file(APPEND ${CONF_OUT_FILE} "#cmakedefine Z_PREFIX 1\n")
+    file(APPEND ${CONF_OUT_FILE} "#cmakedefine HAVE_STDARG_H 1\n")
+    file(APPEND ${CONF_OUT_FILE} "#cmakedefine HAVE_UNISTD_H 1\n")
+    file(READ ${ZLIB_SOURCE_DIR}/zconf.h ZCONF_CONTENT OFFSET 244)
+    set(FIRST_ITEM TRUE)
+
+    foreach(item IN LISTS ZCONF_CONTENT)
+        if(FIRST_ITEM)
+            string(APPEND OUT_CONTENT ${item})
+            set(FIRST_ITEM FALSE)
+        else(FIRST_ITEM)
+            string(APPEND OUT_CONTENT "\;" ${item})
+        endif(FIRST_ITEM)
+    endforeach(item IN LISTS ${ZCONF_CONTENT})
+
+    file(APPEND ${CONF_OUT_FILE} ${OUT_CONTENT})
+    set(ZLIB_CONF_WRITTEN
+        TRUE
+        CACHE BOOL "zconf.h.cmakein was created")
+    mark_as_advanced(ZLIB_CONF_WRITTEN)
+endif(NOT ZLIB_CONF_WRITTEN)
 
 #
 # Check to see if we have large file support
 #
-set (CMAKE_REQUIRED_DEFINITIONS -D_LARGEFILE64_SOURCE=1)
-# We add these other definitions here because CheckTypeSize.cmake
-# in CMake 2.4.x does not automatically do so and we want
-# compatibility with CMake 2.4.x.
-if (HAVE_SYS_TYPES_H)
-  list(APPEND CMAKE_REQUIRED_DEFINITIONS -DHAVE_SYS_TYPES_H)
-endif ()
-if (HAVE_STDINT_H)
-  list(APPEND CMAKE_REQUIRED_DEFINITIONS -DHAVE_STDINT_H)
-endif ()
-if (HAVE_STDDEF_H)
-  list(APPEND CMAKE_REQUIRED_DEFINITIONS -DHAVE_STDDEF_H)
-endif ()
-check_type_size (off64_t OFF64_T)
-if (HAVE_OFF64_T)
-  add_definitions(-D_LARGEFILE64_SOURCE=1)
-endif ()
-set (CMAKE_REQUIRED_DEFINITIONS) # clear variable
+set(CMAKE_REQUIRED_DEFINITIONS -D_LARGEFILE64_SOURCE=1)
+check_type_size(off64_t OFF64_T)
+unset(CMAKE_REQUIRED_DEFINITIONS) # clear variable
 
 #
 # Check for fseeko
 #
-check_function_exists (fseeko HAVE_FSEEKO)
-if (NOT HAVE_FSEEKO)
-  add_definitions (-DNO_FSEEKO)
-endif ()
+check_function_exists(fseeko HAVE_FSEEKO)
+
+#
+# Check for stdarg.h
+#
+check_include_file(stdarg.h HAVE_STDARG_H)
 
 #
 # Check for unistd.h
 #
-check_include_file (unistd.h Z_HAVE_UNISTD_H)
+check_include_file(unistd.h HAVE_UNISTD_H)
+
+#
+# Check visibility attribute is supported
+#
+if(MSVC)
+    set(CMAKE_REQUIRED_FLAGS "-WX")
+else(MSVC)
+    set(CMAKE_REQUIRED_FLAGS "-WError")
+endif(MSVC)
+
+check_c_source_compiles(
+    "
+        #include <stdlib.h>
+        static void f(void) __attribute__ ((visibility(\"hidden\")));
+        int main(void) {return 0;}
+    "
+    HAVE___ATTR__VIS_HIDDEN)
+
+unset(CMAKE_COMPILE_FLAGS)
+set(ZLIB_PC ${ZLIB_BINARY_DIR}/zlib.pc)
+configure_file(${ZLIB_SOURCE_DIR}/zlib.pc.cmakein ${ZLIB_PC} @ONLY)
+configure_file(${ZLIB_BINARY_DIR}/zconf.h.cmakein ${ZLIB_BINARY_DIR}/zconf.h)
+include_directories(${ZLIB_BINARY_DIR} ${ZLIB_SOURCE_DIR})
 
 #-----------------------------------------------------------------------------
 # Define some CMake variables for use later in the project
@@ -87,14 +152,9 @@ set (ZLIB_LIB_NAME            "${ZLIB_EXTERNAL_LIB_PREFIX}${ZLIB_LIB_CORENAME}")
 #-----------------------------------------------------------------------------
 set (ZLIB_LIB_TARGET            "zlib-static")
 
-# parse the full version number from zlib.h and include in ZLIB_FULL_VERSION
-file (READ ${CMAKE_CURRENT_SOURCE_DIR}/zlib.h _zlib_h_contents)
-string (REGEX REPLACE ".*#define[ \t]+ZLIB_VERSION[ \t]+\"([-0-9A-Za-z.]+)\".*"
-    "\\1" ZLIB_FULL_VERSION ${_zlib_h_contents})
-
 set (zlib_VERS_MAJOR 1)
-set (zlib_VERS_MINOR 3)
-set (zlib_VERS_RELEASE 0)
+set (zlib_VERS_MINOR 4)
+set (zlib_VERS_RELEASE 1)
 
 #-----------------------------------------------------------------------------
 set (ZLIB_PACKAGE "zlib")
@@ -131,10 +191,8 @@ set_directory_properties (PROPERTIES INCLUDE_DIRECTORIES
 if (MSVC)
   set(CMAKE_DEBUG_POSTFIX "d")
   add_definitions (-D_BIND_TO_CURRENT_VCLIBS_VERSION=1)
-  add_definitions (-D_CRT_SECURE_NO_DEPRECATE)
   add_definitions (-D_CRT_SECURE_NO_WARNINGS)
   add_definitions (-D_CONSOLE)
-  add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 endif ()
 
@@ -142,15 +200,13 @@ if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
     # If we're doing an out of source build and the user has a zconf.h
     # in their source tree...
     if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h)
-        message(STATUS "Renaming")
-        message(STATUS "    ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h")
-        message(STATUS "to 'zconf.h.included' because this file is included with zlib")
-        message(STATUS "but CMake generates it automatically in the build directory.")
+        message(VERBOSE "Renaming")
+        message(VERBOSE "    ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h")
+        message(VERBOSE "to 'zconf.h.included' because this file is included with zlib")
+        message(VERBOSE "but CMake generates it automatically in the build directory.")
         file(RENAME ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h.included)
   endif()
 endif()
-configure_file(	${CMAKE_CURRENT_SOURCE_DIR}/zconf.h.cmakein
-		${CMAKE_CURRENT_BINARY_DIR}/zconf.h @ONLY)
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_SOURCE_DIR})
 
 
@@ -158,10 +214,8 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_SOURCE_DIR})
 # Define ZLIB Library
 #-----------------------------------------------------------------------------
 
-set(ZLIB_PUBLIC_HDRS
-    ${CMAKE_CURRENT_BINARY_DIR}/zconf.h
-    zlib.h
-)
+set(ZLIB_PUBLIC_HDRS ${ZLIB_BINARY_DIR}/zconf.h zlib.h)
+
 set(ZLIB_PRIVATE_HDRS
     crc32.h
     deflate.h
@@ -171,8 +225,8 @@ set(ZLIB_PRIVATE_HDRS
     inflate.h
     inftrees.h
     trees.h
-    zutil.h
-)
+    zutil.h)
+
 set(ZLIB_SRCS
     adler32.c
     compress.c
@@ -188,10 +242,24 @@ set(ZLIB_SRCS
     inffast.c
     trees.c
     uncompr.c
-    zutil.c
-)
+    zutil.c)
 
 add_library(${ZLIB_LIB_TARGET} STATIC ${ZLIB_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
+    target_include_directories(
+        ${ZLIB_LIB_TARGET}
+        PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+               $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_compile_definitions(
+        ${ZLIB_LIB_TARGET}
+        PRIVATE $<$<BOOL:NOT:${HAVE_FSEEKO}>:NO_FSEEKO>
+                $<$<BOOL:${HAVE___ATTR__VIS_HIDDEN}>:HAVE_HIDDEN>
+                $<$<BOOL:${MSVC}>:_CRT_SECURE_NO_DEPRECATE>
+                $<$<BOOL:${MSVC}>:_CRT_NONSTDC_NO_DEPRECATE>
+                $<$<BOOL:${MSVC}>:_BIND_TO_CURRENT_VCLIBS_VERSION=1>
+                $<$<BOOL:${MSVC}>:_CRT_SECURE_NO_WARNINGS>
+                $<$<BOOL:${MSVC}>:_CONSOLE>
+        PUBLIC $<$<BOOL:${HAVE_OFF64_T}>:_LARGEFILE64_SOURCE=1>)
 target_include_directories(${ZLIB_LIB_TARGET}
     PRIVATE "${CMAKE_BINARY_DIR}"
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}"
@@ -227,8 +295,6 @@ set (install_targets ${ZLIB_LIB_TARGET})
 # Add Target(s) to CMake Install for import into other projects
 #-----------------------------------------------------------------------------
 if (ZLIB_EXPORTED_TARGETS)
-  INSTALL_TARGET_PDB (${ZLIB_LIB_TARGET} ${ZLIB_INSTALL_BIN_DIR} libraries)
-
   install (
       TARGETS
           ${install_targets}

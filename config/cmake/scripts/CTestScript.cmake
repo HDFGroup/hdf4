@@ -1,7 +1,6 @@
 cmake_minimum_required (VERSION 3.18)
 ########################################################
-# This dashboard is maintained by The HDF Group
-# For any comments please contact cdashhelp@hdfgroup.org
+# For any comments please contact help@hdfgroup.org
 #
 ########################################################
 # -----------------------------------------------------------
@@ -12,16 +11,19 @@ if (NOT SITE_OS_NAME)
   ## -- set hostname
   ## --------------------------
   find_program (HOSTNAME_CMD NAMES hostname)
-  exec_program (${HOSTNAME_CMD} ARGS OUTPUT_VARIABLE HOSTNAME)
+  execute_process (COMMAND ${HOSTNAME_CMD} OUTPUT_VARIABLE HOSTNAME OUTPUT_STRIP_TRAILING_WHITESPACE)
   set (CTEST_SITE  "${HOSTNAME}${CTEST_SITE_EXT}")
   find_program (UNAME NAMES uname)
   macro (getuname name flag)
-    exec_program ("${UNAME}" ARGS "${flag}" OUTPUT_VARIABLE "${name}")
+    execute_process (COMMAND "${UNAME}" "${flag}" OUTPUT_VARIABLE "${name}" OUTPUT_STRIP_TRAILING_WHITESPACE)
   endmacro ()
 
   getuname (osname -s)
+  string(STRIP ${osname} osname)
   getuname (osrel  -r)
+  string(STRIP ${osrel} osrel)
   getuname (cpu    -m)
+  string(STRIP ${cpu} cpu)
   message (STATUS "Dashboard script uname output: ${osname}-${osrel}-${cpu}\n")
 
   set (CTEST_BUILD_NAME  "${osname}-${osrel}-${cpu}")
@@ -40,18 +42,18 @@ endif ()
 set (BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DSITE:STRING=${CTEST_SITE} -DBUILDNAME:STRING=${CTEST_BUILD_NAME}")
 
 # Launchers work only with Makefile and Ninja generators.
-if(NOT "${CTEST_CMAKE_GENERATOR}" MATCHES "Make|Ninja" OR LOCAL_SKIP_TEST)
-  set(CTEST_USE_LAUNCHERS 0)
-  set(ENV{CTEST_USE_LAUNCHERS_DEFAULT} 0)
-  set(BUILD_OPTIONS "${BUILD_OPTIONS} -DCTEST_USE_LAUNCHERS:BOOL=OFF")
-else()
-  set(CTEST_USE_LAUNCHERS 1)
-  set(ENV{CTEST_USE_LAUNCHERS_DEFAULT} 1)
-  set(BUILD_OPTIONS "${BUILD_OPTIONS} -DCTEST_USE_LAUNCHERS:BOOL=ON")
-endif()
+if (NOT "${CTEST_CMAKE_GENERATOR}" MATCHES "Make|Ninja" OR LOCAL_SKIP_TEST)
+  set (CTEST_USE_LAUNCHERS 0)
+  set (ENV{CTEST_USE_LAUNCHERS_DEFAULT} 0)
+  set (BUILD_OPTIONS "${BUILD_OPTIONS} -DCTEST_USE_LAUNCHERS:BOOL=OFF")
+else ()
+  set (CTEST_USE_LAUNCHERS 1)
+  set (ENV{CTEST_USE_LAUNCHERS_DEFAULT} 1)
+  set (BUILD_OPTIONS "${BUILD_OPTIONS} -DCTEST_USE_LAUNCHERS:BOOL=ON")
+endif ()
 
 #-----------------------------------------------------------------------------
-# MAC machines need special option
+# MacOS machines need special options
 #-----------------------------------------------------------------------------
 if (APPLE)
   # Compiler choice
@@ -72,7 +74,6 @@ endif ()
 set (NEED_REPOSITORY_CHECKOUT 0)
 set (CTEST_CMAKE_COMMAND "\"${CMAKE_COMMAND}\"")
 if (CTEST_USE_TAR_SOURCE)
-  ## Uncompress source if tar file provided
   ## --------------------------
   if (WIN32 AND NOT MINGW)
     message (STATUS "extracting... [${CMAKE_EXECUTABLE_NAME} -E tar -xvf ${CTEST_DASHBOARD_ROOT}\\${CTEST_USE_TAR_SOURCE}.zip]")
@@ -111,37 +112,6 @@ else ()
         set (CTEST_GIT_options "pull")
       endif ()
       set (CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}")
-    else ()
-      ## --------------------------
-      ## use subversion to get source
-      #-----------------------------------------------------------------------------
-      ## cygwin does not handle the find_package() call
-      ## --------------------------
-      set (CTEST_UPDATE_COMMAND "SVNCommand")
-      if (NOT SITE_CYGWIN})
-        find_package (Subversion)
-        set (CTEST_SVN_COMMAND "${Subversion_SVN_EXECUTABLE}")
-        set (CTEST_UPDATE_COMMAND "${Subversion_SVN_EXECUTABLE}")
-      else ()
-        set (CTEST_SVN_COMMAND "/usr/bin/svn")
-        set (CTEST_UPDATE_COMMAND "/usr/bin/svn")
-      endif ()
-
-      if (NOT EXISTS "${CTEST_SOURCE_DIRECTORY}")
-        set (NEED_REPOSITORY_CHECKOUT 1)
-      endif ()
-
-      if (NOT CTEST_REPO_VERSION)
-        set (CTEST_REPO_VERSION "HEAD")
-      endif ()
-      if (${NEED_REPOSITORY_CHECKOUT})
-        set (CTEST_CHECKOUT_COMMAND
-            "\"${CTEST_SVN_COMMAND}\" co ${REPOSITORY_URL} \"${CTEST_SOURCE_DIRECTORY}\" -r ${CTEST_REPO_VERSION}")
-      else ()
-        if (CTEST_REPO_VERSION)
-          set (CTEST_SVN_UPDATE_OPTIONS "-r ${CTEST_REPO_VERSION}")
-        endif ()
-      endif ()
     endif ()
   endif ()
 endif ()
@@ -178,6 +148,11 @@ list (APPEND CTEST_NOTES_FILES
     "${CMAKE_CURRENT_LIST_FILE}"
     "${CTEST_SOURCE_DIRECTORY}/config/cmake/cacheinit.cmake"
 )
+if (EXISTS "${CTEST_SCRIPT_DIRECTORY}/SkipTests.log")
+    list(APPEND CTEST_NOTES_FILES
+      "${CTEST_SCRIPT_DIRECTORY}/SkipTests.log"
+    )
+endif ()
 
 #-----------------------------------------------------------------------------
 # Check for required variables.
@@ -226,7 +201,7 @@ endif ()
 
 #-----------------------------------------------------------------------------
 ## -- set output to english
-set ($ENV{LC_MESSAGES}  "en_EN")
+set (ENV{LC_MESSAGES} "en_EN")
 
 # Print summary information.
 foreach (v
@@ -279,6 +254,15 @@ set (ENV{CI_MODEL} ${MODEL})
   endif ()
   if (${res} LESS 0 OR ${res} GREATER 0)
     file (APPEND ${CTEST_SCRIPT_DIRECTORY}/FailedCTest.txt "Failed Configure: ${res}\n")
+  endif ()
+
+  # On Cray XC40, configuring fails in the Fortran section when using the craype-mic-knl module.
+  # When the configure phase is done with the craype-haswell module and the build phase is done
+  # with the craype-mic-knl module, configure succeeds and tests pass on the knl compute nodes
+  # for Intel, Cray, GCC and Clang compilers.  If the variables aren't set or if not
+  # cross compiling, the module switch will not occur.
+  if (CMAKE_CROSSCOMPILING AND COMPILENODE_HWCOMPILE_MODULE AND COMPUTENODE_HWCOMPILE_MODULE)
+      execute_process (COMMAND module switch ${COMPILENODE_HWCOMPILE_MODULE} ${COMPUTENODE_HWCOMPILE_MODULE})
   endif ()
 
   ctest_build (BUILD "${CTEST_BINARY_DIRECTORY}" APPEND RETURN_VALUE res NUMBER_ERRORS errval)

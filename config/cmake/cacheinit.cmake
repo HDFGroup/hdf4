@@ -29,24 +29,32 @@ set_property (CACHE HDF4_ALLOW_EXTERNAL_SUPPORT PROPERTY STRINGS NO GIT TGZ)
 # compression options
 ########################
 set (ZLIB_PACKAGE_NAME "zlib" CACHE STRING "Name of ZLIB package" FORCE)
-set (ZLIB_TGZ_NAME "zlib-1.3.tar.gz" CACHE STRING "Use HDF4_ZLib from compressed file" FORCE)
-set (ZLIB_TGZ_ORIGPATH "https://github.com/madler/zlib/releases/download/v1.3" CACHE STRING "Use HDF4_ZLIB from original location" FORCE)
-set (ZLIB_USE_LOCALCONTENT ON CACHE BOOL "Use local file for HDF4_ZLIB FetchContent" FORCE)
+set (ZLIB_TGZ_NAME "zlib-1.3.1.tar.gz" CACHE STRING "Use HDF4_ZLib from compressed file" FORCE)
+set (ZLIB_TGZ_ORIGPATH "https://github.com/madler/zlib/releases/download/v1.3.1" CACHE STRING "Use ZLIB from original location" FORCE)
+set (ZLIB_USE_LOCALCONTENT ON CACHE BOOL "Use local file for ZLIB FetchContent" FORCE)
 set (ZLIB_GIT_URL "https://github.com/madler/zlib.git" CACHE STRING "Use ZLIB from  GitHub repository" FORCE)
 set (ZLIB_GIT_BRANCH "develop" CACHE STRING "" FORCE)
+set (HDF4_USE_ZLIB_STATIC ON CACHE BOOL "Use static zlib library" FORCE)
 
 set (LIBAEC_PACKAGE_NAME "libaec" CACHE STRING "Name of AEC SZIP package" FORCE)
-set (LIBAEC_TGZ_NAME "libaec-1.0.6.tar.gz" CACHE STRING "Use SZip AEC from compressed file" FORCE)
-set (LIBAEC_TGZ_ORIGPATH "https://github.com/MathisRosenhauer/libaec/releases/download/v1.0.6" CACHE STRING "Use LIBAEC from original location" FORCE)
+set (LIBAEC_TGZ_NAME "libaec-1.1.3.tar.gz" CACHE STRING "Use SZip AEC from compressed file" FORCE)
+set (LIBAEC_TGZ_ORIGPATH "https://github.com/MathisRosenhauer/libaec/releases/download/v1.1.3" CACHE STRING "Use LIBAEC from original location" FORCE)
 set (LIBAEC_USE_LOCALCONTENT ON CACHE BOOL "Use local file for LIBAEC FetchContent" FORCE)
 set (LIBAEC_GIT_URL "https://github.com/MathisRosenhauer/libaec.git" CACHE STRING "Use LIBAEC from  GitHub repository" FORCE)
-set (LIBAEC_GIT_BRANCH "v1.0.6" CACHE STRING "" FORCE)
+set (LIBAEC_GIT_BRANCH "v1.1.3" CACHE STRING "" FORCE)
+set (HDF4_USE_LIBAEC_STATIC ON CACHE BOOL "Use static AEC library" FORCE)
 
-set (JPEG_PACKAGE_NAME "jpeg" CACHE STRING "Name of JPEG package" FORCE)
-set (JPEG_TGZ_ORIGPATH "https://www.ijg.org/filesz" CACHE STRING "Use JPEG from original location" FORCE)
-set (JPEG_TGZ_NAME "jpegsrc.v9e.tar.gz" CACHE STRING "Use JPEG from original compressed file" FORCE)
-set (JPEG_USE_LOCALCONTENT ON CACHE BOOL "Use local file for JPEG FetchContent" FORCE)
+#######
+# jpeg
+#######
+
 set (JPEG_GIT_URL "https://github.com/libjpeg-turbo/libjpeg-turbo.git" CACHE STRING "Use JPEG from TurboJPEG" FORCE)
 set (JPEG_GIT_BRANCH "jpeg-9e" CACHE STRING "" FORCE)
 #set (JPEG_GIT_URL "https://github.com/LuaDist/libjpeg.git" CACHE STRING "Use JPEG from ILG" FORCE)
 #set (JPEG_GIT_BRANCH "master" CACHE STRING "" FORCE)
+
+set (JPEG_TGZ_ORIGPATH "https://www.ijg.org/files" CACHE STRING "Use JPEG from original location" FORCE)
+set (JPEG_TGZ_NAME "jpegsrc.v9e.tar.gz" CACHE STRING "Use JPEG from original compressed file" FORCE)
+set (JPEG_USE_LOCALCONTENT ON CACHE BOOL "Use local file for JPEG FetchContent" FORCE)
+
+set (JPEG_PACKAGE_NAME "jpeg" CACHE STRING "Name of JPEG package" FORCE)

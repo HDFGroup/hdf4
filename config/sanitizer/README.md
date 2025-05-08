@@ -45,7 +45,7 @@ A quick rundown of the tools available, and what they do:
 - [MemorySanitizer](https://clang.llvm.org/docs/MemorySanitizer.html) detects uninitialized reads.
 - [Control Flow Integrity](https://clang.llvm.org/docs/ControlFlowIntegrity.html) is designed to detect certain forms of undefined behaviour that can potentially allow attackers to subvert the program's control flow.
 
-These are used by declaring the `USE_SANITIZER` CMake variable as string containing any of:
+These are used by declaring the `HDF4_USE_SANITIZER` CMake variable as string containing any of:
 - Address
 - Memory
 - MemoryWithOrigins
@@ -54,10 +54,9 @@ These are used by declaring the `USE_SANITIZER` CMake variable as string contain
 - Leak
 - CFI
 
-Multiple values are allowed, e.g. `-DUSE_SANITIZER=Address,Leak` but some sanitizers cannot be combined together, e.g.`-DUSE_SANITIZER=Address,Memory` will result in configuration error. The delimiter character is not required and `-DUSE_SANITIZER=AddressLeak` would work as well.
+Multiple values are allowed, e.g. `-DHDF4_USE_SANITIZER=Address,Leak` but some sanitizers cannot be combined together, e.g.`-DHDF4_USE_SANITIZER=Address,Memory` will result in configuration error. The delimiter character is not required and `-DHDF4_USE_SANITIZER=AddressLeak` would work as well.
 
 ## Code Coverage [`code-coverage.cmake`](code-coverage.cmake)
-
 
 > In computer science, test coverage is a measure used to describe the degree to which the source code of a program is executed when a particular test suite runs. A program with high test coverage, measured as a percentage, has had more of its source code executed during testing, which suggests it has a lower chance of containing undetected software bugs compared to a program with low test coverage. Many different metrics can be used to calculate test coverage; some of the most basic are the percentage of program subroutines and the percentage of program statements called during execution of the test suite. 
 >
