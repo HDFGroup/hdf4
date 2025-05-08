@@ -103,9 +103,7 @@ endif ()
 #-----------------------------------------------------------------------------
 # Build examples
 #-----------------------------------------------------------------------------
-if (H4EX_BUILD_C)
-  add_subdirectory (C)
-endif ()
+add_subdirectory (C)
 if (H4EX_BUILD_FORTRAN AND HDF4_BUILD_FORTRAN)
     add_subdirectory (FORTRAN)
 endif ()

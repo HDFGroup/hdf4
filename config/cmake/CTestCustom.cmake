@@ -1,28 +1,36 @@
 # CTestCustom.cmake
 set (CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 3000)
+# Allow full output to go to CDash set to 0
+set (CTEST_CUSTOM_MAXIMUM_PASSED_TEST_OUTPUT_SIZE 50000)
+set (CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE 50000)
+# WARNING!  This could be a lot of output and could overwhelm CDash and the
+# MySQL DB so this might not be a good idea!
 
 set (CTEST_CUSTOM_WARNING_EXCEPTION
     ${CTEST_CUSTOM_WARNING_EXCEPTION}
+    "note.*expected.*void.*but argument is of type.*volatile"
+    "plugin-build.*:[ \t]*warning"
+    "stamp.verify"
+    "CMake Warning*stamp"
+    "src.ZLIB.*:[ \t]*warning"
+    "src.ZLIB.*:[ \t]*warning"
+    "warning LNK4197:.*ZLIB-prefix"
+    "src.SZIP.*:[ \t]*warning"
+    "disabling jobserver mode"
+    "config.cmake.xlatefile.c"
+    "warning.*unknown pragma"
+    "warning.*unrecognized .pragma"
+#    "note: expanded from macro"
+    "This directive is not standard"
     ".*note.*expected.*void.*but argument is of type.*volatile.*"
-    ".*src.SZIP.*"
-    ".*src.ZLIB.*"
-    ".*src.JPEG.*"
-    ".*szip.src.*"
-    ".*zlib.src.*"
-    ".*jpeg.src.*"
+    ".*src.SZIP.*:[ \t]*warning.*"
+    ".*src.ZLIB.*:[ \t]*warning.*"
+    ".*src.ZLIB.*:[ \t]*warning.*"
+    ".*src.JPEG.*:[ \t]*warning.*"
     ".*POSIX name for this item is deprecated.*"
     ".*disabling jobserver mode.*"
     ".*warning.*implicit declaration of function.*"
     ".*note: expanded from macro.*"
-    "note.*expected.*void.*but argument is of type.*volatile.*"
-    "stamp.verify"
-    "CMake Warning*stamp"
-    "warning LNK4197:.*ZLIB-prefix"
-    "warning LNK4197:.*SZIP-prefix"
-    "warning LNK4197:.*JPEG-prefix"
-    "POSIX name for this item is deprecated.*"
-    "disabling jobserver mode.*"
-#    "note: expanded from macro.*"
 )
 
 set (CTEST_CUSTOM_MEMCHECK_IGNORE
