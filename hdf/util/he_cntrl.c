@@ -717,7 +717,7 @@ HEdelete(HE_CMD *cmd)
 }
 
 /* delete -- deletes a group and its elts or an elt from current hdf file */
-int delete (int curr)
+int delete(int curr)
 {
     int ret;
 

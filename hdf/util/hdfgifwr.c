@@ -70,7 +70,7 @@ typedef long int count_int;
 #define PIC24 CONV24_24BIT
 
 /* MONO returns total intensity of r,g,b components */
-#define MONO(rd, gn, bl) (((rd)*11 + (gn)*16 + (bl)*5) >> 5) /*.33R+ .5G+ .17B*/
+#define MONO(rd, gn, bl) (((rd) * 11 + (gn) * 16 + (bl) * 5) >> 5) /*.33R+ .5G+ .17B*/
 
 static int  curx, cury;
 static long CountDown;
