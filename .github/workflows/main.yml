@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
   pull_request:
-    branches: [ master ]
+    branches: [ master, hdf_4_3_1 ]
     paths-ignore:
     - '.github/CODEOWNERS'
     - 'doc/**'

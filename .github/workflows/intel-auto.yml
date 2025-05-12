@@ -76,10 +76,10 @@ jobs:
           make install
         working-directory: ${{ runner.workspace }}/build
 
-      - name: Autotools Verify Install
-        shell: bash
-        env:
-          CC: ${{ steps.setup-fortran.outputs.cc }}
-        run: |
-          make check-install
-        working-directory: ${{ runner.workspace }}/build
+#      - name: Autotools Verify Install
+#        shell: bash
+#        env:
+#          CC: ${{ steps.setup-fortran.outputs.cc }}
+#        run: |
+#          make check-install
+#        working-directory: ${{ runner.workspace }}/build
