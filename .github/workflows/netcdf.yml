@@ -25,10 +25,14 @@ jobs:
     steps:
     - name: Install System dependencies
       run: |
-        sudo apt update
+        sudo apt-get update
+        sudo apt-get install ninja-build
+        sudo apt install libssl3 libssl-dev libcurl4
         sudo apt install -y libaec-dev zlib1g-dev automake autoconf libcurl4-openssl-dev libjpeg-dev wget curl bzip2 m4 flex bison cmake libzip-dev doxygen openssl libtool libtool-bin
+
     - name: Checkout HDF4
-      uses: actions/checkout@v4.1.1
+      uses: actions/checkout@v4.1.7
+
     - name: Install HDF4
       run: |
         ./autogen.sh
@@ -41,6 +45,7 @@ jobs:
       with:
         repository: HDFGroup/hdf5
         path: hdf5
+
     - name: Install HDF5
       run: |
         cd hdf5
@@ -50,10 +55,11 @@ jobs:
         sudo make install -j
 
     - name: Checkout netCDF
-      uses: actions/checkout@v4.1.1
+      uses: actions/checkout@v4.1.7
       with:
         repository: unidata/netcdf-c
         path: netcdf-c
+
     - name: Test netCDF
       run: |
         cd netcdf-c
