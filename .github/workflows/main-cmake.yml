@@ -212,4 +212,4 @@ jobs:
               name: tgz-macos14_clang-${{ inputs.build_mode }}-binary
               path: ${{ runner.workspace }}/build/HDF-*-Darwin.tar.gz
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
-        if: ${{ (matrix.os == 'macos-13') && (inputs.netcdf == 'true') && (inputs.shared == 'true') }}
+        if: ${{ (matrix.os == 'macos-latest') && (matrix.name != 'Ubuntu mingw CMake') && (inputs.netcdf == 'true') && (inputs.shared == 'true') }}
