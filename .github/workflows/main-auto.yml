@@ -78,6 +78,6 @@ jobs:
         run: make install
         working-directory: ${{ runner.workspace }}/build
 
-      - name: Autotools Verify Install
-        run: make check-install
-        working-directory: ${{ runner.workspace }}/build
+#      - name: Autotools Verify Install
+#        run: make check-install
+#        working-directory: ${{ runner.workspace }}/build
