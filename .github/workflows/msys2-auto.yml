@@ -16,6 +16,11 @@ on:
 permissions:
   contents: read
 
+# Using concurrency to cancel any in-progress job or run
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref && github.ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   msys2_build_and_test:
     runs-on: windows-latest
@@ -47,6 +52,7 @@ jobs:
             libjpeg-turbo:p
 
       - name: Autotools Configure
+        shell: msys2 {0}
         run: |
           sh ./autogen.sh
           mkdir "$GITHUB_WORKSPACE/build"
@@ -55,11 +61,13 @@ jobs:
             --disable-netcdf --disable-netcdf-tools --enable-static-exec
 
       - name: Autotools Build
+        shell: msys2 {0}
         run: |
           make -j3
         working-directory: $GITHUB_WORKSPACE/build
 
       - name: Autotools Run Tests
+        shell: msys2 {0}
         run: |
           make check -j
         working-directory: $GITHUB_WORKSPACE/build

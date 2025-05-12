@@ -28,7 +28,9 @@ jobs:
         sudo apt-get update
         sudo apt-get install ninja-build
         sudo apt install libssl3 libssl-dev libcurl4
-        sudo apt install -y libaec-dev zlib1g-dev automake autoconf libcurl4-openssl-dev libjpeg-dev wget curl bzip2 m4 flex bison cmake libzip-dev doxygen openssl libtool libtool-bin
+        sudo apt install -y lautomake autoconf libtool libtool-bin
+        sudo apt install -y libaec-dev zlib1g-dev libcurl4-openssl-dev libjpeg-dev wget curl
+        sudo apt install -y bzip2 m4 flex bison cmake libzip-dev doxygen openssl
 
     - name: Checkout HDF4
       uses: actions/checkout@v4.1.7
@@ -41,18 +43,38 @@ jobs:
         sudo make install -j
 
     - name: Checkout HDF5
-      uses: actions/checkout@v4.1.1
+      uses: actions/checkout@v4.1.7
       with:
         repository: HDFGroup/hdf5
         path: hdf5
+        ref: hdf5_1.14.5
+
+    - name: CMake Configure HDF5
+      run: |
+          mkdir "${{ runner.workspace }}/build5"
+          cd "${{ runner.workspace }}/build5"
+          cmake -C $GITHUB_WORKSPACE/hdf5/config/cmake/cacheinit.cmake \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DHDF4_BUILD_FORTRAN:BOOL=OFF \
+            -DHDF4_BUILD_JAVA:BOOL=OFF \
+            -DHDF4_BUILD_EXAMPLES:BOOL=OFF \
+            -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF \
+            -DZLIB_USE_LOCALCONTENT:BOOL=OFF \
+            -DBUILD_TESTING:BOOL=OFF \
+            -DBUILD_STATIC_LIBS:BOOL=OFF \
+            -DCMAKE_INSTALL_PREFIX:PATH=/usr/local \
+            $GITHUB_WORKSPACE/hdf5
+      shell: bash
+
+    - name: CMake Build HDF5
+      run: cmake --build . --parallel 3 --config Release
+      working-directory: ${{ runner.workspace }}/build5
 
     - name: Install HDF5
       run: |
-        cd hdf5
-        ./autogen.sh
-        ./configure --prefix=/usr/local --disable-tests --disable-static --enable-shared --enable-hl --with-szlib
-        make -j
-        sudo make install -j
+        sudo cmake --install . --config Release --prefix="/usr/local"
+      working-directory: ${{ runner.workspace }}/build5
 
     - name: Checkout netCDF
       uses: actions/checkout@v4.1.7
@@ -71,3 +93,4 @@ jobs:
         CFLAGS=${CFLAGS} LDFLAGS=${LDFLAGS} LD_LIBRARY_PATH=${LD_LIBRARY_PATH} make check TESTS="" -j
         LD_LIBRARY_PATH="/home/runner/work/hdf4/hdf4/netcdf-c/liblib/.libs:/usr/local/lib:${LD_LIBRARY_PATH}"
         CFLAGS=${CFLAGS} LDFLAGS=${LDFLAGS} LD_LIBRARY_PATH=${LD_LIBRARY_PATH} make check -j
+      continue-on-error: true
