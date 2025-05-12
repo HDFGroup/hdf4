@@ -1,5 +1,5 @@
 # Ref: https://github.com/codespell-project/codespell#using-a-config-file
 [codespell]
-skip = .git
+skip = .git,.codespellrc,./bin/trace,./configure,./bin/ltmain.sh,./bin/depcomp,./bin/config.guess,./bin/config.sub
 # ignore-regex =
 ignore-words-list = fillin,indx
