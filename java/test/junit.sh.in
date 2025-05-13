@@ -294,14 +294,20 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
     -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4.ext > JUnit-TestH4.out
+sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
+    -e 's/line [0-9]*/line (number)/' \
+    -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
+    -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
+    -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
+    JUnit-TestH4.txt > JUnit-TestH4.ref
 
-if diff JUnit-TestH4.out JUnit-TestH4.txt > /dev/null; then
+if diff JUnit-TestH4.out JUnit-TestH4.ref > /dev/null; then
     echo "  PASSED      JUnit-TestH4"
 else
     echo "**FAILED**    JUnit-TestH4"
     echo "    Expected result differs from actual result"
     nerrors="`expr $nerrors + 1`"
-    test yes = "$verbose" && $DIFF JUnit-TestH4.txt JUnit-TestH4.out |sed 's/^/    /'
+    test yes = "$verbose" && $DIFF JUnit-TestH4.ref JUnit-TestH4.out |sed 's/^/    /'
 fi
 
 echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4ANparams"
@@ -315,14 +321,20 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
     -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4ANparams.ext > JUnit-TestH4ANparams.out
+sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
+    -e 's/line [0-9]*/line (number)/' \
+    -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
+    -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
+    -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
+    JUnit-TestH4ANparams.txt > JUnit-TestH4ANparams.ref
 
-if diff JUnit-TestH4ANparams.out JUnit-TestH4ANparams.txt > /dev/null; then
+if diff JUnit-TestH4ANparams.out JUnit-TestH4ANparams.ref > /dev/null; then
     echo "  PASSED      JUnit-TestH4ANparams"
 else
     echo "**FAILED**    JUnit-TestH4ANparams"
     echo "    Expected result differs from actual result"
     nerrors="`expr $nerrors + 1`"
-    test yes = "$verbose" && $DIFF JUnit-TestH4ANparams.txt JUnit-TestH4ANparams.out |sed 's/^/    /'
+    test yes = "$verbose" && $DIFF JUnit-TestH4ANparams.ref JUnit-TestH4ANparams.out |sed 's/^/    /'
 fi
 
 echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4DFparams"
@@ -336,14 +348,20 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
     -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4DFparams.ext > JUnit-TestH4DFparams.out
+sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
+    -e 's/line [0-9]*/line (number)/' \
+    -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
+    -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
+    -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
+    JUnit-TestH4DFparams.txt > JUnit-TestH4DFparams.ref
 
-if diff JUnit-TestH4DFparams.out JUnit-TestH4DFparams.txt > /dev/null; then
+if diff JUnit-TestH4DFparams.out JUnit-TestH4DFparams.ref > /dev/null; then
     echo "  PASSED      JUnit-TestH4DFparams"
 else
     echo "**FAILED**    JUnit-TestH4DFparams"
     echo "    Expected result differs from actual result"
     nerrors="`expr $nerrors + 1`"
-    test yes = "$verbose" && $DIFF JUnit-TestH4DFparams.txt JUnit-TestH4DFparams.out |sed 's/^/    /'
+    test yes = "$verbose" && $DIFF JUnit-TestH4DFparams.ref JUnit-TestH4DFparams.out |sed 's/^/    /'
 fi
 
 echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4DFPparams"
@@ -357,14 +375,20 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
     -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4DFPparams.ext > JUnit-TestH4DFPparams.out
+sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
+    -e 's/line [0-9]*/line (number)/' \
+    -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
+    -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
+    -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
+    JUnit-TestH4DFPparams.txt > JUnit-TestH4DFPparams.ref
 
-if diff JUnit-TestH4DFPparams.out JUnit-TestH4DFPparams.txt > /dev/null; then
+if diff JUnit-TestH4DFPparams.out JUnit-TestH4DFPparams.ref > /dev/null; then
     echo "  PASSED      JUnit-TestH4DFPparams"
 else
     echo "**FAILED**    JUnit-TestH4DFPparams"
     echo "    Expected result differs from actual result"
     nerrors="`expr $nerrors + 1`"
-    test yes = "$verbose" && $DIFF JUnit-TestH4DFPparams.txt JUnit-TestH4DFPparams.out |sed 's/^/    /'
+    test yes = "$verbose" && $DIFF JUnit-TestH4DFPparams.ref JUnit-TestH4DFPparams.out |sed 's/^/    /'
 fi
 
 echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4DFRparams"
@@ -378,14 +402,20 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
     -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4DFRparams.ext > JUnit-TestH4DFRparams.out
+sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
+    -e 's/line [0-9]*/line (number)/' \
+    -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
+    -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
+    -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
+    JUnit-TestH4DFRparams.txt > JUnit-TestH4DFRparams.ref
 
-if diff JUnit-TestH4DFRparams.out JUnit-TestH4DFRparams.txt > /dev/null; then
+if diff JUnit-TestH4DFRparams.out JUnit-TestH4DFRparams.ref > /dev/null; then
     echo "  PASSED      JUnit-TestH4DFRparams"
 else
     echo "**FAILED**    JUnit-TestH4DFRparams"
     echo "    Expected result differs from actual result"
     nerrors="`expr $nerrors + 1`"
-    test yes = "$verbose" && $DIFF JUnit-TestH4DFRparams.txt JUnit-TestH4DFRparams.out |sed 's/^/    /'
+    test yes = "$verbose" && $DIFF JUnit-TestH4DFRparams.ref JUnit-TestH4DFRparams.out |sed 's/^/    /'
 fi
 
 echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4GRparams"
@@ -399,14 +429,20 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
     -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4GRparams.ext > JUnit-TestH4GRparams.out
+sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
+    -e 's/line [0-9]*/line (number)/' \
+    -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
+    -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
+    -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
+    JUnit-TestH4GRparams.txt > JUnit-TestH4GRparams.ref
 
-if diff JUnit-TestH4GRparams.out JUnit-TestH4GRparams.txt > /dev/null; then
+if diff JUnit-TestH4GRparams.out JUnit-TestH4GRparams.ref > /dev/null; then
     echo "  PASSED      JUnit-TestH4GRparams"
 else
     echo "**FAILED**    JUnit-TestH4GRparams"
     echo "    Expected result differs from actual result"
     nerrors="`expr $nerrors + 1`"
-    test yes = "$verbose" && $DIFF JUnit-TestH4GRparams.txt JUnit-TestH4GRparams.out |sed 's/^/    /'
+    test yes = "$verbose" && $DIFF JUnit-TestH4GRparams.ref JUnit-TestH4GRparams.out |sed 's/^/    /'
 fi
 
 echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4HCparams"
@@ -420,14 +456,20 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
     -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4HCparams.ext > JUnit-TestH4HCparams.out
+sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
+    -e 's/line [0-9]*/line (number)/' \
+    -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
+    -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
+    -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
+    JUnit-TestH4HCparams.txt > JUnit-TestH4HCparams.ref
 
-if diff JUnit-TestH4HCparams.out JUnit-TestH4HCparams.txt > /dev/null; then
+if diff JUnit-TestH4HCparams.out JUnit-TestH4HCparams.ref > /dev/null; then
     echo "  PASSED      JUnit-TestH4HCparams"
 else
     echo "**FAILED**    JUnit-TestH4HCparams"
     echo "    Expected result differs from actual result"
     nerrors="`expr $nerrors + 1`"
-    test yes = "$verbose" && $DIFF JUnit-TestH4HCparams.txt JUnit-TestH4HCparams.out |sed 's/^/    /'
+    test yes = "$verbose" && $DIFF JUnit-TestH4HCparams.ref JUnit-TestH4HCparams.out |sed 's/^/    /'
 fi
 
 echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4SDparams"
@@ -441,14 +483,20 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
     -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4SDparams.ext > JUnit-TestH4SDparams.out
+sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
+    -e 's/line [0-9]*/line (number)/' \
+    -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
+    -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
+    -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
+    JUnit-TestH4SDparams.txt > JUnit-TestH4SDparams.ref
 
-if diff JUnit-TestH4SDparams.out JUnit-TestH4SDparams.txt > /dev/null; then
+if diff JUnit-TestH4SDparams.out JUnit-TestH4SDparams.ref > /dev/null; then
     echo "  PASSED      JUnit-TestH4SDparams"
 else
     echo "**FAILED**    JUnit-TestH4SDparams"
     echo "    Expected result differs from actual result"
     nerrors="`expr $nerrors + 1`"
-    test yes = "$verbose" && $DIFF JUnit-TestH4SDparams.txt JUnit-TestH4SDparams.out |sed 's/^/    /'
+    test yes = "$verbose" && $DIFF JUnit-TestH4SDparams.ref JUnit-TestH4SDparams.out |sed 's/^/    /'
 fi
 
 echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4Vparams"
@@ -462,14 +510,20 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
     -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4Vparams.ext > JUnit-TestH4Vparams.out
+sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
+    -e 's/line [0-9]*/line (number)/' \
+    -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
+    -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
+    -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
+    JUnit-TestH4Vparams.txt > JUnit-TestH4Vparams.ref
 
-if diff JUnit-TestH4Vparams.out JUnit-TestH4Vparams.txt > /dev/null; then
+if diff JUnit-TestH4Vparams.out JUnit-TestH4Vparams.ref > /dev/null; then
     echo "  PASSED      JUnit-TestH4Vparams"
 else
     echo "**FAILED**    JUnit-TestH4Vparams"
     echo "    Expected result differs from actual result"
     nerrors="`expr $nerrors + 1`"
-    test yes = "$verbose" && $DIFF JUnit-TestH4Vparams.txt JUnit-TestH4Vparams.out |sed 's/^/    /'
+    test yes = "$verbose" && $DIFF JUnit-TestH4Vparams.ref JUnit-TestH4Vparams.out |sed 's/^/    /'
 fi
 
 echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4VSparams"
@@ -483,14 +537,20 @@ sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
     -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
     -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
     JUnit-TestH4VSparams.ext > JUnit-TestH4VSparams.out
+sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
+    -e 's/line [0-9]*/line (number)/' \
+    -e 's/Time: [0-9]*\.[0-9]*/Time:  XXXX/' \
+    -e 's/v[1-9]*\.[0-9]*\./version (number)\./' \
+    -e '1d; s/[1-9]*\.[0-9]*\.[0-9]*[^)]*/version (number)/' \
+    JUnit-TestH4VSparams.txt > JUnit-TestH4VSparams.ref
 
-if diff JUnit-TestH4VSparams.out JUnit-TestH4VSparams.txt > /dev/null; then
+if diff JUnit-TestH4VSparams.out JUnit-TestH4VSparams.ref > /dev/null; then
     echo "  PASSED      JUnit-TestH4VSparams"
 else
     echo "**FAILED**    JUnit-TestH4VSparams"
     echo "    Expected result differs from actual result"
     nerrors="`expr $nerrors + 1`"
-    test yes = "$verbose" && $DIFF JUnit-TestH4VSparams.txt JUnit-TestH4VSparams.out |sed 's/^/    /'
+    test yes = "$verbose" && $DIFF JUnit-TestH4VSparams.txt JUnit-TestH4VSparams.ref |sed 's/^/    /'
 fi
 
 
