@@ -2,16 +2,6 @@ name: msys2 auto
 
 on:
   workflow_dispatch:
-  push:
-  pull_request:
-    branches: [ master ]
-    paths-ignore:
-      - '.github/CODEOWNERS'
-      - 'doc/**'
-      - 'release_docs/**'
-      - 'ACKNOWLEDGEMENTS'
-      - 'COPYING**'
-      - '**.md'
 
 permissions:
   contents: read
@@ -22,19 +12,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  msys2_build_and_test:
+    runs-on: windows-latest
     strategy:
       matrix:
-        sys:
-          - mingw64
-          - mingw32
-          - ucrt64
-          - clang64
-    runs-on: windows-latest
+        include:
+          - { icon: '⬛', sys: mingw32 }
+          - { icon: '🟦', sys: mingw64 }
+          - { icon: '🟨', sys: ucrt64  }
+          - { icon: '🟧', sys: clang64 }
+    name: ${{ matrix.icon }} msys2-${{ matrix.sys }}-${{ inputs.build_mode }}
+    defaults:
+      run:
+        shell: msys2 {0}
     steps:
-      - uses: actions/checkout@v4.1.1
+      - name: Get Sources
+        uses: actions/checkout@v4.1.7
 
-      - name: Setup MSYS2
+      - name: '${{ matrix.icon }} Setup MSYS2'
         uses: msys2/setup-msys2@v2
         with:
           msystem: ${{matrix.sys}}
@@ -49,15 +44,20 @@ jobs:
       - name: Autotools Configure
         shell: msys2 {0}
         run: |
-          ./autogen.sh
-          ./configure LDFLAGS="-lws2_32" --disable-netcdf --disable-netcdf-tools --enable-static-exec
+          sh ./autogen.sh
+          mkdir "$GITHUB_WORKSPACE/build"
+          cd "$GITHUB_WORKSPACE/build"
+          LDFLAGS="-lws2_32" $GITHUB_WORKSPACE/configure \
+            --disable-netcdf --disable-netcdf-tools --enable-static-exec
 
       - name: Autotools Build
         shell: msys2 {0}
         run: |
-          make
+          make -j3
+        working-directory: $GITHUB_WORKSPACE/build
 
       - name: Autotools Run Tests
         shell: msys2 {0}
         run: |
-          make check
+          make check -j
+        working-directory: $GITHUB_WORKSPACE/build

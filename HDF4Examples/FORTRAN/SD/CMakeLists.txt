@@ -13,7 +13,7 @@ endif ()
 # Setup include Directories
 #-----------------------------------------------------------------------------
 set_directory_properties(PROPERTIES INCLUDE_DIRECTORIES
-    "${CMAKE_Fortran_MODULE_DIRECTORY}${HDF_MOD_EXT};${PROJECT_BINARY_DIR};${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+    "${CMAKE_Fortran_MODULE_DIRECTORY}${H4EX_MOD_EXT};${PROJECT_BINARY_DIR};${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
 )
 
 #-----------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 name: hdf4 dev release build
 
-# Controls when the action will run. Triggers the workflow on a manual run
+# Triggers the workflow on demand
 on:
   workflow_dispatch:
     inputs:
@@ -13,8 +13,6 @@ on:
 permissions:
   contents: read
 
-# A workflow run is made up of one or more jobs that can run sequentially or
-# in parallel.
 jobs:
   log-the-inputs:
     runs-on: ubuntu-latest
@@ -27,84 +25,50 @@ jobs:
         TAG: ${{ inputs.use_tag }}
       run: echo "RELEASE_TAG=$TAG" >> $GITHUB_OUTPUT
 
-# tarball.yml will be used for releases when pre-tag actions are implemented
-#  call-workflow-tarball:
-#    needs: log-the-inputs
-#    uses: ./.github/workflows/tarball.yml
-#    with:
-#      use_tag: ${{ inputs.use_tag }}
-#      use_environ: release
-
-  create-files-ctest:
+  call-workflow-tarball:
     needs: log-the-inputs
-    runs-on: ubuntu-latest
-    outputs:
-      file_base: ${{ steps.set-file-base.outputs.FILE_BASE }}
-    steps:
-      - name: Set file base name
-        id: set-file-base
-        run: |
-          FILE_NAME_BASE=$(echo "${{ needs.log-the-inputs.outputs.rel_tag }}")
-          echo "FILE_BASE=$FILE_NAME_BASE" >> $GITHUB_OUTPUT
-        shell: bash
-
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Get Sources
-        uses: actions/checkout@v4.1.1
-        with:
-          path: hdfsrc
-
-      - name: Zip Folder
-        run: |
-              zip -r ${{ steps.set-file-base.outputs.FILE_BASE }}.zip ./hdfsrc
-              tar -zcvf ${{ steps.set-file-base.outputs.FILE_BASE }}.tar.gz ./hdfsrc
-
-      - name: List files in the repository
-        run: |
-              ls -l ${{ github.workspace }}
-              ls $GITHUB_WORKSPACE
-
-      # Save files created by release script
-      - name: Save tgz-tarball
-        uses: actions/upload-artifact@v4
-        with:
-              name: tgz-tarball
-              path: ${{ steps.set-file-base.outputs.FILE_BASE }}.tar.gz
-              if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
-
-      - name: Save zip-tarball
-        uses: actions/upload-artifact@v4
-        with:
-              name: zip-tarball
-              path: ${{ steps.set-file-base.outputs.FILE_BASE }}.zip
-              if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+    uses: ./.github/workflows/tarball.yml
+    with:
+      use_tag: ${{ needs.log-the-inputs.outputs.rel_tag }}
+      use_environ: release
 
   call-workflow-ctest:
-    needs: create-files-ctest
+    needs: call-workflow-tarball
     uses: ./.github/workflows/cmake-ctest.yml
     with:
-      file_base: ${{ needs.create-files-ctest.outputs.file_base }}
       preset_name: ci-StdShar
+      file_base: ${{ needs.call-workflow-tarball.outputs.file_base }}
+      snap_name: hdf-${{ needs.call-workflow-tarball.outputs.source_base }}
+      use_environ: release
+    secrets:
+        APPLE_CERTS_BASE64: ${{ secrets.APPLE_CERTS_BASE64 }}
+        APPLE_CERTS_BASE64_PASSWD: ${{ secrets.APPLE_CERTS_BASE64_PASSWD }}
+        KEYCHAIN_PASSWD: ${{ secrets.KEYCHAIN_PASSWD }}
+        AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        AZURE_ENDPOINT: ${{ secrets.AZURE_ENDPOINT }}
+        AZURE_CODE_SIGNING_NAME: ${{ secrets.AZURE_CODE_SIGNING_NAME }}
+        AZURE_CERT_PROFILE_NAME: ${{ secrets.AZURE_CERT_PROFILE_NAME }}
 
-#  call-workflow-abi:
-#    needs: [log-the-inputs, create-files-ctest, call-workflow-ctest]
-#    uses: ./.github/workflows/abi-report.yml
-#    with:
-#      file_ref: '4_2_16-2'
-#      file_base: ${{ needs.create-files-ctest.outputs.file_base }}
-#      use_tag: ${{ needs.log-the-inputs.outputs.rel_tag }}
-#      use_environ: release
+  call-workflow-abi:
+    needs: [log-the-inputs, call-workflow-tarball, call-workflow-ctest]
+    uses: ./.github/workflows/abi-report.yml
+    with:
+      file_ref: '4.3.0'
+      file_base: ${{ needs.call-workflow-tarball.outputs.file_base }}
+      use_tag: ${{ needs.log-the-inputs.outputs.rel_tag }}
+      use_environ: release
 
   call-workflow-release:
-#    needs: [log-the-inputs, create-files-ctest, call-workflow-ctest, call-workflow-abi]
-    needs: [log-the-inputs, create-files-ctest, call-workflow-ctest]
+    needs: [log-the-inputs, call-workflow-tarball, call-workflow-ctest, call-workflow-abi]
     permissions:
       contents: write # In order to allow tag creation
     uses: ./.github/workflows/release-files.yml
     with:
-      file_base: ${{ needs.create-files-ctest.outputs.file_base }}
-      file_branch: ${{ needs.log-the-inputs.outputs.rel_tag }}
-      file_sha: ${{ needs.log-the-inputs.outputs.rel_tag }}
+      file_base: ${{ needs.call-workflow-tarball.outputs.file_base }}
+      file_branch: ${{ needs.call-workflow-tarball.outputs.file_branch }}
+      file_sha: ${{ needs.call-workflow-tarball.outputs.file_sha }}
       use_tag: ${{ needs.log-the-inputs.outputs.rel_tag }}
       use_environ: release
 

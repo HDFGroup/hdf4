@@ -5,7 +5,7 @@
 Notes: This short instruction is written for users who want to quickly build
        HDF4 Examples using the HDF4 binary package using the CMake tools.
 
-       More information about using CMake can be found at the KitWare
+       More information about using CMake can be found at the Kitware
        site, www.cmake.org.
 
        CMake uses the command line; however, the visual CMake tool is
@@ -45,7 +45,7 @@ I. Preconditions
       (Note there are no quote characters used on Windows and all platforms
       use forward slashes)
 
-   4. Created separate source and build directories.
+   4. Create separate source and build directories.
       (CMake commands are executed in the build directory)
 
 
@@ -99,8 +99,8 @@ These steps are described in more detail below.
         <options> is:
             * H4EX_BUILD_TESTING:BOOL=ON
             * BUILD_SHARED_LIBS:BOOL=[ON | OFF]
-            * HDF_BUILD_FORTRAN:BOOL=[ON | OFF]
-            * HDF_BUILD_JAVA:BOOL=[ON | OFF]
+            * H4EX_BUILD_FORTRAN:BOOL=[ON | OFF]
+            * H4EX_BUILD_JAVA:BOOL=[ON | OFF]
 
         if the hdf4 library was built with a namespace (i.e. "hdf4::") add:
             -D HDF4_NAMESPACE:STRING=hdf4::

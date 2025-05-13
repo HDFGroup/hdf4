@@ -4,7 +4,7 @@
 
 <h2><u>What it is</u></h2>
 The <b>Java HDF Interface (JHI4)</b> is a Java package
-(<a href="../../hdf-java-html/javadocs/hdf/hdflib/package-summary.html">hdf.hdflib</a>)
+(<a href="./hdf/hdflib/package-summary.html">hdf.hdflib</a>)
 that ``wraps around'' the HDF library.
 <p>There are a large number of functions in the HDF
 library (version 4.2). Some of the functions are not supported in JHI4.</p>
@@ -30,7 +30,7 @@ library contains C functions which implement the native methods. The C
 functions call the standard HDF library, which is linked as part of the
 same library on most platforms.
 <p>The central part of the JHI4 is the Java class <i>
-<a href="../../hdf-java-html/javadocs/hdf/hdflib/HDFLibrary.html">hdf.hdflib.HDFLibrary</a></i>.
+<a href="./hdf/hdflib/HDFLibrary.html">hdf.hdflib.HDFLibrary</a></i>.
 The <i>HDFLibrary</i> class calls the standard (<i>i.e.</i>, `native' code) HDF
 library, with native methods for most of the HDF4functions.
 
@@ -40,11 +40,11 @@ The JHI4 is used by Java classes to call the HDF library, in order to
 create HDF files, and read and write data in existing HDF files.
 <p>For example, the HDF library has the function <b>Hopen</b> to open
 an HDF file. The Java interface is the class <i>
-<a href="../../hdf-java-html/javadocs/hdf/hdflib/HDFLibrary.html">hdf.hdflib.HDFLibrary</a></i>,
+<a href="./hdf/hdflib/HDFLibrary.html">hdf.hdflib.HDFLibrary</a></i>,
 which has a method:
 <pre><b>static native int Hopen(String filename, int flags, int access );</b></pre>
 The native method is implemented in C using the
-<a href="http://java.sun.com/javase/6/docs/technotes/guides/jni/index.html">Java
+<a href="https://docs.oracle.com/en/java/javase/18/docs/specs/jni/index.html">Java
 Native Method Interface </a>(JNI). This is written something like the following:
 <pre><b>JNIEXPORT jint
 JNICALL Java_hdf_hdflib_HDFLibrary_Hopen
@@ -89,6 +89,6 @@ The <i><b>HDFLibrary</b> </i>class automatically loads the native method impleme
 and the HDF library.
 
 <h3>To Obtain</h3>
-The JHI4 is included with the <a href="https://portal.hdfgroup.org/display/support/Downloads">HDF</a> library.
+The JHI4 is included with the <a href="https://support.hdfgroup.org/downloads/index.html">HDF</a> library.
 
 </body>

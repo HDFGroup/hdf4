@@ -1,9 +1,14 @@
 cmake_minimum_required (VERSION 3.18)
-project (HDF4 C)
+project (HDF4 LANGUAGES C)
 
 if (POLICY CMP0074)
   # find_package() uses <PackageName>_ROOT variables.
   cmake_policy (SET CMP0074 NEW)
+endif ()
+
+if (POLICY CMP0144)
+  # <PACKAGENAME> is the upper-cased package name.
+  cmake_policy (SET CMP0144 NEW)
 endif ()
 
 if (POLICY CMP0083)
@@ -44,6 +49,17 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
       )
 endif ()
 
+# Whether the most recently called project() command, in the current scope or above,
+# was in the top level CMakeLists.txt file.
+if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.21.0")
+  if(NOT PROJECT_IS_TOP_LEVEL)
+    set (HDF4_EXTERNALLY_CONFIGURED 1)
+  endif()
+else()
+  if (NOT CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+    set (HDF4_EXTERNALLY_CONFIGURED 1)
+  endif()
+endif()
 #-----------------------------------------------------------------------------
 # Instructions for use : Sub-Project Build
 #
@@ -103,8 +119,8 @@ mark_as_advanced (HDF4_EXTERNAL_LIB_PREFIX)
 #     else ()
 #      set (H4_SZIP_HEADER "prj_szip.h")
 #       # Set vars that FindSZIP would have set if used in sub project
-#       set (SZIP_INCLUDE_DIRS "${PRJ_SZIP_INCLUDE_DIRS}")
-#       set (SZIP_LIBRARIES prjszip)
+#       set (H4_SZIP_INCLUDE_DIRS "${PRJ_H4_SZIP_INCLUDE_DIRS}")
+#       set (H4_SZIP_LIBRARIES prjszip)
 #     endif ()
 #  endif ()
 #
@@ -212,9 +228,9 @@ set (HDF4_JAVA_JNI_SRC_DIR         ${HDF4_SOURCE_DIR}/java/src/jni)
 set (HDF4_JAVA_HDF_SRC_DIR         ${HDF4_SOURCE_DIR}/java/src/hdf)
 set (HDF4_JAVA_TEST_SRC_DIR        ${HDF4_SOURCE_DIR}/java/test)
 set (HDF4_JAVA_LIB_DIR             ${HDF4_SOURCE_DIR}/java/lib)
-set (HDF4_JAVA_LOGGING_JAR         ${HDF4_SOURCE_DIR}/java/lib/slf4j-api-1.7.33.jar)
-set (HDF4_JAVA_LOGGING_NOP_JAR     ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-nop-1.7.33.jar)
-set (HDF4_JAVA_LOGGING_SIMPLE_JAR  ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-simple-1.7.33.jar)
+set (HDF4_JAVA_LOGGING_JAR         ${HDF4_SOURCE_DIR}/java/lib/slf4j-api-2.0.16.jar)
+set (HDF4_JAVA_LOGGING_NOP_JAR     ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-nop-2.0.16.jar)
+set (HDF4_JAVA_LOGGING_SIMPLE_JAR  ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-simple-2.0.16.jar)
 set (HDF4_DOXYGEN_DIR              ${HDF4_SOURCE_DIR}/doxygen)
 
 set (HDF4_SRC_INCLUDE_DIRS ${HDF4_HDFSOURCE_DIR} ${HDF4_MFHDFSOURCE_DIR})
@@ -231,9 +247,9 @@ string (REGEX REPLACE ".*#define[ \t]+LIBVER_MINOR[ \t]+([0-9]*).*$"
     "\\1" H4_VERS_MINOR ${_hfile_h_contents})
 string (REGEX REPLACE ".*#define[ \t]+LIBVER_RELEASE[ \t]+([0-9]*).*$"
     "\\1" H4_VERS_RELEASE ${_hfile_h_contents})
-string (REGEX REPLACE ".*#define[ \t]+LIBVER_SUBRELEASE[ \t]+\"([0-9A-Za-z.]*)\".*$"
+string (REGEX REPLACE ".*#define[ \t]+LIBVER_SUBRELEASE[ \t]+\"([0-9A-Za-z._-]*)\".*$"
     "\\1" H4_VERS_SUBRELEASE ${_hfile_h_contents})
-#message (STATUS "VERSION: ${H4_VERS_MAJOR}.${H4_VERS_MINOR}.${H4_VERS_RELEASE}-${H4_VERS_SUBRELEASE}")
+message (TRACE "VERSION: ${H4_VERS_MAJOR}.${H4_VERS_MINOR}.${H4_VERS_RELEASE}-${H4_VERS_SUBRELEASE}")
 
 #-----------------------------------------------------------------------------
 # parse the full soversion number from config/lt_vers.am and include in H4_SOVERS_INFO
@@ -421,8 +437,8 @@ endif ()
 #-----------------------------------------------------------------------------
 # Option to Build Shared and Static libs, default is both
 #-----------------------------------------------------------------------------
-option (ONLY_SHARED_LIBS "Only Build Shared Libraries" OFF)
-mark_as_advanced (ONLY_SHARED_LIBS)
+option (HDF4_ONLY_SHARED_LIBS "Only Build Shared Libraries" OFF)
+mark_as_advanced (HDF4_ONLY_SHARED_LIBS)
 option (BUILD_STATIC_LIBS "Build Static Libraries" ON)
 set (H4_ENABLE_STATIC_LIB NO)
 option (BUILD_SHARED_LIBS "Build Shared Libraries" ON)
@@ -432,11 +448,11 @@ option (HDF4_BUILD_STATIC_TOOLS "Build Static Tools NOT Shared Tools" OFF)
 
 # only shared libraries/tools is true if user forces static OFF
 if (NOT BUILD_STATIC_LIBS)
-  set (ONLY_SHARED_LIBS ON CACHE BOOL "Only Build Shared Libraries" FORCE)
+  set (HDF4_ONLY_SHARED_LIBS ON CACHE BOOL "Only Build Shared Libraries" FORCE)
 endif ()
 
 # only shared libraries is set ON by user then force settings
-if (ONLY_SHARED_LIBS)
+if (HDF4_ONLY_SHARED_LIBS)
   set (H4_ENABLE_STATIC_LIB NO)
   set (BUILD_SHARED_LIBS ON CACHE BOOL "Build Shared Libraries" FORCE)
   set (BUILD_STATIC_LIBS OFF CACHE BOOL "Build Static Libraries" FORCE)
@@ -460,7 +476,7 @@ endif ()
 
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-add_definitions (-DHAVE_CONFIG_H)
+add_compile_definitions (HAVE_CONFIG_H)
 
 #-----------------------------------------------------------------------------
 # Temporary disable optimization flag
@@ -498,8 +514,10 @@ option (HDF4_ENABLE_COVERAGE "Enable code coverage for Libraries and Programs" O
 if (HDF4_ENABLE_COVERAGE)
   include (${HDF4_SOURCE_DIR}/config/sanitizer/code-coverage.cmake)
   if(CODE_COVERAGE AND CODE_COVERAGE_ADDED)
+    message(VERBOSE "Add instrumentation to all targets")
     add_code_coverage () # Adds instrumentation to all targets
   else ()
+    message(VERBOSE "Use --coverage option")
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 --coverage -fprofile-arcs -ftest-coverage")
     if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
       set (LDFLAGS "${LDFLAGS} -fprofile-arcs -ftest-coverage")
@@ -552,6 +570,9 @@ include (UserMacros.cmake)
 #-----------------------------------------------------------------------------
 # Include filter (zlib, szip, etc.) macros
 #-----------------------------------------------------------------------------
+set (HDF4_ENABLE_JPEG_LIB_SUPPORT ON) #Enable libjpeg required
+option (HDF4_ENABLE_SZIP_SUPPORT "Use SZip Filter" OFF) #SZip is optional
+set (HDF4_ENABLE_Z_LIB_SUPPORT ON) #Enable libzlib required
 include (CMakeFilters.cmake)
 
 #-----------------------------------------------------------------------------
@@ -565,8 +586,8 @@ option (HDF4_BUILD_NETCDF_TOOLS "Build HDF4 versions of ncdump and ncgen" ON)
 #-----------------------------------------------------------------------------
 option (HDF4_ENABLE_NETCDF "Build HDF4 versions of NetCDF-3 APIS" ON)
 if (HDF4_ENABLE_NETCDF)
-  set (${HDF_PREFIX}_HAVE_NETCDF 1)
-  set (${HDF_PREFIX}_BUILD_NETCDF 1)
+  set (H4_HAVE_NETCDF 1)
+  set (H4_BUILD_NETCDF 1)
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -579,21 +600,21 @@ add_subdirectory (mfhdf/libsrc)
 # Option to build documentation
 #-----------------------------------------------------------------------------
 option (HDF4_BUILD_DOC "Build documentation" OFF)
-if (HDF4_BUILD_DOC AND EXISTS "${HDF4_DOXYGEN_DIR}" AND IS_DIRECTORY "${HDF4_DOXYGEN_DIR}")
+if (HDF4_BUILD_DOC AND IS_DIRECTORY "${HDF4_DOXYGEN_DIR}")
 # check if Doxygen is installed
   find_package(Doxygen)
   if (DOXYGEN_FOUND)
     option (HDF4_ENABLE_DOXY_WARNINGS "Enable fail if doxygen parsing has warnings." OFF)
     mark_as_advanced (HDF4_ENABLE_DOXY_WARNINGS)
     if (HDF4_ENABLE_DOXY_WARNINGS)
-      set (HDF4_DOXY_WARNINGS "FAIL_ON_WARNINGS")
+      set (HDF4_DOXY_WARNINGS "FAIL_ON_WARNINGS_PRINT")
     else ()
       set (HDF4_DOXY_WARNINGS "NO")
     endif ()
-    message(STATUS "Doxygen version: ${DOXYGEN_VERSION}")
+    message(VERBOSE "Doxygen version: ${DOXYGEN_VERSION}")
     add_subdirectory (doxygen)
   else ()
-    message(STATUS "Doxygen needs to be installed to generate the doxygen documentation")
+    message(WARNING "Doxygen needs to be installed to generate the doxygen documentation")
   endif ()
 endif ()
 
@@ -615,10 +636,10 @@ if (BUILD_TESTING)
   endif ()
 
   if (NOT HDF4_EXTERNALLY_CONFIGURED)
-    if (EXISTS "${HDF4_SOURCE_DIR}/hdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/test")
+    if (IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/test")
       add_subdirectory (hdf/test)
     endif ()
-    if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/test")
+    if (IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/test")
       add_subdirectory (mfhdf/test)
     endif ()
   endif ()
@@ -635,13 +656,15 @@ endif ()
 # Set default name mangling : overridden by Fortran detection in fortran dir
 set (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
 set (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## __")
-if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran")
+if (IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran")
   option (HDF4_BUILD_FORTRAN "Build FORTRAN support" OFF)
   if (HDF4_BUILD_FORTRAN)
     if (WIN32)
       set (H4_F77_FUNC "H4_F77_FUNC(name,NAME) NAME")
       set (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) NAME")
     endif ()
+    message (VERBOSE "Fortran compiler ID is ${CMAKE_Fortran_COMPILER_ID}")
+    #include (${HDF_RESOURCES_DIR}/HDFCompilerFortranFlags.cmake)
     include (${HDF_RESOURCES_DIR}/HDF4UseFortran.cmake)
 
     if (CMAKE_Fortran_COMPILER_ID STREQUAL "GNU" AND NOT CMAKE_Fortran_COMPILER_VERSION VERSION_LESS 10.0)
@@ -663,7 +686,7 @@ add_subdirectory (mfhdf)
 #-----------------------------------------------------------------------------
 # Option to build HDF4 Java Library
 #-----------------------------------------------------------------------------
-if (EXISTS "${HDF4_SOURCE_DIR}/java" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/java")
+if (IS_DIRECTORY "${HDF4_SOURCE_DIR}/java")
   option (HDF4_BUILD_JAVA "Build Java HDF Library" OFF)
   if (HDF4_BUILD_JAVA)
     if (NOT BUILD_SHARED_LIBS)
@@ -682,9 +705,9 @@ configure_file (${HDF_RESOURCES_DIR}/h4config.h.in ${PROJECT_BINARY_DIR}/h4confi
 #-----------------------------------------------------------------------------
 # Option to build examples
 #-----------------------------------------------------------------------------
-if (EXISTS "${HDF4_SOURCE_DIR}/HDF4Examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/HDF4Examples")
+if (IS_DIRECTORY "${HDF4_SOURCE_DIR}/HDF4Examples")
   option (HDF4_BUILD_EXAMPLES  "Build HDF4 Library Examples" ON)
-  if (HDF4_BUILD_EXAMPLES)
+  if (HDF4_BUILD_EXAMPLES AND NOT HDF4_USE_SANITIZER)
     include (${HDF_RESOURCES_DIR}/HDF4ExampleCache.cmake)
     set (HDF4_VERSION ${HDF4_PACKAGE_VERSION})
     add_subdirectory (HDF4Examples)

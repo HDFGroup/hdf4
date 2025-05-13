@@ -1,6 +1,6 @@
 name: hdf4 dev CI
 
-# Controls when the action will run. Triggers the workflow on a call
+# Triggers the workflow on a call from another workflow
 on:
   workflow_call:
     inputs:
@@ -24,9 +24,6 @@ on:
 permissions:
   contents: read
 
-# A workflow run is made up of one or more jobs that can run sequentially or
-# in parallel. We just have one job, but the matrix items defined below will
-# run in parallel.
 jobs:
 
   # A workflow that builds the library and runs all the tests
@@ -45,18 +42,16 @@ jobs:
       # SETUP
       - name: Install Linux Dependencies
         run: |
-           sudo apt update
-           sudo apt install gcc-12 g++-12 gfortran-12
-           sudo apt install automake autoconf libtool libtool-bin
-           sudo apt install libaec0 libaec-dev
-           echo "CC=gcc-12" >> $GITHUB_ENV
-           echo "CXX=g++-12" >> $GITHUB_ENV
+          sudo apt update
+          sudo apt install -y autoconf automake libtool libtool-bin libaec-dev libjpeg-dev
+          sudo apt install -y doxygen libncurses-dev libquadmath0 libstdc++6 libxml2
+          sudo apt install -y zlib1g-dev libcurl4-openssl-dev libjpeg-dev wget curl bzip2
+          sudo apt install -y m4 flex bison cmake libzip-dev openssl build-essential
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Get Sources
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.7
 
-      # AUTOTOOLS CONFIGURE
       - name: Autotools Configure
         run: |
           sh ./autogen.sh
@@ -70,13 +65,10 @@ jobs:
             --${{ inputs.shared }}-shared
         shell: bash
 
-      # BUILD
       - name: Autotools Build
         run: make -j3
         working-directory: ${{ runner.workspace }}/build
 
-      # RUN TESTS
-      # NORMAL
       - name: Autotools Run Tests
         run: make check -j2
         working-directory: ${{ runner.workspace }}/build
@@ -86,7 +78,6 @@ jobs:
         run: make install
         working-directory: ${{ runner.workspace }}/build
 
-      # Commented out until autotools linking is fixed
 #      - name: Autotools Verify Install
-#        run: make installcheck
+#        run: make check-install
 #        working-directory: ${{ runner.workspace }}/build

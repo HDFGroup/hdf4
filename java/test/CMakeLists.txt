@@ -18,7 +18,7 @@ set (HDF4_JAVA_TEST_SOURCES
     TestH4VSparams
 )
 
-set (CMAKE_JAVA_INCLUDE_PATH "${HDF4_JAVA_LIB_DIR}/junit.jar;${HDF4_JAVA_LIB_DIR}/hamcrest-core.jar;${HDF4_JAVA_JARS};${HDF4_JAVA_LOGGING_JAR};${HDF4_JAVA_LOGGING_SIMPLE_JAR}")
+set (CMAKE_JAVA_INCLUDE_PATH "${HDF4_JAVA_LIB_DIR}/org.junit.jar;${HDF4_JAVA_LIB_DIR}/org.hamcrest.jar;${HDF4_JAVA_JARS};${HDF4_JAVA_LOGGING_JAR};${HDF4_JAVA_LOGGING_SIMPLE_JAR}")
 
 foreach (test_file ${HDF4_JAVA_TEST_SOURCES})
 
@@ -35,6 +35,13 @@ foreach (test_file ${HDF4_JAVA_TEST_SOURCES})
 
   add_dependencies (${HDF4_JAVA_TEST_LIB_TARGET}_${test_file} ${HDF4_JAVA_HDF_LIB_TARGET})
   set_target_properties (${HDF4_JAVA_TEST_LIB_TARGET}_${test_file} PROPERTIES FOLDER test/java)
+
+  #-----------------------------------------------------------------------------
+  # Add Target to clang-format
+  #-----------------------------------------------------------------------------
+  if (HDF4_ENABLE_FORMATTERS)
+    clang_format (HDF4_JAVA_TEST_${test_file}_SRC_FORMAT ${test_file}.java)
+  endif ()
 endforeach ()
 
 foreach (h4_file ${HDF4_JAVA_TEST_SOURCES})

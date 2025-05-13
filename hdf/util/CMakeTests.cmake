@@ -125,7 +125,7 @@ add_custom_target(hdf_util_files ALL COMMENT "Copying files needed by hdf_util t
 
 if (HDF4_BUILD_TOOLS)
   macro (ADD_LS_TEST_NOL testfile resultfile resultcode)
-    if (HDF4_ENABLE_USING_MEMCHECKER)
+    if (HDF4_USING_ANALYSIS_TOOL)
       add_test (NAME HDFLS_NOL-${testfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfls> ${testfile})
     else ()
       add_test (
@@ -151,7 +151,7 @@ if (HDF4_BUILD_TOOLS)
   endmacro ()
 
   macro (ADD_LS_TEST testfile resultfile resultcode)
-    if (HDF4_ENABLE_USING_MEMCHECKER)
+    if (HDF4_USING_ANALYSIS_TOOL)
       add_test (NAME HDFLS-${testfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfls> -l ${testfile})
     else ()
       add_test (
@@ -177,7 +177,7 @@ if (HDF4_BUILD_TOOLS)
   endmacro ()
 
   macro (ADD_H4_TEST_ED testfile resultfile resultcode)
-    if (HDF4_ENABLE_USING_MEMCHECKER)
+    if (HDF4_USING_ANALYSIS_TOOL)
       add_test (NAME HEDIT-${testfile} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfed> -batch)
     else ()
       add_test (

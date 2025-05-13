@@ -69,6 +69,9 @@ macro (SET_HDF_BUILD_TYPE)
     else ()
       set (HDF_CFG_NAME "Release")
     endif ()
+    # Set available build types for cmake-gui/ccmake convenience
+    set_property (CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+      "Debug" "Release" "RelWithDebInfo" "MinSizeRel")
   endif ()
 endmacro ()
 
@@ -109,9 +112,9 @@ endmacro ()
 
 #-------------------------------------------------------------------------------
 macro (INSTALL_TARGET_PDB libtarget targetdestination targetcomponent)
-  option (DISABLE_PDB_FILES "Do not install PDB files" OFF)
-  mark_as_advanced (DISABLE_PDB_FILES)
-  if (WIN32 AND MSVC AND NOT DISABLE_PDB_FILES)
+  option (HDF4_DISABLE_PDB_FILES "Do not install PDB files" OFF)
+  mark_as_advanced (HDF4_DISABLE_PDB_FILES)
+  if (WIN32 AND MSVC AND NOT HDF4_DISABLE_PDB_FILES)
     get_target_property (target_type ${libtarget} TYPE)
     if (${target_type} MATCHES "SHARED")
       set (targetfilename $<TARGET_PDB_FILE:${libtarget}>)
@@ -255,6 +258,8 @@ macro (TARGET_C_PROPERTIES wintarget libtype)
   if(MSVC)
     set_property(TARGET ${wintarget} APPEND PROPERTY LINK_FLAGS "${WIN_LINK_FLAGS}")
   endif()
+  #Disable UNITY_BUILD for now
+  set_property(TARGET ${wintarget} APPEND PROPERTY UNITY_BUILD OFF)
 endmacro ()
 
 #-----------------------------------------------------------------------------
@@ -266,6 +271,7 @@ macro (HDF_README_PROPERTIES target_fortran)
   if (WIN32)
     set (BINARY_EXAMPLE_ENDING "zip")
     set (BINARY_INSTALL_ENDING "msi")
+    set (BINARY_COMPRESS_ENDING "zip")
     if (CMAKE_CL_64)
       set (BINARY_SYSTEM_NAME "win64")
     else ()
@@ -308,8 +314,10 @@ macro (HDF_README_PROPERTIES target_fortran)
           set (BINARY_PLATFORM "${BINARY_PLATFORM}, using VISUAL STUDIO 2019")
         elseif (${CMAKE_C_COMPILER_VERSION} MATCHES "^19.3.*")
           set (BINARY_PLATFORM "${BINARY_PLATFORM}, using VISUAL STUDIO 2022")
+        elseif (${CMAKE_C_COMPILER_VERSION} MATCHES "^19.4.*")
+          set (BINARY_PLATFORM "${BINARY_PLATFORM}, using VISUAL STUDIO 2022")
         else ()
-          set (BINARY_PLATFORM "${BINARY_PLATFORM}, using VISUAL STUDIO ???")
+          set (BINARY_PLATFORM "${BINARY_PLATFORM}, using VISUAL STUDIO ????")
         endif ()
       else ()
         set (BINARY_PLATFORM "${BINARY_PLATFORM}, using VISUAL STUDIO ${CMAKE_C_COMPILER_VERSION}")
@@ -317,12 +325,14 @@ macro (HDF_README_PROPERTIES target_fortran)
     endif ()
   elseif (APPLE)
     set (BINARY_EXAMPLE_ENDING "tar.gz")
+    set (BINARY_COMPRESS_ENDING "tar.gz")
     set (BINARY_INSTALL_ENDING "sh") # if packaging changes - use dmg
     set (BINARY_PLATFORM "${BINARY_PLATFORM} ${CMAKE_SYSTEM_VERSION} ${CMAKE_SYSTEM_PROCESSOR}")
     set (BINARY_PLATFORM "${BINARY_PLATFORM}, using ${CMAKE_C_COMPILER_ID} C ${CMAKE_C_COMPILER_VERSION}")
   else ()
     set (BINARY_EXAMPLE_ENDING "tar.gz")
-    set (BINARY_INSTALL_ENDING "sh")
+    set (BINARY_COMPRESS_ENDING "tar.gz")
+    set (BINARY_INSTALL_ENDING "sh/deb/rpm")
     set (BINARY_PLATFORM "${BINARY_PLATFORM} ${CMAKE_SYSTEM_VERSION} ${CMAKE_SYSTEM_PROCESSOR}")
     set (BINARY_PLATFORM "${BINARY_PLATFORM}, using ${CMAKE_C_COMPILER_ID} C ${CMAKE_C_COMPILER_VERSION}")
   endif ()
@@ -331,7 +341,7 @@ macro (HDF_README_PROPERTIES target_fortran)
     set (BINARY_PLATFORM "${BINARY_PLATFORM} / ${CMAKE_Fortran_COMPILER_ID} Fortran")
   endif ()
 
-  if (ONLY_SHARED_LIBS)
+  if (HDF4_ONLY_SHARED_LIBS)
     set (LIB_TYPE "Shared")
   elseif (BUILD_SHARED_LIBS)
     set (LIB_TYPE "Static and Shared")
@@ -387,7 +397,7 @@ macro (HDF_DIR_PATHS package_prefix)
   endif ()
 
   if (APPLE)
-    option (${package_prefix}_BUILD_FRAMEWORKS "ON to build as frameworks libraries, OFF to build according to BUILD_SHARED_LIBS" FALSE)
+    option (${package_prefix}_BUILD_FRAMEWORKS "ON to build as frameworks libraries, OFF to build according to BUILD_SHARED_LIBS" OFF)
   endif ()
 
   if (NOT ${package_prefix}_INSTALL_BIN_DIR)
@@ -435,24 +445,14 @@ macro (HDF_DIR_PATHS package_prefix)
   endif ()
   message(STATUS "Final: ${${package_prefix}_INSTALL_DOC_DIR}")
 
-  # Always use full RPATH, i.e. don't skip the full RPATH for the build tree
-  set (CMAKE_SKIP_BUILD_RPATH  OFF)
-  # when building, don't use the install RPATH already
-  # (but later on when installing)
-  set (CMAKE_INSTALL_RPATH_USE_LINK_PATH  OFF)
-  # add the automatically determined parts of the RPATH
-  # which point to directories outside the build tree to the install RPATH
-  set (CMAKE_BUILD_WITH_INSTALL_RPATH ON)
+  # Append the needed INSTALL_RPATH for HDF Standard binary packages
   if (APPLE)
-    set (CMAKE_INSTALL_NAME_DIR "@rpath")
-    set (CMAKE_INSTALL_RPATH
-        "@executable_path/../${${package_prefix}_INSTALL_LIB_DIR}"
-        "@executable_path/"
+    list (APPEND CMAKE_INSTALL_RPATH
         "@loader_path/../${${package_prefix}_INSTALL_LIB_DIR}"
         "@loader_path/"
     )
   else ()
-    set (CMAKE_INSTALL_RPATH "\$ORIGIN/../${${package_prefix}_INSTALL_LIB_DIR}:\$ORIGIN/")
+    list (APPEND CMAKE_INSTALL_RPATH "\$ORIGIN/../${${package_prefix}_INSTALL_LIB_DIR}:\$ORIGIN/")
   endif ()
 
   if (DEFINED ADDITIONAL_CMAKE_PREFIX_PATH AND EXISTS "${ADDITIONAL_CMAKE_PREFIX_PATH}")
