@@ -79,9 +79,9 @@ jobs:
           cmake -C $GITHUB_WORKSPACE/hdf5/config/cmake/cacheinit.cmake \
             -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
-            -DHDF5_BUILD_FORTRAN:BOOL=OFF \
-            -DHDF5_BUILD_JAVA:BOOL=OFF \
-            -DHDF5_BUILD_EXAMPLES:BOOL=OFF \
+            -DHDF4_BUILD_FORTRAN:BOOL=OFF \
+            -DHDF4_BUILD_JAVA:BOOL=OFF \
+            -DHDF4_BUILD_EXAMPLES:BOOL=OFF \
             -DLIBAEC_USE_LOCALCONTENT:BOOL=OFF \
             -DZLIB_USE_LOCALCONTENT:BOOL=OFF \
             -DBUILD_TESTING:BOOL=OFF \
@@ -109,6 +109,6 @@ jobs:
       run: |
         mkdir "netcdf-c/build"
         cd "netcdf-c/build"
-        cmake .. -DUILD_SHARED_LIBS=ON -DNETCDF_ENABLE_HDF5=ON -DNETCDF_ENABLE_HDF4=ON
+        cmake .. -DUILD_SHARED_LIBS=ON -DNETCDF_ENABLE_HDF4=ON -DNETCDF_ENABLE_HDF5=ON
         make
         make test

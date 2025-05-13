@@ -6,16 +6,21 @@ macro (EXTERNAL_ZLIB_LIBRARY compress_type)
     set (zlib_folder "ZLIB")
   endif ()
   if (${compress_type} MATCHES "GIT")
-    FetchContent_Declare (HDF4_ZLIB
+    if (${ZLIB_BRANCH} MATCHES "develop")
+      set (ZLIB_FILE "devCMakeLists")
+    else ()
+      set (ZLIB_FILE "CMakeLists")
+    endif ()
+    FetchContent_Declare (ZLIB
         GIT_REPOSITORY ${ZLIB_URL}
         GIT_TAG ${ZLIB_BRANCH}
         PATCH_COMMAND ${CMAKE_COMMAND} -E copy
-            ${HDF_RESOURCES_DIR}/${zlib_folder}/CMakeLists.txt
+            ${HDF_RESOURCES_DIR}/${zlib_folder}/${ZLIB_FILE}.txt
             <SOURCE_DIR>/CMakeLists.txt
     )
   elseif (${compress_type} MATCHES "TGZ")
     message (VERBOSE "Filter ZLIB file ${ZLIB_URL}")
-    FetchContent_Declare (HDF4_ZLIB
+    FetchContent_Declare (ZLIB
         URL ${ZLIB_URL}
         URL_HASH ""
         PATCH_COMMAND ${CMAKE_COMMAND} -E copy
@@ -24,7 +29,7 @@ macro (EXTERNAL_ZLIB_LIBRARY compress_type)
     )
   endif ()
 
-  FetchContent_MakeAvailable(HDF4_ZLIB)
+  FetchContent_MakeAvailable(ZLIB)
 
   add_library(${HDF_PACKAGE_NAMESPACE}zlib-static ALIAS zlib-static)
   set (H4_ZLIB_STATIC_LIBRARY "${HDF_PACKAGE_NAMESPACE}zlib-static")
@@ -35,11 +40,11 @@ macro (EXTERNAL_ZLIB_LIBRARY compress_type)
     set (H4_ZLIB_HEADER "zlib.h")
   endif ()
 
-  set (H4_ZLIB_INCLUDE_DIR_GEN "${hdf4_zlib_BINARY_DIR}")
-  set (H4_ZLIB_INCLUDE_DIR "${hdf4_zlib_SOURCE_DIR}")
+  set (H4_ZLIB_INCLUDE_DIR_GEN "${zlib_BINARY_DIR}")
+  set (H4_ZLIB_INCLUDE_DIR "${zlib_SOURCE_DIR}")
   set (H4_ZLIB_FOUND 1)
   set (H4_ZLIB_INCLUDE_DIRS ${H4_ZLIB_INCLUDE_DIR_GEN} ${H4_ZLIB_INCLUDE_DIR})
-  message (VERBOSE "ZLIB link libs: ${H4_ZLIB_LIBRARIES}")
+  message (VERBOSE "H4_ZLIB link libs: ${H4_ZLIB_LIBRARIES} with ${H4_ZLIB_INCLUDE_DIRS}")
 endmacro ()
 
 #-------------------------------------------------------------------------------
@@ -62,6 +67,7 @@ macro (EXTERNAL_JPEG_LIBRARY compress_type)
             <SOURCE_DIR>/CMakeLists.txt
     )
   endif ()
+
   FetchContent_MakeAvailable(JPEG)
 
   add_library(${HDF_PACKAGE_NAMESPACE}jpeg-static ALIAS jpeg-static)
@@ -72,7 +78,7 @@ macro (EXTERNAL_JPEG_LIBRARY compress_type)
   set (H4_JPEG_INCLUDE_DIR "${jpeg_SOURCE_DIR}")
   set (H4_JPEG_FOUND 1)
   set (H4_JPEG_INCLUDE_DIRS ${H4_JPEG_INCLUDE_DIR_GEN} ${H4_JPEG_INCLUDE_DIR})
-  message (VERBOSE "JPEG link libs: ${H4_JPEG_LIBRARIES}")
+  message (VERBOSE "JPEG link libs: ${H4_JPEG_LIBRARIES} with ${H4_JPEG_INCLUDE_DIRS}")
 endmacro ()
 
 #-------------------------------------------------------------------------------
@@ -107,5 +113,5 @@ macro (EXTERNAL_SZIP_LIBRARY compress_type encoding)
   set (H4_SZIP_INCLUDE_DIR "${szip_SOURCE_DIR}/include")
   set (H4_SZIP_FOUND 1)
   set (H4_SZIP_INCLUDE_DIRS ${H4_SZIP_INCLUDE_DIR_GEN} ${H4_SZIP_INCLUDE_DIR})
-  message (VERBOSE "SZIP link libs: ${H4_SZIP_LIBRARIES}")
+  message (VERBOSE "SZIP link libs: ${H4_SZIP_LIBRARIES} with ${H4_SZIP_INCLUDE_DIRS}")
 endmacro ()

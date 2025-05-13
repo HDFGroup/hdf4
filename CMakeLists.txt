@@ -6,6 +6,11 @@ if (POLICY CMP0074)
   cmake_policy (SET CMP0074 NEW)
 endif ()
 
+if (POLICY CMP0144)
+  # <PACKAGENAME> is the upper-cased package name.
+  cmake_policy (SET CMP0144 NEW)
+endif ()
+
 if (POLICY CMP0083)
   # To control generation of Position Independent Executable (PIE) or not,
   # some flags are required at link time.
@@ -128,8 +133,8 @@ mark_as_advanced (HDF4_EXTERNAL_LIB_SUFFIX)
 #     else ()
 #      set (H4_SZIP_HEADER "prj_szip.h")
 #       # Set vars that FindSZIP would have set if used in sub project
-#       set (SZIP_INCLUDE_DIRS "${PRJ_SZIP_INCLUDE_DIRS}")
-#       set (SZIP_LIBRARIES prjszip)
+#       set (H4_SZIP_INCLUDE_DIRS "${PRJ_H4_SZIP_INCLUDE_DIRS}")
+#       set (H4_SZIP_LIBRARIES prjszip)
 #     endif ()
 #  endif ()
 #
@@ -253,9 +258,9 @@ set (HDF4_JAVA_JNI_SRC_DIR         ${HDF4_SOURCE_DIR}/java/src/jni)
 set (HDF4_JAVA_HDF_SRC_DIR         ${HDF4_SOURCE_DIR}/java/src/hdf)
 set (HDF4_JAVA_TEST_SRC_DIR        ${HDF4_SOURCE_DIR}/java/test)
 set (HDF4_JAVA_LIB_DIR             ${HDF4_SOURCE_DIR}/java/lib)
-set (HDF4_JAVA_LOGGING_JAR         ${HDF4_SOURCE_DIR}/java/lib/slf4j-api-2.0.6.jar)
-set (HDF4_JAVA_LOGGING_NOP_JAR     ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-nop-2.0.6.jar)
-set (HDF4_JAVA_LOGGING_SIMPLE_JAR  ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-simple-2.0.6.jar)
+set (HDF4_JAVA_LOGGING_JAR         ${HDF4_SOURCE_DIR}/java/lib/slf4j-api-2.0.16.jar)
+set (HDF4_JAVA_LOGGING_NOP_JAR     ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-nop-2.0.16.jar)
+set (HDF4_JAVA_LOGGING_SIMPLE_JAR  ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-simple-2.0.16.jar)
 set (HDF4_DOXYGEN_DIR              ${HDF4_SOURCE_DIR}/doxygen)
 
 set (HDF4_SRC_INCLUDE_DIRS ${HDF4_HDFSOURCE_DIR} ${HDF4_MFHDFSOURCE_DIR})
@@ -452,7 +457,7 @@ endif ()
 # Option to Build Shared and Static libs, default is both
 #-----------------------------------------------------------------------------
 option (HDF4_ONLY_SHARED_LIBS "Only Build Shared Libraries" OFF)
-mark_as_advanced (ONLY_SHARED_LIBS)
+mark_as_advanced (HDF4_ONLY_SHARED_LIBS)
 option (BUILD_STATIC_LIBS "Build Static Libraries" ON)
 set (H4_ENABLE_STATIC_LIB NO)
 option (BUILD_SHARED_LIBS "Build Shared Libraries" ON)
@@ -462,11 +467,11 @@ option (HDF4_BUILD_STATIC_TOOLS "Build Static Tools NOT Shared Tools" OFF)
 
 # only shared libraries/tools is true if user forces static OFF
 if (NOT BUILD_STATIC_LIBS)
-  set (ONLY_SHARED_LIBS ON CACHE BOOL "Only Build Shared Libraries" FORCE)
+  set (HDF4_ONLY_SHARED_LIBS ON CACHE BOOL "Only Build Shared Libraries" FORCE)
 endif ()
 
 # only shared libraries is set ON by user then force settings
-if (ONLY_SHARED_LIBS)
+if (HDF4_ONLY_SHARED_LIBS)
   set (H4_ENABLE_STATIC_LIB NO)
   set (BUILD_SHARED_LIBS ON CACHE BOOL "Build Shared Libraries" FORCE)
   set (BUILD_STATIC_LIBS OFF CACHE BOOL "Build Static Libraries" FORCE)
@@ -611,7 +616,7 @@ if (HDF4_BUILD_DOC AND IS_DIRECTORY "${HDF4_DOXYGEN_DIR}")
     option (HDF4_ENABLE_DOXY_WARNINGS "Enable fail if doxygen parsing has warnings." OFF)
     mark_as_advanced (HDF4_ENABLE_DOXY_WARNINGS)
     if (HDF4_ENABLE_DOXY_WARNINGS)
-      set (HDF4_DOXY_WARNINGS "FAIL_ON_WARNINGS")
+      set (HDF4_DOXY_WARNINGS "FAIL_ON_WARNINGS_PRINT")
     else ()
       set (HDF4_DOXY_WARNINGS "NO")
     endif ()

@@ -16,6 +16,8 @@ set (HDF4_BUILD_UTILS ON CACHE BOOL "Build HDF4 Library Utilities" FORCE)
 
 set (HDF4_BUILD_GENERATORS OFF CACHE BOOL "Build Test Generators" FORCE)
 
+set (HDF4_ENABLE_JPEG_LIB_SUPPORT ON CACHE BOOL "Use JPEG Filter" FORCE)
+
 set (HDF4_ENABLE_SZIP_SUPPORT OFF CACHE BOOL "Use SZip Filter" FORCE)
 
 set (HDF4_ENABLE_SZIP_ENCODING OFF CACHE BOOL "Use SZip Encoding" FORCE)
@@ -39,14 +41,14 @@ set_property (CACHE HDF4_ALLOW_EXTERNAL_SUPPORT PROPERTY STRINGS NO GIT TGZ)
 # compression options
 ########################
 set (ZLIB_PACKAGE_NAME "zlib" CACHE STRING "Name of ZLIB package" FORCE)
-set (ZLIB_TGZ_NAME "zlib-1.3.1.tar.gz" CACHE STRING "Use HDF5_ZLib from compressed file" FORCE)
+set (ZLIB_TGZ_NAME "zlib-1.3.1.tar.gz" CACHE STRING "Use HDF4_ZLib from compressed file" FORCE)
 set (ZLIB_TGZ_ORIGPATH "https://github.com/madler/zlib/releases/download/v1.3.1" CACHE STRING "Use ZLIB from original location" FORCE)
 set (ZLIB_USE_LOCALCONTENT ON CACHE BOOL "Use local file for ZLIB FetchContent" FORCE)
 set (ZLIB_GIT_URL "https://github.com/madler/zlib.git" CACHE STRING "Use ZLIB from  GitHub repository" FORCE)
 set (ZLIB_GIT_BRANCH "develop" CACHE STRING "" FORCE)
 
 set (ZLIBNG_PACKAGE_NAME "zlib-ng" CACHE STRING "Name of ZLIBNG package" FORCE)
-set (ZLIBNG_TGZ_NAME "2.2.2.tar.gz" CACHE STRING "Use HDF5_ZLib from compressed file" FORCE)
+set (ZLIBNG_TGZ_NAME "2.2.2.tar.gz" CACHE STRING "Use ZLib from compressed file" FORCE)
 set (ZLIBNG_TGZ_ORIGPATH "https://github.com/zlib-ng/zlib-ng/archive/refs/tags" CACHE STRING "Use ZLIBNG from original location" FORCE)
 set (ZLIBNG_GIT_URL "https://github.com/zlib-ng/zlib-ng.git" CACHE STRING "Use ZLIBNG from  GitHub repository" FORCE)
 set (ZLIBNG_GIT_BRANCH "develop" CACHE STRING "" FORCE)

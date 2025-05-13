@@ -48,8 +48,8 @@ set (${HDF4_PACKAGE_NAME}_TOOLSET                 "@CMAKE_GENERATOR_TOOLSET@")
 if (${HDF4_PACKAGE_NAME}_BUILD_JAVA)
   set (${HDF4_PACKAGE_NAME}_JAVA_INCLUDE_DIRS
       @PACKAGE_CURRENT_BUILD_DIR@/lib/jarhdf-@HDF4_VERSION_STRING@.jar
-      @PACKAGE_CURRENT_BUILD_DIR@/lib/slf4j-api-2.0.6.jar
-      @PACKAGE_CURRENT_BUILD_DIR@/lib/slf4j-nop-2.0.6.jar
+      @PACKAGE_CURRENT_BUILD_DIR@/lib/slf4j-api-2.0.16.jar
+      @PACKAGE_CURRENT_BUILD_DIR@/lib/slf4j-nop-2.0.16.jar
   )
 endif ()
 

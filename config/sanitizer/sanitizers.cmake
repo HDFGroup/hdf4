@@ -56,7 +56,7 @@ if(HDF4_USE_SANITIZER)
 
     if(UNIX)
       append("-fno-omit-frame-pointer" CMAKE_C_FLAGS)
-      message(STATUS "Building with sanitize, base flags=${CMAKE_C_FLAGS}")
+      message(STATUS "Building with sanitize, base flags=${CMAKE_C_SANITIZER_FLAGS}")
 
       if(uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
         append("-O1" CMAKE_C_FLAGS)
@@ -177,7 +177,8 @@ if(HDF4_USE_SANITIZER)
         message(STATUS " Building with ${SANITIZER_SELECTED_FLAGS}")
         append("${SANITIZER_SELECTED_FLAGS}" CMAKE_C_FLAGS)
       else()
-        message(FATAL_ERROR "Unsupported value of HDF4_USE_SANITIZER: ${HDF4_USE_SANITIZER}")
+        message(
+          FATAL_ERROR "Unsupported value of HDF4_USE_SANITIZER: ${HDF4_USE_SANITIZER}")
       endif()
     elseif(MSVC)
       if(HDF4_USE_SANITIZER MATCHES "([Aa]ddress)")

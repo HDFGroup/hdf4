@@ -45,7 +45,6 @@ if (MINGW)
   set (${HDF_PREFIX}_HAVE_MINGW 1)
   set (WINDOWS 1) # MinGW tries to imitate Windows
   set (CMAKE_REQUIRED_FLAGS "-DWIN32_LEAN_AND_MEAN=1 -DNOGDI=1")
-  set (${HDF_PREFIX}_HAVE_WINSOCK2_H 1)
   set (__USE_MINGW_ANSI_STDIO 1)
 endif ()
 
@@ -62,7 +61,7 @@ if (WIN32 AND NOT MINGW)
 endif ()
 
 if (WINDOWS)
-  set (CMAKE_REQUIRED_LIBRARIES "ws2_32.lib;wsock32.lib")
+  set (HDF4_REQUIRED_LIBRARIES "ws2_32.lib;wsock32.lib")
   set (${HDF_PREFIX}_HAVE_WIN32_API 1)
   set (${HDF_PREFIX}_HAVE_SYSTEM 1)
   if (NOT UNIX AND NOT CYGWIN)
@@ -93,19 +92,19 @@ endmacro ()
 #  Check for the existence of certain header files
 #-----------------------------------------------------------------------------
 CHECK_INCLUDE_FILE_CONCAT ("fcntl.h"         ${HDF_PREFIX}_HAVE_FCNTL_H)
-CHECK_INCLUDE_FILE_CONCAT ("unistd.h"        ${HDF_PREFIX}_HAVE_UNISTD_H)
-CHECK_INCLUDE_FILE_CONCAT ("arpa/inet.h"     ${HDF_PREFIX}_HAVE_INET_H)
-CHECK_INCLUDE_FILE_CONCAT ("netinet/in.h"    ${HDF_PREFIX}_HAVE_NETINET_IN_H)
 CHECK_INCLUDE_FILE_CONCAT ("sys/file.h"      ${HDF_PREFIX}_HAVE_SYS_FILE_H)
 CHECK_INCLUDE_FILE_CONCAT ("sys/resource.h"  ${HDF_PREFIX}_HAVE_SYS_RESOURCE_H)
 CHECK_INCLUDE_FILE_CONCAT ("sys/stat.h"      ${HDF_PREFIX}_HAVE_SYS_STAT_H)
 CHECK_INCLUDE_FILE_CONCAT ("sys/time.h"      ${HDF_PREFIX}_HAVE_SYS_TIME_H)
 CHECK_INCLUDE_FILE_CONCAT ("sys/types.h"     ${HDF_PREFIX}_HAVE_SYS_TYPES_H)
+CHECK_INCLUDE_FILE_CONCAT ("unistd.h"        ${HDF_PREFIX}_HAVE_UNISTD_H)
+CHECK_INCLUDE_FILE_CONCAT ("netinet/in.h"    ${HDF_PREFIX}_HAVE_NETINET_IN_H)
+CHECK_INCLUDE_FILE_CONCAT ("arpa/inet.h"     ${HDF_PREFIX}_HAVE_INET_H)
 CHECK_INCLUDE_FILE_CONCAT ("sys/wait.h"      ${HDF_PREFIX}_HAVE_SYS_WAIT_H)
 
-# Windows
-if (NOT CYGWIN)
-  CHECK_INCLUDE_FILE_CONCAT ("winsock2.h"      ${HDF_PREFIX}_HAVE_WINSOCK2_H)
+if (MINGW OR CYGWIN)
+  set (CMAKE_REQUIRED_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS} -D_GNU_SOURCE")
+  add_definitions ("-D_GNU_SOURCE")
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -130,32 +129,59 @@ endif ()
 #-----------------------------------------------------------------------------
 
 set (HDF_EXTRA_C_FLAGS)
-set (HDF_EXTRA_FLAGS)
-if (MINGW OR NOT WINDOWS)
-  # Might want to check explicitly for Linux and possibly Cygwin
-  # instead of checking for not Solaris or Darwin.
-  if (NOT ${HDF_PREFIX}_HAVE_SOLARIS AND NOT ${HDF_PREFIX}_HAVE_DARWIN)
-    # Linux Specific flags
-    #
-    # This is needed so strdup, etc. are exposed properly
-    #
-    # POSIX feature information can be found in the gcc manual at:
-    # http://www.gnu.org/s/libc/manual/html_node/Feature-Test-Macros.html
-    set (HDF_EXTRA_C_FLAGS -D_POSIX_C_SOURCE=200809L)
 
-    set (CMAKE_REQUIRED_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS} ${HDF_EXTRA_FLAGS})
-  endif ()
+# Linux-specific flags
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+  # This was originally defined as _POSIX_SOURCE which was updated to
+  # _POSIX_C_SOURCE=199506L to expose a greater amount of POSIX
+  # functionality so clock_gettime and CLOCK_MONOTONIC are defined
+  # correctly. This was later updated to 200112L so that
+  # posix_memalign() is visible for the direct VFD code on Linux
+  # systems. Even later, this was changed to 200809L to support
+  # pread/pwrite in VFDs.
+  #
+  # POSIX feature information can be found in the gcc manual at:
+  # http://www.gnu.org/s/libc/manual/html_node/Feature-Test-Macros.html
+  set (HDF_EXTRA_C_FLAGS -D_POSIX_C_SOURCE=200809L)
+
+  # Need to add this so that O_DIRECT is visible for the direct
+  # VFD on Linux systems.
+  set (HDF_EXTRA_C_FLAGS ${HDF_EXTRA_C_FLAGS} -D_GNU_SOURCE)
+
+  # Set up large file support. This is only necessary on 32-bit systems
+  # but is used on all Linux systems. It has no effect on 64-bit systems
+  # so it's not worth hacking up a 32/64-bit test to selectively include it.
+  #
+  # The library currently does not use any of the 64-flavored API calls
+  # or types
+  set (HDF_EXTRA_C_FLAGS ${HDF_EXTRA_C_FLAGS} -D_LARGEFILE_SOURCE)
+  set (HDF_EXTRA_C_FLAGS ${HDF_EXTRA_C_FLAGS} -D_FILE_OFFSET_BITS=64)
+
+  set (CMAKE_REQUIRED_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS} ${HDF_EXTRA_C_FLAGS})
 endif ()
 
-if (CYGWIN)
-  set (CMAKE_REQUIRED_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS} -D_GNU_SOURCE")
-  add_definitions ("-D_GNU_SOURCE")
-endif ()
+# As of 2024, both AIX and Solaris are uncommon, but still exist! The default
+# compiler options are also often set to -m32, which produces 32-bit binaries.
 
-add_definitions (${HDF_EXTRA_FLAGS})
+# 32-bit AIX compiles might require _LARGE_FILES, but we don't have a system on
+# which to test this (yet).
+#
+# https://www.ibm.com/docs/en/aix/7.1?topic=volumes-writing-programs-that-access-large-files
+
+# 32-bit Solaris probably needs _LARGEFILE_SOURCE and _FILE_OFFSET_BITS=64,
+# as in Linux, above.
+#
+# https://docs.oracle.com/cd/E23824_01/html/821-1474/lfcompile-5.html
+
+# MinGW and Cygwin
+if (MINGW OR CYGWIN)
+  set (CMAKE_REQUIRED_DEFINITIONS
+    "${CURRENT_TEST_DEFINITIONS} -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE"
+  )
+endif ()
 
 #-----------------------------------------------------------------------------
-#  Check the size in bytes of all the int and float types
+#  Check the size in bytes of types
 #-----------------------------------------------------------------------------
 macro (HDF_CHECK_TYPE_SIZE type var)
   set (aType ${type})
@@ -168,7 +194,9 @@ macro (HDF_CHECK_TYPE_SIZE type var)
   endif ()
 endmacro ()
 
-HDF_CHECK_TYPE_SIZE (long ${HDF_PREFIX}_SIZEOF_LONG)
+if (NOT APPLE)
+  HDF_CHECK_TYPE_SIZE (long         ${HDF_PREFIX}_SIZEOF_LONG)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Check for some functions that are used

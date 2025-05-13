@@ -54,7 +54,7 @@ These are used by declaring the `HDF4_USE_SANITIZER` CMake variable as string co
 - Leak
 - CFI
 
-Multiple values are allowed, e.g. `-DHDF4_USE_SANITIZER=Address,Leak` but some sanitizers cannot be combined together, e.g.`-DHDF4_USE_SANITIZER=Address,Memory` will result in configuration error. The delimiter character is not required and `-DHDF5_USE_SANITIZER=AddressLeak` would work as well.
+Multiple values are allowed, e.g. `-DHDF4_USE_SANITIZER=Address,Leak` but some sanitizers cannot be combined together, e.g.`-DHDF4_USE_SANITIZER=Address,Memory` will result in configuration error. The delimiter character is not required and `-DHDF4_USE_SANITIZER=AddressLeak` would work as well.
 
 ## Code Coverage [`code-coverage.cmake`](code-coverage.cmake)
 

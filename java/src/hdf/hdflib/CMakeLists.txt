@@ -36,7 +36,7 @@ set (HDF4_JAVA_HDF_HDF4_SRCS
 set (CMAKE_JNI_TARGET TRUE)
 
 file (WRITE ${PROJECT_BINARY_DIR}/Manifest.txt
-"
+"Enable-Native-Access: ALL-UNNAMED
 "
 )
 
