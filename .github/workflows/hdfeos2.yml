@@ -12,7 +12,7 @@ jobs:
       - name: Install Autotools Dependencies (Linux)
         run: |
           sudo apt update
-          sudo apt install automake autoconf libtool libtool-bin
+          sudo apt install automake autoconf libtool libtool-bin libjpeg-dev
           sudo apt install -y libaec-dev zlib1g-dev automake autoconf libcurl4-openssl-dev libjpeg-dev wget curl bzip2 m4 flex bison cmake libzip-dev doxygen openssl libtool libtool-bin
       - name: Install HDF4
         run: |
