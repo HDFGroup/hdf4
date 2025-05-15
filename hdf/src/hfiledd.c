@@ -1844,8 +1844,8 @@ HTIcount_dd(filerec_t *file_rec, uint16 cnt_tag, uint16 cnt_ref, uintn *all_cnt,
 
                         dd_ptr = block->ddlist;
                         for (idx = 0; idx < block->ndds; idx++, dd_ptr++)
-                            if ((dd_ptr->tag == cnt_tag || dd_ptr->tag == special_tag)
-                                && dd_ptr->ref == cnt_ref)
+                            if ((dd_ptr->tag == cnt_tag || dd_ptr->tag == special_tag) &&
+                                dd_ptr->ref == cnt_ref)
                                 t_real_cnt++;
                     }
                 }
