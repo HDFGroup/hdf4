@@ -1825,31 +1825,19 @@ HTIcount_dd(filerec_t *file_rec, uint16 cnt_tag, uint16 cnt_ref, uintn *all_cnt,
                     for (idx = 0; idx < block->ndds; idx++, dd_ptr++)
                         if (dd_ptr->tag == cnt_tag && (dd_ptr->ref == cnt_ref || cnt_ref == DFREF_WILDCARD))
                             t_real_cnt++;
-                } /* end for */
-            }     /* end if */
+                }
+            }
             else {
                 if (cnt_ref == DFREF_WILDCARD) {
                     for (block = file_rec->ddhead; block != NULL; block = block->next) {
-                        t_all_cnt += (uintn)block->ndds;
+                        t_all_cnt += (unsigned)block->ndds;
 
-                        idx    = 0;
                         dd_ptr = block->ddlist;
-                        if (block->ndds % 2 == 1)
-                            if (dd_ptr->tag == cnt_tag || dd_ptr->tag == special_tag) {
-                                t_real_cnt++;
-                                idx++;
-                                dd_ptr++;
-                            } /* end if */
-                        for (; idx < block->ndds; idx++, dd_ptr++) {
+                        for (idx = 0; idx < block->ndds; idx++, dd_ptr++)
                             if (dd_ptr->tag == cnt_tag || dd_ptr->tag == special_tag)
                                 t_real_cnt++;
-                            idx++;
-                            dd_ptr++;
-                            if (dd_ptr->tag == cnt_tag || dd_ptr->tag == special_tag)
-                                t_real_cnt++;
-                        } /* end for */
-                    }     /* end for */
-                }         /* end if */
+                    }
+                }
                 else {
                     for (block = file_rec->ddhead; block != NULL; block = block->next) {
                         t_all_cnt += (uintn)block->ndds;
@@ -1859,9 +1847,9 @@ HTIcount_dd(filerec_t *file_rec, uint16 cnt_tag, uint16 cnt_ref, uintn *all_cnt,
                             if ((dd_ptr->tag == cnt_tag || dd_ptr->tag == special_tag) &&
                                 dd_ptr->ref == cnt_ref)
                                 t_real_cnt++;
-                    } /* end for */
-                }     /* end else */
-            }         /* end else */
+                    }
+                }
+            }
             break;
     } /* end switch */
 
