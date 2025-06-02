@@ -533,7 +533,7 @@ jobs:
         run: choco install ninja
 
       - name: add clang to env
-        uses: KyleMayes/install-llvm-action@v2.0.6
+        uses: KyleMayes/install-llvm-action@v2.0.7
         id: setup-clang
         with:
           env: true
@@ -636,7 +636,7 @@ jobs:
           sudo apt-get install ninja-build doxygen graphviz curl libtinfo5
 
       - name: add clang to env
-        uses: KyleMayes/install-llvm-action@v2.0.6
+        uses: KyleMayes/install-llvm-action@v2.0.7
         id: setup-clang
         with:
           env: true
