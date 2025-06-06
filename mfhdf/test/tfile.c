@@ -48,6 +48,7 @@
 
 #define FILE_NAME "bug376.hdf" /* data file to test */
 #define DIM0      10
+static idlist[600];
 
 static intn
 test_file_inuse()
@@ -131,7 +132,6 @@ test_file_inuse()
 
     return num_errs;
 } /* test_file_inuse */
-
 /********************************************************************
    Name: test_max_open_files() - tests the new API SDreset_maxopenfiles,
                 SDget_maxopenfiles, SDget_numopenfiles,
@@ -174,7 +174,6 @@ test_file_inuse()
 #define NUM_FILES_LOW 35
 #define NUM_FILES_HI  1024
 
-static int
 test_max_open_files()
 {
     int32 fids[NUM_FILES_HI];         /* holds IDs of opened files */
@@ -222,7 +221,7 @@ test_max_open_files()
     /* Get the current max and system limit */
     status = SDget_maxopenfiles(&curr_max, &sys_limit);
     CHECK(status, FAIL, "test_maxopenfiles: SDget_maxopenfiles");
-    VERIFY(curr_max, sys_limit, "test_maxopenfiles: SDreset_maxopenfiles");
+    VERIFY(curr_max, sys_limit, "test_maxopenfiles: SDget_maxopenfiles");
 
     /* Get the current max another way, it should be the system limit */
     curr_max = SDreset_maxopenfiles(0);
@@ -299,6 +298,7 @@ test_max_open_files()
         CHECK(status, FAIL, "test_maxopenfiles: SDend");
         remove(filename[index]);
     }
+
     return num_errs;
 }
 
