@@ -222,7 +222,7 @@ test_max_open_files()
     /* Get the current max and system limit */
     status = SDget_maxopenfiles(&curr_max, &sys_limit);
     CHECK(status, FAIL, "test_maxopenfiles: SDget_maxopenfiles");
-    VERIFY(curr_max, sys_limit, "test_maxopenfiles: SDreset_maxopenfiles");
+    VERIFY(curr_max, sys_limit, "test_maxopenfiles: SDget_maxopenfiles");
 
     /* Get the current max another way, it should be the system limit */
     curr_max = SDreset_maxopenfiles(0);
@@ -299,6 +299,7 @@ test_max_open_files()
         CHECK(status, FAIL, "test_maxopenfiles: SDend");
         remove(filename[index]);
     }
+
     return num_errs;
 }
 
