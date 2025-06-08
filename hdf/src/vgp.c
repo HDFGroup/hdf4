@@ -1297,9 +1297,9 @@ Vdetach(int32 vkey /* IN: vgroup key */)
         vg->noldattrs = 0;
     }
 
-        /* remove vgroup from atom list */
-        if (HAremove_atom(vkey) == NULL)
-            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    /* remove vgroup from atom list */
+    if (HAremove_atom(vkey) == NULL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
     return ret_value;
