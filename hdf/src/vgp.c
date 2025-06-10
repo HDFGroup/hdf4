@@ -254,7 +254,6 @@ VIrelease_vginstance_node(vginstance_t *vg /* IN: vgroup instance to release */)
     /* Insert the vsinstance at the beginning of the free list */
     vg->next             = vginstance_free_list;
     vginstance_free_list = vg;
-
 } /* end VIrelease_vginstance_node() */
 
 /*******************************************************************************
@@ -941,7 +940,8 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
         if (uint16var == 0)
             vg->vgname = NULL;
         else {
-            vg->vgname = (char *)malloc(uint16var + 1);
+            if (NULL == (vg->vgname = (char *)malloc(uint16var + 1)))
+                HGOTO_ERROR(DFE_NOSPACE, FAIL);
             HIstrncpy(vg->vgname, (char *)bb, (intn)uint16var + 1);
             bb += (size_t)uint16var;
         }
@@ -951,7 +951,8 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
         if (uint16var == 0)
             vg->vgclass = NULL;
         else {
-            vg->vgclass = (char *)malloc(uint16var + 1);
+            if (NULL == (vg->vgclass = (char *)malloc(uint16var + 1)))
+                HGOTO_ERROR(DFE_NOSPACE, FAIL);
             HIstrncpy(vg->vgclass, (char *)bb, (intn)uint16var + 1);
             bb += (size_t)uint16var;
         }
@@ -1224,13 +1225,15 @@ Vdetach(int32 vkey /* IN: vgroup key */)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get instance of vgroup */
-    if (NULL == (v = (vginstance_t *)HAremove_atom(vkey)))
+    if (NULL == (v = (vginstance_t *)HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     /* get vgroup itself and check it */
     vg = v->vg;
     if ((vg == NULL) || (vg->otag != DFTAG_VG))
         HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    v->nattach--;
 
     /* Now, only update the Vgroup if it has actually changed. */
     /* Since only Vgroups with write-access are allowed to change, there is */
@@ -1294,7 +1297,9 @@ Vdetach(int32 vkey /* IN: vgroup key */)
         vg->noldattrs = 0;
     }
 
-    v->nattach--;
+    /* remove vgroup from atom list */
+    if (HAremove_atom(vkey) == NULL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
     return ret_value;
@@ -2852,6 +2857,20 @@ VPshutdown(void)
     vginstance_t *vg        = NULL;
     intn          ret_value = SUCCEED;
 
+    if (vtree != NULL) {
+        /* Free the vfile tree */
+        tbbtdfree(vtree, vfdestroynode, NULL);
+
+        /* Destroy the atom groups for Vdatas and Vgroups */
+        if (HAdestroy_group(VSIDGROUP) == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+        if (HAdestroy_group(VGIDGROUP) == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+        vtree = NULL;
+    }
+
     /* Release the vdata free-list if it exists */
     if (vgroup_free_list != NULL) {
         while (vgroup_free_list != NULL) {
@@ -2870,20 +2889,6 @@ VPshutdown(void)
             vg->next             = NULL;
             free(vg);
         }
-    }
-
-    if (vtree != NULL) {
-        /* Free the vfile tree */
-        tbbtdfree(vtree, vfdestroynode, NULL);
-
-        /* Destroy the atom groups for Vdatas and Vgroups */
-        if (HAdestroy_group(VSIDGROUP) == FAIL)
-            HGOTO_ERROR(DFE_INTERNAL, FAIL);
-
-        if (HAdestroy_group(VGIDGROUP) == FAIL)
-            HGOTO_ERROR(DFE_INTERNAL, FAIL);
-
-        vtree = NULL;
     }
 
     if (Vgbuf != NULL) {
