@@ -65,7 +65,7 @@ Default installation process:
            Shared libraries can be used with the STATIC_ONLY script option set to "NO".
 
        Shared libraries and other options can be changed by editing the
-           HDF5_Examples_options.cmake file.
+           HDF4_Examples_options.cmake file.
 
        If the defaults are okay, execute from this directory:
            ctest -S HDF4_Examples.cmake -C Release -V -O test.log

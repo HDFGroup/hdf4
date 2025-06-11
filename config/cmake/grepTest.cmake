@@ -1,6 +1,7 @@
 # grepTest.cmake executes a command and captures the output in a file. File is then compared
 # against a reference file. Exit status of command can also be compared.
 cmake_policy(SET CMP0007 NEW)
+cmake_policy(SET CMP0053 NEW)
 
 # arguments checking
 if (NOT TEST_PROGRAM)
@@ -12,11 +13,11 @@ endif ()
 if (NOT TEST_OUTPUT)
   message (FATAL_ERROR "Require TEST_OUTPUT to be defined")
 endif ()
-if (NOT TEST_FILTER)
-  message (VERBOSE "Optional TEST_FILTER to be defined")
-endif ()
 if (NOT TEST_REFERENCE)
   message (FATAL_ERROR "Require TEST_REFERENCE to be defined")
+endif ()
+if (NOT TEST_FILTER)
+  message (VERBOSE "Optional TEST_FILTER is not defined")
 endif ()
 
 if (EXISTS "${TEST_FOLDER}/${TEST_OUTPUT}")
@@ -29,7 +30,7 @@ endif ()
 
 message (STATUS "COMMAND: ${TEST_EMULATOR} ${TEST_PROGRAM} ${TEST_ARGS}")
 
-if (TEST_LIBRARY_DIRECTORY)
+if (TEST_LIBRARY_DIRECTORY) # Directory to add to PATH
   if (WIN32)
     set (ENV{PATH} "$ENV{PATH};${TEST_LIBRARY_DIRECTORY}")
   elseif (APPLE)
@@ -54,17 +55,11 @@ execute_process (
     OUTPUT_VARIABLE TEST_OUT
     ERROR_VARIABLE TEST_ERROR
 )
-
 message (STATUS "COMMAND Result: ${TEST_RESULT}")
-
-# append the test result status with a predefined text
-if (TEST_APPEND)
-  file (APPEND ${TEST_FOLDER}/${TEST_OUTPUT} "${TEST_APPEND} ${TEST_RESULT}\n")
-endif ()
 
 message (STATUS "COMMAND Error: ${TEST_ERROR}")
 
-# remove special output
+# remove special regex text from the output
 if (EXISTS "${TEST_FOLDER}/${TEST_OUTPUT}")
   file (READ ${TEST_FOLDER}/${TEST_OUTPUT} TEST_STREAM)
   string (FIND "${TEST_STREAM}" "_pmi_alps" TEST_FIND_RESULT)
@@ -79,22 +74,16 @@ if (EXISTS "${TEST_FOLDER}/${TEST_OUTPUT}")
   endif ()
 endif ()
 
-if (TEST_REF_FILTER)
-  #message (STATUS "TEST_REF_FILTER: ${TEST_APPEND}${TEST_REF_FILTER}")
-  file (READ ${TEST_FOLDER}/${TEST_REFERENCE} TEST_STREAM)
-  string (REGEX REPLACE "${TEST_REF_APPEND}" "${TEST_REF_FILTER}" TEST_STREAM "${TEST_STREAM}")
-  file (WRITE ${TEST_FOLDER}/${TEST_REFERENCE} "${TEST_STREAM}")
-endif ()
-
 # if the TEST_ERRREF exists grep the error output with the error reference
-set (TEST_ERRREF_RESULT 0)
+set (TEST_ERRREF_RESULT 0) # grep result variable; 0 is success
+# TEST_ERRREF should always be matched
 if (TEST_ERRREF)
   # if the .err file exists grep the error output with the error reference before comparing stdout
   if (EXISTS "${TEST_FOLDER}/${TEST_OUTPUT}.err")
     file (READ ${TEST_FOLDER}/${TEST_OUTPUT}.err TEST_ERR_STREAM)
     list (LENGTH TEST_ERR_STREAM test_len)
+    # verify there is text output in the error file
     if (test_len GREATER 0)
-      # TEST_ERRREF should always be matched
       string (REGEX MATCH "${TEST_ERRREF}" TEST_MATCH ${TEST_ERR_STREAM})
       string (COMPARE EQUAL "${TEST_ERRREF}" "${TEST_MATCH}" TEST_ERRREF_RESULT)
       if (NOT TEST_ERRREF_RESULT)
@@ -111,12 +100,21 @@ if (TEST_ERRREF)
   endif ()
 
   # compare output files to references unless this must be skipped
-  set (TEST_COMPARE_RESULT 0)
+  set (TEST_COMPARE_RESULT 0) # grep result variable; 0 is success
   if (NOT TEST_SKIP_COMPARE)
     if (EXISTS "${TEST_FOLDER}/${TEST_REFERENCE}")
       file (READ ${TEST_FOLDER}/${TEST_REFERENCE} TEST_STREAM)
       list (LENGTH TEST_STREAM test_len)
+      # verify there is text output in the reference file
       if (test_len GREATER 0)
+        if (WIN32)
+          configure_file(${TEST_FOLDER}/${TEST_REFERENCE} ${TEST_FOLDER}/${TEST_REFERENCE}.tmp NEWLINE_STYLE CRLF)
+          if (EXISTS "${TEST_FOLDER}/${TEST_REFERENCE}.tmp")
+            file(RENAME ${TEST_FOLDER}/${TEST_REFERENCE}.tmp ${TEST_FOLDER}/${TEST_REFERENCE})
+          endif ()
+          #file (READ ${TEST_FOLDER}/${TEST_REFERENCE} TEST_STREAM)
+          #file (WRITE ${TEST_FOLDER}/${TEST_REFERENCE} "${TEST_STREAM}")
+        endif ()
         if (NOT TEST_SORT_COMPARE)
           # now compare the output with the reference
           execute_process (
@@ -129,10 +127,11 @@ if (TEST_ERRREF)
           list (SORT v1)
           list (SORT v2)
           if (NOT v1 STREQUAL v2)
-            set(TEST_COMPARE_RESULT 1)
+            set (TEST_COMPARE_RESULT 1)
           endif ()
         endif ()
 
+        # only compare files if previous operations were successful
         if (TEST_COMPARE_RESULT)
           set (TEST_COMPARE_RESULT 0)
           file (STRINGS ${TEST_FOLDER}/${TEST_OUTPUT} test_act)
@@ -178,37 +177,44 @@ if (TEST_ERRREF)
       if (TEST_COMPARE_RESULT)
         message (FATAL_ERROR "Failed: The output of ${TEST_OUTPUT} did not match ${TEST_REFERENCE}")
       endif ()
+    else ()
+      message (TRACE "Test output file ${TEST_FOLDER}/${TEST_OUTPUT} does not exist")
     endif ()
-  endif ()
-else ()
-  # else grep the output with the reference
-  set (TEST_GREP_RESULT 0)
-  file (READ ${TEST_FOLDER}/${TEST_OUTPUT} TEST_STREAM)
-  list (LENGTH TEST_STREAM test_len)
-  if (test_len GREATER 0)
-    # TEST_REFERENCE should always be matched
-    string (REGEX MATCH "${TEST_REFERENCE}" TEST_MATCH ${TEST_STREAM})
-    string (COMPARE EQUAL "${TEST_REFERENCE}" "${TEST_MATCH}" TEST_GREP_RESULT)
-    if (NOT TEST_GREP_RESULT)
-      message (FATAL_ERROR "Failed: The output of ${TEST_PROGRAM} did not contain ${TEST_REFERENCE}")
+  endif () # end of TEST_SKIP_COMPARE
+else () # TEST_ERRREF is not defined
+  # TEST_REFERENCE should always be matched unless TEST_GREP_COMPARE is set to 0
+  set (TEST_GREP_RESULT 0) # grep result variable; 0 is success
+  if (TEST_GREP_COMPARE AND EXISTS "${TEST_PROCESSED_OUTPUT}")
+    file (READ ${TEST_PROCESSED_OUTPUT} TEST_STREAM)
+    list (LENGTH TEST_STREAM test_len)
+    if (test_len GREATER 0)
+      string (REGEX MATCH "${TEST_REFERENCE}" TEST_MATCH ${TEST_STREAM})
+      string (COMPARE EQUAL "${TEST_REFERENCE}" "${TEST_MATCH}" TEST_GREP_RESULT)
+      if (NOT TEST_GREP_RESULT)
+        message (FATAL_ERROR "Failed: The output of ${TEST_PROGRAM} did not contain ${TEST_REFERENCE}")
+      endif ()
     endif ()
   endif ()
 endif ()
 
-
+# Check that TEST_FILTER text is not in the output when TEST_EXPECT is set to 1
 if (TEST_FILTER)
-  string (REGEX MATCH "${TEST_FILTER}" TEST_MATCH ${TEST_STREAM})
-  if (TEST_EXPECT)
+  if (EXISTS "${TEST_PROCESSED_OUTPUT}")
+    file (READ ${TEST_PROCESSED_OUTPUT} TEST_STREAM)
+    string (REGEX MATCH "${TEST_FILTER}" TEST_MATCH ${TEST_STREAM})
     # TEST_EXPECT (1) interprets TEST_FILTER as; NOT to match
-    string (LENGTH "${TEST_MATCH}" TEST_GREP_RESULT)
-    if (TEST_GREP_RESULT)
-      message (FATAL_ERROR "Failed: The output of ${TEST_PROGRAM} did contain ${TEST_FILTER}")
+    if (TEST_EXPECT)
+      string (LENGTH "${TEST_MATCH}" TEST_GREP_RESULT)
+      if (TEST_GREP_RESULT)
+        message (FATAL_ERROR "Failed: The output of ${TEST_PROGRAM} did contain ${TEST_FILTER}")
+      endif ()
     endif ()
   endif ()
 endif ()
 
+# Check if the output files should not be removed
 if (NOT DEFINED ENV{HDF4_NOCLEANUP})
-  if (EXISTS "${TEST_FOLDER}/${TEST_OUTPUT}" AND NOT TEST_SAVE)
+  if (EXISTS "${TEST_FOLDER}/${TEST_OUTPUT}")
     file (REMOVE ${TEST_FOLDER}/${TEST_OUTPUT})
   endif ()
 

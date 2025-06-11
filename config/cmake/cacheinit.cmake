@@ -33,15 +33,15 @@ set_property (CACHE HDF4_ALLOW_EXTERNAL_SUPPORT PROPERTY STRINGS NO GIT TGZ)
 # compression options
 ########################
 set (ZLIB_PACKAGE_NAME "zlib" CACHE STRING "Name of ZLIB package" FORCE)
-set (ZLIB_TGZ_NAME "zlib-1.3.1.tar.gz" CACHE STRING "Use HDF5_ZLib from compressed file" FORCE)
+set (ZLIB_TGZ_NAME "zlib-1.3.1.tar.gz" CACHE STRING "Use ZLib from compressed file" FORCE)
 set (ZLIB_TGZ_ORIGPATH "https://github.com/madler/zlib/releases/download/v1.3.1" CACHE STRING "Use ZLIB from original location" FORCE)
 set (ZLIB_USE_LOCALCONTENT ON CACHE BOOL "Use local file for ZLIB FetchContent" FORCE)
 set (ZLIB_GIT_URL "https://github.com/madler/zlib.git" CACHE STRING "Use ZLIB from  GitHub repository" FORCE)
 set (ZLIB_GIT_BRANCH "develop" CACHE STRING "" FORCE)
-set (HDF5_USE_ZLIB_STATIC ON CACHE BOOL "Use static zlib library" FORCE)
+set (HDF4_USE_ZLIB_STATIC ON CACHE BOOL "Use static zlib library" FORCE)
 
 set (ZLIBNG_PACKAGE_NAME "zlib-ng" CACHE STRING "Name of ZLIBNG package" FORCE)
-set (ZLIBNG_TGZ_NAME "2.2.2.tar.gz" CACHE STRING "Use HDF5_ZLib from compressed file" FORCE)
+set (ZLIBNG_TGZ_NAME "2.2.4.tar.gz" CACHE STRING "Use ZLibNG from compressed file" FORCE)
 set (ZLIBNG_TGZ_ORIGPATH "https://github.com/zlib-ng/zlib-ng/archive/refs/tags" CACHE STRING "Use ZLIBNG from original location" FORCE)
 set (ZLIBNG_GIT_URL "https://github.com/zlib-ng/zlib-ng.git" CACHE STRING "Use ZLIBNG from  GitHub repository" FORCE)
 set (ZLIBNG_GIT_BRANCH "develop" CACHE STRING "" FORCE)
@@ -54,11 +54,17 @@ set (LIBAEC_GIT_URL "https://github.com/MathisRosenhauer/libaec.git" CACHE STRIN
 set (LIBAEC_GIT_BRANCH "v1.1.3" CACHE STRING "" FORCE)
 set (HDF4_USE_LIBAEC_STATIC ON CACHE BOOL "Use static AEC library" FORCE)
 
-set (JPEG_PACKAGE_NAME "jpeg" CACHE STRING "Name of JPEG package" FORCE)
-set (JPEG_TGZ_ORIGPATH "https://www.ijg.org/filesz" CACHE STRING "Use JPEG from original location" FORCE)
-set (JPEG_TGZ_NAME "jpegsrc.v9e.tar.gz" CACHE STRING "Use JPEG from original compressed file" FORCE)
-set (JPEG_USE_LOCALCONTENT ON CACHE BOOL "Use local file for JPEG FetchContent" FORCE)
+#######
+# jpeg
+#######
+
 set (JPEG_GIT_URL "https://github.com/libjpeg-turbo/libjpeg-turbo.git" CACHE STRING "Use JPEG from TurboJPEG" FORCE)
 set (JPEG_GIT_BRANCH "jpeg-9e" CACHE STRING "" FORCE)
 #set (JPEG_GIT_URL "https://github.com/LuaDist/libjpeg.git" CACHE STRING "Use JPEG from ILG" FORCE)
 #set (JPEG_GIT_BRANCH "master" CACHE STRING "" FORCE)
+
+set (JPEG_TGZ_ORIGPATH "https://www.ijg.org/files" CACHE STRING "Use JPEG from original location" FORCE)
+set (JPEG_TGZ_NAME "jpegsrc.v9e.tar.gz" CACHE STRING "Use JPEG from original compressed file" FORCE)
+set (JPEG_USE_LOCALCONTENT ON CACHE BOOL "Use local file for JPEG FetchContent" FORCE)
+
+set (JPEG_PACKAGE_NAME "jpeg" CACHE STRING "Name of JPEG package" FORCE)
