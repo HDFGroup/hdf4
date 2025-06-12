@@ -35,5 +35,6 @@ var searchData=
   ['hdfszipcompinfo_32',['HDFSZIPCompInfo',['../classhdf_1_1hdflib_1_1_h_d_f_s_z_i_p_comp_info.html',1,'hdf::hdflib']]],
   ['he_5fcmd_33',['HE_CMD',['../struct_h_e___c_m_d.html',1,'']]],
   ['he_5fgroup_34',['HE_GROUP',['../struct_h_e___g_r_o_u_p.html',1,'']]],
-  ['he_5fpred_35',['HE_PRED',['../struct_h_e___p_r_e_d.html',1,'']]]
+  ['he_5fpred_35',['HE_PRED',['../struct_h_e___p_r_e_d.html',1,'']]],
+  ['hfile_5fatexit_5ft_36',['hfile_atexit_t',['../structhfile__atexit__t.html',1,'']]]
 ];

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>HDF: vars Struct Reference</title>
+<title>HDF: hfile_atexit_t Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.1-a61a5ca</span>
+   &#160;<span id="projectnumber">4.3.1-4a86db1</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -78,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search/",'.html');
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(function(){initNavTree('structvars.html',''); initResizable(); });
+$(function(){initNavTree('structhfile__atexit__t.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -106,121 +106,75 @@ $(function(){initNavTree('structvars.html',''); initResizable(); });
 <div class="header">
   <div class="summary">
 <a href="#pub-attribs">Data Fields</a>  </div>
-  <div class="headertitle"><div class="title">vars Struct Reference</div></div>
+  <div class="headertitle"><div class="title">hfile_atexit_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;mfhdf/ncgen/ncgen.h&gt;</code></p>
+<p><code>#include &lt;hdf/src/hfile_atexit_priv.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:a5ac083a645d964373f022d03df4849c8" id="r_a5ac083a645d964373f022d03df4849c8"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ac083a645d964373f022d03df4849c8">name</a></td></tr>
-<tr class="separator:a5ac083a645d964373f022d03df4849c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad207d4115edb0a794404b86d4c72d4fc" id="r_ad207d4115edb0a794404b86d4c72d4fc"><td class="memItemLeft" align="right" valign="top">nc_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad207d4115edb0a794404b86d4c72d4fc">type</a></td></tr>
-<tr class="separator:ad207d4115edb0a794404b86d4c72d4fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a484873c74138512e41bc50d17b7d955a" id="r_a484873c74138512e41bc50d17b7d955a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a484873c74138512e41bc50d17b7d955a">ndims</a></td></tr>
-<tr class="separator:a484873c74138512e41bc50d17b7d955a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f87b2e5da1b8a0e6e85963744930990" id="r_a2f87b2e5da1b8a0e6e85963744930990"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f87b2e5da1b8a0e6e85963744930990">dims</a> [<a class="el" href="hlimits_8h.html#a8ed3f89a304258f5d4505817b8ea552b">H4_MAX_VAR_DIMS</a>]</td></tr>
-<tr class="separator:a2f87b2e5da1b8a0e6e85963744930990"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9478baabc6405671191c46b1f8feb11a" id="r_a9478baabc6405671191c46b1f8feb11a"><td class="memItemLeft" align="right" valign="top">union <a class="el" href="uniongeneric.html">generic</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9478baabc6405671191c46b1f8feb11a">fill_value</a></td></tr>
-<tr class="separator:a9478baabc6405671191c46b1f8feb11a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb089659feea7f9d827fe3f086722f63" id="r_adb089659feea7f9d827fe3f086722f63"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adb089659feea7f9d827fe3f086722f63">has_data</a></td></tr>
-<tr class="separator:adb089659feea7f9d827fe3f086722f63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b6310694f89c9a22f91a8c8e6e4d3d6" id="r_a7b6310694f89c9a22f91a8c8e6e4d3d6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#a582feff13dfb32fa418cdcac59a13a4d">hdf_termfunc_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b6310694f89c9a22f91a8c8e6e4d3d6">functions</a></td></tr>
+<tr class="separator:a7b6310694f89c9a22f91a8c8e6e4d3d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f3817997eb8fa37db60586153a125dd" id="r_a0f3817997eb8fa37db60586153a125dd"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0f3817997eb8fa37db60586153a125dd">n_functions</a></td></tr>
+<tr class="separator:a0f3817997eb8fa37db60586153a125dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ba5952ef7af12d6dedbb91d43690549" id="r_a8ba5952ef7af12d6dedbb91d43690549"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ba5952ef7af12d6dedbb91d43690549">max_functions</a></td></tr>
+<tr class="separator:a8ba5952ef7af12d6dedbb91d43690549"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Field Documentation</h2>
-<a id="a2f87b2e5da1b8a0e6e85963744930990" name="a2f87b2e5da1b8a0e6e85963744930990"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2f87b2e5da1b8a0e6e85963744930990">&#9670;&#160;</a></span>dims</h2>
+<a id="a7b6310694f89c9a22f91a8c8e6e4d3d6" name="a7b6310694f89c9a22f91a8c8e6e4d3d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b6310694f89c9a22f91a8c8e6e4d3d6">&#9670;&#160;</a></span>functions</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="structdims.html">dims</a>[<a class="el" href="hlimits_8h.html#a8ed3f89a304258f5d4505817b8ea552b">H4_MAX_VAR_DIMS</a>]</td>
+          <td class="memname"><a class="el" href="hdf_8h.html#a582feff13dfb32fa418cdcac59a13a4d">hdf_termfunc_t</a>* functions</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a9478baabc6405671191c46b1f8feb11a" name="a9478baabc6405671191c46b1f8feb11a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9478baabc6405671191c46b1f8feb11a">&#9670;&#160;</a></span>fill_value</h2>
+<a id="a8ba5952ef7af12d6dedbb91d43690549" name="a8ba5952ef7af12d6dedbb91d43690549"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ba5952ef7af12d6dedbb91d43690549">&#9670;&#160;</a></span>max_functions</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">union <a class="el" href="uniongeneric.html">generic</a> fill_value</td>
+          <td class="memname">size_t max_functions</td>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Number of exit functions registered </p>
 
 </div>
 </div>
-<a id="adb089659feea7f9d827fe3f086722f63" name="adb089659feea7f9d827fe3f086722f63"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adb089659feea7f9d827fe3f086722f63">&#9670;&#160;</a></span>has_data</h2>
+<a id="a0f3817997eb8fa37db60586153a125dd" name="a0f3817997eb8fa37db60586153a125dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f3817997eb8fa37db60586153a125dd">&#9670;&#160;</a></span>n_functions</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int has_data</td>
+          <td class="memname">size_t n_functions</td>
         </tr>
       </table>
 </div><div class="memdoc">
-
-</div>
-</div>
-<a id="a5ac083a645d964373f022d03df4849c8" name="a5ac083a645d964373f022d03df4849c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ac083a645d964373f022d03df4849c8">&#9670;&#160;</a></span>name</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">char* name</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a484873c74138512e41bc50d17b7d955a" name="a484873c74138512e41bc50d17b7d955a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a484873c74138512e41bc50d17b7d955a">&#9670;&#160;</a></span>ndims</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int ndims</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ad207d4115edb0a794404b86d4c72d4fc" name="ad207d4115edb0a794404b86d4c72d4fc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad207d4115edb0a794404b86d4c72d4fc">&#9670;&#160;</a></span>type</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">nc_type type</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
+<p>Array of exit functions </p>
 
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>mfhdf/ncgen/<a class="el" href="ncgen_8h.html">ncgen.h</a></li>
+<li>hdf/src/<a class="el" href="hfile__atexit__priv_8h.html">hfile_atexit_priv.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="structvars.html">vars</a></li>
+    <li class="navelem"><a class="el" href="structhfile__atexit__t.html">hfile_atexit_t</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.10.0 </li>
