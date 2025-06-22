@@ -44,7 +44,7 @@
 #include "dfrig_priv.h"
 
 /* Private constants */
-#define PALETTE_SIZE    768
+#define PALETTE_SIZE 768
 
 /* Private Variables */
 static uint8 *paletteBuf = NULL;
@@ -432,12 +432,12 @@ static intn
 DFR8Iputimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress, intn append)
 {
     intn   acc_mode = 0; /* create if op 0, write if op 1 */
-    int32  file_id = (-1);
-    uint16 r8tag;       /* RIG and raster tags of image being written */
-    uint8 *pal = NULL;         /* pointer to palette to be written */
-    uint8  newpal[PALETTE_SIZE] = {0}; /* Imcomp creates new palette to be associated */
-    intn   wdim = 0;        /* have dimensions already been written out? */
-    intn   ret_value = SUCCEED;
+    int32  file_id  = (-1);
+    uint16 r8tag;                       /* RIG and raster tags of image being written */
+    uint8 *pal                  = NULL; /* pointer to palette to be written */
+    uint8  newpal[PALETTE_SIZE] = {0};  /* Imcomp creates new palette to be associated */
+    intn   wdim                 = 0;    /* have dimensions already been written out? */
+    intn   ret_value            = SUCCEED;
 
     HEclear();
 
@@ -874,19 +874,19 @@ done:
 intn
 DFR8nimages(const char *filename)
 {
-    int32  file_id = -1;
-    int32  group_id = -1;      /* group ID for looking at RIG's */
-    uint16 elt_tag = 0, elt_ref = 0;   /* tag/ref of items in a RIG */
-    intn   curr_image;         /* current image gathering information about */
-    intn   nimages;            /* total number of potential images */
-    int32  nrig, nri8, nci8;   /* number of RIGs, RI8s, and CI8s */
-    int32 *img_off;            /* storage for an array of image offsets */
-    uint16 rig_tag, rig_ref;   /* storage for tag/ref pairs of RIGs */
-    intn   found_8bit;         /* indicates whether a RIG is an 8-bit RIG */
-    uint16 find_tag, find_ref; /* storage for tag/ref pairs found */
-    int32  find_off, find_len; /* storage for offset/lengths of tag/refs found */
-    uint8  GRtbuf[64] = {0};   /* local buffer to read the ID element into */
-    intn   i, j;               /* local counting variable */
+    int32  file_id  = -1;
+    int32  group_id = -1;            /* group ID for looking at RIG's */
+    uint16 elt_tag = 0, elt_ref = 0; /* tag/ref of items in a RIG */
+    intn   curr_image;               /* current image gathering information about */
+    intn   nimages;                  /* total number of potential images */
+    int32  nrig, nri8, nci8;         /* number of RIGs, RI8s, and CI8s */
+    int32 *img_off;                  /* storage for an array of image offsets */
+    uint16 rig_tag, rig_ref;         /* storage for tag/ref pairs of RIGs */
+    intn   found_8bit;               /* indicates whether a RIG is an 8-bit RIG */
+    uint16 find_tag, find_ref;       /* storage for tag/ref pairs found */
+    int32  find_off, find_len;       /* storage for offset/lengths of tag/refs found */
+    uint8  GRtbuf[64] = {0};         /* local buffer to read the ID element into */
+    intn   i, j;                     /* local counting variable */
     intn   ret_value = SUCCEED;
 
     HEclear();
