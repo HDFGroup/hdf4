@@ -36,12 +36,15 @@
  *  DFR8Iputimage   : internal routine that write 8-bit images to files
  * Remarks: A RIG specifies attributes associated with an image - palette,
  *          dimension, compression, color compensation etc.
- *          The palette for an 8-bit image is assumed to always be 768 bytes
+ *          The palette for an 8-bit image is assumed to always be 768 (PALETTE_SIZE) bytes
  *          The palette is arranged as RGBRGB...
  *---------------------------------------------------------------------------*/
 
 #include "hdf_priv.h"
 #include "dfrig_priv.h"
+
+/* Private constants */
+#define PALETTE_SIZE 768
 
 /* Private Variables */
 static uint8 *paletteBuf = NULL;
@@ -376,7 +379,7 @@ DFR8setpalette(uint8 *pal)
 
     /* Check if paletteBuf buffer has been allocated */
     if (paletteBuf == NULL) {
-        paletteBuf = (uint8 *)calloc(768, sizeof(uint8));
+        paletteBuf = (uint8 *)calloc(PALETTE_SIZE, sizeof(uint8));
         if (paletteBuf == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
     }
@@ -390,7 +393,7 @@ DFR8setpalette(uint8 *pal)
     }
     else {
         /* store palette */
-        memcpy(paletteBuf, pal, 768);
+        memcpy(paletteBuf, pal, PALETTE_SIZE);
         Newpalette = 1;
     }
 
@@ -428,13 +431,13 @@ done:
 static intn
 DFR8Iputimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress, intn append)
 {
-    intn   acc_mode; /* create if op 0, write if op 1 */
-    int32  file_id = (-1);
-    uint16 r8tag;       /* RIG and raster tags of image being written */
-    uint8 *pal;         /* pointer to palette to be written */
-    uint8  newpal[768]; /* Imcomp creates new palette to be associated */
-    intn   wdim;        /* have dimensions already been written out? */
-    intn   ret_value = SUCCEED;
+    intn   acc_mode = 0; /* create if op 0, write if op 1 */
+    int32  file_id  = (-1);
+    uint16 r8tag;                       /* RIG and raster tags of image being written */
+    uint8 *pal                  = NULL; /* pointer to palette to be written */
+    uint8  newpal[PALETTE_SIZE] = {0};  /* Imcomp creates new palette to be associated */
+    intn   wdim                 = 0;    /* have dimensions already been written out? */
+    intn   ret_value            = SUCCEED;
 
     HEclear();
 
@@ -448,7 +451,7 @@ DFR8Iputimage(const char *filename, const void *image, int32 xdim, int32 ydim, u
 
     /* Check if Palette buffer has been allocated */
     if (paletteBuf == NULL) {
-        paletteBuf = (uint8 *)calloc(768, sizeof(uint8));
+        paletteBuf = (uint8 *)calloc(PALETTE_SIZE, sizeof(uint8));
         if (paletteBuf == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
     }
@@ -513,11 +516,11 @@ DFR8Iputimage(const char *filename, const void *image, int32 xdim, int32 ydim, u
     /* Write out palette */
     if (pal) {                 /* if there is a palette */
         if (Newpalette == 1) { /* write palette */
-            if (Hputelement(file_id, DFTAG_LUT, Writeref, pal, (int32)768) == FAIL)
+            if (Hputelement(file_id, DFTAG_LUT, Writeref, pal, (int32)PALETTE_SIZE) == FAIL)
                 HGOTO_ERROR(DFE_PUTELEM, FAIL);
             Writerig.lut.tag             = DFTAG_LUT;
             Writerig.lut.ref             = Writeref;
-            Writerig.desclut.xdim        = 768;
+            Writerig.desclut.xdim        = PALETTE_SIZE;
             Writerig.desclut.ncomponents = 1;
         } /* end if */
         if (CompType != DFTAG_IMC)
@@ -588,7 +591,7 @@ done:
 intn
 DFR8putimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress)
 {
-    intn ret_value;
+    intn ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
     if (library_terminate == FALSE)
@@ -627,7 +630,7 @@ done:
 intn
 DFR8addimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress)
 {
-    intn ret_value;
+    intn ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
     if (library_terminate == FALSE)
@@ -871,19 +874,19 @@ done:
 intn
 DFR8nimages(const char *filename)
 {
-    int32  file_id;
-    int32  group_id;           /* group ID for looking at RIG's */
-    uint16 elt_tag, elt_ref;   /* tag/ref of items in a RIG */
-    intn   curr_image;         /* current image gathering information about */
-    intn   nimages;            /* total number of potential images */
-    int32  nrig, nri8, nci8;   /* number of RIGs, RI8s, and CI8s */
-    int32 *img_off;            /* storage for an array of image offsets */
-    uint16 rig_tag, rig_ref;   /* storage for tag/ref pairs of RIGs */
-    intn   found_8bit;         /* indicates whether a RIG is an 8-bit RIG */
-    uint16 find_tag, find_ref; /* storage for tag/ref pairs found */
-    int32  find_off, find_len; /* storage for offset/lengths of tag/refs found */
-    uint8  GRtbuf[64];         /* local buffer to read the ID element into */
-    intn   i, j;               /* local counting variable */
+    int32  file_id  = -1;
+    int32  group_id = -1;            /* group ID for looking at RIG's */
+    uint16 elt_tag = 0, elt_ref = 0; /* tag/ref of items in a RIG */
+    intn   curr_image;               /* current image gathering information about */
+    intn   nimages;                  /* total number of potential images */
+    int32  nrig, nri8, nci8;         /* number of RIGs, RI8s, and CI8s */
+    int32 *img_off;                  /* storage for an array of image offsets */
+    uint16 rig_tag, rig_ref;         /* storage for tag/ref pairs of RIGs */
+    intn   found_8bit;               /* indicates whether a RIG is an 8-bit RIG */
+    uint16 find_tag, find_ref;       /* storage for tag/ref pairs found */
+    int32  find_off, find_len;       /* storage for offset/lengths of tag/refs found */
+    uint8  GRtbuf[64] = {0};         /* local buffer to read the ID element into */
+    intn   i, j;                     /* local counting variable */
     intn   ret_value = SUCCEED;
 
     HEclear();
@@ -929,6 +932,7 @@ DFR8nimages(const char *filename)
     /* go through the RIGs looking for 8-bit images */
     curr_image = 0;
     find_tag = find_ref = 0;
+    find_off = find_len = -1;
     while (Hfind(file_id, DFTAG_RIG, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len,
                  DF_FORWARD) == SUCCEED) {
         /* read RIG into memory */
@@ -1149,7 +1153,7 @@ done:
 uint16
 DFR8lastref(void)
 {
-    uint16 ret_value;
+    uint16 ret_value = 0;
 
     /* Perform global, one-time initialization */
     if (library_terminate == FALSE)
