@@ -54,6 +54,7 @@ extern int test_idtest();
 /* extern int test_sd(); - removed temporarily, see note in main(...) */
 extern int test_mixed_apis();
 extern int test_files();
+extern int test_rank0();
 extern int test_SDSprops();
 extern int test_coordvar();
 extern int test_chunk();
