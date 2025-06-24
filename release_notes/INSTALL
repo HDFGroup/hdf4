@@ -45,5 +45,5 @@ CONTENTS
         https://github.com/HDFGroup/hdf4/releases
 
 5. Build and Install HDF4 C and Fortran Libraries and tools with CMake
-        see the release_notess/INSTALL_CMake.txt file.
+        see the release_notes/INSTALL_CMake.txt file.
 
