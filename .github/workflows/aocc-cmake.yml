@@ -16,6 +16,10 @@ jobs:
   aocc_build_and_test:
     name: "aocc ${{ inputs.build_mode }}"
     runs-on: ubuntu-latest
+    env:
+      AOCCVERDOT: "5.0.0"
+      AOCCVERDASH: "5-0"
+
     steps:
       - name: Get Sources
         uses: actions/checkout@v4.1.7
@@ -29,12 +33,12 @@ jobs:
           sudo apt install -y zlib1g-dev libaec-dev libjpeg-dev
           sudo apt install -y wget curl bzip2 flex bison libzip-dev openssl build-essential
 
-      - name: Install AOCC 4.2.0
+      - name: Install ${{ env.AOCCVERDOT }} AOCC
         shell: bash
         run: |
-          wget https://download.amd.com/developer/eula/aocc/aocc-4-2/aocc-compiler-4.2.0.tar
-          tar -xvf aocc-compiler-4.2.0.tar
-          cd aocc-compiler-4.2.0
+          wget https://download.amd.com/developer/eula/aocc/aocc-${{ env.AOCCVERDASH }}/aocc-compiler-${{ env.AOCCVERDOT }}.tar
+          tar -xvf aocc-compiler-${{ env.AOCCVERDOT }}.tar
+          cd aocc-compiler-${{ env.AOCCVERDOT }}
           bash install.sh
           source /home/runner/work/hdf4/hdf4/setenv_AOCC.sh
           which clang
@@ -44,11 +48,11 @@ jobs:
       - name: CMake Configure
         shell: bash
         run: |
-          export LD_LIBRARY_PATH=/home/runner/work/hdf5/hdf5/aocc-compiler-4.2.0/lib:/home/runner/work/hdf5/hdf5/openmpi-4.1.6-install/lib:/usr/local/lib
-          export LD_RUN_PATH=/home/runner/work/hdf5/hdf5/aocc-compiler-4.2.0/lib:/home/runner/work/hdf5/hdf5/openmpi-4.1.6-install/lib:/usr/local/lib
-          export PATH=/usr/local/bin:$PATH
+          export LD_LIBRARY_PATH=/home/runner/work/hdf4/hdf4/aocc-compiler-${{ env.AOCCVERDOT }}/lib:/usr/local/lib
+          export LD_RUN_PATH=/home/runner/work/hdf4/hdf4/aocc-compiler-${{ env.AOCCVERDOT }}/lib:/usr/local/lib
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
+          CC=/home/runner/work/hdf5/hdf5/aocc-compiler-${{ env.AOCCVERDOT }}/bin/clang FC=/home/runner/work/hdf5/hdf5/aocc-compiler-${{ env.AOCCVERDOT }}/bin/flang \
           cmake -C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake -G Ninja \
             --log-level=VERBOSE \
             -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
