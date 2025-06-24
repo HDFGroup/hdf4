@@ -52,7 +52,7 @@ jobs:
           export LD_RUN_PATH=/home/runner/work/hdf4/hdf4/aocc-compiler-${{ env.AOCCVERDOT }}/lib:/usr/local/lib
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
-          CC=/home/runner/work/hdf5/hdf5/aocc-compiler-${{ env.AOCCVERDOT }}/bin/clang FC=/home/runner/work/hdf5/hdf5/aocc-compiler-${{ env.AOCCVERDOT }}/bin/flang \
+          CC=/home/runner/work/hdf4/hdf4/aocc-compiler-${{ env.AOCCVERDOT }}/bin/clang FC=/home/runner/work/hdf4/hdf4/aocc-compiler-${{ env.AOCCVERDOT }}/bin/flang \
           cmake -C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake -G Ninja \
             --log-level=VERBOSE \
             -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
