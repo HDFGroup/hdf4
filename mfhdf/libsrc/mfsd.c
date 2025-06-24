@@ -1092,7 +1092,11 @@ SDcreate(int32       fid,  /* IN: file ID */
     }
 
     /* make fake dimensions which may or may not be over-ridden later */
-    dims = malloc(rank * sizeof(intn));
+    if (rank > 0)
+        dims = malloc(rank * sizeof(intn));
+    else
+        /* when rank = 0, use rank = 1, assuming the data is scalar */
+        dims = malloc(sizeof(intn));
     if (dims == NULL) {
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     }

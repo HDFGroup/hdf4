@@ -16,6 +16,9 @@
  * 		rank = 0.
  * Structure of the file:
  *    test_rank0 - test routine, called in hdftest.c
+ * Description:
+ *    When rank=0, use rank=1 with size=1 as for scalar data.  See issue
+ *    HDFFR-1291 for decision on behavior of API functions.
  ****************************************************************************/
 
 #include <string.h>
@@ -25,8 +28,7 @@
 #include "hdftest.h"
 
 #define FILE_NAME "trank0.hdf" /* data file to test for rank=0 */
-#define X_LENGTH  3
-#define Y_LENGTH  3
+#define X_LENGTH  0
 #define RANK      0
 
 /* Test routine for testing the several APIs with SDS having rank = 0. */
@@ -34,14 +36,15 @@ extern int
 test_rank0()
 {
     int32         fid, sds1_id, sds2_id, sds_id;
-    int32         dim_sizes[2], array_rank, num_type, attributes;
-    int32         start[2], edges[2];
+    int32         dim_sizes[1], array_rank, num_type, attributes;
+    int32         start[1], edges[1];
     comp_coder_t  comp_type; /* to retrieve compression type into */
     comp_info     c_info;    /* compression information structure */
     int32         comp_flag; /* compression flag */
     HDF_CHUNK_DEF c_def;     /* Chunking definitions */
-    int32         buf[Y_LENGTH][X_LENGTH];
-    intn          i, j, status;
+    int32         inbuf[1];
+    int32         outbuf[1];
+    intn          status;
     int32         status_32;
     intn          num_errs = 0; /* number of errors so far */
 
@@ -54,9 +57,8 @@ test_rank0()
 
     /**** Verify that SDsetcompress fails when dataset has rank 0 ****/
 
-    /* Create an X_LENGTH by Y_LENGTH dataset, called DataSet_1 */
-    dim_sizes[0] = X_LENGTH;
-    dim_sizes[1] = Y_LENGTH;
+    /* Create an X_LENGTH dataset, called DataSet_1 */
+    dim_sizes[0] = 1;
     sds1_id      = SDcreate(fid, "DataSet_1", DFNT_INT32, RANK, dim_sizes);
     CHECK(sds1_id, FAIL, "test_rank0: SDcreate");
 
@@ -68,7 +70,7 @@ test_rank0()
 
     /**** Verify that SDsetchunk fails when dataset has rank 0 ****/
 
-    /* Create an X_LENGTH by Y_LENGTH dataset, called DataSet_2 */
+    /* Create an X_LENGTH dataset, called DataSet_2 */
     sds2_id = SDcreate(fid, "DataSet_2", DFNT_INT32, RANK, dim_sizes);
     CHECK(sds2_id, FAIL, "test_rank0: SDcreate");
 
@@ -84,28 +86,23 @@ test_rank0()
     status = SDendaccess(sds2_id);
     CHECK(status, FAIL, "test_rank0: SDendaccess");
 
-    /**** Verify that SDwritedata fails when dataset has rank 0 ****/
+    /**** Verify that SDwritedata succeeds when dataset has rank 0 ****/
 
-    /* Initialize buffer and its copy, so later can verify that the buffer
-       is not corrupted */
-    for (j = 0; j < Y_LENGTH; j++) {
-        for (i = 0; i < X_LENGTH; i++) {
-            buf[j][i] = i;
-        }
-    }
+    /* Initialize input buffer to write, and output buffer to verify the reading */
+    inbuf[0] = 99;
+    outbuf[0] = 0;
+
     /* Select the first dataset */
     sds_id = SDselect(fid, 0);
     CHECK(sds_id, FAIL, "test_rank0: SDselect");
 
     /* Define the location and size of the dataset to be written to the file */
     start[0] = 0;
-    start[1] = 0;
-    edges[0] = Y_LENGTH;
-    edges[1] = X_LENGTH;
+    edges[0] = dim_sizes[0];
 
     /* Write the stored data to the dataset */
-    status = SDwritedata(sds_id, start, NULL, edges, (void *)buf);
-    VERIFY(status, FAIL, "test_rank0:SDwritedata");
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)inbuf);
+    CHECK(status, FAIL, "test_rank0:SDwritedata");
 
     /* Close the SDS */
     status = SDendaccess(sds_id);
@@ -121,11 +118,10 @@ test_rank0()
 
     /* Read the data set */
     start[0] = 0;
-    start[1] = 0;
-    edges[0] = Y_LENGTH;
-    edges[1] = X_LENGTH;
-    status   = SDreaddata(sds_id, start, NULL, edges, (void *)buf);
+    edges[0] = X_LENGTH;
+    status   = SDreaddata(sds_id, start, NULL, edges, (void *)outbuf);
     CHECK(status, FAIL, "test_rank0: SDreaddata");
+    VERIFY(inbuf[0], outbuf[0], "test_rank0: SDreaddata");
 
     /* Close the SDS */
     status = SDendaccess(sds_id);

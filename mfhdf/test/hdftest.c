@@ -1314,8 +1314,9 @@ main(void)
      * several functions when the SDS has rank=0. (in trank0.c) - 02/4/05 */
     /* BMR: SDcreate fails on Copper when rank=0.  EP decided to remove
      * this test until further study can be made on this feature.
+*/
     status = test_rank0();
-    num_errs = num_errs + status; */
+    num_errs = num_errs + status;
 
     /* Tests functionality related to SDS' properties (in tsdsprops.c) */
     status   = test_SDSprops();
