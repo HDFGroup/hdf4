@@ -27,6 +27,6 @@ Additional Third-party Software Requirements:
        to the Windows platform, is recommended. Download from:
            http://sourceforge.net/projects/winflexbison
 
-   3)  CMake version 2.8.11.1 or higher is needed to use Win flex-bison.
+   3)  CMake version 3.21 or higher is needed to use Win flex-bison.
        Using an earlier version of CMake will require renaming the executables
        without the "win_" prefix.
