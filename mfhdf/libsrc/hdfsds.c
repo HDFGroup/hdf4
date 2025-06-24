@@ -1064,14 +1064,14 @@ hdf_read_ndgs(NC *handle)
 
                         /* get space for dimensions, variable dimensions, and scale types */
                         if (rank > 0) {
-                            dimsizes = malloc((uint32)rank * sizeof(int32));
-                            vardims = malloc((uint32)rank * sizeof(intn));
+                            dimsizes   = malloc((uint32)rank * sizeof(int32));
+                            vardims    = malloc((uint32)rank * sizeof(intn));
                             scaletypes = malloc((uint32)rank * sizeof(int32));
                         }
                         else {
                             /* when rank = 0, use rank = 1, assuming the data is scalar */
-                            dimsizes = malloc(sizeof(int32));
-                            vardims = malloc(sizeof(intn));
+                            dimsizes   = malloc(sizeof(int32));
+                            vardims    = malloc(sizeof(intn));
                             scaletypes = malloc(sizeof(int32));
                         }
                         if (dimsizes == NULL) {

@@ -89,7 +89,7 @@ test_rank0()
     /**** Verify that SDwritedata succeeds when dataset has rank 0 ****/
 
     /* Initialize input buffer to write, and output buffer to verify the reading */
-    inbuf[0] = 99;
+    inbuf[0]  = 99;
     outbuf[0] = 0;
 
     /* Select the first dataset */
