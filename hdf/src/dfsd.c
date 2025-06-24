@@ -735,6 +735,10 @@ DFSDsetdims(intn rank, int32 dimsizes[])
     if (Sfile_id != DF_NOFILE)
         HGOTO_ERROR(DFE_BADCALL, FAIL);
 
+    /* Disallow rank = 0 in DFSD API (see HDFFR-1291) */
+    if (rank == 0)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     if (Writesdg.rank == rank) /* check if dimensions same */
     {
         if (Writesdg.dimsizes) {

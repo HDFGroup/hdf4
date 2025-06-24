@@ -54,6 +54,7 @@ extern int test_idtest();
 /* extern int test_sd(); - removed temporarily, see note in main(...) */
 extern int test_mixed_apis();
 extern int test_files();
+extern int test_rank0();
 extern int test_SDSprops();
 extern int test_coordvar();
 extern int test_chunk();
@@ -1314,8 +1315,9 @@ main(void)
      * several functions when the SDS has rank=0. (in trank0.c) - 02/4/05 */
     /* BMR: SDcreate fails on Copper when rank=0.  EP decided to remove
      * this test until further study can be made on this feature.
-    status = test_rank0();
-    num_errs = num_errs + status; */
+     */
+    status   = test_rank0();
+    num_errs = num_errs + status;
 
     /* Tests functionality related to SDS' properties (in tsdsprops.c) */
     status   = test_SDSprops();
