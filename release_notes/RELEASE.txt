@@ -4,7 +4,7 @@ HDF version 4.3.1-1 currently under development
 INTRODUCTION
 
 This document describes the differences between this release and the
-HDF 4.2.16-2 release.  It is written for people who are familiar with
+HDF 4.3.0 release.  It is written for people who are familiar with
 previous releases of HDF and wish to migrate to this version of HDF.
 
 Note that the HDF4 documentation will be updated at the time of
@@ -38,285 +38,41 @@ New features and changes
 ========================
     Configuration:
     -------------
-    - Changed minimum CMake version to 3.18
-
-      Requirement for CMake 3.18 allows removal of special checks for message,
-      EOL checks and Visual Studio 2019 version. Visual Studio 2022 requires
-      CMake version 3.21.
-
-    - Added versioning support to CMake builds
-
-      Added config/lt.vers.am file with soversion numbers for each library.
-
-    - Removed CMake's HDF_ENABLE_LARGE_FILE option
-
-      We now assume that LFS exists, as in the Autotools.
-
-    - New option for building and naming tools in CMake
-
-      The following option has been added:
-        HDF4_BUILD_STATIC_TOOLS    "Build Static Tools Not Shared Tools"          OFF
-
-      The default will build shared tools unless BUILD_SHARED_LIBS = OFF.
-
-    - XDR changes
-
-      We now only support building HDF4 with the XDR implementation packaged
-      with the HDF4 source, which is always built with the mfhdf library.
-
-      The following options have been removed:
-
-        Autotools:  --enable-hdf4-xdr
-        CMake:      HDF4_BUILD_XDR_LIB
-
-      The following header files are no longer deployed:
-
-        types.h, xdr.h
-
-      The XDR functionality has been incorporated into the mfhdf library,
-      so a separate XDR library is no longer distributed with either build
-      system.
-
-    - Man pages were removed
-
-      The few man pages in the HDF4 library are woefully incomplete and/or
-      outdated.  We have no resources to properly update those and to add the
-      missing ones. Instead, we will try to create better man pages from Doxygen.
-
-    - Incorporated HDF4 examples repository into HDF4 library.
-
-      The HDF4Examples folder is equivalent to the repository hdf4-examples.
-      As such it can build and test the examples during library build or after
-      the library is installed. Previously, the hdf4-repository archives were
-      downloaded for packaging with the library. Now the examples can be built
-      and tested without a packaged install of the library.
-
-      However to maintain the ability to use the HDF4Examples with an installed
-      library, it is necessary to translate or synch the option names from those
-      used by the library to those used by the examples. The typical pattern is:
-            <example option> = <library option>
-            HDF_BUILD_JAVA = ${HDF4_BUILD_JAVA}
-
-    - Autotools and CMake target added to produce doxygen generated documentation
-
-      The default is OFF or disabled.
-      Autoconf option is '--enable-doxygen'
-        autotools make target is 'doxygen' and will build all doxygen targets
-      CMake configure option is 'HDF4_BUILD_DOC'.
-        CMake target is 'doxygen' for all available doxygen targets
-        CMake target is 'hdf4lib_doc' for the src subdirectory
-
-    - Added support for CMake presets file.
-
-      CMake supports two main files, CMakePresets.json and CMakeUserPresets.json,
-      that allow users to specify common configure options and share them with others.
-      HDF added a CMakePresets.json file of a typical configuration and support
-      file, config/cmake-presets/hidden-presets.json. 
-      Also added a section to INSTALL_CMake.txt with very basic explanation of the
-      process to use CMakePresets.
-
-    - Private headers are no longer deployed
-
-      * dfi.h - Declared private, unused, undocumented in UG/RM/DG, has been
-                removed from the library entirely.
-
-    - Dropped support for MacFS I/O
-
-      MacFS was an obscure I/O system from the late 90s used to access HFS
-      volumes on MacOS 9 and earlier (publication CMU-CS-98-145 can be
-      found via an internet search).
-
-      HDF4 allows a library builder to manually specify the FILELIB symbol
-      found in hdfi.h to use C standard library buffered I/O (fopen, etc.),
-      POSIX unbuffered I/O (open, etc.), or MacFS I/O (mopen, etc.). The
-      library default is to use C buffered I/O and there is no obvious
-      build-time or run-time option to change that. The FILELIB value is
-      then used to map HI_OPEN, etc. to appropriate I/O calls.
-
-      The "alternative" I/O schemes (POSIX unbuffered and MacFS) are not
-      tested. Due to its age and obscurity, MacFS support is being dropped.
-      The POSIX unbuffered I/O scheme will remain in place for now since it
-      might be interesting to profile that vs C stdio.h calls.
-
-      This change will have *NO IMPACT* on modern Macs. Files created using
-      MacFS in the 90s and early 2000s can be accessed using C standard
-      library I/O.
-
-    C Library:
-    ----------
-    - Private headers are no longer deployed
-
-      The following private headers are not a part of the public API and
-      will no longer be deployed when installing the library:
-      
-        atom.h
-        bitvect.h
-        cdeflate.h
-        cnbit.h
-        cnone.h
-        crle.h
-        cskphuff.h
-        cszip.h
-        dfan.h
-        dfgr.h
-        dfrig.h
-        dfsd.h
-        dfufp2i.h
-        dynarray.h
-        hchunks.h
-        hcompi.h
-        hconv.h
-        hdfi.h
-        hfile.h
-        hkit.h
-        linklist.h
-        local_nc.h
-        mfani.h
-        mfgri.h
-        mstdio.h
-        tbbt.h
-
-    - Most of hbitio.h moved to hbitio_priv.h
-
-      Still in hbitio.h:
-
-      * BITNUM #define
-      * Hputbit() function-like macro
-
-      These are referenced in older versions of the reference manual, e.g., in
-      the Hendbitaccess() entry.
-
-      Moved to hbitio_priv.h:
-
-      * BITBUF_SIZE, DATANUM #defines
-      * bitrec_t struct
-      * maskc and maskl variable declarations
-
-    - Most of hfile.h moved to hfile_priv.h
-
-      Still in hfile.h:
-
-      LIBVER_MAJOR
-      LIBVER_MINOR
-      LIBVER_RELEASE
-      LIBVER_SUBRELEASE
-      LIBVER_STRING
-      LIBVSTR_LEN
-      LIBVER_LEN
-
-      Everything else has been moved to hfile_priv.h
-
-      NOTE that hfile.h is NOT included via hdf.h and must be included
-      separately, which is the same behavior as HDF 4.2.x.
-
-    - hdfi.h is no longer included by hdf.h
-
-      In the past, hdfi.h (an internal header file) was included in the
-      public hdf.h header. This is no longer the case. Anything that
-      should be public has been moved from hdfi.h to hdf.h, including:
-
-        * The C99-like types (e.g., float32)
-        * The archaic VOID/VOIDP macros
-        * The intf Fortran integer type
-        * The HD library macros (e.g., HDmalloc)
-
-      All of these things are considered obsolete and we only maintain
-      them in the public header so that old code does not have to be
-      modified. It is unwise to use them in new code.
-
-      NOTE: hdfi.h included many POSIX, Windows, and C standard library
-            headers.
-
-        *** THESE WILL NO LONGER BE BROUGHT IN BY INCLUDING HDF.H!!! ***
-
-            If you have been relying on hdf.h to bring in headers like
-            stdlib.h, windows.h, or unistd.h, you will need to update your
-            code when you move to HDF 4.3.0.
 
 
-Bugs fixed since HDF 4.2.16-2
+Bugs fixed since HDF 4.3.0
 ===========================
 
-    - Corrected handling of SDgetcompress()
+    - Fixed various unitialized memory occurrences
 
-      SDgetcompress() was deprecated in HDF 4.2.9 (2013) and hidden behind
-      ifdefs controlled by the --enable-deprecated-symbols (Autotools) and
-      HDF4_ENABLE_DEPRECATED_SYMBOLS (CMake) options. These ifdefs were
-      incompletely propagated throughout the library.
+      Valgrind reported
+        "Conditional jump or move depends on uninitialised value(s)"
+      errors in some of the jpeg tests even though the buffers were initialized
+      properly prior to calling the JPEG read function.  This was due to some
+      optimizations/alignments by the JPEG library.
 
-      In this release:
+      Using the environment variable JSIMD_FORCENONE=1 to disable SIMD (Single
+      Instruction Multiple Data) optimizations will help removing the errors,
+      if desired.  However, because these optimizations take advantage of hardware
+      capabilities to speed up JPEG compression and decompression, disabling them
+      might cause the opposite effect.
 
-      * CMake builds did not expose H4_NO_DEPRECATED_SYMBOLS via
-        h4config.h
-      * The mfhdf.h header now hides the SDgetcompress() call behind an
-        H4_NO_DEPRECATED_SYMBOLS ifdef (pulled in via h4config.h via hdf.h)
-      * The Java wrappers now correctly exclude SDgetcompress() when
-        deprecated symbols are disabled
-      * The libhdf4.settings file now indicates whether HDF4 was built
-        with or without deprecated symbols
+      Addresses GH-818
 
-    - Fix --with-szlib with no paths not detecting the encoder
+    - Fixed memory leaks in Vgroup and Vdata APIs
 
-      The --with-szlib option in the Autotools has been broken when used
-      without include/library paths for the past decade (git blame says 11
-      years ago). A misnamed variable and a missing setting would skip
-      the encoder check, so the library could only be added in decode-only
-      mode.
+      The code that destroys the atom groups for Vdatas and Vgroups was placed
+      after the free lists had already been freed, resulting in more released
+      memory being added to the free lists, which were never freed, again.  Fixed.
 
-      This has been fixed and szip encoding will now be detected normally.
+      Addresses GH-819
 
-    - Build fortran with -fallow-argument-mismatch w/ gcc 10+
+    - Fixed memory leaks in SD API
 
-      The gfortran configuration checks checked the version via a variable that
-      was never set, preventing -fallow-argument-mismatch from being set w/
-      gcc 10+, which would prevent building the fortran interface.
+      The SD API internal code contained some memory leaks.  This is now fixed.
 
-      Fixes HDFFR-1582
+      Addresses GH-825
 
-    - JNI SDSreaddata functions for float and double used mismatched buffer macros
-
-      The SDreaddata_double and SDreaddata_float function created data buffers with
-      PIN_DOUBLE_ARRAY_CRITICAL and PIN_FLOAT_ARRAY_CRITICAL macros then tried to
-      free the buffers with UNPIN_DOUBLE_ARRAY and UNPIN_FLOAT_ARRAY macros. This caused
-      free() call to use an invalid pointer.
-
-      Change the macros PIN_DOUBLE_ARRAY_CRITICAL to PIN_DOUBLE_ARRAY and
-      PIN_FLOAT_ARRAY_CRITICAL to PIN_DOUBLE_ARRAY.
-
-      Github issue #355
-
-    - Vstart/Vinitialize did not fail as expected
-
-      User simulated a failure in Vstart while using hrepack, but the
-      function did not fail as expected.
-
-      This is now fixed.
-
-      Github issue #354
-
-    - DF24getimage caused a segfault when reading corrupted file
-
-      When jpeg_start_decompress failed to decompress a corrupted file, the
-      JPEG library exit with failure, causing a segfault in user's application.
-
-      The library now overrides the JPEG routine error_exit to return an
-      error code instead.
-
-      Github issue #295
-
-    - SDgetcompinfo returned incorrect option masks for szip compression
-
-      A special bit, SZ_H4_REV_2, was used to indicate that the szip info
-      was stored in a new way.  This bit was set in the options mask field
-      of the szip info struct.  As a result, the value of options mask
-      became incorrect.  For example, an option mask value was 132 but with
-      the special bit set, it was returned as 65668.
-
-      In this release, the special bit is removed from the option mask before
-      it is returned to the application.  This change does not affect the data
-      format in the file.
-
-      JIRA issue HDFFR-82
 
 
 Documentation
