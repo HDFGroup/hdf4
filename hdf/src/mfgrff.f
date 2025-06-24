@@ -150,7 +150,7 @@ C-------------------------------------------------------------
       character*(*) data
       integer riid, mgisattr, nt, count
 
-      mgsattr = mgisattr(riid, name, nt, count, data, len(name))
+      mgsattr = mgiscatt(riid, name, nt, count, data, len(name))
       return
       end
 C---------------------------------------------------------------
