@@ -192,10 +192,3 @@ jobs:
               name: zip-tarball-nover
               path: hdf.zip
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
-
-      - name: Save NEWSLETTER
-        uses: actions/upload-artifact@v4
-        with:
-              name: NEWSLETTER
-              path: ./hdfsrc/release_docs/NEWSLETTER.txt
-              if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
