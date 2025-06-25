@@ -8,8 +8,7 @@ on:
     branches: [ master, hdf_4_3_1 ]
     paths-ignore:
     - '.github/CODEOWNERS'
-    - 'doc/**'
-    - 'release_docs/**'
+    - 'release_notes/**'
     - 'COPYING'
     - '**.md'
 
