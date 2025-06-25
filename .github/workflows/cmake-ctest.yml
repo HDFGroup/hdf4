@@ -738,7 +738,7 @@ jobs:
           mkdir "${{ runner.workspace }}/build"
           mkdir "${{ runner.workspace }}/build/hdf4"
           cp ${{ runner.workspace }}/hdf4/${{ steps.set-file-base.outputs.SOURCE_BASE }}/COPYING ${{ runner.workspace }}/build/hdf4
-          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/README.txt ${{ runner.workspace }}/build/hdf4
+          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/README.md ${{ runner.workspace }}/build/hdf4
           cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/*.tar.gz ${{ runner.workspace }}/build/hdf4
           cd "${{ runner.workspace }}/build"
           tar -zcvf ${{ steps.set-file-base.outputs.FILE_BASE }}-ubuntu-2404_intel.tar.gz hdf4

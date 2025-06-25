@@ -201,11 +201,6 @@ jobs:
         run: |
           echo "${{ steps.get-file-base.outputs.FILE_BASE }}" > ./last-file.txt
 
-
-      - name: Create description file
-        run: |
-          echo "No description available" > description.txt
-
       - name: PreRelease tag
         id: create_prerelease
         if: ${{ (inputs.use_environ == 'snapshots') }}
@@ -213,7 +208,6 @@ jobs:
         with:
           tag_name: "${{ inputs.use_tag }}"
           prerelease: true
-          body_path: description.txt
           files: |
               last-file.txt
               ${{ steps.get-file-base.outputs.FILE_BASE }}.doxygen.zip
@@ -240,7 +234,7 @@ jobs:
         with:
           tag_name: "${{ inputs.use_tag }}"
           prerelease: false
-          body_path: description.txt
+          #body_path: ${{ github.workspace }}-CHANGELOG.txt
           files: |
               ${{ steps.get-file-base.outputs.FILE_BASE }}.doxygen.zip
               ${{ steps.get-file-base.outputs.FILE_BASE }}.tar.gz
