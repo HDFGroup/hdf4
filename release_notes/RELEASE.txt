@@ -43,7 +43,7 @@ New features and changes
 Bugs fixed since HDF 4.3.0
 ===========================
 
-    - Fixed various unitialized memory occurrences
+    - Fixed various uninitialized memory occurrences
 
       Valgrind reported
         "Conditional jump or move depends on uninitialised value(s)"
