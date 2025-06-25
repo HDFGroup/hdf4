@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.1-1729012</span>
+   &#160;<span id="projectnumber">4.3.1-1</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -105,26 +105,35 @@ $(function(){initNavTree('atom__priv_8h.html',''); initResizable(); });
 
 <div class="header">
   <div class="summary">
+<a href="#define-members">Macros</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">atom_priv.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;stdint.h&gt;</code><br />
-<code>#include &quot;<a class="el" href="hdf__priv_8h.html">hdf_priv.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="hdf__priv_8h.html">hdf_priv.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="hdf_8h.html">hdf.h</a>&quot;</code><br />
 </div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ab9c1adfe0ccb27496ee7e09cf5b723e4" id="r_ab9c1adfe0ccb27496ee7e09cf5b723e4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab9c1adfe0ccb27496ee7e09cf5b723e4">HAIswap_cache</a>(i,  j)</td></tr>
+<tr class="separator:ab9c1adfe0ccb27496ee7e09cf5b723e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf17dcaa2e62c32e3129ef8e159ae22e" id="r_aaf17dcaa2e62c32e3129ef8e159ae22e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaf17dcaa2e62c32e3129ef8e159ae22e">HAatom_object</a>(atm)</td></tr>
+<tr class="separator:aaf17dcaa2e62c32e3129ef8e159ae22e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a565249a286c7ff7fc40cf1cd14d60edd" id="r_a565249a286c7ff7fc40cf1cd14d60edd"><td class="memItemLeft" align="right" valign="top">typedef int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a565249a286c7ff7fc40cf1cd14d60edd">atom_t</a></td></tr>
-<tr class="separator:a565249a286c7ff7fc40cf1cd14d60edd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ef70683ba3d54346cf3000a9c31fa96" id="r_a6ef70683ba3d54346cf3000a9c31fa96"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6ef70683ba3d54346cf3000a9c31fa96">atom_t</a></td></tr>
+<tr class="separator:a6ef70683ba3d54346cf3000a9c31fa96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f9dae97f5490e5b111964ccc078c840" id="r_a8f9dae97f5490e5b111964ccc078c840"><td class="memItemLeft" align="right" valign="top">typedef int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f9dae97f5490e5b111964ccc078c840">HAsearch_func_t</a>) (const void *obj, const void *key)</td></tr>
 <tr class="separator:a8f9dae97f5490e5b111964ccc078c840"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
 <tr class="memitem:a8ae7d1c5a6c04403ab23a53769c65700" id="r_a8ae7d1c5a6c04403ab23a53769c65700"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ae7d1c5a6c04403ab23a53769c65700">group_t</a> { <br />
-&#160;&#160;<a class="el" href="#a8ae7d1c5a6c04403ab23a53769c65700a2e9e77744b6146382b4b713a71451cb6">BADGROUP</a> = -1
+&#160;&#160;<a class="el" href="#a8ae7d1c5a6c04403ab23a53769c65700a2e9e77744b6146382b4b713a71451cb6">BADGROUP</a> = (-1)
 , <a class="el" href="#a8ae7d1c5a6c04403ab23a53769c65700a952516ae7897ee289207109eac42badd">DDGROUP</a> = 0
 , <a class="el" href="#a8ae7d1c5a6c04403ab23a53769c65700a663f502cdea28ae32201738dce3bdf34">AIDGROUP</a> = 1
 , <a class="el" href="#a8ae7d1c5a6c04403ab23a53769c65700a8256b3df4777ddb1b2a39ff143917fc0">FIDGROUP</a> = 2
@@ -143,32 +152,94 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aa9a6f363f2d656092c37f2bf0c8b0992" id="r_aa9a6f363f2d656092c37f2bf0c8b0992"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa9a6f363f2d656092c37f2bf0c8b0992">HAinit_group</a> (<a class="el" href="#a8ae7d1c5a6c04403ab23a53769c65700">group_t</a> grp, unsigned hash_size)</td></tr>
-<tr class="separator:aa9a6f363f2d656092c37f2bf0c8b0992"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12d184315ecb6388d63dd2b07e528f22" id="r_a12d184315ecb6388d63dd2b07e528f22"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a12d184315ecb6388d63dd2b07e528f22">HAinit_group</a> (<a class="el" href="#a8ae7d1c5a6c04403ab23a53769c65700">group_t</a> grp, int hash_size)</td></tr>
+<tr class="separator:a12d184315ecb6388d63dd2b07e528f22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18276e3a0af63bb5376e7073250416de" id="r_a18276e3a0af63bb5376e7073250416de"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a18276e3a0af63bb5376e7073250416de">HAdestroy_group</a> (<a class="el" href="#a8ae7d1c5a6c04403ab23a53769c65700">group_t</a> grp)</td></tr>
 <tr class="separator:a18276e3a0af63bb5376e7073250416de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14905f2cbd20e88a4e596c82a9377d99" id="r_a14905f2cbd20e88a4e596c82a9377d99"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a565249a286c7ff7fc40cf1cd14d60edd">atom_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a14905f2cbd20e88a4e596c82a9377d99">HAregister_atom</a> (<a class="el" href="#a8ae7d1c5a6c04403ab23a53769c65700">group_t</a> grp, void *object)</td></tr>
+<tr class="memitem:a14905f2cbd20e88a4e596c82a9377d99" id="r_a14905f2cbd20e88a4e596c82a9377d99"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a6ef70683ba3d54346cf3000a9c31fa96">atom_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a14905f2cbd20e88a4e596c82a9377d99">HAregister_atom</a> (<a class="el" href="#a8ae7d1c5a6c04403ab23a53769c65700">group_t</a> grp, void *object)</td></tr>
 <tr class="separator:a14905f2cbd20e88a4e596c82a9377d99"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3041d7c29b5b10ceb84a2462240cc69" id="r_ab3041d7c29b5b10ceb84a2462240cc69"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3041d7c29b5b10ceb84a2462240cc69">HAatom_object</a> (<a class="el" href="#a565249a286c7ff7fc40cf1cd14d60edd">atom_t</a> atm)</td></tr>
-<tr class="separator:ab3041d7c29b5b10ceb84a2462240cc69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b9b9fd8f234027122e64b02277a4d2d" id="r_a0b9b9fd8f234027122e64b02277a4d2d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a8ae7d1c5a6c04403ab23a53769c65700">group_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0b9b9fd8f234027122e64b02277a4d2d">HAatom_group</a> (<a class="el" href="#a565249a286c7ff7fc40cf1cd14d60edd">atom_t</a> atm)</td></tr>
+<tr class="memitem:abb81c0c21a8d751fc5370d9b3da39020" id="r_abb81c0c21a8d751fc5370d9b3da39020"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abb81c0c21a8d751fc5370d9b3da39020">HAPatom_object</a> (<a class="el" href="#a6ef70683ba3d54346cf3000a9c31fa96">atom_t</a> atm)</td></tr>
+<tr class="separator:abb81c0c21a8d751fc5370d9b3da39020"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b9b9fd8f234027122e64b02277a4d2d" id="r_a0b9b9fd8f234027122e64b02277a4d2d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a8ae7d1c5a6c04403ab23a53769c65700">group_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0b9b9fd8f234027122e64b02277a4d2d">HAatom_group</a> (<a class="el" href="#a6ef70683ba3d54346cf3000a9c31fa96">atom_t</a> atm)</td></tr>
 <tr class="separator:a0b9b9fd8f234027122e64b02277a4d2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e5979311904eb8e2d1cfc6699a8c3e5" id="r_a2e5979311904eb8e2d1cfc6699a8c3e5"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e5979311904eb8e2d1cfc6699a8c3e5">HAremove_atom</a> (<a class="el" href="#a565249a286c7ff7fc40cf1cd14d60edd">atom_t</a> atm)</td></tr>
+<tr class="memitem:a2e5979311904eb8e2d1cfc6699a8c3e5" id="r_a2e5979311904eb8e2d1cfc6699a8c3e5"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e5979311904eb8e2d1cfc6699a8c3e5">HAremove_atom</a> (<a class="el" href="#a6ef70683ba3d54346cf3000a9c31fa96">atom_t</a> atm)</td></tr>
 <tr class="separator:a2e5979311904eb8e2d1cfc6699a8c3e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae27710bde36f955313ca7a6a535a249b" id="r_ae27710bde36f955313ca7a6a535a249b"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae27710bde36f955313ca7a6a535a249b">HAsearch_atom</a> (<a class="el" href="#a8ae7d1c5a6c04403ab23a53769c65700">group_t</a> grp, <a class="el" href="#a8f9dae97f5490e5b111964ccc078c840">HAsearch_func_t</a> func, const void *key)</td></tr>
 <tr class="separator:ae27710bde36f955313ca7a6a535a249b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e8b1155ebdfa70295f34f7635d32413" id="r_a2e8b1155ebdfa70295f34f7635d32413"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e8b1155ebdfa70295f34f7635d32413">HAshutdown</a> (void)</td></tr>
 <tr class="separator:a2e8b1155ebdfa70295f34f7635d32413"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a6bf266c6d02e9707548dcb0e09b6d33c" id="r_a6bf266c6d02e9707548dcb0e09b6d33c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a6ef70683ba3d54346cf3000a9c31fa96">atom_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6bf266c6d02e9707548dcb0e09b6d33c">atom_id_cache</a> []</td></tr>
+<tr class="separator:a6bf266c6d02e9707548dcb0e09b6d33c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8c86d9525879e8ede486cc134520200" id="r_ae8c86d9525879e8ede486cc134520200"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae8c86d9525879e8ede486cc134520200">atom_obj_cache</a> []</td></tr>
+<tr class="separator:ae8c86d9525879e8ede486cc134520200"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Typedef Documentation</h2>
-<a id="a565249a286c7ff7fc40cf1cd14d60edd" name="a565249a286c7ff7fc40cf1cd14d60edd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a565249a286c7ff7fc40cf1cd14d60edd">&#9670;&#160;</a></span>atom_t</h2>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="aaf17dcaa2e62c32e3129ef8e159ae22e" name="aaf17dcaa2e62c32e3129ef8e159ae22e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf17dcaa2e62c32e3129ef8e159ae22e">&#9670;&#160;</a></span>HAatom_object</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef int32_t <a class="el" href="#a565249a286c7ff7fc40cf1cd14d60edd">atom_t</a></td>
+          <td class="memname">#define HAatom_object</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">atm</span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">    (<a class="code hl_variable" href="#a6bf266c6d02e9707548dcb0e09b6d33c">atom_id_cache</a>[0] == atm   ? <a class="code hl_variable" href="#ae8c86d9525879e8ede486cc134520200">atom_obj_cache</a>[0]                                                           \</div>
+<div class="line">     : <a class="code hl_variable" href="#a6bf266c6d02e9707548dcb0e09b6d33c">atom_id_cache</a>[1] == atm ? (<a class="code hl_define" href="#ab9c1adfe0ccb27496ee7e09cf5b723e4">HAIswap_cache</a>(0, 1), <a class="code hl_variable" href="#ae8c86d9525879e8ede486cc134520200">atom_obj_cache</a>[0])                                    \</div>
+<div class="line">     : <a class="code hl_variable" href="#a6bf266c6d02e9707548dcb0e09b6d33c">atom_id_cache</a>[2] == atm ? (<a class="code hl_define" href="#ab9c1adfe0ccb27496ee7e09cf5b723e4">HAIswap_cache</a>(1, 2), <a class="code hl_variable" href="#ae8c86d9525879e8ede486cc134520200">atom_obj_cache</a>[1])                                    \</div>
+<div class="line">     : <a class="code hl_variable" href="#a6bf266c6d02e9707548dcb0e09b6d33c">atom_id_cache</a>[3] == atm ? (<a class="code hl_define" href="#ab9c1adfe0ccb27496ee7e09cf5b723e4">HAIswap_cache</a>(2, 3), <a class="code hl_variable" href="#ae8c86d9525879e8ede486cc134520200">atom_obj_cache</a>[2])                                    \</div>
+<div class="line">                               : <a class="code hl_function" href="#abb81c0c21a8d751fc5370d9b3da39020">HAPatom_object</a>(atm))</div>
+<div class="ttc" id="aatom__priv_8h_html_a6bf266c6d02e9707548dcb0e09b6d33c"><div class="ttname"><a href="#a6bf266c6d02e9707548dcb0e09b6d33c">atom_id_cache</a></div><div class="ttdeci">atom_t atom_id_cache[]</div></div>
+<div class="ttc" id="aatom__priv_8h_html_ab9c1adfe0ccb27496ee7e09cf5b723e4"><div class="ttname"><a href="#ab9c1adfe0ccb27496ee7e09cf5b723e4">HAIswap_cache</a></div><div class="ttdeci">#define HAIswap_cache(i, j)</div><div class="ttdef"><b>Definition</b> atom_priv.h:25</div></div>
+<div class="ttc" id="aatom__priv_8h_html_abb81c0c21a8d751fc5370d9b3da39020"><div class="ttname"><a href="#abb81c0c21a8d751fc5370d9b3da39020">HAPatom_object</a></div><div class="ttdeci">void * HAPatom_object(atom_t atm)</div></div>
+<div class="ttc" id="aatom__priv_8h_html_ae8c86d9525879e8ede486cc134520200"><div class="ttname"><a href="#ae8c86d9525879e8ede486cc134520200">atom_obj_cache</a></div><div class="ttdeci">void * atom_obj_cache[]</div></div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="ab9c1adfe0ccb27496ee7e09cf5b723e4" name="ab9c1adfe0ccb27496ee7e09cf5b723e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9c1adfe0ccb27496ee7e09cf5b723e4">&#9670;&#160;</a></span>HAIswap_cache</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HAIswap_cache</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">i, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">j</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">    <a class="code hl_variable" href="#a6bf266c6d02e9707548dcb0e09b6d33c">atom_id_cache</a>[i] ^= <a class="code hl_variable" href="#a6bf266c6d02e9707548dcb0e09b6d33c">atom_id_cache</a>[j],                                                                    \</div>
+<div class="line">        <a class="code hl_variable" href="#ae8c86d9525879e8ede486cc134520200">atom_obj_cache</a>[i] = (<span class="keywordtype">void</span> *)((<a class="code hl_typedef" href="hdf__priv_8h.html#a7e8e20a36ce32a101de6814cf4bea91e">hdf_pint_t</a>)<a class="code hl_variable" href="#ae8c86d9525879e8ede486cc134520200">atom_obj_cache</a>[j] ^ (<a class="code hl_typedef" href="hdf__priv_8h.html#a7e8e20a36ce32a101de6814cf4bea91e">hdf_pint_t</a>)<a class="code hl_variable" href="#ae8c86d9525879e8ede486cc134520200">atom_obj_cache</a>[i]),         \</div>
+<div class="line">        <a class="code hl_variable" href="#a6bf266c6d02e9707548dcb0e09b6d33c">atom_id_cache</a>[j] ^= <a class="code hl_variable" href="#a6bf266c6d02e9707548dcb0e09b6d33c">atom_id_cache</a>[i],                                                                \</div>
+<div class="line">        <a class="code hl_variable" href="#ae8c86d9525879e8ede486cc134520200">atom_obj_cache</a>[j] = (<span class="keywordtype">void</span> *)((<a class="code hl_typedef" href="hdf__priv_8h.html#a7e8e20a36ce32a101de6814cf4bea91e">hdf_pint_t</a>)<a class="code hl_variable" href="#ae8c86d9525879e8ede486cc134520200">atom_obj_cache</a>[i] ^ (<a class="code hl_typedef" href="hdf__priv_8h.html#a7e8e20a36ce32a101de6814cf4bea91e">hdf_pint_t</a>)<a class="code hl_variable" href="#ae8c86d9525879e8ede486cc134520200">atom_obj_cache</a>[j]),         \</div>
+<div class="line">        <a class="code hl_variable" href="#a6bf266c6d02e9707548dcb0e09b6d33c">atom_id_cache</a>[i] ^= <a class="code hl_variable" href="#a6bf266c6d02e9707548dcb0e09b6d33c">atom_id_cache</a>[j],                                                                \</div>
+<div class="line">        <a class="code hl_variable" href="#ae8c86d9525879e8ede486cc134520200">atom_obj_cache</a>[i] = (<span class="keywordtype">void</span> *)((<a class="code hl_typedef" href="hdf__priv_8h.html#a7e8e20a36ce32a101de6814cf4bea91e">hdf_pint_t</a>)<a class="code hl_variable" href="#ae8c86d9525879e8ede486cc134520200">atom_obj_cache</a>[i] ^ (<a class="code hl_typedef" href="hdf__priv_8h.html#a7e8e20a36ce32a101de6814cf4bea91e">hdf_pint_t</a>)<a class="code hl_variable" href="#ae8c86d9525879e8ede486cc134520200">atom_obj_cache</a>[j])</div>
+<div class="ttc" id="ahdf__priv_8h_html_a7e8e20a36ce32a101de6814cf4bea91e"><div class="ttname"><a href="hdf__priv_8h.html#a7e8e20a36ce32a101de6814cf4bea91e">hdf_pint_t</a></div><div class="ttdeci">intptr_t hdf_pint_t</div><div class="ttdef"><b>Definition</b> hdf_priv.h:134</div></div>
+</div><!-- fragment -->
+</div>
+</div>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="a6ef70683ba3d54346cf3000a9c31fa96" name="a6ef70683ba3d54346cf3000a9c31fa96"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ef70683ba3d54346cf3000a9c31fa96">&#9670;&#160;</a></span>atom_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="#a6ef70683ba3d54346cf3000a9c31fa96">atom_t</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -230,32 +301,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="#a8ae7d1c5a6c04403ab23a53769c65700">group_t</a> HAatom_group </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="#a565249a286c7ff7fc40cf1cd14d60edd">atom_t</a></td>          <td class="paramname"><span class="paramname"><em>atm</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ab3041d7c29b5b10ceb84a2462240cc69" name="ab3041d7c29b5b10ceb84a2462240cc69"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3041d7c29b5b10ceb84a2462240cc69">&#9670;&#160;</a></span>HAatom_object()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void * HAatom_object </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="#a565249a286c7ff7fc40cf1cd14d60edd">atom_t</a></td>          <td class="paramname"><span class="paramname"><em>atm</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="#a6ef70683ba3d54346cf3000a9c31fa96">atom_t</a></td>          <td class="paramname"><span class="paramname"><em>atm</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -293,8 +339,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aa9a6f363f2d656092c37f2bf0c8b0992" name="aa9a6f363f2d656092c37f2bf0c8b0992"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa9a6f363f2d656092c37f2bf0c8b0992">&#9670;&#160;</a></span>HAinit_group()</h2>
+<a id="a12d184315ecb6388d63dd2b07e528f22" name="a12d184315ecb6388d63dd2b07e528f22"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12d184315ecb6388d63dd2b07e528f22">&#9670;&#160;</a></span>HAinit_group()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -310,7 +356,32 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">unsigned</td>          <td class="paramname"><span class="paramname"><em>hash_size</em></span>&#160;)</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>hash_size</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="abb81c0c21a8d751fc5370d9b3da39020" name="abb81c0c21a8d751fc5370d9b3da39020"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb81c0c21a8d751fc5370d9b3da39020">&#9670;&#160;</a></span>HAPatom_object()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void * HAPatom_object </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#a6ef70683ba3d54346cf3000a9c31fa96">atom_t</a></td>          <td class="paramname"><span class="paramname"><em>atm</em></span></td><td>)</td>
+          <td></td>
         </tr>
       </table>
   </td>
@@ -332,7 +403,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="#a565249a286c7ff7fc40cf1cd14d60edd">atom_t</a> HAregister_atom </td>
+          <td class="memname"><a class="el" href="#a6ef70683ba3d54346cf3000a9c31fa96">atom_t</a> HAregister_atom </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="#a8ae7d1c5a6c04403ab23a53769c65700">group_t</a></td>          <td class="paramname"><span class="paramname"><em>grp</em>, </span></td>
         </tr>
@@ -363,7 +434,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void * HAremove_atom </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="#a565249a286c7ff7fc40cf1cd14d60edd">atom_t</a></td>          <td class="paramname"><span class="paramname"><em>atm</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="#a6ef70683ba3d54346cf3000a9c31fa96">atom_t</a></td>          <td class="paramname"><span class="paramname"><em>atm</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -424,6 +495,51 @@ Functions</h2></td></tr>
           <td>(</td>
           <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="a6bf266c6d02e9707548dcb0e09b6d33c" name="a6bf266c6d02e9707548dcb0e09b6d33c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6bf266c6d02e9707548dcb0e09b6d33c">&#9670;&#160;</a></span>atom_id_cache</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a6ef70683ba3d54346cf3000a9c31fa96">atom_t</a> atom_id_cache[]</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae8c86d9525879e8ede486cc134520200" name="ae8c86d9525879e8ede486cc134520200"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8c86d9525879e8ede486cc134520200">&#9670;&#160;</a></span>atom_obj_cache</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* atom_obj_cache[]</td>
         </tr>
       </table>
   </td>
