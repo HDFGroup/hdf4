@@ -679,6 +679,14 @@ DESCRIPTION
    Get information about Vdata. Space for 'fields' and 'vsname'
    must be allocated by user.
 
+   VSinquire returns FAIL when any of the requested information is
+   not retrievable, meaning some of the information may still be
+   good even when the function returns FAIL.
+
+   We assume that 'fields' and 'vsname' buffers have been allocated by
+   the caller.  When any of the arguments is null, no information will be
+   returned for it.
+
 RETURNS
    SUCCEED/FAIL
 
@@ -700,7 +708,7 @@ VSinquire(int32  vkey,      /* IN: vdata key */
 
     /* obtain the value for each parameter although the previous one
        fails; ret_value should be FAIL if any of the parameters fails */
-    if (fields) { /* we assume 'fields' space has been pre-allocated by user? */
+    if (fields) {
         status    = VSgetfields(vkey, fields);
         ret_value = (status == FAIL) ? FAIL : ret_value;
     }
@@ -716,7 +724,7 @@ VSinquire(int32  vkey,      /* IN: vdata key */
         *eltsize  = VSsizeof(vkey, fields);
         ret_value = (*eltsize == FAIL) ? FAIL : ret_value;
     }
-    if (vsname) { /* we assume 'vsname' space as been pre-allocated by user? */
+    if (vsname) {
         status    = VSgetname(vkey, vsname);
         ret_value = (status == FAIL) ? FAIL : ret_value;
     }
