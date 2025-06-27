@@ -189,12 +189,12 @@ test_max_open_files()
 
     /* Get the current max and system limit */
     status = SDget_maxopenfiles(&curr_max, &sys_limit);
-    CHECK(status, FAIL, "test_maxopenfiles: SDget_maxopenfiles");
-    VERIFY(curr_max, H4_MAX_NC_OPEN, "test_maxopenfiles: SDreset_maxopenfiles");
+    CHECK(status, FAIL, "test_max_open_files: SDget_maxopenfiles");
+    VERIFY(curr_max, H4_MAX_NC_OPEN, "test_max_open_files: SDget_maxopenfiles");
 
     /* Reset current max to an arbitrary number and check */
     curr_max = SDreset_maxopenfiles(33);
-    VERIFY(curr_max, 33, "test_maxopenfiles: SDreset_maxopenfiles");
+    VERIFY(curr_max, 33, "test_max_open_files: SDreset_maxopenfiles");
 
     /* Try to create more files than the default max (currently, 32) and
        all should succeed */
@@ -202,53 +202,53 @@ test_max_open_files()
         /* Create a file */
         sprintf(filename[index], "file%i", index);
         fids[index] = SDstart(filename[index], DFACC_CREATE);
-        CHECK(fids[index], FAIL, "test_maxopenfiles: SDstart");
+        CHECK(fids[index], FAIL, "test_max_open_files: SDstart");
     }
 
     /* Verify that NUM_FILES_LOW files are opened */
     curr_opened = SDget_numopenfiles();
-    VERIFY(curr_opened, NUM_FILES_LOW, "test_maxopenfiles: SDget_numopenfiles");
+    VERIFY(curr_opened, NUM_FILES_LOW, "test_max_open_files: SDget_numopenfiles");
 
     /* Now randomly close 3 files and check number of opened files */
     status = SDend(fids[5]);
-    CHECK(status, FAIL, "test_maxopenfiles: SDend");
+    CHECK(status, FAIL, "test_max_open_files: SDend");
     status = SDend(fids[15]);
-    CHECK(status, FAIL, "test_maxopenfiles: SDend");
+    CHECK(status, FAIL, "test_max_open_files: SDend");
     status = SDend(fids[25]);
-    CHECK(status, FAIL, "test_maxopenfiles: SDend");
+    CHECK(status, FAIL, "test_max_open_files: SDend");
     curr_opened = SDget_numopenfiles();
-    VERIFY(curr_opened, NUM_FILES_LOW - 3, "test_maxopenfiles: SDget_numopenfiles");
+    VERIFY(curr_opened, NUM_FILES_LOW - 3, "test_max_open_files: SDget_numopenfiles");
 
     /* Get the current max and system limit */
     status = SDget_maxopenfiles(&curr_max, &sys_limit);
-    CHECK(status, FAIL, "test_maxopenfiles: SDget_maxopenfiles");
-    VERIFY(curr_max, sys_limit, "test_maxopenfiles: SDget_maxopenfiles");
+    CHECK(status, FAIL, "test_max_open_files: SDget_maxopenfiles");
+    VERIFY(curr_max, sys_limit, "test_max_open_files: SDget_maxopenfiles");
 
     /* Get the current max another way, it should be the system limit */
     curr_max = SDreset_maxopenfiles(0);
-    VERIFY(curr_max, sys_limit, "test_maxopenfiles: SDreset_maxopenfiles");
+    VERIFY(curr_max, sys_limit, "test_max_open_files: SDreset_maxopenfiles");
 
     /* Reopen the 3 files above, and check the number of opened files again */
     fids[5] = SDstart(filename[5], DFACC_RDWR);
-    CHECK(fids[5], FAIL, "test_maxopenfiles: SDstart");
+    CHECK(fids[5], FAIL, "test_max_open_files: SDstart");
     fids[15] = SDstart(filename[15], DFACC_RDWR);
-    CHECK(fids[15], FAIL, "test_maxopenfiles: SDstart");
+    CHECK(fids[15], FAIL, "test_max_open_files: SDstart");
     fids[25] = SDstart(filename[25], DFACC_RDWR);
-    CHECK(fids[25], FAIL, "test_maxopenfiles: SDstart");
+    CHECK(fids[25], FAIL, "test_max_open_files: SDstart");
     curr_opened = SDget_numopenfiles();
-    VERIFY(curr_opened, NUM_FILES_LOW, "test_maxopenfiles: SDget_numopenfiles");
+    VERIFY(curr_opened, NUM_FILES_LOW, "test_max_open_files: SDget_numopenfiles");
 
     /* Reset current max to a value that is smaller than the current
        number of opened files; it shouldn't reset */
     curr_max_bk = curr_max;
     curr_max    = SDreset_maxopenfiles(curr_opened - 1);
-    VERIFY(curr_max, curr_max_bk, "test_maxopenfiles: SDreset_maxopenfiles");
+    VERIFY(curr_max, curr_max_bk, "test_max_open_files: SDreset_maxopenfiles");
 
     /* Reset current max again to a value that is smaller than the
        current max but larger than the current number of opened files,
        that should work for there is no information loss */
     curr_max = SDreset_maxopenfiles(curr_opened + 3);
-    VERIFY(curr_max, curr_opened + 3, "test_maxopenfiles: SDreset_maxopenfiles");
+    VERIFY(curr_max, curr_opened + 3, "test_max_open_files: SDreset_maxopenfiles");
 
     /* Try to create more files up to the system limit or NUM_FILES_HI,
        because the arrays have max NUM_FILES_HI elements in this test */
@@ -268,23 +268,23 @@ test_max_open_files()
         /* only CHECK returned value from SDstart if the failure wasn't
            because of "too many open files" */
         else
-            CHECK(fids[index], FAIL, "test_maxopenfiles: SDstart");
+            CHECK(fids[index], FAIL, "test_max_open_files: SDstart");
     }
 
     /* Close all the files, then try opening all again to verify their
        names, this is to test bugzilla 440 */
     for (index = 0; index < temp_limit; index++) {
         status = SDend(fids[index]);
-        CHECK(status, FAIL, "test_maxopenfiles: SDend");
+        CHECK(status, FAIL, "test_max_open_files: SDend");
 
         fids[index] = SDstart(filename[index], DFACC_RDWR);
-        CHECK(fids[index], FAIL, "test_maxopenfiles: SDstart");
+        CHECK(fids[index], FAIL, "test_max_open_files: SDstart");
     }
 
     /* Verify their names */
     for (index = 0; index < temp_limit; index++) {
         status = SDgetfilename(fids[index], readfname);
-        CHECK(status, FAIL, "test_maxopenfiles: SDgetfilename");
+        CHECK(status, FAIL, "test_max_open_files: SDgetfilename");
 
         /* Verify the file name retrieved against the original */
         if (strcmp(readfname, filename[index])) {
@@ -296,7 +296,7 @@ test_max_open_files()
     /* Close then remove all the files */
     for (index = 0; index < temp_limit; index++) {
         status = SDend(fids[index]);
-        CHECK(status, FAIL, "test_maxopenfiles: SDend");
+        CHECK(status, FAIL, "test_max_open_files: SDend");
         remove(filename[index]);
     }
 
