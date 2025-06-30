@@ -22,22 +22,11 @@ macro (BASIC_SETTINGS varname)
   set (CMAKE_C_STANDARD 99)
   set (CMAKE_C_STANDARD_REQUIRED TRUE)
 
-  if (H4EX_BUILD_CPP_LIB)
-    ENABLE_LANGUAGE (CXX)
-
-    set (CMAKE_CXX_STANDARD 98)
-    set (CMAKE_CXX_STANDARD_REQUIRED TRUE)
-    set (CMAKE_CXX_EXTENSIONS OFF)
-  endif ()
-
   #-----------------------------------------------------------------------------
   # Compiler specific flags : Shouldn't there be compiler tests for these
   #-----------------------------------------------------------------------------
   if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
     set (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -std=c99 -fomit-frame-pointer -finline-functions -fno-common")
-  endif ()
-  if (CMAKE_CXX_COMPILER_LOADED AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set (CMAKE_CXX_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_CXX_FLAGS} -fomit-frame-pointer -finline-functions -fno-common")
   endif ()
 
   #-----------------------------------------------------------------------------
@@ -46,9 +35,6 @@ macro (BASIC_SETTINGS varname)
   #-----------------------------------------------------------------------------
   if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fmessage-length=0")
-  endif ()
-  if (CMAKE_CXX_COMPILER_LOADED AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0")
   endif ()
 
   #-----------------------------------------------------------------------------
@@ -62,10 +48,6 @@ macro (BASIC_SETTINGS varname)
       set (H4EX_WARNINGS_BLOCKED 1)
       string (REGEX REPLACE "(^| )([/-])W[0-9]( |$)" " " CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
       set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /w")
-      if (CMAKE_CXX_COMPILER_LOADED AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        string (REGEX REPLACE "(^| )([/-])W[0-9]( |$)" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /w")
-      endif ()
     endif ()
     if (WIN32)
       add_definitions (-D_CRT_SECURE_NO_WARNINGS)
