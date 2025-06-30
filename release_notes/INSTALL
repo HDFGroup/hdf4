@@ -16,11 +16,10 @@ CONTENTS
 --------
         1. Obtaining HDF4
         2. Third-party Software Requirements
-        3. Optional Szip Compression Library
-        4. HDF4 Source Code and Precompiled Binaries
-        5. Build and Install HDF4 C and Fortran Libraries and tools with CMake
-
-
+        2.1. Optional Szip Compression Library
+        3. HDF4 Source Code and Precompiled Binaries
+        3.1. Build and Install HDF4 C and Fortran Libraries and tools with CMake
+        4. Quick Start Presets
 
 *****************************************************************************
 
@@ -34,16 +33,53 @@ CONTENTS
 
         ZLIB 1.1.4 or later. The software can be downloaded from: "https://github.com/madler/zlib.git"
 
-3. Optional Szip Compression Library
+2.1. Optional Szip Compression Library
         HDF4 may be configured to use the Szip compression library. The
         open source software can be downloaded from: "https://github.com/MathisRosenhauer/libaec.git"
 
-4. HDF4 Source Code and Precompiled Binaries
+3. HDF4 Source Code and Precompiled Binaries
         The HDF Group provides source code and pre-compiled binaries from the
         HDF4 github releases page:
 
         https://github.com/HDFGroup/hdf4/releases
 
-5. Build and Install HDF4 C and Fortran Libraries and tools with CMake
+3.1. Build and Install HDF4 C and Fortran Libraries and tools with CMake
         see the release_notes/INSTALL_CMake.txt file.
+
+4. Quick Start Presets
+        You want to build HDF4 with CMake or use an installed HDF4 binary with CMake,
+        but there are so many options to consider.
+
+4.1. Solution
+        CMake introduced presets in version 3.19. HDF Group provides a file in the source,
+        CMakePresets.json, requiring CMake 3.25 or higher. This file is in the HDF4 library
+        source as well as the HDF4Examples source of the installed binary.
+          The library source file will build HDF4 with the options for building a typical
+        shared library with the common languages for a platform. The features include building
+        the tools, examples, and the shared and static libraries.
+          The HDF4Examples source file will build the examples with the components that were
+        enabled by the options selected when the install HDF4 library was built. The typical
+        library built by HDF and available from the HDF4 Releases page include C, Java, and Fortran
+        compilers along with the tools, examples, and the shared and static libraries.
+
+4.2. Discussion
+        The CMakePresets.json file is located in the root directory of the HDF4 source and
+        the HDF4Examples source of the installed binary.
+        It is from here you will execute the cmake command to build HDF4. The following
+        example shows how to build HDF4 or examples with the CMakePresets.json file:
+          - change directory to the source folder
+          - execute "cmake --workflow --preset ci-StdShar-<compiler-type> --fresh"
+                where "<compiler-type>" is GNUC, MSVC, Clang
+
+        The above example will create a "build" folder in the source parent directory, which
+        will contain the results of the build, including installation package files when the
+        library is built.
+
+4.3. Customization
+        See the HDF4 documentation for more on presets, especially the presets section in:
+          - release_notes/INSTALL_CMake.txt file
+
+4.4. See Also
+        See CMake documentation for details on presets:
+          - https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html
 
