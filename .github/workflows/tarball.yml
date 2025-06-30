@@ -167,14 +167,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
               name: tgz-tarball
-              path: ${{ steps.set-file-base.outputs.FILE_BASE }}.tar.gz
+              path: ${{ inputs.use_tag }}.tar.gz
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
       - name: Save zip-tarball
         uses: actions/upload-artifact@v4
         with:
               name: zip-tarball
-              path: ${{ steps.set-file-base.outputs.FILE_BASE }}.zip
+              path: ${{ inputs.use_tag }}.zip
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
       - name: Save tgz-tarball-nover
