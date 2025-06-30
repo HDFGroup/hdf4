@@ -28,19 +28,32 @@ Notes: This short instruction is written for users who want to quickly build
 I. Preconditions
 ========================================================================
 
-   1. We suggest you obtain the latest CMake for windows from the Kitware
+   1. We suggest you obtain the latest CMake from the Kitware
       web site. The HDF 4.3.x product requires a minimum CMake version
-      of 3.12.
+      of 3.18. If you are using VS2022, the minimum CMake version is 3.21.
+      CMakePresets.json, requires CMake 3.25 or higher.
 
    2. You have installed the HDF4 library built with CMake, by executing
       the HDF Install Utility (the *.msi file in the binary package for
       Windows or the *.sh on Linux). If you are using a Windows platform,
-      you can obtain a pre-built Windows binary from The HDF Group's website
+      you can obtain a pre-built binary from The HDF Group's website
       at www.hdfgroup.org.
 
-   3. Set the environment variable HDF4_DIR to the installed location of
-      the config files for HDF4. On Windows:
-            HDF4_ROOT=C:/Program Files/HDF_Group/HDF/4.3.x/
+   3. Set the HDF4_ROOT CMake variable, -DHDF4_ROOT=<install_path>
+      or environment variable, set(ENV{HDF4_ROOT} "<install_path>")
+      to the installed location of HDF4.
+         On Windows:
+            HDF4_ROOT=C:/Program Files/HDF_Group/HDF4/z.y.x/
+         On unix:
+            HDF4_ROOT=<install root folder>/HDF_Group/HDF4/z.y.x/
+
+      If you are using shared libraries, you may need to add to the path
+      environment variable. Set the path environment variable to the
+      installed location of the library files for HDF4.
+         On Windows (*.dll):
+            PATH=%PATH%;C:/Program Files/HDF_Group/HDF4/z.y.x/bin
+         On unix (*.so):
+            LD_LIBRARY_PATH=$LD_LIBRARY_PATH:<install root folder>/HDF_Group/HDF4/z.y.x/lib
 
       (Note there are no quote characters used on Windows and all platforms
       use forward slashes)
@@ -90,11 +103,14 @@ These steps are described in more detail below.
             * MinGW Makefiles
             * NMake Makefiles
             * Unix Makefiles
-            * Visual Studio 15
-            * Visual Studio 15 Win64
-            * Visual Studio 17
-            * Visual Studio 17 Win64
-            * Visual Studio 19
+            * Visual Studio 15 2017
+            * Visual Studio 15 2017 Win64
+            * Visual Studio 16 2019
+            * ... in addition VS2019 will need to set the "-A" option,
+            * ... [Win32, x64, ARM, ARM64]
+            * Visual Studio 17 2022
+            * ... in addition VS2022 will need to set the "-A" option,
+            * ... [Win32, x64, ARM, ARM64]
 
         <options> is:
             * H4EX_BUILD_TESTING:BOOL=ON
