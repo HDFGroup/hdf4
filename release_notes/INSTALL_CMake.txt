@@ -7,12 +7,13 @@
 Section I:    Preconditions
 Section II:   Quick Step Building HDF4 Libraries with CMake Script Mode
 Section III:  Quick Step Building HDF4 Libraries with CMake Command Mode
-Section IV:   Further considerations
-Section V:    Options for building HDF4 Libraries with CMake command line
+Section IV:   Further Considerations
+Section V:    Options for building HDF4 Libraries with CMake Command Line
 Section VI:   CMake option defaults for HDF4
 Section VII:  User Defined Options for HDF4 Libraries with CMake
-Section VIII: Using CMakePresets.json for compiling
-Section IX:   Autotools Configuration and Build
+Section VIII: Using CMakePresets.json for Compiling
+Section IX:   Using the Library
+Section X:    Autotools Configuration and Build
 
 ************************************************************************
 
@@ -35,7 +36,7 @@ CMake version
    1. We suggest you obtain the latest CMake from the Kitware web site.
       The HDF 4.3"X" product requires a minimum CMake version 3.18,
       where "X" is the current HDF4 release version. If you are using
-      VS2022, the minimum version is 3.21.
+      VS2022, the minimum version is 3.21. CMakePresets requires CMake 3.25.
 
 Note:
    To change the install prefix from the platform defaults initialize
@@ -50,18 +51,25 @@ This short set of instructions is written for users who want to quickly
 build the HDF4 C and Fortran shared libraries and tools
 from the HDF4 source code package using the CMake tools. This procedure
 will use the default settings in the config/cmake/cacheinit.cmake file.
-HDF Group recommends using the ctest script mode to build HDF4.
+The HDF Group recommends using the presets process to build HDF4.
+
+NOTE: if you are using CMake 3.25 or later, you can use the presets process.
+    The CMakePresets.json file in the source directory will configure, build, test,
+    and package HDF4 with the same options that are set in the cacheinit.cmake file.
+    In addition, it will get the optional files listed below that are needed, from
+    the appropriate repositories.
+    See Section VIII: Using CMakePresets.json for compiling
 
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
 Individual files needed as mentioned in this document
 -------------------------------------------------------------------------
 CMake build script from https://github.com/HDFGroup/hdf4/tree/master/config/cmake/scripts:
-    CTestScript.cmake
+    CTestScript.cmake  -- CMake build script
 
 Configuration files from https://github.com/HDFGroup/hdf4/tree/master/config/cmake/scripts:
-    HDF4config.cmake
-    HDF4options.cmake
+    HDF4config.cmake   -- CMake configuration script
+    HDF4options.cmake  -- CMake configuration options script
 
 External compression szip, jpeg, and zlib libraries:
     JPEG          "https://www.ijg.org/filesz"/jpegsrc.v9e.tar.gz"
@@ -272,12 +280,13 @@ Notes: This short set of instructions is written for users who want to
 
 
 ========================================================================
-IV. Further considerations
+IV. Further Considerations
 ========================================================================
 
    1. We suggest you obtain the latest CMake for windows from the Kitware
       web site. The HDF 4.3"X" product requires a minimum CMake version 3.18.
-      If you are using VS2022, the CMake minimum version is 3.21.
+      If you are using VS2022, the CMake minimum version is 3.21. CMakePresets
+      requires CMake 3.25.
 
    2. HDF4 requires Zlib and JPEG. Szip (aka libaec) is optional:
       A. Download the binary packages and install them in a central location.
@@ -410,16 +419,12 @@ IV. Further considerations
 
 Notes: CMake and HDF4
 
-   1. Using CMake for building and using HDF4 is under active development.
-      We have attempted to provide error-free files. The CMake specific
-      files may change before the next release.
-
-   2. CMake support for HDF4 development should be usable on any
+   1. CMake support for HDF4 development should be usable on any
       system where CMake is supported. Please send us any comments on
       how CMake support can be improved on any system. Visit the
       Kitware site for more information about CMake.
 
-   3. Build and test results can be submitted to our CDash server:
+   2. Build and test results can be submitted to our CDash server:
       The CDash server for community submissions of hdf is at
           https://my.cdash.org.
 
@@ -431,7 +436,7 @@ Notes: CMake and HDF4
       configuration every time. "EXPERIMENTAL" submissions can be expected to
       be different for each submission.
 
-   4. See the appendix at the bottom of this file for examples of using
+   3. See the appendix at the bottom of this file for examples of using
       a ctest script for building and testing. Using a ctest script is
       preferred because of its flexibility.
 
@@ -444,6 +449,15 @@ Notes: CMake in General
       available for the configuration step. The steps are similar for
       all the operating systems supported by CMake.
 
+   3. Setting the installation location from the command line at configure time
+      a. Using the --install-prefix command line option, which is available since
+         CMake version 3.21:
+            cmake --install-prefix /my/folder/to/install/to ..
+      b. Using -DCMAKE_INSTALL_PREFIX :
+            cmake -DCMAKE_INSTALL_PREFIX=/my/folder/to/install/to ..
+      c. Using the CMAKE_INSTALL_PREFIX environment variable, which is available
+         since CMake version 3.29:
+            CMAKE_INSTALL_PREFIX=/my/folder/to/install/to cmake ..
 
 ========================================================================
 V. Options for Building HDF4 Libraries with the CMake Command Line
@@ -467,6 +481,11 @@ These five steps are described in detail below.
       available in your Start menu. For Linux, UNIX, and Mac users the
       executable is named "cmake-gui" and can be found where CMake was
       installed.
+      Another option is to use the presets file, CMakePresets.json, to configure,
+      build, test, and package HDF4. See section VIII: Using CMakePresets.json for compiling
+      for use of that file. You can create a CMakeUserPresets.json file to create a
+      specific configuration for your environment. Note that Visual Studio and XCode can
+      use the presets files.
 
       Specify the source and build directories.
 
@@ -489,22 +508,32 @@ These five steps are described in detail below.
             * MinGW Makefiles
             * NMake Makefiles
             * Unix Makefiles
-            * Visual Studio 14 2015
-            * Visual Studio 14 2015 Win64
+            * Ninja
             * Visual Studio 15 2017
             * Visual Studio 15 2017 Win64
             * Visual Studio 16 2019
             * Visual Studio 17 2022
 
         <options> is:
-            * SZIP_INCLUDE_DIR:PATH=<path to szip includes directory>
-            * SZIP_LIBRARY:FILEPATH=<path to szip/library file>
-            * libaec_INCLUDE_DIR:PATH=<path to libaec includes directory>
-            * libaec_LIBRARY:FILEPATH=<path to libaec/library file>
-            * ZLIB_INCLUDE_DIR:PATH=<path to zlib includes directory>
-            * ZLIB_LIBRARY:FILEPATH=<path to zlib/library file>
-            * JPEG_INCLUDE_DIR:PATH=<path to jpeg includes directory>
-            * JPEG_LIBRARY:FILEPATH=<path to jpeg/library file>
+          For installed SZIP/libaec:
+              * SZIP_INCLUDE_DIR:PATH=<path to szip includes directory>
+              * SZIP_LIBRARY:FILEPATH=<path to szip/library file>
+              * libaec_INCLUDE_DIR:PATH=<path to libaec includes directory>
+              * libaec_LIBRARY:FILEPATH=<path to libaec/library file>
+            or
+              * SZIP_ROOT:PATH=<path to szip root directory>
+              * libaec_ROOT:PATH=<path to libaec root directory>
+          For installed ZLIB/ZLIBNG:
+              * ZLIB_INCLUDE_DIR:PATH=<path to zlib includes directory>
+              * ZLIB_LIBRARY:FILEPATH=<path to zlib/library file>
+            or
+              * ZLIB_ROOT:PATH=<path to zlib root directory>
+          For installed JPEG:
+              * JPEG_INCLUDE_DIR:PATH=<path to jpeg includes directory>
+              * JPEG_LIBRARY:FILEPATH=<path to jpeg/library file>
+            or
+              * JPEG_ROOT:PATH=<path to jpeg root directory>
+
             * <HDF4OPTION>:BOOL=[ON | OFF]
 
         <cacheinit.cmake> is:
@@ -697,7 +726,7 @@ VI. CMake Option Defaults for HDF4
 
 In the options listed below, there are three columns of information:
 Option Name, Option Description, and Option Default.
-The config/cmake/cacheinit.cmake file can override the following values.
+The config/cmake/cacheinit.cmake or CMakePresets.json file can override the following values.
 
 ---------------- General Build Options -------------------------------------
 BUILD_SHARED_LIBS  "Build Shared Libraries"    ON
@@ -802,7 +831,7 @@ Then enable the option to the CMake configuration, build and test process.
 
 
 ========================================================================
-VIII:    Using CMakePresets.json for compiling
+VIII:    Using CMakePresets.json for Compiling
 ========================================================================
 
 One problem that CMake users often face is sharing settings with other people for common
@@ -887,9 +916,50 @@ For instance, to change the support files to use a local directory, edit CMakeUs
 
 Then you can change or add options for your specific case.
 
+========================================================================
+IX. Using the Library
+========================================================================
+    For information on using HDF4 see the documentation, tutorials and examples
+    found here:
+
+       https://support.hdfgroup.org/documentation/index.html
+
+    A summary of the features included in the built HDF4 installation can be found
+    in the libhdf4.settings file in the same directory as the static and/or
+    shared HDF5 libraries. However CMake provides a programmable method to
+    determine the features of the library. The CMake installation will
+    provide a CMake package configuration file, located in the installation folder,
+    cmake/hdf4-config.cmake, and can be used to determine the features of the library.
+    The file is accessed by using the find_package command in your CMakeLists.txt file.
+
+   1. Set the HDF5_ROOT CMake variable, -DHDF4_ROOT=<install_path>
+      or environment variable, set(ENV{HDF4_ROOT} "<install_path>")
+      to the installed location of HDF4.
+         On Windows:
+            HDF4_ROOT=C:/Program Files/HDF_Group/HDF4/z.y.x/
+         On unix:
+            HDF4_ROOT=<install root folder>/HDF_Group/HDF4/z.y.x/
+
+      If you are using shared libraries, you may need to add to the path
+      environment variable. Set the path environment variable to the
+      installed location of the library files for HDF4.
+         On Windows (*.dll):
+            PATH=%PATH%;C:/Program Files/HDF_Group/HDF4/z.y.x/bin
+         On unix (*.so):
+            LD_LIBRARY_PATH=$LD_LIBRARY_PATH:<install root folder>/HDF_Group/HDF4/z.y.x/lib
+
+      (Note there are no quote characters used on Windows and all platforms
+      use forward slashes)
+
+   2. Add the following to your CMakeLists.txt file:
+        find_package (HDF4 NAMES hdf4 COMPONENTS  C shared)
+
+      The components are optional and can be omitted if not needed. The
+      components are: shared, static, C, Fortran, Java and Tools.
+
 
 ========================================================================
-III. Autotools Configuration and Build
+X. Autotools Configuration and Build
 ========================================================================
 See RELEASE.txt in the release_notes/ directory for the list of platforms 
 tested for this release.
