@@ -10,7 +10,7 @@ previous releases of HDF and wish to migrate to this version of HDF.
 Note that the HDF4 documentation will be updated at the time of
 each final release and can be found on the HDF4 support page at:
 
-    https://portal.hdfgroup.org/display/HDF4/HDF4
+    https://portal.hdfgroup.org/display/HDF4
 
 The official HDF4 releases can be obtained from:
 
@@ -28,7 +28,6 @@ CONTENTS
 - Bugs fixed since HDF 4.3.0
   -- Configuration
   -- Library
-  -- Utilities
 - Documentation
 - Platforms Tested
 - Known problems
@@ -38,11 +37,22 @@ New features and changes
 ========================
     Configuration:
     -------------
+      None
+
+    C Library:
+    -------------
+      None
 
 
 Bugs fixed since HDF 4.3.0
 ===========================
 
+    Configuration:
+    -------------
+      None
+
+    Library:
+    -------
     - Fixed various uninitialized memory occurrences
 
       Valgrind reported
@@ -73,6 +83,14 @@ Bugs fixed since HDF 4.3.0
 
       Addresses GH-825
 
+    Utilities:
+    ---------
+    - Fixed hdp to display variables with rank = 0 properly
+
+      Previously the tool did not handle variables with rank = 0 correctly.
+      Thus, it simply skipped printing these variables.
+
+      Addresses HDFFR-1293
 
 
 Documentation
