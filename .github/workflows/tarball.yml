@@ -119,7 +119,7 @@ jobs:
             then
               FILE_NAME_BASE=$(echo "snapshot")
             else
-              FILE_NAME_BASE=$(echo "hdf-${{ steps.version.outputs.SOURCE_TAG }}")
+              FILE_NAME_BASE=$(echo "hdf${{ steps.version.outputs.SOURCE_TAG }}")
             fi
           fi
           echo "FILE_BASE=$FILE_NAME_BASE" >> $GITHUB_OUTPUT
@@ -145,8 +145,8 @@ jobs:
         id: ren-basename
         if: ${{ (inputs.use_environ == 'release') && (inputs.use_tag  == 'snapshot') }}
         run: |
-          mv hdf-${{ steps.version.outputs.SOURCE_TAG }}.tar.gz ${{ inputs.use_tag }}.tar.gz
-          mv hdf-${{ steps.version.outputs.SOURCE_TAG }}.zip ${{ inputs.use_tag }}.zip
+          mv hdf${{ steps.version.outputs.SOURCE_TAG }}.tar.gz ${{ inputs.use_tag }}.tar.gz
+          mv hdf${{ steps.version.outputs.SOURCE_TAG }}.zip ${{ inputs.use_tag }}.zip
         shell: bash
 
       - name: Copy the release file source to a non-versioned file name

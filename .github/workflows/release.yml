@@ -38,7 +38,7 @@ jobs:
     with:
       preset_name: ci-StdShar
       file_base: ${{ needs.call-workflow-tarball.outputs.file_base }}
-      snap_name: hdf-${{ needs.call-workflow-tarball.outputs.source_base }}
+      snap_name: hdf${{ needs.call-workflow-tarball.outputs.source_base }}
       use_environ: release
     secrets:
         APPLE_CERTS_BASE64: ${{ secrets.APPLE_CERTS_BASE64 }}
