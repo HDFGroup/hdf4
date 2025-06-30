@@ -1,4 +1,4 @@
-HDF version 4.3.1 currently under development
+HDF version 4.3.1 released on 2025-06-30
 
 ![HDF Logo](doc/img/HDF4.png)
 
