@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>HDF: list_head_t Struct Reference</title>
+<title>HDF: hfile_atexit_t Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.1</span>
+   &#160;<span id="projectnumber">4.3.1-c8d64f3</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -78,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search/",'.html');
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(function(){initNavTree('structlist__head__t.html',''); initResizable(); });
+$(function(){initNavTree('structhfile__atexit__t.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -106,105 +106,75 @@ $(function(){initNavTree('structlist__head__t.html',''); initResizable(); });
 <div class="header">
   <div class="summary">
 <a href="#pub-attribs">Data Fields</a>  </div>
-  <div class="headertitle"><div class="title">list_head_t Struct Reference</div></div>
+  <div class="headertitle"><div class="title">hfile_atexit_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;hdf/src/linklist_priv.h&gt;</code></p>
+<p><code>#include &lt;hdf/src/hfile_atexit_priv.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:a28210c474df73452823fbd640ec81d9f" id="r_a28210c474df73452823fbd640ec81d9f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#a8f0189616483670e42751f89a02501b5">uintn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a28210c474df73452823fbd640ec81d9f">count</a></td></tr>
-<tr class="separator:a28210c474df73452823fbd640ec81d9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78617d358817fd456d9eebbc03ee286c" id="r_a78617d358817fd456d9eebbc03ee286c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#a8f0189616483670e42751f89a02501b5">uintn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a78617d358817fd456d9eebbc03ee286c">flags</a></td></tr>
-<tr class="separator:a78617d358817fd456d9eebbc03ee286c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9b9c36c7be6d183ed77272d4e8a4ee3e" id="r_a9b9c36c7be6d183ed77272d4e8a4ee3e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="linklist__priv_8h.html#a7a17c3fbbe0691a374a9dbc4e105546c">HULfind_func_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9b9c36c7be6d183ed77272d4e8a4ee3e">cmp_func</a></td></tr>
-<tr class="separator:a9b9c36c7be6d183ed77272d4e8a4ee3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb7aedbe44382b4be7e15a18ff0f66f6" id="r_abb7aedbe44382b4be7e15a18ff0f66f6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structnode__info__t.html">node_info_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abb7aedbe44382b4be7e15a18ff0f66f6">node_list</a></td></tr>
-<tr class="separator:abb7aedbe44382b4be7e15a18ff0f66f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f2131144b99391ea51a6fb8229bbf54" id="r_a0f2131144b99391ea51a6fb8229bbf54"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structnode__info__t.html">node_info_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0f2131144b99391ea51a6fb8229bbf54">curr_node</a></td></tr>
-<tr class="separator:a0f2131144b99391ea51a6fb8229bbf54"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b6310694f89c9a22f91a8c8e6e4d3d6" id="r_a7b6310694f89c9a22f91a8c8e6e4d3d6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#a582feff13dfb32fa418cdcac59a13a4d">hdf_termfunc_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b6310694f89c9a22f91a8c8e6e4d3d6">functions</a></td></tr>
+<tr class="separator:a7b6310694f89c9a22f91a8c8e6e4d3d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f3817997eb8fa37db60586153a125dd" id="r_a0f3817997eb8fa37db60586153a125dd"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0f3817997eb8fa37db60586153a125dd">n_functions</a></td></tr>
+<tr class="separator:a0f3817997eb8fa37db60586153a125dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ba5952ef7af12d6dedbb91d43690549" id="r_a8ba5952ef7af12d6dedbb91d43690549"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ba5952ef7af12d6dedbb91d43690549">max_functions</a></td></tr>
+<tr class="separator:a8ba5952ef7af12d6dedbb91d43690549"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Field Documentation</h2>
-<a id="a9b9c36c7be6d183ed77272d4e8a4ee3e" name="a9b9c36c7be6d183ed77272d4e8a4ee3e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9b9c36c7be6d183ed77272d4e8a4ee3e">&#9670;&#160;</a></span>cmp_func</h2>
+<a id="a7b6310694f89c9a22f91a8c8e6e4d3d6" name="a7b6310694f89c9a22f91a8c8e6e4d3d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b6310694f89c9a22f91a8c8e6e4d3d6">&#9670;&#160;</a></span>functions</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="linklist__priv_8h.html#a7a17c3fbbe0691a374a9dbc4e105546c">HULfind_func_t</a> cmp_func</td>
+          <td class="memname"><a class="el" href="hdf_8h.html#a582feff13dfb32fa418cdcac59a13a4d">hdf_termfunc_t</a>* functions</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a28210c474df73452823fbd640ec81d9f" name="a28210c474df73452823fbd640ec81d9f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a28210c474df73452823fbd640ec81d9f">&#9670;&#160;</a></span>count</h2>
+<a id="a8ba5952ef7af12d6dedbb91d43690549" name="a8ba5952ef7af12d6dedbb91d43690549"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ba5952ef7af12d6dedbb91d43690549">&#9670;&#160;</a></span>max_functions</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="hdf_8h.html#a8f0189616483670e42751f89a02501b5">uintn</a> count</td>
+          <td class="memname">size_t max_functions</td>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Number of exit functions registered </p>
 
 </div>
 </div>
-<a id="a0f2131144b99391ea51a6fb8229bbf54" name="a0f2131144b99391ea51a6fb8229bbf54"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0f2131144b99391ea51a6fb8229bbf54">&#9670;&#160;</a></span>curr_node</h2>
+<a id="a0f3817997eb8fa37db60586153a125dd" name="a0f3817997eb8fa37db60586153a125dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f3817997eb8fa37db60586153a125dd">&#9670;&#160;</a></span>n_functions</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structnode__info__t.html">node_info_t</a>* curr_node</td>
+          <td class="memname">size_t n_functions</td>
         </tr>
       </table>
 </div><div class="memdoc">
-
-</div>
-</div>
-<a id="a78617d358817fd456d9eebbc03ee286c" name="a78617d358817fd456d9eebbc03ee286c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a78617d358817fd456d9eebbc03ee286c">&#9670;&#160;</a></span>flags</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="hdf_8h.html#a8f0189616483670e42751f89a02501b5">uintn</a> flags</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="abb7aedbe44382b4be7e15a18ff0f66f6" name="abb7aedbe44382b4be7e15a18ff0f66f6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abb7aedbe44382b4be7e15a18ff0f66f6">&#9670;&#160;</a></span>node_list</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structnode__info__t.html">node_info_t</a>* node_list</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
+<p>Array of exit functions </p>
 
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>hdf/src/<a class="el" href="linklist__priv_8h.html">linklist_priv.h</a></li>
+<li>hdf/src/<a class="el" href="hfile__atexit__priv_8h.html">hfile_atexit_priv.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="structlist__head__t.html">list_head_t</a></li>
+    <li class="navelem"><a class="el" href="structhfile__atexit__t.html">hfile_atexit_t</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.10.0 </li>

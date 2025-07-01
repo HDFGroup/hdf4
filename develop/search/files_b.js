@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['overview_2edox_0',['Overview.dox',['../_overview_8dox.html',1,'']]]
+  ['pal_5frgb_2eh_0',['pal_rgb.h',['../pal__rgb_8h.html',1,'']]]
 ];

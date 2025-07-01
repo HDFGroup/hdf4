@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>HDF: hdf/test/tproto.h File Reference</title>
+<title>HDF: hdf/test/testhdf.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.1</span>
+   &#160;<span id="projectnumber">4.3.1-c8d64f3</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -78,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search/",'.html');
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(function(){initNavTree('tproto_8h.html',''); initResizable(); });
+$(function(){initNavTree('testhdf_8h.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -106,7 +106,7 @@ $(function(){initNavTree('tproto_8h.html',''); initResizable(); });
 <div class="header">
   <div class="summary">
 <a href="#func-members">Functions</a>  </div>
-  <div class="headertitle"><div class="title">tproto.h File Reference</div></div>
+  <div class="headertitle"><div class="title">testhdf.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="hdf__priv_8h.html">hdf_priv.h</a>&quot;</code><br />
@@ -128,8 +128,10 @@ Functions</h2></td></tr>
 <tr class="separator:aad25cae98ecbcc98c2a55d38a4c616cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0b4e39d09ef97a7d13a567459a66a619" id="r_a0b4e39d09ef97a7d13a567459a66a619"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0b4e39d09ef97a7d13a567459a66a619">test_hfile</a> (void)</td></tr>
 <tr class="separator:a0b4e39d09ef97a7d13a567459a66a619"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52e2fc06ac324d5fdd1bd7ac25ec1bee" id="r_a52e2fc06ac324d5fdd1bd7ac25ec1bee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a52e2fc06ac324d5fdd1bd7ac25ec1bee">test_hfile1</a> (void)</td></tr>
-<tr class="separator:a52e2fc06ac324d5fdd1bd7ac25ec1bee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a0cea1ea5eca903a4d9a2a70fda49eb" id="r_a4a0cea1ea5eca903a4d9a2a70fda49eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4a0cea1ea5eca903a4d9a2a70fda49eb">test_hfile_atexit</a> (void)</td></tr>
+<tr class="separator:a4a0cea1ea5eca903a4d9a2a70fda49eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a742e6a714b65db987b3cdebeadd342dc" id="r_a742e6a714b65db987b3cdebeadd342dc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a742e6a714b65db987b3cdebeadd342dc">test_hfile_limits</a> (void)</td></tr>
+<tr class="separator:a742e6a714b65db987b3cdebeadd342dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a213ac6ec00d3818a9033591812075a84" id="r_a213ac6ec00d3818a9033591812075a84"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a213ac6ec00d3818a9033591812075a84">test_r24</a> (void)</td></tr>
 <tr class="separator:a213ac6ec00d3818a9033591812075a84"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8d9870dec7606cd6e346103946eb1333" id="r_a8d9870dec7606cd6e346103946eb1333"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8d9870dec7606cd6e346103946eb1333">test_GR</a> (void)</td></tr>
@@ -445,14 +447,31 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a52e2fc06ac324d5fdd1bd7ac25ec1bee" name="a52e2fc06ac324d5fdd1bd7ac25ec1bee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a52e2fc06ac324d5fdd1bd7ac25ec1bee">&#9670;&#160;</a></span>test_hfile1()</h2>
+<a id="a4a0cea1ea5eca903a4d9a2a70fda49eb" name="a4a0cea1ea5eca903a4d9a2a70fda49eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a0cea1ea5eca903a4d9a2a70fda49eb">&#9670;&#160;</a></span>test_hfile_atexit()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void test_hfile1 </td>
+          <td class="memname">void test_hfile_atexit </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a742e6a714b65db987b3cdebeadd342dc" name="a742e6a714b65db987b3cdebeadd342dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a742e6a714b65db987b3cdebeadd342dc">&#9670;&#160;</a></span>test_hfile_limits()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void test_hfile_limits </td>
           <td>(</td>
           <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td></td>
@@ -824,7 +843,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_d627fa0b4cbfc752560480c73c370f25.html">hdf</a></li><li class="navelem"><a class="el" href="dir_53b2b6c2ab1fdc97a8a4239102f485a7.html">test</a></li><li class="navelem"><a class="el" href="tproto_8h.html">tproto.h</a></li>
+    <li class="navelem"><a class="el" href="dir_d627fa0b4cbfc752560480c73c370f25.html">hdf</a></li><li class="navelem"><a class="el" href="dir_53b2b6c2ab1fdc97a8a4239102f485a7.html">test</a></li><li class="navelem"><a class="el" href="testhdf_8h.html">testhdf.h</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.10.0 </li>
