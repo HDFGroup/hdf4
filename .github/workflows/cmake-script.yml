@@ -56,7 +56,7 @@ jobs:
 
       # Get files created by release script
       - name: Get zip-tarball (Windows)
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
               name: zip-tarball
               path: ${{ github.workspace }}
@@ -117,7 +117,7 @@ jobs:
 
       # Save log files created by ctest script
       - name: Save log (Windows_intel)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cl-win-log
           path: ${{ runner.workspace }}/hdf4/hdf4.log
@@ -154,7 +154,7 @@ jobs:
 
       # Get files created by release script
       - name: Get tgz-tarball (Linux)
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
               name: tgz-tarball
               path: ${{ github.workspace }}
@@ -206,7 +206,7 @@ jobs:
 
       # Save log files created by ctest script
       - name: Save log (Linux)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
             name: gcc-ubuntu-log
             path: ${{ runner.workspace }}/hdf4/hdf4.log
@@ -253,7 +253,7 @@ jobs:
 
       # Get files created by release script
       - name: Get tgz-tarball (MacOS_latest)
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
               name: tgz-tarball
               path: ${{ github.workspace }}
@@ -315,7 +315,7 @@ jobs:
 
       # Save log files created by ctest script
       - name: Save log (MacOS_latest)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: macos-log
           path: ${{ runner.workspace }}/hdf4/hdf4.log
@@ -354,7 +354,7 @@ jobs:
 
       # Get files created by release script
       - name: Get zip-tarball (Windows_intel)
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
               name: zip-tarball
               path: ${{ github.workspace }}
@@ -421,7 +421,7 @@ jobs:
 
       # Save log files created by ctest script
       - name: Save log (Windows_intel)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: intel-win-log
           path: ${{ runner.workspace }}/hdf4/hdf4.log
@@ -460,7 +460,7 @@ jobs:
 
       # Get files created by release script
       - name: Get tgz-tarball (Linux_intel)
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
               name: tgz-tarball
               path: ${{ github.workspace }}
@@ -516,7 +516,7 @@ jobs:
 
       # Save log files created by ctest script
       - name: Save log (Linux_intel)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: intel-ubuntu-log
           path: ${{ runner.workspace }}/hdf4/hdf4.log
@@ -533,7 +533,7 @@ jobs:
         run: choco install ninja
 
       - name: add clang to env
-        uses: KyleMayes/install-llvm-action@v2.0.7
+        uses: KyleMayes/install-llvm-action@v2.0.8
         id: setup-clang
         with:
           env: true
@@ -555,7 +555,7 @@ jobs:
 
       # Get files created by release script
       - name: Get zip-tarball (Windows_clang)
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
           name: zip-tarball
           path: ${{ github.workspace }}
@@ -618,7 +618,7 @@ jobs:
 
       # Save log files created by ctest script
       - name: Save log (Windows_clang)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: clang-win-log
           path: ${{ runner.workspace }}/hdf4/hdf4.log
@@ -636,7 +636,7 @@ jobs:
           sudo apt-get install ninja-build doxygen graphviz curl libtinfo5
 
       - name: add clang to env
-        uses: KyleMayes/install-llvm-action@v2.0.7
+        uses: KyleMayes/install-llvm-action@v2.0.8
         id: setup-clang
         with:
           env: true
@@ -663,7 +663,7 @@ jobs:
 
       # Get files created by release script
       - name: Get tgz-tarball (Linux_clang)
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
           name: tgz-tarball
           path: ${{ github.workspace }}
@@ -717,7 +717,7 @@ jobs:
 
       # Save log files created by ctest script
       - name: Save log (Linux_clang)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: clang-ubuntu-log
           path: ${{ runner.workspace }}/hdf4/hdf4.log
