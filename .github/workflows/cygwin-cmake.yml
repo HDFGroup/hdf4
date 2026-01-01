@@ -33,7 +33,7 @@ jobs:
           git config --global core.autocrlf input
 
       - name: Get Sources
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Install Cygwin
         uses: cygwin/cygwin-install-action@master
@@ -56,7 +56,7 @@ jobs:
 
       # Get files created by release script
       - name: Get zip-tarball (Cygwin)
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
               name: zip-tarball
               path: ${{ github.workspace }}
@@ -110,7 +110,7 @@ jobs:
 
       # Save log files created by ctest script
       - name: Save log (Cygwin)
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
             name: gcc-cygwin-log
             path: ${{ runner.workspace }}/hdf4/hdf4.log
