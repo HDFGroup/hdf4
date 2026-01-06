@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get Sources
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Install Dependencies
         shell: bash
@@ -31,7 +31,7 @@ jobs:
            sudo apt-get install -y ninja-build libtirpc-dev graphviz
 
       - name: Install MinGW
-        uses: egor-tensin/setup-mingw@v2
+        uses: egor-tensin/setup-mingw@v3
         with:
           platform: x64
 

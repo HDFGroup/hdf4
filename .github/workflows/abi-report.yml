@@ -44,10 +44,10 @@ jobs:
           FILE_DOTS=$(echo "${{ inputs.file_ref }}" | sed -r "s/([0-9]+)\_([0-9]+)\_([0-9]+)\-([0-9]+).*/\1\.\2\.\3\-\4/")
           echo "HDF4R_DOTS=$FILE_DOTS" >> $GITHUB_OUTPUT
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Get published binary (Linux)
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
             name: tgz-ubuntu-2404_gcc-binary
             path: ${{ github.workspace }}
@@ -158,7 +158,7 @@ jobs:
         shell: bash
 
       - name: Save output as artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: abi-reports
           path: |
