@@ -19,7 +19,7 @@ jobs:
     name: Ubuntu PowerPC CMake
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.2
 
       - uses: uraimo/run-on-arch-action@v3
         name: Run commands

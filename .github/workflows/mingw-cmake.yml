@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get Sources
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.2
 
       - name: Install Dependencies
         shell: bash
