@@ -33,7 +33,7 @@ jobs:
           git config --global core.autocrlf input
 
       - name: Get Sources
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.2
 
       - name: Install Cygwin
         uses: cygwin/cygwin-install-action@master
