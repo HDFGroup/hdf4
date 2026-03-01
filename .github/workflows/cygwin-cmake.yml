@@ -56,7 +56,7 @@ jobs:
 
       # Get files created by release script
       - name: Get zip-tarball (Cygwin)
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
               name: zip-tarball
               path: ${{ github.workspace }}
@@ -110,7 +110,7 @@ jobs:
 
       # Save log files created by ctest script
       - name: Save log (Cygwin)
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
             name: gcc-cygwin-log
             path: ${{ runner.workspace }}/hdf4/hdf4.log
