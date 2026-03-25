@@ -79,7 +79,11 @@ Variable Name = SDSszip
 	 Type= 32-bit signed integer
 	 Ref. = 6
 	 Compression method = SZIP
-		 Compression information is unavailable (no SZIP library)
+		 Option mask = H4_SZ_EC_OPTION_MASK|H4_SZ_RAW_OPTION_MASK (132)
+		 Pixels per block = 2
+		 Pixels per scanline = 5
+		 Bits per pixel = 32
+		 Pixels = 80
 	 Compression ratio (original:compressed) = 2.67:1
 	 Rank = 2
 	 Number of attributes = 0
