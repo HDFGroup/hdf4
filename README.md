@@ -5,6 +5,7 @@ HDF version 4.3.1-1 currently under development
 [![master build status](https://img.shields.io/github/actions/workflow/status/HDFGroup/hdf4/main.yml?branch=master&label=master)](https://github.com/HDFGroup/hdf4/actions?query=branch%3Amaster)
 [![netCDF build status](https://img.shields.io/github/actions/workflow/status/HDFGroup/hdf4/netcdf.yml?branch=master&label=netCDF)](https://github.com/HDFGroup/hdf4/actions?query=branch%3Amaster)
 [![BSD](https://img.shields.io/badge/License-BSD-blue.svg)](https://github.com/HDFGroup/hdf4/blob/master/COPYING)
+[![MIME Type](https://img.shields.io/badge/MIME%20Type-application%2Fvnd.hdfgroup.hdf4-orange)](https://www.iana.org/assignments/media-types/application/vnd.hdfgroup.hdf4)
 
 DOCUMENTATION
 -------------
