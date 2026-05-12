@@ -88,6 +88,8 @@ OLD ROUTINES
 #include "hfile_priv.h"
 
 /* Private routines */
+static void HTPmemory_cleanup(filerec_t *file_rec);
+
 static int HTIfind_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref, dd_t **pdd, int direction);
 
 static int HTInew_dd_block(filerec_t *file_rec);
@@ -241,6 +243,9 @@ HTPstart(filerec_t *file_rec /* IN:  File record to store info in */
                 file_rec->maxref = curr_dd_ptr->ref;
 
             /* check if the data element is the last thing in the file */
+            if (curr_dd_ptr->length >= 0 && curr_dd_ptr->offset > INT_MAX - curr_dd_ptr->length) {
+                HGOTO_ERROR(DFE_READERROR, FAIL);
+            }
             if ((curr_dd_ptr->offset + curr_dd_ptr->length) > end_off)
                 end_off = curr_dd_ptr->offset + curr_dd_ptr->length;
 
@@ -280,6 +285,9 @@ HTPstart(filerec_t *file_rec /* IN:  File record to store info in */
     file_rec->f_end_off = end_off;
 
 done:
+    if (ret_value == FAIL) {
+        HTPmemory_cleanup(file_rec);
+    }
     free(tbuf);
 
     return ret_value;
@@ -484,32 +492,42 @@ int
 HTPend(filerec_t *file_rec /* IN:  File record to store info in */
 )
 {
-    ddblock_t *bl, *next; /* current ddblock and next ddblock pointers.
-                             for freeing ddblock linked list */
     int ret_value = SUCCEED;
 
     HEclear();
     if (HTPsync(file_rec) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-    for (bl = file_rec->ddhead; bl != NULL; bl = next) {
-        next = bl->next;
-        free(bl->ddlist);
-        free(bl);
-    }
-
-    /* Chuck the tag info tree too */
-    tbbtdfree(file_rec->tag_tree, tagdestroynode, NULL);
+    HTPmemory_cleanup(file_rec);
 
     /* Shutdown the DD atom group */
     if (HAdestroy_group(DDGROUP) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-    file_rec->ddhead = (ddblock_t *)NULL;
-
 done:
     return ret_value;
 } /* end HTPend() */
+
+/******************************************************************************
+ NAME
+     HTPmemory_cleanup - Free DD list and tag_tree
+*******************************************************************************/
+static void
+HTPmemory_cleanup(filerec_t *file_rec)
+{
+    ddblock_t *bl, *next; /* current ddblock and next ddblock pointers.
+                             for freeing ddblock linked list */
+    for (bl = file_rec->ddhead; bl != NULL; bl = next) {
+        next = bl->next;
+        free(bl->ddlist);
+        free(bl);
+    }
+    file_rec->ddhead = (ddblock_t *)NULL;
+
+    /* Chuck the tag info tree too */
+    tbbtdfree(file_rec->tag_tree, tagdestroynode, NULL);
+    file_rec->tag_tree = NULL;
+}
 
 /******************************************************************************
  NAME
@@ -1937,8 +1955,10 @@ HTIregister_tag_ref(filerec_t *file_rec, dd_t *dd_ptr)
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
 
-        if ((tinfo_ptr != NULL) && (tinfo_ptr->d != NULL))
+        if ((tinfo_ptr != NULL) && (tinfo_ptr->d != NULL)) {
             DAdestroy_array(tinfo_ptr->d, 0);
+            tinfo_ptr->d = NULL;
+        }
     }
 
     return ret_value;
