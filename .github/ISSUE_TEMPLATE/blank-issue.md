@@ -1,6 +1,6 @@
 ---
 name: Blank issue
-about: Create a new issue from scratch
+about: Create a new issue. Please note HDF4 is now consider deprecated and maintenance by The HDF Group is limited to fixing defects and porting HDF4 to new operating environments. 
 title: ''
 labels: ''
 assignees: ''
