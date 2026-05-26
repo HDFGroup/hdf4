@@ -7,16 +7,22 @@ HDF version 4.3.1-1 currently under development
 [![BSD](https://img.shields.io/badge/License-BSD-blue.svg)](https://github.com/HDFGroup/hdf4/blob/master/COPYING)
 [![MIME Type](https://img.shields.io/badge/MIME%20Type-application%2Fvnd.hdfgroup.hdf4-orange)](https://www.iana.org/assignments/media-types/application/vnd.hdfgroup.hdf4)
 
+---
+
+> [!CAUTION]
+> ## IMPORTANT NOTICE!
+> Although The HDF Group maintains HDF4 by fixing defects and porting it to new operating environments, there is no longer any new development occurring. HDF4 is considered deprecated and new products should be developed in [HDF5](https://github.com/HDFGroup/hdf5).
+
 DOCUMENTATION
 -------------
 Full Documentation and Programming Resources for this release can be found at
 
-   https://portal.hdfgroup.org/hdf4/
+   https://support.hdfgroup.org/hdf4/
 
-See the RELEASE.txt file in the release\_notes/ directory for information specific
+See the RELEASE.txt file in the release_docs/ directory for information specific
 to the features and updates included in this release of the library.
 
-Several more files are located within the release\_notes/ directory with specific
+Several more files are located within the release_docs/ directory with specific
 details for several common platforms and configurations.
 
     INSTALL - Start Here. General instructions for compiling and installing the library
