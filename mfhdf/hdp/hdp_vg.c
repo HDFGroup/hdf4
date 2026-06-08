@@ -618,6 +618,10 @@ print_fields(const char *fields, const char *field_title, FILE *fp)
         fprintf(fp, "];\n");
     } /* there are fields to print */
 
+    /* Release resources */
+    free(fldname);
+    free(tempflds);
+
 } /* end of print_fields */
 
 /* compose the list of indices of the requested vgroups although some
