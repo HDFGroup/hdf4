@@ -788,6 +788,9 @@ test_attribute_ops()
     status = SDend(fid2);
     CHECK(status, FAIL, "SDend");
 
+    /* Release resource */
+    free(data);
+
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
 }
