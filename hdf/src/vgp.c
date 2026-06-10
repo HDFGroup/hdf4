@@ -29,6 +29,7 @@ LOCAL ROUTINES
  New_vfile    -- create new vgroup file record
  Load_vfile   -- loads vgtab table with info of all vgroups in file.
  Remove_vfile -- removes the file ptr from the vfile[] table.
+ VIGet_vgdesc -- get and verify the vgroup
 
  VPgetinfo  --  Read in the "header" information about the Vgroup.
  VIstart    --  V-level initialization routine
@@ -36,7 +37,7 @@ LOCAL ROUTINES
 
 EXPORTED ROUTINES
 =================
- Following 4 routines are solely for B-tree routines.
+ Following 5 routines are solely for B-tree routines.
  vcompare     -- Compares two TBBT-tree keys for equality.  Similar to memcmp.
  vprint       -- Prints out the key and reference number of VDatas and Vgroups
  vdestroynode -- destroy vgroup node in TBBT
@@ -73,19 +74,22 @@ EXPORTED ROUTINES
  Vaddtagref   -- Inserts a tag/ref pair into the attached vgroup vg.
  vinsertpair  -- Inserts a tag/ref pair into the attached vgroup vg.
  Ventries     -- Returns the num of entries (+ve integer) in the vgroup vgid.
- Vsetname     -- Gives a name to the VGROUP vg.
- Vsetclass    -- Assigns a class name to the VGROUP vg.
+ Vsetname     -- Gives a name to the Vgroup vg.
+ Vsetclass    -- Assigns a class name to the Vgroup vg.
  Visvg        -- Tests if the given entry in the vgroup vg is a VGROUP.
  Visvs        -- Checks if an id in a vgroup refers to a VDATA.
  Vgetid       -- Given a vgroup's id, returns the next vgroup's id in the file.
  Vgetnext     -- Given the id of an entry from a vgroup vg, looks in vg
                   for the next entry after it, and returns its id.
- Vgetnamelen  -- Retrieves the length of the vgroup's name.
- Vgetclassnamelen  -- Retrieves the length of the vgroup's classname.
- Vgetname     -- Returns the vgroup's name.
- Vgetclass    -- Returns the vgroup's class name .
+ Vgetnamelen  -- Retrieves the length of the vgroup's name. - Deprecated
+ Vgetclassnamelen  -- Retrieves the length of the vgroup's classname. - Deprecated
+ Vgetname     -- Returns the vgroup's name. - Deprecated
+ Vgetname40   -- Returns the vgroup's name. (introduced in 4.0)
+ Vgetclass    -- Returns the vgroup's class. - Deprecated
+ Vgetclass40  -- Returns the vgroup's class. (introduced in 4.0)
  Vgetvgroups  -- Gets user-created vgroups in a file or in a vgroup
- Vinquire     -- General inquiry routine for VGROUP.
+ Vinquire     -- General inquiry routine for Vgroup. - Deprecated
+ Vinquire40   -- General inquiry routine for Vgroup. (introduced in 4.0)
  Vopen        -- This routine opens the HDF file and initializes it for
                   Vset operations.(i.e." Hopen(); Vinitialize(f)").
  Vclose       -- This routine closes the HDF file, after it has freed
@@ -95,9 +99,6 @@ EXPORTED ROUTINES
                   remove the Vgoup from the internal Vset data structures
                   as well as from the file.
  Vdeletetagref - delete tag/ref pair in Vgroup
-
- NOTE: Another pass needs to made through this file to update some of
-       the comments about certain sections of the code. -GV 9/8/97
 
 *************************************************************************/
 
@@ -372,7 +373,7 @@ Load_vfile(HFILEID f /* IN: file handle */)
 
     ret = aid = Hstartread(f, DFTAG_VG, DFREF_WILDCARD);
     while (ret != FAIL) {
-        /* get tag/ref for this vgroup */
+        /* get tag/ref for this Vgroup */
         HQuerytagref(aid, &tag, &ref);
 
         /* get a vgroup struct to fill */
@@ -2405,14 +2406,13 @@ done:
 
 /*******************************************************************************
 NAME
-   Vgetnamelen
+   Vgetnamelen - Deprecated in favor of Vgetname40
 
 DESCRIPTION
    Retrieves the length of the vgroup's name.
 
 RETURNS
    Returns SUCCEED/FAIL
-   BMR - 2006/09/10
 
 *******************************************************************************/
 int32
@@ -2456,14 +2456,13 @@ done:
 
 /*******************************************************************************
 NAME
-   Vgetclassnamelen
+   Vgetclassnamelen - Deprecated in favor of Vgetclass40
 
 DESCRIPTION
    Retrieves the length of the vgroup's name.
 
 RETURNS
    Returns SUCCEED/FAIL
-   BMR - 2006/09/10
 
 *******************************************************************************/
 int32
@@ -2503,7 +2502,7 @@ done:
 
 /*******************************************************************************
 NAME
-   Vgetname
+   Vgetname - Deprecated in favor of Vgetname40
 
 DESCRIPTION
    returns the vgroup's name
@@ -3169,3 +3168,237 @@ Vgetvgroups(int32    id,       /* IN: file id or vgroup id */
 done:
     return ret_value;
 } /* Vgetvgroups */
+
+/******************************************************************************
+ * Introduced in 4.0 to address security issues                               *
+ ******************************************************************************/
+
+/*******************************************************************************
+ NAME
+    VIget_vgdesc -- get and verify the vgroup
+
+ DESCRIPTION
+    Return a pointer to a VGROUP for subsequent accesses of the vgroup.
+
+ RETURNS
+    VGROUP record pointer or NULL if failed.
+
+*******************************************************************************/
+VGROUP *
+VIGet_vgdesc(int32 vkey /* IN: vgroup key */)
+{
+
+    vginstance_t *v         = NULL;
+    VGROUP       *vg        = NULL;
+    VGROUP       *ret_value = NULL;
+
+    /* get and verify the vgroup */
+    if (NULL == (v = (vginstance_t *)HAatom_object(vkey)))
+        HGOTO_ERROR(DFE_NOVS, NULL);
+    vg = v->vg;
+    if (vg == NULL)
+        HGOTO_ERROR(DFE_BADPTR, NULL);
+    if (vg->otag != DFTAG_VG)
+        HGOTO_ERROR(DFE_ARGS, NULL);
+
+    ret_value = vg;
+done:
+    return ret_value;
+}
+
+/*******************************************************************************
+NAME
+   Vgetname40 - Retrieves the vgroup's name
+
+DESCRIPTION
+    This function retrieves the name of a vgroup.  buf_size is an IN/OUT
+    parameter.  When vgname is NULL or *buf_size is 0, the function returns
+    the length of the vgroup name in *buf_size without copying.  Otherwise,
+    up to *buf_size-1 characters are stored in vgname followed by a null
+    terminator, and the actual name length is returned in *buf_size.  If the
+    name of the vgroup is longer than *buf_size-1, the string will be truncated
+    and the null terminator is stored in the last position of the buffer.
+    buf_size must not be NULL.
+
+RETURNS
+   SUCCEED / FAIL
+
+*******************************************************************************/
+int
+Vgetname40(int32   vkey,      /* IN: vgroup key */
+           char   *vgname,    /* OUT: vgroup name */
+           size_t *buf_size   /* IN/OUT: name buffer size */)
+{
+    VGROUP *vg        = NULL;
+    size_t  name_len  = 0;
+    int     ret_value = SUCCEED;
+
+    /* Clear error stack */
+    HEclear();
+
+    /* Check arguments */
+    if (HAatom_group(vkey) != VGIDGROUP || buf_size == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Get the vgroup struct for access */
+    if ((vg = VIGet_vgdesc(vkey)) == NULL)
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+    /* Get the length of the vgroup name */
+    name_len = (vg->vgname != NULL) ? strlen(vg->vgname) : 0;
+
+    /* If vgname is NULL or *buf_size is 0, return the length of the name */
+    if (vgname == NULL || *buf_size == 0) {
+        *buf_size = name_len;
+        HGOTO_DONE(ret_value);
+    }
+
+    /* Copy vgroup name, truncating if necessary */
+    if (vg->vgname != NULL) {
+        strncpy(vgname, vg->vgname, *buf_size - 1);
+        vgname[*buf_size - 1] = '\0';
+    }
+    else
+        vgname[0] = '\0';
+
+    /* Return the actual name length */
+    *buf_size = name_len;
+
+done:
+    return ret_value;
+} /* Vgetname40 */
+
+/*******************************************************************************
+NAME
+   Vgetclass40 - Retrieves the vgroup's class
+
+DESCRIPTION
+    This function retrieves the class of a vgroup.  buf_size is an IN/OUT
+    parameter.  When vgclass is NULL or *buf_size is 0, the function returns
+    the length of the vgroup class in *buf_size without copying.  Otherwise,
+    up to *buf_size-1 characters are stored in vgclass followed by a null
+    terminator, and the actual class length is returned in *buf_size.  If the
+    class of the vgroup is longer than *buf_size-1, the string will be truncated
+    and the null terminator is stored in the last position of the buffer.
+    buf_size must not be NULL.
+
+RETURNS
+   SUCCEED / FAIL
+
+*******************************************************************************/
+int
+Vgetclass40(int32   vkey,      /* IN: vgroup key */
+           char   *vgclass,    /* OUT: vgroup class buffer */
+           size_t *buf_size    /* IN/OUT: class buffer size */)
+{
+    VGROUP *vg         = NULL;
+    size_t  class_len  = 0;
+    int     ret_value  = SUCCEED;
+
+    /* Clear error stack */
+    HEclear();
+
+    /* Check arguments */
+    if (HAatom_group(vkey) != VGIDGROUP || buf_size == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Get the vgroup struct for access */
+    if ((vg = VIGet_vgdesc(vkey)) == NULL)
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+    /* Get the length of the vgroup class */
+    class_len = (vg->vgclass != NULL) ? strlen(vg->vgclass) : 0;
+
+    /* If vgclass is NULL or *buf_size is 0, return the length of the class */
+    if (vgclass == NULL || *buf_size == 0) {
+        *buf_size = class_len;
+        HGOTO_DONE(ret_value);
+    }
+
+    /* Copy vgroup class, truncating if necessary */
+    if (vg->vgclass != NULL) {
+        strncpy(vgclass, vg->vgclass, *buf_size - 1);
+        vgclass[*buf_size - 1] = '\0';
+    }
+    else
+        vgclass[0] = '\0';
+
+    /* Return the actual class length */
+    *buf_size = class_len;
+
+done:
+    return ret_value;
+} /* Vgetclass40 */
+
+/*******************************************************************************
+NAME
+   Vinquire40
+
+DESCRIPTION
+   General inquiry routine for VGROUP (introduced in 4.0)
+
+    nentries - OUT: buffer for number of entries in the vgroup
+    buf_size - IN/OUT: size of the vgname buffer on input; actual length
+               of the vgroup name on output.  If vgname is NULL or
+               *buf_size is 0, the function returns the length of the
+               vgroup name in *buf_size without copying.  Otherwise, up
+               to *buf_size-1 characters are stored in vgname followed
+               by a null terminator, and the actual name length is
+               returned in *buf_size.  If the name is longer than
+               *buf_size-1, the string is truncated and the null
+               terminator is stored in the last position of the buffer.
+               If buf_size is NULL, the vgroup name is not retrieved.
+    vgname   - OUT: the vgroup's name, set if non-NULL and *buf_size > 0
+
+RETURNS
+   SUCCEED/FAIL
+
+*******************************************************************************/
+int
+Vinquire40(int32  vkey,      /* IN: vgroup key */
+           int32 *nentries,  /* OUT: number of entries in vgroup */
+           char  *vgname,    /* OUT: vgroup name */
+           size_t *buf_size  /* IN/OUT: vgname size */)
+{
+    VGROUP *vg        = NULL;
+    size_t  name_len  = 0;
+    int     ret_value = SUCCEED;
+
+    /* Clear error stack */
+    HEclear();
+
+    /* Check argument */
+    if (HAatom_group(vkey) != VGIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Get the vgroup struct for access */
+    if ((vg = VIGet_vgdesc(vkey)) == NULL)
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+    /* Get the length of the vgroup name */
+    name_len = (vg->vgname != NULL) ? strlen(vg->vgname) : 0;
+
+    /* Get the number of entries in vgroup, if requested */
+    if (nentries != NULL)
+        *nentries = (int32)vg->nvelt;
+
+    /* If buf_size is provided, handle name copy or length query */
+    if (buf_size != NULL) {
+        if (vgname == NULL || *buf_size == 0) {
+            *buf_size = name_len; /* return the name length */
+        }
+        else {
+            /* Copy vgroup name, truncating if necessary */
+            if (vg->vgname != NULL) {
+                strncpy(vgname, vg->vgname, *buf_size - 1);
+                vgname[*buf_size - 1] = '\0';
+            }
+            else
+                vgname[0] = '\0';
+            *buf_size = name_len; /* return the name length */
+        }
+    }
+
+done:
+    return ret_value;
+} /* Vinquire40 */

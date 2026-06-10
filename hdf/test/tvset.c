@@ -563,10 +563,12 @@ read_vset_stuff(void)
     int32    vg1;
     int32    vs1;
     int32    status, num, i, count, intr, sz;
+    int      statusint = SUCCEED;
     float32  fl_expected;
     int32    in_expected;
     char8    c_expected;
     uint16   name_len;
+    size_t   buf_size;
 
     ibuf = (int32 *)malloc(sizeof(float32) * 2000);
     fbuf = (float32 *)malloc(sizeof(float32) * 2000);
@@ -603,6 +605,35 @@ read_vset_stuff(void)
         printf(">>> Was not able to attach (r) Vgroup %d\n", (int)list[0]);
     }
 
+    /* get the vgroup name's length, allocate the buffer, then get the vgroup name */
+    statusint = Vgetname40(vg1, NULL, &buf_size);
+    CHECK(statusint, FAIL, "Vgetname40:vg1");
+
+    vgname = (char *)malloc(sizeof(char) * (buf_size + 1));
+    CHECK_ALLOC(vgname, "vgname", "read_vset_stuff");
+
+    statusint = Vgetname40(vg1, vgname, &buf_size);
+    CHECK(statusint, FAIL, "Vgetname40:vg1");
+
+  fprintf(stderr, "Vgetname40 returns name = %s\n", vgname);
+    free(vgname);
+
+    /* get the vgroup class' length, allocate the buffer, then get the vgroup class */
+    statusint = Vgetclass40(vg1, NULL, &buf_size);
+    CHECK(statusint, FAIL, "Vgetclass40:vg1");
+
+    vgclass = (char *)malloc(sizeof(char) * (buf_size + 1));
+    CHECK_ALLOC(vgclass, "vgclass", "read_vset_stuff");
+
+    statusint = Vgetclass40(vg1, vgclass, &buf_size);
+    CHECK(statusint, FAIL, "Vgetclass40:vg1");
+
+    free(vgclass);
+
+    /* get the vgroup name with insufficient buffer space */
+
+    /* Tests deprecated functions */
+
     status = Vgetnamelen(vg1, &name_len);
     CHECK(status, FAIL, "Vgetnamelen:vg1");
 
@@ -611,6 +642,7 @@ read_vset_stuff(void)
 
     status = Vgetname(vg1, vgname);
     CHECK(status, FAIL, "Vgetname:vg1");
+fprintf(stderr, "Vgetname returns name = %s\n", vgname);
 
     status = Vgetclassnamelen(vg1, &name_len);
     CHECK(status, FAIL, "Vgetclassnamelen:vg1");
