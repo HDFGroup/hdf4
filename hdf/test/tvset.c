@@ -615,7 +615,7 @@ read_vset_stuff(void)
     statusint = Vgetname40(vg1, vgname, &buf_size);
     CHECK(statusint, FAIL, "Vgetname40:vg1");
 
-  fprintf(stderr, "Vgetname40 returns name = %s\n", vgname);
+    fprintf(stderr, "Vgetname40 returns name = %s\n", vgname);
     free(vgname);
 
     /* get the vgroup class' length, allocate the buffer, then get the vgroup class */
@@ -642,7 +642,7 @@ read_vset_stuff(void)
 
     status = Vgetname(vg1, vgname);
     CHECK(status, FAIL, "Vgetname:vg1");
-fprintf(stderr, "Vgetname returns name = %s\n", vgname);
+    fprintf(stderr, "Vgetname returns name = %s\n", vgname);
 
     status = Vgetclassnamelen(vg1, &name_len);
     CHECK(status, FAIL, "Vgetclassnamelen:vg1");

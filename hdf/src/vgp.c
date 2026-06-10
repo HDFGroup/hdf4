@@ -3225,9 +3225,9 @@ RETURNS
 
 *******************************************************************************/
 int
-Vgetname40(int32   vkey,      /* IN: vgroup key */
-           char   *vgname,    /* OUT: vgroup name */
-           size_t *buf_size   /* IN/OUT: name buffer size */)
+Vgetname40(int32   vkey,   /* IN: vgroup key */
+           char   *vgname, /* OUT: vgroup name */
+           size_t *buf_size /* IN/OUT: name buffer size */)
 {
     VGROUP *vg        = NULL;
     size_t  name_len  = 0;
@@ -3287,13 +3287,13 @@ RETURNS
 
 *******************************************************************************/
 int
-Vgetclass40(int32   vkey,      /* IN: vgroup key */
-           char   *vgclass,    /* OUT: vgroup class buffer */
-           size_t *buf_size    /* IN/OUT: class buffer size */)
+Vgetclass40(int32   vkey,    /* IN: vgroup key */
+            char   *vgclass, /* OUT: vgroup class buffer */
+            size_t *buf_size /* IN/OUT: class buffer size */)
 {
-    VGROUP *vg         = NULL;
-    size_t  class_len  = 0;
-    int     ret_value  = SUCCEED;
+    VGROUP *vg        = NULL;
+    size_t  class_len = 0;
+    int     ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -3355,10 +3355,10 @@ RETURNS
 
 *******************************************************************************/
 int
-Vinquire40(int32  vkey,      /* IN: vgroup key */
-           int32 *nentries,  /* OUT: number of entries in vgroup */
-           char  *vgname,    /* OUT: vgroup name */
-           size_t *buf_size  /* IN/OUT: vgname size */)
+Vinquire40(int32   vkey,     /* IN: vgroup key */
+           int32  *nentries, /* OUT: number of entries in vgroup */
+           char   *vgname,   /* OUT: vgroup name */
+           size_t *buf_size /* IN/OUT: vgname size */)
 {
     VGROUP *vg        = NULL;
     size_t  name_len  = 0;
