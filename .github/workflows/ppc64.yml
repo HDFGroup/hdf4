@@ -21,6 +21,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6.0.2
 
+      - name: Download JPEG source tarball
+        run: wget -q https://www.ijg.org/files/jpegsrc.v9e.tar.gz
+
       - uses: uraimo/run-on-arch-action@v3
         name: Run commands
         id: runcmd
@@ -53,7 +56,7 @@ jobs:
                 -DHDF4_BUILD_FORTRAN=OFF \
                 -DHDF4_BUILD_JAVA=OFF \
                 -DHDF4_BUILD_DOC=OFF \
-                -DJPEG_USE_LOCALCONTENT=OFF \
+                -DJPEG_USE_LOCALCONTENT=ON \
                 -DLIBAEC_USE_LOCALCONTENT=OFF \
                 -DZLIB_USE_LOCALCONTENT=OFF \
                 -DHDF4_PACK_EXAMPLES:BOOL=ON \
