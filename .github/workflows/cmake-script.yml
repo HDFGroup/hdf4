@@ -326,7 +326,7 @@ jobs:
   # Windows w/ OneAPI + CMake
   #
     name: "Windows Intel CTest"
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - name: Install Dependencies (Windows_intel)
         run: choco install ninja

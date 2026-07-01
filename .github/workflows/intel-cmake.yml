@@ -73,7 +73,7 @@ jobs:
 
   Intel_oneapi_windows:
     name: "windows-oneapi ${{ inputs.build_mode }}"
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - name: Get Sources (Windows)
         uses: actions/checkout@v6.0.2
