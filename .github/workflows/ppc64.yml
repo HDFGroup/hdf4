@@ -57,6 +57,7 @@ jobs:
                 -DHDF4_BUILD_JAVA=OFF \
                 -DHDF4_BUILD_DOC=OFF \
                 -DJPEG_USE_LOCALCONTENT=ON \
+                -DTGZPATH=${{ github.workspace }} \
                 -DLIBAEC_USE_LOCALCONTENT=OFF \
                 -DZLIB_USE_LOCALCONTENT=OFF \
                 -DHDF4_PACK_EXAMPLES:BOOL=ON \
