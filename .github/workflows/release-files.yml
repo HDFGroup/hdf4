@@ -40,7 +40,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Get Sources
-        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v4.1.7
+        uses: actions/checkout@4f1f4aec02e41874fa0262ea8ff5172d7978ad1e # v4.1.7
         with:
           fetch-depth: 0
           ref: '${{ github.head_ref || github.ref_name }}'
@@ -214,7 +214,7 @@ jobs:
       - name: PreRelease tag
         id: create_prerelease
         if: ${{ (inputs.use_environ == 'snapshots') }}
-        uses: softprops/action-gh-release@v3.0.0
+        uses: softprops/action-gh-release@v3.0.1
         with:
           tag_name: "${{ inputs.use_tag }}"
           prerelease: true
@@ -241,7 +241,7 @@ jobs:
       - name: Release tag
         id: create_release
         if: ${{ (inputs.use_environ == 'release') }}
-        uses: softprops/action-gh-release@v3.0.0
+        uses: softprops/action-gh-release@v3.0.1
         with:
           tag_name: "${{ inputs.use_tag }}"
           prerelease: false
@@ -272,7 +272,7 @@ jobs:
               ls ${{ runner.workspace }}
 
       - name: dev-only-docs
-        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4.0.0
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ${{ github.workspace }}/${{ steps.get-file-base.outputs.FILE_BASE }}.doxygen

@@ -19,7 +19,7 @@ jobs:
     name: Ubuntu PowerPC CMake
 
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v7.0.0
 
       - name: Download external library source tarballs
         run: |
