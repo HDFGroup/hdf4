@@ -145,7 +145,7 @@ jobs:
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Get Sources
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.0
 
       # CMAKE CONFIGURE
       - name: CMake Configure
