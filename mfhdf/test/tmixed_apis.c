@@ -29,7 +29,6 @@
 #include <string.h>
 
 #include "mfhdf.h"
-
 #include "hdftest.h"
 
 #define IDTYPE_FILE "idtypes.hdf" /* data file to test ID types */
@@ -43,7 +42,7 @@
 static int
 test_SDAPI_ids()
 {
-    int32        fid, dset1, dset2, dim_id;
+    int32        fid = FAIL, dset1 = FAIL, dset2 = FAIL, dim_id = FAIL;
     int32        dimsize[RANK];
     hdf_idtype_t id_type;
     int          status;
@@ -68,14 +67,11 @@ test_SDAPI_ids()
     VERIFY(id_type, SDS_ID, "SDidtype: id_type");
 
     /* Close the datasets */
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDendaccess(dset2);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(dset1, "SDendaccess");
+    ENDSDS(dset2, "SDendaccess");
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
 
     /* Re-open the file to test SDidtype more */
     fid = SDstart(IDTYPE_FILE, DFACC_RDWR);
@@ -105,14 +101,18 @@ test_SDAPI_ids()
     VERIFY(id_type, DIM_ID, "SDidtype dim_id");
 
     /* Close the datasets */
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDendaccess(dset2);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(dset1, "SDendaccess");
+    ENDSDS(dset2, "SDendaccess");
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
+done:
+    if (dset1 != FAIL)
+        SDendaccess(dset1);
+    if (dset2 != FAIL)
+        SDendaccess(dset2);
+    if (fid != FAIL)
+        SDend(fid);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -124,7 +124,7 @@ test_SDAPI_ids()
 static int
 test_nonSDAPI_ids()
 {
-    int32        fid, gr_id, vdata_id, ri_id;
+    int32        fid = FAIL, gr_id = FAIL, vdata_id = FAIL, ri_id = FAIL;
     int32        vdata_ref;
     int          status;
     int32        dims[2] = {4, 5}; /* dimensions for the empty image */
@@ -210,6 +210,7 @@ test_nonSDAPI_ids()
     CHECK(status, FAIL, "Hclose");
 
     /* Return the number of errors that's been kept track of so far */
+done:
     return num_errs;
 } /* test_nonSDAPI_ids */
 
@@ -291,16 +292,12 @@ test_vdatavgroups()
     CHECK(dset3, FAIL, "SDcreate");
 
     /* Close the datasets */
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDendaccess(dset2);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDendaccess(dset3);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(dset1, "SDendaccess");
+    ENDSDS(dset2, "SDendaccess");
+    ENDSDS(dset3, "SDendaccess");
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
 
     /* Open the HDF file and initialize the V interface */
     fid = Hopen(VVS_FILE, DFACC_RDWR, 0);
@@ -402,11 +399,13 @@ test_vdatavgroups()
 
         /* Release resource */
         free(vg_name);
+    vg_name = NULL;
         status = Vdetach(vgroup_id);
         CHECK(status, FAIL, "Vdetach");
     }
     /* Release resource */
     free(refarray);
+    refarray = NULL;
 
     /* Get the number of user-created vdatas */
     num_vdatas = VSgetvdatas(fid, 0, 0, NULL);
@@ -438,13 +437,34 @@ test_vdatavgroups()
         CHECK(status, FAIL, "VSdetach");
     }
     /* Release resource */
-    free(refarray);
+    HDfreenclear(refarray);
 
     /* Terminate access to the Vxxx interface and close the file */
     status = Vend(fid);
     CHECK(status, FAIL, "Vend");
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose");
+    fid = FAIL;
+
+done:
+    if (dset1 != FAIL)
+        SDendaccess(dset1);
+    if (dset2 != FAIL)
+        SDendaccess(dset2);
+    if (dset3 != FAIL)
+        SDendaccess(dset3);
+
+    if (vdata_id != FAIL)
+        VSdetach(vdata_id);
+    if (vgroup_id != FAIL)
+        Vdetach(vgroup_id);
+    if (fid != FAIL) {
+        Vend(fid);
+        Hclose(fid);
+    }
+
+    free(refarray);
+    free(vg_name);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -463,7 +483,7 @@ test_vdatavgroups()
 static int
 test_vgisinternal()
 {
-    int32 fid, vgroup_id;
+    int32 fid = FAIL, vgroup_id = FAIL;
     int   is_internal = FALSE;
     int32 vref        = -1;
     int   ii, status;
@@ -489,6 +509,7 @@ test_vgisinternal()
         VERIFY(is_internal, internal_array1[ii], "Vgisinternal");
 
         status = Vdetach(vgroup_id);
+        vgroup_id = FAIL;
         CHECK(status, FAIL, "Vdetach");
 
         ii++;
@@ -519,6 +540,7 @@ test_vgisinternal()
         VERIFY(is_internal, internal_array2[ii], "Vgisinternal");
 
         status = Vdetach(vgroup_id);
+        vgroup_id = FAIL;
         CHECK(status, FAIL, "Vdetach");
 
         ii++; /* increment vgroup index */
@@ -529,6 +551,15 @@ test_vgisinternal()
     CHECK(status, FAIL, "Vend");
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose");
+    fid = FAIL;
+
+done:
+    if (vgroup_id != FAIL)
+        Vdetach(vgroup_id);
+    if (fid != FAIL) {
+        Vend(fid);
+        Hclose(fid);
+    }
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;

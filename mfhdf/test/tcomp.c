@@ -23,7 +23,6 @@
 #include <string.h>
 
 #include "mfhdf.h"
-
 #include "hdftest.h"
 
 /********************************************************************
@@ -56,7 +55,7 @@
 static int
 test_various_comps()
 {
-    int32     sd_id, sds_id;
+    int32     sd_id = FAIL, sds_id = FAIL;
     int       status;
     int32     comp_type; /* Compression flag */
     comp_info c_info;    /* Compression structure */
@@ -101,8 +100,7 @@ test_various_comps()
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the 1st data set. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Create 2nd data set for Skipping Huffman compression. */
     sds_id = SDcreate(sd_id, SDS2_NAME, DFNT_INT32, RANK, dim_sizes);
@@ -120,8 +118,7 @@ test_various_comps()
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the 2nd data set. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
 #ifdef H4_HAVE_SZIP_ENCODER
 
@@ -153,13 +150,17 @@ test_various_comps()
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the 3rd data set. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 #endif
 
     /* Terminate access to the SD interface and close the file. */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -175,11 +176,11 @@ test_various_comps()
 static int
 test_compressed_data()
 {
-    int32        fcomp;           /* File handle */
+    int32        fcomp = FAIL;    /* File handle */
+    int32        newsds = FAIL;   /* SDS handle */
     int32        index;           /* Index of a dataset */
     int32        nt;              /* Number type */
     int32        dimsize[10];     /* dimension sizes */
-    int32        newsds, newsds2; /* SDS handles */
     comp_coder_t comp_type;       /* to retrieve compression type into */
     comp_info    cinfo;           /* compression information structure */
     int32        idata[100];
@@ -232,12 +233,10 @@ test_compressed_data()
     CHECK(status, FAIL, "SDwritedata");
 
     /* End access to the dataset */
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(newsds, "SDendaccess");
 
     /* need to close to flush compressed info to file */
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fcomp, "SDend");
 
     /*
      * Read and verify the compressed data and information
@@ -245,7 +244,7 @@ test_compressed_data()
     fcomp = SDstart(COMPFILE1, DFACC_RDWR);
     CHECK(fcomp, FAIL, "SDstart (again)");
 
-    newsds2 = SDselect(fcomp, 0);
+    newsds = SDselect(fcomp, 0);
     if (newsds == FAIL) {
         fprintf(stderr, "Failed to select a data set for compressed access\n");
         num_errs++;
@@ -257,7 +256,7 @@ test_compressed_data()
 #ifndef H4_NO_DEPRECATED_SYMBOLS
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     memset(&cinfo, 0, sizeof(cinfo));
-    status = SDgetcompress(newsds2, &comp_type, &cinfo);
+    status = SDgetcompress(newsds, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_SKPHUFF, "SDgetcompress");
     VERIFY(cinfo.skphuff.skp_size, 4, "SDgetcompress");
@@ -265,21 +264,21 @@ test_compressed_data()
 
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     memset(&cinfo, 0, sizeof(cinfo));
-    status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
+    status = SDgetcompinfo(newsds, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_SKPHUFF, "SDgetcompinfo");
     VERIFY(cinfo.skphuff.skp_size, 4, "SDgetcompinfo");
 
     /* Only get the compression method and verify it */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    status    = SDgetcomptype(newsds2, &comp_type);
+    status    = SDgetcomptype(newsds, &comp_type);
     CHECK(status, FAIL, "SDgetcomptype");
     VERIFY(comp_type, COMP_CODE_SKPHUFF, "SDgetcomptype");
 
     /* Read and verify the compressed data */
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
+    status          = SDreaddata(newsds, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -290,10 +289,8 @@ test_compressed_data()
         }
 
     /* End access to the dataset and the file */
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
+    ENDSDS(newsds, "SDendaccess");
+    ENDSD(fcomp, "SDend");
 
     /*
      * Writing 2nd compressed dataset, partially filled & skipping huffman
@@ -338,12 +335,10 @@ test_compressed_data()
     CHECK(status, FAIL, "SDwritedata");
 
     /* End access to the datase */
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(newsds, "SDendaccess");
 
     /* need to close to flush compressed info to file */
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fcomp, "SDend");
 
     /*
      * Read and verify the compressed data and information
@@ -355,7 +350,7 @@ test_compressed_data()
     index = SDnametoindex(fcomp, "CompDataSet2");
     CHECK(index, FAIL, "SDnametoindex");
 
-    newsds2 = SDselect(fcomp, index);
+    newsds = SDselect(fcomp, index);
     if (newsds == FAIL) {
         fprintf(stderr, "Failed to select a data set for compressed access\n");
         num_errs++;
@@ -363,7 +358,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
+    status          = SDreaddata(newsds, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -373,11 +368,8 @@ test_compressed_data()
             num_errs++;
         }
 
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
-
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
+    ENDSDS(newsds, "SDendaccess");
+    ENDSD(fcomp, "SDend");
 
     /*
      * Creating 3rd compressed dataset, compressed template & skipping huffman
@@ -402,12 +394,10 @@ test_compressed_data()
     status                 = SDsetcompress(newsds, COMP_CODE_SKPHUFF, &cinfo);
     CHECK(status, FAIL, "SDsetcompress");
 
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(newsds, "SDendaccess");
 
     /* need to close to flush compressed info to file */
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fcomp, "SDend");
 
     /*
      * Read the compressed data back in
@@ -415,7 +405,7 @@ test_compressed_data()
     fcomp = SDstart(COMPFILE3, DFACC_RDWR);
     CHECK(fcomp, FAIL, "SDstart (again)");
 
-    newsds2 = SDselect(fcomp, 0);
+    newsds = SDselect(fcomp, 0);
     if (newsds == FAIL) {
         fprintf(stderr, "Failed to select a data set for compressed access\n");
         num_errs++;
@@ -423,7 +413,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
+    status          = SDreaddata(newsds, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -433,11 +423,8 @@ test_compressed_data()
             num_errs++;
         }
 
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
-
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
+    ENDSDS(newsds, "SDendaccess");
+    ENDSD(fcomp, "SDend");
 
     /*
      * Creating 4th compressed dataset, compressed template read, then
@@ -463,12 +450,10 @@ test_compressed_data()
     status                 = SDsetcompress(newsds, COMP_CODE_SKPHUFF, &cinfo);
     CHECK(status, FAIL, "SDsetcompress");
 
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(newsds, "SDendaccess");
 
     /* need to close to flush compressed info to file */
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fcomp, "SDend");
 
     /*
      * Read the compressed data back in
@@ -476,7 +461,7 @@ test_compressed_data()
     fcomp = SDstart(COMPFILE4, DFACC_RDWR);
     CHECK(fcomp, FAIL, "SDstart (again)");
 
-    newsds2 = SDselect(fcomp, 0);
+    newsds = SDselect(fcomp, 0);
     if (newsds == FAIL) {
         fprintf(stderr, "Failed to select a data set for compressed access\n");
         num_errs++;
@@ -484,7 +469,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
+    status          = SDreaddata(newsds, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -494,12 +479,10 @@ test_compressed_data()
             num_errs++;
         }
 
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(newsds, "SDendaccess");
 
     /* need to close to flush compressed info to file */
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fcomp, "SDend");
 
     /*
      * Modifying first compressed dataset.
@@ -507,7 +490,7 @@ test_compressed_data()
     fcomp = SDstart(COMPFILE4, DFACC_RDWR);
     CHECK(fcomp, FAIL, "SDstart (again)");
 
-    newsds2 = SDselect(fcomp, 0);
+    newsds = SDselect(fcomp, 0);
     if (newsds == FAIL) {
         fprintf(stderr, "Failed to select a data set for compressed access\n");
         num_errs++;
@@ -528,17 +511,15 @@ test_compressed_data()
     status   = SDwritedata(newsds, start, NULL, end, (void *)&idata[10]);
     CHECK(status, FAIL, "SDwritedata");
 
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(newsds, "SDendaccess");
 
     /* need to close to flush compressed info to file */
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fcomp, "SDend");
 
     fcomp = SDstart(COMPFILE4, DFACC_RDWR);
     CHECK(fcomp, FAIL, "SDstart (again)");
 
-    newsds2 = SDselect(fcomp, 0);
+    newsds = SDselect(fcomp, 0);
     if (newsds == FAIL) {
         fprintf(stderr, "Failed to select a data set for compressed access\n");
         num_errs++;
@@ -546,7 +527,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
+    status          = SDreaddata(newsds, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -556,11 +537,8 @@ test_compressed_data()
             num_errs++;
         }
 
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
-
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
+    ENDSDS(newsds, "SDendaccess");
+    ENDSD(fcomp, "SDend");
 
     /*
      * Writing 5th compressed dataset, basic RLE.
@@ -588,12 +566,10 @@ test_compressed_data()
     status          = SDwritedata(newsds, start, NULL, end, (void *)idata);
     CHECK(status, FAIL, "SDwritedata");
 
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(newsds, "SDendaccess");
 
     /* need to close to flush compressed info to file */
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fcomp, "SDend");
 
     /*
      * Read the compressed data back in.
@@ -601,7 +577,7 @@ test_compressed_data()
     fcomp = SDstart(COMPFILE5, DFACC_RDWR);
     CHECK(fcomp, FAIL, "SDstart (again)");
 
-    newsds2 = SDselect(fcomp, 0);
+    newsds = SDselect(fcomp, 0);
     if (newsds == FAIL) {
         fprintf(stderr, "Failed to select a data set for compressed access\n");
         num_errs++;
@@ -613,26 +589,26 @@ test_compressed_data()
 #ifndef H4_NO_DEPRECATED_SYMBOLS
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     memset(&cinfo, 0, sizeof(cinfo));
-    status = SDgetcompress(newsds2, &comp_type, &cinfo);
+    status = SDgetcompress(newsds, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_RLE, "SDgetcompress");
 #endif /* H4_NO_DEPRECATED_SYMBOLS */
 
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     memset(&cinfo, 0, sizeof(cinfo));
-    status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
+    status = SDgetcompinfo(newsds, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_RLE, "SDgetcompinfo");
 
     /* Only get the compression method and verify it */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    status    = SDgetcomptype(newsds2, &comp_type);
+    status    = SDgetcomptype(newsds, &comp_type);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_RLE, "SDgetcompinfo");
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
+    status          = SDreaddata(newsds, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -642,11 +618,8 @@ test_compressed_data()
             num_errs++;
         }
 
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
-
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
+    ENDSDS(newsds, "SDendaccess");
+    ENDSD(fcomp, "SDend");
 
     /*
      * Writing 6th compressed dataset, no encoding
@@ -674,12 +647,10 @@ test_compressed_data()
     status          = SDwritedata(newsds, start, NULL, end, (void *)idata);
     CHECK(status, FAIL, "SDwritedata");
 
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(newsds, "SDendaccess");
 
     /* need to close to flush compressed info to file */
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fcomp, "SDend");
 
     /*
      * Read the compressed data back in.
@@ -687,7 +658,7 @@ test_compressed_data()
     fcomp = SDstart(COMPFILE6, DFACC_RDWR);
     CHECK(fcomp, FAIL, "SDstart (again)");
 
-    newsds2 = SDselect(fcomp, 0);
+    newsds = SDselect(fcomp, 0);
     if (newsds == FAIL) {
         fprintf(stderr, "Failed to select a data set for compressed access\n");
         num_errs++;
@@ -699,26 +670,26 @@ test_compressed_data()
 #ifndef H4_NO_DEPRECATED_SYMBOLS
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     memset(&cinfo, 0, sizeof(cinfo));
-    status = SDgetcompress(newsds2, &comp_type, &cinfo);
+    status = SDgetcompress(newsds, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_NONE, "SDgetcompress");
 #endif /* H4_NO_DEPRECATED_SYMBOLS */
 
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     memset(&cinfo, 0, sizeof(cinfo));
-    status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
+    status = SDgetcompinfo(newsds, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_NONE, "SDgetcompinfo");
 
     /* Only get the compression method and verify it */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    status    = SDgetcomptype(newsds2, &comp_type);
+    status    = SDgetcomptype(newsds, &comp_type);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_NONE, "SDgetcompinfo");
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
+    status          = SDreaddata(newsds, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -728,11 +699,8 @@ test_compressed_data()
             num_errs++;
         }
 
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
-
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
+    ENDSDS(newsds, "SDendaccess");
+    ENDSD(fcomp, "SDend");
 
     /*
      * Writing 7th compressed dataset, deflate encoding.
@@ -761,12 +729,10 @@ test_compressed_data()
     status          = SDwritedata(newsds, start, NULL, end, (void *)idata);
     CHECK(status, FAIL, "SDwritedata");
 
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(newsds, "SDendaccess");
 
     /* need to close to flush compressed info to file */
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fcomp, "SDend");
 
     /*
      * Read the compressed data back in.
@@ -774,7 +740,7 @@ test_compressed_data()
     fcomp = SDstart(COMPFILE7, DFACC_RDWR);
     CHECK(fcomp, FAIL, "SDstart (again)");
 
-    newsds2 = SDselect(fcomp, 0);
+    newsds = SDselect(fcomp, 0);
     if (newsds == FAIL) {
         fprintf(stderr, "Failed to select a data set for compressed access\n");
         num_errs++;
@@ -786,7 +752,7 @@ test_compressed_data()
 #ifndef H4_NO_DEPRECATED_SYMBOLS
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     memset(&cinfo, 0, sizeof(cinfo));
-    status = SDgetcompress(newsds2, &comp_type, &cinfo);
+    status = SDgetcompress(newsds, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_DEFLATE, "SDgetcompress");
     VERIFY(cinfo.deflate.level, 6, "SDgetcompress");
@@ -794,20 +760,20 @@ test_compressed_data()
 
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     memset(&cinfo, 0, sizeof(cinfo));
-    status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
+    status = SDgetcompinfo(newsds, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_DEFLATE, "SDgetcompinfo");
     VERIFY(cinfo.deflate.level, 6, "SDgetcompinfo");
 
     /* Only get the compression method and verify it */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    status    = SDgetcomptype(newsds2, &comp_type);
+    status    = SDgetcomptype(newsds, &comp_type);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_DEFLATE, "SDgetcompinfo");
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
+    status          = SDreaddata(newsds, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -817,11 +783,14 @@ test_compressed_data()
             num_errs++;
         }
 
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(newsds, "SDendaccess");
+    ENDSD(fcomp, "SDend");
 
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
+done:
+    if (newsds != FAIL)
+        SDendaccess(newsds);
+    if (fcomp != FAIL)
+        SDend(fcomp);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;

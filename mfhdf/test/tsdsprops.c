@@ -32,7 +32,6 @@
 #include <string.h>
 
 #include "mfhdf.h"
-
 #include "hdftest.h"
 
 /***************************************************************************
@@ -62,9 +61,9 @@
 static int
 test_SDSnames()
 {
-    int32  fid, dset1, dset2;
+    int32  fid = FAIL, dset1 = FAIL, dset2 = FAIL;
     int32  rank, dtype, nattrs, dimsizes[RANK];
-    char  *ds_name;
+    char  *ds_name = NULL;
     uint16 name_len;
     int    status;
     int    num_errs = 0; /* number of errors so far */
@@ -83,15 +82,11 @@ test_SDSnames()
     CHECK(dset2, FAIL, "SDcreate");
 
     /* Close the datasets */
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "SDendaccess");
-
-    status = SDendaccess(dset2);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(dset1, "SDendaccess");
+    ENDSDS(dset2, "SDendaccess");
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
 
     /* Re-open the file to check on the SDS name */
     fid = SDstart(FILE_NAME, DFACC_RDWR);
@@ -115,12 +110,9 @@ test_SDSnames()
     CHECK(status, FAIL, "SDgetinfo");
     VERIFY_CHAR(ds_name, longname_ds, "SDgetinfo");
 
-    /* Close the datasets */
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* Release allocated memory */
-    free(ds_name);
+    /* Close the dataset and release allocated memory */
+    ENDSDS(dset1, "SDendaccess");
+    HDfreenclear(ds_name);
 
     /* Get access to the second dataset */
     dset2 = SDselect(fid, 1);
@@ -141,16 +133,21 @@ test_SDSnames()
     CHECK(status, FAIL, "SDgetinfo");
     VERIFY_CHAR(ds_name, shortname_ds, "SDgetinfo");
 
-    /* Close the datasets */
-    status = SDendaccess(dset2);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* Release allocated memory */
-    free(ds_name);
+    /* Close the dataset and release allocated memory */
+    ENDSDS(dset2, "SDendaccess");
+    HDfreenclear(ds_name);
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
+
+done:
+    free(ds_name);
+    if (dset1 > 0)
+        SDendaccess(dset1);
+    if (dset2 > 0)
+        SDendaccess(dset2);
+    if (fid > 0)
+        SDend(fid);
 
     /* Return the number of errors that's been kept track of, so far */
     return num_errs;
@@ -182,7 +179,7 @@ test_SDSnames()
 static int
 test_unlim_dim()
 {
-    int32 fid, dset1, dset2;
+    int32 fid = FAIL, dset1 = FAIL, dset2 = FAIL;
     int32 rank, start[1], edges[1], dtype, nattrs, dimsizes[1];
     int16 array_data[DIM0];      /* Data to be written to both datasets */
     int16 append_data[DIM0];     /* Data to be appended to both datasets */
@@ -237,15 +234,11 @@ test_unlim_dim()
     CHECK(status, FAIL, "SDwritedata");
 
     /* Close the datasets */
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "SDendaccess");
-
-    status = SDendaccess(dset2);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(dset1, "SDendaccess dset1");
+    ENDSDS(dset2, "SDendaccess dset2");
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
 
     /* Re-open the file to check on the SDS names */
     fid = SDstart(UD_FILE_NAME, DFACC_RDWR);
@@ -288,16 +281,19 @@ test_unlim_dim()
     }
 
     /* Close the datasets */
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* Close the datasets */
-    status = SDendaccess(dset2);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(dset1, "SDendaccess dset1");
+    ENDSDS(dset2, "SDendaccess dset2");
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
+
+done:
+    if (dset1 > 0)
+        SDendaccess(dset1);
+    if (dset2 > 0)
+        SDendaccess(dset2);
+    if (fid > 0)
+        SDend(fid);
 
     /* Return the number of errors that's been kept track of, so far */
     return num_errs;
@@ -327,7 +323,7 @@ test_unlim_dim()
 static int
 test_unlim_inloop()
 {
-    int32 fid;
+    int32 fid = FAIL;
     int32 sds_id[N_DSETS];
     int32 start[RANK1], edges[RANK1], rank, dimsizes[RANK1];
     int32 dtype, nattrs;
@@ -346,12 +342,14 @@ test_unlim_inloop()
 
     /* Create N_DSETS data sets in a loop */
     for (i = 0; i < N_DSETS; i++) {
+        char msg[80];
+
         sprintf(sds_name, "test%d", i);
         sds_id[i] = SDcreate(fid, sds_name, DFNT_FLOAT64, 1, dimsizes);
         CHECK(sds_id[i], FAIL, "SDcreate");
 
-        status = SDendaccess(sds_id[i]);
-        CHECK(status, FAIL, "SDendaccess");
+        sprintf(msg, "SDendaccess %s", sds_name);
+        ENDSDS(sds_id[i], msg);
     }
 
     /* Making up data to write */
@@ -367,21 +365,28 @@ test_unlim_inloop()
         start[0] = SIZE * n_writes;
 
         for (i = 0; i < N_DSETS; i++) {
+            char msg[80];
+            sprintf(msg, "SDendaccess data set #%d", i);
+
             sds_id[i] = SDselect(fid, i);
             CHECK(sds_id[i], FAIL, "SDselect");
 
             status = SDwritedata(sds_id[i], start, NULL, edges, (void *)array_data);
-            CHECK(status, FAIL, "SDwritedata");
+            if (status == FAIL) {
 
-            status = SDendaccess(sds_id[i]);
-            CHECK(status, FAIL, "SDendaccess");
+                fprintf(stderr, "*** Routine SDwritedata FAILED at line %d ***\n", __LINE__);
+                num_errs++;
+
+                ENDSDS(sds_id[i], msg);
+                goto done;
+            }
+            ENDSDS(sds_id[i], msg);
         }
         n_writes++;
     }
 
     /* close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDcreate");
+    ENDSD(fid, "SDend");
 
     /* Re-open the file to check on the SDS name */
     fid = SDstart(UDIL_FILE_NAME, DFACC_RDWR);
@@ -389,13 +394,23 @@ test_unlim_inloop()
 
     for (i = 0; i < N_DSETS; i++) {
         float64 outdata[SIZE * 2];
+        char msg[80];
+        sprintf(msg, "SDendaccess data set #%d", i);
 
         /* Get access to the datasets */
         sds_id[i] = SDselect(fid, i);
+        CHECK(sds_id[i], FAIL, "SDselect");
 
         /* Get information of the first dataset, and verify its name */
         status = SDgetinfo(sds_id[i], sds_name, &rank, dimsizes, &dtype, &nattrs);
-        CHECK(status, FAIL, "SDgetinfo");
+        if (status == FAIL) {
+
+            fprintf(stderr, "*** Routine SDgetinfo FAILED at line %d ***\n", __LINE__);
+            num_errs++;
+
+            ENDSDS(sds_id[i], msg);
+            goto done;
+        }
 
         /* Define the location to read */
         start[0] = 0;
@@ -403,7 +418,19 @@ test_unlim_inloop()
 
         /* Read and check first dataset */
         status = SDreaddata(sds_id[i], start, NULL, edges, (void *)outdata);
-        CHECK(status, FAIL, "SDreaddata");
+        if (status == FAIL) {
+            char msg[80];
+            sprintf(msg, "SDendaccess data set #%d", i);
+
+            fprintf(stderr, "*** Routine SDreaddata FAILED at line %d ***\n", __LINE__);
+            num_errs++;
+
+            ENDSDS(sds_id[i], msg);
+            goto done;
+        }
+
+        /* Close the datasets */
+        ENDSDS(sds_id[i], msg);
 
         /* Verify the read data */
         n_writes = 0;
@@ -414,15 +441,14 @@ test_unlim_inloop()
             }
             n_writes++;
         }
-
-        /* Close the datasets */
-        status = SDendaccess(sds_id[i]);
-        CHECK(status, FAIL, "SDendaccess");
     }
 
     /* close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDcreate");
+    ENDSD(fid, "SDend");
+
+done:
+    if (fid > 0)
+        SDend(fid);
 
     /* Return the number of errors that's been kept track of, so far */
     return num_errs;
@@ -453,7 +479,7 @@ test_unlim_inloop()
 static int
 test_valid_args()
 {
-    int32 fid, dset1, dset2;
+    int32 fid = FAIL, dset1 = FAIL, dset2 = FAIL;
     int32 start[2], edges[2], dtype, nattrs, dimsizes[2], rank, strides[2];
     int16 array_data[X_LENGTH][Y_LENGTH]; /* Data to be written to datasets */
     int16 outdata[X_LENGTH][Y_LENGTH];    /* Data read */
@@ -495,15 +521,11 @@ test_valid_args()
     CHECK(status, FAIL, "SDwritedata");
 
     /* Close the datasets */
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "SDendaccess");
-
-    status = SDendaccess(dset2);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(dset1, "SDendaccess");
+    ENDSDS(dset2, "SDendaccess");
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
 
     /* Re-open the file to check on the SDS names */
     fid = SDstart(ARGS_FILE_NAME, DFACC_RDWR);
@@ -536,16 +558,19 @@ test_valid_args()
     VERIFY(HEvalue(1), DFE_ARGS, "SDreaddata");
 
     /* Close the datasets */
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* Close the datasets */
-    status = SDendaccess(dset2);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(dset1, "SDendaccess");
+    ENDSDS(dset2, "SDendaccess");
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
+
+done:
+    if (dset1 > 0)
+        SDendaccess(dset1);
+    if (dset2 > 0)
+        SDendaccess(dset2);
+    if (fid > 0)
+        SDend(fid);
 
     /* Return the number of errors that's been kept track of, so far */
     return num_errs;
@@ -585,7 +610,7 @@ static int
 makeSDS(int32 sd_id, const char *name, int32 dtype, int32 rank, int32 *dimsizes, int32 *start, int32 *strides,
         int32 *count, void *data)
 {
-    int32 sds_id;
+    int32 sds_id = FAIL;
     int   status;
     int   num_errs = 0; /* number of errors so far */
 
@@ -598,16 +623,18 @@ makeSDS(int32 sd_id, const char *name, int32 dtype, int32 rank, int32 *dimsizes,
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the array. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
+done:
+    if (sds_id > 0)
+        SDendaccess(sds_id);
     return (status);
 }
 
 static int
 test_valid_args2()
 {
-    int32   sd_id, sds_id;
+    int32   sd_id = FAIL, sds_id = FAIL;
     int32   dim[1], dims2[2], dims3[3], d1start[1], d2start[2], d3start[3];
     int32   d1count[1], d2count[2], d3count[3];
     int32   d1stride[1], d2stride[2], d3stride[3];
@@ -677,8 +704,7 @@ test_valid_args2()
     CHECK(status, FAIL, "makeSDS data3");
 
     /* Terminate access to the SD interface and close the file. */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
 
     /* Reopen the file and read in some of the data */
     sd_id = SDstart("b150.hdf", DFACC_READ);
@@ -706,8 +732,7 @@ test_valid_args2()
     VERIFY_FLOAT(outdata1, data1, "SDreaddata first dataset");
 
     /* Terminate access to the first dataset */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Read second dataset with out of bound stride */
     sds_id     = SDselect(sd_id, 1);
@@ -726,8 +751,7 @@ test_valid_args2()
     VERIFY(status, FAIL, "SDreaddata");
 
     /* Terminate access to the second dataset */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Read third dataset with too many values requested */
     sds_id     = SDselect(sd_id, 2);
@@ -755,14 +779,26 @@ test_valid_args2()
     CHECK(status, FAIL, "SDreaddata");
 
     /* Terminate access to the third dataset */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file. */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
 
     /* Free memory for data buffers */
+    free(data2);
+    data2 = NULL;
+    free(outdata2);
+    outdata2 = NULL;
+    free(data3);
+    data3 = NULL;
+    free(outdata3);
+    outdata3 = NULL;
+
+done:
+    if (sds_id > 0)
+        SDendaccess(sds_id);
+    if (sd_id > 0)
+        SDend(sd_id);
     free(data2);
     free(outdata2);
     free(data3);
@@ -787,12 +823,12 @@ test_valid_args2()
 static int
 test_fillvalue()
 {
-    int32 f1;
-    int32 sdid;
+    int32 f1 = FAIL;
+    int32 sdid = FAIL;
     int32 dimsize[RANK]; /* dimension sizes */
     int32 idata[100];
     int32 fillval = 0, readval = 0;
-    int32 index;
+    int32 index = FAIL;
     int32 start[2], end[2];
     int   status;
     int   num_errs = 0; /* number of errors so far */
@@ -840,8 +876,7 @@ test_fillvalue()
     }
 
     /* end access to data set 'FIXED1' */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sdid, "SDendaccess");
 
     /* get index of dataset in file FILE1 called 'FIXED1' */
     index = SDnametoindex(f1, "FIXED1");
@@ -876,8 +911,7 @@ test_fillvalue()
     }
 
     /* end access to data set 'FIXED1' */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sdid, "SDendaccess");
 
     /* set the fill mode for FILE1 to no-fill */
     status = SDsetfillmode(f1, SD_NOFILL);
@@ -904,12 +938,10 @@ test_fillvalue()
     CHECK(status, FAIL, "SDwritedata: (SD_NOFILL)");
 
     /* end access to data set 'FIXED' */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sdid, "SDendaccess");
 
     /* close file FILE1 */
-    status = SDend(f1);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(f1, "SDend FILE1");
 
     /* open again, write record 4 with SD_FILL mode */
     /* fill values already written out in the first SDwritedata,
@@ -945,12 +977,10 @@ test_fillvalue()
     CHECK(status, FAIL, "SDwritedata (SD_FILL)");
 
     /* end access to data set 'FIXED' */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sdid, "SDendaccess");
 
     /* close file FILE1 */
-    status = SDend(f1);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(f1, "SDend FILE1");
 
     /* read back and check fill values */
 
@@ -992,8 +1022,7 @@ test_fillvalue()
     }
 
     /* end access to data set 'FIXED' */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sdid, "SDendaccess");
 
     /* read back in data set 'FIXED1' , with fill values */
 
@@ -1031,12 +1060,16 @@ test_fillvalue()
     }
 
     /* end access to data set 'FIXED1' in file FILE1 */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sdid, "SDendaccess");
 
     /* close file FILE1 */
-    status = SDend(f1);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(f1, "SDend FILE1");
+
+done:
+    if (sdid > 0)
+        SDendaccess(sdid);
+    if (f1 > 0)
+        SDend(f1);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -1055,11 +1088,11 @@ test_fillvalue()
 static int
 test_unlim_fillvalue()
 {
-    int32 f1;
-    int32 sdid;
+    int32 f1 = FAIL;
+    int32 sdid = FAIL;
     int32 dimsize[RANK]; /* dimension sizes */
     int32 idata[100];
-    int32 index;
+    int32 index = FAIL;
     int32 start[2], end[2];
     int32 fillval = 0;
     int   status;
@@ -1101,12 +1134,10 @@ test_unlim_fillvalue()
     CHECK(status, FAIL, "SDwritedata: (SD_NOFILL, UNLIMITED)");
 
     /* end access to data set 'UNLIMITED_SDS' in file FILE1 */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sdid, "SDendaccess");
 
-    /* Close file FILE1 */
-    status = SDend(f1);
-    CHECK(status, FAIL, "SDend");
+    /* close file FILE1 */
+    ENDSD(f1, "SDend FILE1");
 
     /* open again, write record 4 with SD_FILL mode */
 
@@ -1135,12 +1166,10 @@ test_unlim_fillvalue()
     CHECK(status, FAIL, "SDwritedata: (SD_FILL)");
 
     /* end access to data set 'UNLIMITED_SDS' */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sdid, "SDendaccess");
 
     /* close file FILE1 */
-    status = SDend(f1);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(f1, "SDend FILE1");
 
     /* read back and check fill values */
 
@@ -1182,12 +1211,16 @@ test_unlim_fillvalue()
     }
 
     /* end access to data set 'UNLIMITED_SDS' */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sdid, "SDendaccess");
 
     /* close file FILE1 */
-    status = SDend(f1);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(f1, "SDend FILE1");
+
+done:
+    if (sdid > 0)
+        SDendaccess(sdid);
+    if (f1 > 0)
+        SDend(f1);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;

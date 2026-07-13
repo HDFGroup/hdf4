@@ -80,7 +80,7 @@ int readnoHDF_char(const char *filename, const int32 offset, const int32 length,
 static int
 test_attrs()
 {
-    int32   sd_id, sds_id, dim_id, dim_idx, att_idx;
+    int32   sd_id = FAIL, sds_id = FAIL, dim_id = FAIL, dim_idx, att_idx;
     int32   dimsizes[2], starts[2], edges[2];
     int32   data1[LENGTH1_X];
     float   data2[LENGTH2_X][LENGTH2_Y];
@@ -101,7 +101,7 @@ test_attrs()
     /* Set an attribute that describes the file contents. */
     n_values = 16;
     status   = SDsetattr(sd_id, FILE_ATTR_NAME, DFNT_CHAR8, n_values, (void *)file_values);
-    CHECK(status, FAIL, "SDsetattr")
+    CHECK(status, FAIL, "SDsetattr");
 
     /***************************************************************
      Create and write non-special SDSs
@@ -127,16 +127,13 @@ test_attrs()
     status    = SDwritedata(sds_id, starts, NULL, edges, (void *)data1);
     CHECK(status, FAIL, "SDwritedata");
 
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
-
     /* Assign two attributes to the first SDS. */
     n_values = 2;
     status   = SDsetattr(sds_id, SDS_ATTR_NAME1, DFNT_FLOAT32, n_values, (void *)sds_values);
-    CHECK(status, FAIL, "SDsetattr")
+    CHECK(status, FAIL, "SDsetattr");
     n_values = 7;
     status   = SDsetattr(sds_id, SDS_ATTR_NAME2, DFNT_CHAR8, n_values, (void *)dim_values);
-    CHECK(status, FAIL, "SDsetattr")
+    CHECK(status, FAIL, "SDsetattr");
 
     /*
      * Create a 2-dim 5x8 element SDS, type float32, then write 5x8 values
@@ -161,18 +158,16 @@ test_attrs()
     /* Get the the second dimension identifier of the SDS. */
     dim_idx = 1;
     dim_id  = SDgetdimid(sds_id, dim_idx);
-    CHECK(dim_id, FAIL, "SDgetdimid")
+    CHECK(dim_id, FAIL, "SDgetdimid");
 
     /* Set an attribute of the dimension that specifies the dimension metric. */
     n_values = 7;
     status   = SDsetattr(dim_id, DIM_ATTR_NAME, DFNT_CHAR8, n_values, (void *)dim_values);
-    CHECK(status, FAIL, "SDsetattr")
+    CHECK(status, FAIL, "SDsetattr");
 
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
-
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    /* Terminate access to the data set and the file */
+    ENDSDS(sds_id, "SDendaccess");
+    ENDSD(sd_id, "SDend");
 
     /***********************************************************************
      Read data info for later accessing data without the use of HDF4 library
@@ -197,15 +192,19 @@ test_attrs()
         CHECK(status, FAIL, "test_attrs: SDgetattdatainfo");
     }
 
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
-
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    /* Terminate access to the data set and the file */
+    ENDSDS(sds_id, "SDendaccess");
+    ENDSD(sd_id, "SDend");
 
     /******************************************************************
      Read data using previously obtained data info without HDF4 library
      ******************************************************************/
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -258,7 +257,7 @@ static int
 check_lab_desc(const char *fname, uint16 tag, uint16 ref, char *label, char *desc)
 {
     int32 inlablen, indesclen, ret;
-    char  inlabel[MAXLEN_LAB], *indesc;
+    char  inlabel[MAXLEN_LAB], *indesc = NULL;
     int   num_errs = 0;
 
     inlablen = DFANgetlablen(fname, tag, ref);
@@ -272,13 +271,18 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, char *label, char *des
     CHECK(indesclen, FAIL, "check_lab_desc: DFANgetdesclen");
     if (indesclen >= 0) {
         indesc = (char *)malloc((size_t)indesclen + 1);
+        CHECK_ALLOC(indesc, "indesc", "check_lab_desc");
         ret    = DFANgetdesc(fname, tag, ref, indesc, MAXLEN_DESC);
         CHECK(ret, FAIL, "check_lab_desc: DFANgetdesc");
 
         indesc[indesclen] = '\0';
         VERIFY_CHAR(indesc, desc, "check_lab_desc: DFANgetdesc");
-        free(indesc);
+        HDfreenclear(indesc);
     }
+done:
+    free(indesc);
+
+    /* Return the number of errors that's been kept track of so far */
     return (num_errs);
 }
 
@@ -292,7 +296,7 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, char *label, char *des
 int
 add_sdfile_annotations()
 {
-    int32 file_id;
+    int32 file_id = FAIL;
     char  labels[2][MAXLEN_LAB], descs[2][MAXLEN_DESC], tempstr[MAXLEN_DESC];
     int   ret;
     int   num_errs = 0;
@@ -370,6 +374,11 @@ add_sdfile_annotations()
     if (FAIL == Hclose(file_id))
         printf("\n\nUnable to close file %s after reading.\n\n", DFAN_NDG_FILE);
 
+done:
+    if (file_id != FAIL)
+        Hclose(file_id);
+
+    /* Return the number of errors that's been kept track of so far */
     return (num_errs);
 } /* add_sdfile_annotations */
 
@@ -390,7 +399,7 @@ add_sdsNDG_annotations()
     int    rank;
     int    jj;
     int32  dimsizes[2];
-    float *data;
+    float *data = NULL;
     int    num_errs = 0;
 
     /* set up object labels and descriptions */
@@ -440,8 +449,11 @@ add_sdsNDG_annotations()
         /* Verify data of labels and descriptions */
         num_errs = check_lab_desc(DFAN_NDG_FILE, DFTAG_NDG, refnum, labels[jj], descs[jj]);
     }
+
+done:
     free(data);
 
+    /* Return the number of errors that's been kept track of so far */
     return (num_errs);
 } /* add_sdsNDG_annotations */
 
@@ -461,7 +473,7 @@ add_sdsSDG_annotations()
     int    rank;
     int    j;
     int32  dimsizes[2];
-    float *data;
+    float *data = NULL;
 
     /* set up object labels and descriptions */
 
@@ -474,6 +486,7 @@ add_sdsSDG_annotations()
     /***** generate float array and image *****/
 
     data = (float *)malloc(ROWS * COLS * sizeof(float));
+    CHECK_ALLOC(data, "data", "add_sdsSDG_annotations");
 
     dimsizes[0] = ROWS;
     dimsizes[1] = COLS;
@@ -503,8 +516,9 @@ add_sdsSDG_annotations()
         if ((j % 3) != 0) /* read in annotations for 2 out of every 3 */
             check_lab_desc(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds, descsds);
     }
-    free(data);
 
+done:
+    free(data);
     return 0;
 }
 
@@ -526,11 +540,9 @@ get_ann_datainfo(int32 id, ann_type annot_type, int32 *chk_offsets, int32 *chk_l
 
     if (num_annots > 0) {
         offsetarray = (int32 *)malloc((size_t)num_annots * sizeof(int32));
-        if (offsetarray == NULL)
-            exit(-1);
+        CHECK_ALLOC(offsetarray, "offsetarray", "get_ann_datainfo");
         lengtharray = (int32 *)malloc((size_t)num_annots * sizeof(int32));
-        if (lengtharray == NULL)
-            exit(-1);
+        CHECK_ALLOC(offsetarray, "offsetarray", "get_ann_datainfo");
 
         num_annots = SDgetanndatainfo(id, annot_type, (unsigned)num_annots, offsetarray, lengtharray);
         CHECK(num_annots, FAIL, "get_ann_datainfo: SDgetanndatainfo");
@@ -540,11 +552,14 @@ get_ann_datainfo(int32 id, ann_type annot_type, int32 *chk_offsets, int32 *chk_l
             VERIFY(offsetarray[ii], chk_offsets[ii], "get_ann_datainfo: SDgetanndatainfo");
             VERIFY(lengtharray[ii], chk_lengths[ii], "get_ann_datainfo: SDgetanndatainfo");
         }
-
-        free(offsetarray);
-        free(lengtharray);
     }
-    return (num_errs);
+
+done:
+    free(offsetarray);
+    free(lengtharray);
+
+    /* Return the number of errors that's been kept track of so far */
+    return(num_errs);
 }
 
 /***************************************************************************
@@ -559,7 +574,7 @@ get_ann_datainfo(int32 id, ann_type annot_type, int32 *chk_offsets, int32 *chk_l
 static int
 test_dfannots(void)
 {
-    int32 sd_id, sds_id, sds_index;
+    int32 sd_id = FAIL, sds_id = FAIL, sds_index = FAIL;
     int   status;
     int32 n_datasets, n_file_attr;
     int32 chk_offsets[10], chk_lengths[10];
@@ -656,14 +671,12 @@ test_dfannots(void)
                 fprintf(stderr, "test_dfannots: errors while verifying annotations\n");
         } /* SDS is not coordinate var */
 
-        /* Terminate access to the selected data set. */
-        status = SDendaccess(sds_id);
-        CHECK(status, FAIL, "test_dfannots: SDendaccess");
+        /* Terminate access to the data set */
+        ENDSDS(sds_id, "SDendaccess");
     } /* for each data set */
 
     /* Terminate access to the SD interface and close the file. */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "test_dfannots: SDend");
+    ENDSD(sd_id, "SDend");
 
     /**********************************************************************
      * Using SD API to get offset/length of data from file annotations    *
@@ -671,6 +684,12 @@ test_dfannots(void)
      * -Not doing now because there are no such data in NASA files and we *
      * are running out of time.                                           *
      **********************************************************************/
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
+
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
 }
@@ -845,12 +864,17 @@ test_dfsdattrs()
        need to study that to document better. */
 
     /* Terminate access to the dataset and close the file */
-    status = SDendaccess(sdsid);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSDS(sdsid, "SDendaccess");
+    ENDSD(fid, "SDend");
 
-    return (num_errs);
+done:
+    if (sdsid != FAIL)
+        SDendaccess(sdsid);
+    if (fid != FAIL)
+        SDend(fid);
+
+    /* Return the number of errors that's been kept track of so far */
+    return num_errs;
 }
 
 int
@@ -888,9 +912,9 @@ compare(const char *outstring, const char *instring)
 int
 readnoHDF_char(const char *filename, const int32 offset, const int32 length, const char *orig_buf)
 {
-    FILE  *fd;          /* file descriptor */
+    FILE  *fd = NULL;   /* file descriptor */
     size_t readlen = 0; /* number of bytes actually read */
-    char  *readcbuf;
+    char  *readcbuf = NULL;
     int    ret_value = SUCCEED;
 
     /* Open the file for reading without SD API */
@@ -920,13 +944,21 @@ readnoHDF_char(const char *filename, const int32 offset, const int32 length, con
                     "%s\n   >>> read = %s\n",
                     orig_buf, readcbuf);
     }
-    free(readcbuf);
+    HDfreenclear(readcbuf);
 
     /* Close the file */
     if (fclose(fd) == -1) {
         fprintf(stderr, "readnoHDF_char: unable to close file %s", filename);
         exit(1);
     }
+    fd = NULL;
+
+done:
+    free(readcbuf);
+    if (fd != NULL)
+        fclose(fd);
+
+    /* Return the number of errors that's been kept track of so far */
     return ret_value;
 }
 

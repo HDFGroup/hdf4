@@ -50,7 +50,7 @@
 #define DIM1     5
 #define DIM2     5
 
-void verify_data(int32 sd_id, int32 sds_ind);
+int verify_data(int32 sd_id, int32 sds_ind);
 
 /* Same set of data for every 3-dim data set.  Initialized in test_external(). */
 int32 written_data[Z_LENGTH][Y_LENGTH][X_LENGTH];
@@ -91,7 +91,7 @@ int32 ap_data[1][Y_LENGTH][X_LENGTH];
 static int
 test_setexternal()
 {
-    int32 sd_id, sds_id;
+    int32 sd_id = FAIL, sds_id = FAIL;
     int32 start[2], edges[2], dimsizes[2], nt, offset;
     int32 idata[DIM1 * DIM2];
     int   ii;
@@ -138,12 +138,10 @@ test_setexternal()
     CHECK(status, FAIL, "SDwritedata");
 
     /* End access to the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Need to close to flush external info to the HDF file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
 
     /* Open the HDF file again */
     sd_id = SDstart(EXTTST, DFACC_RDWR);
@@ -165,12 +163,10 @@ test_setexternal()
     CHECK(status, FAIL, "SDsetexternalfile");
 
     /* End access to the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Need to close to flush external info to the HDF, or main, file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
 
     /* Open the HDF file again */
     sd_id = SDstart(EXTTST, DFACC_RDWR);
@@ -201,8 +197,7 @@ test_setexternal()
     }
 
     /* End access to the wrapper data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Create an empty data set then write external data to it */
 
@@ -215,7 +210,7 @@ test_setexternal()
           "SDcreate: Failed to create a new data set for testing writing external data to an empty data set");
 
     /* Close data sets */
-    status = SDendaccess(sds_id);
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Re-open the named data set, id is checked by callee */
     sds_id = get_SDSbyName(sd_id, EXTSDS2);
@@ -235,12 +230,16 @@ test_setexternal()
     CHECK(status, FAIL, "SDwritedata");
 
     /* Close data sets */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Close HDF file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -266,9 +265,9 @@ test_setexternal()
 static int
 test_getexternal()
 {
-    int32 sd_id, sds_id, noextsds;
+    int32 sd_id = FAIL, sds_id = FAIL, noextsds = FAIL;
     int   name_len = 0;
-    char *extfile_name;
+    char *extfile_name = NULL;
     int32 offset = 0, length = 0;
     int32 start[2], edges[2], dimsizes[2], nt;
     int32 idata[DIM1 * DIM2];
@@ -299,12 +298,10 @@ test_getexternal()
     start[0] = start[1] = 0;
     edges[0] = edges[1] = DIM1;
     status              = SDwritedata(noextsds, start, NULL, edges, (void *)idata);
-    CHECK(status, FAIL, NOEXTSDS);
     CHECK(status, FAIL, "SDwritedata");
 
-    /* Close data sets */
-    status = SDendaccess(noextsds);
-    CHECK(status, FAIL, "SDendaccess");
+    /* Close data set */
+    ENDSDS(noextsds, "SDendaccess");
 
     /*
      * Test getting external info on an external data set; should return the
@@ -329,7 +326,7 @@ test_getexternal()
         name_len = SDgetexternalfile(sds_id, name_len + 1, extfile_name, &offset);
         VERIFY(name_len, (int)strlen(EXTFILE), "SDgetexternalfile");
         VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalfile");
-        free(extfile_name);
+        HDfreenclear(extfile_name);
     }
 
     /* Call SDgetexternalinfo the first time passing in 0 for external
@@ -370,15 +367,18 @@ test_getexternal()
            that SDgetexternalinfo reads the name truncated to the given
            buffer size*/
         name_len = SDgetexternalinfo(sds_id, (unsigned)name_len - 2, extfile_name, &offset, &length);
+        if (strcmp(short_name, extfile_name) != 0) {
+            fprintf(stderr, "*** UNEXPECTED VALUE from SDgetexternalinfo is %s at line %4d in %s\n", short_name, (int)__LINE__, __FILE__);
+            HDfreenclear(short_name);
+            num_errs++;
+        }
+        HDfreenclear(short_name);
         VERIFY(name_len, (int)strlen(extfile_name), "SDgetexternalinfo");
-        VERIFY_CHAR(short_name, extfile_name, "SDgetexternalinfo");
-        free(short_name);
     }
-    free(extfile_name);
+    HDfreenclear(extfile_name);
 
     /* Close the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /*
      * Test getting external info on a wrapper data set; should return the
@@ -410,7 +410,8 @@ test_getexternal()
     name_len = SDgetexternalinfo(sds_id, (unsigned)name_len + 1, extfile_name, &offset, &length);
     VERIFY(name_len, (int)strlen(EXTFILE), "SDgetexternalinfo");
     VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalinfo");
-    free(extfile_name);
+    ENDSDS(sds_id, "SDendaccess");
+    HDfreenclear(extfile_name);
 
     /*
      * Test getting external info on a non-external data set; should return
@@ -424,13 +425,19 @@ test_getexternal()
     element, should return 0 for length of external file name */
     name_len = SDgetexternalinfo(noextsds, 0, NULL, NULL, NULL);
     VERIFY(name_len, 0, "SDgetexternalinfo");
-
-    status = SDendaccess(noextsds);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(noextsds, "SDendaccess");
 
     /* Close file 'exttst.hdf' */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (noextsds != FAIL)
+        SDendaccess(noextsds);
+    if (sd_id != FAIL)
+        SDend(sd_id);
+
+    free(extfile_name);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -455,7 +462,7 @@ test_getexternal()
 int
 test_mult_setexternal()
 {
-    int32 sd_id, sds1_id;
+    int32 sd_id = FAIL, sds1_id = FAIL;
     int32 dim_sizes[3];
     int32 size_written = 0;
     char *extfile_name = NULL;
@@ -482,8 +489,7 @@ test_mult_setexternal()
     CHECK(size_written, FAIL, "make_Ext3D_SDS");
 
     /* Close the file to flush */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
 
     /* Re-open the file */
     sd_id = SDstart(EXTTST, DFACC_RDWR);
@@ -522,23 +528,29 @@ test_mult_setexternal()
     VERIFY_CHAR(EXTFILE2, extfile_name, "SDgetexternalinfo");
 
     /* Close the data set and the file */
-    status = SDendaccess(sds1_id);
-    CHECK(status, FAIL, "SDendaccess SDS1");
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSDS(sds1_id, "SDendaccess SDS1");
+    ENDSD(sd_id, "SDend");
 
     /* Re-open the file to verify written data */
     sd_id = SDstart(EXTTST, DFACC_RDWR);
     CHECK(status, FAIL, "SDstart");
 
     /* Read data of the data set and verify against the original */
-    verify_data(sd_id, 0);
+    status = verify_data(sd_id, 0);
+    CHECK(status, FAIL, "verify_data");
 
-    free(extfile_name);
+    HDfreenclear(extfile_name);
 
     /* Close the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
+
+done:
+    if (sds1_id != FAIL)
+        SDendaccess(sds1_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
+
+    free(extfile_name);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -570,7 +582,7 @@ test_mult_setexternal()
 int
 test_special_combos()
 {
-    int32 sd_id, sds2_id, sds3_id, sds4_id;
+    int32 sd_id = FAIL, sds2_id = FAIL, sds3_id = FAIL, sds4_id = FAIL;
     int32 num_sds = 0, num_attrs = 0;
     int32 ap_start[3], ap_edges[3], dim_sizes[3];
     int32 sds2_size = 0, sds3_size = 0, sds4_size = 0;
@@ -592,11 +604,12 @@ test_special_combos()
     /* Create and write two unlimited-dimension data sets, SDS2 and SDS3,
        in the main file.  Z_LENGTH is passed for unlimited dimension. */
     sds2_size = make_SDS(sd_id, SDS2, DFNT_INT32, 3, dim_sizes, Z_LENGTH, (void *)written_data);
+    CHECK(sds2_size, FAIL, "make_SDS SDS2");
     sds3_size = make_SDS(sd_id, SDS3, DFNT_INT32, 3, dim_sizes, Z_LENGTH, (void *)written_data);
+    CHECK(sds3_size, FAIL, "make_SDS SDS3");
 
     /* Close the file to flush */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
 
     /* Re-open the file */
     sd_id = SDstart(EXTTST, DFACC_RDWR);
@@ -671,16 +684,12 @@ test_special_combos()
     status = verify_datasize(sds4_id, sds4_size, SDS4);
     CHECK(status, FAIL, "verify_datasize");
 
-    status = SDendaccess(sds2_id);
-    CHECK(status, FAIL, "SDendaccess SDS2");
-    status = SDendaccess(sds3_id);
-    CHECK(status, FAIL, "SDendaccess SDS3");
-    status = SDendaccess(sds4_id);
-    CHECK(status, FAIL, "SDendaccess SDS4");
+    ENDSDS(sds2_id, "SDendaccess SDS2");
+    ENDSDS(sds3_id, "SDendaccess SDS3");
+    ENDSDS(sds4_id, "SDendaccess SDS4");
 
     /* Close the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
 
     /* Re-open the file to verify written data */
     sd_id = SDstart(EXTTST, DFACC_RDWR);
@@ -691,12 +700,22 @@ test_special_combos()
 
     /* Read data of each data sets and verify against the original */
     for (ii = 0; ii < num_sds; ii++) {
-        verify_data(sd_id, ii);
+        status = verify_data(sd_id, ii);
+        CHECK(status, FAIL, "verify_data");
     }
 
     /* Close the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
+
+done:
+    if (sds2_id != FAIL)
+        SDendaccess(sds2_id);
+    if (sds3_id != FAIL)
+        SDendaccess(sds3_id);
+    if (sds4_id != FAIL)
+        SDendaccess(sds4_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -727,8 +746,8 @@ test_special_combos()
 static int
 test_change_extdir(void)
 {
-    int32  sd_id;
-    int32  sds_id;
+    int32  sd_id = FAIL;
+    int32  sds_id = FAIL;
     float  sds_data[] = {0.1f, 2.3f, 4.5f, 6.7f, 8.9f};
     float  sds1_out[5];
     int32  start = 0, stride = 1, edge;
@@ -787,10 +806,8 @@ test_change_extdir(void)
     status = SDwritedata(sds_id, &start, &stride, &edge, sds_data);
     CHECK(status, FAIL, "SDwritedata");
 
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSDS(sds_id, "SDendaccess");
+    ENDSD(sd_id, "SDend");
 
     /* Open the file to read */
     sd_id = SDstart(MAIN_FILE, DFACC_READ);
@@ -830,7 +847,7 @@ test_change_extdir(void)
     CHECK(status, FAIL, "HXsetdir another_path");
     status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
     VERIFY(status, FAIL, "SDreaddata");
-    free(another_path);
+    HDfreenclear(another_path);
 
     status = HXsetdir(dir_name);
     CHECK(status, FAIL, "HXsetdir dir_name");
@@ -843,10 +860,8 @@ test_change_extdir(void)
     VERIFY(status, FAIL, "SDreaddata");
 
     /* Terminates access to the SD interface and closes the file */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSDS(sds_id, "SDendaccess");
+    ENDSD(sd_id, "SDend");
 
     /* Remove external data file */
     created_file_path = (char *)malloc(strlen(dir_name) + strlen(EXT_FILE) + 1);
@@ -855,7 +870,7 @@ test_change_extdir(void)
     strcat(created_file_path, EXT_FILE);
     command_ret = remove(created_file_path);
     CHECK(command_ret, FAIL, "remove created_file_path");
-    free(created_file_path);
+    HDfreenclear(created_file_path);
 
     /* Remove hdf file */
     command_ret = remove(MAIN_FILE);
@@ -865,8 +880,18 @@ test_change_extdir(void)
     if (temp_dir) {
         command_ret = rmdir(temp_dir);
         CHECK(command_ret, (-1), "remove temp_dir");
-        free(temp_dir);
+        HDfreenclear(temp_dir);
     }
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
+
+    free(temp_dir);
+    free(another_path);
+    free(created_file_path);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -892,8 +917,8 @@ test_change_extdir(void)
 static int
 test_HDFFR_1609(void)
 {
-    int32 sd_id;
-    int32 sds_id;
+    int32 sd_id = FAIL;
+    int32 sds_id = FAIL;
     float sds_data[] = {0.1f, 2.3f, 4.5f, 6.7f, 8.9f};
     int32 start = 0, stride = 1, edge;
     int32 dimsize[RANK];
@@ -952,10 +977,8 @@ test_HDFFR_1609(void)
     status = SDwritedata(sds_id, &start, &stride, &edge, sds_data);
     CHECK(status, FAIL, "SDwritedata");
 
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSDS(sds_id, "SDendaccess");
+    ENDSD(sd_id, "SDend");
 
     /* Remove external data file */
     created_file_path = (char *)malloc(strlen(dir_name) + strlen(EXT_FILE) + 1);
@@ -964,7 +987,7 @@ test_HDFFR_1609(void)
     strcat(created_file_path, EXT_FILE);
     command_ret = remove(created_file_path);
     CHECK(command_ret, FAIL, "remove created_file_path");
-    free(created_file_path);
+    HDfreenclear(created_file_path);
 
     /* Remove hdf file */
     command_ret = remove(MAIN_FILE);
@@ -974,8 +997,17 @@ test_HDFFR_1609(void)
     if (temp_dir) {
         command_ret = rmdir(temp_dir);
         CHECK(command_ret, (-1), "remove temp_dir");
-        free(temp_dir);
+        HDfreenclear(temp_dir);
     }
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
+
+    free(temp_dir);
+    free(created_file_path);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -1034,11 +1066,11 @@ test_external()
    Return value:
         None.
 *********************************************************************/
-void
+int
 verify_data(int32 sd_id, int32 sds_ind)
 {
-    int32  sds_id;
-    int32 *ptr;
+    int32  sds_id = FAIL;
+    int32 *ptr = NULL;
     char   name[80];
     int32  data_size, rank1;
     int32  start[3], edges[3], dims[3];
@@ -1120,10 +1152,15 @@ verify_data(int32 sd_id, int32 sds_ind)
     }
 
     /* Release resource */
-    free(outdata);
+    HDfreenclear(outdata);
 
     /* Terminate access to the data set, SD interface, and file. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+
+    /* Return the number of errors that's been kept track of so far */
+    return num_errs;
 } /* verify_data */

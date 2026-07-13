@@ -38,7 +38,7 @@ test_szip_SDS8bit()
 {
     /************************* Variable declaration **************************/
 
-    int32        sd_id, sds_id;
+    int32        sd_id = FAIL, sds_id = FAIL;
     int          status;
     int32        dim_sizes[2], array_rank, num_type, attributes;
     char         name[H4_MAX_NC_NAME];
@@ -94,13 +94,11 @@ test_szip_SDS8bit()
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file to
        flush the compressed info to the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
 
     /*
      * Verify the compressed data
@@ -148,12 +146,16 @@ test_szip_SDS8bit()
     }
 
     /* Terminate access to the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -164,7 +166,7 @@ test_szip_SDS16bit()
 {
     /************************* Variable declaration **************************/
 
-    int32     sd_id, sds_id;
+    int32     sd_id = FAIL, sds_id = FAIL;
     int       status;
     int32     dim_sizes[2], array_rank, num_type, attributes;
     char      name[H4_MAX_NC_NAME];
@@ -219,13 +221,11 @@ test_szip_SDS16bit()
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file to
        flush the compressed info to the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
 
     /*
      * Verify the compressed data
@@ -264,12 +264,16 @@ test_szip_SDS16bit()
     }
 
     /* Terminate access to the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -280,7 +284,7 @@ test_szip_SDS32bit()
 {
     /************************* Variable declaration **************************/
 
-    int32     sd_id, sds_id;
+    int32     sd_id = FAIL, sds_id = FAIL;
     int       status;
     int32     dim_sizes[2], array_rank, num_type, attributes;
     char      name[H4_MAX_NC_NAME];
@@ -335,13 +339,11 @@ test_szip_SDS32bit()
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file to
        flush the compressed info to the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
 
     /*
      * Verify the compressed data
@@ -380,12 +382,16 @@ test_szip_SDS32bit()
     }
 
     /* Terminate access to the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -396,7 +402,7 @@ test_szip_SDSfl32bit()
 {
     /************************* Variable declaration **************************/
 
-    int32     sd_id, sds_id;
+    int32     sd_id = FAIL, sds_id = FAIL;
     int       status;
     int32     dim_sizes[2], array_rank, num_type, attributes;
     char      name[H4_MAX_NC_NAME];
@@ -453,13 +459,11 @@ test_szip_SDSfl32bit()
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file to
        flush the compressed info to the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
 
     /*
      * Verify the compressed data
@@ -498,12 +502,16 @@ test_szip_SDSfl32bit()
     }
 
     /* Terminate access to the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -514,7 +522,7 @@ test_szip_SDSfl64bit()
 {
     /************************* Variable declaration **************************/
 
-    int32     sd_id, sds_id;
+    int32     sd_id = FAIL, sds_id = FAIL;
     int       status;
     int32     dim_sizes[2], array_rank, num_type, attributes;
     char      name[H4_MAX_NC_NAME];
@@ -571,13 +579,11 @@ test_szip_SDSfl64bit()
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file to
        flush the compressed info to the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
 
     /*
      * Verify the compressed data
@@ -616,12 +622,16 @@ test_szip_SDSfl64bit()
     }
 
     /* Terminate access to the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -640,7 +650,7 @@ test_szip_chunk()
 {
     /************************* Variable declaration **************************/
 
-    int32         sd_id, sds_id, sds_index;
+    int32         sd_id = FAIL, sds_id = FAIL, sds_index;
     int           status;
     int32         flag, maxcache, new_maxcache;
     int32         dim_sizes[2], origin[2];
@@ -771,12 +781,10 @@ test_szip_chunk()
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the data set. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file. */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
 
     /*
      * Verify the compressed data
@@ -863,12 +871,16 @@ test_szip_chunk()
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDgetdatasize");
 
     /* Terminate access to the data set. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file. */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -890,7 +902,7 @@ test_szip_chunk_3d()
 {
     /************************* Variable declaration **************************/
 
-    int32         sd_id, sds_id0, sds_id, sds_index;
+    int32         sd_id = FAIL, sds_id0 = FAIL, sds_id = FAIL, sds_index;
     int           status;
     int32         dim_sizes[3];
     HDF_CHUNK_DEF c_def;     /* Chunking definitions */
@@ -950,6 +962,7 @@ test_szip_chunk_3d()
     c_def.comp.cinfo.szip.pixels_per_scanline = 2;
     c_flags                                   = HDF_CHUNK | HDF_COMP;
     status                                    = SDsetchunk(sds_id0, c_def, c_flags);
+    CHECK(status, FAIL, "SDsetchunk");
     status                                    = SDsetchunk(sds_id, c_def, c_flags);
     CHECK(status, FAIL, "SDsetchunk");
 
@@ -977,15 +990,11 @@ test_szip_chunk_3d()
     VERIFY(c_def_out.comp.comp_type, COMP_CODE_SZIP, "SDgetchunkinfo");
 
     /* Terminate access to the data sets. */
-    status = SDendaccess(sds_id0);
-    CHECK(status, FAIL, "SDendaccess");
-
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id0, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file. */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
 
     /*
      * Verify the compressed data
@@ -1033,12 +1042,18 @@ test_szip_chunk_3d()
     }
 
     /* Terminate access to the data set. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file. */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sds_id0 != FAIL)
+        SDendaccess(sds_id0);
+    if (sd_id != FAIL)
+        SDend(sd_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -1056,7 +1071,7 @@ test_szip_unlimited()
 {
     /************************* Variable declaration **************************/
 
-    int32     sd_id, sds_id;
+    int32     sd_id = FAIL, sds_id = FAIL;
     int       status;
     int32     dim_sizes[2], array_rank, num_type, attributes;
     char      name[H4_MAX_NC_NAME];
@@ -1112,13 +1127,11 @@ test_szip_unlimited()
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file to
        flush the compressed info to the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
 
     /*
      * Verify the written data
@@ -1158,12 +1171,16 @@ test_szip_unlimited()
     }
 
     /* Terminate access to the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -1267,12 +1284,16 @@ test_getszipinfo()
     }
 
     /* Terminate access to the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -1302,7 +1323,7 @@ test_getszipdata()
 {
     /************************* Variable declaration **************************/
 
-    int32       sd_id, sds_id;
+    int32       sd_id = FAIL, sds_id = FAIL;
     int         status;
     int32       dim_sizes[2], array_rank, num_type, attributes;
     char        name[H4_MAX_NC_NAME];
@@ -1359,12 +1380,16 @@ test_getszipdata()
     }
 
     /* Terminate access to the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;

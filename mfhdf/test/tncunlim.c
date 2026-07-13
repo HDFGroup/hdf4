@@ -266,7 +266,8 @@ test_1dim_singlevar()
     status = ncclose(ncid);
     CHECK(status, -1, "ncclose");
 
-    return 0;
+done:
+    return num_errs;
 } /* test_1dim_singlevar */
 
 /********************************************************************
@@ -643,6 +644,7 @@ test_1dim_multivars()
     /* Close file */
     status = ncclose(ncid);
     CHECK(status, -1, "ncclose");
+done:
 
     return num_errs;
 } /* test_1dim_multivars */
@@ -895,7 +897,8 @@ test_multidim_singlevar()
     status = ncclose(ncid);
     CHECK(status, -1, "ncclose");
 
-    return 0;
+done:
+    return num_errs;
 }
 
 /* Test driver for testing reading/writing variables with unlimited dimension

@@ -12,7 +12,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "mfhdf.h"
-
 #include "hdftest.h"
 #include "nc_priv.h"
 
@@ -52,7 +51,9 @@
 static int
 test_file_inuse()
 {
-    int32       file_id, sd_id[5], sds_id[5];
+    int32       file_id = FAIL;
+    int32       sd_id[5] = {FAIL, FAIL, FAIL, FAIL, FAIL},
+                sds_id[5] = {FAIL, FAIL, FAIL, FAIL, FAIL};
     int         statusn;
     int32       dims[1], start[1], edges[1], rank;
     int16       array_data[DIM0];
@@ -104,6 +105,7 @@ test_file_inuse()
 
         /* Terminate access to the data sets. */
         statusn = SDendaccess(sds_id[i]);
+        sds_id[i] = FAIL;
         if (i == 0) {
             CHECK(statusn, FAIL, "SDendaccess");
         } /* 1st SDendaccess must pass */
@@ -115,6 +117,7 @@ test_file_inuse()
     for (i = 0; i < 5; i++) {
         /* Terminate access to the SD interface and close the file. */
         statusn = SDend(sd_id[i]);
+        sd_id[i] = FAIL;
         if (i == 0) {
             CHECK(statusn, FAIL, "SDend");
         } /* 1st SDend must pass */
@@ -128,7 +131,13 @@ test_file_inuse()
 
     statusn = SDend(file_id);
     CHECK(statusn, FAIL, "SDend");
-
+done:
+    for (i = 0; i < 5; i++) {
+        if (sds_id[i] != FAIL)
+            SDendaccess(sds_id[i]);
+        if (sd_id[i] != FAIL)
+            SDend(sd_id[i]);
+    }
     return num_errs;
 } /* test_file_inuse */
 
@@ -225,12 +234,9 @@ test_max_open_files()
     VERIFY(curr_opened, NUM_FILES_LOW, "test_maxopenfiles: SDget_numopenfiles");
 
     /* Now randomly close 3 files and check number of opened files */
-    status = SDend(fids[5]);
-    CHECK(status, FAIL, "test_maxopenfiles: SDend");
-    status = SDend(fids[15]);
-    CHECK(status, FAIL, "test_maxopenfiles: SDend");
-    status = SDend(fids[25]);
-    CHECK(status, FAIL, "test_maxopenfiles: SDend");
+    ENDSD(fids[5], "test_maxopenfiles: SDend");
+    ENDSD(fids[15], "test_maxopenfiles: SDend");
+    ENDSD(fids[25], "test_maxopenfiles: SDend");
     curr_opened = SDget_numopenfiles();
     VERIFY(curr_opened, NUM_FILES_LOW - 3, "test_maxopenfiles: SDget_numopenfiles");
 
@@ -284,8 +290,7 @@ test_max_open_files()
     /* Close all the files, then try opening all again to verify their
        names, this is to test bugzilla 440 */
     for (index = 0; index < temp_limit; index++) {
-        status = SDend(fids[index]);
-        CHECK(status, FAIL, "test_maxopenfiles: SDend");
+        ENDSD(fids[index], "test_maxopenfiles: SDend");
 
         fids[index] = SDstart(filenames[index], DFACC_RDWR);
         CHECK(fids[index], FAIL, "test_maxopenfiles: SDstart");
@@ -305,16 +310,17 @@ test_max_open_files()
 
     /* Close then remove all the files */
     for (index = 0; index < temp_limit; index++) {
-        status = SDend(fids[index]);
-        CHECK(status, FAIL, "test_maxopenfiles: SDend");
+        ENDSD(fids[index], "test_maxopenfiles: SDend");
         remove(filenames[index]);
     }
-
+done:
     /* Free memory */
     free(fids);
-    for (int i = 0; i < NUM_FILES_HI; i++)
-        free(filenames[i]);
-    free(filenames);
+    if (filenames) {
+        for (int i = 0; i < NUM_FILES_HI; i++)
+            free(filenames[i]);
+        free(filenames);
+    }
 
     return num_errs;
 }
@@ -340,9 +346,9 @@ test_max_open_files()
 static int
 test_longfilename()
 {
-    int32 fid;     /* file id */
-    int32 dset1;   /* dataset ids */
-    int32 dims[2]; /* variable shapes */
+    int32 fid = FAIL;     /* file id */
+    int32 dset1 = FAIL;   /* dataset ids */
+    int32 dims[2];        /* variable shapes */
     char  dsname[10];
     char  filename[256];
     int   status   = 0; /* status returned by called functions */
@@ -364,11 +370,13 @@ test_longfilename()
     dset1 = SDcreate(fid, dsname, DFNT_FLOAT32, 2, dims);
     CHECK(dset1, FAIL, "test_longfilename: SDcreate");
 
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "test_longfilename: SDendaccess");
-
-    status = SDend(fid);
-    CHECK(status, FAIL, "test_longfilename: SDend");
+    ENDSDS(dset1, "test_longfilename: SDendaccess");
+    ENDSD(fid, "test_longfilename: SDend");
+done:
+    if (dset1 != FAIL)
+        SDendaccess(dset1);
+    if (fid != FAIL)
+        SDend (fid);
 
     return num_errs;
 }
@@ -392,7 +400,7 @@ test_longfilename()
 static int
 test_fileformat()
 {
-    int32       fid;                          /* file id */
+    int32       fid          = FAIL;          /* file id */
     int         ishdf        = 0;             /* true if file has HDF format */
     int         isnetcdf     = 0;             /* true if file has classic netCDF format */
     int         isnetcdf64   = 0;             /* true if file has 64-bit netCDF format */
@@ -403,8 +411,7 @@ test_fileformat()
     /* Create an empty HDF file to test Hishdf. */
     fid = SDstart(hdf_basename, DFACC_CREATE);
     CHECK(fid, FAIL, "SDstart");
-    status = SDend(fid);
-    CHECK(status, FAIL, "test_longfilename: SDend");
+    ENDSD(fid, "test_longfilename: SDend");
 
     /* Verify that this is an HDF file */
     ishdf = Hishdf(hdf_basename);
@@ -439,6 +446,9 @@ test_fileformat()
         isnetcdf = HDisnetcdf(netcdf_filename);
         VERIFY(isnetcdf, FALSE, "test_fileformat: HDisnetcdf");
     }
+done:
+    if (fid != FAIL)
+        SDend(fid);
 
     return num_errs;
 }
@@ -462,8 +472,8 @@ test_fileformat()
 static int
 test_invalid_opening()
 {
-    int32 fid;          /* file id */
-    int   num_errs = 0; /* number of errors */
+    int32 fid      = FAIL; /* file id */
+    int   num_errs = 0;    /* number of errors */
 
     /* Try opening a non-existing file with RDONLY and RDWR. Both should fail. */
 

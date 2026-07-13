@@ -85,9 +85,11 @@ test_count(void)
     char    sds_name[20], dim_name[20];
     float32 sds1_data[] = {0.1F, 2.3F, 4.5F, 6.7F, 8.9F};
     int32   dimsize[1], size;
-    int32   sds_id, file_id, dim_id, index;
+    int32   sds_id = FAIL,
+            file_id = FAIL,
+            dim_id = FAIL;
     int32   start = 0, stride = 1;
-    int32   ntype, rank, count;
+    int32   ntype, rank, count, index;
     int32   nattrs = 0;
     int     status = 0;
     char    attr_name[H4_MAX_NC_NAME], attr_values[80];
@@ -115,10 +117,8 @@ test_count(void)
        the file is opened again. */
 
     /* Close dataset and file. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDend(file_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSDS(sds_id, "SDendaccess");
+    ENDSD(file_id, "SDend");
 
     /* Open the file again to check attributes */
     file_id = SDstart(FILE_SATTR, DFACC_RDWR);
@@ -155,10 +155,8 @@ test_count(void)
        and for the dimension. */
 
     /* Close dataset and file. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDend(file_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSDS(sds_id, "SDendaccess");
+    ENDSD(file_id, "SDend");
 
     /* Open the file again to check attributes */
     file_id = SDstart(FILE_SATTR, DFACC_RDWR);
@@ -192,10 +190,8 @@ test_count(void)
     CHECK(status, FAIL, "SDwritedata");
 
     /* Close dataset and file. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDend(file_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSDS(sds_id, "SDendaccess");
+    ENDSD(file_id, "SDend");
 
     /* Open the file again to check attributes */
     file_id = SDstart(FILE_SATTR, DFACC_RDWR);
@@ -253,11 +249,14 @@ test_count(void)
     }
 
     /* Close dataset and file. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
+    ENDSD(file_id, "SDend");
 
-    status = SDend(file_id);
-    CHECK(status, FAIL, "SDend");
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (file_id != FAIL)
+        SDend(file_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -282,16 +281,19 @@ test_count(void)
 static int
 test_attribute_ops()
 {
-    int32    fid1, fid2;               /* File handles */
-    int32    nt;                       /* Number type */
-    int32    dimsize[10];              /* dimension sizes */
-    int32    newsds, newsds2, newsds3; /* SDS handles */
-    int32    dimid, dimid2;            /* Dimension handles */
-    int32    num_sds;                  /* number of SDS in file */
-    int32    num_gattr;                /* Number of global attributes */
-    int32    index;                    /* Index of dataset in file */
+    int32    fid1 = FAIL,
+             fid2 = FAIL;    /* File handles */
+    int32    nt;             /* Number type */
+    int32    dimsize[10];    /* dimension sizes */
+    int32    newsds = FAIL,
+             newsds2 = FAIL,
+             newsds3 = FAIL; /* SDS handles */
+    int32    dimid, dimid2;  /* Dimension handles */
+    int32    num_sds;        /* number of SDS in file */
+    int32    num_gattr;      /* Number of global attributes */
+    int32    index;          /* Index of dataset in file */
     int32    ival;
-    int      status; /* status flag */
+    int      status;         /* status flag */
     char     name[90];
     char     text[256];
     int32    start[10], end[10], stride[10]; /* start, end, stride arrays */
@@ -769,24 +771,31 @@ test_attribute_ops()
     }
 
     /* end access to data set DSALPHA */
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(newsds, "SDendaccess");
 
     /* end access to data set DSBETA */
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(newsds2, "SDendaccess");
 
     /* end access to data set DSGAMMA */
-    status = SDendaccess(newsds3);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(newsds3, "SDendaccess");
 
     /* Close access to file FILE1 */
-    status = SDend(fid1);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid1, "SDend");
 
     /* Close access to file 'test2.hdf' */
-    status = SDend(fid2);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid2, "SDend");
+
+done:
+    if (newsds != FAIL)
+        SDendaccess(newsds);
+    if (newsds2 != FAIL)
+        SDendaccess(newsds2);
+    if (newsds3 != FAIL)
+        SDendaccess(newsds3);
+    if (fid1 != FAIL)
+        SDend(fid1);
+    if (fid2 != FAIL)
+        SDend(fid2);
 
     /* Release resource */
     free(data);

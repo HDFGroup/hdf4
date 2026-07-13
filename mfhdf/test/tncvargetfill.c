@@ -13,19 +13,19 @@
 
 /****************************************************************************
  * tncvargetfill.c - tests that ncvarget fills user buffers with fill-values
- *		where data is not present.
- *		The tests show that the fill-values are filled correctly in
- *		the following situations:
- *		+ reading passed written data of a variable but still less
- *		  than the maximum number of records in the file
- *		+ reading passed the maximum number of records in the file
+ *      where data is not present.
+ *      The tests show that the fill-values are filled correctly in
+ *      the following situations:
+ *      + reading passed written data of a variable but still less
+ *        than the maximum number of records in the file
+ *      + reading passed the maximum number of records in the file
  *
  * Structure of the file:
  *    test_vargetfill - test driver
  *        test_1dim_multivars - tests on multiple variables with only 1 dimension
  *        test_multidims      - tests on variables with multiple dimensions
- *	  test_readings       - tests reading passed written data and max number
- *				of records in the file.
+ *        test_readings       - tests reading passed written data and max number
+ *                              of records in the file.
  *
  ****************************************************************************/
 
@@ -73,7 +73,7 @@ read_verify_nc_api_1dim(void)
 {
     long  start[1];                                             /* where to start reading */
     long  edges[1];                                             /* length of data to be read */
-    int   ncid;                                                 /* file id */
+    int   ncid = -1;                                                 /* file id */
     int   var1id, var2id;                                       /* variable ids */
     long  dimsize = 0;                                          /* dimension size buffer */
     short outdata[DIM0];                                        /* data read back */
@@ -146,15 +146,20 @@ read_verify_nc_api_1dim(void)
 
     status = ncclose(ncid);
     CHECK(status, -1, "ncclose");
+done:
+    if (ncid != -1)
+        ncclose(ncid);
 
+    /* Return the number of errors that's been kept track of so far */
     return num_errs;
 } /* end read data */
 
 static int
 test_1dim_multivars()
 {
-    int32 fid;           /* file id */
-    int32 dset1, dset2;  /* dataset ids */
+    int32 fid = FAIL;    /* file id */
+    int32 dset1 = FAIL,
+          dset2 = FAIL;  /* dataset ids */
     int32 dimsizes[1];   /* dimension size buffer */
     int32 start[1],      /* where to start writing */
         edges[1];        /* length of data to be read/written */
@@ -220,19 +225,24 @@ test_1dim_multivars()
     num_errs = num_errs + verify_info_data(dset2, D2_NUMRECS, sdresult2);
 
     /* Close the data sets */
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDendaccess(dset2);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(dset1, "SDendaccess");
+    ENDSDS(dset2, "SDendaccess");
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
 
     /* Read and verify the data through the netCDF API */
     status = read_verify_nc_api_1dim();
     CHECK(status, -1, "read_verify_nc_api_1dim");
+done:
+    if (dset1 != FAIL)
+        SDendaccess(dset1);
+    if (dset2 != FAIL)
+        SDendaccess(dset2);
+    if (fid != FAIL)
+        SDend(fid);
 
+    /* Return the number of errors that's been kept track of, so far */
     return num_errs;
 } /* test_1dim_multivars */
 
@@ -284,7 +294,7 @@ read_verify_nc_api_multidims(void)
 {
     long  start[3];
     long  edges[3];
-    int   ncid;                        /* file id */
+    int   ncid = -1;                   /* file id */
     int   var1id, var2id, var3id;      /* variable ids */
     long  dims[3];                     /* dimension size buffer */
     int   rh_ndims;                    /* number of dims */
@@ -411,23 +421,29 @@ read_verify_nc_api_multidims(void)
 
     status = ncclose(ncid);
     CHECK(status, -1, "ncclose");
+done:
+    if (ncid != -1)
+        ncclose(ncid);
 
+    /* Return the number of errors that's been kept track of so far */
     return num_errs;
 } /* end read data with nc API */
 
 static int
 test_multidims()
 {
-    int32 fid;                          /* file id */
-    int32 dset1, dset2, dset3;          /* dataset ids */
+    int32 fid = FAIL;                   /* file id */
+    int32 dset1 = FAIL,
+          dset2 = FAIL,
+          dset3 = FAIL;                 /* dataset ids */
     int32 dset_index;                   /* dataset index */
     int32 dimsizes3D[3];                /* dimension size buffer for first SDS */
     int32 dimsize1D[1];                 /* dimension size buffer for second SDS */
     int32 start[3],                     /* where to start reading */
-        edges[3];                       /* length of data to be read */
+          edges[3];                     /* length of data to be read */
     int16  outdata3D[DIM0][DIM1][DIM2]; /* 3-D data read back */
     int16  outdata1D[DIM0];             /* 1-D data read back */
-    int16 *outdata3;                    /* for dynamically allocated buffer */
+    int16 *outdata3 = NULL;             /* for dynamically allocated buffer */
     int16  fillval1 = -3;               /* fill value for the 3-D variable */
     int16  fillval2 = -1;               /* fill value for the 1-D variable */
     int16  fillval3 = -10;              /* fill value for the 1-D variable */
@@ -509,6 +525,7 @@ test_multidims()
     VERIFY(status, 0, "memcmp");
 
     free(outdata3);
+    outdata3 = NULL;
     { /* Add data to second data set, i.e. 1-D var */
         int16 data[] = {300, 301, 302, 303};
 
@@ -519,16 +536,11 @@ test_multidims()
         CHECK(status, FAIL, "SDwritedata");
     }
 
-    /* Close the data sets */
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDendaccess(dset2);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDendaccess(dset3);
-    CHECK(status, FAIL, "SDendaccess");
-
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    /* Close the data sets and the file */
+    ENDSDS(dset1, "SDendaccess");
+    ENDSDS(dset2, "SDendaccess");
+    ENDSDS(dset3, "SDendaccess");
+    ENDSD(fid, "SDend");
 
     /* Reopen file and first data set, VAR3D */
     fid = SDstart(FILENAME2, DFACC_RDWR);
@@ -601,10 +613,8 @@ test_multidims()
     VERIFY(status, 0, "memcmp");
 
     /* Close the datasets */
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDendaccess(dset2);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(dset1, "SDendaccess");
+    ENDSDS(dset2, "SDendaccess");
 
     /* Create the fourth data set, named VARDOZEN and with unlimited
        dimension.  This data set will have more records than the current
@@ -625,17 +635,22 @@ test_multidims()
     }
     /* This number of elements will cause the nc number of records to be 12. */
 
-    /* Close the datasets */
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    /* Close the dataset and the file */
+    ENDSDS(dset1, "SDendaccess");
+    ENDSD(fid, "SDend");
 
     /* Read and verify the data through the netCDF API */
     status = read_verify_nc_api_multidims();
     CHECK(status, -1, "read_verify_nc_api_multidims");
+done:
+    if (dset1 != FAIL)
+        SDendaccess(dset1);
+    if (dset2 != FAIL)
+        SDendaccess(dset2);
+    if (dset3 != FAIL)
+        SDendaccess(dset3);
+    if (fid != FAIL)
+        SDend(fid);
 
     return num_errs;
 }
@@ -658,8 +673,9 @@ test_multidims()
 static int
 test_readings(int32 max_numrecs)
 {
-    int   ncid;           /* file id */
-    int   var1id, var2id; /* variable ids */
+    int   ncid = -1;   /* file id */
+    int   var1id = -1,
+          var2id = -1; /* variable ids */
     long  start[3];
     long  edges[3];
     long  dims[3];                     /* dimension size buffer */
@@ -787,6 +803,9 @@ test_readings(int32 max_numrecs)
 
     status = ncclose(ncid);
     CHECK(status, -1, "ncclose");
+done:
+    if (ncid != -1)
+        ncclose(ncid);
 
     return num_errs;
 }

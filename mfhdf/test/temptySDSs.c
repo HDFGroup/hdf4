@@ -29,7 +29,6 @@
  ****************************************************************************/
 
 #include "mfhdf.h"
-
 #include "hdftest.h"
 
 #define FILE_NAME "emptySDSs.hdf" /* data file to test empty SDSs */
@@ -45,7 +44,7 @@ check_empty_SDS(int32       fid,          /* file id */
                 int32       verify_value, /* expected value of 'emptySDS' from SDcheckempty */
                 int        *ret_num_errs /* current number of errors */)
 {
-    int32 sds_id, sds_index, status_32;
+    int32 sds_id = FAIL, sds_index = FAIL, status_32;
     int   status, emptySDS;
     int   num_errs = 0;
     char  mesg[80];
@@ -62,14 +61,16 @@ check_empty_SDS(int32       fid,          /* file id */
     /* The returned value from SDcheckempty is CHECKed for FAIL and
        'emptySDS' is verified to be verify_value, which can be TRUE or FALSE. */
     status_32 = SDcheckempty(sds_id, &emptySDS);
-    CHECK(status_32, FAIL, "SDcheckempty");
-    VERIFY(emptySDS, verify_value, "SDcheckempty");
+    CHECK(status_32, FAIL, "In check_empty_SDS: SDcheckempty");
+    VERIFY(emptySDS, verify_value, "In check_empty_SDS: SDcheckempty");
 
     /* Close this SDS */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "In check_empty_SDS: SDendaccess");
+    ENDSDS(sds_id, "In check_empty_SDS: SDendaccess");
 
     *ret_num_errs = num_errs;
+done:
+    if (sds_id > 0)
+        SDendaccess(sds_id);
 } /* check_empty_SDS */
 
 /* Utility routine that selects that named SDS, then calls SDgetchunkinfo and
@@ -81,7 +82,7 @@ check_getchunkinfo(int32       fid,          /* file id */
                    int32       verify_value, /* expected value of 'flags' from SDgetchunkinfo */
                    int        *ret_num_errs /* current number of errors */)
 {
-    int32         sds_id, sds_index;
+    int32         sds_id = FAIL, sds_index = FAIL;
     HDF_CHUNK_DEF c_def_out; /* Chunking definitions */
     int32         c_flags;
     int           status;
@@ -101,14 +102,16 @@ check_getchunkinfo(int32       fid,          /* file id */
        'c_flags' is VERIFied to be verify_value, which can be HDF_NONE,
        HDF_CHUNK, or HDF_CHUNK | HDF_COMP. */
     status = SDgetchunkinfo(sds_id, &c_def_out, &c_flags);
-    CHECK(status, FAIL, "SDgetchunkinfo");
-    VERIFY(c_flags, verify_value, "SDgetchunkinfo");
+    CHECK(status, FAIL, "In check_empty_SDS: SDgetchunkinfo");
+    VERIFY(c_flags, verify_value, "In check_empty_SDS: SDgetchunkinfo");
 
     /* Close this SDS */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "In check_getchunkinfo: SDendaccess");
+    ENDSDS(sds_id, "In check_getchunkinfo: SDendaccess");
 
     *ret_num_errs = num_errs;
+done:
+    if (sds_id > 0)
+        SDendaccess(sds_id);
 } /* check_getchunkinfo */
 
 /* Test non-special SDSs.  This routine creates non-special SDSs, writes
@@ -117,7 +120,7 @@ check_getchunkinfo(int32       fid,          /* file id */
 static int
 test_nonspecial_SDSs(int32 fid)
 {
-    int32 sds_id;
+    int32 sds_id = FAIL;
     int32 dimsize[2], start[2], edges[2];
     int32 data[Y_LENGTH][X_LENGTH];
     int   status;
@@ -137,8 +140,7 @@ test_nonspecial_SDSs(int32 fid)
     CHECK(sds_id, FAIL, "In test_nonspecial_SDSs: SDcreate 'EmptyDataset'");
 
     /* Close this SDS */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "In test_nonspecial_SDSs: SDendaccess");
+    ENDSDS(sds_id, "In test_nonspecial_SDSs: SDendaccess");
 
     /* Check that this SDS is empty */
     check_empty_SDS(fid, "EmptyDataset", TRUE, &num_errs);
@@ -158,11 +160,13 @@ test_nonspecial_SDSs(int32 fid)
     CHECK(sds_id, FAIL, "In test_nonspecial_SDSs: SDwritedata");
 
     /* Close this SDS */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "In test_nonspecial_SDSs: SDendaccess");
+    ENDSDS(sds_id, "In test_nonspecial_SDSs: SDendaccess");
 
     /* Check that this SDS is NOT empty */
     check_empty_SDS(fid, "WrittenDataset", FALSE, &num_errs);
+done:
+    if (sds_id > 0)
+        SDendaccess(sds_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -174,7 +178,7 @@ test_nonspecial_SDSs(int32 fid)
 static int
 test_compressed_SDSs(int32 fid)
 {
-    int32     sds_id, esds_id;
+    int32     sds_id = FAIL, esds_id = FAIL;
     int32     start[2], edges[2], dim_sizes[2];
     int32     comp_type; /* Compression flag */
     comp_info c_info;    /* Compression structure */
@@ -217,17 +221,19 @@ test_compressed_SDSs(int32 fid)
     CHECK(status, FAIL, "In test_compressed_SDSs: SDwritedata");
 
     /* Close the SDSs */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "In test_compressed_SDSs: SDendaccess 'CompressedData'");
-
-    status = SDendaccess(esds_id);
-    CHECK(status, FAIL, "In test_compressed_SDSs: SDendaccess 'Compressed-No-Data'");
+    ENDSDS(sds_id, "In test_compressed_SDSs: SDendaccess 'CompressedData'");
+    ENDSDS(esds_id, "In test_compressed_SDSs: SDendaccess 'Compressed-No-Data'");
 
     /* Check that this SDS is NOT empty */
     check_empty_SDS(fid, "CompressedData", FALSE, &num_errs);
 
     /* Check that this SDS is empty */
     check_empty_SDS(fid, "Compressed-No-Data", TRUE, &num_errs);
+done:
+    if (sds_id > 0)
+        SDendaccess(sds_id);
+    if (esds_id > 0)
+        SDendaccess(esds_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -243,7 +249,7 @@ test_compressed_SDSs(int32 fid)
 static int
 test_chunked_SDSs(int32 fid)
 {
-    int32         sds_id, esds_id, sds_index;
+    int32         sds_id = FAIL, esds_id = FAIL, sds_index = FAIL;
     int32         flag, maxcache, new_maxcache;
     int32         dim_sizes[RANK], origin[RANK];
     HDF_CHUNK_DEF c_def; /* Chunking definitions */
@@ -274,8 +280,7 @@ test_chunked_SDSs(int32 fid)
     CHECK(status, FAIL, "In test_chunked_SDSs: SDsetchunk");
 
     /* Terminate access to the "Chunked-No-Data" dataset */
-    status = SDendaccess(esds_id);
-    CHECK(status, FAIL, "In test_chunked_SDSs: SDendaccess 'Chunked-No-Data'");
+    ENDSDS(esds_id, "In test_chunked_SDSs: SDendaccess 'Chunked-No-Data'");
 
     /* Check that this SDS is empty */
     check_empty_SDS(fid, "Chunked-No-Data", TRUE, &num_errs);
@@ -302,8 +307,7 @@ test_chunked_SDSs(int32 fid)
 
     /* Terminate access to the dataset then check if it's empty - and it
        should be, before writing data to it. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "In test_chunked_SDSs: SDendaccess");
+    ENDSDS(sds_id, "In test_chunked_SDSs: SDendaccess");
 
     /* Check that this SDS is still empty after the call to SDsetchunk */
     check_empty_SDS(fid, "ChunkedData", TRUE, &num_errs);
@@ -338,11 +342,15 @@ test_chunked_SDSs(int32 fid)
     CHECK(status, FAIL, "In test_chunked_SDSs: SDwritechunk");
 
     /* Terminate access to the dataset */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "In test_chunked_SDSs: SDendaccess");
+    ENDSDS(sds_id, "In test_chunked_SDSs: SDendaccess");
 
     /* Check that this SDS is NOT empty */
     check_empty_SDS(fid, "ChunkedData", FALSE, &num_errs);
+done:
+    if (sds_id > 0)
+        SDendaccess(sds_id);
+    if (esds_id > 0)
+        SDendaccess(esds_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -354,7 +362,7 @@ test_chunked_SDSs(int32 fid)
 static int
 test_unlimited_SDSs(int32 fid)
 {
-    int32 sds_id, esds_id, sds_index;
+    int32 sds_id = FAIL, esds_id = FAIL, sds_index = FAIL;
     int32 dim_sizes[2];
     int32 data[Y_LENGTH][X_LENGTH], append_data[X_LENGTH];
     int32 start[2], edges[2];
@@ -381,7 +389,7 @@ test_unlimited_SDSs(int32 fid)
     CHECK(sds_id, FAIL, "In test_unlimited_SDSs: SDcreate 'AppendableData'");
 
     /* Terminate access to the dataset "Appendable-No-Data" */
-    status = SDendaccess(esds_id);
+    ENDSDS(esds_id, "In test_unlimited_SDSs: SDendaccess");
 
     /* Define the location and the size of the data to be written
        to the second dataset  */
@@ -394,8 +402,7 @@ test_unlimited_SDSs(int32 fid)
     CHECK(status, FAIL, "In test_unlimited_SDSs: SDwritedata");
 
     /* Terminate access to the unlimited dataset */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "In test_unlimited_SDSs: SDendaccess");
+    ENDSDS(sds_id, "In test_unlimited_SDSs: SDendaccess");
 
     /* Check that this SDS is NOT empty */
     check_empty_SDS(fid, "AppendableData", FALSE, &num_errs);
@@ -429,14 +436,18 @@ test_unlimited_SDSs(int32 fid)
     }
 
     /* Terminate access to the dataset */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "In test_unlimited_SDSs: SDendaccess");
+    ENDSDS(sds_id, "In test_unlimited_SDSs: SDendaccess");
 
     /* Check that this SDS is NOT empty */
     check_empty_SDS(fid, "AppendableData", FALSE, &num_errs);
 
     /* Check that this SDS is empty */
     check_empty_SDS(fid, "Appendable-No-Data", TRUE, &num_errs);
+done:
+    if (esds_id > 0)
+        SDendaccess(esds_id);
+    if (sds_id > 0)
+        SDendaccess(sds_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -448,7 +459,7 @@ test_unlimited_SDSs(int32 fid)
 static int
 test_with_existing_file()
 {
-    int32 fid;
+    int32 fid = FAIL;
     int   status;
     int   num_errs = 0; /* number of errors so far */
 
@@ -478,8 +489,10 @@ test_with_existing_file()
     check_empty_SDS(fid, "Chunked-No-Data", TRUE, &num_errs);
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "In test_with_existing_file: SDend");
+    ENDSD(fid, "In test_with_existing_file: SDend");
+done:
+    if (fid > 0)
+        SDend(fid);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -491,7 +504,7 @@ test_with_existing_file()
 static int
 test_getchunkinfo()
 {
-    int32 fid;
+    int32 fid = FAIL;
     int   status;
     int   num_errs = 0; /* number of errors so far */
 
@@ -521,8 +534,10 @@ test_getchunkinfo()
     check_getchunkinfo(fid, "Chunked-No-Data", HDF_CHUNK, &num_errs);
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "In check_getchunkinfo: SDend");
+    ENDSD(fid, "In check_getchunkinfo: SDend");
+done:
+    if (fid > 0)
+        SDend(fid);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -532,7 +547,7 @@ test_getchunkinfo()
 extern int
 test_checkempty()
 {
-    int32 fid;
+    int32 fid = FAIL;
     int   status;
     int   num_errs = 0;
 
@@ -549,8 +564,7 @@ test_checkempty()
     num_errs = num_errs + test_unlimited_SDSs(fid);
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "In test_checkempty: SDend");
+    ENDSD(fid, "In test_checkempty: SDend");
 
     /* This function will reopen the file and check the SDSs in it */
     num_errs = num_errs + test_with_existing_file();
@@ -561,5 +575,11 @@ test_checkempty()
 
     if (num_errs == 0)
         PASSED();
+
+done:
+    if (fid > 0)
+        SDend(fid);
+
+    /* Return the number of errors that's been kept track of so far */
     return num_errs;
 }
