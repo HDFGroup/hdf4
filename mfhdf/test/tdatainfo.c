@@ -156,7 +156,7 @@ comp_n_values(int32 rank, int32 *dimsizes)
 static int
 test_nonspecial_SDSs()
 {
-    int              fd = -1;     /* for open */
+    int              fd    = -1; /* for open */
     int32            sd_id = FAIL, sds_id = FAIL;
     int32            dimsizes[2], starts[2], edges[2], rank = 0;
     int32            data1[LENGTH1_X];

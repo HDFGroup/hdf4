@@ -144,17 +144,17 @@
  * Macros to end access to a dataset or a file and reset the variable
  * to prevent double free later.
  */
-#define ENDSDS(sds_id, msg) \
-    do { \
-        status = SDendaccess(sds_id); \
-        sds_id = FAIL; \
-        CHECK(status, FAIL, msg); \
+#define ENDSDS(sds_id, msg)                                                                                  \
+    do {                                                                                                     \
+        status = SDendaccess(sds_id);                                                                        \
+        sds_id = FAIL;                                                                                       \
+        CHECK(status, FAIL, msg);                                                                            \
     } while (0)
-#define ENDSD(sd_id, msg) \
-    do { \
-        status = SDend(sd_id); \
-        sd_id = FAIL; \
-        CHECK(status, FAIL, msg); \
+#define ENDSD(sd_id, msg)                                                                                    \
+    do {                                                                                                     \
+        status = SDend(sd_id);                                                                               \
+        sd_id  = FAIL;                                                                                       \
+        CHECK(status, FAIL, msg);                                                                            \
     } while (0)
 
 /*************************** Utility Functions ***************************/

@@ -272,7 +272,7 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, char *label, char *des
     if (indesclen >= 0) {
         indesc = (char *)malloc((size_t)indesclen + 1);
         CHECK_ALLOC(indesc, "indesc", "check_lab_desc");
-        ret    = DFANgetdesc(fname, tag, ref, indesc, MAXLEN_DESC);
+        ret = DFANgetdesc(fname, tag, ref, indesc, MAXLEN_DESC);
         CHECK(ret, FAIL, "check_lab_desc: DFANgetdesc");
 
         indesc[indesclen] = '\0';
@@ -399,7 +399,7 @@ add_sdsNDG_annotations()
     int    rank;
     int    jj;
     int32  dimsizes[2];
-    float *data = NULL;
+    float *data     = NULL;
     int    num_errs = 0;
 
     /* set up object labels and descriptions */
@@ -559,7 +559,7 @@ done:
     free(lengtharray);
 
     /* Return the number of errors that's been kept track of so far */
-    return(num_errs);
+    return (num_errs);
 }
 
 /***************************************************************************
@@ -912,9 +912,9 @@ compare(const char *outstring, const char *instring)
 int
 readnoHDF_char(const char *filename, const int32 offset, const int32 length, const char *orig_buf)
 {
-    FILE  *fd = NULL;   /* file descriptor */
-    size_t readlen = 0; /* number of bytes actually read */
-    char  *readcbuf = NULL;
+    FILE  *fd        = NULL; /* file descriptor */
+    size_t readlen   = 0;    /* number of bytes actually read */
+    char  *readcbuf  = NULL;
     int    ret_value = SUCCEED;
 
     /* Open the file for reading without SD API */

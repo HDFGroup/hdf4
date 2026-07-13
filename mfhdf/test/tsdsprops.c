@@ -394,7 +394,7 @@ test_unlim_inloop()
 
     for (i = 0; i < N_DSETS; i++) {
         float64 outdata[SIZE * 2];
-        char msg[80];
+        char    msg[80];
         sprintf(msg, "SDendaccess data set #%d", i);
 
         /* Get access to the datasets */
@@ -823,7 +823,7 @@ done:
 static int
 test_fillvalue()
 {
-    int32 f1 = FAIL;
+    int32 f1   = FAIL;
     int32 sdid = FAIL;
     int32 dimsize[RANK]; /* dimension sizes */
     int32 idata[100];
@@ -1088,7 +1088,7 @@ done:
 static int
 test_unlim_fillvalue()
 {
-    int32 f1 = FAIL;
+    int32 f1   = FAIL;
     int32 sdid = FAIL;
     int32 dimsize[RANK]; /* dimension sizes */
     int32 idata[100];

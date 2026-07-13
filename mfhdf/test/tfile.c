@@ -51,9 +51,8 @@
 static int
 test_file_inuse()
 {
-    int32       file_id = FAIL;
-    int32       sd_id[5] = {FAIL, FAIL, FAIL, FAIL, FAIL},
-                sds_id[5] = {FAIL, FAIL, FAIL, FAIL, FAIL};
+    int32       file_id  = FAIL;
+    int32       sd_id[5] = {FAIL, FAIL, FAIL, FAIL, FAIL}, sds_id[5] = {FAIL, FAIL, FAIL, FAIL, FAIL};
     int         statusn;
     int32       dims[1], start[1], edges[1], rank;
     int16       array_data[DIM0];
@@ -104,7 +103,7 @@ test_file_inuse()
             VERIFY(statusn, FAIL, "SDwritedata");
 
         /* Terminate access to the data sets. */
-        statusn = SDendaccess(sds_id[i]);
+        statusn   = SDendaccess(sds_id[i]);
         sds_id[i] = FAIL;
         if (i == 0) {
             CHECK(statusn, FAIL, "SDendaccess");
@@ -116,7 +115,7 @@ test_file_inuse()
 
     for (i = 0; i < 5; i++) {
         /* Terminate access to the SD interface and close the file. */
-        statusn = SDend(sd_id[i]);
+        statusn  = SDend(sd_id[i]);
         sd_id[i] = FAIL;
         if (i == 0) {
             CHECK(statusn, FAIL, "SDend");
@@ -346,9 +345,9 @@ done:
 static int
 test_longfilename()
 {
-    int32 fid = FAIL;     /* file id */
-    int32 dset1 = FAIL;   /* dataset ids */
-    int32 dims[2];        /* variable shapes */
+    int32 fid   = FAIL; /* file id */
+    int32 dset1 = FAIL; /* dataset ids */
+    int32 dims[2];      /* variable shapes */
     char  dsname[10];
     char  filename[256];
     int   status   = 0; /* status returned by called functions */
@@ -376,7 +375,7 @@ done:
     if (dset1 != FAIL)
         SDendaccess(dset1);
     if (fid != FAIL)
-        SDend (fid);
+        SDend(fid);
 
     return num_errs;
 }

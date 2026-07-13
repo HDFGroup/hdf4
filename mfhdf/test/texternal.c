@@ -266,7 +266,7 @@ static int
 test_getexternal()
 {
     int32 sd_id = FAIL, sds_id = FAIL, noextsds = FAIL;
-    int   name_len = 0;
+    int   name_len     = 0;
     char *extfile_name = NULL;
     int32 offset = 0, length = 0;
     int32 start[2], edges[2], dimsizes[2], nt;
@@ -368,7 +368,8 @@ test_getexternal()
            buffer size*/
         name_len = SDgetexternalinfo(sds_id, (unsigned)name_len - 2, extfile_name, &offset, &length);
         if (strcmp(short_name, extfile_name) != 0) {
-            fprintf(stderr, "*** UNEXPECTED VALUE from SDgetexternalinfo is %s at line %4d in %s\n", short_name, (int)__LINE__, __FILE__);
+            fprintf(stderr, "*** UNEXPECTED VALUE from SDgetexternalinfo is %s at line %4d in %s\n",
+                    short_name, (int)__LINE__, __FILE__);
             HDfreenclear(short_name);
             num_errs++;
         }
@@ -746,8 +747,8 @@ done:
 static int
 test_change_extdir(void)
 {
-    int32  sd_id = FAIL;
-    int32  sds_id = FAIL;
+    int32  sd_id      = FAIL;
+    int32  sds_id     = FAIL;
     float  sds_data[] = {0.1f, 2.3f, 4.5f, 6.7f, 8.9f};
     float  sds1_out[5];
     int32  start = 0, stride = 1, edge;
@@ -917,8 +918,8 @@ done:
 static int
 test_HDFFR_1609(void)
 {
-    int32 sd_id = FAIL;
-    int32 sds_id = FAIL;
+    int32 sd_id      = FAIL;
+    int32 sds_id     = FAIL;
     float sds_data[] = {0.1f, 2.3f, 4.5f, 6.7f, 8.9f};
     int32 start = 0, stride = 1, edge;
     int32 dimsize[RANK];
@@ -1070,7 +1071,7 @@ int
 verify_data(int32 sd_id, int32 sds_ind)
 {
     int32  sds_id = FAIL;
-    int32 *ptr = NULL;
+    int32 *ptr    = NULL;
     char   name[80];
     int32  data_size, rank1;
     int32  start[3], edges[3], dims[3];

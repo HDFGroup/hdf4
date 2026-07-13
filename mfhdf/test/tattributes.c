@@ -85,9 +85,7 @@ test_count(void)
     char    sds_name[20], dim_name[20];
     float32 sds1_data[] = {0.1F, 2.3F, 4.5F, 6.7F, 8.9F};
     int32   dimsize[1], size;
-    int32   sds_id = FAIL,
-            file_id = FAIL,
-            dim_id = FAIL;
+    int32   sds_id = FAIL, file_id = FAIL, dim_id = FAIL;
     int32   start = 0, stride = 1;
     int32   ntype, rank, count, index;
     int32   nattrs = 0;
@@ -281,19 +279,16 @@ done:
 static int
 test_attribute_ops()
 {
-    int32    fid1 = FAIL,
-             fid2 = FAIL;    /* File handles */
-    int32    nt;             /* Number type */
-    int32    dimsize[10];    /* dimension sizes */
-    int32    newsds = FAIL,
-             newsds2 = FAIL,
-             newsds3 = FAIL; /* SDS handles */
-    int32    dimid, dimid2;  /* Dimension handles */
-    int32    num_sds;        /* number of SDS in file */
-    int32    num_gattr;      /* Number of global attributes */
-    int32    index;          /* Index of dataset in file */
+    int32    fid1 = FAIL, fid2 = FAIL;                      /* File handles */
+    int32    nt;                                            /* Number type */
+    int32    dimsize[10];                                   /* dimension sizes */
+    int32    newsds = FAIL, newsds2 = FAIL, newsds3 = FAIL; /* SDS handles */
+    int32    dimid, dimid2;                                 /* Dimension handles */
+    int32    num_sds;                                       /* number of SDS in file */
+    int32    num_gattr;                                     /* Number of global attributes */
+    int32    index;                                         /* Index of dataset in file */
     int32    ival;
-    int      status;         /* status flag */
+    int      status; /* status flag */
     char     name[90];
     char     text[256];
     int32    start[10], end[10], stride[10]; /* start, end, stride arrays */

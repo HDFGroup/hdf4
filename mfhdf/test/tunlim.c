@@ -117,7 +117,7 @@ done:
 static int
 test_1dim_singlevar()
 {
-    int32 fid = FAIL;    /* file id */
+    int32 fid   = FAIL;  /* file id */
     int32 dset1 = FAIL;  /* dataset ids */
     int32 dimsizes[1];   /* dimension size buffer */
     int32 start[1],      /* where to start writing */
@@ -240,17 +240,16 @@ done:
 static int
 test_1dim_multivars()
 {
-    int32 fid = FAIL;    /* file id */
-    int32 dset1 = FAIL,
-          dset2 = FAIL;  /* dataset ids */
-    int32 dimsizes[1];   /* dimension size buffer */
-    int32 start[1],      /* where to start writing */
-        edges[1];        /* length of data to be read/written */
-    int16 outdata[DIM0]; /* data read back */
-    int16 fillval1 = -1; /* fill value for the variable */
-    int16 fillval2 = -2; /* fill value for the variable */
-    int   status   = 0;  /* returned by called functions */
-    int   num_errs = 0;  /* number of errors so far */
+    int32 fid   = FAIL;               /* file id */
+    int32 dset1 = FAIL, dset2 = FAIL; /* dataset ids */
+    int32 dimsizes[1];                /* dimension size buffer */
+    int32 start[1],                   /* where to start writing */
+        edges[1];                     /* length of data to be read/written */
+    int16 outdata[DIM0];              /* data read back */
+    int16 fillval1 = -1;              /* fill value for the variable */
+    int16 fillval2 = -2;              /* fill value for the variable */
+    int   status   = 0;               /* returned by called functions */
+    int   num_errs = 0;               /* number of errors so far */
 
     /* result data to compare against read data */
     int16 result1[] = {300, 301, 302, 303, -1, -1, 400, 401, 500, 501, 502};
@@ -403,7 +402,7 @@ done:
 static int
 test_multidim_singlevar()
 {
-    int32 fid = FAIL;                /* file id */
+    int32 fid   = FAIL;              /* file id */
     int32 dset1 = FAIL;              /* dataset id */
     int32 dset_index;                /* dataset index */
     int32 dimsizes[3];               /* dimension size buffer */
@@ -594,16 +593,15 @@ done:
 static int
 test_1dim_multivars_addon()
 {
-    int32 fid = FAIL;    /* file id */
-    int32 dset1 = FAIL,
-          dset2 = FAIL;  /* dataset ids */
-    int32 dset_index;    /* dataset index */
-    int32 dimsizes[1];   /* dimension size buffer */
-    int32 start[1],      /* where to start writing */
-        edges[1];        /* length of data to be read/written */
-    int16 fillval  = -3; /* fill value for the variable */
-    int   status   = 0;  /* returned by called functions */
-    int   num_errs = 0;  /* number of errors so far */
+    int32 fid   = FAIL;               /* file id */
+    int32 dset1 = FAIL, dset2 = FAIL; /* dataset ids */
+    int32 dset_index;                 /* dataset index */
+    int32 dimsizes[1];                /* dimension size buffer */
+    int32 start[1],                   /* where to start writing */
+        edges[1];                     /* length of data to be read/written */
+    int16 fillval  = -3;              /* fill value for the variable */
+    int   status   = 0;               /* returned by called functions */
+    int   num_errs = 0;               /* number of errors so far */
 
     /* result data to compare against read data */
     int16 result3[] = {300, 301, 302, 303, -3, -3, 30, 31, 801, 802, 803};

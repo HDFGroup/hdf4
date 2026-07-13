@@ -176,13 +176,13 @@ done:
 static int
 test_compressed_data()
 {
-    int32        fcomp = FAIL;    /* File handle */
-    int32        newsds = FAIL;   /* SDS handle */
-    int32        index;           /* Index of a dataset */
-    int32        nt;              /* Number type */
-    int32        dimsize[10];     /* dimension sizes */
-    comp_coder_t comp_type;       /* to retrieve compression type into */
-    comp_info    cinfo;           /* compression information structure */
+    int32        fcomp  = FAIL; /* File handle */
+    int32        newsds = FAIL; /* SDS handle */
+    int32        index;         /* Index of a dataset */
+    int32        nt;            /* Number type */
+    int32        dimsize[10];   /* dimension sizes */
+    comp_coder_t comp_type;     /* to retrieve compression type into */
+    comp_info    cinfo;         /* compression information structure */
     int32        idata[100];
     int32        rdata[100];
     int32        fillval;

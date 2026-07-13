@@ -73,7 +73,7 @@ read_verify_nc_api_1dim(void)
 {
     long  start[1];                                             /* where to start reading */
     long  edges[1];                                             /* length of data to be read */
-    int   ncid = -1;                                                 /* file id */
+    int   ncid = -1;                                            /* file id */
     int   var1id, var2id;                                       /* variable ids */
     long  dimsize = 0;                                          /* dimension size buffer */
     short outdata[DIM0];                                        /* data read back */
@@ -157,17 +157,16 @@ done:
 static int
 test_1dim_multivars()
 {
-    int32 fid = FAIL;    /* file id */
-    int32 dset1 = FAIL,
-          dset2 = FAIL;  /* dataset ids */
-    int32 dimsizes[1];   /* dimension size buffer */
-    int32 start[1],      /* where to start writing */
-        edges[1];        /* length of data to be read/written */
-    int32 rank     = 1;  /* rank of the 1-D data sets */
-    int16 fillval1 = -1; /* fill value for the variable */
-    int16 fillval2 = -2; /* fill value for the variable */
-    int   status   = 0;  /* returned by called functions */
-    int   num_errs = 0;  /* number of errors so far */
+    int32 fid   = FAIL;               /* file id */
+    int32 dset1 = FAIL, dset2 = FAIL; /* dataset ids */
+    int32 dimsizes[1];                /* dimension size buffer */
+    int32 start[1],                   /* where to start writing */
+        edges[1];                     /* length of data to be read/written */
+    int32 rank     = 1;               /* rank of the 1-D data sets */
+    int16 fillval1 = -1;              /* fill value for the variable */
+    int16 fillval2 = -2;              /* fill value for the variable */
+    int   status   = 0;               /* returned by called functions */
+    int   num_errs = 0;               /* number of errors so far */
 
     /* result data to compare against read data */
     int16 sdresult1[] = {300, 301, 302, 303, -1, -1, 306, 307};
@@ -432,23 +431,21 @@ done:
 static int
 test_multidims()
 {
-    int32 fid = FAIL;                   /* file id */
-    int32 dset1 = FAIL,
-          dset2 = FAIL,
-          dset3 = FAIL;                 /* dataset ids */
-    int32 dset_index;                   /* dataset index */
-    int32 dimsizes3D[3];                /* dimension size buffer for first SDS */
-    int32 dimsize1D[1];                 /* dimension size buffer for second SDS */
-    int32 start[3],                     /* where to start reading */
-          edges[3];                     /* length of data to be read */
-    int16  outdata3D[DIM0][DIM1][DIM2]; /* 3-D data read back */
-    int16  outdata1D[DIM0];             /* 1-D data read back */
-    int16 *outdata3 = NULL;             /* for dynamically allocated buffer */
-    int16  fillval1 = -3;               /* fill value for the 3-D variable */
-    int16  fillval2 = -1;               /* fill value for the 1-D variable */
-    int16  fillval3 = -10;              /* fill value for the 1-D variable */
-    int    status   = 0;                /* returned by called functions */
-    int    num_errs = 0;                /* number of errors so far */
+    int32 fid   = FAIL;                             /* file id */
+    int32 dset1 = FAIL, dset2 = FAIL, dset3 = FAIL; /* dataset ids */
+    int32 dset_index;                               /* dataset index */
+    int32 dimsizes3D[3];                            /* dimension size buffer for first SDS */
+    int32 dimsize1D[1];                             /* dimension size buffer for second SDS */
+    int32 start[3],                                 /* where to start reading */
+        edges[3];                                   /* length of data to be read */
+    int16  outdata3D[DIM0][DIM1][DIM2];             /* 3-D data read back */
+    int16  outdata1D[DIM0];                         /* 1-D data read back */
+    int16 *outdata3 = NULL;                         /* for dynamically allocated buffer */
+    int16  fillval1 = -3;                           /* fill value for the 3-D variable */
+    int16  fillval2 = -1;                           /* fill value for the 1-D variable */
+    int16  fillval3 = -10;                          /* fill value for the 1-D variable */
+    int    status   = 0;                            /* returned by called functions */
+    int    num_errs = 0;                            /* number of errors so far */
 
     /* result data to compare against read data */
     /* clang-format off */
@@ -673,9 +670,8 @@ done:
 static int
 test_readings(int32 max_numrecs)
 {
-    int   ncid = -1;   /* file id */
-    int   var1id = -1,
-          var2id = -1; /* variable ids */
+    int   ncid   = -1;              /* file id */
+    int   var1id = -1, var2id = -1; /* variable ids */
     long  start[3];
     long  edges[3];
     long  dims[3];                     /* dimension size buffer */

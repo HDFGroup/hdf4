@@ -131,7 +131,7 @@ test_nonspecial_SDSs(int32 fid)
                     &num_errs);
 
 done:
-   if (sds_id != FAIL)
+    if (sds_id != FAIL)
         SDendaccess(sds_id);
 
     /* Return the number of errors that's been kept track of so far */
@@ -211,11 +211,11 @@ test_compressed_SDSs(int32 fid)
                     Y_LENGTH * X_LENGTH * SIZE_INT32, &num_errs);
 
 done:
-   if (sds_id != FAIL)
+    if (sds_id != FAIL)
         SDendaccess(sds_id);
-   if (esds_id != FAIL)
+    if (esds_id != FAIL)
         SDendaccess(esds_id);
-   if (usds_id != FAIL)
+    if (usds_id != FAIL)
         SDendaccess(usds_id);
 
     /* Return the number of errors that's been kept track of so far */
@@ -364,7 +364,7 @@ done:
 static int
 test_chkcmp_SDSs(int32 fid)
 {
-    int32         sds_id = FAIL, sds_index;
+    int32         sds_id    = FAIL, sds_index;
     int32         cmpsds_id = FAIL, cmpsds_index;
     int32         flag, maxcache, new_maxcache;
     int32         dim_sizes[RANK], origin[RANK];

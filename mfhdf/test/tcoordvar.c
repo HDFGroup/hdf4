@@ -88,9 +88,7 @@ test_dim1_SDS1(void)
     float32        sds1_data[] = {0.1F, 2.3F, 4.5F, 6.7F, 8.9F};
     float32        out_data[5];
     int32          dimsize[1];
-    int32          sds_id = FAIL,
-                   file_id = FAIL,
-                   dim_id = FAIL;
+    int32          sds_id = FAIL, file_id = FAIL, dim_id = FAIL;
     int32          index = FAIL;
     int32          start = 0, stride = 1;
     int32          num_type, count;
@@ -290,10 +288,7 @@ test_dim1_SDS2(void)
     char    sds_name[20];
     float32 sds2_data[2][3] = {{0.1F, 2.3F, 4.5F}, {4.5F, 6.7F, 8.9F}};
     int32   dimsize[1], dimsize2[2];
-    int32   sds1_id = FAIL,
-            sds2_id = FAIL,
-            file_id = FAIL,
-            dim_id = FAIL;
+    int32   sds1_id = FAIL, sds2_id = FAIL, file_id = FAIL, dim_id = FAIL;
     int32   index;
     int32   start2[2] = {0, 0}, stride2[2] = {1, 1};
     int32   scale1[5] = {101, 102, 103, 104, 105}, scale1_out[5];
@@ -497,16 +492,14 @@ test_named_vars(void)
 {
     char           sds_name[20];
     int32          dimsize[1], dimsize2[2];
-    int32          sds_id = FAIL,
-                   file_id = FAIL,
-                   dim_id = FAIL;
+    int32          sds_id = FAIL, file_id = FAIL, dim_id = FAIL;
     int32          scale1[5] = {101, 102, 103, 104, 105};
     int32          array_rank;
     int32          n_datasets, n_file_attrs, n_vars = 0;
     int            status      = 0, idx;
     int            is_coordvar = FALSE;
-    hdf_varlist_t *allvars = NULL;
-    int            num_errs = 0; /* number of errors so far */
+    hdf_varlist_t *allvars     = NULL;
+    int            num_errs    = 0; /* number of errors so far */
     char           line[40];
     char contents[7][40] = {"#0 SDS        2-dim 'Common Name'",   "#1 SDS        2-dim 'Common Name'",
                             "#2 SDS        1-dim 'One Dimension'", "#3 Coordinate 1-dim 'Common Name'",
@@ -530,7 +523,7 @@ test_named_vars(void)
     ENDSDS(sds_id, "SDendaccess");
 
     dimsize[0] = 5;
-    sds_id    = SDcreate(file_id, ONEDIM_NAME, DFNT_FLOAT32, 1, dimsize);
+    sds_id     = SDcreate(file_id, ONEDIM_NAME, DFNT_FLOAT32, 1, dimsize);
     CHECK(sds_id, FAIL, "SDcreate");
 
     /* Set the dimension name to be the same as the previous 2 datasets */
@@ -555,7 +548,7 @@ test_named_vars(void)
     VERIFY(n_datasets, 4, "SDfileinfo");
 
     dimsize[0] = 8;
-    sds_id    = SDcreate(file_id, ONEDIM_NAME, DFNT_FLOAT32, 1, dimsize);
+    sds_id     = SDcreate(file_id, ONEDIM_NAME, DFNT_FLOAT32, 1, dimsize);
     CHECK(sds_id, FAIL, "SDcreate");
 
     /* Set the dimension name to be the same as the previous 2 datasets */
@@ -604,7 +597,7 @@ test_named_vars(void)
     /* Compare file contents with predefined text to verify */
     for (idx = 0; idx < n_datasets; idx++) {
 
-        int count;
+        int  count;
         char msg[25];
 
         sds_id = SDselect(file_id, idx);

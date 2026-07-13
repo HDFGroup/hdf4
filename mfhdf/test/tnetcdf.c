@@ -102,7 +102,7 @@ static int16 netcdf_u16[2][3] = {{1, 2, 3}, {4, 5, 6}};
 extern int
 test_netcdf_reading()
 {
-    int32       sd_id = FAIL;
+    int32       sd_id  = FAIL;
     int32       sds_id = FAIL;
     int32       n_datasets;
     int32       n_file_attrs;

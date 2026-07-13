@@ -963,7 +963,7 @@ test_szip_chunk_3d()
     c_flags                                   = HDF_CHUNK | HDF_COMP;
     status                                    = SDsetchunk(sds_id0, c_def, c_flags);
     CHECK(status, FAIL, "SDsetchunk");
-    status                                    = SDsetchunk(sds_id, c_def, c_flags);
+    status = SDsetchunk(sds_id, c_def, c_flags);
     CHECK(status, FAIL, "SDsetchunk");
 
     start[0] = 0;

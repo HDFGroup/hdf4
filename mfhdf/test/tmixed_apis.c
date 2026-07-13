@@ -399,8 +399,8 @@ test_vdatavgroups()
 
         /* Release resource */
         free(vg_name);
-    vg_name = NULL;
-        status = Vdetach(vgroup_id);
+        vg_name = NULL;
+        status  = Vdetach(vgroup_id);
         CHECK(status, FAIL, "Vdetach");
     }
     /* Release resource */
@@ -508,7 +508,7 @@ test_vgisinternal()
         CHECK(is_internal, FAIL, "Vgisinternal");
         VERIFY(is_internal, internal_array1[ii], "Vgisinternal");
 
-        status = Vdetach(vgroup_id);
+        status    = Vdetach(vgroup_id);
         vgroup_id = FAIL;
         CHECK(status, FAIL, "Vdetach");
 
@@ -539,7 +539,7 @@ test_vgisinternal()
         CHECK(is_internal, FAIL, "Vgisinternal");
         VERIFY(is_internal, internal_array2[ii], "Vgisinternal");
 
-        status = Vdetach(vgroup_id);
+        status    = Vdetach(vgroup_id);
         vgroup_id = FAIL;
         CHECK(status, FAIL, "Vdetach");
 
