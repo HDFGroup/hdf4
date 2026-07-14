@@ -1379,14 +1379,14 @@ done:
 static int
 test_extend_SDSs()
 {
-    int32            sd_id = FAIL, sds_id = FAIL, sds_index;
-    int32            dimsizes[2], starts[2], edges[2], rank = 0;
-    int32            start1[1], edges1[1];
-    int32            (*data1)[X_LENGTH] = NULL;
-    int32            (*data2)[X_LENGTH] = NULL;
-    int32            (*data3)[X_LENGTH] = NULL;
-    float            fdata[Y_LENGTH];
-    int32            (*output)[X_LENGTH] = NULL;
+    int32 sd_id = FAIL, sds_id = FAIL, sds_index;
+    int32 dimsizes[2], starts[2], edges[2], rank = 0;
+    int32 start1[1], edges1[1];
+    int32(*data1)[X_LENGTH] = NULL;
+    int32(*data2)[X_LENGTH] = NULL;
+    int32(*data3)[X_LENGTH] = NULL;
+    float fdata[Y_LENGTH];
+    int32(*output)[X_LENGTH]    = NULL;
     int              info_count = 0;
     t_hdf_datainfo_t sds_info;
     int32            block_size = 0;
