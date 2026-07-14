@@ -1382,11 +1382,11 @@ test_extend_SDSs()
     int32            sd_id = FAIL, sds_id = FAIL, sds_index;
     int32            dimsizes[2], starts[2], edges[2], rank = 0;
     int32            start1[1], edges1[1];
-    int32            data1[Y_LENGTH][X_LENGTH];
-    int32            data2[Y_LENGTH][X_LENGTH];
-    int32            data3[Y_LENGTH][X_LENGTH];
+    int32            (*data1)[X_LENGTH] = NULL;
+    int32            (*data2)[X_LENGTH] = NULL;
+    int32            (*data3)[X_LENGTH] = NULL;
     float            fdata[Y_LENGTH];
-    int32            output[Y_LENGTH * 3][X_LENGTH];
+    int32            (*output)[X_LENGTH] = NULL;
     int              info_count = 0;
     t_hdf_datainfo_t sds_info;
     int32            block_size = 0;
@@ -1394,7 +1394,10 @@ test_extend_SDSs()
     int              i, j, kk;
     int              num_errs = 0; /* number of errors so far */
 
-    /* Initialize data for the dataset */
+    /* Allocate and initialize data for the dataset */
+    data1 = (int32(*)[X_LENGTH])malloc(Y_LENGTH * X_LENGTH * sizeof(int32));
+    CHECK_ALLOC(data1, "data1", "test_extend_SDSs");
+
     for (j = 0; j < Y_LENGTH; j++)
         for (i = 0; i < X_LENGTH; i++)
             data1[j][i] = (i + j) + 1;
@@ -1429,7 +1432,9 @@ test_extend_SDSs()
     VERIFY(block_size, BLOCK_SIZE, "SDgetblocksize");
 
     /* Check data. */
-    memset(&output, 0, sizeof(output));
+    output = (int32(*)[X_LENGTH])malloc((Y_LENGTH * 3 * X_LENGTH) * sizeof(int32));
+    CHECK_ALLOC(output, "output", "test_extend_SDSs");
+    memset(output, 0, (Y_LENGTH * 3 * X_LENGTH) * sizeof(int32));
     status = SDreaddata(sds_id, starts, NULL, edges, (void *)output);
     CHECK(status, FAIL, "test_extend_SDSs: SDreaddata");
 
@@ -1470,7 +1475,10 @@ test_extend_SDSs()
     CHECK(status, FAIL, "test_extend_SDSs: SDgetblocksize");
     VERIFY(block_size, BLOCK_SIZE, "SDgetblocksize");
 
-    /* Initialize second batch of data for the extendable dataset */
+    /* Allocate and initialize second batch of data for the extendable dataset */
+    data2 = (int32(*)[X_LENGTH])malloc(Y_LENGTH * X_LENGTH * sizeof(int32));
+    CHECK_ALLOC(data2, "data2", "test_extend_SDSs");
+
     for (j = 0; j < Y_LENGTH; j++)
         for (i = 0; i < X_LENGTH; i++)
             data2[j][i] = (i + j) + 10;
@@ -1483,7 +1491,10 @@ test_extend_SDSs()
     status    = SDwritedata(sds_id, starts, NULL, edges, (void *)data2);
     CHECK(status, FAIL, "test_extend_SDSs: SDwritedata");
 
-    /* Initialize third batch of data for the extendable dataset */
+    /* Allocate and initialize third batch of data for the extendable dataset */
+    data3 = (int32(*)[X_LENGTH])malloc(Y_LENGTH * X_LENGTH * sizeof(int32));
+    CHECK_ALLOC(data3, "data3", "test_extend_SDSs");
+
     for (j = 0; j < Y_LENGTH; j++)
         for (i = 0; i < X_LENGTH; i++)
             data3[j][i] = (i + j) + 100;
@@ -1506,7 +1517,7 @@ test_extend_SDSs()
     starts[1] = 0;
     edges[0]  = Y_LENGTH + Y_LENGTH + Y_LENGTH;
     edges[1]  = X_LENGTH;
-    memset(&output, 0, sizeof(output));
+    memset(output, 0, (size_t)(edges[0] * edges[1]) * sizeof(int32));
     status = SDreaddata(sds_id, starts, NULL, edges, (void *)output);
     CHECK(status, FAIL, "test_extend_SDSs: SDreaddata");
 
@@ -1622,6 +1633,15 @@ done:
         SDendaccess(sds_id);
     if (sd_id != FAIL)
         SDend(sd_id);
+
+    if (data1 != NULL)
+        free(data1);
+    if (data2 != NULL)
+        free(data2);
+    if (data3 != NULL)
+        free(data3);
+    if (output != NULL)
+        free(output);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
