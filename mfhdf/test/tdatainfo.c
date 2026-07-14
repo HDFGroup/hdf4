@@ -470,10 +470,14 @@ done:
     if (fd != FAIL)
         close(fd);
 
-    free(readibuf);
-    free(readibuf_swapped);
-    free(readfbuf);
-    free(readfbuf_swapped);
+    if (readibuf != NULL)
+        free(readibuf);
+    if (readibuf_swapped != NULL)
+        free(readibuf_swapped);
+    if (readfbuf != NULL)
+        free(readfbuf);
+    if (readfbuf_swapped != NULL)
+        free(readfbuf_swapped);
     free_info(&sds1_info);
     free_info(&sds2_info);
     free_info(&sds3_info);
