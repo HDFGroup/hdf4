@@ -960,9 +960,9 @@ test_chunked_partial()
     t_hdf_datainfo_t sds_info;
     int32           *readibuf = NULL, *readibuf_swapped = NULL;
     int32            data[Y_LENGTH][X_LENGTH];
-    int              fd;             /* for open */
+    int              fd; /* for open */
     int              chk_num;
-    int              num_errs = 0;   /* number of errors so far */
+    int              num_errs = 0; /* number of errors so far */
     int              status;
 
     /* Declare chunks data type and initialize some of them. */
@@ -1053,7 +1053,7 @@ test_chunked_partial()
 
     /* Get the number of data blocks */
     chk_coord[0] = chk_coord[1] = 0;
-    info_count = SDgetdatainfo(sds_id, chk_coord, 0, 0, NULL, NULL);
+    info_count                  = SDgetdatainfo(sds_id, chk_coord, 0, 0, NULL, NULL);
     CHECK(info_count, FAIL, "test_chunked_partial: SDgetdatainfo");
     VERIFY(info_count, 1, "test_chunked_partial: SDgetdatainfo");
 
@@ -1072,8 +1072,7 @@ test_chunked_partial()
     sds_info.n_values = 1 * 10; /* chunk has 1 dim of size 10 */
 
     /* Retrieve the offset and length of the chunks */
-    status = SDgetdatainfo(sds_id, chk_coord, 0, (unsigned)info_count, sds_info.offsets,
-                           sds_info.lengths);
+    status = SDgetdatainfo(sds_id, chk_coord, 0, (unsigned)info_count, sds_info.offsets, sds_info.lengths);
     CHECK(status, FAIL, "test_chunked_partial: SDgetdatainfo");
 
     ENDSDS(sds_id, "test_chunked_partial: SDendaccess");
