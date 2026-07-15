@@ -458,8 +458,9 @@ test_nonspecial_SDSs()
         if (close(fd) == -1) {
             fprintf(stderr, "test_nonspecial_SDSs: unable to close file %s", SIMPLE_FILE);
             num_errs++;
-            return num_errs;
+            goto done;
         }
+        fd = -1;
     }
 
 done:
@@ -467,7 +468,7 @@ done:
         SDendaccess(sds_id);
     if (sd_id != FAIL)
         SDend(sd_id);
-    if (fd != FAIL)
+    if (fd != -1)
         close(fd);
 
     if (readibuf != NULL)
@@ -964,7 +965,7 @@ test_chunked_partial()
     t_hdf_datainfo_t sds_info;
     int32           *readibuf = NULL, *readibuf_swapped = NULL;
     int32            data[Y_LENGTH][X_LENGTH];
-    int              fd; /* for open */
+    int              fd = -1; /* for open */
     int              chk_num;
     int              num_errs = 0; /* number of errors so far */
     int              status;
@@ -1132,18 +1133,22 @@ test_chunked_partial()
     if (close(fd) == -1) {
         fprintf(stderr, "test_chunked_partial: unable to close file %s", CHK_FILE);
         num_errs++;
-        return num_errs;
+        goto done;
     }
+    fd = -1;
+
 done:
     if (sds_id != FAIL)
         SDendaccess(sds_id);
     if (sd_id != FAIL)
         SDend(sd_id);
-    if (fd != FAIL)
+    if (fd != -1)
         close(fd);
 
-    free(readibuf);
-    free(readibuf_swapped);
+    if (readibuf != NULL)
+        free(readibuf);
+    if (readibuf_swapped != NULL)
+        free(readibuf_swapped);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
