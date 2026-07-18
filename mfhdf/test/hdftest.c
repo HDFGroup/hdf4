@@ -91,13 +91,11 @@ test_nbit()
     CHECK(status, FAIL, "SDwritedata");
 
     /* end access to NBIT data set 'NBitDataSet' */
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(newsds, "SDendaccess");
 
     /* need to close to flush n-bit info to file.
        hmm... */
-    status = SDend(fnbit);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fnbit, "SDend");
 
     /* read the n-bit data back in */
     fnbit = SDstart(NBITFILE, DFACC_RDWR);
@@ -123,12 +121,18 @@ test_nbit()
     }
 
     /* end access to NBIT data set */
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(newsds2, "SDendaccess");
 
     /* close file 'nbit.hdf' */
-    status = SDend(fnbit);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fnbit, "SDend");
+
+done:
+    if (newsds != FAIL)
+        SDendaccess(newsds);
+    if (newsds2 != FAIL)
+        SDendaccess(newsds2);
+    if (fnbit != FAIL)
+        SDend(fnbit);
 
     free(data);
 

@@ -14,7 +14,6 @@
 #include <string.h>
 
 #include "mfhdf.h"
-
 #include "hdftest.h"
 
 #define CHKFILE   "chktst.hdf"  /* Chunking test file */
@@ -78,30 +77,31 @@ static uint8 u8_data[2][3][4] = {{{0, 1, 2, 3}, {10, 11, 12, 13}, {20, 21, 22, 2
 extern int
 test_chunk()
 {
-    int32   fchk;                                                                   /* File handles */
-    int32   nt;                                                                     /* Number type */
-    int32   dimsize[10];                                                            /* dimension sizes */
-    int32   newsds1, newsds2, newsds3, newsds4, newsds5, newsds6, newsds7, newsds8; /* Chunked SDS ids */
-    float32 inbuf_f32[2][3][4];       /* float32 Data array read from from file */
-    uint16  inbuf_u16[2][3][4];       /* uint16 Data array read from from file */
-    uint16  inbuf1_2u16[9][4];        /* Data array read for Example 1 */
-    uint16  inbuf_2u16[5][2];         /* Data array read for Example 1 */
-    uint8   inbuf_u8[2][3][4];        /* uint8 Data array read from from file */
-    uint8   ru8_data[4];              /* chunk input buffer */
-    int32  *rcdims;                   /* for SDgetchunkinfo() */
-    uint16  fill_u16 = 0;             /* fill value */
-    HDF_CHUNK_DEF chunk_def;          /* Chunk definition set */
-    HDF_CHUNK_DEF chunk_def_out;      /* Chunk definition set */
-    HDF_CHUNK_DEF rchunk_def;         /* Chunk definition read */
-    comp_coder_t  comp_type;          /* to retrieve compression type into */
-    comp_info     cinfo;              /* compression information structure */
-    int32         cflags;             /* chunk flags */
-    int32         c_flags;            /* chunk flags to set */
-    int32         c_flags_out;        /* chunk flags retrieved */
-    int32         index;              /* Index of dataset in file */
-    int           status;             /* status flag */
-    int           i, j, k;            /* loop variables */
-    int32         start[10], end[10]; /* start, end, stride arrays */
+    int32 fchk = FAIL; /* File handles */
+    int32 nt;          /* Number type */
+    int32 dimsize[10]; /* dimension sizes */
+    int32 newsds1 = FAIL, newsds2 = FAIL, newsds3 = FAIL, newsds4 = FAIL, newsds5 = FAIL, newsds6 = FAIL,
+          newsds7 = FAIL, newsds8 = FAIL; /* Chunked SDS ids */
+    float32       inbuf_f32[2][3][4];     /* float32 Data array read from from file */
+    uint16        inbuf_u16[2][3][4];     /* uint16 Data array read from from file */
+    uint16        inbuf1_2u16[9][4];      /* Data array read for Example 1 */
+    uint16        inbuf_2u16[5][2];       /* Data array read for Example 1 */
+    uint8         inbuf_u8[2][3][4];      /* uint8 Data array read from from file */
+    uint8         ru8_data[4];            /* chunk input buffer */
+    int32        *rcdims;                 /* for SDgetchunkinfo() */
+    uint16        fill_u16 = 0;           /* fill value */
+    HDF_CHUNK_DEF chunk_def;              /* Chunk definition set */
+    HDF_CHUNK_DEF chunk_def_out;          /* Chunk definition set */
+    HDF_CHUNK_DEF rchunk_def;             /* Chunk definition read */
+    comp_coder_t  comp_type;              /* to retrieve compression type into */
+    comp_info     cinfo;                  /* compression information structure */
+    int32         cflags;                 /* chunk flags */
+    int32         c_flags;                /* chunk flags to set */
+    int32         c_flags_out;            /* chunk flags retrieved */
+    int32         index;                  /* Index of dataset in file */
+    int           status;                 /* status flag */
+    int           i, j, k;                /* loop variables */
+    int32         start[10], end[10];     /* start, end, stride arrays */
     int32         idata[100];
     int32         rdata[100];
     float32       max;
@@ -220,8 +220,7 @@ test_chunk()
     }
 
     /* Close down this SDS*/
-    status = SDendaccess(newsds1);
-    CHECK(status, FAIL, "Chunk Test 1. SDendaccess");
+    ENDSDS(newsds1, "Chunk Test 1. SDendaccess");
 
     /*
       Test 2. 2-D 9x4 SDS of uint16 with 3x2 chunks
@@ -366,8 +365,7 @@ test2:
     }
 
     /* Close down this SDS*/
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "Chunk Test 2. SDendaccess");
+    ENDSDS(newsds2, "Chunk Test 2. SDendaccess");
 
     /*
      * Next 3 different number types are tested with 3-D arrays
@@ -440,8 +438,7 @@ test3:
     }
 
     /* Close down SDS*/
-    status = SDendaccess(newsds3);
-    CHECK(status, FAIL, "Chunk Test 3. SDendaccess");
+    ENDSDS(newsds3, "Chunk Test 3. SDendaccess");
 
     /*
      * Test 4. Create a new chunked SDS of uint16 in file 1
@@ -539,8 +536,7 @@ test4:
     }
 
     /* Close down SDS*/
-    status = SDendaccess(newsds4);
-    CHECK(status, FAIL, "Chunk Test 4. SDendaccess");
+    ENDSDS(newsds4, "Chunk Test 4. SDendaccess");
 
     /*
      * Test 5. Create a new chunked SDS of uint8 in file 1
@@ -759,8 +755,7 @@ test5:
     }
 
     /* Close down SDS*/
-    status = SDendaccess(newsds5);
-    CHECK(status, FAIL, "Chunk Test 5. SDendaccess");
+    ENDSDS(newsds5, "Chunk Test 5. SDendaccess");
 
     /* ---------------------------------------------------------------
      *  Chunking with Compression
@@ -801,8 +796,7 @@ test6:
     }
 
     /* Close down SDS ie. template creation*/
-    status = SDendaccess(newsds6);
-    CHECK(status, FAIL, "Chunk Test 6. SDendaccess");
+    ENDSDS(newsds6, "Chunk Test 6. SDendaccess");
 
     newsds6 = FAIL;
 
@@ -1042,8 +1036,7 @@ test6:
     VERIFY(c_flags_out, (HDF_CHUNK | HDF_COMP), "Chunk Test 6. SDgetchunkinfo");
 
     /* Close down SDS*/
-    status = SDendaccess(newsds6);
-    CHECK(status, FAIL, "Chunk Test 6. SDendaccess");
+    ENDSDS(newsds6, "Chunk Test 6. SDendaccess");
 
     newsds6 = FAIL;
 
@@ -1071,8 +1064,7 @@ test6:
     VERIFY(comp_type, COMP_CODE_SKPHUFF, "Chunk Test 6. SDgetcomptype");
 
     /* Close down SDS*/
-    status = SDendaccess(newsds6);
-    CHECK(status, FAIL, "Chunk Test 6. SDendaccess");
+    ENDSDS(newsds6, "Chunk Test 6. SDendaccess");
 
     /*
      * Test 7. Create a  9x4 SDS of uint16 in file 1
@@ -1179,8 +1171,7 @@ test7:
     }
 
     /* Close down this SDS*/
-    status = SDendaccess(newsds7);
-    CHECK(status, FAIL, "Chunk Test 7. SDendaccess");
+    ENDSDS(newsds7, "Chunk Test 7. SDendaccess");
 
     /*
      * Test getting compression information for chunked SDS - bug# 307
@@ -1214,12 +1205,10 @@ test7:
     VERIFY((int)comp_type, chunk_def.comp.comp_type, "Chunk Test 7. SDgetcomptype");
 
     /* Close down SDS*/
-    status = SDendaccess(newsds7);
-    CHECK(status, FAIL, "Chunk Test 7. SDendaccess");
+    ENDSDS(newsds7, "Chunk Test 7. SDendaccess");
 
     /* Close down file 'chktst.hdf' */
-    status = SDend(fchk);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fchk, "SDend");
 
     /* ---------------------------------------------------------------
      *  Chunking with NBIT Compression
@@ -1287,12 +1276,10 @@ test8:
     VERIFY(chunk_def_out.nbit.fill_one, chunk_def.nbit.fill_one, "Chunk Test 8. SDgetchunkinfo");
 
     /* end access to SDS */
-    status = SDendaccess(newsds8);
-    CHECK(status, FAIL, "Chunk Test 8. SDendaccess");
+    ENDSDS(newsds8, "Chunk Test 8. SDendaccess");
 
     /* need to close to flush n-bit info to file */
-    status = SDend(fchk);
-    CHECK(status, FAIL, "Chunk Test 8. SDend");
+    ENDSD(fchk, "Chunk Test 8. SDend");
 
     /* open file again */
     fchk = SDstart(CNBITFILE, DFACC_RDWR);
@@ -1367,16 +1354,33 @@ test8:
     /* end of test for bug# 307 and bugzilla# 130 */
 
     /* end access to SDS */
-    status = SDendaccess(newsds8);
-    CHECK(status, FAIL, "Chunk Test 8. SDendaccess");
+    ENDSDS(newsds8, "Chunk Test 8. SDendaccess");
 
     /* close file */
-    status = SDend(fchk);
-    CHECK(status, FAIL, "Chunk Test 8. SDend");
+    ENDSD(fchk, "Chunk Test 8. SDend");
 
     if (num_errs == 0)
         PASSED();
 
 done:
+    if (newsds1 > 0)
+        SDendaccess(newsds1);
+    if (newsds2 > 0)
+        SDendaccess(newsds2);
+    if (newsds3 > 0)
+        SDendaccess(newsds3);
+    if (newsds4 > 0)
+        SDendaccess(newsds4);
+    if (newsds5 > 0)
+        SDendaccess(newsds5);
+    if (newsds6 > 0)
+        SDendaccess(newsds6);
+    if (newsds7 > 0)
+        SDendaccess(newsds7);
+    if (newsds8 > 0)
+        SDendaccess(newsds8);
+    if (fchk > 0)
+        SDend(fchk);
+
     return num_errs;
 } /* test_chunk() */

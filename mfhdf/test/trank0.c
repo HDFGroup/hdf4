@@ -21,7 +21,6 @@
 #include <string.h>
 
 #include "mfhdf.h"
-
 #include "hdftest.h"
 
 #define FILE_NAME "trank0.hdf" /* data file to test for rank=0 */
@@ -33,7 +32,7 @@
 extern int
 test_rank0()
 {
-    int32         fid, sds1_id, sds2_id, sds_id;
+    int32         fid = FAIL, sds1_id = FAIL, sds2_id = FAIL, sds_id = FAIL;
     int32         dim_sizes[2], array_rank, num_type, attributes;
     int32         start[2], edges[2];
     comp_coder_t  comp_type; /* to retrieve compression type into */
@@ -79,10 +78,8 @@ test_rank0()
     VERIFY(status, FAIL, "test_rank0: SDsetchunk");
 
     /* Close the SDSs */
-    status = SDendaccess(sds1_id);
-    CHECK(status, FAIL, "test_rank0: SDendaccess");
-    status = SDendaccess(sds2_id);
-    CHECK(status, FAIL, "test_rank0: SDendaccess");
+    ENDSDS(sds1_id, "test_rank0: SDendaccess");
+    ENDSDS(sds2_id, "test_rank0: SDendaccess");
 
     /**** Verify that SDwritedata fails when dataset has rank 0 ****/
 
@@ -108,8 +105,7 @@ test_rank0()
     VERIFY(status, FAIL, "test_rank0:SDwritedata");
 
     /* Close the SDS */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_rank0: SDendaccess");
+    ENDSDS(sds_id, "test_rank0: SDendaccess");
 
     /**** Verify that SDreaddata doesn't corrupt user's buffer, when dataset
           has rank 0; at this time, it does (buf[0][0] changed), but EP said
@@ -128,8 +124,7 @@ test_rank0()
     CHECK(status, FAIL, "test_rank0: SDreaddata");
 
     /* Close the SDS */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_rank0: SDendaccess");
+    ENDSDS(sds_id, "test_rank0: SDendaccess");
 
     /**** Verify various functions ****/
 
@@ -147,14 +142,23 @@ test_rank0()
     VERIFY(status_32, TRUE, "test_rank0: SDisrecord");
 
     /* Close the SDSs */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_rank0: SDendaccess");
+    ENDSDS(sds_id, "test_rank0: SDendaccess");
 
     /* Close the SD interface */
-    status = SDend(fid);
-    CHECK(status, FAIL, "test_rank0: SDend");
+    ENDSD(fid, "test_rank0: SDend");
 
     if (num_errs == 0)
         PASSED();
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sds1_id != FAIL)
+        SDendaccess(sds1_id);
+    if (sds2_id != FAIL)
+        SDendaccess(sds2_id);
+    if (fid != FAIL)
+        SDend(fid);
+
+    /* Return the number of errors that's been kept track of so far */
     return num_errs;
 }

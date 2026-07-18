@@ -20,7 +20,6 @@
  *  test_chunked_partial - tests on chunked and partially written SDS
  *  test_chkcmp_SDSs     - tests chunked/compressed SDSs
  *  test_extend_SDSs     - tests SDSs with unlimited dimensions
- * -BMR, Jul 2010
  ****************************************************************************/
 
 #include <math.h>
@@ -111,6 +110,7 @@ free_info(t_hdf_datainfo_t *info)
         free(info->offsets);
         free(info->lengths);
         free(info->dimsizes);
+        memset(info, 0, sizeof(t_hdf_datainfo_t));
     }
 }
 
@@ -142,7 +142,6 @@ comp_n_values(int32 rank, int32 *dimsizes)
  the use of the HDF4 library, and will be verified against the original
  data buffers.
 
- BMR - Jul 2010
  ****************************************************************************/
 #define SDS1_NAME "Simple_data_1dim_int32"
 #define SDS2_NAME "Simple_data_2dims_float32"
@@ -157,12 +156,15 @@ comp_n_values(int32 rank, int32 *dimsizes)
 static int
 test_nonspecial_SDSs()
 {
-    int32            sd_id, sds_id;
+    int              fd    = -1; /* for open */
+    int32            sd_id = FAIL, sds_id = FAIL;
     int32            dimsizes[2], starts[2], edges[2], rank = 0;
     int32            data1[LENGTH1_X];
     float            data2[LENGTH2_X][LENGTH2_Y];
     char             data3[LENGTH3_X];
     t_hdf_datainfo_t sds1_info, sds2_info, sds3_info;
+    int32           *readibuf = NULL, *readibuf_swapped = NULL;
+    float           *readfbuf = NULL, *readfbuf_swapped = NULL;
     int              info_count = 0;
     int              status;
     int              num_errs = 0; /* number of errors so far */
@@ -182,8 +184,7 @@ test_nonspecial_SDSs()
     CHECK(sds_id, FAIL, "test_nonspecial_SDSs: SDcreate");
 
     /* Close this SDS */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_nonspecial_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_nonspecial_SDSs: SDendaccess");
 
     /* Open that first dataset and verify that number of data block is 0 */
     sds_id = SDselect(sd_id, 0);
@@ -193,8 +194,7 @@ test_nonspecial_SDSs()
     VERIFY(info_count, 0, "test_nonspecial_SDSs: SDgetdatainfo");
 
     /* Close this SDS */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_nonspecial_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_nonspecial_SDSs: SDendaccess");
 
     /*
      * Create a 1-dim 10-element SDS, type int32, then write 10 values
@@ -212,8 +212,7 @@ test_nonspecial_SDSs()
     status    = SDwritedata(sds_id, starts, NULL, edges, (void *)data1);
     CHECK(status, FAIL, "test_nonspecial_SDSs: SDwritedata");
 
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_nonspecial_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_nonspecial_SDSs: SDendaccess");
 
     /*
      * Create a 2-dim 5x8 element SDS, type float32, then write 5x8 values
@@ -235,8 +234,7 @@ test_nonspecial_SDSs()
     status    = SDwritedata(sds_id, starts, NULL, edges, (void *)data2);
     CHECK(status, FAIL, "test_nonspecial_SDSs: SDwritedata");
 
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_nonspecial_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_nonspecial_SDSs: SDendaccess");
 
     /*
      * Create a 1-dim 20-element SDS, type char, then write 20 values
@@ -253,8 +251,7 @@ test_nonspecial_SDSs()
     status    = SDwritedata(sds_id, starts, NULL, edges, (void *)data3);
     CHECK(status, FAIL, "test_nonspecial_SDSs: SDwritedata");
 
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_nonspecial_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_nonspecial_SDSs: SDendaccess");
 
     /***********************************************************************
      Read data info for later accessing data without the use of HDF4 library
@@ -287,8 +284,7 @@ test_nonspecial_SDSs()
     status = SDgetdatainfo(sds_id, NULL, 0, (unsigned)info_count, sds1_info.offsets, sds1_info.lengths);
     CHECK(status, FAIL, "test_nonspecial_SDSs: SDgetdatainfo");
 
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_nonspecial_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_nonspecial_SDSs: SDendaccess");
 
     /* Open the third dataset, verify that number of data block is 1, then
      retrieve and record the offset/length */
@@ -318,8 +314,7 @@ test_nonspecial_SDSs()
     CHECK(status, FAIL, "test_nonspecial_SDSs: SDgetdatainfo");
 
     /* Close SDS index 2 */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_nonspecial_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_nonspecial_SDSs: SDendaccess");
 
     /* Open the last dataset, verify that number of data block is 1, then
      retrieve and record the offset/length */
@@ -348,12 +343,9 @@ test_nonspecial_SDSs()
     status = SDgetdatainfo(sds_id, NULL, 0, (unsigned)info_count, sds3_info.offsets, sds3_info.lengths);
     CHECK(status, FAIL, "test_nonspecial_SDSs: SDgetdatainfo");
 
-    /* Close SDS index 3 */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_nonspecial_SDSs: SDendaccess");
-
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "test_nonspecial_SDSs: SDend");
+    /* Close SDS index 3 and the file */
+    ENDSDS(sds_id, "test_nonspecial_SDSs: SDendaccess");
+    ENDSD(sd_id, "test_nonspecial_SDSs: SDend");
 
     /******************************************************************
      Read data using previously obtained data info without HDF4 library
@@ -361,11 +353,8 @@ test_nonspecial_SDSs()
 
     /* Open file and read in data without using SD API */
     {
-        int     fd;          /* for open */
         int32   ret32;       /* for DFKconvert */
         ssize_t readlen = 0; /* for read */
-        int32  *readibuf, *readibuf_swapped;
-        float  *readfbuf, *readfbuf_swapped;
         int     kk;
 
         /* Open the file for reading without SD API */
@@ -402,8 +391,8 @@ test_nonspecial_SDSs()
                             readibuf_swapped[ii]);
             }
         }
-        free(readibuf_swapped);
-        free(readibuf);
+        HDfreenclear(readibuf_swapped);
+        HDfreenclear(readibuf);
 
         /* Forward to the position of the data of SDS at index 2 */
         if (lseek(fd, (off_t)sds2_info.offsets[0], SEEK_SET) == -1) {
@@ -434,8 +423,8 @@ test_nonspecial_SDSs()
                 if (kk < sds2_info.n_values)
                     kk++;
             }
-        free(readfbuf_swapped);
-        free(readfbuf);
+        HDfreenclear(readfbuf_swapped);
+        HDfreenclear(readfbuf);
 
         /* Forward to the position of the data of SDS at index 3 */
         if (lseek(fd, (off_t)sds3_info.offsets[0], SEEK_SET) == -1) {
@@ -463,15 +452,33 @@ test_nonspecial_SDSs()
                             readibuf_swapped[ii]);
             }
         }
-        free(readibuf_swapped);
-        free(readibuf);
+        HDfreenclear(readibuf_swapped);
+        HDfreenclear(readibuf);
 
         if (close(fd) == -1) {
             fprintf(stderr, "test_nonspecial_SDSs: unable to close file %s", SIMPLE_FILE);
             num_errs++;
-            return num_errs;
+            goto done;
         }
+        fd = -1;
     }
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
+    if (fd != -1)
+        close(fd);
+
+    if (readibuf != NULL)
+        free(readibuf);
+    if (readibuf_swapped != NULL)
+        free(readibuf_swapped);
+    if (readfbuf != NULL)
+        free(readfbuf);
+    if (readfbuf_swapped != NULL)
+        free(readfbuf_swapped);
     free_info(&sds1_info);
     free_info(&sds2_info);
     free_info(&sds3_info);
@@ -499,13 +506,12 @@ test_nonspecial_SDSs()
  the use of the HDF4 library, and will be verified against the original
  data buffers.
 
- BMR - Jul 2010
  ****************************************************************************/
 #define COMP_FILE "datainfo_cmp.hdf" /* data file */
 static int
 test_compressed_SDSs()
 {
-    int32            sd_id, sds_id;
+    int32            sd_id = FAIL, sds_id = FAIL;
     int32            starts[2], edges[2], dimsizes[2], rank = 0;
     comp_coder_t     comp_type; /* Compression flag */
     comp_info        c_info;    /* Compression structure */
@@ -540,8 +546,7 @@ test_compressed_SDSs()
     CHECK(status, FAIL, "test_compressed_SDSs: SDsetnbitdataset");
 
     /* End access to 'NBit-No-Data' */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_compressed_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_compressed_SDSs: SDendaccess");
 
     /*
      * Create a 1-dim 10-element SDS, type int32, set Deflate compression,
@@ -565,8 +570,7 @@ test_compressed_SDSs()
     status    = SDwritedata(sds_id, starts, NULL, edges, (void *)data1);
     CHECK(status, FAIL, "test_compressed_SDSs: SDwritedata 'Deflate-Data'");
 
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_compressed_SDSs: SDendaccess 'Deflate-Data'");
+    ENDSDS(sds_id, "test_compressed_SDSs: SDendaccess 'Deflate-Data'");
 
     for (ii = 0; ii < LENGTH2_X; ii++)
         for (jj = 0; jj < LENGTH2_Y; jj++)
@@ -605,8 +609,7 @@ test_compressed_SDSs()
     status                = SDwritedata(sds_id, starts, NULL, edges, (void *)data2);
     CHECK(status, FAIL, "test_compressed_SDSs: SDwritedata 'SZIP-Data'");
 
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_compressed_SDSs: SDendaccess 'SZIP-Data'");
+    ENDSDS(sds_id, "test_compressed_SDSs: SDendaccess 'SZIP-Data'");
 #else  /* SZIP lib not available */
     /*
      * Create a 2-dim 5x8 element SDS, type float32, set SZIP compression,
@@ -633,8 +636,7 @@ test_compressed_SDSs()
     status                = SDwritedata(sds_id, starts, NULL, edges, (void *)data2);
     CHECK(status, FAIL, "test_compressed_SDSs: SDwritedata");
 
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_compressed_SDSs: SDendaccess 'SZIP-Data'");
+    ENDSDS(sds_id, "test_compressed_SDSs: SDendaccess 'SZIP-Data'");
 #endif /* SZIP lib available */
 
     /*
@@ -658,11 +660,9 @@ test_compressed_SDSs()
     status    = SDwritedata(sds_id, starts, NULL, edges, (void *)data3);
     CHECK(status, FAIL, "test_compressed_SDSs: SDwritedata 'SKPHUFF-Data'");
 
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_compressed_SDSs: SDendaccess 'SKPHUFF-Data'");
-
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "test_compressed_SDSs: SDend COMP_FILE");
+    /* Close sds SKPHUFF-Data and the file */
+    ENDSDS(sds_id, "test_compressed_SDSs: SDendaccess 'SKPHUFF-Data'");
+    ENDSD(sd_id, "test_compressed_SDSs: SDend COMP_FILE");
 
     /***********************************************************************
      Read data info for later accessing data without the use of HDF4 library
@@ -718,8 +718,7 @@ test_compressed_SDSs()
     status = SDgetdatainfo(sds_id, NULL, 0, (unsigned)info_count, sds1_info.offsets, sds1_info.lengths);
     CHECK(status, FAIL, "test_compressed_SDSs: SDgetdatainfo");
 
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_compressed_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_compressed_SDSs: SDendaccess");
 
     /* Open the third dataset, verify that number of data block is 1, verify its
      comp type is SZIP or NBIT, then retrieve and record the offset/length */
@@ -758,8 +757,7 @@ test_compressed_SDSs()
     CHECK(status, FAIL, "test_compressed_SDSs: SDgetdatainfo");
 
     /* Close SDS index 2 */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_compressed_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_compressed_SDSs: SDendaccess");
 
     /* Open the third dataset, verify that number of data block is 1, verify
      its comp type is Skipping Huffman, then retrieve and record the
@@ -795,16 +793,20 @@ test_compressed_SDSs()
     CHECK(status, FAIL, "test_compressed_SDSs: SDgetdatainfo");
 
     /* Close SDS index 3 */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_compressed_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_compressed_SDSs: SDendaccess");
 
     /* Close the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "test_compressed_SDSs: SDend");
+    ENDSD(sd_id, "test_compressed_SDSs: SDend");
 
     /******************************************************************
      Read data using previously obtained data info without HDF4 library
      ******************************************************************/
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
 
     free_info(&sds1_info);
     free_info(&sds2_info);
@@ -827,7 +829,6 @@ test_compressed_SDSs()
  the SDSs, then uses SDgetdatainfo to verify that the number of data
  blocks of each SDS is 0.
 
- BMR - Jul 2010
  ****************************************************************************/
 #define X_LENGTH2   4
 #define Y_LENGTH2   9
@@ -839,7 +840,7 @@ test_compressed_SDSs()
 static int
 test_empty_SDSs()
 {
-    int32        sd_id, sds_id;
+    int32        sd_id = FAIL, sds_id = FAIL;
     int32        dimsizes[RANK];
     int          info_count = 0;
     comp_coder_t comp_type; /* Compression flag */
@@ -862,8 +863,7 @@ test_empty_SDSs()
     /* Contiguous-No-Data */
     sds_id = SDcreate(sd_id, "Contiguous-No-Data", DFNT_INT16, RANK, dimsizes);
     CHECK(sds_id, FAIL, "test_empty_SDSs: SDcreate 'Contiguous-No-Data'");
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_empty_SDSs: SDendaccess 'Contiguous-No-Data'");
+    ENDSDS(sds_id, "test_empty_SDSs: SDendaccess 'Contiguous-No-Data'");
 
     /* Compressed-No-Data */
     sds_id = SDcreate(sd_id, "Compressed-No-Data", DFNT_INT16, RANK, dimsizes);
@@ -874,15 +874,13 @@ test_empty_SDSs()
     c_info.skphuff.skp_size = 4;
     status                  = SDsetcompress(sds_id, comp_type, &c_info);
     CHECK(status, FAIL, "test_empty_SDSs: SDsetcompress 'Compressed-No-Data'");
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_empty_SDSs: SDendaccess 'Compressed-No-Data'");
+    ENDSDS(sds_id, "test_empty_SDSs: SDendaccess 'Compressed-No-Data'");
 
     /* Extend-No-Data */
     dimsizes[0] = SD_UNLIMITED;
     sds_id      = SDcreate(sd_id, "Extend-No-Data", DFNT_INT16, RANK, dimsizes);
     CHECK(sds_id, FAIL, "test_empty_SDSs: SDcreate 'Extend-No-Data'");
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_empty_SDSs: SDendaccess 'Extend-No-Data'");
+    ENDSDS(sds_id, "test_empty_SDSs: SDendaccess 'Extend-No-Data'");
 
     /* Verify that the number of data block is 0 for all data sets */
     for (ii = 0; ii < NUM_SDS; ii++) {
@@ -896,10 +894,11 @@ test_empty_SDSs()
         status = SDendaccess(sds_id);
         CHECK_IND(status, FAIL, "test_empty_SDSs: SDendaccess", ii);
     }
+    /* Reset sds ID after the last closing */
+    sds_id = FAIL;
 
     /* Close the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "test_empty_SDSs: SDend");
+    ENDSD(sd_id, "test_empty_SDSs: SDend");
 
     /* Reopen the file and check again to make sure that it is still correct
      after flushing the metadata */
@@ -918,9 +917,17 @@ test_empty_SDSs()
         status = SDendaccess(sds_id);
         CHECK_IND(status, FAIL, "test_empty_SDSs: SDendaccess", ii);
     }
+    /* Reset sds ID after the last closing */
+    sds_id = FAIL;
+
     /* Close the file */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "test_empty_SDSs: SDend");
+    ENDSD(sd_id, "test_empty_SDSs: SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -945,19 +952,20 @@ test_empty_SDSs()
  the use of the HDF4 library, and will be verified against the original
  data buffers.
 
- BMR - Jul 2010
  ****************************************************************************/
 #define CHK_FILE "datainfo_chk.hdf" /* data file */
 static int
 test_chunked_partial()
 {
-    int32            sd_id, sds_id, sds_index;
+    int32            sd_id = FAIL, sds_id = FAIL, sds_index;
     int32            dimsizes[RANK], origin[RANK], starts[RANK], rank = 0, edges[RANK];
-    HDF_CHUNK_DEF    c_def; /* Chunking definitions */
-    int              info_count = 0;
+    HDF_CHUNK_DEF    c_def;          /* chunking definitions */
+    int32            chk_coord[2];   /* chunk coordinates */
+    int              info_count = 0; /* number of data blocks */
     t_hdf_datainfo_t sds_info;
+    int32           *readibuf = NULL, *readibuf_swapped = NULL;
     int32            data[Y_LENGTH][X_LENGTH];
-    int              fd; /* for open */
+    int              fd = -1; /* for open */
     int              chk_num;
     int              num_errs = 0; /* number of errors so far */
     int              status;
@@ -1007,8 +1015,7 @@ test_chunked_partial()
     CHECK(status, FAIL, "test_chunked_partial: SDwritechunk");
 
     /* Terminate access to 'Chunked-Partial-Data' */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_chunked_partial: SDendaccess");
+    ENDSDS(sds_id, "test_chunked_partial: SDendaccess");
 
     /* Create a 2x2 dataset called 'Non-Special-Data 1' */
     dimsizes[0] = Y_LENGTH;
@@ -1042,15 +1049,18 @@ test_chunked_partial()
     status    = SDwritechunk(sds_id, origin, (void *)chunk_1dim);
     CHECK(status, FAIL, "test_chunked_partial: SDwritechunk");
 
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_chunked_partial: SDendaccess");
+    ENDSDS(sds_id, "test_chunked_partial: SDendaccess");
 
     sds_id = SDselect(sd_id, sds_index);
     CHECK(sds_id, FAIL, "test_chunked_partial: SDselect 'Chunked-Partial-Data'");
 
     /* Verify new number of chunks written */
 
-    /* Retrieve the offset and length of the chunks */
+    /* Get the number of data blocks */
+    chk_coord[0] = chk_coord[1] = 0;
+    info_count                  = SDgetdatainfo(sds_id, chk_coord, 0, 0, NULL, NULL);
+    CHECK(info_count, FAIL, "test_chunked_partial: SDgetdatainfo");
+    VERIFY(info_count, 1, "test_chunked_partial: SDgetdatainfo");
 
     /* Get SDS' rank to know how much to allocate space for sds_info */
     status = SDgetinfo(sds_id, NULL, &rank, NULL, NULL, NULL);
@@ -1066,10 +1076,12 @@ test_chunked_partial()
     /* Record number of values the SDS can have */
     sds_info.n_values = 1 * 10; /* chunk has 1 dim of size 10 */
 
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_chunked_partial: SDendaccess");
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "test_chunked_partial: SDend");
+    /* Retrieve the offset and length of the chunks */
+    status = SDgetdatainfo(sds_id, chk_coord, 0, (unsigned)info_count, sds_info.offsets, sds_info.lengths);
+    CHECK(status, FAIL, "test_chunked_partial: SDgetdatainfo");
+
+    ENDSDS(sds_id, "test_chunked_partial: SDendaccess");
+    ENDSD(sd_id, "test_chunked_partial: SDend");
 
     /* Open file and read in data without using SD API */
     fd = open(CHK_FILE, O_RDONLY);
@@ -1083,7 +1095,6 @@ test_chunked_partial()
     for (chk_num = 0; chk_num < info_count; chk_num++) {
         int32   ret32;       /* for DFKconvert */
         ssize_t readlen = 0; /* for read */
-        int32  *readibuf, *readibuf_swapped;
 
         /* Forward to the position of the data of the SDS */
         if (lseek(fd, (off_t)sds_info.offsets[chk_num], SEEK_SET) == -1) {
@@ -1114,16 +1125,31 @@ test_chunked_partial()
                 fprintf(stderr, "At value# %d: written = %d read = %d\n", ii, chunk_1dim[ii],
                         readibuf_swapped[ii]);
         }
-        free(readibuf_swapped);
-        free(readibuf);
+        HDfreenclear(readibuf_swapped);
+        HDfreenclear(readibuf);
     }
     free_info(&sds_info);
 
     if (close(fd) == -1) {
         fprintf(stderr, "test_chunked_partial: unable to close file %s", CHK_FILE);
         num_errs++;
-        return num_errs;
+        goto done;
     }
+    fd = -1;
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
+    if (fd != -1)
+        close(fd);
+
+    if (readibuf != NULL)
+        free(readibuf);
+    if (readibuf_swapped != NULL)
+        free(readibuf_swapped);
+
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
 } /* test_chunked_partial */
@@ -1138,7 +1164,7 @@ test_chunked_partial()
 static int
 test_chkcmp_SDSs()
 {
-    int32            sd_id, sds_id, sds_index;
+    int32            sd_id = FAIL, sds_id = FAIL, sds_index;
     int32            cmpsds_id, cmpsds_index;
     int32            flag;
     int32            dimsizes[RANK], origin[RANK], rank = 0;
@@ -1209,12 +1235,9 @@ test_chkcmp_SDSs()
      new_maxcache = SDsetchunkcache(sds_id, maxcache, 0);
      CHECK(new_maxcache, FAIL, "test_chkcmp_SDSs: SDsetchunkcache");
      */
-    /* Terminate access to the dataset before writing data to it. */
-    status = SDendaccess(cmpsds_id);
-    CHECK(status, FAIL, "test_chkcmp_SDSs: SDendaccess");
-
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_chkcmp_SDSs: SDendaccess");
+    /* Terminate access to the datasets before writing data to them. */
+    ENDSDS(cmpsds_id, "test_chkcmp_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_chkcmp_SDSs: SDendaccess");
 
     /* Re-select the datasets, write chunks using SDwritechunk function, then
      check their data sizes */
@@ -1256,13 +1279,10 @@ test_chkcmp_SDSs()
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDwritechunk");
 
     /* Terminate access to the datasets */
-    status = SDendaccess(cmpsds_id);
-    CHECK(status, FAIL, "test_chkcmp_SDSs: SDendaccess");
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_chkcmp_SDSs: SDendaccess");
+    ENDSDS(cmpsds_id, "test_chkcmp_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_chkcmp_SDSs: SDendaccess");
 
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "test_chkcmp_SDSs: SDend");
+    ENDSD(sd_id, "test_chkcmp_SDSs: SDend");
 
     /* Retrieve the offset and length of the chunks of both SDSs */
 
@@ -1305,8 +1325,7 @@ test_chkcmp_SDSs()
 
     free_info(&sds_info);
 
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_chkcmp_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_chkcmp_SDSs: SDendaccess");
 
     /*
      * "Chunked-Deflate-Data"
@@ -1337,11 +1356,19 @@ test_chkcmp_SDSs()
 
     free_info(&cmpsds_info);
 
-    status = SDendaccess(cmpsds_id);
-    CHECK(status, FAIL, "test_chkcmp_SDSs: SDendaccess");
+    ENDSDS(cmpsds_id, "test_chkcmp_SDSs: SDendaccess");
 
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "test_chkcmp_SDSs: SDend");
+    ENDSD(sd_id, "test_chkcmp_SDSs: SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (cmpsds_id != FAIL)
+        SDendaccess(cmpsds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
+
+    free_info(&cmpsds_info);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -1357,14 +1384,14 @@ test_chkcmp_SDSs()
 static int
 test_extend_SDSs()
 {
-    int32            sd_id, sds_id, sds_index;
-    int32            dimsizes[2], starts[2], edges[2], rank = 0;
-    int32            start1[1], edges1[1];
-    int32            data1[Y_LENGTH][X_LENGTH];
-    int32            data2[Y_LENGTH][X_LENGTH];
-    int32            data3[Y_LENGTH][X_LENGTH];
-    float            fdata[Y_LENGTH];
-    int32            output[Y_LENGTH * 3][X_LENGTH];
+    int32 sd_id = FAIL, sds_id = FAIL, sds_index;
+    int32 dimsizes[2], starts[2], edges[2], rank = 0;
+    int32 start1[1], edges1[1];
+    int32(*data1)[X_LENGTH] = NULL;
+    int32(*data2)[X_LENGTH] = NULL;
+    int32(*data3)[X_LENGTH] = NULL;
+    float fdata[Y_LENGTH];
+    int32(*output)[X_LENGTH]    = NULL;
     int              info_count = 0;
     t_hdf_datainfo_t sds_info;
     int32            block_size = 0;
@@ -1372,7 +1399,10 @@ test_extend_SDSs()
     int              i, j, kk;
     int              num_errs = 0; /* number of errors so far */
 
-    /* Initialize data for the dataset */
+    /* Allocate and initialize data for the dataset */
+    data1 = (int32(*)[X_LENGTH])malloc(Y_LENGTH * X_LENGTH * sizeof(int32));
+    CHECK_ALLOC(data1, "data1", "test_extend_SDSs");
+
     for (j = 0; j < Y_LENGTH; j++)
         for (i = 0; i < X_LENGTH; i++)
             data1[j][i] = (i + j) + 1;
@@ -1407,7 +1437,9 @@ test_extend_SDSs()
     VERIFY(block_size, BLOCK_SIZE, "SDgetblocksize");
 
     /* Check data. */
-    memset(&output, 0, sizeof(output));
+    output = (int32(*)[X_LENGTH])malloc((Y_LENGTH * 3 * X_LENGTH) * sizeof(int32));
+    CHECK_ALLOC(output, "output", "test_extend_SDSs");
+    memset(output, 0, (Y_LENGTH * 3 * X_LENGTH) * sizeof(int32));
     status = SDreaddata(sds_id, starts, NULL, edges, (void *)output);
     CHECK(status, FAIL, "test_extend_SDSs: SDreaddata");
 
@@ -1419,8 +1451,7 @@ test_extend_SDSs()
                         data1[j][i], j, i);
 
     /* Close this SDS */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_extend_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_extend_SDSs: SDendaccess");
 
     /* Create another dataset with 1 unlimited dimension */
     sds_id = SDcreate(sd_id, "Extend-Data 2", DFNT_FLOAT32, RANK1, dimsizes);
@@ -1435,8 +1466,7 @@ test_extend_SDSs()
     CHECK(status, FAIL, "test_extend_SDSs: SDwritedata");
 
     /* Close this SDS */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_extend_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_extend_SDSs: SDendaccess");
 
     /* Select the dataset "Extend-Data 1", then write more data to it */
     sds_index = SDnametoindex(sd_id, "Extend-Data 1");
@@ -1450,7 +1480,10 @@ test_extend_SDSs()
     CHECK(status, FAIL, "test_extend_SDSs: SDgetblocksize");
     VERIFY(block_size, BLOCK_SIZE, "SDgetblocksize");
 
-    /* Initialize second batch of data for the extendable dataset */
+    /* Allocate and initialize second batch of data for the extendable dataset */
+    data2 = (int32(*)[X_LENGTH])malloc(Y_LENGTH * X_LENGTH * sizeof(int32));
+    CHECK_ALLOC(data2, "data2", "test_extend_SDSs");
+
     for (j = 0; j < Y_LENGTH; j++)
         for (i = 0; i < X_LENGTH; i++)
             data2[j][i] = (i + j) + 10;
@@ -1463,7 +1496,10 @@ test_extend_SDSs()
     status    = SDwritedata(sds_id, starts, NULL, edges, (void *)data2);
     CHECK(status, FAIL, "test_extend_SDSs: SDwritedata");
 
-    /* Initialize third batch of data for the extendable dataset */
+    /* Allocate and initialize third batch of data for the extendable dataset */
+    data3 = (int32(*)[X_LENGTH])malloc(Y_LENGTH * X_LENGTH * sizeof(int32));
+    CHECK_ALLOC(data3, "data3", "test_extend_SDSs");
+
     for (j = 0; j < Y_LENGTH; j++)
         for (i = 0; i < X_LENGTH; i++)
             data3[j][i] = (i + j) + 100;
@@ -1476,8 +1512,7 @@ test_extend_SDSs()
     CHECK(status, FAIL, "test_extend_SDSs: SDwritedata");
 
     /* Close this SDS */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_extend_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_extend_SDSs: SDendaccess");
 
     /* Open "Extend-Data 1" again and check data. */
     sds_id = SDselect(sd_id, sds_index);
@@ -1487,7 +1522,7 @@ test_extend_SDSs()
     starts[1] = 0;
     edges[0]  = Y_LENGTH + Y_LENGTH + Y_LENGTH;
     edges[1]  = X_LENGTH;
-    memset(&output, 0, sizeof(output));
+    memset(output, 0, (size_t)(edges[0] * edges[1]) * sizeof(int32));
     status = SDreaddata(sds_id, starts, NULL, edges, (void *)output);
     CHECK(status, FAIL, "test_extend_SDSs: SDreaddata");
 
@@ -1515,8 +1550,7 @@ test_extend_SDSs()
                         data3[j][i], kk, i);
 
     /* Close this SDS */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_extend_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_extend_SDSs: SDendaccess");
 
     /* Select the dataset "Extend-Data 1", then get offsets and lengths of
      its data blocks */
@@ -1571,10 +1605,8 @@ test_extend_SDSs()
     free_info(&sds_info);
 
     /* Close this SDS and the SD interface */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_extend_SDSs: SDendaccess");
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "test_extend_SDSs: SDend");
+    ENDSDS(sds_id, "test_extend_SDSs: SDendaccess");
+    ENDSD(sd_id, "test_extend_SDSs: SDend");
 
     /*
      * Reopen the file and verify that "Extend-Data 1" has the correct
@@ -1598,10 +1630,23 @@ test_extend_SDSs()
     VERIFY(block_size, BLOCK_SIZE, "SDgetblocksize");
 
     /* Close this SDS and the SD interface */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_extend_SDSs: SDendaccess");
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "test_extend_SDSs: SDend");
+    ENDSDS(sds_id, "test_extend_SDSs: SDendaccess");
+    ENDSD(sd_id, "test_extend_SDSs: SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
+
+    if (data1 != NULL)
+        free(data1);
+    if (data2 != NULL)
+        free(data2);
+    if (data3 != NULL)
+        free(data3);
+    if (output != NULL)
+        free(output);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;

@@ -25,9 +25,8 @@
 #endif
 
 #include "mfhdf.h"
-
-#include "hdftest.h"
 #include "hfile_priv.h"
+#include "hdftest.h"
 
 /* Data file to test ID types */
 #define FILE_NAME "sdtest.hdf"
@@ -35,7 +34,7 @@
 int
 test_sd()
 {
-    int32 fid;
+    int32 fid = FAIL;
     int   status;
 #if defined(H4_HAVE_WIN32_API)
     int mode;
@@ -77,8 +76,7 @@ test_sd()
     CHECK(fid, FAIL, "SDstart");
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
 
 #if defined(H4_HAVE_WIN32_API)
     mode = _S_IREAD;
@@ -111,5 +109,9 @@ test_sd()
 
     if (num_errs == 0)
         PASSED();
+done:
+    if (fid != FAIL)
+        SDend(fid);
+
     return num_errs;
 } /* test_SDAPI_ids */

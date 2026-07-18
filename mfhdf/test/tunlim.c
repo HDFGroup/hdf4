@@ -91,6 +91,7 @@ verify_info_data(int32 sds_id, int32 expected_dimsize, int16 *result)
     if (status != 0)
         fprintf(stderr, "For SDS %s: Read data doesn't match input\n", ds_name);
 
+done:
     /* Return the number of errors occurred here */
     return (num_errs);
 }
@@ -116,8 +117,8 @@ verify_info_data(int32 sds_id, int32 expected_dimsize, int16 *result)
 static int
 test_1dim_singlevar()
 {
-    int32 fid;           /* file id */
-    int32 dset1;         /* dataset ids */
+    int32 fid   = FAIL;  /* file id */
+    int32 dset1 = FAIL;  /* dataset ids */
     int32 dimsizes[1];   /* dimension size buffer */
     int32 start[1],      /* where to start writing */
         edges[1];        /* length of data to be read/written */
@@ -201,14 +202,19 @@ test_1dim_singlevar()
     num_errs = num_errs + verify_info_data(dset1, 11, result);
 
     /* Close the dataset */
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(dset1, "SDendaccess");
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
 
-    return 0;
+done:
+    if (dset1 != FAIL)
+        SDendaccess(dset1);
+    if (fid != FAIL)
+        SDend(fid);
+
+    /* Return the number of errors that's been kept track of so far */
+    return num_errs;
 }
 
 /********************************************************************
@@ -234,16 +240,16 @@ test_1dim_singlevar()
 static int
 test_1dim_multivars()
 {
-    int32 fid;           /* file id */
-    int32 dset1, dset2;  /* dataset ids */
-    int32 dimsizes[1];   /* dimension size buffer */
-    int32 start[1],      /* where to start writing */
-        edges[1];        /* length of data to be read/written */
-    int16 outdata[DIM0]; /* data read back */
-    int16 fillval1 = -1; /* fill value for the variable */
-    int16 fillval2 = -2; /* fill value for the variable */
-    int   status   = 0;  /* returned by called functions */
-    int   num_errs = 0;  /* number of errors so far */
+    int32 fid   = FAIL;               /* file id */
+    int32 dset1 = FAIL, dset2 = FAIL; /* dataset ids */
+    int32 dimsizes[1];                /* dimension size buffer */
+    int32 start[1],                   /* where to start writing */
+        edges[1];                     /* length of data to be read/written */
+    int16 outdata[DIM0];              /* data read back */
+    int16 fillval1 = -1;              /* fill value for the variable */
+    int16 fillval2 = -2;              /* fill value for the variable */
+    int   status   = 0;               /* returned by called functions */
+    int   num_errs = 0;               /* number of errors so far */
 
     /* result data to compare against read data */
     int16 result1[] = {300, 301, 302, 303, -1, -1, 400, 401, 500, 501, 502};
@@ -354,14 +360,21 @@ test_1dim_multivars()
     num_errs = num_errs + verify_info_data(dset2, 15, result2);
 
     /* Close the dataset */
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(dset1, "SDendaccess");
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
 
-    return 0;
+done:
+    if (dset1 != FAIL)
+        SDendaccess(dset1);
+    if (dset2 != FAIL)
+        SDendaccess(dset2);
+    if (fid != FAIL)
+        SDend(fid);
+
+    /* Return the number of errors that's been kept track of so far */
+    return num_errs;
 }
 
 /********************************************************************
@@ -389,8 +402,8 @@ test_1dim_multivars()
 static int
 test_multidim_singlevar()
 {
-    int32 fid;                       /* file id */
-    int32 dset1;                     /* dataset id */
+    int32 fid   = FAIL;              /* file id */
+    int32 dset1 = FAIL;              /* dataset id */
     int32 dset_index;                /* dataset index */
     int32 dimsizes[3];               /* dimension size buffer */
     int32 start[3],                  /* where to start reading */
@@ -457,11 +470,9 @@ test_multidim_singlevar()
     VERIFY(status, 0, "memcmp");
 
     /* Close the dataset */
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(dset1, "SDendaccess");
 
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
 
     /* Reopen file and dataset */
     fid = SDstart(FILENAME3, DFACC_RDWR);
@@ -541,14 +552,19 @@ test_multidim_singlevar()
     */
 
     /* Close the dataset */
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(dset1, "SDendaccess");
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
 
-    return 0;
+done:
+    if (dset1 != FAIL)
+        SDendaccess(dset1);
+    if (fid != FAIL)
+        SDend(fid);
+
+    /* Return the number of errors that's been kept track of so far */
+    return num_errs;
 }
 
 /********************************************************************
@@ -577,15 +593,15 @@ test_multidim_singlevar()
 static int
 test_1dim_multivars_addon()
 {
-    int32 fid;           /* file id */
-    int32 dset1, dset2;  /* dataset ids */
-    int32 dset_index;    /* dataset index */
-    int32 dimsizes[1];   /* dimension size buffer */
-    int32 start[1],      /* where to start writing */
-        edges[1];        /* length of data to be read/written */
-    int16 fillval  = -3; /* fill value for the variable */
-    int   status   = 0;  /* returned by called functions */
-    int   num_errs = 0;  /* number of errors so far */
+    int32 fid   = FAIL;               /* file id */
+    int32 dset1 = FAIL, dset2 = FAIL; /* dataset ids */
+    int32 dset_index;                 /* dataset index */
+    int32 dimsizes[1];                /* dimension size buffer */
+    int32 start[1],                   /* where to start writing */
+        edges[1];                     /* length of data to be read/written */
+    int16 fillval  = -3;              /* fill value for the variable */
+    int   status   = 0;               /* returned by called functions */
+    int   num_errs = 0;               /* number of errors so far */
 
     /* result data to compare against read data */
     int16 result3[] = {300, 301, 302, 303, -3, -3, 30, 31, 801, 802, 803};
@@ -607,10 +623,8 @@ test_1dim_multivars_addon()
     CHECK(status, FAIL, "SDsetfillvalue");
 
     /* Close dataset and file */
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSDS(dset1, "SDendaccess");
+    ENDSD(fid, "SDend");
 
     /* Reopen file and dataset */
     fid = SDstart(FILENAME2, DFACC_RDWR);
@@ -701,22 +715,27 @@ test_1dim_multivars_addon()
         num_errs = num_errs + verify_info_data(dset, 15, result2);
 
         /* Close "Variable 2" */
-        status = SDendaccess(dset);
-        CHECK(status, FAIL, "SDendaccess");
+        ENDSDS(dset, "SDendaccess");
     } /* end reading "Variable 2" */
 
     /* Close all datasets */
-    status = SDendaccess(dset1);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDendaccess(dset2);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(dset1, "SDendaccess");
+    ENDSDS(dset2, "SDendaccess");
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
 
-    return 0;
-} /* test_1dim_multivars_addon */
+done:
+    if (dset1 != FAIL)
+        SDendaccess(dset1);
+    if (dset2 != FAIL)
+        SDendaccess(dset2);
+    if (fid != FAIL)
+        SDend(fid);
+
+    /* Return the number of errors that's been kept track of so far */
+    return num_errs;
+}
 
 /* Test driver for testing reading/writing variables with unlimited dimension
    using SD API. */

@@ -23,7 +23,6 @@
 #include <string.h>
 
 #include "mfhdf.h"
-
 #include "hdftest.h"
 
 /********************************************************************
@@ -61,7 +60,7 @@
 static int
 test_basic_dim()
 {
-    int32 fid, sds_id, status, dim0_id, dim1_id, sds_idx;
+    int32 fid = FAIL, sds_id = FAIL, status, dim0_id = FAIL, dim1_id = FAIL, sds_idx;
     int32 dims[2], start[2], edges[2], rank;
     int16 array1_data[LENGTH0][LENGTH1]; /* data for first SDS */
     int32 dim_sizes[H4_MAX_VAR_DIMS];    /* read dimensions */
@@ -133,12 +132,10 @@ test_basic_dim()
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the array. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file. */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
 
     /* Re-open BASIC_FILE in W mode */
     fid = SDstart(BASIC_FILE, DFACC_WRITE);
@@ -184,8 +181,7 @@ test_basic_dim()
     VERIFY(dim_num_attrs, 0, "SDdiminfo");
 
     /* Terminate access to the array. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /*
      * Add another dataset to the file; this dataset is a LENGTH2 x LENGTH3
@@ -230,16 +226,19 @@ test_basic_dim()
     VERIFY(dim_num_attrs, 0, "SDdiminfo");
 
     /* Terminate access to the array. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (fid != FAIL)
+        SDend(fid);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
-
 } /* test_dim_basics */
 
 /********************************************************************
@@ -272,7 +271,7 @@ test_basic_dim()
 static int
 test_dim_scales()
 {
-    int32   fid, sds_id, status, dim0_id, dim1_id, sds_idx;
+    int32   fid = FAIL, sds_id = FAIL, status, dim0_id = FAIL, dim1_id = FAIL, sds_idx;
     int32   dims[2], start[2], edges[2], rank;
     int16   array1_data[LENGTH0][LENGTH1]; /* data for first SDS */
     uint32  array2_data[LENGTH2][LENGTH3]; /* data for second SDS */
@@ -334,12 +333,10 @@ test_dim_scales()
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the array. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file. */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
 
     /* Re-open SCALES_FILE in W mode */
     fid = SDstart(SCALES_FILE, DFACC_WRITE);
@@ -392,8 +389,7 @@ test_dim_scales()
     VERIFY(dim_data_type, num_type, "SDdiminfo");
 
     /* Terminate access to the array. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /*
      * Add another dataset to the file; this dataset is a LENGTH2 x LENGTH3
@@ -474,16 +470,19 @@ test_dim_scales()
         VERIFY(scale2_out[i], scale2[i], "SDgetdimscale");
 
     /* Terminate access to the array. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (fid != FAIL)
+        SDend(fid);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
-
 } /* test_dim_scales */
 
 /********************************************************************
@@ -521,7 +520,7 @@ test_dim_scales()
 static int
 test_dim_strs()
 {
-    int32  fid, sds_id, status, dim0_id, dim1_id, sds_idx, coord_var_id;
+    int32  fid = FAIL, sds_id = FAIL, status, dim0_id = FAIL, dim1_id = FAIL, sds_idx, coord_var_id = FAIL;
     int32  dims[2], start[2], edges[2], rank;
     int16  array1_data[LENGTH0][LENGTH1]; /* data for first SDS */
     uint32 array2_data[LENGTH2][LENGTH3]; /* data for second SDS */
@@ -590,12 +589,10 @@ test_dim_strs()
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the array. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file. */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
 
     /* Re-open BASIC_FILE in W mode and select the dataset named by DS0_NAME */
     fid = SDstart(BASIC_FILE, DFACC_WRITE);
@@ -658,8 +655,7 @@ test_dim_strs()
     VERIFY(format[0], '\0', "SDgetdimstrs");
 
     /* Terminate access to the array. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /*
      * Test that a dimension is a coordinate variable but does not have
@@ -727,8 +723,7 @@ test_dim_strs()
     VERIFY(dim_sizes[0], dims[0], "SDgetinfo");
 
     /* Terminate access to the array. */
-    status = SDendaccess(coord_var_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(coord_var_id, "SDendaccess");
 
     /* Get and verify that predefined attributes label, unit, and format
        are not assigned to this dimension */
@@ -742,12 +737,18 @@ test_dim_strs()
     VERIFY(format[0], '\0', "SDgetdimstrs");
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (coord_var_id != FAIL)
+        SDendaccess(coord_var_id);
+    if (fid != FAIL)
+        SDend(fid);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
-
 } /* test_dim_strs */
 
 /********************************************************************
@@ -768,11 +769,10 @@ test_dim_strs()
 static int
 test_dim_bw_incomp()
 {
-
-    int32 fid;
+    int32 fid = FAIL;
     int32 nt;            /* Number type */
     int32 ndg_saved_ref; /* used to save a ref of an SDS in one of the test */
-    int32 sds_id;
+    int32 sds_id = FAIL;
     int32 dim_id, dim_id1;
     int32 dimsize[10]; /* dimension sizes */
     int32 rank;        /* rank of SDS */
@@ -832,12 +832,10 @@ test_dim_bw_incomp()
     CHECK(status, FAIL, "SDwritedata");
 
     /* End access to data set FIRST_DSET */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Close file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
 
     /* Read back and change dimval compatibility  */
 
@@ -924,12 +922,10 @@ test_dim_bw_incomp()
     CHECK(status, FAIL, "SDsetdimval_comp");
 
     /* End access to data set FIRST_DSET */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
 
     /* Open one last time to check that NDG ref has been constant */
     /* check SDsetdimval_compat */
@@ -981,8 +977,7 @@ test_dim_bw_incomp()
     CHECK(status, FAIL, "SDsetdimval_comp");
 
     /* End access to data set FIRST_DSET */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /*
      * Used saved ref at the beginning to retrieve the data set
@@ -1003,12 +998,16 @@ test_dim_bw_incomp()
     }
 
     /* End access to data set 'DataSetAlpha' in file 'test1.hdf' */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Close file 'test1.hdf' */
-    status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(fid, "SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (fid != FAIL)
+        SDend(fid);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;

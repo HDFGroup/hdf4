@@ -30,7 +30,6 @@
 #include <string.h>
 
 #include "mfhdf.h"
-
 #include "hdftest.h"
 
 #define FILE_NAME "datasizes.hdf" /* data file to test empty SDSs */
@@ -47,7 +46,7 @@ check_datasizes(int32       fid,               /* file id */
                 int32       uncomp_size_check, /* expected non-compressed data size */
                 int        *ret_num_errs /* current number of errors */)
 {
-    int32 sds_id, sds_index;
+    int32 sds_id = FAIL, sds_index;
     int   status;
     int   num_errs = 0;
     char  mesg[80];
@@ -71,10 +70,12 @@ check_datasizes(int32       fid,               /* file id */
     VERIFY(uncomp_size, uncomp_size_check, mesg);
 
     /* Close this SDS */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "check_datasizes: SDendaccess");
+    ENDSDS(sds_id, "check_datasizes: SDendaccess");
 
     *ret_num_errs = num_errs;
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
 } /* check_datasizes */
 
 /* Test non-special SDSs.  This routine creates non-special SDSs, writes
@@ -83,7 +84,7 @@ check_datasizes(int32       fid,               /* file id */
 static int
 test_nonspecial_SDSs(int32 fid)
 {
-    int32 sds_id;
+    int32 sds_id = FAIL;
     int32 dimsize[2], start[2], edges[2];
     int32 data[Y_LENGTH][X_LENGTH];
     int   status;
@@ -103,8 +104,7 @@ test_nonspecial_SDSs(int32 fid)
     CHECK(sds_id, FAIL, "test_nonspecial_SDSs: SDcreate 'EmptyDataset'");
 
     /* Close this SDS */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_nonspecial_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_nonspecial_SDSs: SDendaccess");
 
     /* Check that this SDS is empty */
     check_datasizes(fid, "EmptyDataset", 0, 0, &num_errs);
@@ -124,12 +124,15 @@ test_nonspecial_SDSs(int32 fid)
     CHECK(sds_id, FAIL, "test_nonspecial_SDSs: SDwritedata");
 
     /* Close this SDS */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_nonspecial_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_nonspecial_SDSs: SDendaccess");
 
     /* Check the size of the data of this SDS */
     check_datasizes(fid, "WrittenDataset", Y_LENGTH * X_LENGTH * SIZE_INT32, Y_LENGTH * X_LENGTH * SIZE_INT32,
                     &num_errs);
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -142,7 +145,7 @@ test_nonspecial_SDSs(int32 fid)
 static int
 test_compressed_SDSs(int32 fid)
 {
-    int32        sds_id, esds_id, usds_id;
+    int32        sds_id = FAIL, esds_id = FAIL, usds_id = FAIL;
     int32        start[2], edges[2], dim_sizes[2];
     comp_coder_t comp_type; /* Compression flag */
     comp_info    c_info;    /* Compression structure */
@@ -192,14 +195,10 @@ test_compressed_SDSs(int32 fid)
     CHECK(status, FAIL, "test_compressed_SDSs: SDwritedata");
 
     /* Close the SDSs */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_compressed_SDSs: SDendaccess 'CompressedData'");
+    ENDSDS(sds_id, "test_compressed_SDSs: SDendaccess 'CompressedData'");
+    ENDSDS(esds_id, "test_compressed_SDSs: SDendaccess 'Compressed-No-Data'");
 
-    status = SDendaccess(esds_id);
-    CHECK(status, FAIL, "test_compressed_SDSs: SDendaccess 'Compressed-No-Data'");
-
-    status = SDendaccess(usds_id);
-    CHECK(status, FAIL, "test_compressed_SDSs: SDendaccess 'Non-CompressedData'");
+    ENDSDS(usds_id, "test_compressed_SDSs: SDendaccess 'Non-CompressedData'");
 
     /* Check the size of the data of this SDS - 59 is from examining previously */
     check_datasizes(fid, "CompressedData", 59, Y_LENGTH * X_LENGTH * SIZE_INT32, &num_errs);
@@ -210,6 +209,14 @@ test_compressed_SDSs(int32 fid)
     /* Check the size of the data of this SDS */
     check_datasizes(fid, "Non-CompressedData", Y_LENGTH * X_LENGTH * SIZE_INT32,
                     Y_LENGTH * X_LENGTH * SIZE_INT32, &num_errs);
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (esds_id != FAIL)
+        SDendaccess(esds_id);
+    if (usds_id != FAIL)
+        SDendaccess(usds_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -228,7 +235,7 @@ test_compressed_SDSs(int32 fid)
 static int
 test_empty_SDSs(int32 fid)
 {
-    int32         ch_sds_id, chcp_sds_id;
+    int32         ch_sds_id = FAIL, chcp_sds_id = FAIL;
     int32         dim_sizes[RANK];
     HDF_CHUNK_DEF c_def; /* Chunking definitions */
     int32         flag;
@@ -260,16 +267,20 @@ test_empty_SDSs(int32 fid)
     CHECK(status, FAIL, "test_empty_SDSs: SDsetchunk");
 
     /* Terminate access to the datasets */
-    status = SDendaccess(ch_sds_id);
-    CHECK(status, FAIL, "test_empty_SDSs: SDendaccess 'Chunked Empty'");
-    status = SDendaccess(chcp_sds_id);
-    CHECK(status, FAIL, "test_empty_SDSs: SDendaccess 'Chunked Compressed Empty'");
+    ENDSDS(ch_sds_id, "test_empty_SDSs: SDendaccess 'Chunked Empty'");
+    ENDSDS(chcp_sds_id, "test_empty_SDSs: SDendaccess 'Chunked Compressed Empty'");
 
     /* Check the size of the data of 'Chunked Empty' */
     check_datasizes(fid, "Chunked Empty", 0, 0, &num_errs);
 
     /* Check the size of the data of 'Chunked Compressed Empty' */
     check_datasizes(fid, "Chunked Compressed Empty", 0, 0, &num_errs);
+
+done:
+    if (ch_sds_id != FAIL)
+        SDendaccess(ch_sds_id);
+    if (chcp_sds_id != FAIL)
+        SDendaccess(chcp_sds_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -282,7 +293,7 @@ test_empty_SDSs(int32 fid)
 static int
 test_chunked_partial(int32 fid)
 {
-    int32         sds_id;
+    int32         sds_id = FAIL;
     int32         dim_sizes[RANK], origin[RANK];
     HDF_CHUNK_DEF c_def;          /* Chunking definitions */
     int32         flag;           /* Chunking flag */
@@ -330,14 +341,17 @@ test_chunked_partial(int32 fid)
     CHECK(status, FAIL, "test_chunked_partial: SDwritechunk");
 
     /* Terminate access to the "Chunked Not Empty" dataset */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_chunked_partial: SDendaccess 'Chunked Not Empty'");
+    ENDSDS(sds_id, "test_chunked_partial: SDendaccess 'Chunked Not Empty'");
 
     /* Check the size of the data of this SDS - only chunked, not compressed,
        so both values should be the same; there are two chunks of size
        CHK_X*CHK_Y in type int16 written */
     check_datasizes(fid, "Chunked Not Empty", CHK_X * CHK_Y * SIZE_INT16 * 2, CHK_X * CHK_Y * SIZE_INT16 * 2,
                     &num_errs);
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -350,8 +364,8 @@ test_chunked_partial(int32 fid)
 static int
 test_chkcmp_SDSs(int32 fid)
 {
-    int32         sds_id, sds_index;
-    int32         cmpsds_id, cmpsds_index;
+    int32         sds_id    = FAIL, sds_index;
+    int32         cmpsds_id = FAIL, cmpsds_index;
     int32         flag, maxcache, new_maxcache;
     int32         dim_sizes[RANK], origin[RANK];
     HDF_CHUNK_DEF c_def;          /* Chunking definitions */
@@ -415,11 +429,8 @@ test_chkcmp_SDSs(int32 fid)
     CHECK(new_maxcache, FAIL, "test_chkcmp_SDSs: SDsetchunkcache 'ChunkedNoDeflateData'");
 
     /* Terminate access to the dataset before writing data to it. */
-    status = SDendaccess(cmpsds_id);
-    CHECK(status, FAIL, "test_chkcmp_SDSs: SDendaccess 'ChunkedDeflateData'");
-
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_chkcmp_SDSs: SDendaccess 'ChunkedNoDeflateData'");
+    ENDSDS(cmpsds_id, "test_chkcmp_SDSs: SDendaccess 'ChunkedDeflateData'");
+    ENDSDS(sds_id, "test_chkcmp_SDSs: SDendaccess 'ChunkedNoDeflateData'");
 
     /* Check that this SDS is still empty after the call to SDsetchunk */
     check_datasizes(fid, "ChunkedDeflateData", 0, 0, &num_errs);
@@ -466,10 +477,8 @@ test_chkcmp_SDSs(int32 fid)
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDwritechunk 'ChunkedNoDeflateData'");
 
     /* Terminate access to the datasets */
-    status = SDendaccess(cmpsds_id);
-    CHECK(status, FAIL, "test_chkcmp_SDSs: SDendaccess 'ChunkedDeflateData'");
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_chkcmp_SDSs: SDendaccess 'ChunkedNoDeflateData'");
+    ENDSDS(cmpsds_id, "test_chkcmp_SDSs: SDendaccess 'ChunkedDeflateData'");
+    ENDSDS(sds_id, "test_chkcmp_SDSs: SDendaccess 'ChunkedNoDeflateData'");
 
     /* Verify the compressed and non-compressed data sizes of the datasets */
 
@@ -503,11 +512,14 @@ test_chkcmp_SDSs(int32 fid)
     }
 
     /* Terminate access to the data sets. */
-    status = SDendaccess(sds_id);
-    CHECK(sds_id, FAIL, "test_chkcmp_SDSs: SDendaccess 'ChunkedNoDeflateData'");
+    ENDSDS(sds_id, "test_chkcmp_SDSs: SDendaccess 'ChunkedNoDeflateData'");
+    ENDSDS(cmpsds_id, "test_chkcmp_SDSs: SDendaccess 'ChunkedDeflateData'");
 
-    status = SDendaccess(cmpsds_id);
-    CHECK(sds_id, FAIL, "test_chkcmp_SDSs: SDendaccess 'ChunkedDeflateData'");
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (cmpsds_id != FAIL)
+        SDendaccess(cmpsds_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -520,7 +532,7 @@ test_chkcmp_SDSs(int32 fid)
 static int
 test_extend_SDSs(int32 fid)
 {
-    int32 sds_id     = -1;
+    int32 sds_id     = FAIL;
     int32 dimsize[2] = {-1, -1};
     int32 start[2]   = {-1, -1};
     int32 edges[2]   = {-1, -1};
@@ -568,8 +580,7 @@ test_extend_SDSs(int32 fid)
                         data[j][i], j, i);
 
     /* Close this SDS */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_extend_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_extend_SDSs: SDendaccess");
 
     /* Check that this SDS is empty */
     check_datasizes(fid, "AppendableDataset 1", Y_LENGTH * X_LENGTH * SIZE_INT32,
@@ -588,11 +599,14 @@ test_extend_SDSs(int32 fid)
     CHECK(sds_id, FAIL, "test_extend_SDSs: SDwritedata");
 
     /* Close this SDS */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_extend_SDSs: SDendaccess");
+    ENDSDS(sds_id, "test_extend_SDSs: SDendaccess");
 
     /* Check the size of the data of this SDS */
     check_datasizes(fid, "AppendableDataset 2", Y_LENGTH * SIZE_FLOAT32, Y_LENGTH * SIZE_FLOAT32, &num_errs);
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -602,8 +616,8 @@ test_extend_SDSs(int32 fid)
 extern int
 test_datasizes()
 {
-    int32 fid      = -1;
-    int   status   = -1;
+    int32 fid      = FAIL;
+    int   status   = FAIL;
     int   num_errs = 0;
 
     /* Output message about test being performed */
@@ -627,10 +641,14 @@ test_datasizes()
     num_errs = num_errs + test_extend_SDSs(fid);
 
     /* Close the file */
-    status = SDend(fid);
-    CHECK(status, FAIL, "test_datasizes: SDend");
+    ENDSD(fid, "test_datasizes: SDend");
 
     if (num_errs == 0)
         PASSED();
+done:
+    if (fid != FAIL)
+        SDend(fid);
+
+    /* Return the number of errors that's been kept track of so far */
     return num_errs;
 }

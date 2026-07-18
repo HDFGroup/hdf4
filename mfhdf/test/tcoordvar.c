@@ -36,7 +36,6 @@
 #include <string.h>
 
 #include "mfhdf.h"
-
 #include "hdftest.h"
 
 /********************************************************************
@@ -89,7 +88,7 @@ test_dim1_SDS1(void)
     float32        sds1_data[] = {0.1F, 2.3F, 4.5F, 6.7F, 8.9F};
     float32        out_data[5];
     int32          dimsize[1];
-    int32          sds_id, file_id, dim_id;
+    int32          sds_id = FAIL, file_id = FAIL, dim_id = FAIL;
     int32          index = FAIL;
     int32          start = 0, stride = 1;
     int32          num_type, count;
@@ -140,10 +139,8 @@ test_dim1_SDS1(void)
     CHECK(status, FAIL, "SDwritedata");
 
     /* Close dataset and file. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDend(file_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSDS(sds_id, "SDendaccess");
+    ENDSD(file_id, "SDend");
 
     /* Open the file again to check its data */
     file_id = SDstart(FILE1, DFACC_RDWR);
@@ -173,6 +170,7 @@ test_dim1_SDS1(void)
         }
     }
     free(var_list);
+    var_list = NULL;
 
     sds_id = SDselect(file_id, index);
     CHECK(sds_id, FAIL, "SDselect");
@@ -236,13 +234,18 @@ test_dim1_SDS1(void)
         }
 
     /* Close dataset and file. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
+    ENDSD(file_id, "SDend");
 
-    status = SDend(file_id);
-    CHECK(status, FAIL, "SDend");
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (file_id != FAIL)
+        SDend(file_id);
 
-    /* Return the number of errors that's been kept track of so far */
+    free(var_list);
+
+    /* Return the number of errors that's been kept track of, so far */
     return num_errs;
 } /* test_dim1_SDS1 */
 
@@ -285,7 +288,8 @@ test_dim1_SDS2(void)
     char    sds_name[20];
     float32 sds2_data[2][3] = {{0.1F, 2.3F, 4.5F}, {4.5F, 6.7F, 8.9F}};
     int32   dimsize[1], dimsize2[2];
-    int32   sds1_id, sds2_id, file_id, dim_id, index;
+    int32   sds1_id = FAIL, sds2_id = FAIL, file_id = FAIL, dim_id = FAIL;
+    int32   index;
     int32   start2[2] = {0, 0}, stride2[2] = {1, 1};
     int32   scale1[5] = {101, 102, 103, 104, 105}, scale1_out[5];
     int32   num_type, array_rank;
@@ -323,8 +327,7 @@ test_dim1_SDS2(void)
     status = SDwritedata(sds2_id, start2, stride2, dimsize2, sds2_data);
     CHECK(status, FAIL, "SDwritedata");
 
-    status = SDendaccess(sds2_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds2_id, "SDendaccess");
 
     /* Get file info and verify that there are 2 datasets in the file. */
     status = SDfileinfo(file_id, &n_datasets, &n_file_attrs);
@@ -342,10 +345,8 @@ test_dim1_SDS2(void)
     VERIFY(n_datasets, 3, "SDfileinfo");
 
     /* Close dataset and file */
-    status = SDendaccess(sds1_id);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDend(file_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSDS(sds1_id, "SDendaccess");
+    ENDSD(file_id, "SDend");
 
     /* Open the file again to check its data */
     file_id = SDstart(FILE2, DFACC_RDWR);
@@ -411,15 +412,19 @@ test_dim1_SDS2(void)
     CHECK(status, FAIL, "SDfileinfo");
     VERIFY(n_datasets, 3, "SDfileinfo");
 
-    status = SDendaccess(sds1_id);
-    CHECK(status, FAIL, "SDendaccess");
-    status = SDendaccess(sds2_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds1_id, "SDendaccess");
+    ENDSDS(sds2_id, "SDendaccess");
+    ENDSD(file_id, "SDend");
 
-    status = SDend(file_id);
-    CHECK(status, FAIL, "SDend");
+done:
+    if (sds1_id != FAIL)
+        SDendaccess(sds1_id);
+    if (sds2_id != FAIL)
+        SDendaccess(sds2_id);
+    if (file_id != FAIL)
+        SDend(file_id);
 
-    /* Return the number of errors that's been kept track of so far */
+    /* Return the number of errors that's been kept track of, so far */
     return num_errs;
 } /* test_dim1_SDS2 */
 
@@ -487,15 +492,14 @@ test_named_vars(void)
 {
     char           sds_name[20];
     int32          dimsize[1], dimsize2[2];
-    int32          sds_id, sds1_id, sds2_id, sds3_id, sds4_id, sds5_id;
-    int32          file_id, dim_id;
+    int32          sds_id = FAIL, file_id = FAIL, dim_id = FAIL;
     int32          scale1[5] = {101, 102, 103, 104, 105};
     int32          array_rank;
     int32          n_datasets, n_file_attrs, n_vars = 0;
     int            status      = 0, idx;
     int            is_coordvar = FALSE;
-    hdf_varlist_t *allvars;
-    int            num_errs = 0; /* number of errors so far */
+    hdf_varlist_t *allvars     = NULL;
+    int            num_errs    = 0; /* number of errors so far */
     char           line[40];
     char contents[7][40] = {"#0 SDS        2-dim 'Common Name'",   "#1 SDS        2-dim 'Common Name'",
                             "#2 SDS        1-dim 'One Dimension'", "#3 Coordinate 1-dim 'Common Name'",
@@ -509,26 +513,25 @@ test_named_vars(void)
     dimsize2[1] = 3;
 
     /* Create first COMMON_NAME data set. */
-    sds1_id = SDcreate(file_id, COMMON_NAME, DFNT_FLOAT32, 2, dimsize2);
-    CHECK(sds1_id, FAIL, "SDcreate");
-    status = SDendaccess(sds1_id);
-    CHECK(status, FAIL, "SDendaccess");
+    sds_id = SDcreate(file_id, COMMON_NAME, DFNT_FLOAT32, 2, dimsize2);
+    CHECK(sds_id, FAIL, "SDcreate");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Create second COMMON_NAME data set. */
-    sds2_id = SDcreate(file_id, COMMON_NAME, DFNT_FLOAT32, 2, dimsize2);
-    CHECK(sds2_id, FAIL, "SDcreate");
-    status = SDendaccess(sds2_id);
-    CHECK(status, FAIL, "SDendaccess");
+    sds_id = SDcreate(file_id, COMMON_NAME, DFNT_FLOAT32, 2, dimsize2);
+    CHECK(sds_id, FAIL, "SDcreate");
+    ENDSDS(sds_id, "SDendaccess");
 
     dimsize[0] = 5;
-    sds3_id    = SDcreate(file_id, ONEDIM_NAME, DFNT_FLOAT32, 1, dimsize);
-    CHECK(sds3_id, FAIL, "SDcreate");
+    sds_id     = SDcreate(file_id, ONEDIM_NAME, DFNT_FLOAT32, 1, dimsize);
+    CHECK(sds_id, FAIL, "SDcreate");
 
     /* Set the dimension name to be the same as the previous 2 datasets */
-    dim_id = SDgetdimid(sds3_id, 0);
+    dim_id = SDgetdimid(sds_id, 0);
     CHECK(dim_id, FAIL, "SDgetdimid");
     status = SDsetdimname(dim_id, COMMON_NAME);
     CHECK(status, FAIL, "SDsetdimname");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Get file info and verify that there are 3 datasets in the file */
     status = SDfileinfo(file_id, &n_datasets, &n_file_attrs);
@@ -545,17 +548,19 @@ test_named_vars(void)
     VERIFY(n_datasets, 4, "SDfileinfo");
 
     dimsize[0] = 8;
-    sds4_id    = SDcreate(file_id, ONEDIM_NAME, DFNT_FLOAT32, 1, dimsize);
-    CHECK(sds4_id, FAIL, "SDcreate");
+    sds_id     = SDcreate(file_id, ONEDIM_NAME, DFNT_FLOAT32, 1, dimsize);
+    CHECK(sds_id, FAIL, "SDcreate");
 
     /* Set the dimension name to be the same as the previous 2 datasets */
-    dim_id = SDgetdimid(sds4_id, 0);
+    dim_id = SDgetdimid(sds_id, 0);
     CHECK(dim_id, FAIL, "SDgetdimid");
     status = SDsetdimname(dim_id, ANOTHER_NAME);
     CHECK(status, FAIL, "SDsetdimname");
+    ENDSDS(sds_id, "SDendaccess sds4_id");
 
-    sds5_id = SDcreate(file_id, ANOTHER_NAME, DFNT_FLOAT32, 1, dimsize);
-    CHECK(sds5_id, FAIL, "SDcreate");
+    sds_id = SDcreate(file_id, ANOTHER_NAME, DFNT_FLOAT32, 1, dimsize);
+    CHECK(sds_id, FAIL, "SDcreate");
+    ENDSDS(sds_id, "SDendaccess sds5_id");
 
     /* Get file info and verify that there are 6 datasets in the file */
     status = SDfileinfo(file_id, &n_datasets, &n_file_attrs);
@@ -587,11 +592,13 @@ test_named_vars(void)
     VERIFY(allvars[1].var_type, IS_SDSVAR, "SDnametoindices");
     VERIFY(allvars[2].var_type, IS_CRDVAR, "SDnametoindices");
     free(allvars);
+    allvars = NULL;
 
     /* Compare file contents with predefined text to verify */
     for (idx = 0; idx < n_datasets; idx++) {
 
-        int count;
+        int  count;
+        char msg[25];
 
         sds_id = SDselect(file_id, idx);
         CHECK(sds_id, FAIL, "SDselect");
@@ -609,12 +616,21 @@ test_named_vars(void)
             fprintf(stderr, "File contents are incorrect in testing variable types at variable of index %d\n",
                     idx);
         }
+        sprintf(msg, "SDendaccess at idx %d", idx);
+        ENDSDS(sds_id, msg);
     }
 
-    status = SDend(file_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(file_id, "SDend");
 
-    /* Return the number of errors that's been kept track of so far */
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (file_id != FAIL)
+        SDend(file_id);
+
+    free(allvars);
+
+    /* Return the number of errors that's been kept track of, so far */
     return num_errs;
 } /* test_named_vars */
 

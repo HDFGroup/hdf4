@@ -14,7 +14,6 @@
 #include <stdlib.h>
 
 #include "mfhdf.h"
-
 #include "hdftest.h"
 
 /* all test functions to be called in main */

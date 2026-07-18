@@ -26,10 +26,10 @@
  * spaces.
  */
 #define TESTING(WHAT)                                                                                        \
-    {                                                                                                        \
+    do {                                                                                                     \
         printf("Testing %-62s", WHAT);                                                                       \
         fflush(stdout);                                                                                      \
-    }
+    } while (0)
 #define PASSED()                                                                                             \
     do {                                                                                                     \
         puts(" PASSED");                                                                                     \
@@ -41,84 +41,90 @@
         fflush(stdout);                                                                                      \
     } while (0)
 #define H4_WARNING()                                                                                         \
-    {                                                                                                        \
+    do {                                                                                                     \
         puts("*WARNING*");                                                                                   \
         fflush(stdout);                                                                                      \
-    }
+    } while (0)
 #define SKIPPED()                                                                                            \
-    {                                                                                                        \
+    do {                                                                                                     \
         puts(" -SKIP-");                                                                                     \
         fflush(stdout);                                                                                      \
-    }
+    } while (0)
 
 /* Check status value and print error message */
 #define CHECK(status, fail_value, name)                                                                      \
-    {                                                                                                        \
+    do {                                                                                                     \
         if (status == fail_value) {                                                                          \
             fprintf(stderr, "*** Routine %s FAILED at line %d ***\n", name, __LINE__);                       \
             num_errs++;                                                                                      \
+            goto done;                                                                                       \
         }                                                                                                    \
-    }
+    } while (0)
 
 /* Check status value and print error message, including index */
 #define CHECK_IND(status, fail_value, name, index)                                                           \
-    {                                                                                                        \
+    do {                                                                                                     \
         if (status == fail_value) {                                                                          \
             fprintf(stderr, "*** Routine %s FAILED at line %d for SDS index %d ***\n", name, __LINE__,       \
                     index);                                                                                  \
             num_errs++;                                                                                      \
+            goto done;                                                                                       \
         }                                                                                                    \
-    }
+    } while (0)
 
 /* Verify that a value is as expected and, if not, print error message */
 #define VERIFY(item, value, test_name)                                                                       \
-    {                                                                                                        \
+    do {                                                                                                     \
         if (item != value) {                                                                                 \
             fprintf(stderr, "*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", test_name,            \
                     (long)item, (int)__LINE__, __FILE__);                                                    \
             num_errs++;                                                                                      \
+            goto done;                                                                                       \
         }                                                                                                    \
-    }
+    } while (0)
 
 /* Verify that a float value is as expected and, if not, print error message */
 #define VERIFY_FLOAT(item, value, test_name)                                                                 \
-    {                                                                                                        \
+    do {                                                                                                     \
         if (!H4_FLT_ABS_EQUAL(item, value)) {                                                                \
             fprintf(stderr, "*** UNEXPECTED VALUE from %s is %f at line %4d in %s\n", test_name,             \
                     (double)item, (int)__LINE__, __FILE__);                                                  \
             num_errs++;                                                                                      \
+            goto done;                                                                                       \
         }                                                                                                    \
-    }
+    } while (0)
 
 /* Verify that a double value is as expected and, if not, print error message */
 #define VERIFY_DOUBLE(item, value, test_name)                                                                \
-    {                                                                                                        \
+    do {                                                                                                     \
         if (!H4_DBL_ABS_EQUAL(item, value)) {                                                                \
             fprintf(stderr, "*** UNEXPECTED VALUE from %s is %f at line %4d in %s\n", test_name, item,       \
                     (int)__LINE__, __FILE__);                                                                \
             num_errs++;                                                                                      \
+            goto done;                                                                                       \
         }                                                                                                    \
-    }
+    } while (0)
 
 /* Verify that a value of type char* is as expected and, if not, print
    error message */
 #define VERIFY_CHAR(item, value, test_name)                                                                  \
-    {                                                                                                        \
+    do {                                                                                                     \
         if (strcmp(item, value) != 0) {                                                                      \
             fprintf(stderr, "*** UNEXPECTED VALUE from %s is <%s> at line %4d in %s\n", test_name, item,     \
                     (int)__LINE__, __FILE__);                                                                \
             num_errs++;                                                                                      \
+            goto done;                                                                                       \
         }                                                                                                    \
-    }
+    } while (0)
 
 /* Used to validate that 'buffer' has been successfully allocated */
 #define CHECK_ALLOC(buffer, buf_name, func_name)                                                             \
-    {                                                                                                        \
+    do {                                                                                                     \
         if (buffer == NULL) {                                                                                \
             fprintf(stderr, "in %s: space allocation for %s failed.  Terminated!\n", func_name, buf_name);   \
             exit(1);                                                                                         \
         }                                                                                                    \
-    }
+    } while (0)
 
 /*
  * Methods to compare the equality of floating-point values:
@@ -133,6 +139,23 @@
 #define H4_FLT_ABS_EQUAL(X, Y)  (fabsf((X) - (Y)) < FLT_EPSILON)
 #define H4_DBL_ABS_EQUAL(X, Y)  (fabs((X) - (Y)) < DBL_EPSILON)
 #define H4_LDBL_ABS_EQUAL(X, Y) (fabsl((X) - (Y)) < LDBL_EPSILON)
+
+/*
+ * Macros to end access to a dataset or a file and reset the variable
+ * to prevent double free later.
+ */
+#define ENDSDS(sds_id, msg)                                                                                  \
+    do {                                                                                                     \
+        status = SDendaccess(sds_id);                                                                        \
+        sds_id = FAIL;                                                                                       \
+        CHECK(status, FAIL, msg);                                                                            \
+    } while (0)
+#define ENDSD(sd_id, msg)                                                                                    \
+    do {                                                                                                     \
+        status = SDend(sd_id);                                                                               \
+        sd_id  = FAIL;                                                                                       \
+        CHECK(status, FAIL, msg);                                                                            \
+    } while (0)
 
 /*************************** Utility Functions ***************************/
 

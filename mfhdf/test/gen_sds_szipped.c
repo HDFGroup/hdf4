@@ -19,7 +19,7 @@
  *	tdatasizes.c: to test getting compressed data size with only decoder
  *
  * This program must be compiled with an h4cc version that was built with
- * szip encoder enabled. (2008-10-09 - BMR)
+ * szip encoder enabled.
  *
  ****************************************************************************/
 
@@ -45,7 +45,7 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    int32     sd_id, sds_id, sds_index;
+    int32     sd_id = FAIL, sds_id = FAIL, sds_index = FAIL;
     int       status;
     int32     comp_type; /* Compression flag */
     comp_info c_info;    /* Compression structure */
@@ -101,12 +101,16 @@ main()
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the 3rd data set. */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Terminate access to the SD interface and close the file. */
-    status = SDend(sd_id);
-    CHECK(status, FAIL, "SDend");
+    ENDSD(sd_id, "SDend");
+
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    if (sd_id != FAIL)
+        SDend(sd_id);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;

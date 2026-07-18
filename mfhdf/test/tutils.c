@@ -128,8 +128,12 @@ make_sourcepath(char *src_path, unsigned int size)
         return FAIL;
 
     strcpy(src_path, tempdir);
-    free(tempdir);
+    HDfreenclear(tempdir);
     return SUCCEED;
+
+done:
+    free(tempdir);
+    return FAIL;
 }
 
 /********************************************************************
@@ -147,7 +151,7 @@ int32
 make_SDS(int32 sd_id, const char *sds_name, int32 type, int32 rank, int32 *dim_sizes, int32 unlim_dim,
          void *written_data)
 {
-    int32  sds_id;
+    int32  sds_id = FAIL;
     int32 *start, *edges;
     int32  sds_size = 0, count = 0;
     int    status, ii;
@@ -185,18 +189,22 @@ make_SDS(int32 sd_id, const char *sds_name, int32 type, int32 rank, int32 *dim_s
     }
     sds_size = count * DFKNTsize(type);
 
-    /* Terminate access to the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
-
-    free(edges);
-    free(start);
+    /* Terminate access to the data set and release allocated memory */
+    ENDSDS(sds_id, "SDendaccess");
+    HDfreenclear(edges);
+    HDfreenclear(start);
 
     /* Return the size of data being written if no error */
     if (num_errs == 0)
         return (sds_size);
-    else
-        return FAIL;
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    free(edges);
+    free(start);
+
+    /* No need to accumulate this num_errs */
+    return FAIL;
 } /* make_SDS */
 
 /********************************************************************
@@ -215,8 +223,8 @@ int32
 make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, void *written_data,
                int32 offset, char *ext_file_name)
 {
-    int32  sds_id;
-    int32 *start, *edges;
+    int32  sds_id = FAIL;
+    int32 *start = NULL, *edges = NULL;
     int32  sds_size = 0, count;
     int    status   = 0, ii;
     int    num_errs = 0; /* number of errors in compression test so far */
@@ -251,17 +259,22 @@ make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_s
     sds_size = count * DFKNTsize(type);
 
     /* Terminate access to the data set */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    ENDSDS(sds_id, "SDendaccess");
 
-    free(edges);
-    free(start);
+    HDfreenclear(edges);
+    HDfreenclear(start);
 
     /* Return the size of data being written if no error */
     if (num_errs == 0)
         return (sds_size);
-    else
-        return FAIL;
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
+    free(edges);
+    free(start);
+
+    /* No need to accumulate this num_errs */
+    return FAIL;
 } /* make_Ext3D_SDS */
 
 /********************************************************************
@@ -275,7 +288,7 @@ make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_s
 int32
 get_SDSbyName(int32 sd_id, const char *sds_name)
 {
-    int32 sds_id, sds_index;
+    int32 sds_id = FAIL, sds_index = FAIL;
     int   num_errs = 0; /* number of errors in compression test so far */
 
     sds_index = SDnametoindex(sd_id, sds_name);
@@ -287,6 +300,10 @@ get_SDSbyName(int32 sd_id, const char *sds_name)
 
     /* Return the data set id or FAIL */
     return (sds_id);
+
+done:
+    /* No need to accumulate this num_errs */
+    return FAIL;
 
 } /* get_SDSbyName */
 
@@ -304,7 +321,7 @@ get_SDSbyName(int32 sd_id, const char *sds_name)
 int32
 append_Data2SDS(int32 sd_id, char *sds_name, int32 *start, int32 *edges, void *ap_data)
 {
-    int32 sds_id;
+    int32 sds_id = FAIL;
     int32 sds_size, ntype;
     int32 comp_size = 0, uncomp_size = 0;
     char  name[80];
@@ -329,16 +346,18 @@ append_Data2SDS(int32 sd_id, char *sds_name, int32 *start, int32 *edges, void *a
     /* Calculate data set's size to verify later */
     sds_size = uncomp_size + edges[0] * edges[1] * edges[2] * DFKNTsize(ntype);
 
-    /* Terminate access to the data set and file */
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    /* Terminate access to the data set */
+    ENDSDS(sds_id, "SDendaccess");
 
     /* Return the size of data being written if no error */
     if (num_errs == 0)
         return (sds_size);
-    else
-        return FAIL;
+done:
+    if (sds_id != FAIL)
+        SDendaccess(sds_id);
 
+    /* No need to accumulate this num_errs */
+    return FAIL;
 } /* append_Data2SDS */
 
 /********************************************************************
@@ -366,6 +385,7 @@ verify_datasize(int32 sds_id, int32 data_size, const char *sds_name)
 
     if (num_errs == 0)
         return SUCCEED;
-    else
-        return FAIL;
+done:
+    /* No need to accumulate this num_errs */
+    return FAIL;
 } /* verify_datasize */
