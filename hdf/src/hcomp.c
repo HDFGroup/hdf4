@@ -138,7 +138,7 @@ funclist_t comp_funcs = {
         this function somehow.  Yet, I'm not sure exactly how it should
         be added because this function is called in both cases, writing
         and reading.  At this time, the function will fail if it encounters
-        COMP_CODE_IMCOMP. -BMR, Jul 11, 2012
+        COMP_CODE_IMCOMP.
 --------------------------------------------------------------------------*/
 static int32
 HCIinit_coder(int16 acc_mode, comp_coder_info_t *cinfo, comp_coder_t coder_type, comp_info *c_info)
