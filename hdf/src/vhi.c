@@ -151,7 +151,7 @@ int32
 VHmakegroup(HFILEID f, int32 tagarray[], int32 refarray[], int32 n, const char *vgname, const char *vgclass)
 {
     int32 ref, i;
-    int32 vg;
+    int32 vg = FAIL;
     int32 ret_value = SUCCEED;
 
     if ((vg = Vattach(f, -1, "w")) == FAIL)
@@ -177,6 +177,8 @@ VHmakegroup(HFILEID f, int32 tagarray[], int32 refarray[], int32 n, const char *
     ret_value = (ref);
 
 done:
+    if (vg != FAIL)
+        Vdetach(vg);
     return ret_value;
 } /* VHmakegroup */
 

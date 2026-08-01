@@ -80,6 +80,11 @@ ncreset_cdflist(void)
         _cdfs      = NULL;
         _cdfs_size = 0;
     }
+    
+    /* Reset the high-water marks completely */
+    _ncdf = 0; 
+    _curr_opened = 0; 
+    
     return 0;
 }
 
@@ -113,7 +118,7 @@ NC_reset_maxopenfiles(int req_max)
         else
             _cdfs_size = req_max;
 
-        _cdfs = malloc(sizeof(NC *) * (size_t)_cdfs_size);
+        _cdfs = calloc((size_t)_cdfs_size, sizeof(NC *));
 
         /* If allocation fails, return with failure */
         if (_cdfs == NULL) {
@@ -123,9 +128,6 @@ NC_reset_maxopenfiles(int req_max)
             HGOTO_DONE(-1);
         }
         else {
-            for (i = 0; i < _cdfs_size; i++)
-                _cdfs[i] = NULL;
-
             /* Reset current max files opened allowed in HDF to the new max */
             max_NC_open = _cdfs_size;
 
@@ -389,7 +391,7 @@ ncabort(int cdfid)
                 _curr_opened--; /* one less file currently opened */
 
                 /* if the _cdf list is empty, deallocate and reset it to NULL */
-                if (_ncdf == 0)
+                if (_curr_opened == 0)
                     if (ncreset_cdflist() == -1) {
                         fprintf(stderr, "unable to reset _cdfs list\n");
                         return -1;
@@ -436,7 +438,7 @@ ncabort(int cdfid)
     _curr_opened--; /* one less file currently being opened */
 
     /* if the _cdf list is empty, deallocate and reset it to NULL */
-    if (_ncdf == 0)
+    if (_curr_opened == 0)
         if (ncreset_cdflist() == -1) {
             fprintf(stderr, "unable to reset _cdfs list\n");
             return -1;
@@ -660,7 +662,7 @@ NC_endef(int cdfid, NC *handle)
             NC_free_cdf(handle);
 
             /* if the _cdf list is empty, deallocate and reset it to NULL */
-            if (_ncdf == 0)
+            if (_curr_opened == 0)
                 if (ncreset_cdflist() == -1) {
                     fprintf(stderr, "unable to reset _cdfs list\n");
                     return -1;
@@ -681,7 +683,7 @@ NC_endef(int cdfid, NC *handle)
         handle->redefid = -1;
 
         /* if the _cdf list is empty, deallocate and reset it to NULL */
-        if (_ncdf == 0)
+        if (_curr_opened == 0)
             ncreset_cdflist();
     }
 
