@@ -80,11 +80,11 @@ ncreset_cdflist(void)
         _cdfs      = NULL;
         _cdfs_size = 0;
     }
-    
+
     /* Reset the high-water marks completely */
-    _ncdf = 0; 
-    _curr_opened = 0; 
-    
+    _ncdf        = 0;
+    _curr_opened = 0;
+
     return 0;
 }
 
