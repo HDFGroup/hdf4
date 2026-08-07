@@ -89,7 +89,7 @@ VHstoredatam(HFILEID f, const char *field, const uint8 *buf, int32 n, int32 data
              const char *vsclass, int32 order)
 {
     int32 ref;
-    int32 vs;
+    int32 vs = FAIL;
     int32 ret_value = SUCCEED;
 
     if ((vs = VSattach(f, -1, "w")) == FAIL)
@@ -117,6 +117,9 @@ VHstoredatam(HFILEID f, const char *field, const uint8 *buf, int32 n, int32 data
     ret_value = ((int32)ref);
 
 done:
+    if (ret_value == FAIL && vs != FAIL)
+        VSdetach(vs);
+
     return ret_value;
 } /* VHstoredatam */
 

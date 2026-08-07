@@ -314,7 +314,14 @@ test_max_open_files()
     }
 done:
     /* Free memory */
-    free(fids);
+    if (fids) {
+        /* Close any still-open file IDs */
+        for (int i = 0; i < NUM_FILES_HI; i++)
+            if (fids[i] != FAIL)
+                SDend(fids[i]);
+        free(fids);
+    }
+
     if (filenames) {
         for (int i = 0; i < NUM_FILES_HI; i++)
             free(filenames[i]);

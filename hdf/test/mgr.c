@@ -3867,10 +3867,16 @@ test_mgr_old_e(int flag)
         CHECK_VOID(ret, FAIL, "GRreadimage");
 
         /* Verify correct image contents */
+        /* NOTE: Valgrind may report "Conditional jump or move depends on
+         * uninitialised value(s)" for this memcmp when using SIMD-enabled
+         * libjpeg-turbo. This is a documented false positive caused by Valgrind
+         * mis-tracking libjpeg-turbo's SSE2 color-space conversion code, not an
+         * actual bug. Confirmed absent when built/run with SIMD disabled
+         * (JSIMD_FORCENONE=1). See libjpeg-turbo README, "SIMD Extensions" section.
+         */
         if (memcmp(image, jpeg_24bit_j80, JPEGY * JPEGX * 3) != 0) {
-            /*  MESSAGE(3, printf("Error reading data for 24-bit JPEG compressed image\n"););
+            MESSAGE(3, printf("Error reading data for 24-bit JPEG compressed image\n"););
             num_errs++;
- */
         } /* end if */
 
         /* Close the empty image */

@@ -432,7 +432,7 @@ DFR8Iputimage(const char *filename, const void *image, int32 xdim, int32 ydim, u
     int32  file_id = (-1);
     uint16 r8tag;       /* RIG and raster tags of image being written */
     uint8 *pal;         /* pointer to palette to be written */
-    uint8  newpal[768]; /* Imcomp creates new palette to be associated */
+    uint8  newpal[768] = {0}; /* Imcomp creates new palette to be associated */
     int    wdim;        /* have dimensions already been written out? */
     int    ret_value = SUCCEED;
 
