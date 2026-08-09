@@ -3532,8 +3532,8 @@ test_mgr_old_c(int flag)
         int32 riid;                     /* RI ID for the new image */
         int32 dims[2] = {JPEGX, JPEGY}; /* dimensions for the empty image */
         uint8 image[JPEGY][JPEGX];      /* space for the image data */
-        int32 offset[n_images], length[n_images];
-        int32 n_entries;
+        int32 offset = 0, length = 0;
+        int32 n_entries = 0;
         uint8 jpeglib_readbuf[JPEGY * JPEGX];
         /* buffer for data read by JPEG function */
         int32 start[2];  /* start of image data to grab */
@@ -3549,11 +3549,12 @@ test_mgr_old_c(int flag)
         ret                   = GRreadimage(riid, start, stride, dims, image);
         CHECK_VOID(ret, FAIL, "GRreadimage");
 
-        n_entries = GRgetdatainfo(riid, 0, 1, offset, length);
+        n_entries = GRgetdatainfo(riid, 0, 1, &offset, &length);
         CHECK_VOID(n_entries, FAIL, "GRgetdatainfo");
+  fprintf(stderr, "n_entries in 8 bit is %d\n", n_entries);
 
         /* Decompress that exact byte range directly via libjpeg */
-        ret = decomp_using_jpeglib(oldgreyjpegfile, (long)offset[0], JPEGY, JPEGX, 1, jpeglib_readbuf);
+        ret = decomp_using_jpeglib(oldgreyjpegfile, (long)offset, JPEGY, JPEGX, 1, jpeglib_readbuf);
         CHECK_VOID(ret, FAIL, "decomp_using_jpeglib");
 
         /* Compare data decompressed by HDF against that by JPEG lib, the buffers
@@ -3614,8 +3615,8 @@ test_mgr_old_e(int flag)
         /* buffer for data read by JPEG function */
         int32 start[2];  /* start of image data to grab */
         int32 stride[2]; /* stride of image data to grab */
-        int32 offset[n_images], length[n_images];
-        int32 n_entries;
+        int32 offset = 0, length = 0;
+        int32 n_entries = 0;
 
         /* Get the first image in this file */
         riid = GRselect(grid, idx);
@@ -3627,11 +3628,11 @@ test_mgr_old_e(int flag)
         ret                   = GRreadimage(riid, start, stride, dims, image);
         CHECK_VOID(ret, FAIL, "GRreadimage");
 
-        n_entries = GRgetdatainfo(riid, 0, 1, offset, length);
+        n_entries = GRgetdatainfo(riid, 0, 1, &offset, &length);
         CHECK_VOID(n_entries, FAIL, "GRgetdatainfo");
 
         /* Decompress that exact byte range directly via libjpeg */
-        ret = decomp_using_jpeglib(oldjpegfile, (long)offset[0], JPEGY, JPEGX, 3, jpeglib_readbuf);
+        ret = decomp_using_jpeglib(oldjpegfile, (long)offset, JPEGY, JPEGX, 3, jpeglib_readbuf);
         CHECK_VOID(ret, FAIL, "decomp_using_jpeglib");
 
         /* Compare data decompressed by HDF against that by JPEG lib, the buffers
