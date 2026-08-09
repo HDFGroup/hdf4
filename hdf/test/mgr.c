@@ -24,6 +24,7 @@
 #define DATAFILE  "test_files/tmgr.dat"
 
 #include "testhdf.h"
+#include "tutils.h"
 #include "mfgr.h"
 #include "mfgr_priv.h"
 

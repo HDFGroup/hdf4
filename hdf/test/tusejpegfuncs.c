@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include "testhdf.h"
+#include "tutils.h"
 
 /* Hack to prevent libjpeg from re-defining `boolean` in a way that clashes
  * with windows.h. This MUST come before including jpeglib.h.
