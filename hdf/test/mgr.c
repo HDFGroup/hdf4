@@ -3507,8 +3507,8 @@ test_mgr_old_c(int flag)
     int32       fid;  /* HDF file ID */
     int32       grid; /* GRID for the interface */
     int32       n_images = 0;
-    int         status = 0;
-    int32       ret;  /* generic return value */
+    int         status   = 0;
+    int32       ret; /* generic return value */
     const char *oldgreyjpegfile = get_srcdir_filename(OLDGREYJPEGFILE);
 
     (void)flag;
@@ -3534,9 +3534,9 @@ test_mgr_old_c(int flag)
         int32 offset[n_images], length[n_images];
         int32 n_entries;
         uint8 jpeglib_readbuf[JPEGY * JPEGX];
-                                        /* buffer for data read by JPEG function */
-        int32 start[2];                 /* start of image data to grab */
-        int32 stride[2];                /* stride of image data to grab */
+        /* buffer for data read by JPEG function */
+        int32 start[2];  /* start of image data to grab */
+        int32 stride[2]; /* stride of image data to grab */
 
         /* Get the first image in this file */
         riid = GRselect(grid, idx);
@@ -3583,16 +3583,16 @@ test_mgr_old_e(int flag)
     int32       fid;  /* HDF file ID */
     int32       grid; /* GRID for the interface */
     int32       ret;  /* generic return value */
-    int32       n_images = 0;
+    int32       n_images    = 0;
     const char *oldjpegfile = get_srcdir_filename(OLDJPEGFILE);
-    int         status = 0;
+    int         status      = 0;
 
     (void)flag;
 
     /* E - Read 24-bit JPEG compressed data from old raster image file */
     MESSAGE(8, printf("Read 24-bit JPEG compressed image\n"););
 
-  fprintf(stderr, "oldjpegfile: %s \n", oldjpegfile);
+    fprintf(stderr, "oldjpegfile: %s \n", oldjpegfile);
 
     /* Open up the existing datafile and get the image information from it */
     fid = Hopen(oldjpegfile, DFACC_READ, 0);
@@ -3610,9 +3610,9 @@ test_mgr_old_e(int flag)
         int32 dims[2] = {JPEGX, JPEGY}; /* dimensions for the empty image */
         uint8 image[JPEGY][JPEGX][3];   /* space for the image data */
         uint8 jpeglib_readbuf[JPEGY * JPEGX * 3];
-                                        /* buffer for data read by JPEG function */
-        int32 start[2];                 /* start of image data to grab */
-        int32 stride[2];                /* stride of image data to grab */
+        /* buffer for data read by JPEG function */
+        int32 start[2];  /* start of image data to grab */
+        int32 stride[2]; /* stride of image data to grab */
         int32 offset[n_images], length[n_images];
         int32 n_entries;
 
