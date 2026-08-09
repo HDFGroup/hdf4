@@ -3551,7 +3551,7 @@ test_mgr_old_c(int flag)
 
         n_entries = GRgetdatainfo(riid, 0, 1, &offset, &length);
         CHECK_VOID(n_entries, FAIL, "GRgetdatainfo");
-  fprintf(stderr, "n_entries in 8 bit is %d\n", n_entries);
+        fprintf(stderr, "n_entries in 8 bit is %d\n", n_entries);
 
         /* Decompress that exact byte range directly via libjpeg */
         ret = decomp_using_jpeglib(oldgreyjpegfile, (long)offset, JPEGY, JPEGX, 1, jpeglib_readbuf);
