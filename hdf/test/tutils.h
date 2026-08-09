@@ -241,8 +241,10 @@ void print_mismatched(const void *s1, const void *s2, int32 size2cmp);
 /* These two functions are in tusejpegfuncs.c.  They use JPEG functions directly
    to compress and decompress data so tests can verify that the DFR8 and DFR24
    APIs work correctly regardless which JPEG library is used */
-int comp_using_jpeglib(const char *filename, long *file_offset, int im_height, int im_width, int im_ncomps, int quality, uint8 *written_buffer);
-int decomp_using_jpeglib(const char *filename, long file_offset, int im_height, int im_width, int im_ncomps, uint8 *read_buffer);
+int comp_using_jpeglib(const char *filename, long *file_offset, int im_height, int im_width, int im_ncomps,
+                       int quality, uint8 *written_buffer);
+int decomp_using_jpeglib(const char *filename, long file_offset, int im_height, int im_width, int im_ncomps,
+                         uint8 *read_buffer);
 
 /* System command to use for Cleanup */
 #if defined _WIN32
