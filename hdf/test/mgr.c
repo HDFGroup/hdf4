@@ -3551,7 +3551,6 @@ test_mgr_old_c(int flag)
 
         n_entries = GRgetdatainfo(riid, 0, 1, &offset, &length);
         CHECK_VOID(n_entries, FAIL, "GRgetdatainfo");
-        fprintf(stderr, "n_entries in 8 bit is %d\n", n_entries);
 
         /* Decompress that exact byte range directly via libjpeg */
         ret = decomp_using_jpeglib(oldgreyjpegfile, (long)offset, JPEGY, JPEGX, 1, jpeglib_readbuf);
@@ -3593,8 +3592,6 @@ test_mgr_old_e(int flag)
 
     /* E - Read 24-bit JPEG compressed data from old raster image file */
     MESSAGE(8, printf("Read 24-bit JPEG compressed image\n"););
-
-    fprintf(stderr, "oldjpegfile: %s \n", oldjpegfile);
 
     /* Open up the existing datafile and get the image information from it */
     fid = Hopen(oldjpegfile, DFACC_READ, 0);
