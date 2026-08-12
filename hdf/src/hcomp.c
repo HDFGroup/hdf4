@@ -143,14 +143,6 @@ funclist_t comp_funcs = {
 static int32
 HCIinit_coder(int16 acc_mode, comp_coder_info_t *cinfo, comp_coder_t coder_type, comp_info *c_info)
 {
-    uint32 comp_config_info;
-
-    HCget_config_info(coder_type, &comp_config_info);
-    if ((comp_config_info & (COMP_DECODER_ENABLED | COMP_ENCODER_ENABLED)) == 0) {
-        /* coder not present */
-        HRETURN_ERROR(DFE_BADCODER, FAIL);
-    }
-
     switch (coder_type) {                        /* determine the type of encoding */
         case COMP_CODE_NONE:                     /* "none" (i.e. no) encoding */
             cinfo->coder_type  = COMP_CODE_NONE; /* set coding type */
