@@ -32,8 +32,8 @@ cmake_minimum_required (VERSION 3.18)
 #     NO_MAC_FORTRAN  - Yes to be SHARED on a Mac
 ##############################################################################
 
-set (CTEST_SOURCE_VERSION "4.3.1")
-set (CTEST_SOURCE_VERSEXT "-1")
+set (CTEST_SOURCE_VERSION "4.4.0")
+set (CTEST_SOURCE_VERSEXT "-pre1")
 
 ##############################################################################
 # handle input parameters to script.
