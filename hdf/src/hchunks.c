@@ -2357,6 +2357,9 @@ HMCgetdatasize(int32 file_id, uint8 *p, /* IN: access id of header info */
         if (VSdetach(chktab_id) == FAIL)
             HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
+        if (Vend(file_id) == FAIL)
+            HGOTO_ERROR(DFE_CANTFLUSH, FAIL);
+
     } /* it is a vdata */
     else
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
