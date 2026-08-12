@@ -12,6 +12,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "testhdf.h"
+#include "tutils.h"
 
 #define XSIZE    13
 #define YSIZE    15
@@ -458,13 +459,6 @@ void test_GRgetcomptype(void); /* in "tdfr8.c" */
 static void check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy, uint8 *oldim, uint8 *newim,
                          uint8 *oldpal, uint8 *newpal);
 
-/* These two functions are in tusejpegfuncs.c.  They use JPEG functions directly
-   to compress and decompress the same data as in test_r24_jpeg, to verify that
-   the DFR24 API work correctly regardless which JPEG library is used */
-int  comp_using_jpeglib(const char *filename, long *file_offset, int im_height, int im_width, int im_ncomps,
-                        int quality, uint8 *written_buffer);
-int  decomp_using_jpeglib(const char *filename, long file_offset, int im_height, int im_width, int im_ncomps,
-                          uint8 *read_buffer);
 void test_r24_jpeg(void);
 
 /* ------------------------------- test_r24 ------------------------------- */

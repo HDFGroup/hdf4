@@ -2184,6 +2184,7 @@ HMCgetdatasize(int32 file_id, uint8 *p, /* IN: access id of header info */
     int32        vdata_size;                     /* size of Vdata */
     chunkinfo_t *chkinfo   = NULL;               /* chunked element information */
     uint8       *v_data    = NULL;               /* Vdata record */
+    unsigned     Vapi_on   = FALSE;              /* TRUE when Vstart succeeded */
     int32        num_recs  = 0,                  /* number of records in chunk table */
         chk_data_size      = 0,                  /* non-compressed data size */
         chk_comp_data_size = 0,                  /* compressed data size */
@@ -2239,6 +2240,7 @@ HMCgetdatasize(int32 file_id, uint8 *p, /* IN: access id of header info */
         /* Start access on Vdata */
         if (Vstart(file_id) == FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
+        Vapi_on = TRUE;
 
         /* Attach to the chunk table vdata and get its num of records */
         if ((chktab_id = VSattach(file_id, (int32)chkinfo->chktbl_ref, "r")) == FAIL)
@@ -2356,10 +2358,8 @@ HMCgetdatasize(int32 file_id, uint8 *p, /* IN: access id of header info */
 
         if (VSdetach(chktab_id) == FAIL)
             HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
-
         if (Vend(file_id) == FAIL)
-            HGOTO_ERROR(DFE_CANTFLUSH, FAIL);
-
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
     } /* it is a vdata */
     else
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -2371,6 +2371,13 @@ HMCgetdatasize(int32 file_id, uint8 *p, /* IN: access id of header info */
         *orig_size = chk_data_size * num_recs;
 
 done:
+    if (ret_value == FAIL) {
+        if (chktab_id != -1)
+            VSdetach(chktab_id);
+        if (Vapi_on == TRUE)
+            Vend(file_id);
+    }
+
     /* Free allocated space for vdata record */
     free(v_data);
 

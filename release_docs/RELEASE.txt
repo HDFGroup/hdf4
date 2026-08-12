@@ -364,6 +364,16 @@ This version has been tested in the following platforms:
 
 Known problems
 ==============
+o  Valgrind may report "Conditional jump or move depends on uninitialised
+   value(s)" in JPEG-related test comparisons when the library is built
+   against SIMD-enabled libjpeg-turbo. This is a documented false positive
+   caused by Valgrind mis-tracking libjpeg-turbo's SSE2 color-space
+   conversion code, not an actual bug in HDF4. It does not occur when
+   built/run with SIMD disabled (JSIMD_FORCENONE=1). See the libjpeg-turbo
+   README, "SIMD Extensions" section at:
+    https://github.com/libjpeg-turbo/libjpeg-turbo/blob/main/README.md#memory-debugger-pitfalls
+   for details.
+
 o  The test_sd() test in mfhdf's hdftest can fail depending on the privileges
    of the account running the test. We've engineered around cases like running
    as root, but you may still encounter test failures when running that test

@@ -209,8 +209,19 @@ test_nonSDAPI_ids()
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose");
 
-    /* Return the number of errors that's been kept track of so far */
 done:
+    if (vdata_id != FAIL)
+        VSdetach(vdata_id);
+    if (ri_id != FAIL)
+        GRendaccess(ri_id);
+    if (gr_id != FAIL)
+        GRend(gr_id);
+    if (fid != FAIL) {
+        Vend(fid);
+        Hclose(fid);
+    }
+
+    /* Return the number of errors that's been kept track of so far */
     return num_errs;
 } /* test_nonSDAPI_ids */
 
