@@ -244,6 +244,7 @@ jobs:
         uses: softprops/action-gh-release@v3.0.2
         with:
           tag_name: "${{ inputs.use_tag }}"
+          draft: true
           prerelease: false
           body_path: description.txt
           files: |

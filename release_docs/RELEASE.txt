@@ -4,7 +4,7 @@ HDF version 4.3.1-1 currently under development
 INTRODUCTION
 
 This document describes the differences between this release and the
-HDF 4.2.16-2 release.  It is written for people who are familiar with
+HDF 4.3.1 release.  It is written for people who are familiar with
 previous releases of HDF and wish to migrate to this version of HDF.
 
 Note that the HDF4 documentation will be updated at the time of
@@ -25,7 +25,7 @@ CONTENTS
 - New features and changes
   -- Configuration
   -- C Library
-- Bugs fixed since HDF 4.3.0
+- Bugs fixed since HDF 4.3.1
   -- Configuration
   -- Library
   -- Utilities
@@ -276,7 +276,7 @@ New features and changes
       retained in hdf.h so old code will compile, but other public headers
       now use int and unsigned in place of these types.
 
-Bugs fixed since HDF 4.3.0
+Bugs fixed since HDF 4.3.1
 ===========================
     -
 
