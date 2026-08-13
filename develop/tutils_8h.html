@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.1-8989384</span>
+   &#160;<span id="projectnumber">4.3.1-c640c7b</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -180,6 +180,10 @@ Functions</h2></td></tr>
 <tr class="separator:ad7d110d0d460b8e9f1ebca97f19b32b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a60ee04f3e4b53e76efa1400e27d4ca3d" id="r_a60ee04f3e4b53e76efa1400e27d4ca3d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a60ee04f3e4b53e76efa1400e27d4ca3d">print_mismatched</a> (const void *s1, const void *s2, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> size2cmp)</td></tr>
 <tr class="separator:a60ee04f3e4b53e76efa1400e27d4ca3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9d2a7f10609b5157b75b18b22289e74" id="r_ae9d2a7f10609b5157b75b18b22289e74"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae9d2a7f10609b5157b75b18b22289e74">comp_using_jpeglib</a> (const char *<a class="el" href="hproto__fortran_8h.html#a19f25aa8c2e1e4e0e813ffe9d2a71bcc">filename</a>, long *file_offset, int im_height, int im_width, int im_ncomps, int quality, <a class="el" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a> *written_buffer)</td></tr>
+<tr class="separator:ae9d2a7f10609b5157b75b18b22289e74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad99967460155024b764f4c01684c8432" id="r_ad99967460155024b764f4c01684c8432"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad99967460155024b764f4c01684c8432">decomp_using_jpeglib</a> (const char *<a class="el" href="hproto__fortran_8h.html#a19f25aa8c2e1e4e0e813ffe9d2a71bcc">filename</a>, long file_offset, int im_height, int im_width, int im_ncomps, <a class="el" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a> *read_buffer)</td></tr>
+<tr class="separator:ad99967460155024b764f4c01684c8432"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -854,6 +858,93 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="ae9d2a7f10609b5157b75b18b22289e74" name="ae9d2a7f10609b5157b75b18b22289e74"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9d2a7f10609b5157b75b18b22289e74">&#9670;&#160;</a></span>comp_using_jpeglib()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int comp_using_jpeglib </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>filename</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long *</td>          <td class="paramname"><span class="paramname"><em>file_offset</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>im_height</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>im_width</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>im_ncomps</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>quality</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a> *</td>          <td class="paramname"><span class="paramname"><em>written_buffer</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad99967460155024b764f4c01684c8432" name="ad99967460155024b764f4c01684c8432"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad99967460155024b764f4c01684c8432">&#9670;&#160;</a></span>decomp_using_jpeglib()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int decomp_using_jpeglib </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>filename</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long</td>          <td class="paramname"><span class="paramname"><em>file_offset</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>im_height</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>im_width</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>im_ncomps</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a> *</td>          <td class="paramname"><span class="paramname"><em>read_buffer</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ad7d110d0d460b8e9f1ebca97f19b32b4" name="ad7d110d0d460b8e9f1ebca97f19b32b4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad7d110d0d460b8e9f1ebca97f19b32b4">&#9670;&#160;</a></span>fuzzy_memcmp()</h2>
 
