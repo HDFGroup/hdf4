@@ -146,7 +146,6 @@ today=`date +%Y%m%d`
 pmode='no'
 revmode='no'
 tmpdir="../#release_tmp.$$"    # tmp work directory
-=""
 
 # Restore previous Version information
 RESTORE_VERSION()

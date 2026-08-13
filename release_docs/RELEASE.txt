@@ -337,8 +337,8 @@ This version has been tested in the following platforms:
                                       pgcc and pgf90 17.10-0 64-bit target
                                          on x86-64 Linux -tp nehalem
 
-    macOS Sonoma 14                  Apple clang version 15.0.7
-    Darwin 23.2.0 arm64              Clang 17.0.0
+    macOS Sequoia 15.7.7             Apple clang version 15.0.7
+    Darwin 24.6.0 arm64              Clang 17.0.0
 
     macOS Ventura 13.6.4             Apple clang version 15.0.0
     Darwin 22.6.0 x86_64
@@ -347,8 +347,8 @@ This version has been tested in the following platforms:
     Darwin 21.6.0 x86_64             gfortran GNU Fortran (Homebrew GCC 13.2.0) 13.2.0
     (philo)                          Intel icc/icpc/ifort version 2021.10.0 20230609
 
-    macOS Apple M1 11.7.3            Apple clang version 13.0.0 (clang-1300.0.29.30)
-    Darwin 20.6.0 arm64              gfortran GNU Fortran (Homebrew GCC 12.2.0) 12.2.0
+    macOS Apple M1 26.5.2            Apple clang version 16.0.0 (clang-1600.0.26.6)
+    Darwin 25.5.0 arm64              gfortran GNU Fortran (Homebrew GCC 12.2.0) 12.2.0
     (macmini-m1)                     Intel icc/icpc/ifort version 2021.8.0 20221120
 
     macOS Big Sur 11.7.3             Apple clang version 12.0.5 (clang-1205.0.22.9)
