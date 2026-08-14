@@ -219,7 +219,7 @@ test_GRgetcomptype()
     /* Terminate access to the file */
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;

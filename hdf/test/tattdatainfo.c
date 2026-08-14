@@ -67,7 +67,7 @@ static void test_grattrs();
 static void
 test_vvsattrs()
 {
-    int32 fid = FAIL;                                /* File ID */
+    int32 fid        = FAIL;                                       /* File ID */
     int32 vgroup0_id = FAIL, vgroup1_id = FAIL, vgroup2_id = FAIL; /* Various vgroup IDs */
     int32 vdata0_id = FAIL, vdata1_id = FAIL, vdata2_id = FAIL;    /* Various vdata IDs */
     int32 fldindex;
@@ -212,10 +212,10 @@ test_vvsattrs()
     status_32 = Vdetach(vgroup0_id);
     CHECK(status_32, FAIL, "Vdetach vgroup0_id");
     vgroup0_id = FAIL;
-    status_32 = Vdetach(vgroup1_id);
+    status_32  = Vdetach(vgroup1_id);
     CHECK(status_32, FAIL, "Vdetach vgroup1_id");
     vgroup1_id = FAIL;
-    status_32 = Vdetach(vgroup2_id);
+    status_32  = Vdetach(vgroup2_id);
     CHECK(status_32, FAIL, "Vdetach vgroup2_id");
     vgroup2_id = FAIL;
 
@@ -295,7 +295,7 @@ test_vvsattrs()
     status_32 = Vdetach(vgroup0_id);
     CHECK(status_32, FAIL, "Vdetach vgroup0_id");
     vgroup0_id = FAIL;
-    status_32 = VSdetach(vdata0_id);
+    status_32  = VSdetach(vdata0_id);
     CHECK(status_32, FAIL, "VSdetach vdata0_id");
     vdata0_id = FAIL;
     status_32 = VSdetach(vdata1_id);
@@ -331,7 +331,7 @@ done:
 static void
 test_vgmixedattrs()
 {
-    int32 fid = FAIL; /* File ID */
+    int32 fid       = FAIL; /* File ID */
     int32 vgroup_id = FAIL, vgroup_ref;
     int32 n_attrs;
     int32 offsets[10], lengths[10]; /* offsets and lengths of attrs' data */
@@ -548,10 +548,10 @@ test_grattrs()
     int32 file_id = FAIL, /* HDF file identifier */
         gr_id     = FAIL, /* GR interface identifier */
         ri_id     = FAIL, /* raster image identifier */
-        start[2],       /* where to start to write for each dimension  */
-        edges[2],       /* how long to write for each dimension */
-        dimsizes[2],    /* sizes of the two dimensions of the image array   */
-        interlace_mode, /* interlace mode of the image */
+        start[2],         /* where to start to write for each dimension  */
+        edges[2],         /* how long to write for each dimension */
+        dimsizes[2],      /* sizes of the two dimensions of the image array   */
+        interlace_mode,   /* interlace mode of the image */
         ii, jj;
     int   status;
     int16 ri_att2_val[RI_ATT2_COUNT] = {1, 2, 3, 4, 5, 6};
@@ -624,10 +624,10 @@ test_grattrs()
      * close the HDF file. */
     status = GRendaccess(ri_id);
     CHECK(status, FAIL, "GRendaccess");
-    ri_id = FAIL;
+    ri_id  = FAIL;
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;
@@ -674,10 +674,10 @@ test_grattrs()
      * HDF file. */
     status = GRendaccess(ri_id);
     CHECK(status, FAIL, "GRendaccess");
-    ri_id = FAIL;
+    ri_id  = FAIL;
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;

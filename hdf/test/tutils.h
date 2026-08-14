@@ -85,8 +85,8 @@ extern
             printf("   Call to HDF routine: %15s at line %4d in %s had value %ld \n", where, (int)__LINE__,  \
                    __FILE__, (long)x);                                                                       \
         if (x != val) {                                                                                      \
-            printf("*** UNEXPECTED VALUE from %s is %ld (expected %ld) at line %4d in %s\n", where, (long)val, (long)x, (int)__LINE__, \
-                   __FILE__);                                                                                \
+            printf("*** UNEXPECTED VALUE from %s is %ld (expected %ld) at line %4d in %s\n", where,          \
+                   (long)val, (long)x, (int)__LINE__, __FILE__);                                             \
             num_errs++;                                                                                      \
             goto done;                                                                                       \
         }                                                                                                    \
@@ -99,8 +99,8 @@ extern
             printf("   Call to HDF routine: %15s at line %4d in %s had value %ld \n", where, (int)__LINE__,  \
                    __FILE__, (long)x);                                                                       \
         if (x != val) {                                                                                      \
-            printf("*** UNEXPECTED VALUE from %s is %ld (expected %ld) at line %4d in %s\n", where, (long)val, (long)x, (int)__LINE__, \
-                   __FILE__);                                                                                \
+            printf("*** UNEXPECTED VALUE from %s is %ld (expected %ld) at line %4d in %s\n", where,          \
+                   (long)val, (long)x, (int)__LINE__, __FILE__);                                             \
             num_errs++;                                                                                      \
         }                                                                                                    \
     } while (0)
@@ -111,9 +111,9 @@ extern
         if (Verbosity > 9)                                                                                   \
             printf("   Call to HDF routine: %15s at line %4d in %s had value %s \n", where, (int)__LINE__,   \
                    __FILE__, x);                                                                             \
-        if (strncmp(x, val, strlen(x)) != 0) {                                                                           \
-            printf("*** UNEXPECTED VALUE from %s is <%s> (expected <%s>) at line %4d in %s\n", where, val, x, (int)__LINE__,        \
-                   __FILE__);                                                                                \
+        if (strncmp(x, val, strlen(x)) != 0) {                                                               \
+            printf("*** UNEXPECTED VALUE from %s is <%s> (expected <%s>) at line %4d in %s\n", where, val,   \
+                   x, (int)__LINE__, __FILE__);                                                              \
             num_errs++;                                                                                      \
             goto done;                                                                                       \
         }                                                                                                    \

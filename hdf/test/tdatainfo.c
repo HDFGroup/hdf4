@@ -118,7 +118,7 @@ static void
 test_simple_vs()
 {
     int32 fid = FAIL,                           /* File ID */
-        vsid = FAIL,                            /* Vdata ID */
+        vsid  = FAIL,                           /* Vdata ID */
         vs_ref,                                 /* Vdata ref# */
         n_records,                              /* number of records actually written to vdata */
         data_buf0[N_RECORDS][N_VALS_PER_REC_1], /* for single vdata's data */
@@ -316,7 +316,7 @@ done:
 static void
 test_append_vs()
 {
-    int32 fid = FAIL;                           /* file ID */
+    int32 fid    = FAIL;                        /* file ID */
     int32 apvsid = FAIL;                        /* vdata IDs */
     int32 vs1_ref,                              /* vdata ref# */
         n_records,                              /* number of records written to vdata */
@@ -326,8 +326,8 @@ test_append_vs()
     int              n_blocks;
     t_hdf_datainfo_t vs_info = {0}; /* zero-initialized so free_info() is safe
                                         even if alloc_info() was never reached */
-    int32            status;   /* Status values from routines */
-    int              status_n; /* Status values from routines */
+    int32 status;                   /* Status values from routines */
+    int   status_n;                 /* Status values from routines */
 
     /* Open the HDF file. */
     fid = Hopen(APPEND_FILE, DFACC_CREATE, 0);
@@ -662,13 +662,13 @@ done:
 static void
 test_annotation()
 {
-    int32 fid = FAIL,                    /* file ID */
-        an_id = FAIL,                    /* AN interface ID */
+    int32 fid         = FAIL,            /* file ID */
+        an_id         = FAIL,            /* AN interface ID */
         file_label_id = FAIL,            /* file label ID */
-        file_desc_id = FAIL,             /* file description ID */
+        file_desc_id  = FAIL,            /* file description ID */
         data_label_id = FAIL,            /* data label ID */
-        data_desc_id = FAIL,             /* data description ID */
-        vgroup_id = FAIL;                 /* vgroup ID */
+        data_desc_id  = FAIL,            /* data description ID */
+        vgroup_id     = FAIL;            /* vgroup ID */
     uint16       vgroup_tag, vgroup_ref; /* vgroup tag/ref */
     t_ann_info_t ann_info[4];            /* temporary storage of annotation info */
     int          status_n;               /* returned status for functions returning an int  */
@@ -724,25 +724,25 @@ test_annotation()
     status_n = ANendaccess(file_label_id);
     CHECK(status_n, FAIL, "ANendaccess");
     file_label_id = FAIL;
-    status_n = ANendaccess(file_desc_id);
+    status_n      = ANendaccess(file_desc_id);
     CHECK(status_n, FAIL, "ANendaccess");
     file_desc_id = FAIL;
-    status_n = ANendaccess(data_label_id);
+    status_n     = ANendaccess(data_label_id);
     CHECK(status_n, FAIL, "ANendaccess");
     data_label_id = FAIL;
-    status_n = ANendaccess(data_desc_id);
+    status_n      = ANendaccess(data_desc_id);
     CHECK(status_n, FAIL, "ANendaccess");
     data_desc_id = FAIL;
 
     /* Terminate access to the vgroup and to the V interface. */
-    status   = Vdetach(vgroup_id);
+    status    = Vdetach(vgroup_id);
     vgroup_id = FAIL;
-    status_n = Vend(fid);
+    status_n  = Vend(fid);
 
     /* Terminate access to the AN interface and close the HDF file. */
     status = ANend(an_id);
     CHECK(status, FAIL, "ANend");
-    an_id = FAIL;
+    an_id    = FAIL;
     status_n = Hclose(fid);
     CHECK(status_n, FAIL, "Hclose");
     fid = FAIL;
@@ -810,7 +810,7 @@ test_annotation()
         /* Terminate access to the AN interface and close the HDF file. */
         status = ANend(an_id);
         CHECK(status, FAIL, "ANend");
-        an_id = FAIL;
+        an_id    = FAIL;
         status_n = Hclose(fid);
         CHECK(status_n, FAIL, "Hclose");
         fid = FAIL;
@@ -879,7 +879,7 @@ make_comp_image(int32 grid, const char *img_name,
                 int32      comp_type,  /* compression method */
                 comp_info *cinfo)      /* compression parameters */
 {
-    int32 riid = FAIL;               /* raster image ID */
+    int32 riid    = FAIL;            /* raster image ID */
     int32 dims[2] = {WIDTH, LENGTH}; /* dimensions for the image */
     char  image0[WIDTH][LENGTH];     /* image data */
     int32 start[2];                  /* start of image data to grab */
@@ -929,9 +929,9 @@ test_oneblock_ri()
 {
     int32 fid = FAIL, grid = FAIL, /* file ID and GR interface ID */
         riid = FAIL;               /* raster image ID */
-    int32     offset, length; /* offset/length buffers for single block of data */
-    int       status;         /* status returned from routines */
-    int       ii;             /* indices */
+    int32     offset, length;      /* offset/length buffers for single block of data */
+    int       status;              /* status returned from routines */
+    int       ii;                  /* indices */
     int32     n_images, n_fattrs;
     comp_info cinfo; /* Compression parameters - union */
     /* offsets/lengths to be used to verify offsets/lengths returned by
@@ -992,7 +992,7 @@ test_oneblock_ri()
     /* Terminate access to the GR interface and close the file */
     status = GRend(grid);
     CHECK(status, FAIL, "GRend");
-    grid = FAIL;
+    grid   = FAIL;
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose");
     fid = FAIL;
@@ -1051,7 +1051,7 @@ test_oneblock_ri()
     /* Terminate access to the GR interface and close the file */
     status = GRend(grid);
     CHECK(status, FAIL, "GRend");
-    grid = FAIL;
+    grid   = FAIL;
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose");
     fid = FAIL;
@@ -1073,10 +1073,10 @@ static void
 test_dfr8_24()
 {
     int32 fid = FAIL, grid = FAIL, /* file ID and GR interface ID */
-        riid = FAIL;      /* raster image ID */
-    int32 offset, length; /* offset/length buffers for single block of data */
-    int   status;         /* status returned from routines */
-    int   ii, jj;         /* indices */
+        riid = FAIL;               /* raster image ID */
+    int32 offset, length;          /* offset/length buffers for single block of data */
+    int   status;                  /* status returned from routines */
+    int   ii, jj;                  /* indices */
     int32 n_images, n_fattrs;
     char  buf[WIDTH][LENGTH][3];
 
@@ -1154,7 +1154,7 @@ test_dfr8_24()
     /* Terminate access to the GR interface and close the file */
     status = GRend(grid);
     CHECK(status, FAIL, "GRend");
-    grid = FAIL;
+    grid   = FAIL;
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose");
     fid = FAIL;
@@ -1184,8 +1184,8 @@ done:
 static void
 test_getpalinfo()
 {
-    int32 fid = FAIL, grid = FAIL,                /* file ID and GR interface ID */
-        riid = FAIL, palid,                       /* raster image ID and palette ID */
+    int32 fid = FAIL, grid = FAIL,               /* file ID and GR interface ID */
+        riid = FAIL, palid,                      /* raster image ID and palette ID */
         interlace_mode, start[2],                /* where to start to write for each dimension  */
         edges[2],                                /* specifies how long to write for each dimension */
         dim_sizes[2];                            /* sizes of the two dimensions of the image array */
@@ -1311,7 +1311,7 @@ test_getpalinfo()
 
     /* Terminate access to the first image */
     status = GRendaccess(riid);
-    riid = FAIL;
+    riid   = FAIL;
 
     /* Create another image named IMAGE2_WITH_PAL */
     riid = GRcreate(grid, IMAGE2_WITH_PAL, N_COMPS_IMG, DFNT_UINT8, interlace_mode, dim_sizes);
@@ -1405,7 +1405,7 @@ test_getpalinfo()
     VERIFY(n_pals, 10, "DFPputpal");
 
     status = GRendaccess(riid);
-    riid = FAIL;
+    riid   = FAIL;
 
     status = DFPputpal(IMAGE_DFPAL_FILE, paletteD, 0, "a");
     CHECK(status, FAIL, "DFPputpal");
@@ -1491,7 +1491,7 @@ test_getpalinfo()
     /* Terminate access to the GR interface and close the file */
     status = GRend(grid);
     CHECK(status, FAIL, "GRend");
-    grid = FAIL;
+    grid   = FAIL;
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose");
     fid = FAIL;

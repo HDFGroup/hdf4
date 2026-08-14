@@ -55,13 +55,13 @@ test_szip_RI8bit()
 {
     /************************* Variable declaration **************************/
 
-    int   status;       /* status for functions returning an int */
+    int   status;         /* status for functions returning an int */
     int32 file_id = FAIL, /* HDF file identifier */
-        gr_id     = FAIL,  /* GR interface identifier */
-        ri_id     = FAIL,  /* raster image identifier */
-        dim_sizes[2],   /* dimension sizes of the image array */
-        interlace_mode, /* interlace mode of the image */
-        data_type,      /* data type of the image data */
+        gr_id     = FAIL, /* GR interface identifier */
+        ri_id     = FAIL, /* raster image identifier */
+        dim_sizes[2],     /* dimension sizes of the image array */
+        interlace_mode,   /* interlace mode of the image */
+        data_type,        /* data type of the image data */
         index;
     int32        start[2], edges[2];
     uint32       comp_config;
@@ -135,7 +135,7 @@ test_szip_RI8bit()
 
     HCget_config_info(COMP_CODE_SZIP, &comp_config);
     CHECK(((comp_config & COMP_DECODER_ENABLED) && (comp_config & COMP_ENCODER_ENABLED)), 0,
-               "SZIP Compression not available");
+          "SZIP Compression not available");
 
     /* Create and open the file for sziped data */
     file_id = Hopen(FILE_NAME8, DFACC_CREATE, 0);
@@ -186,7 +186,7 @@ test_szip_RI8bit()
         /* Terminate access to the GR interface and close the HDF file */
         status = GRend(gr_id);
         CHECK(status, FAIL, "GRend");
-        gr_id = FAIL;
+        gr_id  = FAIL;
         status = Hclose(file_id);
         CHECK(status, FAIL, "Hclose");
         file_id = FAIL;
@@ -206,7 +206,7 @@ test_szip_RI8bit()
        flush the compressed info to the file */
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;
@@ -262,11 +262,10 @@ test_szip_RI8bit()
     /* Terminate access to the GR interface and close the HDF file */
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;
-
 
 done:
     /* Release resources */
@@ -287,13 +286,13 @@ test_szip_RI16bit()
 {
     /************************* Variable declaration **************************/
 
-    int   status;       /* status for functions returning an int */
+    int   status;         /* status for functions returning an int */
     int32 file_id = FAIL, /* HDF file identifier */
-        gr_id     = FAIL,  /* GR interface identifier */
-        ri_id     = FAIL,  /* raster image identifier */
-        dim_sizes[2],   /* dimension sizes of the image array */
-        interlace_mode, /* interlace mode of the image */
-        data_type,      /* data type of the image data */
+        gr_id     = FAIL, /* GR interface identifier */
+        ri_id     = FAIL, /* raster image identifier */
+        dim_sizes[2],     /* dimension sizes of the image array */
+        interlace_mode,   /* interlace mode of the image */
+        data_type,        /* data type of the image data */
         index;
     int32        start[2], edges[2];
     uint32       comp_config;
@@ -367,7 +366,7 @@ test_szip_RI16bit()
 
     HCget_config_info(COMP_CODE_SZIP, &comp_config);
     CHECK(((comp_config & COMP_DECODER_ENABLED) && (comp_config & COMP_ENCODER_ENABLED)), 0,
-               "SZIP Compression not available");
+          "SZIP Compression not available");
 
     /* Create and open the file for sziped data */
     file_id = Hopen(FILE_NAME16, DFACC_CREATE, 0);
@@ -418,7 +417,7 @@ test_szip_RI16bit()
         /* Terminate access to the GR interface and close the HDF file */
         status = GRend(gr_id);
         CHECK(status, FAIL, "GRend");
-        gr_id = FAIL;
+        gr_id  = FAIL;
         status = Hclose(file_id);
         CHECK(status, FAIL, "Hclose");
         file_id = FAIL;
@@ -438,7 +437,7 @@ test_szip_RI16bit()
        flush the compressed info to the file */
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;
@@ -494,11 +493,10 @@ test_szip_RI16bit()
     /* Terminate access to the GR interface and close the HDF file */
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;
-
 
 done:
     /* Release resources */
@@ -519,13 +517,13 @@ test_szip_RI32bit()
 {
     /************************* Variable declaration **************************/
 
-    int   status;       /* status for functions returning an int */
+    int   status;         /* status for functions returning an int */
     int32 file_id = FAIL, /* HDF file identifier */
-        gr_id     = FAIL,  /* GR interface identifier */
-        ri_id     = FAIL,  /* raster image identifier */
-        dim_sizes[2],   /* dimension sizes of the image array */
-        interlace_mode, /* interlace mode of the image */
-        data_type,      /* data type of the image data */
+        gr_id     = FAIL, /* GR interface identifier */
+        ri_id     = FAIL, /* raster image identifier */
+        dim_sizes[2],     /* dimension sizes of the image array */
+        interlace_mode,   /* interlace mode of the image */
+        data_type,        /* data type of the image data */
         index;
     int32        start[2], edges[2];
     uint32       comp_config;
@@ -599,7 +597,7 @@ test_szip_RI32bit()
 
     HCget_config_info(COMP_CODE_SZIP, &comp_config);
     CHECK(((comp_config & COMP_DECODER_ENABLED) && (comp_config & COMP_ENCODER_ENABLED)), 0,
-               "SZIP Compression not available");
+          "SZIP Compression not available");
 
     /* Create and open the file for sziped data */
     file_id = Hopen(FILE_NAME32, DFACC_CREATE, 0);
@@ -650,7 +648,7 @@ test_szip_RI32bit()
         /* Terminate access to the GR interface and close the HDF file */
         status = GRend(gr_id);
         CHECK(status, FAIL, "GRend");
-        gr_id = FAIL;
+        gr_id  = FAIL;
         status = Hclose(file_id);
         CHECK(status, FAIL, "Hclose");
         file_id = FAIL;
@@ -670,7 +668,7 @@ test_szip_RI32bit()
        flush the compressed info to the file */
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;
@@ -726,11 +724,10 @@ test_szip_RI32bit()
     /* Terminate access to the GR interface and close the HDF file */
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;
-
 
 done:
     /* Release resources */
@@ -751,13 +748,13 @@ test_szip_RIfl32bit()
 {
     /************************* Variable declaration **************************/
 
-    int   status;       /* status for functions returning an int */
+    int   status;         /* status for functions returning an int */
     int32 file_id = FAIL, /* HDF file identifier */
-        gr_id     = FAIL,  /* GR interface identifier */
-        ri_id     = FAIL,  /* raster image identifier */
-        dim_sizes[2],   /* dimension sizes of the image array */
-        interlace_mode, /* interlace mode of the image */
-        data_type,      /* data type of the image data */
+        gr_id     = FAIL, /* GR interface identifier */
+        ri_id     = FAIL, /* raster image identifier */
+        dim_sizes[2],     /* dimension sizes of the image array */
+        interlace_mode,   /* interlace mode of the image */
+        data_type,        /* data type of the image data */
         index;
     int32        start[2], edges[2];
     uint32       comp_config;
@@ -831,7 +828,7 @@ test_szip_RIfl32bit()
 
     HCget_config_info(COMP_CODE_SZIP, &comp_config);
     CHECK(((comp_config & COMP_DECODER_ENABLED) && (comp_config & COMP_ENCODER_ENABLED)), 0,
-               "SZIP Compression not available");
+          "SZIP Compression not available");
 
     /* Create and open the file for sziped data */
     file_id = Hopen(FILE_NAMEfl32, DFACC_CREATE, 0);
@@ -883,7 +880,7 @@ test_szip_RIfl32bit()
         /* Terminate access to the GR interface and close the HDF file */
         status = GRend(gr_id);
         CHECK(status, FAIL, "GRend");
-        gr_id = FAIL;
+        gr_id  = FAIL;
         status = Hclose(file_id);
         CHECK(status, FAIL, "Hclose");
         file_id = FAIL;
@@ -903,7 +900,7 @@ test_szip_RIfl32bit()
        flush the compressed info to the file */
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;
@@ -959,11 +956,10 @@ test_szip_RIfl32bit()
     /* Terminate access to the GR interface and close the HDF file */
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;
-
 
 done:
     /* Release resources */
@@ -984,13 +980,13 @@ test_szip_RIfl64bit()
 {
     /************************* Variable declaration **************************/
 
-    int   status;       /* status for functions returning an int */
+    int   status;         /* status for functions returning an int */
     int32 file_id = FAIL, /* HDF file identifier */
-        gr_id     = FAIL,  /* GR interface identifier */
-        ri_id     = FAIL,  /* raster image identifier */
-        dim_sizes[2],   /* dimension sizes of the image array */
-        interlace_mode, /* interlace mode of the image */
-        data_type,      /* data type of the image data */
+        gr_id     = FAIL, /* GR interface identifier */
+        ri_id     = FAIL, /* raster image identifier */
+        dim_sizes[2],     /* dimension sizes of the image array */
+        interlace_mode,   /* interlace mode of the image */
+        data_type,        /* data type of the image data */
         index;
     int32        start[2], edges[2];
     uint32       comp_config;
@@ -1064,7 +1060,7 @@ test_szip_RIfl64bit()
 
     HCget_config_info(COMP_CODE_SZIP, &comp_config);
     CHECK(((comp_config & COMP_DECODER_ENABLED) && (comp_config & COMP_ENCODER_ENABLED)), 0,
-               "SZIP Compression not available");
+          "SZIP Compression not available");
 
     /* Create and open the file for sziped data */
     /* Create and open the file for sziped data */
@@ -1117,7 +1113,7 @@ test_szip_RIfl64bit()
         /* Terminate access to the GR interface and close the HDF file */
         status = GRend(gr_id);
         CHECK(status, FAIL, "GRend");
-        gr_id = FAIL;
+        gr_id  = FAIL;
         status = Hclose(file_id);
         CHECK(status, FAIL, "Hclose");
         file_id = FAIL;
@@ -1137,7 +1133,7 @@ test_szip_RIfl64bit()
       flush the compressed info to the file */
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;
@@ -1193,11 +1189,10 @@ test_szip_RIfl64bit()
     /* Terminate access to the GR interface and close the HDF file */
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;
-
 
 done:
     /* Release resources */
@@ -1224,15 +1219,15 @@ test_szip_chunk()
 
     /************************* Variable declaration **************************/
 
-    int   status;       /* status for functions returning an int */
+    int   status;         /* status for functions returning an int */
     int32 file_id = FAIL, /* HDF file identifier */
-        gr_id     = FAIL,  /* GR interface identifier */
-        ri_id     = FAIL,  /* raster image identifier */
-        origin[2],      /* start position to write for each dimension */
-        dim_sizes[2],   /* dimension sizes of the image array */
-        interlace_mode, /* interlace mode of the image */
-        data_type,      /* data type of the image data */
-        comp_flag,      /* compression flag */
+        gr_id     = FAIL, /* GR interface identifier */
+        ri_id     = FAIL, /* raster image identifier */
+        origin[2],        /* start position to write for each dimension */
+        dim_sizes[2],     /* dimension sizes of the image array */
+        interlace_mode,   /* interlace mode of the image */
+        data_type,        /* data type of the image data */
+        comp_flag,        /* compression flag */
         index;
     int32         start[2], stride[2], edge[2];
     comp_info     cinfo_out; /* Compression parameters read - union */
@@ -1265,7 +1260,7 @@ test_szip_chunk()
 
     HCget_config_info(COMP_CODE_SZIP, &comp_config);
     CHECK(((comp_config & COMP_DECODER_ENABLED) && (comp_config & COMP_ENCODER_ENABLED)), 0,
-               "SZIP Compression not available");
+          "SZIP Compression not available");
 
     /* Create and open the file for chunked and sziped data. */
     file_id = Hopen(CHKSZIPFILE, DFACC_CREATE, 0);
@@ -1314,7 +1309,7 @@ test_szip_chunk()
         /* Terminate access to the GR interface and close the HDF file */
         status = GRend(gr_id);
         CHECK(status, FAIL, "GRend");
-        gr_id = FAIL;
+        gr_id  = FAIL;
         status = Hclose(file_id);
         CHECK(status, FAIL, "Hclose");
         file_id = FAIL;
@@ -1342,10 +1337,10 @@ test_szip_chunk()
     /* Terminate accesses and close the HDF file. */
     status = GRendaccess(ri_id);
     CHECK(status, FAIL, "GRendaccess");
-    ri_id = FAIL;
+    ri_id  = FAIL;
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;
@@ -1425,14 +1420,13 @@ test_szip_chunk()
     /* Terminate accesses and close the HDF file. */
     status = GRendaccess(ri_id);
     CHECK(status, FAIL, "GRendaccess");
-    ri_id = FAIL;
+    ri_id  = FAIL;
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;
-
 
 done:
     /* Release resources */

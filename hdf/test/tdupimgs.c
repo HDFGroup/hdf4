@@ -151,7 +151,7 @@ test_mgr_dup_images()
     /* Terminate access to the file */
     status = GRend(grid);
     CHECK(status, FAIL, "GRend");
-    grid = FAIL;
+    grid   = FAIL;
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose");
     fid = FAIL;
@@ -172,7 +172,7 @@ test_mgr_dup_images()
     /* Terminate access to the file */
     status = GRend(grid);
     CHECK(status, FAIL, "GRend");
-    grid = FAIL;
+    grid   = FAIL;
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose");
     fid = FAIL;

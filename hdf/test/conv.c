@@ -768,7 +768,6 @@ test_conv(void)
         dst2_float64 = NULL;
     } /* end for */
 
-
 done:
     /* Release resources */
     free(src_uint8);

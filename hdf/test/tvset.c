@@ -1255,7 +1255,7 @@ test_vsdelete(void)
 #define FIELD_NAME     "Field Entries"
 #define NUMBER_OF_ROWS 10
 #define ORDER          3
-    int32 fid = FAIL;
+    int32 fid      = FAIL;
     int32 vdata_id = FAIL;
     int32 status;
     int32 num_of_elements;
@@ -1395,7 +1395,7 @@ done:
 static void
 test_vdelete(void)
 {
-    int32 fid = FAIL;
+    int32 fid       = FAIL;
     int32 vgroup_id = FAIL;
     int32 status;
     int32 vg_ref;
@@ -1506,7 +1506,7 @@ done:
 static void
 test_vdeletetagref(void)
 {
-    int32 fid = FAIL;
+    int32 fid       = FAIL;
     int32 vgroup_id = FAIL;
     int32 status;
     int32 vg_ref;
@@ -1695,10 +1695,10 @@ done:
 static void
 test_emptyvdata(void)
 {
-    int32 status; /* Status values from routines */
+    int32 status;     /* Status values from routines */
     int32 fid = FAIL; /* File ID */
     int32 vs1 = FAIL; /* Vdata ID */
-    int32 ref;    /* Vdata ref */
+    int32 ref;        /* Vdata ref */
     char *vsname = NULL;
     char *fields = NULL;
 
@@ -1882,11 +1882,11 @@ done:
 static void
 test_vglongnames(void)
 {
-    int32  status;   /* Status values from routines */
+    int32  status;     /* Status values from routines */
     int32  fid = FAIL; /* File ID */
     int32  vg1 = FAIL; /* Vdata ID */
-    int32  ref;      /* Vdata ref */
-    uint16 name_len; /* Length of a vgroup's name or class name */
+    int32  ref;        /* Vdata ref */
+    uint16 name_len;   /* Length of a vgroup's name or class name */
     char  *vgname = NULL, *vgclass = NULL;
 
     /* Open the HDF file. */
@@ -2059,12 +2059,11 @@ done:
 static void
 test_getvgroups(void)
 {
-    int32 fid = FAIL; /* File ID */
+    int32 fid       = FAIL; /* File ID */
     int32 vgroup_id = FAIL, vgroup0_id = FAIL, vgroup1_id = FAIL, vgroup2_id = FAIL, vgroup3_id = FAIL,
-          vgroup4_id = FAIL,
-        vgroup5_id = FAIL;  /* Various vgroup IDs */
-    int32   vgroup_ref; /* Vgroup ref */
-    int     n_vgs = 0;
+          vgroup4_id = FAIL, vgroup5_id = FAIL; /* Various vgroup IDs */
+    int32   vgroup_ref;                         /* Vgroup ref */
+    int     n_vgs    = 0;
     uint16 *refarray = NULL;
     int32   ref_list[NUM_VGROUPS];
     char    vgclass[20];
@@ -2236,13 +2235,13 @@ test_getvgroups(void)
     status = Vdetach(vgroup2_id);
     CHECK(status, FAIL, "Vdetach vgroup2_id");
     vgroup2_id = FAIL;
-    status = Vdetach(vgroup3_id);
+    status     = Vdetach(vgroup3_id);
     CHECK(status, FAIL, "Vdetach vgroup3_id");
     vgroup3_id = FAIL;
-    status = Vdetach(vgroup4_id);
+    status     = Vdetach(vgroup4_id);
     CHECK(status, FAIL, "Vdetach vgroup4_id");
     vgroup4_id = FAIL;
-    status = Vdetach(vgroup5_id);
+    status     = Vdetach(vgroup5_id);
     CHECK(status, FAIL, "Vdetach vgroup5_id");
     vgroup5_id = FAIL;
 
@@ -2359,7 +2358,7 @@ test_getvgroups(void)
     status = Vdetach(vgroup0_id);
     CHECK(status, FAIL, "Vdetach vgroup0_id");
     vgroup0_id = FAIL;
-    status = Vdetach(vgroup1_id);
+    status     = Vdetach(vgroup1_id);
     CHECK(status, FAIL, "Vdetach vgroup1_id");
     vgroup1_id = FAIL;
 
@@ -2493,10 +2492,9 @@ test_getvdatas(void)
     int32 vgroup_ref;
     int32 vdata_id = FAIL;
     int32 vdata_ref;
-    int32 fid = FAIL; /* File ID */
+    int32 fid        = FAIL; /* File ID */
     int32 vgroup0_id = FAIL, vgroup1_id = FAIL, vgroup2_id = FAIL, vgroup4_id = FAIL, vgroup6_id = FAIL,
-          vgroup7_id = FAIL,
-        vgroup9_id = FAIL; /* Various vgroup IDs */
+          vgroup7_id = FAIL, vgroup9_id = FAIL; /* Various vgroup IDs */
     int32 vdata1_id = FAIL, vdata2_id = FAIL, vdata3_id = FAIL, vdata4_id = FAIL, vdata5_id = FAIL,
           vdata6_id = FAIL, vdata7_id = FAIL; /* Various vdata IDs */
     int   n_vgs = 0;
@@ -2629,44 +2627,44 @@ test_getvdatas(void)
     status = Vdetach(vgroup0_id);
     CHECK(status, FAIL, "Vdetach vgroup0_id");
     vgroup0_id = FAIL;
-    status = Vdetach(vgroup1_id);
+    status     = Vdetach(vgroup1_id);
     CHECK(status, FAIL, "Vdetach vgroup1_id");
     vgroup1_id = FAIL;
-    status = Vdetach(vgroup2_id);
+    status     = Vdetach(vgroup2_id);
     CHECK(status, FAIL, "Vdetach vgroup2_id");
     vgroup2_id = FAIL;
-    status = Vdetach(vgroup4_id);
+    status     = Vdetach(vgroup4_id);
     CHECK(status, FAIL, "Vdetach vgroup4_id");
     vgroup4_id = FAIL;
-    status = Vdetach(vgroup6_id);
+    status     = Vdetach(vgroup6_id);
     CHECK(status, FAIL, "Vdetach vgroup6_id");
     vgroup6_id = FAIL;
-    status = Vdetach(vgroup7_id);
+    status     = Vdetach(vgroup7_id);
     CHECK(status, FAIL, "Vdetach vgroup7_id");
     vgroup7_id = FAIL;
-    status = Vdetach(vgroup9_id);
+    status     = Vdetach(vgroup9_id);
     CHECK(status, FAIL, "Vdetach vgroup9_id");
     vgroup9_id = FAIL;
 
     status = VSdetach(vdata1_id);
     CHECK(status, FAIL, "VSdetach vdata1_id");
     vdata1_id = FAIL;
-    status = VSdetach(vdata2_id);
+    status    = VSdetach(vdata2_id);
     CHECK(status, FAIL, "VSdetach vdata2_id");
     vdata2_id = FAIL;
-    status = VSdetach(vdata3_id);
+    status    = VSdetach(vdata3_id);
     CHECK(status, FAIL, "VSdetach vdata3_id");
     vdata3_id = FAIL;
-    status = VSdetach(vdata4_id);
+    status    = VSdetach(vdata4_id);
     CHECK(status, FAIL, "VSdetach vdata4_id");
     vdata4_id = FAIL;
-    status = VSdetach(vdata5_id);
+    status    = VSdetach(vdata5_id);
     CHECK(status, FAIL, "VSdetach vdata5_id");
     vdata5_id = FAIL;
-    status = VSdetach(vdata6_id);
+    status    = VSdetach(vdata6_id);
     CHECK(status, FAIL, "VSdetach vdata6_id");
     vdata6_id = FAIL;
-    status = VSdetach(vdata7_id);
+    status    = VSdetach(vdata7_id);
     CHECK(status, FAIL, "VSdetach vdata7_id");
     vdata7_id = FAIL;
 
@@ -2813,16 +2811,16 @@ test_getvdatas(void)
     status = Vdetach(vgroup0_id);
     CHECK(status, FAIL, "Vdetach vgroup0_id");
     vgroup0_id = FAIL;
-    status = Vdetach(vgroup1_id);
+    status     = Vdetach(vgroup1_id);
     CHECK(status, FAIL, "Vdetach vgroup1_id");
     vgroup1_id = FAIL;
-    status = Vdetach(vgroup6_id);
+    status     = Vdetach(vgroup6_id);
     CHECK(status, FAIL, "Vdetach vgroup6_id");
     vgroup6_id = FAIL;
-    status = Vdetach(vgroup7_id);
+    status     = Vdetach(vgroup7_id);
     CHECK(status, FAIL, "Vdetach vgroup7_id");
     vgroup7_id = FAIL;
-    status = Vdetach(vgroup9_id);
+    status     = Vdetach(vgroup9_id);
     CHECK(status, FAIL, "Vdetach vgroup9_id");
     vgroup9_id = FAIL;
 
@@ -2896,13 +2894,13 @@ test_extfile(void)
     int32      fid = FAIL, vdata1_id = FAIL, vdata_ref = -1; /* ref number of a vdata, set to -1 to create  */
     int32      vdata1_ref;
     int32      offset = -1, length = -1;
-    const char hibuf[2]  = "hi";
-    const char byebuf[3] = "bye";
+    const char hibuf[2]     = "hi";
+    const char byebuf[3]    = "bye";
     char      *extfile_name = NULL;
     char      *short_name   = NULL;
     void      *columnPtrs[3];
     int        bufsize;
-    void      *databuf = NULL;
+    void      *databuf  = NULL;
     int        name_len = 0;
     int        status_n; /* returned status for functions returning an int  */
     int32      status;   /* returned status for functions returning an int32 */
@@ -3464,7 +3462,7 @@ test_blockinfo_multLBs(void)
     status = VSdetach(vdata2_id);
     CHECK(status, FAIL, "Vdetach");
     vdata2_id = FAIL;
-    status_n = Vend(fid);
+    status_n  = Vend(fid);
     CHECK(status_n, FAIL, "Vend");
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose");
@@ -3517,7 +3515,7 @@ test_blockinfo_multLBs(void)
     status = VSdetach(vdata2_id);
     CHECK(status, FAIL, "Vdetach");
     vdata2_id = FAIL;
-    status_n = Vend(fid);
+    status_n  = Vend(fid);
     CHECK(status_n, FAIL, "Vend");
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose");
@@ -3547,7 +3545,7 @@ test_VSofclass()
 {
     int     status_n; /* returned status for functions returning an int  */
     int32   status;   /* returned status for functions returning an int32 */
-    int32   fid = FAIL;
+    int32   fid      = FAIL;
     int     n_vds    = 0;
     uint16 *refarray = NULL;
 
@@ -3642,7 +3640,6 @@ test_blockinfo(void)
     /* test VSofclass; relies on the file created and written by the tests
        in test_blockinfo_oneLB and test_blockinfo_multLBs */
     test_VSofclass();
-
 }
 
 /* main test driver */

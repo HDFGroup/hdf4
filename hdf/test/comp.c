@@ -409,7 +409,7 @@ done:
 void
 test_comp(void)
 {
-    int32      fid = FAIL;     /* file ID of HDF file for testing */
+    int32      fid = FAIL; /* file ID of HDF file for testing */
     int32      aid = FAIL;
     model_info m_info;
     comp_info  c_info;

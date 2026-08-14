@@ -66,8 +66,8 @@ static void test_bitio_seek(void);
 static void
 test_bitio_write(void)
 {
-    int32  fid     = FAIL;
-    int32  bitid1  = FAIL;
+    int32  fid    = FAIL;
+    int32  bitid1 = FAIL;
     int32  ret;
     int    i;
     uint32 tot_bits = 0;

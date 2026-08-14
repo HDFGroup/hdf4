@@ -134,11 +134,11 @@ done:
 static void
 test_ref_limits(void)
 {
-    int32 i;   /* local counting variable */
+    int32 i;          /* local counting variable */
     int32 fid = FAIL; /* file ID */
     int32 iloop;
     int32 aid1 = FAIL, aid2 = FAIL;
-    int32 aid  = FAIL;
+    int32 aid = FAIL;
 
     MESSAGE(6, printf("Testing reference # limits\n"););
     MESSAGE(7, printf("Writing out data\n"););

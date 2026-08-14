@@ -29,7 +29,7 @@ test_anfile(void)
 {
     char  lab1[MAXLEN_LAB], lab2[MAXLEN_LAB], desc1[MAXLEN_DESC], desc2[MAXLEN_DESC], tempstr[MAXLEN_DESC];
     int32 testflag = SUCCEED;
-    int32 file_id = FAIL, ret;
+    int32 file_id  = FAIL, ret;
 
     /* set up file labels and descriptions */
 

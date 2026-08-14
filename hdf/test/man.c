@@ -92,7 +92,6 @@ gen2Dfloat(int height, int width, float32 *data)
     for (i = 0; i < height; i++)
         for (j = 0; j < width; j++)
             *pdata++ = (float32)(i + 1);
-
 }
 
 /****************************************************************
@@ -131,18 +130,18 @@ genimage(int height, int width, float32 *data, uint8 *image)
 static int32
 check_fann_rewrite(const char *fname)
 {
-    int32 ret = SUCCEED;     /* return value */
-    int32 file_handle = FAIL; /* file handle */
-    int32 an_handle    = FAIL; /* annotation interface handle */
-    int32 ann_handle   = FAIL; /* annotation handle */
-    int32 nflabs,             /* number of file labels */
-        nfdescs,              /* number of file descs */
-        nolabs,               /* total number of data labels */
-        nodescs;              /* total number of data descs */
-    int32  ann_len;           /* length of annotation */
-    uint16 atag;              /* annotation tag */
-    uint16 aref;              /* annotation ref */
-    char  *ann_label = NULL;  /* annotation label */
+    int32 ret         = SUCCEED; /* return value */
+    int32 file_handle = FAIL;    /* file handle */
+    int32 an_handle   = FAIL;    /* annotation interface handle */
+    int32 ann_handle  = FAIL;    /* annotation handle */
+    int32 nflabs,                /* number of file labels */
+        nfdescs,                 /* number of file descs */
+        nolabs,                  /* total number of data labels */
+        nodescs;                 /* total number of data descs */
+    int32  ann_len;              /* length of annotation */
+    uint16 atag;                 /* annotation tag */
+    uint16 aref;                 /* annotation ref */
+    char  *ann_label = NULL;     /* annotation label */
     int32  ann_id;
     uint16 ann_tag;
     uint16 ann_ref;
@@ -296,19 +295,19 @@ done:
 static int32
 check_fann(const char *fname)
 {
-    int32 ret = SUCCEED;      /* return value */
-    int32 file_handle = FAIL; /* file handle */
-    int32 an_handle    = FAIL; /* annotation interface handle */
-    int32 ann_handle   = FAIL; /* annotation handle */
-    int32 nflabs,            /* number of file labels */
-        nfdescs,             /* number of file descs */
-        nolabs,              /* total number of data labels */
-        nodescs;             /* total number of data descs */
-    int32  ann_len;          /* length of annotation */
-    uint16 atag;             /* annotation tag */
-    uint16 aref;             /* annotation ref */
-    char  *ann_label = NULL; /* annotation label */
-    char  *ann_desc  = NULL; /* annotation desc */
+    int32 ret         = SUCCEED; /* return value */
+    int32 file_handle = FAIL;    /* file handle */
+    int32 an_handle   = FAIL;    /* annotation interface handle */
+    int32 ann_handle  = FAIL;    /* annotation handle */
+    int32 nflabs,                /* number of file labels */
+        nfdescs,                 /* number of file descs */
+        nolabs,                  /* total number of data labels */
+        nodescs;                 /* total number of data descs */
+    int32  ann_len;              /* length of annotation */
+    uint16 atag;                 /* annotation tag */
+    uint16 aref;                 /* annotation ref */
+    char  *ann_label = NULL;     /* annotation label */
+    char  *ann_desc  = NULL;     /* annotation desc */
     int    indx;
     int32  ann_id;
     uint16 ann_tag;
@@ -467,20 +466,20 @@ done:
 static int32
 check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[], const char *desc[])
 {
-    int32 ret = SUCCEED;      /* return value */
-    int32 file_handle = FAIL; /* file handle */
-    int32 an_handle    = FAIL; /* annotation interface handle */
-    int32 nflabs,           /* number of file labels */
-        nfdescs,            /* number of file descs */
-        nolabs,             /* total number of data labels */
-        nodescs;            /* total number of data descs */
-    int32 ann_len;          /* length of annotation */
-    char *ann_label = NULL; /* annotation label */
-    char *ann_desc  = NULL; /* annotation desc */
-    int   num_dlabels,      /* number of data labels for an element */
-        num_ddescs;         /* number of data descs for an element */
-    int32 *dlabels = NULL;  /* array of data labels for an element */
-    int32 *ddescs  = NULL;  /* array of data descs for an element */
+    int32 ret         = SUCCEED; /* return value */
+    int32 file_handle = FAIL;    /* file handle */
+    int32 an_handle   = FAIL;    /* annotation interface handle */
+    int32 nflabs,                /* number of file labels */
+        nfdescs,                 /* number of file descs */
+        nolabs,                  /* total number of data labels */
+        nodescs;                 /* total number of data descs */
+    int32 ann_len;               /* length of annotation */
+    char *ann_label = NULL;      /* annotation label */
+    char *ann_desc  = NULL;      /* annotation desc */
+    int   num_dlabels,           /* number of data labels for an element */
+        num_ddescs;              /* number of data descs for an element */
+    int32 *dlabels = NULL;       /* array of data labels for an element */
+    int32 *ddescs  = NULL;       /* array of data descs for an element */
     int    i;
 
     /* open file again */
@@ -681,10 +680,10 @@ test_man(void)
     int      rank;
     int      i, j;
     int32    dimsizes[2];
-    float32 *data = NULL;
+    float32 *data        = NULL;
     int32    file_handle = FAIL; /* file handle */
-    int32    an_handle    = FAIL; /* annotation interface handle */
-    int32    ann_handle   = FAIL; /* annotation handle */
+    int32    an_handle   = FAIL; /* annotation interface handle */
+    int32    ann_handle  = FAIL; /* annotation handle */
 
     /***** generate float array and image *****/
     if ((data = (float32 *)malloc(ROWS * COLS * sizeof(float32))) == NULL) {

@@ -1129,11 +1129,11 @@ extern void test_mgr_dup_images();
 static void
 test_mgr_init(void)
 {
-    int32       fid = FAIL;        /* HDF file ID */
-    int32       grid = FAIL;       /* GRID for the interface */
-    int32       n_datasets; /* number of datasets */
-    int32       n_attrs;    /* number of attributes */
-    int32       ret;        /* generic return value */
+    int32       fid  = FAIL; /* HDF file ID */
+    int32       grid = FAIL; /* GRID for the interface */
+    int32       n_datasets;  /* number of datasets */
+    int32       n_attrs;     /* number of attributes */
+    int32       ret;         /* generic return value */
     const char *datafile = get_srcdir_filename(DATAFILE);
 
     /* Output message about test being performed */
@@ -1203,8 +1203,8 @@ done:
 static void
 test_mgr_image_b1a(int flag)
 {
-    int32         fid = FAIL;               /* HDF file ID */
-    int32         grid = FAIL;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
     int32         cdims[2] = {1, 1}; /* chunk dims */
     int32        *rcdims;            /* for SDgetchunkinfo() */
@@ -1323,8 +1323,8 @@ done:
 static void
 test_mgr_image_b1b(int flag)
 {
-    int32         fid = FAIL;               /* HDF file ID */
-    int32         grid = FAIL;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
     int32         cdims[2] = {1, 1}; /* chunk dims */
     int32        *rcdims;            /* for SDgetchunkinfo() */
@@ -1444,8 +1444,8 @@ done:
 static void
 test_mgr_image_b2a1aa(int flag)
 {
-    int32         fid = FAIL;               /* HDF file ID */
-    int32         grid = FAIL;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
     int32         cdims[2] = {1, 1}; /* chunk dims */
     int32        *rcdims;            /* for SDgetchunkinfo() */
@@ -1597,8 +1597,8 @@ done:
 static void
 test_mgr_image_b2a1bb1(int flag)
 {
-    int32         fid = FAIL;               /* HDF file ID */
-    int32         grid = FAIL;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
     int32         cdims[2] = {1, 1}; /* chunk dims */
     int32        *rcdims;            /* for SDgetchunkinfo() */
@@ -1776,8 +1776,8 @@ done:
 static void
 test_mgr_image_b2a1bb2(int flag)
 {
-    int32         fid = FAIL;               /* HDF file ID */
-    int32         grid = FAIL;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
     int32         cdims[2] = {1, 1}; /* chunk dims */
     int32        *rcdims;            /* for SDgetchunkinfo() */
@@ -1950,8 +1950,8 @@ done:
 static void
 test_mgr_image_b2a1cc1(int flag)
 {
-    int32         fid = FAIL;               /* HDF file ID */
-    int32         grid = FAIL;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
     int32         cdims[2] = {1, 1}; /* chunk dims */
     int32        *rcdims;            /* for SDgetchunkinfo() */
@@ -2129,8 +2129,8 @@ done:
 static void
 test_mgr_image_b2a1cc2(int flag)
 {
-    int32         fid = FAIL;               /* HDF file ID */
-    int32         grid = FAIL;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
     int32         cdims[2] = {1, 1}; /* chunk dims */
     int32        *rcdims;            /* for SDgetchunkinfo() */
@@ -2298,8 +2298,8 @@ done:
 static void
 test_mgr_image_b2a2bb(int flag)
 {
-    int32         fid = FAIL;               /* HDF file ID */
-    int32         grid = FAIL;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
     int32         cdims[2] = {1, 1}; /* chunk dims */
     int32        *rcdims;            /* for SDgetchunkinfo() */
@@ -2486,8 +2486,8 @@ done:
 static void
 test_mgr_image_b2a2cc(int flag)
 {
-    int32         fid = FAIL;               /* HDF file ID */
-    int32         grid = FAIL;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
     int32         cdims[2] = {1, 1}; /* chunk dims */
     int32        *rcdims;            /* for SDgetchunkinfo() */
@@ -2671,9 +2671,9 @@ done:
 static void
 test_mgr_image_b2b1(int flag)
 {
-    int32       fid = FAIL;  /* HDF file ID */
+    int32       fid  = FAIL; /* HDF file ID */
     int32       grid = FAIL; /* GRID for the interface */
-    int32       ret;  /* generic return value */
+    int32       ret;         /* generic return value */
     const char *datafile = get_srcdir_filename(DATAFILE);
     void       *img_data = NULL; /* buffer for the image data; hoisted out of
                                      the loop below so it can be freed at
@@ -2825,7 +2825,7 @@ test_mgr_image_b2b1(int flag)
                 free(img_data);
                 img_data = NULL; /* avoid dangling pointer between iterations
                                      if a later CHECK in this loop jumps to done */
-            } /* end block */
+            }                    /* end block */
 
             /* End access to the image */
             ENDRI(riid, "GRendaccess");
@@ -2857,8 +2857,8 @@ test_mgr_image_chunk(int flag)
     HDF_CHUNK_DEF chunk_def;         /* Chunk definition set */
     HDF_CHUNK_DEF rchunk_def;        /* Chunk definition read */
     int32         cflags;            /* chunk flags */
-    int32         fid = FAIL;               /* HDF file ID */
-    int32         grid = FAIL;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
 
     (void)flag;
@@ -3077,14 +3077,14 @@ test_mgr_index(int flag)
 static void
 test_mgr_interlace(int flag)
 {
-    int32 fid = FAIL;        /* hdf file id */
-    int32 grid = FAIL;       /* grid for the interface */
-    int32 n_datasets; /* number of datasets */
-    int32 n_attrs;    /* number of attributes */
-    int32 ret;        /* generic return value */
-    void *image    = NULL; /* image to retrieve */
-    void *img_data = NULL; /* buffer for the image data; hoisted out of the
-                               loop below so it can be freed at done: */
+    int32 fid  = FAIL;      /* hdf file id */
+    int32 grid = FAIL;      /* grid for the interface */
+    int32 n_datasets;       /* number of datasets */
+    int32 n_attrs;          /* number of attributes */
+    int32 ret;              /* generic return value */
+    void *image    = NULL;  /* image to retrieve */
+    void *img_data = NULL;  /* buffer for the image data; hoisted out of the
+                                loop below so it can be freed at done: */
     void *pixel_buf = NULL; /* interlace-converted buffer; hoisted for the
                                 same reason */
 
@@ -3211,13 +3211,13 @@ done:
 static void
 test_mgr_lut_a(int flag)
 {
-    int32 fid  = FAIL; /* hdf file id */
-    int32 grid = FAIL; /* grid for the interface */
-    int32 ret;  /* generic return value */
-    uint8 *tmp_data  = NULL; /* temporary buffer pointer; hoisted out of the
-                                 nested blocks below so it can be freed at done: */
-    void  *pal_data  = NULL; /* buffer for the palette data; hoisted for the same reason */
-    void  *pixel_buf = NULL; /* interlace-converted buffer; hoisted for the same reason */
+    int32  fid  = FAIL;     /* hdf file id */
+    int32  grid = FAIL;     /* grid for the interface */
+    int32  ret;             /* generic return value */
+    uint8 *tmp_data = NULL; /* temporary buffer pointer; hoisted out of the
+                                nested blocks below so it can be freed at done: */
+    void *pal_data  = NULL; /* buffer for the palette data; hoisted for the same reason */
+    void *pixel_buf = NULL; /* interlace-converted buffer; hoisted for the same reason */
 
     (void)flag;
 
@@ -3551,9 +3551,9 @@ test_mgr_special(int flag)
 static void
 test_mgr_old_a(int flag)
 {
-    int32       fid = FAIL;  /* HDF file ID */
+    int32       fid  = FAIL; /* HDF file ID */
     int32       grid = FAIL; /* GRID for the interface */
-    int32       ret;  /* generic return value */
+    int32       ret;         /* generic return value */
     const char *oldrlefile = get_srcdir_filename(OLDRLEFILE);
 
     (void)flag;
@@ -3622,8 +3622,8 @@ done:
 static void
 test_mgr_old_c(int flag)
 {
-    int32       fid = FAIL;  /* HDF file ID */
-    int32       grid = FAIL; /* GRID for the interface */
+    int32       fid      = FAIL; /* HDF file ID */
+    int32       grid     = FAIL; /* GRID for the interface */
     int32       n_images = 0;
     int         status   = 0;
     int32       ret; /* generic return value */
@@ -3704,9 +3704,9 @@ done:
 static void
 test_mgr_old_e(int flag)
 {
-    int32       fid = FAIL;  /* HDF file ID */
+    int32       fid  = FAIL; /* HDF file ID */
     int32       grid = FAIL; /* GRID for the interface */
-    int32       ret;  /* generic return value */
+    int32       ret;         /* generic return value */
     int32       n_images    = 0;
     const char *oldjpegfile = get_srcdir_filename(OLDJPEGFILE);
     int         status      = 0;
@@ -3815,9 +3815,9 @@ test_mgr_old(int flag)
 static void
 test_mgr_r24_a(int flag)
 {
-    int32       fid = FAIL;  /* HDF file ID */
+    int32       fid  = FAIL; /* HDF file ID */
     int32       grid = FAIL; /* GRID for the interface */
-    int32       ret;  /* generic return value */
+    int32       ret;         /* generic return value */
     const char *gr_r24file = get_srcdir_filename(GR_R24FILE);
 
     (void)flag;
@@ -3920,7 +3920,6 @@ test_mgr_r24(int flag)
     MESSAGE(6, printf("Testing Multi-file Raster/DF24 Compatibility\n"););
 
     test_mgr_r24_a(flag);
-
 }
 
 #define GR_R8FILE "gr_r8.hdf"
@@ -3931,9 +3930,9 @@ test_mgr_r24(int flag)
 static void
 test_mgr_r8_a(int flag)
 {
-    int32 fid = FAIL;  /* HDF file ID */
+    int32 fid  = FAIL; /* HDF file ID */
     int32 grid = FAIL; /* GRID for the interface */
-    int32 ret;  /* generic return value */
+    int32 ret;         /* generic return value */
     uint8 palette[256][3];
     uint8 picture[GR_R8YDIM][GR_R8XDIM];
     int   i, j; /* indices */
@@ -4069,7 +4068,6 @@ test_mgr_r8(int flag)
     MESSAGE(6, printf("Testing Multi-file Raster/DF8 Compatibility\n"););
 
     test_mgr_r8_a(flag);
-
 }
 
 static void
@@ -4092,15 +4090,15 @@ test_mgr_chunkwr_pixelone()
 
     /************************* Variable declaration **************************/
 
-    int   status;       /* status for functions returning an int */
-    int32 file_id = FAIL, /* HDF file identifier */
-        gr_id     = FAIL, /* GR interface identifier */
+    int   status;                             /* status for functions returning an int */
+    int32 file_id = FAIL,                     /* HDF file identifier */
+        gr_id     = FAIL,                     /* GR interface identifier */
         ri_id[4]  = {FAIL, FAIL, FAIL, FAIL}, /* raster image identifier */
-        origin[2],      /* start position to write for each dimension */
-        dim_sizes[2],   /* dimension sizes of the image array */
-        interlace_mode, /* interlace mode of the image */
-        data_type,      /* data type of the image data */
-        comp_flag,      /* compression flag */
+        origin[2],                            /* start position to write for each dimension */
+        dim_sizes[2],                         /* dimension sizes of the image array */
+        interlace_mode,                       /* interlace mode of the image */
+        data_type,                            /* data type of the image data */
+        comp_flag,                            /* compression flag */
         index, i;
     int32         start[2], stride[2], edge[2];
     int16         data_out[3 * Y_LENGTH * X_LENGTH];
@@ -4239,7 +4237,7 @@ test_mgr_chunkwr_pixelone()
     } /* end for*/
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;
@@ -4308,7 +4306,7 @@ test_mgr_chunkwr_pixelone()
      */
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;
@@ -4346,15 +4344,15 @@ test_mgr_chunkwr_pixel(int flag)
 
     /************************* Variable declaration **************************/
 
-    int   status;       /* status for functions returning an int */
-    int32 file_id = FAIL, /* HDF file identifier */
-        gr_id     = FAIL, /* GR interface identifier */
+    int   status;                             /* status for functions returning an int */
+    int32 file_id = FAIL,                     /* HDF file identifier */
+        gr_id     = FAIL,                     /* GR interface identifier */
         ri_id[4]  = {FAIL, FAIL, FAIL, FAIL}, /* raster image identifier */
-        origin[2],      /* start position to write for each dimension */
-        dim_sizes[2],   /* dimension sizes of the image array */
-        interlace_mode, /* interlace mode of the image */
-        data_type,      /* data type of the image data */
-        comp_flag,      /* compression flag */
+        origin[2],                            /* start position to write for each dimension */
+        dim_sizes[2],                         /* dimension sizes of the image array */
+        interlace_mode,                       /* interlace mode of the image */
+        data_type,                            /* data type of the image data */
+        comp_flag,                            /* compression flag */
         index, i;
     int32         start[2], stride[2], edge[2];
     int           is_mappedable;  /* TRUE if the image is mapped-able (hmap project)*/
@@ -4505,7 +4503,7 @@ test_mgr_chunkwr_pixel(int flag)
     /* } */ /* end for*/
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;
@@ -4584,7 +4582,7 @@ test_mgr_chunkwr_pixel(int flag)
      */
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;
@@ -4623,7 +4621,6 @@ test_mgr_chunkwr(void)
     test_mgr_chunkwr_pixel(1);
     test_mgr_chunkwr_pixel(2);
     test_mgr_chunkwr_pixel(3);
-
 }
 
 /****************************************************************
@@ -4679,5 +4676,4 @@ test_mgr(void)
 
     /* Added after fixing bug #814 to test eliminating of duplicate images */
     test_mgr_dup_images();
-
 }

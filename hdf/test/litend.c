@@ -63,8 +63,8 @@ test_little_read(void)
     int      rank;
     int32    dimsizes[2] = {-1, -1};
     int32    numbertype;
-    int8    *data_i8 = NULL;
-    uint8   *data_u8 = NULL;
+    int8    *data_i8  = NULL;
+    uint8   *data_u8  = NULL;
     int16   *data_i16 = NULL;
     uint16  *data_u16 = NULL;
     int32   *data_i32 = NULL;
@@ -327,8 +327,8 @@ test_little_write(void)
     int      rank;
     int32    dimsizes[2];
     int32    numbertype;
-    int8    *data_i8 = NULL;
-    uint8   *data_u8 = NULL;
+    int8    *data_i8  = NULL;
+    uint8   *data_u8  = NULL;
     int16   *data_i16 = NULL;
     uint16  *data_u16 = NULL;
     int32   *data_i32 = NULL;

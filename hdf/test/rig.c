@@ -839,12 +839,12 @@ void
 test_r24_jpeg(void)
 {
     int32 fid = FAIL, grid = FAIL, /* file ID and GR interface ID */
-        riid  = FAIL;              /* raster image ID */
-    comp_info cinfo;            /* compression information for the JPEG */
-    int32     xd, yd;           /* image's dimensions */
-    int       il;               /* image's interlace */
-    long      begin_offset = 0, /* offset at the beginning of image's data */
-        end_offset         = 0; /* offset at the end of image's data */
+        riid = FAIL;               /* raster image ID */
+    comp_info cinfo;               /* compression information for the JPEG */
+    int32     xd, yd;              /* image's dimensions */
+    int       il;                  /* image's interlace */
+    long      begin_offset = 0,    /* offset at the beginning of image's data */
+        end_offset         = 0;    /* offset at the end of image's data */
     uint8 *jpeg_24bit_temp = NULL; /* buffer for 24-bit image data */
     uint8  jpeglib_readbuf[JPEGY * JPEGX * NCOMPS];
     /* buffer for data read by JPEG function */
@@ -853,7 +853,7 @@ test_r24_jpeg(void)
     int    status;             /* status returned from GR routines */
     int    ii;                 /* indices */
     int32  n_images, n_fattrs; /* number of images and number of file attrs */
-    uint8 *hdf_buffer = NULL,  /* buffer of data read from HDF file */
+    uint8 *hdf_buffer  = NULL, /* buffer of data read from HDF file */
         *nonhdf_buffer = NULL; /* buffer of data read from non-HDF file */
     int ret;
 
@@ -1066,7 +1066,7 @@ test_r24_jpeg(void)
     /* Terminate access to the GR interface and close the file */
     status = GRend(grid);
     CHECK(status, FAIL, "GRend");
-    grid = FAIL;
+    grid   = FAIL;
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose");
     fid = FAIL;

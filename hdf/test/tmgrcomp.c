@@ -36,9 +36,9 @@
 static void
 test_mgr_compress_a(void)
 {
-    int32 fid = FAIL;  /* HDF file ID */
+    int32 fid  = FAIL; /* HDF file ID */
     int32 grid = FAIL; /* GRID for the interface */
-    int32 ret;  /* generic return value */
+    int32 ret;         /* generic return value */
 
     MESSAGE(8, printf("Operate on gzip compressed images\n"););
 
@@ -176,16 +176,15 @@ done:
     if (fid != FAIL)
         Hclose(fid);
     return;
-
 }
 
 /* Create/Write/Read 8-bit JPEG compressed image */
 static void
 test_mgr_compress_b(void)
 {
-    int32 fid = FAIL;  /* HDF file ID */
+    int32 fid  = FAIL; /* HDF file ID */
     int32 grid = FAIL; /* GRID for the interface */
-    int32 ret;  /* generic return value */
+    int32 ret;         /* generic return value */
 
     MESSAGE(8, printf("Operate on 8-bit JPEG compressed images\n"););
 
@@ -305,7 +304,6 @@ done:
     if (fid != FAIL)
         Hclose(fid);
     return;
-
 }
 
 /* Create/Write/Read 24-bit JPEG compressed image */
@@ -314,8 +312,8 @@ test_mgr_compress_c(void)
 {
     int       status;         /* status for functions returning an int */
     int32     file_id = FAIL; /* HDF file identifier */
-    int32     gr_id = FAIL;   /* GR interface identifier */
-    int32     ri_id = FAIL;   /* raster image identifier */
+    int32     gr_id   = FAIL; /* GR interface identifier */
+    int32     ri_id   = FAIL; /* raster image identifier */
     int32     start[2];       /* start position to write for each dimension */
     int32     edges[2];       /* number of elements to be written along each dimension */
     int32     dim_sizes[2];   /* dimension sizes of the image array */
@@ -428,7 +426,6 @@ done:
     if (file_id != FAIL)
         Hclose(file_id);
     return;
-
 }
 
 /*--------------------------------------------------------------------------
@@ -462,7 +459,7 @@ static int
 make_comp_image(int32 grid, const char *img_name, comp_coder_t comp_type, /* Compression method */
                 comp_info *cinfo, char *message)                          /* Compression parameters */
 {
-    int32 riid = FAIL;         /* RI ID of the working image */
+    int32 riid    = FAIL;     /* RI ID of the working image */
     int32 dims[2] = {10, 10}; /* dimensions for the empty image */
     uint8 image_data[10][10]; /* space for the image data */
     int32 start[2];           /* start of image data to grab */
@@ -503,7 +500,7 @@ make_comp_image(int32 grid, const char *img_name, comp_coder_t comp_type, /* Com
 
     /* Close the image */
     ret_value = GRendaccess(riid);
-    riid = FAIL;
+    riid      = FAIL;
     if (ret_value == FAIL) {
         strcpy(message, "make_comp_image::GRendaccess");
         func_ret_value = FAIL;
@@ -520,7 +517,7 @@ done:
 static void
 test_get_compress(void)
 {
-    int32        fid = FAIL;   /* HDF file ID */
+    int32        fid  = FAIL;  /* HDF file ID */
     int32        grid = FAIL;  /* GRID for the interface */
     int32        riid = FAIL;  /* RI ID of the working image */
     comp_coder_t comp_type;    /* Compression method */
@@ -582,7 +579,7 @@ test_get_compress(void)
     /* Terminate access to the GR interface and close the file */
     status = GRend(grid);
     CHECK(status, FAIL, "GRend");
-    grid = FAIL;
+    grid   = FAIL;
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose");
     fid = FAIL;
@@ -679,7 +676,7 @@ test_get_compress(void)
     /* Terminate access and close the file */
     status = GRend(grid);
     CHECK(status, FAIL, "GRend");
-    grid = FAIL;
+    grid   = FAIL;
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose");
     fid = FAIL;
@@ -693,7 +690,6 @@ done:
     if (fid != FAIL)
         Hclose(fid);
     return;
-
 }
 
 /*--------------------------------------------------------------------------
@@ -729,15 +725,15 @@ test_mgr_chunk_compress(void)
 
     /************************* Variable declaration **************************/
 
-    int   status;        /* status for functions returning an int */
-    int32 file_id = FAIL, /* HDF file identifier */
-        gr_id     = FAIL, /* GR interface identifier */
+    int   status;                                   /* status for functions returning an int */
+    int32 file_id       = FAIL,                     /* HDF file identifier */
+        gr_id           = FAIL,                     /* GR interface identifier */
         ri_id[N_IMAGES] = {FAIL, FAIL, FAIL, FAIL}, /* raster image identifier */
-        origin[2],       /* start position to write for each dimension */
-        dim_sizes[2],    /* dimension sizes of the image array */
-        interlace_mode,  /* interlace mode of the image */
-        data_type,       /* data type of the image data */
-        comp_flag,       /* compression flag */
+        origin[2],                                  /* start position to write for each dimension */
+        dim_sizes[2],                               /* dimension sizes of the image array */
+        interlace_mode,                             /* interlace mode of the image */
+        data_type,                                  /* data type of the image data */
+        comp_flag,                                  /* compression flag */
         index, img_num;
     int32     start[2], stride[2], edge[2];
     comp_info cinfo; /* Compression parameters - union */
@@ -862,7 +858,7 @@ test_mgr_chunk_compress(void)
 
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;
@@ -946,7 +942,7 @@ test_mgr_chunk_compress(void)
     /* Terminate access to the GR interface and close the HDF file. */
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
-    gr_id = FAIL;
+    gr_id  = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
     file_id = FAIL;
@@ -961,7 +957,6 @@ done:
     if (file_id != FAIL)
         Hclose(file_id);
     return;
-
 }
 
 /****************************************************************

@@ -32,8 +32,8 @@ test_vglongnames(void)
 {
     int32  file_id = FAIL; /* File ID */
     int32  vg1     = FAIL; /* Vdata ID */
-    int32  ref;      /* Vdata ref */
-    uint16 name_len; /* Length of a vgroup's name or class name */
+    int32  ref;            /* Vdata ref */
+    uint16 name_len;       /* Length of a vgroup's name or class name */
     char  *vgname = NULL, *vgclass = NULL;
     int    is_internal;
     int32  status; /* Status values from routines */
@@ -202,12 +202,12 @@ done:
 static void
 test_undefined(void)
 {
-    int32  status;      /* Status values from routines */
+    int32  status;         /* Status values from routines */
     int32  file_id = FAIL; /* File ID */
     int32  vg1     = FAIL; /* Vdata ID */
-    int32  ref;         /* Vdata ref */
-    int    is_internal; /* to test Vgisinternal */
-    uint16 name_len;    /* Length of a vgroup's name or class name */
+    int32  ref;            /* Vdata ref */
+    int    is_internal;    /* to test Vgisinternal */
+    uint16 name_len;       /* Length of a vgroup's name or class name */
     /* to simulate calls to Vgetclass/Vgetname in older applications */
     char vgname[VGNAMELENMAX + 1], vgclass[VGNAMELENMAX + 1];
 

@@ -119,7 +119,7 @@ create_vset_stuff(void)
     ret = VSdetach(vsid);
     CHECK(ret, FAIL, "VSdetach");
     vsid = FAIL;
-    ret = Vdetach(vgid);
+    ret  = Vdetach(vgid);
     CHECK(ret, FAIL, "Vdetach");
     vgid = FAIL;
 
@@ -658,7 +658,7 @@ read_vattrs(void)
     ret = VSdetach(vsid);
     CHECK(ret, FAIL, "VSdetach");
     vsid = FAIL;
-    ret = Vend(fid);
+    ret  = Vend(fid);
     CHECK(ret, FAIL, "Vend");
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");

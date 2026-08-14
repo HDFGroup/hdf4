@@ -143,7 +143,6 @@ fixname(const char *base_name, char *fullname, size_t size)
         last = *ptr;
     }
     return fullname;
-
 }
 
 static long
@@ -391,7 +390,7 @@ main(int argc, char *argv[])
 {
     model_info m_info;
     comp_info  c_info;
-    uint16     ref_num; /* reference number of the data written out */
+    uint16     ref_num;    /* reference number of the data written out */
     int32      fid = FAIL; /* file ID of HDF file for testing */
     int32      aid = FAIL; /* AID of element to test */
     int        test_num;
