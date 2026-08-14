@@ -109,7 +109,7 @@
    error message */
 #define VERIFY_CHAR(val, x, test_name)                                                                       \
     do {                                                                                                     \
-        if (strcmp(x, val) != 0) {                                                               \
+        if (strcmp(x, val) != 0) {                                                                           \
             fprintf(stderr, "*** UNEXPECTED VALUE from %s is <%s> (expected <%s>) at line %4d in %s\n",      \
                     test_name, val, x, (int)__LINE__, __FILE__);                                             \
             num_errs++;                                                                                      \
