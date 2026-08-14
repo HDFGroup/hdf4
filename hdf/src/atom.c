@@ -575,9 +575,9 @@ HAIget_atom_node(void)
         if ((ret_value = (atom_info_t *)malloc(sizeof(atom_info_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     }
+    memset(ret_value, 0, sizeof(atom_info_t));
 
 done:
-    memset(ret_value, 0, sizeof(atom_info_t));
     return ret_value;
 } /* end HAIget_atom_node() */
 
