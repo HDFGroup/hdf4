@@ -1192,7 +1192,7 @@ test_mgr_init(void)
     fid = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (grid != FAIL)
         GRend(grid);
     if (fid != FAIL)
@@ -1313,7 +1313,7 @@ test_mgr_image_b1a(int flag)
     fid = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (grid != FAIL)
         GRend(grid);
     if (fid != FAIL)
@@ -1434,7 +1434,7 @@ test_mgr_image_b1b(int flag)
     fid = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (grid != FAIL)
         GRend(grid);
     if (fid != FAIL)
@@ -1587,7 +1587,7 @@ test_mgr_image_b2a1aa(int flag)
     fid = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (grid != FAIL)
         GRend(grid);
     if (fid != FAIL)
@@ -1766,7 +1766,7 @@ test_mgr_image_b2a1bb1(int flag)
     fid = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (grid != FAIL)
         GRend(grid);
     if (fid != FAIL)
@@ -1940,7 +1940,7 @@ test_mgr_image_b2a1bb2(int flag)
     fid = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (grid != FAIL)
         GRend(grid);
     if (fid != FAIL)
@@ -2119,7 +2119,7 @@ test_mgr_image_b2a1cc1(int flag)
     fid = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (grid != FAIL)
         GRend(grid);
     if (fid != FAIL)
@@ -2288,7 +2288,7 @@ test_mgr_image_b2a1cc2(int flag)
     fid = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (grid != FAIL)
         GRend(grid);
     if (fid != FAIL)
@@ -2476,7 +2476,7 @@ test_mgr_image_b2a2bb(int flag)
     fid = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (grid != FAIL)
         GRend(grid);
     if (fid != FAIL)
@@ -2661,7 +2661,7 @@ test_mgr_image_b2a2cc(int flag)
     fid = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (grid != FAIL)
         GRend(grid);
     if (fid != FAIL)
@@ -2841,7 +2841,7 @@ test_mgr_image_b2b1(int flag)
     fid = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (grid != FAIL)
         GRend(grid);
     if (fid != FAIL)
@@ -2995,7 +2995,7 @@ test_mgr_image_chunk(int flag)
     fid = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (grid != FAIL)
         GRend(grid);
     if (fid != FAIL)
@@ -3186,7 +3186,7 @@ test_mgr_interlace(int flag)
     fid = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (grid != FAIL)
         GRend(grid);
     if (fid != FAIL)
@@ -3369,7 +3369,7 @@ test_mgr_lut_a(int flag)
     fid = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (grid != FAIL)
         GRend(grid);
     if (fid != FAIL)
@@ -3492,7 +3492,7 @@ test_mgr_lut_b(int flag)
     file_id = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (ri_id != FAIL)
         GRendaccess(ri_id);
     if (gr_id != FAIL)
@@ -3612,7 +3612,7 @@ test_mgr_old_a(int flag)
     fid = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (grid != FAIL)
         GRend(grid);
     if (fid != FAIL)
@@ -3694,7 +3694,7 @@ test_mgr_old_c(int flag)
     fid = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (grid != FAIL)
         GRend(grid);
     if (fid != FAIL)
@@ -3777,7 +3777,7 @@ test_mgr_old_e(int flag)
     fid = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (grid != FAIL)
         GRend(grid);
     if (fid != FAIL)
@@ -3898,7 +3898,7 @@ test_mgr_r24_a(int flag)
     fid = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (grid != FAIL)
         GRend(grid);
     if (fid != FAIL)
@@ -4046,7 +4046,7 @@ test_mgr_r8_a(int flag)
     fid = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     if (grid != FAIL)
         GRend(grid);
     if (fid != FAIL)
@@ -4312,7 +4312,7 @@ test_mgr_chunkwr_pixelone()
     file_id = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     for (i = 0; i < 4; i++)
         if (ri_id[i] != FAIL)
             GRendaccess(ri_id[i]);
@@ -4588,7 +4588,7 @@ test_mgr_chunkwr_pixel(int flag)
     file_id = FAIL;
 
 done:
-    /* Release resouces */
+    /* Release resources */
     for (i = 0; i < 4; i++)
         if (ri_id[i] != FAIL)
             GRendaccess(ri_id[i]);
