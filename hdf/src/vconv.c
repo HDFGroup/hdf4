@@ -222,6 +222,7 @@ vimakecompat(HFILEID f)
         ret = Hputelement(f, VGDESCTAG, ref, (uint8 *)buf, bsize);
         free(buf);
         buf = NULL;
+
         if (ret == FAIL)
             HRETURN_ERROR(DFE_WRITEERROR, 0);
 
