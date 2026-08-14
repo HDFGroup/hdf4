@@ -403,6 +403,7 @@ slabwf32(void)
     else
         MESSAGE(10, printf("\n       slabwf32:  %d wrong values in slab.  \n", (int)num_err););
 
+done:
     return (int)num_err;
 }
 
@@ -551,6 +552,7 @@ slabwf64(void)
     else
         MESSAGE(10, printf("\n       slabwf64:  %d wrong values in slab.  \n", (int)num_err););
 
+done:
     return (int)num_err;
 }
 
@@ -699,6 +701,7 @@ slabwin(void)
     else
         MESSAGE(10, printf("\n       slabwin:  %d wrong values in slab.  \n", (int)num_err););
 
+done:
     return (int)num_err;
 }
 
@@ -847,6 +850,7 @@ slabwuin(void)
     else
         MESSAGE(10, printf("\n       slabwuin:  %d wrong values in slab.  \n", (int)num_err););
 
+done:
     return (int)num_err;
 }
 
@@ -995,6 +999,7 @@ slabwi32(void)
     else
         MESSAGE(10, printf("\n       slabwi32:  %d wrong values in slab.  \n", (int)num_err););
 
+done:
     return (int)num_err;
 }
 
@@ -1143,6 +1148,7 @@ slabwui32(void)
     else
         MESSAGE(10, printf("\n       slabwui32:  %d wrong values in slab.  \n", (int)num_err););
 
+done:
     return (int)num_err;
 }
 
@@ -1291,6 +1297,7 @@ slabwi16(void)
     else
         MESSAGE(10, printf("\n       slabwi16:  %d wrong values in slab.  \n", (int)num_err);)
 
+done:
     return (int)num_err;
 }
 
@@ -1439,6 +1446,7 @@ slabwui16(void)
     else
         MESSAGE(10, printf("\n       slabwui16:  %d wrong values in slab.  \n", (int)num_err););
 
+done:
     return (int)num_err;
 }
 
@@ -1587,6 +1595,7 @@ slabwi8(void)
     else
         MESSAGE(10, printf("\n       slabwi8:  %d wrong values in slab.  \n", (int)num_err););
 
+done:
     return (int)num_err;
 }
 
@@ -1736,6 +1745,7 @@ slabwui8(void)
     else
         MESSAGE(10, printf("\n       slabwui8:  %d wrong values in slab.  \n", (int)num_err););
 
+done:
     return (int)num_err;
 }
 
@@ -1825,6 +1835,7 @@ slab1w(void)
     else
         MESSAGE(10, printf("\n         slab1w:  %d failures.  \n", (int)num_err););
 
+done:
     return (int)num_err;
 }
 
@@ -1913,6 +1924,7 @@ slab2w(void)
     else
         MESSAGE(10, printf("\n        slab2w:  %d wrong values in slab.  \n", (int)num_err););
 
+done:
     return (int)num_err;
 }
 
@@ -2214,6 +2226,7 @@ slab3w(void)
     else
         MESSAGE(10, printf("\n       slab3w:  %d wrong values in slab.  \n", (int)num_err););
 
+done:
     return (int)num_err;
 }
 
@@ -2303,6 +2316,7 @@ slab4w(void)
     else
         MESSAGE(10, printf("\n          slab4w:  %d wrong values in slab.  \n", (int)num_err););
 
+done:
     return (int)num_err;
 }
 

@@ -191,7 +191,7 @@ test_sdmms(void)
        when we don't store calibration info we don't get any
        info returned */
     ret = DFSDgetcal(&ical1, &ical2, &ical3, &ical4, &ical5);
-    CHECK_VOID(ret, SUCCEED, "DFSDgetcal");
+    CHECK(ret, SUCCEED, "DFSDgetcal");
 
     ret = DFSDgetdata("ntcheck.hdf", rank, dims, (void *)tui8);
     RESULT("DFSDgetdata");
@@ -388,4 +388,7 @@ test_sdmms(void)
             else printf("Test passed for uint32 scales.\n"););
     MESSAGE(5, if (err1 == 1) printf(">>> Test failed for uint32 max/min.\n");
             else printf("Test passed for uint32 max/min.\n"););
+
+done:
+    return;
 }

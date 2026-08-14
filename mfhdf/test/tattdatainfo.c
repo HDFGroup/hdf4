@@ -185,7 +185,7 @@ test_attrs()
     /* Get SDS' rank */
     status = SDgetinfo(sds_id, sds_name, NULL, NULL, NULL, &nattrs);
     CHECK(status, FAIL, "test_attrs: SDgetinfo SDS index 0");
-    VERIFY(nattrs, 2, "test_attrs: SDgetinfo SDS index 0");
+    VERIFY(nattrs, 2, "test_attrs: SDgetinfo SDS index 0: nattrs ");
 
     for (att_idx = 0; att_idx < nattrs; att_idx++) {
         status = SDgetattdatainfo(sds_id, att_idx, &offset, &length);
@@ -343,7 +343,7 @@ add_sdfile_annotations()
 
     ret = DFANgetfid(file_id, tempstr, MAXLEN_LAB, ISFIRST);
     CHECK(ret, FAIL, "DFANgetfid");
-    VERIFY_CHAR(labels[0], tempstr, "DFANgetfid first file label");
+    VERIFY_CHAR(tempstr, labels[0], "DFANgetfid first file label");
 
     ret = DFANgetfidlen(file_id, NOTFIRST);
     CHECK(ret, FAIL, "DFANgetfidlen");
@@ -351,7 +351,7 @@ add_sdfile_annotations()
 
     ret = DFANgetfid(file_id, tempstr, MAXLEN_LAB, NOTFIRST);
     CHECK(ret, FAIL, "DFANgetfid");
-    VERIFY_CHAR(labels[1], tempstr, "DFANgetfid second file label");
+    VERIFY_CHAR(tempstr, labels[1], "DFANgetfid second file label");
 
     /********  Read file descriptions *********/
 

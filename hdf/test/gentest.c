@@ -85,7 +85,7 @@ gen_bitio_test(void)
         return FAIL;
 
     return SUCCEED;
-} /* end gen_bitio_test() */
+}
 
 /*--------------------------------------------------------------------------
 
@@ -164,7 +164,7 @@ gen_nbit_test(void)
         return FAIL;
 
     return SUCCEED;
-} /* end gen_nbit_test() */
+}
 
 int
 main(void)
@@ -173,4 +173,4 @@ main(void)
     gen_nbit_test();
 
     return EXIT_SUCCESS;
-} /* end main() */
+}

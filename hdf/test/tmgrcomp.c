@@ -33,11 +33,11 @@
  *****************************************************************************/
 
 /* Create/Write/Read GZIP compressed image */
-static int
-test_mgr_compress_a()
+static void
+test_mgr_compress_a(void)
 {
-    int32 fid;  /* HDF file ID */
-    int32 grid; /* GRID for the interface */
+    int32 fid = FAIL;  /* HDF file ID */
+    int32 grid = FAIL; /* GRID for the interface */
     int32 ret;  /* generic return value */
 
     MESSAGE(8, printf("Operate on gzip compressed images\n"););
@@ -83,8 +83,7 @@ test_mgr_compress_a()
         CHECK(ret, FAIL, "GRreadimage");
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
 
         /* Check that the image made it out correctly */
 
@@ -105,8 +104,7 @@ test_mgr_compress_a()
         }
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
 
         /* Check for compressing image in the middle of writing data */
 
@@ -138,8 +136,7 @@ test_mgr_compress_a()
         CHECK(ret, FAIL, "GRwriteimage");
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
 
         /* Check that the image made it out correctly */
         memset(image, 0, 10 * 10);
@@ -161,28 +158,33 @@ test_mgr_compress_a()
         }
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
     }
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
 
-    /* Return the number of errors that's been kept track of so far */
-    return num_errs;
-} /* end test_mgr_compress_a() */
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+    return;
+
+}
 
 /* Create/Write/Read 8-bit JPEG compressed image */
-static int
-test_mgr_compress_b()
+static void
+test_mgr_compress_b(void)
 {
-    int32 fid;  /* HDF file ID */
-    int32 grid; /* GRID for the interface */
+    int32 fid = FAIL;  /* HDF file ID */
+    int32 grid = FAIL; /* GRID for the interface */
     int32 ret;  /* generic return value */
 
     MESSAGE(8, printf("Operate on 8-bit JPEG compressed images\n"););
@@ -237,12 +239,10 @@ test_mgr_compress_b()
         CHECK(ret, FAIL, "GRwriteimage");
 
         /* Close the image */
-        ret = GRendaccess(riid);
-        CHECK(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
 
         /* Close the interface */
-        ret = GRend(grid);
-        CHECK(ret, FAIL, "GRend");
+        ENDGR(grid, "GRend");
 
         /* Check that the image made it out correctly */
 
@@ -287,30 +287,35 @@ test_mgr_compress_b()
         }
 
         /* Close the image */
-        ret = GRendaccess(riid);
-        CHECK(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
     }
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
 
-    /* Return the number of errors that's been kept track of so far */
-    return num_errs;
-} /* end test_mgr_compress_b() */
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+    return;
+
+}
 
 /* Create/Write/Read 24-bit JPEG compressed image */
-static int
-test_mgr_compress_c()
+static void
+test_mgr_compress_c(void)
 {
     int       status;         /* status for functions returning an int */
-    int32     file_id;        /* HDF file identifier */
-    int32     gr_id;          /* GR interface identifier */
-    int32     ri_id;          /* raster image identifier */
+    int32     file_id = FAIL; /* HDF file identifier */
+    int32     gr_id = FAIL;   /* GR interface identifier */
+    int32     ri_id = FAIL;   /* raster image identifier */
     int32     start[2];       /* start position to write for each dimension */
     int32     edges[2];       /* number of elements to be written along each dimension */
     int32     dim_sizes[2];   /* dimension sizes of the image array */
@@ -365,9 +370,11 @@ test_mgr_compress_c()
     /* Terminate access to raster image and to GR interface */
     status = GRendaccess(ri_id);
     CHECK(status, FAIL, "GRendaccess");
+    ri_id = FAIL;
 
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
+    gr_id = FAIL;
 
     /* Start access to the GR interface and get access to the first RI */
     gr_id = GRstart(file_id);
@@ -402,16 +409,27 @@ test_mgr_compress_c()
     /* interface and, close the HDF file.         */
     status = GRendaccess(ri_id);
     CHECK(status, FAIL, "GRendaccess");
+    ri_id = FAIL;
 
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
+    gr_id = FAIL;
 
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
+    file_id = FAIL;
 
-    /* Return the number of errors that's been kept track of so far */
-    return num_errs;
-} /* end test_mgr_compress_c() */
+done:
+    /* Release resources */
+    if (ri_id != FAIL)
+        GRendaccess(ri_id);
+    if (gr_id != FAIL)
+        GRend(gr_id);
+    if (file_id != FAIL)
+        Hclose(file_id);
+    return;
+
+}
 
 /*--------------------------------------------------------------------------
     The following 2 routines are added when bug# 307 was fixed:
@@ -444,12 +462,13 @@ static int
 make_comp_image(int32 grid, const char *img_name, comp_coder_t comp_type, /* Compression method */
                 comp_info *cinfo, char *message)                          /* Compression parameters */
 {
-    int32 riid;               /* RI ID of the working image */
+    int32 riid = FAIL;         /* RI ID of the working image */
     int32 dims[2] = {10, 10}; /* dimensions for the empty image */
     uint8 image_data[10][10]; /* space for the image data */
     int32 start[2];           /* start of image data to grab */
     int32 stride[2];          /* stride of image data to grab */
     int   ret_value;          /* generic return value */
+    int   func_ret_value = SUCCEED;
 
     /* Initialize data we are going to write out */
     for (int i = 0; i < 10; i++)
@@ -460,14 +479,16 @@ make_comp_image(int32 grid, const char *img_name, comp_coder_t comp_type, /* Com
     riid = GRcreate(grid, img_name, 1, DFNT_UINT8, MFGR_INTERLACE_PIXEL, dims);
     if (riid == FAIL) {
         strcpy(message, "make_comp_image::GRcreate");
-        return FAIL;
+        func_ret_value = FAIL;
+        goto done;
     }
 
     /* Set the compression as provided */
     ret_value = GRsetcompress(riid, comp_type, cinfo);
     if (ret_value == FAIL) {
         strcpy(message, "make_comp_image::GRsetcompress");
-        return FAIL;
+        func_ret_value = FAIL;
+        goto done;
     }
 
     /* Write the image out */
@@ -476,25 +497,32 @@ make_comp_image(int32 grid, const char *img_name, comp_coder_t comp_type, /* Com
     ret_value             = GRwriteimage(riid, start, stride, dims, image_data);
     if (ret_value == FAIL) {
         strcpy(message, "make_comp_image::GRwriteimage");
-        return FAIL;
+        func_ret_value = FAIL;
+        goto done;
     }
 
     /* Close the image */
     ret_value = GRendaccess(riid);
+    riid = FAIL;
     if (ret_value == FAIL) {
         strcpy(message, "make_comp_image::GRendaccess");
-        return FAIL;
+        func_ret_value = FAIL;
+        goto done;
     }
 
-    return SUCCEED;
+done:
+    /* Release resources */
+    if (riid != FAIL)
+        GRendaccess(riid);
+    return func_ret_value;
 }
 
-static int
-test_get_compress()
+static void
+test_get_compress(void)
 {
-    int32        fid;          /* HDF file ID */
-    int32        grid;         /* GRID for the interface */
-    int32        riid;         /* RI ID of the working image */
+    int32        fid = FAIL;   /* HDF file ID */
+    int32        grid = FAIL;  /* GRID for the interface */
+    int32        riid = FAIL;  /* RI ID of the working image */
     comp_coder_t comp_type;    /* Compression method */
     comp_info    cinfo;        /* Compression parameters - union */
     char         err_func[80]; /* name of the functions where failure occurs */
@@ -554,8 +582,10 @@ test_get_compress()
     /* Terminate access to the GR interface and close the file */
     status = GRend(grid);
     CHECK(status, FAIL, "GRend");
+    grid = FAIL;
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose");
+    fid = FAIL;
 
     /*
      * Re-open the file COMPFILE, and retrieve the compression information
@@ -580,6 +610,7 @@ test_get_compress()
     /* end access to the first image */
     status = GRendaccess(riid);
     CHECK(status, FAIL, "GRendaccess");
+    riid = FAIL;
 
     /* get the compression info of the second image, and then check
      * the values against the values set earlier, which are:
@@ -601,6 +632,7 @@ test_get_compress()
     /* end access to the second image */
     status = GRendaccess(riid);
     CHECK(status, FAIL, "GRendaccess");
+    riid = FAIL;
 
     /* get the compression info of the third image, and then check
        the values against the values set earlier, which are:
@@ -622,6 +654,7 @@ test_get_compress()
     /* Terminate access to the third image */
     status = GRendaccess(riid);
     CHECK(status, FAIL, "GRendaccess");
+    riid = FAIL;
 
     /* get access to the fourth image */
     riid = GRselect(grid, 3);
@@ -641,16 +674,27 @@ test_get_compress()
     /* Terminate access to the third image */
     status = GRendaccess(riid);
     CHECK(status, FAIL, "GRendaccess");
+    riid = FAIL;
 
     /* Terminate access and close the file */
     status = GRend(grid);
     CHECK(status, FAIL, "GRend");
+    grid = FAIL;
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose");
+    fid = FAIL;
 
-    /* Return the number of errors that's been kept track of so far */
-    return num_errs;
-} /* end test_get_compress */
+done:
+    /* Release resources */
+    if (riid != FAIL)
+        GRendaccess(riid);
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+    return;
+
+}
 
 /*--------------------------------------------------------------------------
     The test routine test_mgr_chunk_compress is added when bug# 307 was
@@ -674,8 +718,8 @@ test_get_compress()
  -BMR (Oct 7, 01)
 --------------------------------------------------------------------------*/
 
-static int
-test_mgr_chunk_compress()
+static void
+test_mgr_chunk_compress(void)
 {
 #define CHKCOMPFILE "gr_chunkcomp.hdf"
 #define X_LENGTH    10 /* number of columns in the image */
@@ -686,9 +730,9 @@ test_mgr_chunk_compress()
     /************************* Variable declaration **************************/
 
     int   status;        /* status for functions returning an int */
-    int32 file_id,       /* HDF file identifier */
-        gr_id,           /* GR interface identifier */
-        ri_id[N_IMAGES], /* raster image identifier */
+    int32 file_id = FAIL, /* HDF file identifier */
+        gr_id     = FAIL, /* GR interface identifier */
+        ri_id[N_IMAGES] = {FAIL, FAIL, FAIL, FAIL}, /* raster image identifier */
         origin[2],       /* start position to write for each dimension */
         dim_sizes[2],    /* dimension sizes of the image array */
         interlace_mode,  /* interlace mode of the image */
@@ -813,12 +857,15 @@ test_mgr_chunk_compress()
         /* Terminate access to the GR interface and close the HDF file. */
         status = GRendaccess(ri_id[img_num]);
         CHECK(status, FAIL, "GRendaccess");
+        ri_id[img_num] = FAIL;
     } /* end for */
 
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
+    gr_id = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
+    file_id = FAIL;
 
     /* Open the file. */
 
@@ -892,18 +939,30 @@ test_mgr_chunk_compress()
 
         status = GRendaccess(ri_id[img_num]);
         CHECK(status, FAIL, "GRendaccess");
+        ri_id[img_num] = FAIL;
 
     } /* end for */
 
     /* Terminate access to the GR interface and close the HDF file. */
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
+    gr_id = FAIL;
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
+    file_id = FAIL;
 
-    /* Return the number of errors that's been kept track of so far */
-    return num_errs;
-} /* end of test_mgr_chunk_compress */
+done:
+    /* Release resources */
+    for (img_num = 0; img_num < N_IMAGES; img_num++)
+        if (ri_id[img_num] != FAIL)
+            GRendaccess(ri_id[img_num]);
+    if (gr_id != FAIL)
+        GRend(gr_id);
+    if (file_id != FAIL)
+        Hclose(file_id);
+    return;
+
+}
 
 /****************************************************************
 **
@@ -924,22 +983,22 @@ test_mgr_compress()
     MESSAGE(5, printf("Testing Multi-file Raster Compression Functions\n"););
 
     /* Test compression functions on GZIP compressed image */
-    num_errs = num_errs + test_mgr_compress_a();
+    test_mgr_compress_a();
 
     /* Test compression functions on 8-bit JPEG compressed image */
-    num_errs = num_errs + test_mgr_compress_b();
+    test_mgr_compress_b();
 
     /* Test compression functions on 24-bit JPEG compressed image */
-    num_errs = num_errs + test_mgr_compress_c();
+    test_mgr_compress_c();
 
     /* Test retrieving various compression information of compressed image */
-    num_errs = num_errs + test_get_compress();
+    test_get_compress();
 
     /* Test retrieving various compression information of chunked and
        compressed image */
-    num_errs = num_errs + test_mgr_chunk_compress();
+    test_mgr_chunk_compress();
 
     if (num_errs != 0) {
         H4_FAILED();
     }
-} /* end test_mgr_compress() */
+}

@@ -322,4 +322,4 @@ test_vspack(void)
 
     if (funpack() == FAIL)
         return;
-} /* test_vspack */
+}

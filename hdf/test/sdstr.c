@@ -109,6 +109,8 @@ test_tsdstr(void)
         MESSAGE(7, printf("\n\t>>> ALL TESTS PASSED <<<\n\n");)
 
     num_errs = num_errs + number_failed;
+done:
+    return;
 }
 
 static void

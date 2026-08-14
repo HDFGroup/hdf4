@@ -49,45 +49,45 @@ test_hfile_atexit(void)
 
     /* These should fail */
     ret = hfile_atexit_create(NULL);
-    CHECK_VOID(ret, SUCCEED, "hfile_atexit_create");
+    CHECK(ret, SUCCEED, "hfile_atexit_create");
 
     ret = hfile_atexit_add(NULL, add_one);
-    CHECK_VOID(ret, SUCCEED, "hfile_atexit_add");
+    CHECK(ret, SUCCEED, "hfile_atexit_add");
     ret = hfile_atexit_execute_all(NULL);
-    CHECK_VOID(ret, SUCCEED, "hfile_atexit_execute_all");
+    CHECK(ret, SUCCEED, "hfile_atexit_execute_all");
 
     ret = hfile_atexit_add(ha, add_one);
-    CHECK_VOID(ret, SUCCEED, "hfile_atexit_add");
+    CHECK(ret, SUCCEED, "hfile_atexit_add");
     ret = hfile_atexit_execute_all(ha);
-    CHECK_VOID(ret, SUCCEED, "hfile_atexit_execute_all");
+    CHECK(ret, SUCCEED, "hfile_atexit_execute_all");
 
     /* These should succeed */
     ret = hfile_atexit_destroy(NULL);
-    CHECK_VOID(ret, FAIL, "hfile_atexit_destroy");
+    CHECK(ret, FAIL, "hfile_atexit_destroy");
     ret = hfile_atexit_destroy(&ha);
-    CHECK_VOID(ret, FAIL, "hfile_atexit_destroy");
+    CHECK(ret, FAIL, "hfile_atexit_destroy");
 
     /****************************/
     /* Make sure creation works */
     /****************************/
 
     ret = hfile_atexit_create(&ha);
-    CHECK_VOID(ret, FAIL, "hfile_atexit_create");
+    CHECK(ret, FAIL, "hfile_atexit_create");
     CHECK_ALLOC(ha, "ha", "hfile_atexit_create");
-    VERIFY_VOID(ha->n_functions, 0, "hfile_atexit_create");
-    VERIFY_VOID(ha->max_functions, ATEXIT_ARRAY_INCR, "hfile_atexit_create");
+    VERIFY(ha->n_functions, 0, "hfile_atexit_create");
+    VERIFY(ha->max_functions, ATEXIT_ARRAY_INCR, "hfile_atexit_create");
 
     /******************/
     /* Add a function */
     /******************/
 
     ret = hfile_atexit_add(ha, add_one);
-    CHECK_VOID(ret, FAIL, "hfile_atexit_add");
+    CHECK(ret, FAIL, "hfile_atexit_add");
     n_functions += 1;
     actual_count += 1;
 
-    VERIFY_VOID(ha->n_functions, n_functions, "hfile_atexit_add");
-    VERIFY_VOID(ha->max_functions, ATEXIT_ARRAY_INCR, "hfile_atexit_add");
+    VERIFY(ha->n_functions, n_functions, "hfile_atexit_add");
+    VERIFY(ha->max_functions, ATEXIT_ARRAY_INCR, "hfile_atexit_add");
 
     /*******************************************/
     /* Add enough functions to force a realloc */
@@ -95,37 +95,37 @@ test_hfile_atexit(void)
 
     for (size_t i = 0; i < ATEXIT_ARRAY_INCR; i++) {
         ret = hfile_atexit_add(ha, add_one);
-        CHECK_VOID(ret, FAIL, "hfile_atexit_add");
+        CHECK(ret, FAIL, "hfile_atexit_add");
 
         n_functions += 1;
         actual_count += 1;
-        VERIFY_VOID(ha->n_functions, n_functions, "hfile_atexit_add");
+        VERIFY(ha->n_functions, n_functions, "hfile_atexit_add");
     }
-    VERIFY_VOID(ha->max_functions, (2 * ATEXIT_ARRAY_INCR), "hfile_atexit_add");
+    VERIFY(ha->max_functions, (2 * ATEXIT_ARRAY_INCR), "hfile_atexit_add");
 
     /***********************************/
     /* Make sure functions are invoked */
     /***********************************/
 
     ret = hfile_atexit_execute_all(ha);
-    CHECK_VOID(ret, FAIL, "hfile_atexit_execute_all");
+    CHECK(ret, FAIL, "hfile_atexit_execute_all");
 
     /* Each function adds one to count_g */
-    VERIFY_VOID(count_g, actual_count, "hfile_atexit_execute_all");
+    VERIFY(count_g, actual_count, "hfile_atexit_execute_all");
 
     /* The functions don't get cleared out after use */
-    VERIFY_VOID(ha->n_functions, n_functions, "hfile_atexit_execute_all");
-    VERIFY_VOID(ha->max_functions, (2 * ATEXIT_ARRAY_INCR), "hfile_atexit_execute_all");
+    VERIFY(ha->n_functions, n_functions, "hfile_atexit_execute_all");
+    VERIFY(ha->max_functions, (2 * ATEXIT_ARRAY_INCR), "hfile_atexit_execute_all");
 
     /* reset count */
     count_g = 0;
 
     /* Execute the functions again */
     ret = hfile_atexit_execute_all(ha);
-    CHECK_VOID(ret, FAIL, "hfile_atexit_execute_all");
+    CHECK(ret, FAIL, "hfile_atexit_execute_all");
 
     /* Each function adds one to count_g */
-    VERIFY_VOID(count_g, actual_count, "hfile_atexit_execute_all");
+    VERIFY(count_g, actual_count, "hfile_atexit_execute_all");
 
     /*************************************************/
     /* Add enough functions to force ANOTHER realloc */
@@ -133,14 +133,14 @@ test_hfile_atexit(void)
 
     for (size_t i = 0; i < ATEXIT_ARRAY_INCR; i++) {
         ret = hfile_atexit_add(ha, add_two);
-        CHECK_VOID(ret, FAIL, "hfile_atexit_add");
+        CHECK(ret, FAIL, "hfile_atexit_add");
 
         /* Each function adds two to count_g */
         actual_count += 2;
         n_functions += 1;
-        VERIFY_VOID(ha->n_functions, n_functions, "hfile_atexit_add");
+        VERIFY(ha->n_functions, n_functions, "hfile_atexit_add");
     }
-    VERIFY_VOID(ha->max_functions, (3 * ATEXIT_ARRAY_INCR), "hfile_atexit_add");
+    VERIFY(ha->max_functions, (3 * ATEXIT_ARRAY_INCR), "hfile_atexit_add");
 
     /***********************************/
     /* Make sure functions are invoked */
@@ -150,22 +150,27 @@ test_hfile_atexit(void)
     count_g = 0;
 
     ret = hfile_atexit_execute_all(ha);
-    CHECK_VOID(ret, FAIL, "hfile_atexit_execute_all");
+    CHECK(ret, FAIL, "hfile_atexit_execute_all");
 
     /* Check count_g */
-    VERIFY_VOID(count_g, actual_count, "hfile_atexit_execute_all");
+    VERIFY(count_g, actual_count, "hfile_atexit_execute_all");
 
     /* The functions don't get cleared out after use */
-    VERIFY_VOID(ha->n_functions, n_functions, "hfile_atexit_execute_all");
-    VERIFY_VOID(ha->max_functions, (3 * ATEXIT_ARRAY_INCR), "hfile_atexit_execute_all");
+    VERIFY(ha->n_functions, n_functions, "hfile_atexit_execute_all");
+    VERIFY(ha->max_functions, (3 * ATEXIT_ARRAY_INCR), "hfile_atexit_execute_all");
 
     /****************************/
     /* Make sure shutdown works */
     /****************************/
 
     ret = hfile_atexit_destroy(&ha);
-    CHECK_VOID(ret, FAIL, "hfile_atexit_destroy");
+    CHECK(ret, FAIL, "hfile_atexit_destroy");
 
     /* Destroy sets the passed-in pointer to NULL */
-    VERIFY_VOID(ha, NULL, "hfile_atexit_execute_all");
+    VERIFY(ha, NULL, "hfile_atexit_execute_all");
+
+done:
+    /* Shutdown in case of failure mid-way */
+    hfile_atexit_destroy(&ha);
+    return;
 }

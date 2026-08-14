@@ -29,7 +29,7 @@ static void test_4(void);
 static void
 test_1(void)
 {
-    bv_ptr b;
+    bv_ptr b = NULL;
     int32  size;
     int    ret;
 
@@ -38,29 +38,37 @@ test_1(void)
     /* Test basic default creation */
     MESSAGE(7, printf("Create a bit-vector with all defaults\n"););
     b = bv_new(-1);
-    CHECK_VOID(b, NULL, "bv_new");
+    CHECK(b, NULL, "bv_new");
     size = bv_size(b);
     MESSAGE(8, printf("Bit-vector size=%" PRId32 "\n", size););
-    VERIFY_VOID(size, BV_DEFAULT_BITS, "bv_size");
+    VERIFY(size, BV_DEFAULT_BITS, "bv_size");
     ret = bv_delete(b);
-    CHECK_VOID(ret, FAIL, "bv_delete");
+    CHECK(ret, FAIL, "bv_delete");
+    b = NULL;
 
     /* Test creating a bit-vector w/ size >> defaults */
     MESSAGE(7, printf("Create an extendable bit-vector with large # of bits\n"););
     b = bv_new(80000);
-    CHECK_VOID(b, NULL, "bv_new");
+    CHECK(b, NULL, "bv_new");
     size = bv_size(b);
     MESSAGE(8, printf("Bit-vector size=%" PRId32 "\n", size););
-    VERIFY_VOID(size, 80000, "bv_size");
+    VERIFY(size, 80000, "bv_size");
     ret = bv_delete(b);
-    CHECK_VOID(ret, FAIL, "bv_delete");
-} /* end test_1 */
+    CHECK(ret, FAIL, "bv_delete");
+    b = NULL;
+
+done:
+    /* Release resources */
+    if (b != NULL)
+        bv_delete(b);
+    return;
+}
 
 /* Basic set & get tests */
 static void
 test_2(void)
 {
-    bv_ptr b;
+    bv_ptr b = NULL;
     int32  size;
     int    ret;
 
@@ -69,73 +77,81 @@ test_2(void)
     /* test basic default creation */
     MESSAGE(7, printf("Create a bit-vector with all defaults\n"););
     b = bv_new(-1);
-    CHECK_VOID(b, NULL, "bv_new");
+    CHECK(b, NULL, "bv_new");
     size = bv_size(b);
     MESSAGE(8, printf("Bit-vector size=%" PRId32 "\n", size););
-    VERIFY_VOID(size, BV_DEFAULT_BITS, "bv_size");
+    VERIFY(size, BV_DEFAULT_BITS, "bv_size");
 
     /* Check setting bits */
     ret = bv_set(b, 13, BV_TRUE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
     ret = bv_set(b, 3, BV_TRUE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
     ret = bv_set(b, 150, BV_TRUE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
 
     /* Check getting bits */
     ret = bv_get(b, 2);
-    VERIFY_VOID(ret, BV_FALSE, "bv_get");
+    VERIFY(ret, BV_FALSE, "bv_get");
     ret = bv_get(b, 3);
-    VERIFY_VOID(ret, BV_TRUE, "bv_get");
+    VERIFY(ret, BV_TRUE, "bv_get");
     ret = bv_get(b, 0);
-    VERIFY_VOID(ret, BV_FALSE, "bv_get");
+    VERIFY(ret, BV_FALSE, "bv_get");
     ret = bv_get(b, 13);
-    VERIFY_VOID(ret, BV_TRUE, "bv_get");
+    VERIFY(ret, BV_TRUE, "bv_get");
     ret = bv_get(b, -1);
-    VERIFY_VOID(ret, FAIL, "bv_get");
+    VERIFY(ret, FAIL, "bv_get");
 
     ret = bv_delete(b);
-    CHECK_VOID(ret, FAIL, "bv_delete");
+    CHECK(ret, FAIL, "bv_delete");
+    b = NULL;
 
     /* Test another bit vector with a large number of bits */
     MESSAGE(7, printf("Create an extendable bit-vector with large # of bits\n"););
     b = bv_new(1000);
-    CHECK_VOID(b, NULL, "bv_new");
+    CHECK(b, NULL, "bv_new");
     size = bv_size(b);
     MESSAGE(8, printf("Bit-vector size=%" PRId32 "\n", size););
-    VERIFY_VOID(size, 1000, "bv_size");
+    VERIFY(size, 1000, "bv_size");
 
     /* Check setting bits */
     ret = bv_set(b, 13, BV_TRUE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
     ret = bv_set(b, 3, BV_TRUE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
     ret = bv_set(b, 1050, BV_TRUE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
 
     /* Check getting bits */
     ret = bv_get(b, 2);
-    VERIFY_VOID(ret, BV_FALSE, "bv_get");
+    VERIFY(ret, BV_FALSE, "bv_get");
     ret = bv_get(b, 3);
-    VERIFY_VOID(ret, BV_TRUE, "bv_get");
+    VERIFY(ret, BV_TRUE, "bv_get");
     ret = bv_get(b, 0);
-    VERIFY_VOID(ret, BV_FALSE, "bv_get");
+    VERIFY(ret, BV_FALSE, "bv_get");
     ret = bv_get(b, 13);
-    VERIFY_VOID(ret, BV_TRUE, "bv_get");
+    VERIFY(ret, BV_TRUE, "bv_get");
     ret = bv_get(b, 1040);
-    VERIFY_VOID(ret, BV_FALSE, "bv_get");
+    VERIFY(ret, BV_FALSE, "bv_get");
     ret = bv_get(b, 1050);
-    VERIFY_VOID(ret, BV_TRUE, "bv_get");
+    VERIFY(ret, BV_TRUE, "bv_get");
 
     ret = bv_delete(b);
-    CHECK_VOID(ret, FAIL, "bv_delete");
-} /* end test_2 */
+    CHECK(ret, FAIL, "bv_delete");
+    b = NULL;
+
+done:
+    /* Release resources */
+    if (b != NULL)
+        bv_delete(b);
+    return;
+}
 
 /* Advanced set & get tests */
 static void
 test_3(void)
 {
-    bv_ptr b;
+    bv_ptr b = NULL;
     int32  size;
     int32  bit_num;
     int    ret;
@@ -145,75 +161,82 @@ test_3(void)
     /* Create an extendable bit-vector */
     MESSAGE(7, printf("Create an extendable bit-vector\n"););
     b = bv_new(-1);
-    CHECK_VOID(b, NULL, "bv_new");
+    CHECK(b, NULL, "bv_new");
     size = bv_size(b);
     MESSAGE(8, printf("Bit-vector size=%" PRId32 "\n", size););
-    VERIFY_VOID(size, BV_DEFAULT_BITS, "bv_size");
+    VERIFY(size, BV_DEFAULT_BITS, "bv_size");
 
     /* Check setting bits */
     ret = bv_set(b, 13, BV_TRUE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
     ret = bv_set(b, 3, BV_TRUE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
     ret = bv_set(b, 150, BV_TRUE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
     ret = bv_set(b, 152, BV_TRUE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
 
     /* Check getting bits */
     ret = bv_get(b, 2);
-    VERIFY_VOID(ret, BV_FALSE, "bv_get");
+    VERIFY(ret, BV_FALSE, "bv_get");
     ret = bv_get(b, 3);
-    VERIFY_VOID(ret, BV_TRUE, "bv_get");
+    VERIFY(ret, BV_TRUE, "bv_get");
     ret = bv_get(b, 0);
-    VERIFY_VOID(ret, BV_FALSE, "bv_get");
+    VERIFY(ret, BV_FALSE, "bv_get");
     ret = bv_get(b, 13);
-    VERIFY_VOID(ret, BV_TRUE, "bv_get");
+    VERIFY(ret, BV_TRUE, "bv_get");
     ret = bv_get(b, 140);
-    VERIFY_VOID(ret, BV_FALSE, "bv_get");
+    VERIFY(ret, BV_FALSE, "bv_get");
     ret = bv_get(b, 150);
-    VERIFY_VOID(ret, BV_TRUE, "bv_get");
+    VERIFY(ret, BV_TRUE, "bv_get");
 
     /* Check finding 0s in the bit-vector, remembering the last one. This
      * should skip bit 3, which we set to 1 in the above code.
      */
     bit_num = bv_find_next_zero(b);
-    CHECK_VOID(bit_num, FAIL, "bv_find_next_zero");
-    VERIFY_VOID(bit_num, 0, "bv_find_next_zero");
+    CHECK(bit_num, FAIL, "bv_find_next_zero");
+    VERIFY(bit_num, 0, "bv_find_next_zero");
     MESSAGE(8, printf("First 0 found at: %" PRId32 "\n", bit_num););
     ret = bv_set(b, bit_num, BV_TRUE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
 
     bit_num = bv_find_next_zero(b);
-    CHECK_VOID(bit_num, FAIL, "bv_find_next_zero");
-    VERIFY_VOID(bit_num, 1, "bv_find_next_zero");
+    CHECK(bit_num, FAIL, "bv_find_next_zero");
+    VERIFY(bit_num, 1, "bv_find_next_zero");
     MESSAGE(8, printf("Second 0 found at: %" PRId32 "\n", bit_num););
     ret = bv_set(b, bit_num, BV_TRUE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
 
     bit_num = bv_find_next_zero(b);
-    CHECK_VOID(bit_num, FAIL, "bv_find_next_zero");
-    VERIFY_VOID(bit_num, 2, "bv_find_next_zero");
+    CHECK(bit_num, FAIL, "bv_find_next_zero");
+    VERIFY(bit_num, 2, "bv_find_next_zero");
     MESSAGE(8, printf("Third 0 found at: %" PRId32 "\n", bit_num););
     ret = bv_set(b, bit_num, BV_TRUE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
 
     bit_num = bv_find_next_zero(b);
-    CHECK_VOID(bit_num, FAIL, "bv_find_next_zero");
-    VERIFY_VOID(bit_num, 4, "bv_find_next_zero");
+    CHECK(bit_num, FAIL, "bv_find_next_zero");
+    VERIFY(bit_num, 4, "bv_find_next_zero");
     MESSAGE(8, printf("Fourth 0 found at: %" PRId32 "\n", bit_num););
     ret = bv_set(b, bit_num, BV_TRUE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
 
     ret = bv_delete(b);
-    CHECK_VOID(ret, FAIL, "bv_delete");
-} /* end test_3 */
+    CHECK(ret, FAIL, "bv_delete");
+    b = NULL;
+
+done:
+    /* Release resources */
+    if (b != NULL)
+        bv_delete(b);
+    return;
+}
 
 /* Pathologic set/find test */
 static void
 test_4(void)
 {
-    bv_ptr b;
+    bv_ptr b = NULL;
     int32  size;
     int32  bit_num;
     int    i;
@@ -224,64 +247,71 @@ test_4(void)
     /* Create an extendable bit-vector */
     MESSAGE(7, printf("Create an extendable bit-vector\n"););
     b = bv_new(16);
-    CHECK_VOID(b, NULL, "bv_new");
+    CHECK(b, NULL, "bv_new");
     size = bv_size(b);
     MESSAGE(8, printf("Bit-vector size=%" PRId32 "\n", size););
-    VERIFY_VOID(size, 16, "bv_size");
+    VERIFY(size, 16, "bv_size");
 
     /* Set all the bits to 1 */
     for (i = 0; i < 16; i++) {
         ret = bv_set(b, i, BV_TRUE);
-        CHECK_VOID(ret, FAIL, "bv_set");
+        CHECK(ret, FAIL, "bv_set");
     }
 
     /* Set two bits to 0 (order is important!), one in each byte. At this
      * point the cached first zero should be 5.
      */
     ret = bv_set(b, 13, BV_FALSE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
     ret = bv_set(b, 5, BV_FALSE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
 
     /* Now set the lower bit to 1. This should invalidate the cached value. */
     ret = bv_set(b, 5, BV_TRUE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
 
     /* See if we can find the remaining 0 */
     bit_num = bv_find_next_zero(b);
-    CHECK_VOID(bit_num, FAIL, "bv_find_next_zero");
-    VERIFY_VOID(bit_num, 13, "bv_find_next_zero");
+    CHECK(bit_num, FAIL, "bv_find_next_zero");
+    VERIFY(bit_num, 13, "bv_find_next_zero");
     MESSAGE(8, printf("Remaining 0 found at: %" PRId32 "\n", bit_num););
 
     /* Reset the zero bits */
     ret = bv_set(b, 13, BV_FALSE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
     ret = bv_set(b, 5, BV_FALSE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
 
     /* Now set the higher bit to 1, just to make sure this order works */
     ret = bv_set(b, 13, BV_TRUE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
 
     /* See if we can find the remaining 0 */
     bit_num = bv_find_next_zero(b);
-    CHECK_VOID(bit_num, FAIL, "bv_find_next_zero");
-    VERIFY_VOID(bit_num, 5, "bv_find_next_zero");
+    CHECK(bit_num, FAIL, "bv_find_next_zero");
+    VERIFY(bit_num, 5, "bv_find_next_zero");
     MESSAGE(8, printf("Remaining 0 found at: %" PRId32 "\n", bit_num););
 
     /* Now set remaining bit to 1 */
     ret = bv_set(b, 5, BV_TRUE);
-    CHECK_VOID(ret, FAIL, "bv_set");
+    CHECK(ret, FAIL, "bv_set");
 
     /* The next bit should extend the array */
     bit_num = bv_find_next_zero(b);
-    CHECK_VOID(bit_num, FAIL, "bv_find_next_zero");
-    VERIFY_VOID(bit_num, 16, "bv_find_next_zero");
+    CHECK(bit_num, FAIL, "bv_find_next_zero");
+    VERIFY(bit_num, 16, "bv_find_next_zero");
     MESSAGE(8, printf("Remaining 0 found at: %" PRId32 "\n", bit_num););
 
     ret = bv_delete(b);
-    CHECK_VOID(ret, FAIL, "bv_delete");
-} /* end test_4 */
+    CHECK(ret, FAIL, "bv_delete");
+    b = NULL;
+
+done:
+    /* Release resources */
+    if (b != NULL)
+        bv_delete(b);
+    return;
+}
 
 void
 test_bitvect(void)

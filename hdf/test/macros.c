@@ -223,4 +223,4 @@ test_macros(void)
         num_errs += errors;
     }
 
-} /* end test_macros() */
+}

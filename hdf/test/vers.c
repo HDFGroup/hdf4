@@ -33,4 +33,6 @@ test_vers(void)
     MESSAGE(5, printf("---------------\n"););
     MESSAGE(5, printf("Major:\t\t%u\nMinor:\t\t%u\nRelease:\t%u\nString:\t\t\"%s\"\n", (unsigned)lmajor,
                       (unsigned)lminor, (unsigned)lrelease, lstring););
+done:
+    return;
 }

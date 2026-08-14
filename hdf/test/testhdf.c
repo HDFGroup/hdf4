@@ -103,7 +103,7 @@ usage(void)
     for (i = 0; i < Index; i++)
         printf("%16s %s\n", Test[i].Name, Test[i].Description);
     printf("\n\n");
-} /* end usage() */
+}
 
 int
 main(int argc, char *argv[])
@@ -281,4 +281,4 @@ main(int argc, char *argv[])
     free(Test);
 
     return num_errs;
-} /* end main() */
+}
