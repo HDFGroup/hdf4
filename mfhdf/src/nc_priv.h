@@ -505,7 +505,7 @@ HDFLIBAPI int        NCxdrfile_create(XDR *xdrs, const char *path, int ncmode);
 
 HDFLIBAPI int       hdf_fill_array(uint8_t *storage, int32 len, uint8_t *value, int32 type);
 HDFLIBAPI int       hdf_get_data(NC *handle, NC_var *vp);
-HDFLIBAPI int32     hdf_get_vp_aid(NC *handle, NC_var *vp);
+HDFLIBAPI int32     hdf_get_vp_aid(NC *handle, NC_var *vp, uint32 access);
 HDFLIBAPI int       hdf_map_type(nc_type);
 HDFLIBAPI nc_type   hdf_unmap_type(int);
 HDFLIBAPI int       hdf_get_ref(NC *, int);

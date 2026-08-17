@@ -4276,7 +4276,7 @@ SDsetaccesstype(int32    id, /* IN: dataset ID */
 
     /* if aid is not valid yet, there is no access_rec setup yet. */
     /* Go ahead and try set it up. */
-    if (var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL)
+    if (hdf_get_vp_aid(handle, var, DFACC_READ) == FAIL)
         ret_value = FAIL;
     else
         ret_value = (int)Hsetaccesstype(var->aid, accesstype);
@@ -5017,17 +5017,6 @@ SDgetchunkinfo(int32          sdsid,     /* IN: sds access id */
         HGOTO_DONE(SUCCEED);
     }
 
-#ifdef added_by_mistake
-    /* Replaced this if statement by if (var->aid == FAIL) because it seemed
-       that hdf_get_vp_aid was called here by mistake (perhaps, copy/paste.)
-       For more info, see SVN log messages and bug HDFFR-171. -BMR, 2011/10 */
-
-    /* Check if data aid exists; if not, set up an access elt for reading */
-    if (var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL) {
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-    }
-#endif
-
     /* Need to get access id for the subsequent calls */
     if (var->aid == FAIL) {
         var->aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
@@ -5244,7 +5233,7 @@ SDwritechunk(int32       sdsid,  /* IN: access aid to SDS */
     }
 
     /* Check to see if data aid exists? i.e. may need to create a ref for SDS */
-    if (var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL) {
+    if (hdf_get_vp_aid(handle, var, DFACC_WRITE) == FAIL) {
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
@@ -5427,17 +5416,6 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
     /* Dev note: empty SDS should have been checked here and SDreadchunk would
        have failed, but since it wasn't, for backward compatibility, we won't
        do it now either. -BMR 2011 */
-
-#ifdef added_by_mistake
-    /* Replaced this if statement by if (var->aid == FAIL) because it seemed
-       that hdf_get_vp_aid was called here by mistake (perhaps, copy/paste.)
-       For more info, see SVN log messages and bug HDFFR-171. -BMR, 2011/10 */
-
-    /* Check to see if data aid exists? i.e. may need to create a ref for SDS */
-    if (var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL) {
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-    }
-#endif
 
     /* Check compression method is enabled */
     status = HCPgetcomptype(handle->hdf_file, var->data_tag, var->data_ref, &comp_type);
@@ -5639,9 +5617,13 @@ SDsetchunkcache(int32 sdsid,    /* IN: access aid to mess with */
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
-    /* Check to see if data aid exists? i.e. may need to create a ref for SDS */
-    if (var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL) {
-        HGOTO_ERROR(DFE_ARGS, FAIL);
+    /* This function is read-only (only queries/adjusts the chunk cache),
+       so a cached AID -- however it was opened -- already suffices; no
+       need to route through hdf_get_vp_aid()'s read/write logic. */
+    if (var->aid == FAIL) {
+        var->aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
+        if (var->aid == FAIL)
+            HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
     /* inquire about element */
