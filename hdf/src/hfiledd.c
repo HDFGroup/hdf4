@@ -243,7 +243,8 @@ HTPstart(filerec_t *file_rec /* IN:  File record to store info in */
                 file_rec->maxref = curr_dd_ptr->ref;
 
             /* check if the data element is the last thing in the file */
-            if (curr_dd_ptr->length >= 0 && curr_dd_ptr->offset > INT_MAX - curr_dd_ptr->length) {
+            if (curr_dd_ptr->length >= 0 &&
+                (curr_dd_ptr->offset < 0 || curr_dd_ptr->offset > INT32_MAX - curr_dd_ptr->length)) {
                 HGOTO_ERROR(DFE_READERROR, FAIL);
             }
             if ((curr_dd_ptr->offset + curr_dd_ptr->length) > end_off)
@@ -515,16 +516,16 @@ done:
 static void
 HTPmemory_cleanup(filerec_t *file_rec)
 {
-    ddblock_t *bl, *next; /* current ddblock and next ddblock pointers.
-                             for freeing ddblock linked list */
-    for (bl = file_rec->ddhead; bl != NULL; bl = next) {
+    /* Free the ddblock linked list. */
+    ddblock_t *next;
+    for (ddblock_t *bl = file_rec->ddhead; bl != NULL; bl = next) {
         next = bl->next;
         free(bl->ddlist);
         free(bl);
     }
     file_rec->ddhead = (ddblock_t *)NULL;
 
-    /* Chuck the tag info tree too */
+    /* Deallocate the tag info tree. */
     tbbtdfree(file_rec->tag_tree, tagdestroynode, NULL);
     file_rec->tag_tree = NULL;
 }
