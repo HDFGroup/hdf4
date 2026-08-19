@@ -236,9 +236,10 @@ DAset_elem(dynarr_p arr_ptr, /* IN: Array to access */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if (elem >= arr->num_elems) {
-        int new_size; /* new number of elements in the array */
+        size_t new_size; /* new number of elements in the array */
 
-        new_size = ((elem / arr->incr_mult) + 1) * arr->incr_mult;
+        assert(arr->incr_mult > 0);
+        new_size = ((size_t)(elem / arr->incr_mult) + 1) * (size_t)arr->incr_mult;
         if (arr->num_elems == 0) { /* array not currently allocated */
             if ((arr->arr = (void **)calloc((size_t)new_size, sizeof(void *))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
