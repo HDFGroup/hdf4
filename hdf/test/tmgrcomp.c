@@ -452,10 +452,8 @@ done:
 #define SKPHUFF_SKIPSIZE 28 /* arbitrary */
 
 static int
-make_comp_image(int32 grid,
-                const char *img_name,
-                comp_coder_t comp_type, /* Compression method */
-                comp_info *cinfo)       /* Compression parameters */
+make_comp_image(int32 grid, const char *img_name, comp_coder_t comp_type, /* Compression method */
+                comp_info *cinfo)                                         /* Compression parameters */
 {
     int32 riid    = FAIL;     /* RI ID of the working image */
     int32 dims[2] = {10, 10}; /* dimensions for the empty image */
@@ -480,13 +478,13 @@ make_comp_image(int32 grid,
     /* Write the image out */
     start[0] = start[1] = 0;
     stride[0] = stride[1] = 1;
-    status    = GRwriteimage(riid, start, stride, dims, image_data);
+    status                = GRwriteimage(riid, start, stride, dims, image_data);
     CHECK(status, FAIL, "GRwriteimage");
 
     /* Close the image */
     status = GRendaccess(riid);
     CHECK(status, FAIL, "GRendaccess");
-    riid   = FAIL;
+    riid = FAIL;
 
     return SUCCEED;
 
@@ -500,12 +498,12 @@ done:
 static void
 test_get_compress(void)
 {
-    int32        fid  = FAIL;  /* HDF file ID */
-    int32        grid = FAIL;  /* GRID for the interface */
-    int32        riid = FAIL;  /* RI ID of the working image */
-    comp_coder_t comp_type;    /* Compression method */
-    comp_info    cinfo;        /* Compression parameters - union */
-    int          status;       /* generic return value */
+    int32        fid  = FAIL; /* HDF file ID */
+    int32        grid = FAIL; /* GRID for the interface */
+    int32        riid = FAIL; /* RI ID of the working image */
+    comp_coder_t comp_type;   /* Compression method */
+    comp_info    cinfo;       /* Compression parameters - union */
+    int          status;      /* generic return value */
 
     /* D - Retrieve compression information of compressed images */
     MESSAGE(8, printf("Verify the compression information of compressed images\n"););
