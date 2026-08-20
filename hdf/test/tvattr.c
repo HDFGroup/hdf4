@@ -145,7 +145,7 @@ done:
 /*  write_vattr() adds attributes to the vgroups, vdata and
  *  the fields of the vdata. It then creates new vdata and vgroup,
  *  and adds attrs to them.  read_vattr reads the attributes back,
- *  and check their correctness.
+ *  and checks their correctness.
  */
 static int
 write_vattrs(void)
