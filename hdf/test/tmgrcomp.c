@@ -28,8 +28,6 @@
  *	  test_get_compress - tests getting comp info with compressed image
  *	  test_mgr_chunk_compress - tests getting comp info with chunked
  *				and compressed image
- * Modification:
- *	Nov 23, 2009: Moved out from mgr.c. - BMR
  *****************************************************************************/
 
 /* Create/Write/Read GZIP compressed image */
@@ -443,8 +441,6 @@ done:
 
     - make_comp_image: is a helper that test_get_compress uses to create
                 several compressed images.
-
- -BMR (Sept 7, 01)
 --------------------------------------------------------------------------*/
 
 #define COMPFILE         "gr_comp.hdf"
@@ -456,16 +452,17 @@ done:
 #define SKPHUFF_SKIPSIZE 28 /* arbitrary */
 
 static int
-make_comp_image(int32 grid, const char *img_name, comp_coder_t comp_type, /* Compression method */
-                comp_info *cinfo, char *message)                          /* Compression parameters */
+make_comp_image(int32 grid,
+                const char *img_name,
+                comp_coder_t comp_type, /* Compression method */
+                comp_info *cinfo)       /* Compression parameters */
 {
     int32 riid    = FAIL;     /* RI ID of the working image */
     int32 dims[2] = {10, 10}; /* dimensions for the empty image */
     uint8 image_data[10][10]; /* space for the image data */
     int32 start[2];           /* start of image data to grab */
     int32 stride[2];          /* stride of image data to grab */
-    int   ret_value;          /* generic return value */
-    int   func_ret_value = SUCCEED;
+    int   status;             /* generic return value */
 
     /* Initialize data we are going to write out */
     for (int i = 0; i < 10; i++)
@@ -474,44 +471,30 @@ make_comp_image(int32 grid, const char *img_name, comp_coder_t comp_type, /* Com
 
     /* Create the image */
     riid = GRcreate(grid, img_name, 1, DFNT_UINT8, MFGR_INTERLACE_PIXEL, dims);
-    if (riid == FAIL) {
-        strcpy(message, "make_comp_image::GRcreate");
-        func_ret_value = FAIL;
-        goto done;
-    }
+    CHECK(riid, FAIL, "GRcreate");
 
     /* Set the compression as provided */
-    ret_value = GRsetcompress(riid, comp_type, cinfo);
-    if (ret_value == FAIL) {
-        strcpy(message, "make_comp_image::GRsetcompress");
-        func_ret_value = FAIL;
-        goto done;
-    }
+    status = GRsetcompress(riid, comp_type, cinfo);
+    CHECK(status, FAIL, "GRsetcompress");
 
     /* Write the image out */
     start[0] = start[1] = 0;
     stride[0] = stride[1] = 1;
-    ret_value             = GRwriteimage(riid, start, stride, dims, image_data);
-    if (ret_value == FAIL) {
-        strcpy(message, "make_comp_image::GRwriteimage");
-        func_ret_value = FAIL;
-        goto done;
-    }
+    status    = GRwriteimage(riid, start, stride, dims, image_data);
+    CHECK(status, FAIL, "GRwriteimage");
 
     /* Close the image */
-    ret_value = GRendaccess(riid);
-    riid      = FAIL;
-    if (ret_value == FAIL) {
-        strcpy(message, "make_comp_image::GRendaccess");
-        func_ret_value = FAIL;
-        goto done;
-    }
+    status = GRendaccess(riid);
+    CHECK(status, FAIL, "GRendaccess");
+    riid   = FAIL;
+
+    return SUCCEED;
 
 done:
     /* Release resources */
     if (riid != FAIL)
         GRendaccess(riid);
-    return func_ret_value;
+    return FAIL;
 }
 
 static void
@@ -522,7 +505,6 @@ test_get_compress(void)
     int32        riid = FAIL;  /* RI ID of the working image */
     comp_coder_t comp_type;    /* Compression method */
     comp_info    cinfo;        /* Compression parameters - union */
-    char         err_func[80]; /* name of the functions where failure occurs */
     int          status;       /* generic return value */
 
     /* D - Retrieve compression information of compressed images */
@@ -547,8 +529,8 @@ test_get_compress(void)
     memset(&cinfo, 0, sizeof(cinfo));
 
     /* Create and write the first compressed image in this file */
-    status = make_comp_image(grid, RLE_IMAGE, COMP_CODE_RLE, &cinfo, err_func);
-    CHECK(status, FAIL, err_func);
+    status = make_comp_image(grid, RLE_IMAGE, COMP_CODE_RLE, &cinfo);
+    CHECK(status, FAIL, "make_comp_image: COMP_CODE_RLE");
 
     /* Set the compression info for the second image with skipping
        huffman method */
@@ -556,16 +538,16 @@ test_get_compress(void)
     cinfo.skphuff.skp_size = SKPHUFF_SKIPSIZE;
 
     /* Create and write the second compressed image in this file */
-    status = make_comp_image(grid, SKPHUFF_IMAGE, COMP_CODE_SKPHUFF, &cinfo, err_func);
-    CHECK(status, FAIL, err_func);
+    status = make_comp_image(grid, SKPHUFF_IMAGE, COMP_CODE_SKPHUFF, &cinfo);
+    CHECK(status, FAIL, "make_comp_image: COMP_CODE_SKPHUFF");
 
     /* Set the compression info for the third image with deflate method */
     memset(&cinfo, 0, sizeof(cinfo));
     cinfo.deflate.level = DEFLATE_LEVEL;
 
     /* Create and write the third compressed image in this file */
-    status = make_comp_image(grid, DEFLATE_IMAGE, COMP_CODE_DEFLATE, &cinfo, err_func);
-    CHECK(status, FAIL, err_func);
+    status = make_comp_image(grid, DEFLATE_IMAGE, COMP_CODE_DEFLATE, &cinfo);
+    CHECK(status, FAIL, "make_comp_image: COMP_CODE_DEFLATE");
 
     /* Set the compression method for the fourth image */
     memset(&cinfo, 0, sizeof(cinfo));
@@ -573,8 +555,8 @@ test_get_compress(void)
     cinfo.jpeg.force_baseline = 1;
 
     /* Create and write the fourth compressed image in this file */
-    status = make_comp_image(grid, JPEG_IMAGE, COMP_CODE_JPEG, &cinfo, err_func);
-    CHECK(status, FAIL, err_func);
+    status = make_comp_image(grid, JPEG_IMAGE, COMP_CODE_JPEG, &cinfo);
+    CHECK(status, FAIL, "make_comp_image: COMP_CODE_JPEG");
 
     /* Terminate access to the GR interface and close the file */
     status = GRend(grid);
@@ -710,8 +692,6 @@ done:
     but when it is, its tests should be added to this routines (and to
     test_mgr_chunkwr_pixelone as well) appropriately, i.e. another image
     should be added to the image list.
-
- -BMR (Oct 7, 01)
 --------------------------------------------------------------------------*/
 
 static void

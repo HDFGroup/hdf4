@@ -953,6 +953,7 @@ test_oneblock_ri()
 
     /* Create and write the non-compressed image to this file */
     status = make_comp_image(grid, NONCOMP_IMAGE, 'n', COMP_CODE_NONE, &cinfo);
+    CHECK(status, FAIL, "make_comp_image: COMP_CODE_NONE");
 
     /* Create and write 3 more images: RLE, Deflate, and Skipping Huffman */
 
@@ -962,6 +963,7 @@ test_oneblock_ri()
     /* Create and write the RLE compressed image to this file, starting the
        data values with the letter 'r' */
     status = make_comp_image(grid, RLE_IMAGE, 'r', COMP_CODE_RLE, &cinfo);
+    CHECK(status, FAIL, "make_comp_image: COMP_CODE_RLE");
 
     /* Set the compression info for the image with Skipping Huffman method */
     memset(&cinfo, 0, sizeof(cinfo));
@@ -970,6 +972,7 @@ test_oneblock_ri()
     /* Create and write the Skipping Huffman compressed image to this file,
        starting the data values with the letter 's' */
     status = make_comp_image(grid, SKPHUFF_IMAGE, 's', COMP_CODE_SKPHUFF, &cinfo);
+    CHECK(status, FAIL, "make_comp_image: COMP_CODE_SKPHUFF");
 
     /* Set the compression info for the image with Deflate method */
     memset(&cinfo, 0, sizeof(cinfo));
@@ -978,6 +981,7 @@ test_oneblock_ri()
     /* Create and write the Deflate compressed image to this file, starting the
        data values with the letter 'd' */
     status = make_comp_image(grid, DEFLATE_IMAGE, 'd', COMP_CODE_DEFLATE, &cinfo);
+    CHECK(status, FAIL, "make_comp_image: COMP_CODE_DEFLATE");
 
     /* Set the compression method for the image with JPEG method */
     memset(&cinfo, 0, sizeof(cinfo));
@@ -987,6 +991,7 @@ test_oneblock_ri()
     /* Create and write the JPEG compressed image to this file, starting the
        data values with the letter 'j' - more work to be done for JPEG */
     /* status = make_comp_image(grid, JPEG_IMAGE, 'j', COMP_CODE_JPEG, &cinfo);
+    CHECK(status, FAIL, "make_comp_image: COMP_CODE_JPEG");
      */
 
     /* Terminate access to the GR interface and close the file */
