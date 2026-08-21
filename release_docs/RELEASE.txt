@@ -348,8 +348,8 @@ This version has been tested in the following platforms:
     (philo)                          Intel icc/icpc/ifort version 2021.10.0 20230609
 
     macOS Apple M1 26.5.2            Apple clang version 16.0.0 (clang-1600.0.26.6)
-    Darwin 25.5.0 arm64              gfortran GNU Fortran (Homebrew GCC 12.2.0) 12.2.0
-    (macmini-m1)                     Intel icc/icpc/ifort version 2021.8.0 20221120
+    Darwin 25.5.0 arm64              gfortran GNU Fortran (Homebrew GCC 14.2.0.1) 14.2.0
+    (macmini-m1)
 
     macOS Big Sur 11.7.3             Apple clang version 12.0.5 (clang-1205.0.22.9)
     Darwin 20.4.0 x86_64             gfortran GNU Fortran (Homebrew GCC 12.2.0) 12.2.0
