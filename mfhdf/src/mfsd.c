@@ -5573,7 +5573,7 @@ RETURNS
 int
 SDsetchunkcache(int32 sdsid,    /* IN: access aid to mess with */
                 int32 maxcache, /* IN: max number of chunks to cache */
-                int32 flags     /* IN: flags = 0, HDF_CACHEALL */)
+                int32 flags /* IN: flags = 0, HDF_CACHEALL */)
 {
     NC     *handle = NULL; /* file handle */
     NC_var *var    = NULL; /* SDS variable */

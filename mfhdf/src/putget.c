@@ -785,8 +785,8 @@ hdf_get_vp_aid(NC *handle, NC_var *vp, uint32 access)
             if (vp->aid != FAIL && vp->set_length == TRUE) {
                 if (Hsetlength(vp->aid, vp->len) == FAIL) {
                     Hendaccess(vp->aid);
-                    vp->aid    = FAIL;
-                    ret_value  = FAIL;
+                    vp->aid   = FAIL;
+                    ret_value = FAIL;
                     goto done;
                 }
                 vp->set_length = FALSE;
@@ -835,8 +835,7 @@ hdf_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint3
 
     (void)type;
 
-    if (hdf_get_vp_aid(handle, vp, (handle->xdrs->x_op == XDR_ENCODE) ? DFACC_WRITE : DFACC_READ) ==
-        FAIL) {
+    if (hdf_get_vp_aid(handle, vp, (handle->xdrs->x_op == XDR_ENCODE) ? DFACC_WRITE : DFACC_READ) == FAIL) {
         /*
          * Fail if there is no data *AND* we were trying to read...
          * Otherwise, we should fill with the fillvalue
