@@ -83,7 +83,7 @@ init_buffer(void)
     for (int j = 0; j < elemsize; j++) {
         out_buf[j] = (uint8)RAND();
     }
-} /* init_buffers() */
+}
 
 static void
 usage(void)
@@ -92,7 +92,7 @@ usage(void)
     printf("where elemsize is the number of elements in buffer (default: 1000 in Cray, 16384 in other "
            "platforms)\n");
     printf("\n");
-} /* end usage() */
+}
 
 /*
    Creates a file name from a file base name like 'test' and return it through
@@ -143,8 +143,7 @@ fixname(const char *base_name, char *fullname, size_t size)
         last = *ptr;
     }
     return fullname;
-
-} /* end fixname() */
+}
 
 static long
 read_test(int32 aid)
@@ -258,8 +257,9 @@ read_test(int32 aid)
         acc_time += (end_time.tv_sec - start_time.tv_sec) * FACTOR + (end_time.tv_usec - start_time.tv_usec);
     } /* end for */
 
+done:
     return acc_time;
-} /* end read_test() */
+}
 
 static long
 write_test(int32 aid, int num_timings)
@@ -381,17 +381,18 @@ write_test(int32 aid, int num_timings)
         acc_time += (end_time.tv_sec - start_time.tv_sec) * FACTOR + (end_time.tv_usec - start_time.tv_usec);
     } /* end for */
 
+done:
     return acc_time;
-} /* end read_test() */
+}
 
 int
 main(int argc, char *argv[])
 {
     model_info m_info;
     comp_info  c_info;
-    uint16     ref_num; /* reference number of the data written out */
-    int32      fid;     /* file ID of HDF file for testing */
-    int32      aid;     /* AID of element to test */
+    uint16     ref_num;    /* reference number of the data written out */
+    int32      fid = FAIL; /* file ID of HDF file for testing */
+    int32      aid = FAIL; /* AID of element to test */
     int        test_num;
     int32      ret;
     char       hfilename[32];
@@ -417,7 +418,9 @@ main(int argc, char *argv[])
     }
 
     out_buf = malloc((size_t)elemsize * sizeof(uint8));
-    in_buf  = malloc((size_t)elemsize * sizeof(uint8));
+    CHECK_ALLOC(out_buf, "out_buf", "main");
+    in_buf = malloc((size_t)elemsize * sizeof(uint8));
+    CHECK_ALLOC(in_buf, "in_buf", "main");
 
     Verbosity = 4; /* Default Verbosity is Low */
 
@@ -495,8 +498,7 @@ main(int argc, char *argv[])
         write_time[test_num][1] = write_test(aid, NUM_TIMINGS);
 
         /* Close data element */
-        ret = Hendaccess(aid);
-        CHECK(ret, FAIL, "Hendaccess");
+        ENDACCESS(aid, "Hendaccess");
 
         MESSAGE(3, {
             printf("Unbuffered read time=%f seconds\n", ((double)read_time[test_num][0] / FACTOR));
@@ -510,6 +512,7 @@ main(int argc, char *argv[])
     /* close the HDF file */
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
 
     /* Clean up files created */
     if (CleanUp) {
@@ -517,9 +520,16 @@ main(int argc, char *argv[])
         remove(hfilename);
     }
 
+    MESSAGE(6, printf("Finished buffered element test\n");)
+
+done:
+    /* Release resources */
+    if (aid != FAIL)
+        Hendaccess(aid);
+    if (fid != FAIL)
+        Hclose(fid);
     free(out_buf);
     free(in_buf);
 
-    MESSAGE(6, printf("Finished buffered element test\n");)
     return num_errs;
-} /* end main() */
+}

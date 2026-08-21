@@ -661,8 +661,6 @@ init(int blocks, int distinct, struct rgb *my_color_pt)
     first->right    = NULL;
     dummy->nmbr_pts = 0;
 
-    free(first);
-    free(dummy);
     free(temp);
 
     return;

@@ -47,7 +47,7 @@ get_srcdir_filename(const char *filename)
 
     /* If not enough space, just return NULL */
     return NULL;
-} /* end get_srcdir_filename() */
+}
 
 /*-------------------------------------------------------------------------
  * Function:    get_srcdir
@@ -74,7 +74,7 @@ get_srcdir(void)
     }
     else
         return NULL;
-} /* end get_srcdir() */
+}
 
 int
 fuzzy_memcmp(const void *s1, const void *s2, int32 len, int fuzz_factor)
@@ -92,7 +92,7 @@ fuzzy_memcmp(const void *s1, const void *s2, int32 len, int fuzz_factor)
     else {
         return (int)(*t1 - *t2);
     }
-} /* end fuzzy_memcmp() */
+}
 
 void
 print_mismatched(const void *s1, const void *s2, int32 size2cmp)

@@ -16,17 +16,11 @@
  * tvattr.c
  *
  * This program tests routines in hdf/src/vattr.c.  Those routines
- *  set or change attributes for a vgroup, a vdata or a field of
- *  a vdata; get info about an attribute; read values of an attr.
- *
- * create_vset_stuff() creates 1 empty vgroup and 1 vgroup having 1
- *  vdata. write_vattr() adds attributes to the vgroups, vdata and
- *  the fields of the vdata. It then creates new vdata and vgroup,
- *  and adds attrs to them.  read_vattr reads the attributes back,
- *  and check their correctness.
+ *  set or change attributes for a vgroup, a vdata or a field of a
+ *  vdata; get info about an attribute; read/write values of an attr.
  *
  * test_readattrtwice: tests the fix of bugzilla #486, which a
- *	subsequent read of an attribute failed. - BMR - Dec, 2005.
+ *	subsequent read of an attribute failed.
  *
  **************************************************************/
 #include <math.h>
@@ -75,132 +69,121 @@ static int  write_vattrs(void);
 static int  read_vattrs(void);
 static void test_readattrtwice(void);
 
-/* create vdatas and vgroups */
-
+/* create_vset_stuff() creates 1 empty vgroup and 1 vgroup having 1
+ *  vdata. write_vattr() adds attributes to the vgroups, vdata and
+ *  the fields of the vdata. It then creates new vdata and vgroup,
+ *  and adds attrs to them.  read_vattr reads the attributes back,
+ *  and check their correctness.
+ */
 static int
 create_vset_stuff(void)
 {
-    int32 fid, vgid, vsid;
+    int32 fid = FAIL, vgid = FAIL, vsid = FAIL;
+    int32 ret;
 
-    if (FAIL == (fid = Hopen(FILENAME, DFACC_CREATE, 0))) {
-        num_errs++;
-        return FAIL;
-    }
-    if (Vstart(fid) == FAIL) {
-        num_errs++;
-        return FAIL;
-    }
-    /* Vgroup Generation */
-    if (FAIL == (vgid = (Vattach(fid, -1, "w")))) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == Vsetname(vgid, VGNAME0)) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == Vdetach(vgid)) {
-        num_errs++;
-        return FAIL;
-    }
-    /* create a vgroup and a vdata, insert the vdata into the vgroup */
-    if (FAIL == (vgid = (Vattach(fid, -1, "w")))) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == Vsetname(vgid, VGNAME1)) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == (vsid = (VSattach(fid, -1, "w")))) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == VSsetname(vsid, VSNAME1)) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == VSfdefine(vsid, FLDNAME1, DFNT_CHAR8, 1)) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == VSfdefine(vsid, FLDNAME2, DFNT_CHAR8, 1)) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == VSsetfields(vsid, FLDNAMES_1)) {
-        num_errs++;
-        return FAIL;
-    }
-    if (N_RECS != VSwrite(vsid, (unsigned char *)data2, N_RECS, FULL_INTERLACE)) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == Vinsert(vgid, vsid)) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == VSdetach(vsid)) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == Vdetach(vgid)) {
-        num_errs++;
-        return FAIL;
-    }
+    /* open the file and initialize the V interface */
+    fid = Hopen(FILENAME, DFACC_CREATE, 0);
+    CHECK(fid, FAIL, "Hopen");
+    ret = Vstart(fid);
+    CHECK(ret, FAIL, "Vstart");
+
+    /* create a vgroup */
+    vgid = Vattach(fid, -1, "w");
+    CHECK(vgid, FAIL, "Vattach");
+    ret = Vsetname(vgid, VGNAME0);
+    CHECK(ret, FAIL, "Vsetname");
+    ret = Vdetach(vgid);
+    CHECK(ret, FAIL, "Vdetach");
+    vgid = FAIL;
+    vgid = FAIL;
+
+    /* create a vgroup and a vdata, then insert the vdata into the vgroup */
+    vgid = Vattach(fid, -1, "w");
+    CHECK(vgid, FAIL, "Vattach");
+    ret = Vsetname(vgid, VGNAME1);
+    CHECK(ret, FAIL, "Vsetname");
+    vsid = VSattach(fid, -1, "w");
+    CHECK(vsid, FAIL, "VSattach");
+    ret = VSsetname(vsid, VSNAME1);
+    CHECK(ret, FAIL, "VSsetname");
+    ret = VSfdefine(vsid, FLDNAME1, DFNT_CHAR8, 1);
+    CHECK(ret, FAIL, "VSfdefine");
+    ret = VSfdefine(vsid, FLDNAME2, DFNT_CHAR8, 1);
+    CHECK(ret, FAIL, "VSfdefine");
+    ret = VSsetfields(vsid, FLDNAMES_1);
+    CHECK(ret, FAIL, "VSsetfields");
+    ret = VSwrite(vsid, (unsigned char *)data2, N_RECS, FULL_INTERLACE);
+    VERIFY(ret, N_RECS, "VSwrite");
+    ret = Vinsert(vgid, vsid);
+    CHECK(ret, FAIL, "Vinsert");
+    ret = VSdetach(vsid);
+    CHECK(ret, FAIL, "VSdetach");
+    vsid = FAIL;
+    ret  = Vdetach(vgid);
+    CHECK(ret, FAIL, "Vdetach");
+    vgid = FAIL;
+
     /* close the file */
-    if (FAIL == Vend(fid)) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == Hclose(fid)) {
-        num_errs++;
-        return FAIL;
+    ret = Vend(fid);
+    CHECK(ret, FAIL, "Vend");
+    ret = Hclose(fid);
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
+
+done:
+    if (vsid != FAIL)
+        VSdetach(vsid);
+    if (vgid != FAIL)
+        Vdetach(vgid);
+    if (fid != FAIL) {
+        Vend(fid);
+        Hclose(fid);
     }
     return SUCCEED;
-} /* create_vset_stuff */
+}
 
-/* test attribute routines */
+/*  write_vattr() adds attributes to the vgroups, vdata and
+ *  the fields of the vdata. It then creates new vdata and vgroup,
+ *  and adds attrs to them.  read_vattr reads the attributes back,
+ *  and checks their correctness.
+ */
 static int
 write_vattrs(void)
 {
-    int32 fid, vgid, vsid;
+    int32 fid = FAIL, vgid = FAIL, vsid = FAIL;
     int32 vsref, vgref;
+    int32 ret;
     int32 fldindex, vsversion;
     int   n_flds;
 
-    /* add attrs to the 1 vg */
-    if (FAIL == (fid = Hopen(FILENAME, DFACC_RDWR, -1))) {
-        num_errs++;
-        return FAIL;
-    }
-    if (Vstart(fid) == FAIL) {
-        num_errs++;
-        return FAIL;
-    }
+    /* open the file and initialize the V interface */
+    fid = Hopen(FILENAME, DFACC_RDWR, -1);
+    CHECK(fid, FAIL, "Hopen");
+    ret = Vstart(fid);
+    CHECK(ret, FAIL, "Vstart");
 
-    if (FAIL == (vgref = Vgetid(fid, -1))) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == (vgid = Vattach(fid, vgref, "w"))) {
-        num_errs++;
-        return FAIL;
-    }
+    /* add attrs to the 1 vg */
+    vgref = Vgetid(fid, -1);
+    CHECK(vgref, FAIL, "Vgetid");
+    vgid = Vattach(fid, vgref, "w");
+    CHECK(vgid, FAIL, "Vattach");
     if (FAIL == Vsetattr(vgid, ATTNAME1, DFNT_UINT32, 2, attr1)) {
         num_errs++;
         printf(">>> Vsetattr1 failed\n");
     }
+
     /* change data type of existing attr, should fail */
     if (FAIL != Vsetattr(vgid, ATTNAME1, DFNT_UINT16, 2, attr2)) {
         num_errs++;
         printf(">>> Vsetattr1 changes attr type, should failed\n");
     }
+
     /* change order of existing attr, should fail */
     if (FAIL != Vsetattr(vgid, ATTNAME1, DFNT_UINT32, 1, attr1)) {
         num_errs++;
         printf(">>> Vsetattr changes attr order, should failed\n");
     }
+
     /* change values of existing attr */
     if (FAIL == Vsetattr(vgid, ATTNAME1, DFNT_UINT32, 2, &attr1[2])) {
         num_errs++;
@@ -211,29 +194,35 @@ write_vattrs(void)
         num_errs++;
         printf(">>> Vsetattr2 failed\n");
     }
-    if (FAIL == Vdetach(vgid)) {
-        num_errs++;
-        return FAIL;
-    }
-    /* add attr to vdata */
-    if (FAIL == (vsref = VSfind(fid, VSNAME1))) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == (vsid = VSattach(fid, vsref, "w"))) {
-        num_errs++;
-        return FAIL;
-    }
+
+    /* close the vgroup */
+    ret = Vdetach(vgid);
+    CHECK(ret, FAIL, "Vdetach");
+    vgid = FAIL;
+
+    /*
+     * Add attr to vdata
+     */
+
+    /* locate the vdata and access it */
+    vsref = VSfind(fid, VSNAME1);
+    CHECK(vsref, FAIL, "VSfind");
+    vsid = VSattach(fid, vsref, "w");
+    CHECK(vsid, FAIL, "VSattach");
+
+    /* verify its version */
     if (VSET_VERSION != (vsversion = VSgetversion(vsid))) {
         num_errs++;
         printf(">>> Wrong version, should be 3, got %d \n", (int)vsversion);
     }
+
     /* check number of fields */
     if (2 != (n_flds = VFnfields(vsid))) {
         num_errs++;
         printf(">>> Wrong number of fields, should be 2, got %d.\n", n_flds);
     }
-    /* search for non-existing field  */
+
+    /* test searching for non-existing field  */
     if (FAIL != VSfindex(vsid, FLDNAME0, &fldindex)) {
         num_errs++;
         printf(">>> Search for non-existing field, should fail.\n");
@@ -258,6 +247,8 @@ write_vattrs(void)
         num_errs++;
         printf(">>> VSsetattr5 failed\n");
     }
+
+    /* verify that setting attr for non-existing field is invalid */
     if (FAIL != VSsetattr(vsid, 2, ATTNAME3, DFNT_CHAR8, 5, attr3)) {
         num_errs++;
         printf(">>> Set attr for non-existing field, should fail\n");
@@ -267,7 +258,7 @@ write_vattrs(void)
         printf(">>> Set attr for non-existing field, should fail\n");
     }
 
-    /* set same attr name to different fields */
+    /* test setting the same attr name to different fields */
     if (FAIL == VSsetattr(vsid, _HDF_VDATA, ATTNAME4, DFNT_FLOAT32, 1, attr4)) {
         num_errs++;
         printf(">>> VSsetattr6 failed\n");
@@ -300,36 +291,23 @@ write_vattrs(void)
         num_errs++;
         printf(">>> VSsetattr failed in changing attr values.\n");
     }
-    if (FAIL == VSdetach(vsid)) {
-        num_errs++;
-        return FAIL;
-    }
+    ret = VSdetach(vsid);
+    CHECK(ret, FAIL, "VSdetach");
+    vsid = FAIL;
 
     /* create lone vdata  and add attributes to it */
-    if (FAIL == (vsid = (VSattach(fid, -1, "w")))) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == VSsetname(vsid, VSNAME0)) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == VSfdefine(vsid, FLDNAME0, DFNT_INT32, 1)) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == VSfdefine(vsid, FLDNAME1, DFNT_INT32, 1)) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == VSsetfields(vsid, FLDNAMES)) {
-        num_errs++;
-        return FAIL;
-    }
-    if (N_RECS != VSwrite(vsid, (unsigned char *)data1, N_RECS, FULL_INTERLACE)) {
-        num_errs++;
-        return FAIL;
-    }
+    vsid = VSattach(fid, -1, "w");
+    CHECK(vsid, FAIL, "VSattach");
+    ret = VSsetname(vsid, VSNAME0);
+    CHECK(ret, FAIL, "VSsetname");
+    ret = VSfdefine(vsid, FLDNAME0, DFNT_INT32, 1);
+    CHECK(ret, FAIL, "VSfdefine");
+    ret = VSfdefine(vsid, FLDNAME1, DFNT_INT32, 1);
+    CHECK(ret, FAIL, "VSfdefine");
+    ret = VSsetfields(vsid, FLDNAMES);
+    CHECK(ret, FAIL, "VSsetfields");
+    ret = VSwrite(vsid, (unsigned char *)data1, N_RECS, FULL_INTERLACE);
+    VERIFY(ret, N_RECS, "VSwrite");
     if (FAIL == VSfindex(vsid, FLDNAME0, &fldindex)) {
         num_errs++;
         printf(">>> VSfindex failed in searching for FLDNAME0.\n");
@@ -351,23 +329,16 @@ write_vattrs(void)
         num_errs++;
         printf(">>> VSsetattr8 failed\n");
     }
-    if (FAIL == VSdetach(vsid)) {
-        num_errs++;
-        return FAIL;
-    }
+    ret = VSdetach(vsid);
+    CHECK(ret, FAIL, "VSdetach");
+    vsid = FAIL;
     /* attach again, and modify attr */
-    if (FAIL == (vsref = VSfind(fid, VSNAME0))) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == (vsid = VSattach(fid, vsref, "w"))) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == VSsetclass(vsid, VSCLASS0)) {
-        num_errs++;
-        return FAIL;
-    }
+    vsref = VSfind(fid, VSNAME0);
+    CHECK(vsref, FAIL, "VSfind");
+    vsid = VSattach(fid, vsref, "w");
+    CHECK(vsid, FAIL, "VSattach");
+    ret = VSsetclass(vsid, VSCLASS0);
+    CHECK(ret, FAIL, "VSsetclass");
     if (FAIL == VSsetattr(vsid, 1, ATTNAME8, DFNT_FLOAT32, 1, &attr4[1])) {
         num_errs++;
         printf(">>> VSsetattr failed in modifying attr8.\n");
@@ -376,58 +347,39 @@ write_vattrs(void)
         num_errs++;
         printf(">>> VSsetattr9  field. \n");
     }
-    if (FAIL == VSdetach(vsid)) {
-        num_errs++;
-        return FAIL;
-    }
+    ret = VSdetach(vsid);
+    CHECK(ret, FAIL, "VSdetach");
+    vsid = FAIL;
     /* attach again with "r" access to test VSsetattr on "r" access vdata
        BMR - Nov 4, 2004 */
-    if (FAIL == (vsref = VSfind(fid, VSNAME0))) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == (vsid = VSattach(fid, vsref, "r"))) {
-        num_errs++;
-        return FAIL;
-    }
+    vsref = VSfind(fid, VSNAME0);
+    CHECK(vsref, FAIL, "VSfind");
+    vsid = VSattach(fid, vsref, "r");
+    CHECK(vsid, FAIL, "VSattach");
     if (FAIL != VSsetattr(vsid, 1, "NO ATTRIBUTE", DFNT_FLOAT32, 1, &attr4[1])) {
         num_errs++;
         printf(">>> VSsetattr did not fail on read access vdata.\n");
     }
-    if (FAIL == VSdetach(vsid)) {
-        num_errs++;
-        return FAIL;
-    }
+    ret = VSdetach(vsid);
+    CHECK(ret, FAIL, "VSdetach");
+    vsid = FAIL;
     /* create vgroup and add attrs */
-    if (FAIL == (vgid = (Vattach(fid, -1, "w")))) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == Vsetname(vgid, VGNAME2)) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == Vaddtagref(vgid, DFTAG_VH, vsref)) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == Vsetclass(vgid, VGCLASS2)) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == Vdetach(vgid)) {
-        num_errs++;
-        return FAIL;
-    }
+    vgid = Vattach(fid, -1, "w");
+    CHECK(vgid, FAIL, "Vattach");
+    ret = Vsetname(vgid, VGNAME2);
+    CHECK(ret, FAIL, "Vsetname");
+    ret = Vaddtagref(vgid, DFTAG_VH, vsref);
+    CHECK(ret, FAIL, "Vaddtagref");
+    ret = Vsetclass(vgid, VGCLASS2);
+    CHECK(ret, FAIL, "Vsetclass");
+    ret = Vdetach(vgid);
+    CHECK(ret, FAIL, "Vdetach");
+    vgid = FAIL;
     /* attach again, add attr */
-    if (FAIL == (vgref = Vfind(fid, VGNAME2))) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == (vgid = (Vattach(fid, vgref, "w")))) {
-        num_errs++;
-        return FAIL;
-    }
+    vgref = Vfind(fid, VGNAME2);
+    CHECK(vgref, FAIL, "Vfind");
+    vgid = Vattach(fid, vgref, "w");
+    CHECK(vgid, FAIL, "Vattach");
     if (FAIL == Vsetattr(vgid, ATTNAME9, DFNT_UINT32, 1, attr1)) {
         num_errs++;
         printf(">>> Vsetattr1 failed\n");
@@ -445,45 +397,47 @@ write_vattrs(void)
         num_errs++;
         printf(">>> Vdetach failed in vgname2.\n");
     }
+    vgid = FAIL;
 
-    if (FAIL == Vend(fid)) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == Hclose(fid)) {
-        num_errs++;
-        return FAIL;
+    ret = Vend(fid);
+    CHECK(ret, FAIL, "Vend");
+    ret = Hclose(fid);
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
+
+done:
+    if (vsid != FAIL)
+        VSdetach(vsid);
+    if (vgid != FAIL)
+        Vdetach(vgid);
+    if (fid != FAIL) {
+        Vend(fid);
+        Hclose(fid);
     }
     return SUCCEED;
-} /* write_vattr */
+}
 
-/*  Test reading routines */
+/*  read_vattr reads the attributes back, and check their correctness.
+ */
 static int
 read_vattrs(void)
 {
-    int32 fid, vgid, vsid, vgref, vsref;
+    int32 fid = FAIL, vgid = FAIL, vsid = FAIL, vgref, vsref;
     int   n_vgattrs, n_vsattrs, n_fldattrs;
     int   iattrindex, ret;
     int32 i_type, i_count, i_size, iversion;
     char  iattrname[FIELDNAMELENMAX + 1];
 
-    if (FAIL == (fid = Hopen(FILENAME, DFACC_RDONLY, 0))) {
-        num_errs++;
-        return FAIL;
-    }
-    if (Vstart(fid) == FAIL) {
-        num_errs++;
-        return FAIL;
-    }
+    fid = Hopen(FILENAME, DFACC_RDONLY, 0);
+    CHECK(fid, FAIL, "Hopen");
+    ret = Vstart(fid);
+    CHECK(ret, FAIL, "Vstart");
+
     /* Read vgroup attrs first */
-    if (FAIL == (vgref = Vfind(fid, VGNAME0))) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == (vgid = (Vattach(fid, vgref, "r")))) {
-        num_errs++;
-        return FAIL;
-    }
+    vgref = Vfind(fid, VGNAME0);
+    CHECK(vgref, FAIL, "Vfind");
+    vgid = Vattach(fid, vgref, "r");
+    CHECK(vgid, FAIL, "Vattach");
     if ((iversion = Vgetversion(vgid)) < VSET_NEW_VERSION) {
         num_errs++;
         printf(">>> Wrong Vgroup version, should be %d, got %d.\n", VSET_NEW_VERSION, (int)iversion);
@@ -530,15 +484,12 @@ read_vattrs(void)
         num_errs++;
         printf(">>>Vdetach failed in vgname0.\n");
     }
+    vgid = FAIL;
     /* VGNAME1 has no attr */
-    if (FAIL == (vgref = Vfind(fid, VGNAME1))) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == (vgid = (Vattach(fid, vgref, "r")))) {
-        num_errs++;
-        return FAIL;
-    }
+    vgref = Vfind(fid, VGNAME1);
+    CHECK(vgref, FAIL, "Vfind");
+    vgid = Vattach(fid, vgref, "r");
+    CHECK(vgid, FAIL, "Vattach");
     if ((iversion = Vgetversion(vgid)) != VSET_VERSION) {
         num_errs++;
         printf(">>> Wrong Vgroup version, should be %d, got %d.\n", VSET_VERSION, (int)iversion);
@@ -551,15 +502,12 @@ read_vattrs(void)
         num_errs++;
         printf(">>>Vdetach failed in detaching vgname1.\n");
     }
+    vgid = FAIL;
     /* VSNAME0 has 5 attrs */
-    if (FAIL == (vsref = VSfind(fid, VSNAME0))) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == (vsid = (VSattach(fid, vsref, "r")))) {
-        num_errs++;
-        return FAIL;
-    }
+    vsref = VSfind(fid, VSNAME0);
+    CHECK(vsref, FAIL, "VSfind");
+    vsid = VSattach(fid, vsref, "r");
+    CHECK(vsid, FAIL, "VSattach");
     if ((iversion = VSgetversion(vsid)) != VSET_NEW_VERSION) {
         num_errs++;
         printf(">>> Wrong Vdata version, should be %d, got %d.\n", VSET_NEW_VERSION, (int)iversion);
@@ -592,15 +540,12 @@ read_vattrs(void)
         num_errs++;
         printf(">>>Vsdetach failed in vsname0.\n");
     }
+    vsid = FAIL;
     /* VSNAME1 has 2 attrs, fld0  has 3 and fld1 has 1 attr */
-    if (FAIL == (vsref = VSfind(fid, VSNAME1))) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == (vsid = (VSattach(fid, vsref, "r")))) {
-        num_errs++;
-        return FAIL;
-    }
+    vsref = VSfind(fid, VSNAME1);
+    CHECK(vsref, FAIL, "VSfind");
+    vsid = VSattach(fid, vsref, "r");
+    CHECK(vsid, FAIL, "VSattach");
     if ((iversion = VSgetversion(vsid)) != VSET_NEW_VERSION) {
         num_errs++;
         printf(">>> Wrong Vdata version, should be %d, got %d.\n", VSET_NEW_VERSION, (int)iversion);
@@ -695,15 +640,12 @@ read_vattrs(void)
         num_errs++;
         printf(">>>VSdetach failed in vsname1.\n");
     }
+    vsid = FAIL;
     /* test VSisattr for attr vdata */
-    if (FAIL == (vsref = VSfind(fid, ATTNAME10))) {
-        num_errs++;
-        return FAIL;
-    }
-    if (FAIL == (vsid = (VSattach(fid, vsref, "r")))) {
-        num_errs++;
-        return FAIL;
-    }
+    vsref = VSfind(fid, ATTNAME10);
+    CHECK(vsref, FAIL, "VSfind");
+    vsid = VSattach(fid, vsref, "r");
+    CHECK(vsid, FAIL, "VSattach");
     if (TRUE != VSisattr(vsid)) {
         num_errs++;
         printf(">>> VSisattr failed. ATTNAME10 is an attribute vdata.\n");
@@ -715,31 +657,42 @@ read_vattrs(void)
     }
     ret = VSdetach(vsid);
     CHECK(ret, FAIL, "VSdetach");
-    ret = Vend(fid);
+    vsid = FAIL;
+    ret  = Vend(fid);
     CHECK(ret, FAIL, "Vend");
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
 
+done:
+    if (vsid != FAIL)
+        VSdetach(vsid);
+    if (vgid != FAIL)
+        Vdetach(vgid);
+    if (fid != FAIL) {
+        Vend(fid);
+        Hclose(fid);
+    }
     return 0;
 }
 
 static void
 test_readattrtwice(void)
 {
-    int32 file_id, vsref, vsid;
+    int32 file_id = FAIL, vsref, vsid = FAIL;
     int32 findex, fattr_index;
     int32 data_type, count, size;
     int32 nfields, num_attrs, num_fattrs;
     char  name[MAX_HDF4_NAME_LENGTH + 1];
-    char *buffer;
+    char *buffer = NULL;
     int   k;
     int   ret;
 
     file_id = Hopen(FILENAME, DFACC_READ, 0);
-    CHECK_VOID(file_id, FAIL, "Hopen:FILENAME");
+    CHECK(file_id, FAIL, "Hopen:FILENAME");
 
     ret = Vstart(file_id);
-    CHECK_VOID(ret, FAIL, "Vstart:file_id");
+    CHECK(ret, FAIL, "Vstart:file_id");
 
     /* get the first vdata */
     vsref = VSgetid(file_id, -1);
@@ -751,20 +704,20 @@ test_readattrtwice(void)
     /* read attributes of each vdata and its fields, then go to next vdata */
     while (vsref != -1) {
         vsid = VSattach(file_id, vsref, "r");
-        CHECK_VOID(vsid, FAIL, "VSattach");
+        CHECK(vsid, FAIL, "VSattach");
 
         num_attrs = VSfnattrs(vsid, _HDF_VDATA);
-        CHECK_VOID(num_attrs, FAIL, "VSfnattrs");
+        CHECK(num_attrs, FAIL, "VSfnattrs");
 
         for (k = 0; k < num_attrs; k++) {
             ret = VSattrinfo(vsid, _HDF_VDATA, k, name, &data_type, &count, &size);
-            CHECK_VOID(ret, FAIL, "VSattrinfo");
+            CHECK(ret, FAIL, "VSattrinfo");
 
             buffer = malloc((size_t)size + 1);
-            CHECK_VOID(buffer, NULL, "malloc");
+            CHECK(buffer, NULL, "malloc");
 
             ret = VSgetattr(vsid, _HDF_VDATA, k, buffer);
-            CHECK_VOID(ret, FAIL, "VSgetattr");
+            CHECK(ret, FAIL, "VSgetattr");
 
             ret = VSgetattr(vsid, _HDF_VDATA, k, buffer);
             if (ret == FAIL) {
@@ -772,23 +725,24 @@ test_readattrtwice(void)
                 printf(">>> Reading attribute twice failed - (bugzilla 486)\n");
             }
             free(buffer);
+            buffer = NULL;
 
             nfields = VFnfields(vsid);
-            CHECK_VOID(nfields, FAIL, "VFnfields");
+            CHECK(nfields, FAIL, "VFnfields");
 
             for (findex = 0; findex < nfields; findex++) {
                 num_fattrs = VSfnattrs(vsid, findex);
-                CHECK_VOID(num_fattrs, FAIL, "VSfnattrs");
+                CHECK(num_fattrs, FAIL, "VSfnattrs");
 
                 for (fattr_index = 0; fattr_index < num_fattrs; fattr_index++) {
                     ret = VSattrinfo(vsid, findex, fattr_index, name, &data_type, &count, &size);
-                    CHECK_VOID(ret, FAIL, "VSattrinfo");
+                    CHECK(ret, FAIL, "VSattrinfo");
 
                     buffer = malloc((size_t)size);
-                    CHECK_VOID(buffer, NULL, "malloc");
+                    CHECK(buffer, NULL, "malloc");
 
                     ret = VSgetattr(vsid, findex, fattr_index, buffer);
-                    CHECK_VOID(ret, FAIL, "VSgetattr");
+                    CHECK(ret, FAIL, "VSgetattr");
 
                     ret = VSgetattr(vsid, findex, fattr_index, buffer);
                     if (ret == FAIL) {
@@ -797,21 +751,34 @@ test_readattrtwice(void)
                     }
 
                     free(buffer);
+                    buffer = NULL;
                 } /* for fattr_index */
             }     /* for findex */
         }         /* for k */
 
         ret = VSdetach(vsid);
-        CHECK_VOID(ret, FAIL, "VSdetach");
+        CHECK(ret, FAIL, "VSdetach");
+        vsid = FAIL;
 
         /* find next vdata */
         vsref = VSgetid(file_id, vsref);
     }
     ret = Vend(file_id);
-    CHECK_VOID(ret, FAIL, "VSdetach");
+    CHECK(ret, FAIL, "Vend");
     ret = Hclose(file_id);
-    CHECK_VOID(ret, FAIL, "Hclose");
-} /* test_readattrtwice */
+    CHECK(ret, FAIL, "Hclose");
+    file_id = FAIL;
+
+done:
+    free(buffer);
+    if (vsid != FAIL)
+        VSdetach(vsid);
+    if (file_id != FAIL) {
+        Vend(file_id);
+        Hclose(file_id);
+    }
+    return;
+}
 
 /* main test driver */
 void
@@ -821,4 +788,4 @@ test_vset_attr(void)
     write_vattrs();
     read_vattrs();
     test_readattrtwice();
-} /* test_vset_attr */
+}

@@ -55,14 +55,14 @@ void
 test_conv(void)
 {
     clock_t  c1, c2, c3, c4;
-    uint8   *src_uint8, *dst_uint8, *dst2_uint8;
-    uint16  *src_uint16, *dst_uint16, *dst2_uint16;
-    uint32  *src_uint32, *dst_uint32, *dst2_uint32;
-    int8    *src_int8, *dst_int8, *dst2_int8;
-    int16   *src_int16, *dst_int16, *dst2_int16;
-    int32   *src_int32, *dst_int32, *dst2_int32;
-    float32 *src_float32, *dst_float32, *dst2_float32;
-    float64 *src_float64, *dst_float64, *dst2_float64;
+    uint8   *src_uint8 = NULL, *dst_uint8 = NULL, *dst2_uint8 = NULL;
+    uint16  *src_uint16 = NULL, *dst_uint16 = NULL, *dst2_uint16 = NULL;
+    uint32  *src_uint32 = NULL, *dst_uint32 = NULL, *dst2_uint32 = NULL;
+    int8    *src_int8 = NULL, *dst_int8 = NULL, *dst2_int8 = NULL;
+    int16   *src_int16 = NULL, *dst_int16 = NULL, *dst2_int16 = NULL;
+    int32   *src_int32 = NULL, *dst_int32 = NULL, *dst2_int32 = NULL;
+    float32 *src_float32 = NULL, *dst_float32 = NULL, *dst2_float32 = NULL;
+    float64 *src_float64 = NULL, *dst_float64 = NULL, *dst2_float64 = NULL;
     int      i, r;
     int      t;
     int32    ret;
@@ -76,17 +76,17 @@ test_conv(void)
         /* allocate arrays */
         src_int8 = (int8 *)malloc(TEST_SIZE * sizeof(int8));
         if (src_int8 == NULL) {
-            CHECK_VOID(src_int8, NULL, "malloc");
+            CHECK(src_int8, NULL, "malloc");
             return;
         } /* end if */
         dst_int8 = (int8 *)malloc(TEST_SIZE * sizeof(int8));
         if (dst_int8 == NULL) {
-            CHECK_VOID(dst_int8, NULL, "malloc");
+            CHECK(dst_int8, NULL, "malloc");
             return;
         } /* end if */
         dst2_int8 = (int8 *)malloc(TEST_SIZE * sizeof(int8));
         if (dst2_int8 == NULL) {
-            CHECK_VOID(dst2_int8, NULL, "malloc");
+            CHECK(dst2_int8, NULL, "malloc");
             return;
         } /* end if */
 
@@ -151,23 +151,26 @@ test_conv(void)
         }
 
         free(src_int8);
+        src_int8 = NULL;
         free(dst_int8);
+        dst_int8 = NULL;
         free(dst2_int8);
+        dst2_int8 = NULL;
 
         MESSAGE(6, printf("seeding %s uint8 array\n", test_name[t]););
         src_uint8 = (uint8 *)malloc(TEST_SIZE * sizeof(uint8));
         if (src_uint8 == NULL) {
-            CHECK_VOID(src_uint8, NULL, "malloc");
+            CHECK(src_uint8, NULL, "malloc");
             return;
         } /* end if */
         dst_uint8 = (uint8 *)malloc(TEST_SIZE * sizeof(uint8));
         if (dst_uint8 == NULL) {
-            CHECK_VOID(dst_uint8, NULL, "malloc");
+            CHECK(dst_uint8, NULL, "malloc");
             return;
         } /* end if */
         dst2_uint8 = (uint8 *)malloc(TEST_SIZE * sizeof(uint8));
         if (dst2_uint8 == NULL) {
-            CHECK_VOID(dst2_uint8, NULL, "malloc");
+            CHECK(dst2_uint8, NULL, "malloc");
             return;
         } /* end if */
 
@@ -233,23 +236,26 @@ test_conv(void)
         }
 
         free(src_uint8);
+        src_uint8 = NULL;
         free(dst_uint8);
+        dst_uint8 = NULL;
         free(dst2_uint8);
+        dst2_uint8 = NULL;
 
         MESSAGE(6, printf("seeding %s int16 array\n", test_name[t]););
         src_int16 = (int16 *)malloc(TEST_SIZE * sizeof(int16));
         if (src_int16 == NULL) {
-            CHECK_VOID(src_int16, NULL, "malloc");
+            CHECK(src_int16, NULL, "malloc");
             return;
         } /* end if */
         dst_int16 = (int16 *)malloc(TEST_SIZE * sizeof(int16));
         if (dst_int16 == NULL) {
-            CHECK_VOID(dst_int16, NULL, "malloc");
+            CHECK(dst_int16, NULL, "malloc");
             return;
         } /* end if */
         dst2_int16 = (int16 *)malloc(TEST_SIZE * sizeof(int16));
         if (dst2_int16 == NULL) {
-            CHECK_VOID(dst2_int16, NULL, "malloc");
+            CHECK(dst2_int16, NULL, "malloc");
             return;
         } /* end if */
 
@@ -314,23 +320,26 @@ test_conv(void)
         } /* end if */
 
         free(src_int16);
+        src_int16 = NULL;
         free(dst_int16);
+        dst_int16 = NULL;
         free(dst2_int16);
+        dst2_int16 = NULL;
 
         MESSAGE(6, printf("seeding %s uint16 array\n", test_name[t]););
         src_uint16 = (uint16 *)malloc(TEST_SIZE * sizeof(uint16));
         if (src_uint16 == NULL) {
-            CHECK_VOID(src_uint16, NULL, "malloc");
+            CHECK(src_uint16, NULL, "malloc");
             return;
         } /* end if */
         dst_uint16 = (uint16 *)malloc(TEST_SIZE * sizeof(uint16));
         if (dst_uint16 == NULL) {
-            CHECK_VOID(dst_uint16, NULL, "malloc");
+            CHECK(dst_uint16, NULL, "malloc");
             return;
         } /* end if */
         dst2_uint16 = (uint16 *)malloc(TEST_SIZE * sizeof(uint16));
         if (dst2_uint16 == NULL) {
-            CHECK_VOID(dst2_uint16, NULL, "malloc");
+            CHECK(dst2_uint16, NULL, "malloc");
             return;
         } /* end if */
 
@@ -395,23 +404,26 @@ test_conv(void)
         }
 
         free(src_uint16);
+        src_uint16 = NULL;
         free(dst_uint16);
+        dst_uint16 = NULL;
         free(dst2_uint16);
+        dst2_uint16 = NULL;
 
         MESSAGE(6, printf("seeding %s int32 array\n", test_name[t]););
         src_int32 = (int32 *)malloc(TEST_SIZE * sizeof(int32));
         if (src_int32 == NULL) {
-            CHECK_VOID(src_int32, NULL, "malloc");
+            CHECK(src_int32, NULL, "malloc");
             return;
         } /* end if */
         dst_int32 = (int32 *)malloc(TEST_SIZE * sizeof(int32));
         if (dst_int32 == NULL) {
-            CHECK_VOID(dst_int32, NULL, "malloc");
+            CHECK(dst_int32, NULL, "malloc");
             return;
         } /* end if */
         dst2_int32 = (int32 *)malloc(TEST_SIZE * sizeof(int32));
         if (dst2_int32 == NULL) {
-            CHECK_VOID(dst2_int32, NULL, "malloc");
+            CHECK(dst2_int32, NULL, "malloc");
             return;
         } /* end if */
 
@@ -476,23 +488,26 @@ test_conv(void)
         }
 
         free(src_int32);
+        src_int32 = NULL;
         free(dst_int32);
+        dst_int32 = NULL;
         free(dst2_int32);
+        dst2_int32 = NULL;
 
         MESSAGE(6, printf("seeding %s uint32 array\n", test_name[t]););
         src_uint32 = (uint32 *)malloc(TEST_SIZE * sizeof(uint32));
         if (src_uint32 == NULL) {
-            CHECK_VOID(src_uint32, NULL, "malloc");
+            CHECK(src_uint32, NULL, "malloc");
             return;
         } /* end if */
         dst_uint32 = (uint32 *)malloc(TEST_SIZE * sizeof(uint32));
         if (dst_uint32 == NULL) {
-            CHECK_VOID(dst_uint32, NULL, "malloc");
+            CHECK(dst_uint32, NULL, "malloc");
             return;
         } /* end if */
         dst2_uint32 = (uint32 *)malloc(TEST_SIZE * sizeof(uint32));
         if (dst2_uint32 == NULL) {
-            CHECK_VOID(dst2_uint32, NULL, "malloc");
+            CHECK(dst2_uint32, NULL, "malloc");
             return;
         } /* end if */
 
@@ -557,23 +572,26 @@ test_conv(void)
         }
 
         free(src_uint32);
+        src_uint32 = NULL;
         free(dst_uint32);
+        dst_uint32 = NULL;
         free(dst2_uint32);
+        dst2_uint32 = NULL;
 
         MESSAGE(6, printf("seeding %s float32 array\n", test_name[t]););
         src_float32 = (float32 *)malloc(TEST_SIZE * sizeof(float32));
         if (src_float32 == NULL) {
-            CHECK_VOID(src_float32, NULL, "malloc");
+            CHECK(src_float32, NULL, "malloc");
             return;
         } /* end if */
         dst_float32 = (float32 *)malloc(TEST_SIZE * sizeof(float32));
         if (dst_float32 == NULL) {
-            CHECK_VOID(dst_float32, NULL, "malloc");
+            CHECK(dst_float32, NULL, "malloc");
             return;
         } /* end if */
         dst2_float32 = (float32 *)malloc(TEST_SIZE * sizeof(float32));
         if (dst2_float32 == NULL) {
-            CHECK_VOID(dst2_float32, NULL, "malloc");
+            CHECK(dst2_float32, NULL, "malloc");
             return;
         } /* end if */
 
@@ -649,23 +667,26 @@ test_conv(void)
         }
 
         free(src_float32);
+        src_float32 = NULL;
         free(dst_float32);
+        dst_float32 = NULL;
         free(dst2_float32);
+        dst2_float32 = NULL;
 
         MESSAGE(6, printf("seeding %s float64 array\n", test_name[t]););
         src_float64 = (float64 *)malloc(TEST_SIZE * sizeof(float64));
         if (src_float64 == NULL) {
-            CHECK_VOID(src_float64, NULL, "malloc");
+            CHECK(src_float64, NULL, "malloc");
             return;
         } /* end if */
         dst_float64 = (float64 *)malloc(TEST_SIZE * sizeof(float64));
         if (dst_float64 == NULL) {
-            CHECK_VOID(dst_float64, NULL, "malloc");
+            CHECK(dst_float64, NULL, "malloc");
             return;
         } /* end if */
         dst2_float64 = (float64 *)malloc(TEST_SIZE * sizeof(float64));
         if (dst2_float64 == NULL) {
-            CHECK_VOID(dst2_float64, NULL, "malloc");
+            CHECK(dst2_float64, NULL, "malloc");
             return;
         } /* end if */
 
@@ -740,8 +761,39 @@ test_conv(void)
         }
 
         free(src_float64);
+        src_float64 = NULL;
         free(dst_float64);
+        dst_float64 = NULL;
         free(dst2_float64);
+        dst2_float64 = NULL;
     } /* end for */
 
-} /* end test_conv() */
+done:
+    /* Release resources */
+    free(src_uint8);
+    free(dst_uint8);
+    free(dst2_uint8);
+    free(src_uint16);
+    free(dst_uint16);
+    free(dst2_uint16);
+    free(src_uint32);
+    free(dst_uint32);
+    free(dst2_uint32);
+    free(src_int8);
+    free(dst_int8);
+    free(dst2_int8);
+    free(src_int16);
+    free(dst_int16);
+    free(dst2_int16);
+    free(src_int32);
+    free(dst_int32);
+    free(dst2_int32);
+    free(src_float32);
+    free(dst_float32);
+    free(dst2_float32);
+    free(src_float64);
+    free(dst_float64);
+    free(dst2_float64);
+
+    return;
+}

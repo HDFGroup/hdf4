@@ -132,7 +132,7 @@ comp_using_jpeglib(const char *filename,    /* file to write compressed data in 
     jpeg_destroy_compress(&cinfo);
 
     return 0;
-} /* comp_using_jpeglib */
+}
 
 /***************************************************************************
    Name: decomp_using_jpeglib() - decompresses a buffer using JPEG functions
@@ -233,4 +233,4 @@ decomp_using_jpeglib(const char *filename,    /* file to read compressed data fr
     fclose(infile);
 
     return 0;
-} /* decomp_using_jpeglib */
+}

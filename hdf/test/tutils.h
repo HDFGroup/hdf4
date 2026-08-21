@@ -35,8 +35,7 @@ extern
     ;
 
 /* Use %ld to print the value because long could cover most cases. */
-/* Used to make certain a return value _is_not_ a value.  If not true, */
-/* print error messages, increment num_err and return. */
+/* Used to make certain a returned value _is_not_ val. */
 #define CHECK(ret, val, where)                                                                               \
     do {                                                                                                     \
         if (Verbosity > 9)                                                                                   \
@@ -46,24 +45,11 @@ extern
             printf("*** UNEXPECTED RETURN from %s is %ld at line %4d in %s\n", where, (long)ret,             \
                    (int)__LINE__, __FILE__);                                                                 \
             num_errs++;                                                                                      \
-            return num_errs;                                                                                 \
+            goto done;                                                                                       \
         }                                                                                                    \
     } while (0)
 
-#define CHECK_VOID(ret, val, where)                                                                          \
-    do {                                                                                                     \
-        if (Verbosity > 9)                                                                                   \
-            printf("   Call to HDF routine: %15s at line %4d in %s returned %ld \n", where, (int)__LINE__,   \
-                   __FILE__, (long)ret);                                                                     \
-        if (ret == val) {                                                                                    \
-            printf("*** UNEXPECTED RETURN from %s is %ld at line %4d in %s\n", where, (long)ret,             \
-                   (int)__LINE__, __FILE__);                                                                 \
-            num_errs++;                                                                                      \
-            return;                                                                                          \
-        }                                                                                                    \
-    } while (0)
-
-/* Same as CHECK except no return but continue. */
+/* Same as CHECK except no goto done but continue. */
 #define CHECK_CONT(ret, val, where)                                                                          \
     do {                                                                                                     \
         if (Verbosity > 9)                                                                                   \
@@ -93,71 +79,43 @@ extern
     }
 
 /* Used to make certain a return value _is_ a value */
-#define VERIFY(x, val, where)                                                                                \
+#define VERIFY(val, x, where)                                                                                \
     do {                                                                                                     \
         if (Verbosity > 9)                                                                                   \
             printf("   Call to HDF routine: %15s at line %4d in %s had value %ld \n", where, (int)__LINE__,  \
                    __FILE__, (long)x);                                                                       \
         if (x != val) {                                                                                      \
-            printf("*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", where, (long)x, (int)__LINE__, \
-                   __FILE__);                                                                                \
+            printf("*** UNEXPECTED VALUE from %s is %ld (expected %ld) at line %4d in %s\n", where,          \
+                   (long)val, (long)x, (int)__LINE__, __FILE__);                                             \
             num_errs++;                                                                                      \
-            return (num_errs);                                                                               \
-        }                                                                                                    \
-    } while (0)
-
-/* Same as VERIFY except return without a value. */
-#define VERIFY_VOID(x, val, where)                                                                           \
-    do {                                                                                                     \
-        if (Verbosity > 9)                                                                                   \
-            printf("   Call to HDF routine: %15s at line %4d in %s had value %ld \n", where, (int)__LINE__,  \
-                   __FILE__, (long)x);                                                                       \
-        if (x != val) {                                                                                      \
-            printf("*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", where, (long)x, (int)__LINE__, \
-                   __FILE__);                                                                                \
-            num_errs++;                                                                                      \
-            return;                                                                                          \
+            goto done;                                                                                       \
         }                                                                                                    \
     } while (0)
 
 /* Same as VERIFY except no return but continue. */
-#define VERIFY_CONT(x, val, where)                                                                           \
+#define VERIFY_CONT(val, x, where)                                                                           \
     do {                                                                                                     \
         if (Verbosity > 9)                                                                                   \
             printf("   Call to HDF routine: %15s at line %4d in %s had value %ld \n", where, (int)__LINE__,  \
                    __FILE__, (long)x);                                                                       \
         if (x != val) {                                                                                      \
-            printf("*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", where, (long)x, (int)__LINE__, \
-                   __FILE__);                                                                                \
+            printf("*** UNEXPECTED VALUE from %s is %ld (expected %ld) at line %4d in %s\n", where,          \
+                   (long)val, (long)x, (int)__LINE__, __FILE__);                                             \
             num_errs++;                                                                                      \
         }                                                                                                    \
     } while (0)
 
 /* Same as VERIFY except that the value has type char* */
-#define VERIFY_CHAR(x, val, where)                                                                           \
+#define VERIFY_CHAR(val, x, where)                                                                           \
     do {                                                                                                     \
         if (Verbosity > 9)                                                                                   \
             printf("   Call to HDF routine: %15s at line %4d in %s had value %s \n", where, (int)__LINE__,   \
                    __FILE__, x);                                                                             \
-        if (strcmp(x, val) != 0) {                                                                           \
-            printf("*** UNEXPECTED VALUE from %s is %s at line %4d in %s\n", where, x, (int)__LINE__,        \
-                   __FILE__);                                                                                \
+        if (strncmp(x, val, strlen(x)) != 0) {                                                               \
+            printf("*** UNEXPECTED VALUE from %s is <%s> (expected <%s>) at line %4d in %s\n", where, val,   \
+                   x, (int)__LINE__, __FILE__);                                                              \
             num_errs++;                                                                                      \
-            return (num_errs);                                                                               \
-        }                                                                                                    \
-    } while (0)
-
-/* Same as VERIFY_CHAR except return without a value. */
-#define VERIFY_CHAR_VOID(x, val, where)                                                                      \
-    do {                                                                                                     \
-        if (Verbosity > 9)                                                                                   \
-            printf("   Call to HDF routine: %15s at line %4d in %s had value %s \n", where, (int)__LINE__,   \
-                   __FILE__, x);                                                                             \
-        if (strncmp(x, val, strlen(val)) != 0) {                                                             \
-            printf("*** UNEXPECTED VALUE from %s is %s at line %4d in %s\n", where, x, (int)__LINE__,        \
-                   __FILE__);                                                                                \
-            num_errs++;                                                                                      \
-            return;                                                                                          \
+            goto done;                                                                                       \
         }                                                                                                    \
     } while (0)
 
@@ -172,7 +130,44 @@ extern
             printf("*** UNEXPECTED RETURN from %s is %ld at line %4d in %s\n", a, (long)ret, (int)__LINE__,  \
                    __FILE__);                                                                                \
             num_errs++;                                                                                      \
+            goto done;                                                                                       \
         }                                                                                                    \
+    } while (0)
+
+/*
+ * Macros to end access to an element/annotation/image or a file/interface
+ * and reset the variable to FAIL to prevent double-close later (mirrors
+ * ENDSDS/ENDSD in mfhdf/test).
+ */
+#define ENDACCESS(aid, msg)                                                                                  \
+    do {                                                                                                     \
+        ret = Hendaccess(aid);                                                                               \
+        aid = FAIL;                                                                                          \
+        CHECK(ret, FAIL, msg);                                                                               \
+    } while (0)
+#define ENDANNO(ann_handle, msg)                                                                             \
+    do {                                                                                                     \
+        ret        = ANendaccess(ann_handle);                                                                \
+        ann_handle = FAIL;                                                                                   \
+        CHECK(ret, FAIL, msg);                                                                               \
+    } while (0)
+#define ENDAN(an_handle, msg)                                                                                \
+    do {                                                                                                     \
+        ret       = ANend(an_handle);                                                                        \
+        an_handle = FAIL;                                                                                    \
+        CHECK(ret, FAIL, msg);                                                                               \
+    } while (0)
+#define ENDRI(riid, msg)                                                                                     \
+    do {                                                                                                     \
+        ret  = GRendaccess(riid);                                                                            \
+        riid = FAIL;                                                                                         \
+        CHECK(ret, FAIL, msg);                                                                               \
+    } while (0)
+#define ENDGR(grid, msg)                                                                                     \
+    do {                                                                                                     \
+        ret  = GRend(grid);                                                                                  \
+        grid = FAIL;                                                                                         \
+        CHECK(ret, FAIL, msg);                                                                               \
     } while (0)
 
 #define MESSAGE(v, a)                                                                                        \

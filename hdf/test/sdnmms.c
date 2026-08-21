@@ -401,4 +401,6 @@ test_sdnmms(void)
             else printf("Test passed for uint32 scales.\n"););
     MESSAGE(5, if (err1 == 1) printf(">>> Test failed for uint32 max/min.\n");
             else printf("Test passed for uint32 max/min.\n"););
+done:
+    return;
 }

@@ -75,6 +75,10 @@ free_info(t_hdf_datainfo_t *info)
     if (info != NULL) {
         free(info->offsets);
         free(info->lengths);
+        /* NULL out after freeing so a repeat call (e.g. once inline, then
+           again at a done: cleanup label) is a safe no-op, not a double free */
+        info->offsets = NULL;
+        info->lengths = NULL;
     }
 }
 
@@ -91,7 +95,6 @@ free_info(t_hdf_datainfo_t *info)
         Only the character vdata's values are verified against the original
         buffer.  The other two were verified by examining the hdf file using
         od. (Todo 1)
-   BMR - Jul 2010
  ****************************************************************************/
 #define SIMPLE_FILE      "tdatainfo_simple.hdf" /* data file */
 #define NONSPECIAL_VS    "Non-Special Vdata"
@@ -114,8 +117,8 @@ free_info(t_hdf_datainfo_t *info)
 static void
 test_simple_vs()
 {
-    int32 fid,                                  /* File ID */
-        vsid,                                   /* Vdata ID */
+    int32 fid = FAIL,                           /* File ID */
+        vsid  = FAIL,                           /* Vdata ID */
         vs_ref,                                 /* Vdata ref# */
         n_records,                              /* number of records actually written to vdata */
         data_buf0[N_RECORDS][N_VALS_PER_REC_1], /* for single vdata's data */
@@ -129,9 +132,9 @@ test_simple_vs()
 
     /* Open the HDF file and initialize the interface. */
     fid = Hopen(SIMPLE_FILE, DFACC_CREATE, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
     status = Vstart(fid);
-    CHECK_VOID(status, FAIL, "Vstart");
+    CHECK(status, FAIL, "Vstart");
 
     /* Create and write to the first vdata using high-level func VHstoredata */
     for (rec_num = 0; rec_num < N_RECORDS; rec_num++)
@@ -146,23 +149,24 @@ test_simple_vs()
      */
 
     vsid = VSattach(fid, vs_ref, "w");
-    CHECK_VOID(vsid, FAIL, "VSattach");
+    CHECK(vsid, FAIL, "VSattach");
 
     /* Get the number of data blocks first, should be 1 */
     n_blocks = VSgetdatainfo(vsid, 0, 0, NULL, NULL);
-    CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
-    VERIFY_VOID(n_blocks, 1, "VSgetdatainfo");
+    CHECK(n_blocks, FAIL, "VSgetdatainfo");
+    VERIFY(n_blocks, 1, "VSgetdatainfo");
 
     /* Get the offset/length of the data, should be 294/20 */
     n_blocks = VSgetdatainfo(vsid, 0, (unsigned)n_blocks, &offset, &length);
-    CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
+    CHECK(n_blocks, FAIL, "VSgetdatainfo");
 
     /* Verify offset/length */
-    VERIFY_VOID(offset, 294, "VSgetdatainfo offset from 'One Field One Order'");
-    VERIFY_VOID(length, 20, "VSgetdatainfo length from 'One Field One Order'");
+    VERIFY(offset, 294, "VSgetdatainfo offset from 'One Field One Order'");
+    VERIFY(length, 20, "VSgetdatainfo length from 'One Field One Order'");
 
     status = VSdetach(vsid);
-    CHECK_VOID(status, FAIL, "VSdetach");
+    CHECK(status, FAIL, "VSdetach");
+    vsid = FAIL;
 
     /*
      * Create a multi-field/multi-order vdata, named NONSPECIAL_VS, in class
@@ -170,38 +174,39 @@ test_simple_vs()
      * offsets/lengths
      */
     vsid = VSattach(fid, -1, "w");
-    CHECK_VOID(vsid, FAIL, "VSattach");
+    CHECK(vsid, FAIL, "VSattach");
 
     /* Set name and class name of the vdata. */
     status = VSsetname(vsid, NONSPECIAL_VS);
-    CHECK_VOID(status, FAIL, "VSsetname");
+    CHECK(status, FAIL, "VSsetname");
     status = VSsetclass(vsid, CONTCLASS_NAME);
-    CHECK_VOID(status, FAIL, "VSsetclass");
+    CHECK(status, FAIL, "VSsetclass");
 
     /* Record its reference number for later access before detaching it */
     vs_ref = VSQueryref(vsid);
-    CHECK_VOID(vs_ref, FAIL, "VSQueryref");
+    CHECK(vs_ref, FAIL, "VSQueryref");
     status = VSdetach(vsid);
-    CHECK_VOID(status, FAIL, "VSdetach");
+    CHECK(status, FAIL, "VSdetach");
+    vsid = FAIL;
 
     /* Attach to vdata NONSPECIAL_VS to write data, but first verify that
         number of data blocks is 0 */
     vsid = VSattach(fid, vs_ref, "w");
-    CHECK_VOID(vsid, FAIL, "VSattach");
+    CHECK(vsid, FAIL, "VSattach");
 
     n_blocks = VSgetdatainfo(vsid, 0, 0, NULL, NULL);
-    CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
-    VERIFY_VOID(n_blocks, 0, "VSgetdatainfo");
+    CHECK(n_blocks, FAIL, "VSgetdatainfo");
+    VERIFY(n_blocks, 0, "VSgetdatainfo");
 
     /* Define the fields in the vdata */
     status_n = VSfdefine(vsid, FIELD1_NAME, DFNT_INT32, ORDER_1);
-    CHECK_VOID(status_n, FAIL, "VSfdefine");
+    CHECK(status_n, FAIL, "VSfdefine");
     status_n = VSfdefine(vsid, FIELD2_NAME, DFNT_INT32, ORDER_2);
-    CHECK_VOID(status_n, FAIL, "VSfdefine");
+    CHECK(status_n, FAIL, "VSfdefine");
     status_n = VSfdefine(vsid, FIELD3_NAME, DFNT_INT32, ORDER_3);
-    CHECK_VOID(status_n, FAIL, "VSfdefine");
+    CHECK(status_n, FAIL, "VSfdefine");
     status_n = VSsetfields(vsid, FIELD_NAME_LIST);
-    CHECK_VOID(status_n, FAIL, "VSsetfields");
+    CHECK(status_n, FAIL, "VSsetfields");
 
     /*
      * Buffer the data by the record for fully interlaced mode.  Note that the
@@ -227,61 +232,72 @@ test_simple_vs()
 
     /* Set the block size and the number of blocks */
     status_n = VSsetblocksize(vsid, BLOCK_SIZE);
-    CHECK_VOID(status_n, FAIL, "VSsetblocksize");
+    CHECK(status_n, FAIL, "VSsetblocksize");
     status_n = VSsetnumblocks(vsid, NUM_BLOCKS);
-    CHECK_VOID(status_n, FAIL, "VSsetnumblocks");
+    CHECK(status_n, FAIL, "VSsetnumblocks");
 
     /* Write the data from data_buf1 to the non special vdata */
     n_records = VSwrite(vsid, (uint8 *)data_buf1, N_RECORDS, FULL_INTERLACE);
-    VERIFY_VOID(n_records, N_RECORDS, "VSwrite");
+    VERIFY(n_records, N_RECORDS, "VSwrite");
 
     n_blocks = VSgetdatainfo(vsid, 0, 0, NULL, NULL);
-    CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
-    VERIFY_VOID(n_blocks, 1, "VSgetdatainfo");
+    CHECK(n_blocks, FAIL, "VSgetdatainfo");
+    VERIFY(n_blocks, 1, "VSgetdatainfo");
 
     n_blocks = VSgetdatainfo(vsid, 0, (unsigned)n_blocks, &offset, &length);
-    CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
+    CHECK(n_blocks, FAIL, "VSgetdatainfo");
 
     /* Verify offset/length */
-    VERIFY_VOID(offset, 456, "VSgetdatainfo offset from NONSPECIAL_VS");
-    VERIFY_VOID(length, 120, "VSgetdatainfo length from NONSPECIAL_VS");
+    VERIFY(offset, 456, "VSgetdatainfo offset from NONSPECIAL_VS");
+    VERIFY(length, 120, "VSgetdatainfo length from NONSPECIAL_VS");
 
     status_n = VSdetach(vsid);
-    CHECK_VOID(status_n, FAIL, "VSdetach");
+    CHECK(status_n, FAIL, "VSdetach");
+    vsid = FAIL;
 
     /* Create and write to another simple vdata, named 'Characters Only', in
         class CONTCLASS_NAME */
     vs_ref = VHstoredata(fid, "Only field", (const uint8 *)data_buf2, N_RECORDS, DFNT_CHAR, "Characters Only",
                          CONTCLASS_NAME);
-    CHECK_VOID(vs_ref, FAIL, "VHstoredata");
+    CHECK(vs_ref, FAIL, "VHstoredata");
 
     /* Attach to vdata 'Characters Only' and get offset and length of its data */
     vsid = VSattach(fid, vs_ref, "r");
 
     n_blocks = VSgetdatainfo(vsid, 0, 0, NULL, NULL);
-    CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
-    VERIFY_VOID(n_blocks, 1, "VSgetdatainfo NONSPECIAL_VS");
+    CHECK(n_blocks, FAIL, "VSgetdatainfo");
+    VERIFY(n_blocks, 1, "VSgetdatainfo NONSPECIAL_VS");
 
     /* Get offset/length */
     n_blocks = VSgetdatainfo(vsid, 0, (unsigned)n_blocks, &offset, &length);
-    CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
+    CHECK(n_blocks, FAIL, "VSgetdatainfo");
 
     /* Close everything */
     status = VSdetach(vsid);
-    CHECK_VOID(status, FAIL, "VSdetach");
+    CHECK(status, FAIL, "VSdetach");
+    vsid = FAIL;
 
     status_n = Vend(fid);
-    CHECK_VOID(status_n, FAIL, "Vend");
+    CHECK(status_n, FAIL, "Vend");
 
     status_n = Hclose(fid);
-    CHECK_VOID(status_n, FAIL, "Hclose");
+    CHECK(status_n, FAIL, "Hclose");
+    fid = FAIL;
 
     /* Open the file with fopen, read data at the offset obtained and verify
        the values */
     status_n = readnoHDF_char(SIMPLE_FILE, offset, length, data_buf2);
     if (status_n == FAIL)
         fprintf(stderr, "Attempt reading data without HDF4 library failed at line %d\n", __LINE__);
-} /* test_simple_vs() */
+done:
+    /* Release resources */
+    if (vsid != FAIL)
+        VSdetach(vsid);
+    if (fid != FAIL) {
+        Vend(fid);
+        Hclose(fid);
+    }
+}
 
 /****************************************************************************
    Name: test_append_vs() - tests Vdatas with linked-blocks
@@ -294,68 +310,69 @@ test_simple_vs()
         - create and write to a simple vdata
         - add data to the appendable vdata
         - use VSgetdatainfo to get offsets/lengths of the linked-blocks of data
-   BMR - Jul 2010
  ****************************************************************************/
 #define APPEND_FILE   "tdatainfo_linkblock.hdf" /* data file */
 #define APPENDABLE_VD "Appendable Vdata"
 static void
 test_append_vs()
 {
-    int32 fid;                                  /* file ID */
-    int32 apvsid;                               /* vdata IDs */
+    int32 fid    = FAIL;                        /* file ID */
+    int32 apvsid = FAIL;                        /* vdata IDs */
     int32 vs1_ref,                              /* vdata ref# */
         n_records,                              /* number of records written to vdata */
         data_buf0[N_RECORDS][N_VALS_PER_REC_1], /* for "Very Simple Vdata" */
         data_buf1[N_RECORDS][N_VALS_PER_REC_2]; /* for first vdata's data */
     int16            rec_num;                   /* current record number */
     int              n_blocks;
-    t_hdf_datainfo_t vs_info;
-    int32            status;   /* Status values from routines */
-    int              status_n; /* Status values from routines */
+    t_hdf_datainfo_t vs_info = {0}; /* zero-initialized so free_info() is safe
+                                        even if alloc_info() was never reached */
+    int32 status;                   /* Status values from routines */
+    int   status_n;                 /* Status values from routines */
 
     /* Open the HDF file. */
     fid = Hopen(APPEND_FILE, DFACC_CREATE, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Initialize HDF for subsequent vgroup/vdata access. */
     status_n = Vstart(fid);
-    CHECK_VOID(status_n, FAIL, "Vstart");
+    CHECK(status_n, FAIL, "Vstart");
 
     /* Create the first vdata */
     apvsid = VSattach(fid, -1, "w");
-    CHECK_VOID(apvsid, FAIL, "VSattach");
+    CHECK(apvsid, FAIL, "VSattach");
 
     vs1_ref = VSQueryref(apvsid);
-    CHECK_VOID(vs1_ref, FAIL, "VSQueryref:apvsid");
+    CHECK(vs1_ref, FAIL, "VSQueryref:apvsid");
 
     status = VSdetach(apvsid);
-    CHECK_VOID(status, FAIL, "VSdetach");
+    CHECK(status, FAIL, "VSdetach");
+    apvsid = FAIL;
 
     apvsid = VSattach(fid, vs1_ref, "w");
-    CHECK_VOID(apvsid, FAIL, "VSattach");
+    CHECK(apvsid, FAIL, "VSattach");
 
     /* Set name and class name of the vdata. */
     status = VSsetname(apvsid, APPENDABLE_VD);
-    CHECK_VOID(status, FAIL, "VSsetname");
+    CHECK(status, FAIL, "VSsetname");
     status = VSsetclass(apvsid, LINKED_BLOCK);
-    CHECK_VOID(status, FAIL, "VSsetclass");
+    CHECK(status, FAIL, "VSsetclass");
 
     n_blocks = VSgetdatainfo(apvsid, 0, 0, NULL, NULL);
-    CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
-    VERIFY_VOID(n_blocks, 0, "VSgetdatainfo");
+    CHECK(n_blocks, FAIL, "VSgetdatainfo");
+    VERIFY(n_blocks, 0, "VSgetdatainfo");
 
     /* Introduce each field's name, data type, and order.  This is the first
       part in defining a field.  */
     status_n = VSfdefine(apvsid, FIELD1_NAME, DFNT_INT32, ORDER_1);
-    CHECK_VOID(status_n, FAIL, "VSfdefine");
+    CHECK(status_n, FAIL, "VSfdefine");
     status_n = VSfdefine(apvsid, FIELD2_NAME, DFNT_INT32, ORDER_2);
-    CHECK_VOID(status_n, FAIL, "VSfdefine");
+    CHECK(status_n, FAIL, "VSfdefine");
     status_n = VSfdefine(apvsid, FIELD3_NAME, DFNT_INT32, ORDER_3);
-    CHECK_VOID(status_n, FAIL, "VSfdefine");
+    CHECK(status_n, FAIL, "VSfdefine");
 
     /* Finalize the definition of the fields. */
     status_n = VSsetfields(apvsid, FIELD_NAME_LIST);
-    CHECK_VOID(status_n, FAIL, "VSsetfields");
+    CHECK(status_n, FAIL, "VSsetfields");
 
     /*
      * Buffer the data by the record for fully interlaced mode.  Note that the
@@ -382,16 +399,16 @@ test_append_vs()
 
     /* Set the block size and the number of blocks the first vdata */
     status_n = VSsetblocksize(apvsid, BLOCK_SIZE);
-    CHECK_VOID(status_n, FAIL, "VSsetblocksize");
+    CHECK(status_n, FAIL, "VSsetblocksize");
     status_n = VSsetnumblocks(apvsid, NUM_BLOCKS);
-    CHECK_VOID(status_n, FAIL, "VSsetnumblocks");
+    CHECK(status_n, FAIL, "VSsetnumblocks");
 
     /* Write the data from data_buf1 to vdata APPENDABLE_VD the first time */
     n_records = VSwrite(apvsid, (uint8 *)data_buf1, N_RECORDS, FULL_INTERLACE);
-    VERIFY_VOID(n_records, N_RECORDS, "VSwrite");
+    VERIFY(n_records, N_RECORDS, "VSwrite");
 
     n_blocks = VSgetdatainfo(apvsid, 0, 0, NULL, NULL);
-    CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
+    CHECK(n_blocks, FAIL, "VSgetdatainfo");
 
     /* Allocate space to record the vdata's data info */
     if (alloc_info(&vs_info, (unsigned)n_blocks) == -1)
@@ -399,12 +416,13 @@ test_append_vs()
 
     /* Get offset and lengths of the data */
     n_blocks = VSgetdatainfo(apvsid, 0, (unsigned)n_blocks, vs_info.offsets, vs_info.lengths);
-    CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
-    free_info(&vs_info);
+    CHECK(n_blocks, FAIL, "VSgetdatainfo");
+    free_info(&vs_info); /* releases the first allocation before it's
+                             overwritten by the second alloc_info() below */
 
     /* Get the reference number of this vdata for later use */
     vs1_ref = VSQueryref(apvsid);
-    CHECK_VOID(vs1_ref, FAIL, "VSQueryref");
+    CHECK(vs1_ref, FAIL, "VSQueryref");
 
     /* Make another simple vdata to cause linked-blocks */
     for (rec_num = 0; rec_num < N_RECORDS; rec_num++)
@@ -425,19 +443,20 @@ test_append_vs()
     }
     /* Write the data to vdata APPENDABLE_VD the second time */
     n_records = VSwrite(apvsid, (uint8 *)data_buf1, N_RECORDS, FULL_INTERLACE);
-    VERIFY_VOID(n_records, N_RECORDS, "VSwrite");
+    VERIFY(n_records, N_RECORDS, "VSwrite");
 
     /* Detach this vdata and attach to it again, just to make sure meta-data
        is recorded; it may not be necessary but it doesn't hurt */
     status = VSdetach(apvsid);
-    CHECK_VOID(status, FAIL, "VSdetach");
+    CHECK(status, FAIL, "VSdetach");
+    apvsid = FAIL;
     apvsid = VSattach(fid, vs1_ref, "w");
-    CHECK_VOID(apvsid, FAIL, "VSattach");
+    CHECK(apvsid, FAIL, "VSattach");
 
     /* Get the number of data blocks the vdata currently has */
     n_blocks = VSgetdatainfo(apvsid, 0, 0, NULL, NULL);
-    CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
-    VERIFY_VOID(n_blocks, 3, "VSgetdatainfo");
+    CHECK(n_blocks, FAIL, "VSgetdatainfo");
+    VERIFY(n_blocks, 3, "VSgetdatainfo");
 
     /* Allocate space to record the vdata's data info */
     if (alloc_info(&vs_info, (unsigned)n_blocks) == -1)
@@ -449,31 +468,39 @@ test_append_vs()
 
     /* Get and verify offsets and lengths of data */
     n_blocks = VSgetdatainfo(apvsid, 0, (unsigned)n_blocks, vs_info.offsets, vs_info.lengths);
-    CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
+    CHECK(n_blocks, FAIL, "VSgetdatainfo");
 
     {
         int   ii;
         int32 check_offsets[] = {294, 556, 636};
         int32 check_lengths[] = {120, 80, 40}; /* last chunk is not completely filled */
         for (ii = 0; ii < n_blocks; ii++) {
-            VERIFY_VOID(vs_info.offsets[ii], check_offsets[ii], "VSgetdatainfo offset");
-            VERIFY_VOID(vs_info.lengths[ii], check_lengths[ii], "VSgetdatainfo length");
+            VERIFY(vs_info.offsets[ii], check_offsets[ii], "VSgetdatainfo offset");
+            VERIFY(vs_info.lengths[ii], check_lengths[ii], "VSgetdatainfo length");
         }
     }
     /* Verifying data read without HDF4 library */
     /* NOT YET */
 
-    /* Release memory */
-    free_info(&vs_info);
-
     /* Close everything */
     status = VSdetach(apvsid);
-    CHECK_VOID(status, FAIL, "Vdetach");
+    CHECK(status, FAIL, "Vdetach");
+    apvsid = FAIL;
     status = Vend(fid);
-    CHECK_VOID(status, FAIL, "Vend");
+    CHECK(status, FAIL, "Vend");
     status = Hclose(fid);
-    CHECK_VOID(status, FAIL, "Hclose");
-} /* test_append_vs */
+    CHECK(status, FAIL, "Hclose");
+    fid = FAIL;
+done:
+    /* Release resources */
+    if (apvsid != FAIL)
+        VSdetach(apvsid);
+    if (fid != FAIL) {
+        Vend(fid);
+        Hclose(fid);
+    }
+    free_info(&vs_info);
+}
 
 /*******************************************************************
   Name: readnoHDF_char - utility routine to read and verify character
@@ -492,7 +519,6 @@ test_append_vs()
 
   Return value:
         SUCCEED/FAIL
-  BMR - Jul 2010
 ********************************************************************/
 int
 readnoHDF_char(const char *filename, const int32 offset, const int32 length, const char *orig_buf)
@@ -572,7 +598,7 @@ static int
 get_annot_datainfo(int32 an_id, ann_type annot_type, int32 num_anns, t_ann_info_t *ann_info, int ann_info_num,
                    const char *ann_text)
 {
-    int32 ann_id, ann_index;
+    int32 ann_id = FAIL, ann_index;
     int   status_n, ret_value = 0;
 
     /* Get the annotation. */
@@ -592,12 +618,17 @@ get_annot_datainfo(int32 an_id, ann_type annot_type, int32 num_anns, t_ann_info_
         /* Terminate access to the current annotation. */
         status_n = ANendaccess(ann_id);
         CHECK(status_n, FAIL, "ANendaccess");
+        ann_id = FAIL;
 
         /* Number of annotations whose datainfo is retrieved */
         ret_value++;
     }
+done:
+    /* Release resources */
+    if (ann_id != FAIL)
+        ANendaccess(ann_id);
     return ret_value;
-} /* get_annot_datainfo */
+}
 
 /****************************************************************************
    Name: test_annotation() - tests getting data info of annotations
@@ -616,12 +647,11 @@ get_annot_datainfo(int32 an_id, ann_type annot_type, int32 num_anns, t_ann_info_
         Todo 2: Should add more annotations so there will be multiple annots
         for an object or file.  get_annot_datainfo needs to be fixed to
         accommodate this.
-   BMR - Aug 2010
    NOTE:
         It is near the end of H4 Mapping project and Ruth had said there were
         no annotation for Vgroup and Vdata, so the continuation of these tests
         is not that critical anymore.  For SDS, SDgetanndatainfo handles
-        annotations already.  BMR - Jan 2011
+        annotations already.
  ****************************************************************************/
 #define ANNOT_FILE     "tdatainfo_annot.hdf" /* data file */
 #define VG_NAME        "AN Vgroup"
@@ -632,13 +662,13 @@ get_annot_datainfo(int32 an_id, ann_type annot_type, int32 num_anns, t_ann_info_
 static void
 test_annotation()
 {
-    int32 fid,                           /* file ID */
-        an_id,                           /* AN interface ID */
-        file_label_id,                   /* file label ID */
-        file_desc_id,                    /* file description ID */
-        data_label_id,                   /* data label ID */
-        data_desc_id,                    /* data description ID */
-        vgroup_id;                       /* vgroup ID */
+    int32 fid         = FAIL,            /* file ID */
+        an_id         = FAIL,            /* AN interface ID */
+        file_label_id = FAIL,            /* file label ID */
+        file_desc_id  = FAIL,            /* file description ID */
+        data_label_id = FAIL,            /* data label ID */
+        data_desc_id  = FAIL,            /* data description ID */
+        vgroup_id     = FAIL;            /* vgroup ID */
     uint16       vgroup_tag, vgroup_ref; /* vgroup tag/ref */
     t_ann_info_t ann_info[4];            /* temporary storage of annotation info */
     int          status_n;               /* returned status for functions returning an int  */
@@ -646,69 +676,76 @@ test_annotation()
 
     /* Create the HDF file. */
     fid = Hopen(ANNOT_FILE, DFACC_CREATE, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Initialize the AN interface. */
     an_id = ANstart(fid);
-    CHECK_VOID(an_id, FAIL, "ANstart");
+    CHECK(an_id, FAIL, "ANstart");
 
     /* Create and write a file label. */
     file_label_id = ANcreatef(an_id, AN_FILE_LABEL);
-    CHECK_VOID(file_label_id, FAIL, "ANcreatef");
+    CHECK(file_label_id, FAIL, "ANcreatef");
     status = ANwriteann(file_label_id, FILE_LABEL_TXT, strlen(FILE_LABEL_TXT));
-    CHECK_VOID(status, FAIL, "ANwriteann");
+    CHECK(status, FAIL, "ANwriteann");
 
     /* Create and write a file description. */
     file_desc_id = ANcreatef(an_id, AN_FILE_DESC);
-    CHECK_VOID(file_desc_id, FAIL, "ANcreatef");
+    CHECK(file_desc_id, FAIL, "ANcreatef");
     status = ANwriteann(file_desc_id, FILE_DESC_TXT, strlen(FILE_DESC_TXT));
-    CHECK_VOID(status, FAIL, "ANwriteann");
+    CHECK(status, FAIL, "ANwriteann");
 
     /* Create a vgroup to add annotation to it. */
     status_n = Vstart(fid);
-    CHECK_VOID(status_n, FAIL, "Vstart");
+    CHECK(status_n, FAIL, "Vstart");
     vgroup_id = Vattach(fid, -1, "w");
-    CHECK_VOID(vgroup_id, FAIL, "Vattach");
+    CHECK(vgroup_id, FAIL, "Vattach");
     status = Vsetname(vgroup_id, VG_NAME);
-    CHECK_VOID(status, FAIL, "Vsetname");
+    CHECK(status, FAIL, "Vsetname");
 
     /* Get the tag and ref number of the vgroup for ANcreate. */
     vgroup_tag = (uint16)VQuerytag(vgroup_id);
-    CHECK_VOID(vgroup_tag, 0, "VQuerytag");
+    CHECK(vgroup_tag, 0, "VQuerytag");
     vgroup_ref = (uint16)VQueryref(vgroup_id);
-    CHECK_VOID(vgroup_ref, 0, "VQueryref");
+    CHECK(vgroup_ref, 0, "VQueryref");
 
     /* Add a data label to the vgroup. */
     data_label_id = ANcreate(an_id, vgroup_tag, vgroup_ref, AN_DATA_LABEL);
-    CHECK_VOID(data_label_id, FAIL, "ANcreate");
+    CHECK(data_label_id, FAIL, "ANcreate");
     status = ANwriteann(data_label_id, DATA_LABEL_TXT, strlen(DATA_LABEL_TXT));
-    CHECK_VOID(status, FAIL, "ANwriteann");
+    CHECK(status, FAIL, "ANwriteann");
 
     /* Add a data description to the vgroup. */
     data_desc_id = ANcreate(an_id, vgroup_tag, vgroup_ref, AN_DATA_DESC);
-    CHECK_VOID(data_desc_id, FAIL, "ANcreate");
+    CHECK(data_desc_id, FAIL, "ANcreate");
     status = ANwriteann(data_desc_id, DATA_DESC_TXT, strlen(DATA_DESC_TXT));
-    CHECK_VOID(status, FAIL, "ANwriteann");
+    CHECK(status, FAIL, "ANwriteann");
 
     /* Terminate access to each annotation. */
     status_n = ANendaccess(file_label_id);
-    CHECK_VOID(status_n, FAIL, "ANendaccess");
-    status_n = ANendaccess(file_desc_id);
-    CHECK_VOID(status_n, FAIL, "ANendaccess");
-    status_n = ANendaccess(data_label_id);
-    CHECK_VOID(status_n, FAIL, "ANendaccess");
-    status_n = ANendaccess(data_desc_id);
-    CHECK_VOID(status_n, FAIL, "ANendaccess");
+    CHECK(status_n, FAIL, "ANendaccess");
+    file_label_id = FAIL;
+    status_n      = ANendaccess(file_desc_id);
+    CHECK(status_n, FAIL, "ANendaccess");
+    file_desc_id = FAIL;
+    status_n     = ANendaccess(data_label_id);
+    CHECK(status_n, FAIL, "ANendaccess");
+    data_label_id = FAIL;
+    status_n      = ANendaccess(data_desc_id);
+    CHECK(status_n, FAIL, "ANendaccess");
+    data_desc_id = FAIL;
 
     /* Terminate access to the vgroup and to the V interface. */
-    status   = Vdetach(vgroup_id);
-    status_n = Vend(fid);
+    status    = Vdetach(vgroup_id);
+    vgroup_id = FAIL;
+    status_n  = Vend(fid);
 
     /* Terminate access to the AN interface and close the HDF file. */
     status = ANend(an_id);
-    CHECK_VOID(status, FAIL, "ANend");
+    CHECK(status, FAIL, "ANend");
+    an_id    = FAIL;
     status_n = Hclose(fid);
-    CHECK_VOID(status_n, FAIL, "Hclose");
+    CHECK(status_n, FAIL, "Hclose");
+    fid = FAIL;
 
     /* Open the file and read in location/size of all annotations */
 
@@ -722,19 +759,19 @@ test_annotation()
 
         /* Open the file. */
         fid = Hopen(ANNOT_FILE, DFACC_RDONLY, 0);
-        CHECK_VOID(fid, FAIL, "Hopen");
+        CHECK(fid, FAIL, "Hopen");
 
         /* Initialize the AN interface. */
         an_id = ANstart(fid);
-        CHECK_VOID(an_id, FAIL, "ANstart");
+        CHECK(an_id, FAIL, "ANstart");
 
         /* Get the number of data/file labels/descriptions */
         status_n = ANfileinfo(an_id, &n_file_labels, &n_file_descs, &n_data_labels, &n_data_descs);
-        CHECK_VOID(status_n, FAIL, "ANfileinfo");
-        VERIFY_VOID(n_file_labels, 1, "ANfileinfo");
-        VERIFY_VOID(n_file_descs, 1, "ANfileinfo");
-        VERIFY_VOID(n_data_labels, 1, "ANfileinfo");
-        VERIFY_VOID(n_data_descs, 1, "ANfileinfo");
+        CHECK(status_n, FAIL, "ANfileinfo");
+        VERIFY(n_file_labels, 1, "ANfileinfo");
+        VERIFY(n_file_descs, 1, "ANfileinfo");
+        VERIFY(n_data_labels, 1, "ANfileinfo");
+        VERIFY(n_data_descs, 1, "ANfileinfo");
 
         /* Get access to each annotation then call ANgetdatainfo to retrieve
            the offset/length of the annotation data */
@@ -748,33 +785,35 @@ test_annotation()
 
         /* AN_DATA_LABEL */
         num_anns = get_annot_datainfo(an_id, AN_DATA_LABEL, 1, ann_info, ann_info_num, DATA_LABEL_TXT);
-        CHECK_VOID(num_anns, FAIL, "get_annot_datainfo");
-        VERIFY_VOID(num_anns, 1, "get_annot_datainfo");
+        CHECK(num_anns, FAIL, "get_annot_datainfo");
+        VERIFY(num_anns, 1, "get_annot_datainfo");
         ann_info_num = ann_info_num + num_anns;
 
         /* AN_DATA_DESC */
         num_anns = get_annot_datainfo(an_id, AN_DATA_DESC, 1, ann_info, ann_info_num, DATA_DESC_TXT);
-        CHECK_VOID(num_anns, FAIL, "get_annot_datainfo");
-        VERIFY_VOID(num_anns, 1, "get_annot_datainfo");
+        CHECK(num_anns, FAIL, "get_annot_datainfo");
+        VERIFY(num_anns, 1, "get_annot_datainfo");
         ann_info_num = ann_info_num + num_anns;
 
         /* AN_FILE_LABEL */
         num_anns = get_annot_datainfo(an_id, AN_FILE_LABEL, 1, ann_info, ann_info_num, FILE_LABEL_TXT);
-        CHECK_VOID(num_anns, FAIL, "get_annot_datainfo");
-        VERIFY_VOID(num_anns, 1, "get_annot_datainfo");
+        CHECK(num_anns, FAIL, "get_annot_datainfo");
+        VERIFY(num_anns, 1, "get_annot_datainfo");
         ann_info_num = ann_info_num + num_anns;
 
         /* AN_FILE_DESC */
         num_anns = get_annot_datainfo(an_id, AN_FILE_DESC, 1, ann_info, ann_info_num, FILE_DESC_TXT);
-        CHECK_VOID(num_anns, FAIL, "get_annot_datainfo");
-        VERIFY_VOID(num_anns, 1, "get_annot_datainfo");
+        CHECK(num_anns, FAIL, "get_annot_datainfo");
+        VERIFY(num_anns, 1, "get_annot_datainfo");
         ann_info_num = ann_info_num + num_anns;
 
         /* Terminate access to the AN interface and close the HDF file. */
         status = ANend(an_id);
-        CHECK_VOID(status, FAIL, "ANend");
+        CHECK(status, FAIL, "ANend");
+        an_id    = FAIL;
         status_n = Hclose(fid);
-        CHECK_VOID(status_n, FAIL, "Hclose");
+        CHECK(status_n, FAIL, "Hclose");
+        fid = FAIL;
 
         /* calling readnoHDF_char to verify data without the use of HDF lib */
 
@@ -787,7 +826,23 @@ test_annotation()
                 fprintf(stderr, "Attempt reading data without HDF4 library failed at line %d\n", __LINE__);
         }
     }
-} /* test_annotation */
+done:
+    /* Release resources */
+    if (file_label_id != FAIL)
+        ANendaccess(file_label_id);
+    if (file_desc_id != FAIL)
+        ANendaccess(file_desc_id);
+    if (data_label_id != FAIL)
+        ANendaccess(data_label_id);
+    if (data_desc_id != FAIL)
+        ANendaccess(data_desc_id);
+    if (vgroup_id != FAIL)
+        Vdetach(vgroup_id);
+    if (an_id != FAIL)
+        ANend(an_id);
+    if (fid != FAIL)
+        Hclose(fid);
+}
 
 /****************************************************************************
    Name: test_oneblock_ri() - tests non-linked-block images
@@ -803,7 +858,6 @@ test_annotation()
         decompression code needed for further verification (Todo 2)
 
    Note: Incomplete, waiting for schema design
-   BMR - Aug 2010
  ****************************************************************************/
 #define IMAGE_FILE       "tdatainfo_images.hdf" /* data file */
 #define NONCOMP_IMAGE    "Image with No Compression"
@@ -825,7 +879,7 @@ make_comp_image(int32 grid, const char *img_name,
                 int32      comp_type,  /* compression method */
                 comp_info *cinfo)      /* compression parameters */
 {
-    int32 riid;                      /* raster image ID */
+    int32 riid    = FAIL;            /* raster image ID */
     int32 dims[2] = {WIDTH, LENGTH}; /* dimensions for the image */
     char  image0[WIDTH][LENGTH];     /* image data */
     int32 start[2];                  /* start of image data to grab */
@@ -861,18 +915,23 @@ make_comp_image(int32 grid, const char *img_name,
     /* Close the first image */
     status = GRendaccess(riid);
     CHECK(status, FAIL, "GRendaccess");
+    riid = FAIL;
 
+done:
+    /* Release resources */
+    if (riid != FAIL)
+        GRendaccess(riid);
     return ret_value;
 }
 
 static void
 test_oneblock_ri()
 {
-    int32 fid, grid,          /* file ID and GR interface ID */
-        riid;                 /* raster image ID */
-    int32     offset, length; /* offset/length buffers for single block of data */
-    int       status;         /* status returned from routines */
-    int       ii;             /* indices */
+    int32 fid = FAIL, grid = FAIL, /* file ID and GR interface ID */
+        riid = FAIL;               /* raster image ID */
+    int32     offset, length;      /* offset/length buffers for single block of data */
+    int       status;              /* status returned from routines */
+    int       ii;                  /* indices */
     int32     n_images, n_fattrs;
     comp_info cinfo; /* Compression parameters - union */
     /* offsets/lengths to be used to verify offsets/lengths returned by
@@ -887,13 +946,14 @@ test_oneblock_ri()
 
     /* Create the HDF file and initialize the interface. */
     fid = Hopen(IMAGE_FILE, DFACC_CREATE, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     /* Create and write the non-compressed image to this file */
     status = make_comp_image(grid, NONCOMP_IMAGE, 'n', COMP_CODE_NONE, &cinfo);
+    CHECK(status, FAIL, "make_comp_image: COMP_CODE_NONE");
 
     /* Create and write 3 more images: RLE, Deflate, and Skipping Huffman */
 
@@ -903,6 +963,7 @@ test_oneblock_ri()
     /* Create and write the RLE compressed image to this file, starting the
        data values with the letter 'r' */
     status = make_comp_image(grid, RLE_IMAGE, 'r', COMP_CODE_RLE, &cinfo);
+    CHECK(status, FAIL, "make_comp_image: COMP_CODE_RLE");
 
     /* Set the compression info for the image with Skipping Huffman method */
     memset(&cinfo, 0, sizeof(cinfo));
@@ -911,6 +972,7 @@ test_oneblock_ri()
     /* Create and write the Skipping Huffman compressed image to this file,
        starting the data values with the letter 's' */
     status = make_comp_image(grid, SKPHUFF_IMAGE, 's', COMP_CODE_SKPHUFF, &cinfo);
+    CHECK(status, FAIL, "make_comp_image: COMP_CODE_SKPHUFF");
 
     /* Set the compression info for the image with Deflate method */
     memset(&cinfo, 0, sizeof(cinfo));
@@ -919,6 +981,7 @@ test_oneblock_ri()
     /* Create and write the Deflate compressed image to this file, starting the
        data values with the letter 'd' */
     status = make_comp_image(grid, DEFLATE_IMAGE, 'd', COMP_CODE_DEFLATE, &cinfo);
+    CHECK(status, FAIL, "make_comp_image: COMP_CODE_DEFLATE");
 
     /* Set the compression method for the image with JPEG method */
     memset(&cinfo, 0, sizeof(cinfo));
@@ -928,13 +991,16 @@ test_oneblock_ri()
     /* Create and write the JPEG compressed image to this file, starting the
        data values with the letter 'j' - more work to be done for JPEG */
     /* status = make_comp_image(grid, JPEG_IMAGE, 'j', COMP_CODE_JPEG, &cinfo);
+    CHECK(status, FAIL, "make_comp_image: COMP_CODE_JPEG");
      */
 
     /* Terminate access to the GR interface and close the file */
     status = GRend(grid);
-    CHECK_VOID(status, FAIL, "GRend");
+    CHECK(status, FAIL, "GRend");
+    grid   = FAIL;
     status = Hclose(fid);
-    CHECK_VOID(status, FAIL, "Hclose");
+    CHECK(status, FAIL, "Hclose");
+    fid = FAIL;
 
     /****************************************************************
       Re-open the file to read the images and their data information
@@ -942,26 +1008,26 @@ test_oneblock_ri()
 
     /* Re-open the file and initialize the GR interface */
     fid = Hopen(IMAGE_FILE, DFACC_RDONLY, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     /* Get the number of images in the file */
     status = GRfileinfo(grid, &n_images, &n_fattrs);
-    CHECK_VOID(status, FAIL, "GRfileinfo");
-    VERIFY_VOID(n_images, N_IMAGES, "GRfileinfo");
+    CHECK(status, FAIL, "GRfileinfo");
+    VERIFY(n_images, N_IMAGES, "GRfileinfo");
 
     /* Open each image then get and verify its data information.  Note that
         currently, the offsets and lengths are obtained from debugging
         and the command od on the file */
     for (ii = 0; ii < n_images; ii++) {
         riid = GRselect(grid, ii);
-        CHECK_VOID(riid, FAIL, "GRselect");
+        CHECK(riid, FAIL, "GRselect");
 
         status = GRgetdatainfo(riid, 0, 1, &offset, &length);
-        CHECK_VOID(status, FAIL, "GRgetdatainfo");
-        VERIFY_VOID(offset, image_data_offsets[ii], "GRgetdatainfo");
-        VERIFY_VOID(length, image_data_lengths[ii], "GRgetdatainfo");
+        CHECK(status, FAIL, "GRgetdatainfo");
+        VERIFY(offset, image_data_offsets[ii], "GRgetdatainfo");
+        VERIFY(length, image_data_lengths[ii], "GRgetdatainfo");
 
         /* Only verify data of the first image, which has non-compressed data. */
         if (ii == 0) {
@@ -983,15 +1049,26 @@ test_oneblock_ri()
 
         /* Close the image */
         status = GRendaccess(riid);
-        CHECK_VOID(status, FAIL, "GRendaccess");
+        CHECK(status, FAIL, "GRendaccess");
+        riid = FAIL;
     } /* for n_images */
 
     /* Terminate access to the GR interface and close the file */
     status = GRend(grid);
-    CHECK_VOID(status, FAIL, "GRend");
+    CHECK(status, FAIL, "GRend");
+    grid   = FAIL;
     status = Hclose(fid);
-    CHECK_VOID(status, FAIL, "Hclose");
-} /* end test_oneblock_ri */
+    CHECK(status, FAIL, "Hclose");
+    fid = FAIL;
+done:
+    /* Release resources */
+    if (riid != FAIL)
+        GRendaccess(riid);
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+}
 
 #define IMAGE_DF_FILE "tdatainfo_dfri.hdf" /* data file for DFR APIs */
 #define N_DF_IMAGES                                                                                          \
@@ -1000,11 +1077,11 @@ test_oneblock_ri()
 static void
 test_dfr8_24()
 {
-    int32 fid, grid,      /* file ID and GR interface ID */
-        riid;             /* raster image ID */
-    int32 offset, length; /* offset/length buffers for single block of data */
-    int   status;         /* status returned from routines */
-    int   ii, jj;         /* indices */
+    int32 fid = FAIL, grid = FAIL, /* file ID and GR interface ID */
+        riid = FAIL;               /* raster image ID */
+    int32 offset, length;          /* offset/length buffers for single block of data */
+    int   status;                  /* status returned from routines */
+    int   ii, jj;                  /* indices */
     int32 n_images, n_fattrs;
     char  buf[WIDTH][LENGTH][3];
 
@@ -1043,14 +1120,14 @@ test_dfr8_24()
      ****************************************************************/
     /* Re-open the file and initialize the GR interface */
     fid = Hopen(IMAGE_DF_FILE, DFACC_RDONLY, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     /* Get the number of images in the file */
     status = GRfileinfo(grid, &n_images, &n_fattrs);
-    CHECK_VOID(status, FAIL, "GRfileinfo");
-    VERIFY_VOID(n_images, N_DF_IMAGES, "GRfileinfo");
+    CHECK(status, FAIL, "GRfileinfo");
+    VERIFY(n_images, N_DF_IMAGES, "GRfileinfo");
 
     /* Open each image then get and verify its data information.  Note that
         currently, the offsets and lengths are obtained from debugging
@@ -1059,31 +1136,42 @@ test_dfr8_24()
         int info_count = FAIL;
 
         riid = GRselect(grid, ii);
-        CHECK_VOID(riid, FAIL, "GRselect");
+        CHECK(riid, FAIL, "GRselect");
 
         /* Get the number of data blocks and verify; should be 1 */
         info_count = GRgetdatainfo(riid, 0, 0, NULL, NULL);
-        CHECK_VOID(info_count, FAIL, "GRgetdatainfo");
-        VERIFY_VOID(info_count, 1, "GRgetdatainfo");
+        CHECK(info_count, FAIL, "GRgetdatainfo");
+        VERIFY(info_count, 1, "GRgetdatainfo");
 
         /* Get offset/length of the image and verify with pre-determined
            values */
         info_count = GRgetdatainfo(riid, 0, (unsigned)info_count, &offset, &length);
-        CHECK_VOID(info_count, FAIL, "GRgetdatainfo");
-        VERIFY_VOID(offset, image_data_offsets[ii], "GRgetdatainfo");
-        VERIFY_VOID(length, image_data_lengths[ii], "GRgetdatainfo");
+        CHECK(info_count, FAIL, "GRgetdatainfo");
+        VERIFY(offset, image_data_offsets[ii], "GRgetdatainfo");
+        VERIFY(length, image_data_lengths[ii], "GRgetdatainfo");
 
         /* Close the image */
         status = GRendaccess(riid);
-        CHECK_VOID(status, FAIL, "GRendaccess");
+        CHECK(status, FAIL, "GRendaccess");
+        riid = FAIL;
     } /* for n_images */
 
     /* Terminate access to the GR interface and close the file */
     status = GRend(grid);
-    CHECK_VOID(status, FAIL, "GRend");
+    CHECK(status, FAIL, "GRend");
+    grid   = FAIL;
     status = Hclose(fid);
-    CHECK_VOID(status, FAIL, "Hclose");
-} /* test_dfr8_24 */
+    CHECK(status, FAIL, "Hclose");
+    fid = FAIL;
+done:
+    /* Release resources */
+    if (riid != FAIL)
+        GRendaccess(riid);
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+}
 
 /*************************************************************************
  test_getpalinfo() - tests GRgetpalinfo
@@ -1101,8 +1189,8 @@ test_dfr8_24()
 static void
 test_getpalinfo()
 {
-    int32 fid, grid,                             /* file ID and GR interface ID */
-        riid, palid,                             /* raster image ID and palette ID */
+    int32 fid = FAIL, grid = FAIL,               /* file ID and GR interface ID */
+        riid = FAIL, palid,                      /* raster image ID and palette ID */
         interlace_mode, start[2],                /* where to start to write for each dimension  */
         edges[2],                                /* specifies how long to write for each dimension */
         dim_sizes[2];                            /* sizes of the two dimensions of the image array */
@@ -1115,7 +1203,7 @@ test_getpalinfo()
     int   n_pals = 0; /* number of palettes, returned by DFPnpals and GRgetpalinfo */
 
     hdf_ddinfo_t *palinfo_array = NULL; /* list of palette DDs */
-    uint8        *inbuf;                /* palette data read back in */
+    uint8        *inbuf         = NULL; /* palette data read back in */
     int           ii, jj;               /* indices */
     int           status;               /* status returned from routines */
 
@@ -1138,40 +1226,40 @@ test_getpalinfo()
     */
     /* Add two palettes with DFP API. */
     status = DFPputpal(IMAGE_DFPAL_FILE, paletteA, 0, "w");
-    CHECK_VOID(status, FAIL, "DFPputpal");
+    CHECK(status, FAIL, "DFPputpal");
 
     status = DFPputpal(IMAGE_DFPAL_FILE, paletteB, 0, "a");
-    CHECK_VOID(status, FAIL, "DFPputpal");
+    CHECK(status, FAIL, "DFPputpal");
 
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
-    CHECK_VOID(n_pals, FAIL, "DFPnpals");
-    VERIFY_VOID(n_pals, 2, "DFPputpal"); /* 2 palettes from 2 DFPputpal's */
+    CHECK(n_pals, FAIL, "DFPnpals");
+    VERIFY(n_pals, 2, "DFPputpal"); /* 2 palettes from 2 DFPputpal's */
 
     /* Specify palette to be used with subsequent 8-bit images */
     status = DFR8setpalette(paletteA);
-    CHECK_VOID(status, FAIL, "DFR8setpalette");
+    CHECK(status, FAIL, "DFR8setpalette");
 
     /* Write an 8-bit raster image to the file */
     status = DFR8addimage(IMAGE_DFPAL_FILE, raster_data, WIDTH, LENGTH, COMP_RLE);
-    CHECK_VOID(status, FAIL, "DFR8addimage");
+    CHECK(status, FAIL, "DFR8addimage");
 
     /* Get the number of palettes using DFP API */
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
-    CHECK_VOID(n_pals, FAIL, "DFPnpals");
-    VERIFY_VOID(n_pals, 3, "DFPputpal");
+    CHECK(n_pals, FAIL, "DFPnpals");
+    VERIFY(n_pals, 3, "DFPputpal");
     /* 3 palettes: 2 DFPputpal's + DFR8setpalette/DFR8addimage combo */
 
     /* Write another 8-bit raster image to file, without calling another
        DFR8setpalette, that means this image is using the same palette as the
        previous image.  This is when only 201 is created */
     status = DFR8addimage(IMAGE_DFPAL_FILE, raster_data, WIDTH, LENGTH, COMP_RLE);
-    CHECK_VOID(status, FAIL, "DFR8addimage");
+    CHECK(status, FAIL, "DFR8addimage");
 
     /* Thus, the number of palettes returned by DFPnpals should be the same as
        from the last call to DFPnpals */
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
-    CHECK_VOID(n_pals, FAIL, "DFPnpals");
-    VERIFY_VOID(n_pals, 3, "DFPputpal");
+    CHECK(n_pals, FAIL, "DFPnpals");
+    VERIFY(n_pals, 3, "DFPputpal");
 
     /****************************************************************
         Re-open the file in GR interface, add a few images with
@@ -1180,9 +1268,9 @@ test_getpalinfo()
 
     /* Re-open the file and initialize the GR interface */
     fid = Hopen(IMAGE_DFPAL_FILE, DFACC_RDWR, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     /* Define the dimensions and interlace mode of the image */
     dim_sizes[0]   = LENGTH;
@@ -1223,11 +1311,12 @@ test_getpalinfo()
 
     /* DFPnpals now sees another palette */
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
-    CHECK_VOID(n_pals, FAIL, "DFPnpals");
-    VERIFY_VOID(n_pals, 4, "DFPputpal");
+    CHECK(n_pals, FAIL, "DFPnpals");
+    VERIFY(n_pals, 4, "DFPputpal");
 
     /* Terminate access to the first image */
     status = GRendaccess(riid);
+    riid   = FAIL;
 
     /* Create another image named IMAGE2_WITH_PAL */
     riid = GRcreate(grid, IMAGE2_WITH_PAL, N_COMPS_IMG, DFNT_UINT8, interlace_mode, dim_sizes);
@@ -1250,82 +1339,85 @@ test_getpalinfo()
 
     /* DFPnpals now sees another palette */
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
-    CHECK_VOID(n_pals, FAIL, "DFPnpals");
-    VERIFY_VOID(n_pals, 5, "DFPputpal");
+    CHECK(n_pals, FAIL, "DFPnpals");
+    VERIFY(n_pals, 5, "DFPputpal");
 
     /* Terminate access to this image */
     status = GRendaccess(riid);
-    CHECK_VOID(status, FAIL, "GRendaccess");
+    CHECK(status, FAIL, "GRendaccess");
+    riid = FAIL;
 
     /* Create another image named LASTIMAGE_NOPAL */
     riid = GRcreate(grid, LASTIMAGE_NOPAL, N_COMPS_IMG, DFNT_UINT8, interlace_mode, dim_sizes);
-    CHECK_VOID(riid, FAIL, "GRcreate");
+    CHECK(riid, FAIL, "GRcreate");
 
     /* Write the data in the buffer into the image array */
     status = GRwriteimage(riid, start, NULL, edges, (void *)image_buf);
-    CHECK_VOID(status, FAIL, "GRwriteimage");
+    CHECK(status, FAIL, "GRwriteimage");
 
     /* Terminate access to the image */
     status = GRendaccess(riid);
-    CHECK_VOID(status, FAIL, "GRendaccess");
+    CHECK(status, FAIL, "GRendaccess");
+    riid = FAIL;
 
     status = DFR8setpalette(paletteB);
-    CHECK_VOID(status, FAIL, "DFR8setpalette");
+    CHECK(status, FAIL, "DFR8setpalette");
 
     /* Write another 8-bit raster image to file */
     status = DFR8addimage(IMAGE_DFPAL_FILE, raster_data, WIDTH, LENGTH, COMP_RLE);
-    CHECK_VOID(status, FAIL, "DFR8addimage");
+    CHECK(status, FAIL, "DFR8addimage");
 
     /* DFR8setpalette/DFR8addimage just added another palette, so DFPnpals now
        returns 6 */
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
-    CHECK_VOID(n_pals, FAIL, "DFPnpals");
-    VERIFY_VOID(n_pals, 6, "DFPputpal");
+    CHECK(n_pals, FAIL, "DFPnpals");
+    VERIFY(n_pals, 6, "DFPputpal");
 
     status = DFPputpal(IMAGE_DFPAL_FILE, paletteD, 0, "a");
-    CHECK_VOID(status, FAIL, "DFPputpal");
+    CHECK(status, FAIL, "DFPputpal");
 
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
-    CHECK_VOID(n_pals, FAIL, "DFPnpals");
-    VERIFY_VOID(n_pals, 7, "DFPnpals");
+    CHECK(n_pals, FAIL, "DFPnpals");
+    VERIFY(n_pals, 7, "DFPnpals");
 
     status = DFPputpal(IMAGE_DFPAL_FILE, paletteB, 0, "a");
-    CHECK_VOID(status, FAIL, "DFPputpal");
+    CHECK(status, FAIL, "DFPputpal");
 
     status = DFPputpal(IMAGE_DFPAL_FILE, paletteD, 0, "a");
-    CHECK_VOID(status, FAIL, "DFPputpal");
+    CHECK(status, FAIL, "DFPputpal");
 
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
-    CHECK_VOID(n_pals, FAIL, "DFPnpals");
-    VERIFY_VOID(n_pals, 9, "DFPputpal");
+    CHECK(n_pals, FAIL, "DFPnpals");
+    VERIFY(n_pals, 9, "DFPputpal");
 
     /* Create another image named ANO_IMAGE_NAME. */
     riid = GRcreate(grid, ANO_IMAGE_NAME, N_COMPS_IMG, DFNT_UINT8, interlace_mode, dim_sizes);
-    CHECK_VOID(riid, FAIL, "GRcreate");
+    CHECK(riid, FAIL, "GRcreate");
 
     /* Write the data in the buffer into the image array. */
     status = GRwriteimage(riid, start, NULL, edges, (void *)image_buf);
-    CHECK_VOID(status, FAIL, "GRwriteimage");
+    CHECK(status, FAIL, "GRwriteimage");
 
     /* Get the identifier of the palette attached to the image ANO_IMAGE_NAME */
     palid = GRgetlutid(riid, 0);
-    CHECK_VOID(palid, FAIL, "GRgetlutid");
+    CHECK(palid, FAIL, "GRgetlutid");
 
     /* Write data to the palette. */
     status = GRwritelut(palid, N_COMPS_PAL, DFNT_UINT8, interlace_mode, N_ENTRIES, (void *)palette_buf2);
 
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
-    CHECK_VOID(n_pals, FAIL, "DFPnpals");
-    VERIFY_VOID(n_pals, 10, "DFPputpal");
+    CHECK(n_pals, FAIL, "DFPnpals");
+    VERIFY(n_pals, 10, "DFPputpal");
 
     status = GRendaccess(riid);
+    riid   = FAIL;
 
     status = DFPputpal(IMAGE_DFPAL_FILE, paletteD, 0, "a");
-    CHECK_VOID(status, FAIL, "DFPputpal");
+    CHECK(status, FAIL, "DFPputpal");
 
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
-    CHECK_VOID(n_pals, FAIL, "DFPnpals");
-    VERIFY_VOID(n_pals, 11, "DFPputpal");
+    CHECK(n_pals, FAIL, "DFPnpals");
+    VERIFY(n_pals, 11, "DFPputpal");
 
     /* Assuming that this file has been written exactly in this manner, this
        is what the palette DDs would look like at this point:
@@ -1357,13 +1449,13 @@ test_getpalinfo()
            to get the number of palettes in the file */
         n_pals = 0;
         n_pals = GRgetpalinfo(grid, 0, NULL);
-        CHECK_VOID(n_pals, FAIL, "GRgetpalinfo");
+        CHECK(n_pals, FAIL, "GRgetpalinfo");
 
         palinfo_array = (hdf_ddinfo_t *)malloc((size_t)n_pals * sizeof(hdf_ddinfo_t));
         CHECK_ALLOC(palinfo_array, "palinfo_array", "test_getpalinfo");
 
         n_pals = GRgetpalinfo(grid, (unsigned)n_pals, palinfo_array);
-        CHECK_VOID(n_pals, FAIL, "GRgetpalinfo");
+        CHECK(n_pals, FAIL, "GRgetpalinfo");
 
         /* Read and verify data of the first palette which is pointed to by both
            data identifiers 201/ref and 301/ref */
@@ -1372,14 +1464,16 @@ test_getpalinfo()
         inbuf = (uint8 *)malloc((size_t)(palinfo_array[0].length));
         CHECK_ALLOC(inbuf, "inbuf", "test_getpalinfo");
         status = Hgetelement(fid, palinfo_array[0].tag, palinfo_array[0].ref, inbuf);
-        CHECK_VOID(status, FAIL, "Hgetelement");
+        CHECK(status, FAIL, "Hgetelement");
 
         if (memcmp(inbuf, paletteA, (size_t)(palinfo_array[0].length)) != 0)
             fprintf(stderr,
                     "palette data pointed by tag/ref = %d/%d at offset/length = %d/%d differs from written\n",
                     palinfo_array[0].tag, palinfo_array[0].ref, palinfo_array[0].offset,
                     palinfo_array[0].length);
-        free(inbuf);
+        free(inbuf); /* release before reassigning below, so it isn't leaked
+                         when inbuf is overwritten */
+        inbuf = NULL;
 
         /* Read and verify data of the palette pointed to by 301/4.  This is the
            data element that was not revealed by DFPgetpal because the tag/ref pair
@@ -1390,25 +1484,34 @@ test_getpalinfo()
         inbuf = (uint8 *)malloc((size_t)palinfo_array[7].length);
         CHECK_ALLOC(inbuf, "inbuf", "test_getpalinfo");
         status = Hgetelement(fid, palinfo_array[7].tag, palinfo_array[7].ref, inbuf);
-        CHECK_VOID(status, FAIL, "Hgetelement");
+        CHECK(status, FAIL, "Hgetelement");
 
         if (memcmp(inbuf, palette_buf1, (size_t)palinfo_array[7].length) != 0)
             fprintf(stderr,
                     "palette data pointed by tag/ref = %d/%d at offset/length = %d/%d differs from written\n",
                     palinfo_array[7].tag, palinfo_array[7].ref, palinfo_array[7].offset,
                     palinfo_array[7].length);
-        free(inbuf);
-
-        free(palinfo_array);
     }
 
     /* Terminate access to the GR interface and close the file */
     status = GRend(grid);
-    CHECK_VOID(status, FAIL, "GRend");
+    CHECK(status, FAIL, "GRend");
+    grid   = FAIL;
     status = Hclose(fid);
-    CHECK_VOID(status, FAIL, "Hclose");
+    CHECK(status, FAIL, "Hclose");
+    fid = FAIL;
 
-} /* test_getpalinfo */
+done:
+    /* Release resources */
+    if (riid != FAIL)
+        GRendaccess(riid);
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+    free(inbuf);
+    free(palinfo_array);
+}
 
 /****************************************************************************
    Name: test_getntinfo() - tests getting number type's information
@@ -1416,7 +1519,6 @@ test_getpalinfo()
    Description:
         This routine simply calls Hgetntinfo with various types and verifies
         the information retrieved.
-   BMR - Aug 2010
  ****************************************************************************/
 static void
 test_getntinfo()
@@ -1425,45 +1527,46 @@ test_getntinfo()
     int          status = SUCCEED;
 
     status = Hgetntinfo(DFNT_UINT8, &nt_info);
-    CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_UINT8");
-    VERIFY_CHAR_VOID(nt_info.type_name, "uint8", "Hgetntinfo DFNT_UINT8");
-    VERIFY_CHAR_VOID(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_UINT8");
+    CHECK(status, FAIL, "Hgetntinfo DFNT_UINT8");
+    VERIFY_CHAR(nt_info.type_name, "uint8", "Hgetntinfo DFNT_UINT8");
+    VERIFY_CHAR(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_UINT8");
 
     status = Hgetntinfo(DFNT_CHAR16, &nt_info);
-    CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_CHAR16");
-    VERIFY_CHAR_VOID(nt_info.type_name, "char16", "Hgetntinfo DFNT_CHAR16");
-    VERIFY_CHAR_VOID(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_CHAR16");
+    CHECK(status, FAIL, "Hgetntinfo DFNT_CHAR16");
+    VERIFY_CHAR(nt_info.type_name, "char16", "Hgetntinfo DFNT_CHAR16");
+    VERIFY_CHAR(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_CHAR16");
 
     /* Native */
     status = Hgetntinfo(DFNT_NFLOAT32, &nt_info);
-    CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_NFLOAT32");
-    VERIFY_CHAR_VOID(nt_info.type_name, "float32", "Hgetntinfo DFNT_NFLOAT32");
-    VERIFY_CHAR_VOID(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_NFLOAT32");
+    CHECK(status, FAIL, "Hgetntinfo DFNT_NFLOAT32");
+    VERIFY_CHAR(nt_info.type_name, "float32", "Hgetntinfo DFNT_NFLOAT32");
+    VERIFY_CHAR(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_NFLOAT32");
 
     /* Little endian */
     status = Hgetntinfo(DFNT_LFLOAT32, &nt_info);
-    CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_LFLOAT32");
-    VERIFY_CHAR_VOID(nt_info.type_name, "float32", "Hgetntinfo DFNT_LFLOAT32");
-    VERIFY_CHAR_VOID(nt_info.byte_order, "littleEndian", "Hgetntinfo DFNT_LFLOAT32");
+    CHECK(status, FAIL, "Hgetntinfo DFNT_LFLOAT32");
+    VERIFY_CHAR(nt_info.type_name, "float32", "Hgetntinfo DFNT_LFLOAT32");
+    VERIFY_CHAR(nt_info.byte_order, "littleEndian", "Hgetntinfo DFNT_LFLOAT32");
 
     /* Little endian backward compatible */
     status = Hgetntinfo(DFNT_LCHAR, &nt_info);
-    CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_LCHAR");
-    VERIFY_CHAR_VOID(nt_info.type_name, "char8", "Hgetntinfo DFNT_LCHAR");
-    VERIFY_CHAR_VOID(nt_info.byte_order, "littleEndian", "Hgetntinfo DFNT_LCHAR");
+    CHECK(status, FAIL, "Hgetntinfo DFNT_LCHAR");
+    VERIFY_CHAR(nt_info.type_name, "char8", "Hgetntinfo DFNT_LCHAR");
+    VERIFY_CHAR(nt_info.byte_order, "littleEndian", "Hgetntinfo DFNT_LCHAR");
 
     /* Backward compatible */
     status = Hgetntinfo(DFNT_DOUBLE, &nt_info);
-    CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_DOUBLE");
-    VERIFY_CHAR_VOID(nt_info.type_name, "float64", "Hgetntinfo DFNT_DOUBLE");
-    VERIFY_CHAR_VOID(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_DOUBLE");
+    CHECK(status, FAIL, "Hgetntinfo DFNT_DOUBLE");
+    VERIFY_CHAR(nt_info.type_name, "float64", "Hgetntinfo DFNT_DOUBLE");
+    VERIFY_CHAR(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_DOUBLE");
 
     /* Native backward compatible */
     status = Hgetntinfo(DFNT_NUCHAR, &nt_info);
-    CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_NUCHAR");
-    VERIFY_CHAR_VOID(nt_info.type_name, "uchar8", "Hgetntinfo DFNT_NUCHAR");
-    VERIFY_CHAR_VOID(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_NUCHAR");
-} /* test_getntinfo */
+    CHECK(status, FAIL, "Hgetntinfo DFNT_NUCHAR");
+    VERIFY_CHAR(nt_info.type_name, "uchar8", "Hgetntinfo DFNT_NUCHAR");
+    VERIFY_CHAR(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_NUCHAR");
+done:;
+}
 
 /* Test driver for testing the public functions VSgetdatainfo, ANgetdatainfo,
    GRgetdatainfo, and Hgetntinfo. */

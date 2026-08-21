@@ -52,9 +52,9 @@
     } while (0)
 
 /* Check status value and print error message */
-#define CHECK(status, fail_value, name)                                                                      \
+#define CHECK(status, fail_val, name)                                                                        \
     do {                                                                                                     \
-        if (status == fail_value) {                                                                          \
+        if (status == fail_val) {                                                                            \
             fprintf(stderr, "*** Routine %s FAILED at line %d ***\n", name, __LINE__);                       \
             num_errs++;                                                                                      \
             goto done;                                                                                       \
@@ -62,9 +62,9 @@
     } while (0)
 
 /* Check status value and print error message, including index */
-#define CHECK_IND(status, fail_value, name, index)                                                           \
+#define CHECK_IND(status, fail_val, name, index)                                                             \
     do {                                                                                                     \
-        if (status == fail_value) {                                                                          \
+        if (status == fail_val) {                                                                            \
             fprintf(stderr, "*** Routine %s FAILED at line %d for SDS index %d ***\n", name, __LINE__,       \
                     index);                                                                                  \
             num_errs++;                                                                                      \
@@ -73,33 +73,33 @@
     } while (0)
 
 /* Verify that a value is as expected and, if not, print error message */
-#define VERIFY(item, value, test_name)                                                                       \
+#define VERIFY(val, x, test_name)                                                                            \
     do {                                                                                                     \
-        if (item != value) {                                                                                 \
-            fprintf(stderr, "*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", test_name,            \
-                    (long)item, (int)__LINE__, __FILE__);                                                    \
+        if (x != val) {                                                                                      \
+            fprintf(stderr, "*** UNEXPECTED VALUE from %s is %ld (expected %ld) at line %4d in %s\n",        \
+                    test_name, (long)val, (long)x, (int)__LINE__, __FILE__);                                 \
             num_errs++;                                                                                      \
             goto done;                                                                                       \
         }                                                                                                    \
     } while (0)
 
 /* Verify that a float value is as expected and, if not, print error message */
-#define VERIFY_FLOAT(item, value, test_name)                                                                 \
+#define VERIFY_FLOAT(val, x, test_name)                                                                      \
     do {                                                                                                     \
-        if (!H4_FLT_ABS_EQUAL(item, value)) {                                                                \
-            fprintf(stderr, "*** UNEXPECTED VALUE from %s is %f at line %4d in %s\n", test_name,             \
-                    (double)item, (int)__LINE__, __FILE__);                                                  \
+        if (!H4_FLT_ABS_EQUAL(x, val)) {                                                                     \
+            fprintf(stderr, "*** UNEXPECTED VALUE from %s is %f (expected %f) at line %4d in %s\n",          \
+                    test_name, (double)val, (double)x, (int)__LINE__, __FILE__);                             \
             num_errs++;                                                                                      \
             goto done;                                                                                       \
         }                                                                                                    \
     } while (0)
 
 /* Verify that a double value is as expected and, if not, print error message */
-#define VERIFY_DOUBLE(item, value, test_name)                                                                \
+#define VERIFY_DOUBLE(val, x, test_name)                                                                     \
     do {                                                                                                     \
-        if (!H4_DBL_ABS_EQUAL(item, value)) {                                                                \
-            fprintf(stderr, "*** UNEXPECTED VALUE from %s is %f at line %4d in %s\n", test_name, item,       \
-                    (int)__LINE__, __FILE__);                                                                \
+        if (!H4_DBL_ABS_EQUAL(x, val)) {                                                                     \
+            fprintf(stderr, "*** UNEXPECTED VALUE from %s is %f (expected %f) at line %4d in %s\n",          \
+                    test_name, val, x, (int)__LINE__, __FILE__);                                             \
             num_errs++;                                                                                      \
             goto done;                                                                                       \
         }                                                                                                    \
@@ -107,11 +107,11 @@
 
 /* Verify that a value of type char* is as expected and, if not, print
    error message */
-#define VERIFY_CHAR(item, value, test_name)                                                                  \
+#define VERIFY_CHAR(val, x, test_name)                                                                       \
     do {                                                                                                     \
-        if (strcmp(item, value) != 0) {                                                                      \
-            fprintf(stderr, "*** UNEXPECTED VALUE from %s is <%s> at line %4d in %s\n", test_name, item,     \
-                    (int)__LINE__, __FILE__);                                                                \
+        if (strcmp(x, val) != 0) {                                                                           \
+            fprintf(stderr, "*** UNEXPECTED VALUE from %s is <%s> (expected <%s>) at line %4d in %s\n",      \
+                    test_name, val, x, (int)__LINE__, __FILE__);                                             \
             num_errs++;                                                                                      \
             goto done;                                                                                       \
         }                                                                                                    \
