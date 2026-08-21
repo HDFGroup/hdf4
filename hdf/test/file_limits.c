@@ -40,6 +40,10 @@ test_open_limits(void)
     int   i;
     int32 ret;
 
+    /* Initialize the tracking arrays */
+    for (i = 0; i < BIG; i++)
+        files[i] = accs[i] = FAIL;
+
 #ifdef H4_HAVE_WIN32_API
     /* Windows can only have 512 stdio files open by default, so we need
      * to bump this to handle large values for BIG files open at once.
@@ -48,13 +52,12 @@ test_open_limits(void)
      * worth keeping around in case we need to set this in the future.
      */
     ret = _setmaxstdio(1024);
-    CHECK_VOID(ret, FAIL, "_setmaxstdio");
+    CHECK(ret, FAIL, "_setmaxstdio");
 #endif
 
     MESSAGE(5, puts("Opening many files of same name"););
     for (i = 0; i < BIG; i++) {
         files[i] = Hopen("thf.hdf", DFACC_RDWR, 0);
-        CHECK_VOID(files[i], FAIL, "Hopen");
         if (files[i] < 0) {
             break;
         }
@@ -64,7 +67,8 @@ test_open_limits(void)
     MESSAGE(5, puts("Closing all files"););
     for (i--; i >= 0; i--) {
         ret = Hclose(files[i]);
-        CHECK_VOID(ret, FAIL, "Hclose");
+        CHECK(ret, FAIL, "Hclose");
+        files[i] = FAIL;
         if (ret < 0)
             printf("Error closing file %d\n", i);
     }
@@ -75,7 +79,6 @@ test_open_limits(void)
         char fname[100];
         sprintf(fname, "%s%1d.hdf", TESTFILE_NAME, i);
         files[i] = Hopen(fname, DFACC_ALL, 0);
-        CHECK_VOID(files[i], FAIL, "Hopen");
         if (files[i] < 0) {
             break;
         }
@@ -85,7 +88,8 @@ test_open_limits(void)
     MESSAGE(5, puts("Closing all files except first open"););
     for (i--; i > 0; i--) {
         ret = Hclose(files[i]);
-        CHECK_VOID(ret, FAIL, "Hclose");
+        CHECK(ret, FAIL, "Hclose");
+        files[i] = FAIL;
         if (ret < 0)
             printf("Error closing file %d\n", i);
     }
@@ -94,7 +98,6 @@ test_open_limits(void)
     MESSAGE(5, puts("Opening write access elements"););
     for (i = 0; i < BIG; i++) {
         accs[i] = Hstartwrite(files[0], (uint16)100, (uint16)(i + 1), 100L);
-        CHECK_VOID(accs[i], FAIL, "Hstartwrite");
         if (accs[i] < 0)
             break;
     }
@@ -103,15 +106,27 @@ test_open_limits(void)
     MESSAGE(5, puts("Closing access elements"););
     for (i--; i >= 0; i--) {
         ret = Hendaccess(accs[i]);
-        CHECK_VOID(ret, FAIL, "Hendaccess");
+        CHECK(ret, FAIL, "Hendaccess");
+        accs[i] = FAIL;
         if (ret < 0)
             printf("Error ending access %d\n", i);
     }
     MESSAGE(5, puts("Ended access"););
 
     ret = Hclose(files[0]);
-    CHECK_VOID(ret, FAIL, "Hclose");
-} /* end test_open_limits() */
+    CHECK(ret, FAIL, "Hclose");
+    files[0] = FAIL;
+
+done:
+    /* Release resources */
+    for (i = 0; i < BIG; i++) {
+        if (accs[i] != FAIL)
+            Hendaccess(accs[i]);
+        if (files[i] != FAIL)
+            Hclose(files[i]);
+    }
+    return;
+}
 
 #define TAG1 ((uint16)1000)
 #define TAG2 ((uint16)1001)
@@ -119,34 +134,36 @@ test_open_limits(void)
 static void
 test_ref_limits(void)
 {
-    int32 i;   /* local counting variable */
-    int32 fid; /* file ID */
+    int32 i;          /* local counting variable */
+    int32 fid = FAIL; /* file ID */
     int32 iloop;
+    int32 aid1 = FAIL, aid2 = FAIL;
+    int32 aid = FAIL;
 
     MESSAGE(6, printf("Testing reference # limits\n"););
     MESSAGE(7, printf("Writing out data\n"););
     /* Write out MAX_REF number of data items for each tag */
     fid = Hopen(TESTREF_NAME, DFACC_CREATE, 512);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     if (fid != FAIL) {
         iloop = MAX_REF_TESTED;
         for (i = 1; i <= (iloop / 2) + 5; i++) {
-            int32  aid;
             uint16 ref;
             int32  data;
             int32  ret;
 
             /* Write out data to tag1 */
             ref = Htagnewref(fid, TAG1);
-            CHECK_VOID(ref, 0, "Htagnewref");
+            CHECK(ref, 0, "Htagnewref");
             aid = Hstartwrite(fid, TAG1, ref, sizeof(int32));
-            CHECK_VOID(aid, FAIL, "Hstartwrite");
+            CHECK(aid, FAIL, "Hstartwrite");
             data = (int32)ref;
             ret  = Hwrite(aid, sizeof(int32), &data);
-            CHECK_VOID(ret, FAIL, "Hwrite");
+            CHECK(ret, FAIL, "Hwrite");
             ret = Hendaccess(aid);
-            CHECK_VOID(ret, FAIL, "Hendaccess");
+            CHECK(ret, FAIL, "Hendaccess");
+            aid = FAIL;
 
             /* lets be a little smatter here */
             if (ret == FAIL)
@@ -154,76 +171,92 @@ test_ref_limits(void)
 
             /* Write out data to tag2 */
             ref = Htagnewref(fid, TAG2);
-            CHECK_VOID(ref, 0, "Htagnewref");
+            CHECK(ref, 0, "Htagnewref");
             aid = Hstartwrite(fid, TAG2, ref, sizeof(int32));
-            CHECK_VOID(aid, FAIL, "Hstartwrite");
+            CHECK(aid, FAIL, "Hstartwrite");
             data = ref << 16;
             ret  = Hwrite(aid, sizeof(int32), &data);
-            CHECK_VOID(ret, FAIL, "Hwrite");
+            CHECK(ret, FAIL, "Hwrite");
             ret = Hendaccess(aid);
-            CHECK_VOID(ret, FAIL, "Hendaccess");
+            CHECK(ret, FAIL, "Hendaccess");
+            aid = FAIL;
             /* lets be a little smatter here */
             if (ret == FAIL)
                 break;
 
         } /* end for */
         Hclose(fid);
+        fid = FAIL;
 
         MESSAGE(7, printf("Verifying data\n"););
 
         /* Check the data written earlier */
         fid = Hopen(TESTREF_NAME, DFACC_READ, 0);
-        CHECK_VOID(fid, FAIL, "Hopen");
+        CHECK(fid, FAIL, "Hopen");
 
         if (fid != FAIL) {
             uint16 ref;
-            int32  aid1, aid2;
             int32  data;
             int32  ret;
 
             /* Read in data from tag1 */
             aid1 = Hstartread(fid, TAG1, DFREF_WILDCARD);
-            CHECK_VOID(aid1, FAIL, "Hstartread");
+            CHECK(aid1, FAIL, "Hstartread");
             ret = Hread(aid1, sizeof(int32), &data);
-            CHECK_VOID(ret, FAIL, "Hread");
+            CHECK(ret, FAIL, "Hread");
             ret = Hinquire(aid1, NULL, NULL, &ref, NULL, NULL, NULL, NULL, NULL);
-            CHECK_VOID(ret, FAIL, "Hinquire");
-            VERIFY_VOID((uint16)data, ref, "Hread");
+            CHECK(ret, FAIL, "Hinquire");
+            VERIFY((uint16)data, ref, "Hread");
 
             /* Read in data from tag2 */
             aid2 = Hstartread(fid, TAG2, DFREF_WILDCARD);
-            CHECK_VOID(aid2, FAIL, "Hstartread");
+            CHECK(aid2, FAIL, "Hstartread");
             ret = Hread(aid2, sizeof(int32), &data);
-            CHECK_VOID(ret, FAIL, "Hread");
+            CHECK(ret, FAIL, "Hread");
             ret = Hinquire(aid2, NULL, NULL, &ref, NULL, NULL, NULL, NULL, NULL);
-            CHECK_VOID(ret, FAIL, "Hinquire");
-            VERIFY_VOID((uint32)data, (((uint32)ref) << 16), "Hread");
+            CHECK(ret, FAIL, "Hinquire");
+            VERIFY((uint32)data, (((uint32)ref) << 16), "Hread");
 
             while (Hnextread(aid1, TAG1, DFTAG_WILDCARD, DF_CURRENT) != FAIL) {
                 ret = Hread(aid1, sizeof(int32), &data);
-                CHECK_VOID(ret, FAIL, "Hread");
+                CHECK(ret, FAIL, "Hread");
                 ret = Hinquire(aid1, NULL, NULL, &ref, NULL, NULL, NULL, NULL, NULL);
-                CHECK_VOID(ret, FAIL, "Hinquire");
-                VERIFY_VOID((uint16)data, ref, "Hread");
+                CHECK(ret, FAIL, "Hinquire");
+                VERIFY((uint16)data, ref, "Hread");
 
                 if (Hnextread(aid2, TAG2, DFTAG_WILDCARD, DF_CURRENT) != FAIL) {
                     ret = Hread(aid2, sizeof(int32), &data);
-                    CHECK_VOID(ret, FAIL, "Hread");
+                    CHECK(ret, FAIL, "Hread");
                     ret = Hinquire(aid2, NULL, NULL, &ref, NULL, NULL, NULL, NULL, NULL);
-                    CHECK_VOID(ret, FAIL, "Hinquire");
-                    VERIFY_VOID((uint32)data, (((uint32)ref) << 16), "Hread");
+                    CHECK(ret, FAIL, "Hinquire");
+                    VERIFY((uint32)data, (((uint32)ref) << 16), "Hread");
                 } /* end while */
             }     /* end while */
             ret = Hendaccess(aid1);
-            CHECK_VOID(ret, FAIL, "Hendaccess");
+            CHECK(ret, FAIL, "Hendaccess");
+            aid1 = FAIL;
 
             ret = Hendaccess(aid2);
-            CHECK_VOID(ret, FAIL, "Hendaccess");
+            CHECK(ret, FAIL, "Hendaccess");
+            aid2 = FAIL;
 
             Hclose(fid);
+            fid = FAIL;
         } /* end if */
     }     /* end if */
-} /* end test_ref_limits() */
+
+done:
+    /* Release resources */
+    if (aid != FAIL)
+        Hendaccess(aid);
+    if (aid1 != FAIL)
+        Hendaccess(aid1);
+    if (aid2 != FAIL)
+        Hendaccess(aid2);
+    if (fid != FAIL)
+        Hclose(fid);
+    return;
+}
 
 void
 test_hfile_limits(void)

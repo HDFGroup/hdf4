@@ -222,5 +222,4 @@ test_macros(void)
         printf("            %d ERRORS were detected during (macros) Testing\n", errors);
         num_errs += errors;
     }
-
-} /* end test_macros() */
+}

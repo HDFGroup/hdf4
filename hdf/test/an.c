@@ -43,13 +43,13 @@ test_an(void)
 {
     char   labsds[MAXLEN_LAB], labris[MAXLEN_LAB], descsds[MAXLEN_DESC], descris[MAXLEN_DESC];
     uint8  pal[768];
-    uint8 *image, *newimage;
+    uint8 *image = NULL, *newimage = NULL;
     uint16 refnum;
     int32  ret;
     int    rank;
     int    j;
     int32  dimsizes[2];
-    float *data;
+    float *data = NULL;
 
     /* set up object labels and descriptions */
 
@@ -65,6 +65,9 @@ test_an(void)
     data     = (float *)malloc(ROWS * COLS * sizeof(float));
     image    = (uint8 *)malloc(ROWS * COLS * sizeof(char));
     newimage = (uint8 *)malloc(ROWS * COLS * sizeof(char));
+    CHECK_ALLOC(data, "data", "test_an");
+    CHECK_ALLOC(image, "image", "test_an");
+    CHECK_ALLOC(newimage, "newimage", "test_an");
 
     dimsizes[0] = ROWS;
     dimsizes[1] = COLS;
@@ -119,6 +122,8 @@ test_an(void)
         check_lab_desc(DFTAG_RIG, refnum, labris, descris);
     }
 
+done:
+    /* Release resources */
     free(data);
     free(image);
     free(newimage);
@@ -177,7 +182,7 @@ static void
 check_lab_desc(uint16 tag, uint16 ref, char *label, char *desc)
 {
     int32 inlablen, indesclen, ret;
-    char  inlabel[MAXLEN_LAB], *indesc;
+    char  inlabel[MAXLEN_LAB], *indesc = NULL;
 
     inlablen = ret = DFANgetlablen(TESTFILE, tag, ref);
     RESULT("DFANgetlablen");
@@ -202,7 +207,8 @@ check_lab_desc(uint16 tag, uint16 ref, char *label, char *desc)
     }
     else {
         indesc = (char *)malloc((size_t)indesclen + 1);
-        ret    = DFANgetdesc(TESTFILE, tag, ref, indesc, MAXLEN_DESC);
+        CHECK_ALLOC(indesc, "indesc", "check_lab_desc");
+        ret = DFANgetdesc(TESTFILE, tag, ref, indesc, MAXLEN_DESC);
         RESULT("DFANgetdesc");
         indesc[indesclen] = '\0';
         if (strcmp(indesc, desc) != 0) {
@@ -211,7 +217,11 @@ check_lab_desc(uint16 tag, uint16 ref, char *label, char *desc)
             num_errs++;
         }
         free(indesc);
+        indesc = NULL;
     }
+done:
+    /* Release resources */
+    free(indesc);
 }
 
 void
@@ -219,13 +229,13 @@ test_an_2(void)
 {
     char   labsds[MAXLEN_LAB], labris[MAXLEN_LAB], descsds[MAXLEN_DESC], descris[MAXLEN_DESC];
     uint8  pal[768];
-    uint8 *image, *newimage;
+    uint8 *image = NULL, *newimage = NULL;
     uint16 refnum;
     int32  ret;
     int    rank;
     int    j;
     int32  dimsizes[2];
-    float *data;
+    float *data = NULL;
 
     /* set up object labels and descriptions */
 
@@ -241,6 +251,9 @@ test_an_2(void)
     data     = (float *)malloc(ROWS * COLS * sizeof(float));
     image    = (uint8 *)malloc(ROWS * COLS * sizeof(char));
     newimage = (uint8 *)malloc(ROWS * COLS * sizeof(char));
+    CHECK_ALLOC(data, "data", "test_an");
+    CHECK_ALLOC(image, "image", "test_an");
+    CHECK_ALLOC(newimage, "newimage", "test_an");
 
     dimsizes[0] = ROWS;
     dimsizes[1] = COLS;
@@ -295,6 +308,8 @@ test_an_2(void)
         check_lab_desc(DFTAG_RIG, refnum, labris, descris);
     }
 
+done:
+    /* Release resources */
     free(data);
     free(image);
     free(newimage);

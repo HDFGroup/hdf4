@@ -67,9 +67,9 @@ static void test_grattrs();
 static void
 test_vvsattrs()
 {
-    int32 fid;                                /* File ID */
-    int32 vgroup0_id, vgroup1_id, vgroup2_id; /* Various vgroup IDs */
-    int32 vdata0_id, vdata1_id, vdata2_id;    /* Various vdata IDs */
+    int32 fid        = FAIL;                                       /* File ID */
+    int32 vgroup0_id = FAIL, vgroup1_id = FAIL, vgroup2_id = FAIL; /* Various vgroup IDs */
+    int32 vdata0_id = FAIL, vdata1_id = FAIL, vdata2_id = FAIL;    /* Various vdata IDs */
     int32 fldindex;
     int32 ref_list[NUM_VGROUPS], vdref_list[NUM_VDATAS];
     int32 offset, length;
@@ -86,9 +86,9 @@ test_vvsattrs()
 
     /* Create HDF file and initialize the interface. */
     fid = Hopen(ATTRFILE, DFACC_CREATE, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
     status = Vstart(fid);
-    CHECK_VOID(status, FAIL, "Vstart");
+    CHECK(status, FAIL, "Vstart");
 
     /* Create NUM_VGROUPS vgroups and set classname */
     for (ii = 0; ii < NUM_VGROUPS; ii++) {
@@ -96,21 +96,21 @@ test_vvsattrs()
 
         /* Create a vgroup. */
         vgroup_id = Vattach(fid, -1, "w");
-        CHECK_VOID(vgroup_id, FAIL, "Vattach");
+        CHECK(vgroup_id, FAIL, "Vattach");
 
         /* Record its reference number for later access */
         vgroup_ref = VQueryref(vgroup_id);
-        CHECK_VOID(vgroup_ref, FAIL, "VQueryref:vgroup_id");
+        CHECK(vgroup_ref, FAIL, "VQueryref:vgroup_id");
         ref_list[ii] = vgroup_ref;
 
         /* Set its class name */
         sprintf(vgclass, "VG-CLASS-%d", ii);
         status_32 = Vsetclass(vgroup_id, vgclass);
-        CHECK_VOID(status_32, FAIL, "Vsetclass");
+        CHECK(status_32, FAIL, "Vsetclass");
 
         /* Detach it */
         status_32 = Vdetach(vgroup_id);
-        CHECK_VOID(status_32, FAIL, "Vdetach");
+        CHECK(status_32, FAIL, "Vdetach");
     }
 
     /* Create NUM_VDATAS vgroups and set classname */
@@ -119,21 +119,21 @@ test_vvsattrs()
 
         /* Create a vdata. */
         vdata_id = VSattach(fid, -1, "w");
-        CHECK_VOID(vdata_id, FAIL, "VSattach");
+        CHECK(vdata_id, FAIL, "VSattach");
 
         /* Record its reference number for later access */
         vdata_ref = VSQueryref(vdata_id);
-        CHECK_VOID(vdata_ref, FAIL, "VSQueryref:vdata_id");
+        CHECK(vdata_ref, FAIL, "VSQueryref:vdata_id");
         vdref_list[ii] = vdata_ref;
 
         /* Set its class name */
         sprintf(vgclass, "VS-CLASS-%d", ii);
         status_32 = VSsetclass(vdata_id, vgclass);
-        CHECK_VOID(status_32, FAIL, "VSsetclass");
+        CHECK(status_32, FAIL, "VSsetclass");
 
         /* Detach it */
         status_32 = VSdetach(vdata_id);
-        CHECK_VOID(status_32, FAIL, "VSdetach");
+        CHECK(status_32, FAIL, "VSdetach");
     }
 
     /* Insert some vdatas/vgroups into some other vgroups to build some sort of
@@ -141,46 +141,46 @@ test_vvsattrs()
 
     /* Insert "VD-CLASS-1" and "VD-CLASS-2" into "VG-CLASS-0" */
     vgroup0_id = Vattach(fid, ref_list[0], "w"); /* "VG-CLASS-0" */
-    CHECK_VOID(vgroup0_id, FAIL, "Vattach");
+    CHECK(vgroup0_id, FAIL, "Vattach");
     vdata1_id = VSattach(fid, vdref_list[1], "w"); /* "VD-CLASS-1" */
-    CHECK_VOID(vdata1_id, FAIL, "VSattach");
+    CHECK(vdata1_id, FAIL, "VSattach");
     vdata2_id = VSattach(fid, vdref_list[2], "w"); /* "VD-CLASS-2" */
-    CHECK_VOID(vdata2_id, FAIL, "VSattach");
+    CHECK(vdata2_id, FAIL, "VSattach");
 
     /* Define fields for vdata1 and vdata2 */
     status = VSfdefine(vdata1_id, FLDNAME1, DFNT_CHAR8, 1);
-    CHECK_VOID(status, FAIL, "VSfdefine");
+    CHECK(status, FAIL, "VSfdefine");
     status = VSfdefine(vdata1_id, FLDNAME2, DFNT_CHAR8, 3);
-    CHECK_VOID(status, FAIL, "VSfdefine");
+    CHECK(status, FAIL, "VSfdefine");
     status = VSsetfields(vdata1_id, FIELD_NAME_LIST1);
-    CHECK_VOID(status, FAIL, "VSsetfields");
+    CHECK(status, FAIL, "VSsetfields");
 
     status = VSfdefine(vdata2_id, FLDNAME3, DFNT_INT32, 2);
-    CHECK_VOID(status, FAIL, "VSfdefine");
+    CHECK(status, FAIL, "VSfdefine");
     status = VSfdefine(vdata2_id, FLDNAME4, DFNT_FLOAT, 1);
-    CHECK_VOID(status, FAIL, "VSfdefine");
+    CHECK(status, FAIL, "VSfdefine");
     status = VSsetfields(vdata2_id, FIELD_NAME_LIST2);
-    CHECK_VOID(status, FAIL, "VSsetfields");
+    CHECK(status, FAIL, "VSsetfields");
 
     status_32 = Vinsert(vgroup0_id, vdata1_id);
-    CHECK_VOID(status_32, FAIL, "Vinsert vdata1_id into vgroup0_id");
+    CHECK(status_32, FAIL, "Vinsert vdata1_id into vgroup0_id");
     status_32 = Vinsert(vgroup0_id, vdata2_id);
-    CHECK_VOID(status_32, FAIL, "Vinsert vdata2_id into vgroup0_id");
+    CHECK(status_32, FAIL, "Vinsert vdata2_id into vgroup0_id");
 
     /* Insert "VD-CLASS-0", "VG-CLASS-0", and "VG-CLASS-1" into "VG-CLASS-2" */
     vdata0_id = VSattach(fid, vdref_list[0], "w");
-    CHECK_VOID(vdata0_id, FAIL, "Vattach");
+    CHECK(vdata0_id, FAIL, "Vattach");
     vgroup1_id = Vattach(fid, ref_list[1], "w"); /* "VG-CLASS-1" */
-    CHECK_VOID(vgroup1_id, FAIL, "Vattach");
+    CHECK(vgroup1_id, FAIL, "Vattach");
     vgroup2_id = Vattach(fid, ref_list[2], "w"); /* "VG-CLASS-2" */
-    CHECK_VOID(vgroup2_id, FAIL, "Vattach");
+    CHECK(vgroup2_id, FAIL, "Vattach");
 
     status_32 = Vinsert(vgroup2_id, vdata0_id);
-    CHECK_VOID(status_32, FAIL, "Vinsert vdata0_id into vgroup2_id");
+    CHECK(status_32, FAIL, "Vinsert vdata0_id into vgroup2_id");
     status_32 = Vinsert(vgroup2_id, vgroup0_id);
-    CHECK_VOID(status_32, FAIL, "Vinsert vgroup0_id into vgroup2_id");
+    CHECK(status_32, FAIL, "Vinsert vgroup0_id into vgroup2_id");
     status_32 = Vinsert(vgroup2_id, vgroup1_id);
-    CHECK_VOID(status_32, FAIL, "Vinsert vgroup1_id into vgroup2_id");
+    CHECK(status_32, FAIL, "Vinsert vgroup1_id into vgroup2_id");
 
     /***************************************/
     /* Set attributes for various elements */
@@ -188,46 +188,53 @@ test_vvsattrs()
 
     /* Set two attributes for vgroup0 */
     status = Vsetattr(vgroup0_id, ATTNAME1, DFNT_UINT32, 4, attr1);
-    CHECK_VOID(status, FAIL, "Vsetattr vgroup0_id");
+    CHECK(status, FAIL, "Vsetattr vgroup0_id");
     status = Vsetattr(vgroup0_id, ATTNAME2, DFNT_CHAR8, 8, attr2);
-    CHECK_VOID(status, FAIL, "Vsetattr vgroup0_id");
+    CHECK(status, FAIL, "Vsetattr vgroup0_id");
 
     /* Set attribute for vdata0 */
     status = VSsetattr(vdata0_id, _HDF_VDATA, ATTNAME3, DFNT_CHAR8, 7, attr3);
-    CHECK_VOID(status, FAIL, "VSsetattr vdata0_id");
+    CHECK(status, FAIL, "VSsetattr vdata0_id");
 
     /* Set attribute for vdata1/field1 */
     status = VSfindex(vdata1_id, FLDNAME1, &fldindex);
-    CHECK_VOID(status, FAIL, "VSfindex vdata1_id");
-    VERIFY_VOID(fldindex, 0, "VSfindex vdata1_id");
+    CHECK(status, FAIL, "VSfindex vdata1_id");
+    VERIFY(fldindex, 0, "VSfindex vdata1_id");
 
     /* Set attribute to field FLDNAME1*/
     status = VSsetattr(vdata1_id, fldindex, ATTNAME4, DFNT_CHAR8, 7, attr4);
-    CHECK_VOID(status, FAIL, "VSsetattr vdata1_id");
+    CHECK(status, FAIL, "VSsetattr vdata1_id");
 
     /* Change values of existing attribute */
     /* Vsetattr(vgid, ATTNAME1, DFNT_UINT32, 2, &attr1[2]))
      */
     /* Terminate access to any opened elements */
     status_32 = Vdetach(vgroup0_id);
-    CHECK_VOID(status_32, FAIL, "Vdetach vgroup0_id");
-    status_32 = Vdetach(vgroup1_id);
-    CHECK_VOID(status_32, FAIL, "Vdetach vgroup1_id");
-    status_32 = Vdetach(vgroup2_id);
-    CHECK_VOID(status_32, FAIL, "Vdetach vgroup2_id");
+    CHECK(status_32, FAIL, "Vdetach vgroup0_id");
+    vgroup0_id = FAIL;
+    status_32  = Vdetach(vgroup1_id);
+    CHECK(status_32, FAIL, "Vdetach vgroup1_id");
+    vgroup1_id = FAIL;
+    status_32  = Vdetach(vgroup2_id);
+    CHECK(status_32, FAIL, "Vdetach vgroup2_id");
+    vgroup2_id = FAIL;
 
     status_32 = VSdetach(vdata0_id);
-    CHECK_VOID(status_32, FAIL, "VSdetach vdata0_id");
+    CHECK(status_32, FAIL, "VSdetach vdata0_id");
+    vdata0_id = FAIL;
     status_32 = VSdetach(vdata1_id);
-    CHECK_VOID(status_32, FAIL, "VSdetach vdata1_id");
+    CHECK(status_32, FAIL, "VSdetach vdata1_id");
+    vdata1_id = FAIL;
     status_32 = VSdetach(vdata2_id);
-    CHECK_VOID(status_32, FAIL, "VSdetach vdata2_id");
+    CHECK(status_32, FAIL, "VSdetach vdata2_id");
+    vdata2_id = FAIL;
 
     /* Terminate access to the V interface and close the HDF file.  */
     status = Vend(fid);
-    CHECK_VOID(status, FAIL, "Vend");
+    CHECK(status, FAIL, "Vend");
     status = Hclose(fid);
-    CHECK_VOID(status, FAIL, "Hclose");
+    CHECK(status, FAIL, "Hclose");
+    fid = FAIL;
 
     /**************************************************************
         The following elements have attributes:
@@ -238,21 +245,21 @@ test_vvsattrs()
 
     /* Open the file to test Vgetattdatainfo and VSgetattdatainfo */
     fid = Hopen(ATTRFILE, DFACC_RDWR, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
     status = Vstart(fid);
-    CHECK_VOID(status, FAIL, "Vstart");
+    CHECK(status, FAIL, "Vstart");
 
     /* Attach to vgroup0, vdata0, and vdata1 for attribute's data info */
     vgroup0_id = Vattach(fid, ref_list[0], "w"); /* "VG-CLASS-0" */
-    CHECK_VOID(vgroup0_id, FAIL, "Vattach");
+    CHECK(vgroup0_id, FAIL, "Vattach");
     vdata0_id = VSattach(fid, vdref_list[0], "w"); /* "VD-CLASS-0" */
-    CHECK_VOID(vdata0_id, FAIL, "Vattach");
+    CHECK(vdata0_id, FAIL, "Vattach");
     vdata1_id = VSattach(fid, vdref_list[1], "w"); /* "VD-CLASS-1" */
-    CHECK_VOID(vdata1_id, FAIL, "VSattach");
+    CHECK(vdata1_id, FAIL, "VSattach");
 
     /* Get data info of the first attribute from vdata0 */
     status = VSgetattdatainfo(vdata0_id, _HDF_VDATA, 0, &offset, &length);
-    CHECK_VOID(status, FAIL, "VSgetattdatainfo");
+    CHECK(status, FAIL, "VSgetattdatainfo");
 
     /* Read and verify an attribute without using HDF4 library */
     status = readnoHDF_char(ATTRFILE, offset, length, attr3);
@@ -263,7 +270,7 @@ test_vvsattrs()
 
     /* Get data info of the first attribute from vdata1/FLDNAME1 */
     status = VSgetattdatainfo(vdata1_id, 0, 0, &offset, &length);
-    CHECK_VOID(status, FAIL, "VSgetattdatainfo");
+    CHECK(status, FAIL, "VSgetattdatainfo");
 
     /* Read and verify an attribute without using HDF4 library */
     status = readnoHDF_char(ATTRFILE, offset, length, attr4);
@@ -271,14 +278,14 @@ test_vvsattrs()
 
     /* Get data info of the first attributes from vgroup0 */
     status = Vgetattdatainfo(vgroup0_id, 0, &offset, &length);
-    CHECK_VOID(status, FAIL, "Vgetattdatainfo");
+    CHECK(status, FAIL, "Vgetattdatainfo");
 
     /* Reset offset/length */
     offset = length = 0;
 
     /* Get data info of the second attributes from vgroup0 */
     status = Vgetattdatainfo(vgroup0_id, 1, &offset, &length);
-    CHECK_VOID(status, FAIL, "Vgetattdatainfo");
+    CHECK(status, FAIL, "Vgetattdatainfo");
 
     /* Read and verify an attribute without using HDF4 library */
     status = readnoHDF_char("tattdatainfo.hdf", offset, length, attr2);
@@ -286,24 +293,46 @@ test_vvsattrs()
 
     /* Terminate access to any opened elements */
     status_32 = Vdetach(vgroup0_id);
-    CHECK_VOID(status_32, FAIL, "Vdetach vgroup0_id");
-    status_32 = VSdetach(vdata0_id);
-    CHECK_VOID(status_32, FAIL, "VSdetach vdata0_id");
+    CHECK(status_32, FAIL, "Vdetach vgroup0_id");
+    vgroup0_id = FAIL;
+    status_32  = VSdetach(vdata0_id);
+    CHECK(status_32, FAIL, "VSdetach vdata0_id");
+    vdata0_id = FAIL;
     status_32 = VSdetach(vdata1_id);
-    CHECK_VOID(status_32, FAIL, "VSdetach vdata1_id");
+    CHECK(status_32, FAIL, "VSdetach vdata1_id");
+    vdata1_id = FAIL;
 
     /* Terminate access to the V interface and close the HDF file.  */
     status = Vend(fid);
-    CHECK_VOID(status, FAIL, "Vend");
+    CHECK(status, FAIL, "Vend");
     status = Hclose(fid);
-    CHECK_VOID(status, FAIL, "Hclose");
-} /* test_vvsattrs() */
+    CHECK(status, FAIL, "Hclose");
+    fid = FAIL;
+done:
+    /* Release resources */
+    if (vgroup0_id != FAIL)
+        Vdetach(vgroup0_id);
+    if (vgroup1_id != FAIL)
+        Vdetach(vgroup1_id);
+    if (vgroup2_id != FAIL)
+        Vdetach(vgroup2_id);
+    if (vdata0_id != FAIL)
+        VSdetach(vdata0_id);
+    if (vdata1_id != FAIL)
+        VSdetach(vdata1_id);
+    if (vdata2_id != FAIL)
+        VSdetach(vdata2_id);
+    if (fid != FAIL) {
+        Vend(fid);
+        Hclose(fid);
+    }
+}
 
 static void
 test_vgmixedattrs()
 {
-    int32 fid; /* File ID */
-    int32 vgroup_id, vgroup_ref;
+    int32 fid       = FAIL; /* File ID */
+    int32 vgroup_id = FAIL, vgroup_ref;
     int32 n_attrs;
     int32 offsets[10], lengths[10]; /* offsets and lengths of attrs' data */
     /* Note: each array element is associated with an individual attribute, not
@@ -322,20 +351,20 @@ test_vgmixedattrs()
 
     /* Create HDF file and initialize the interface. */
     fid = Hopen(ATTRFILE, DFACC_RDWR, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
     status = Vstart(fid);
-    CHECK_VOID(status, FAIL, "Vstart");
+    CHECK(status, FAIL, "Vstart");
 
     /* Get access to first vgroup. */
     vgroup_ref = Vgetid(fid, -1);
-    CHECK_VOID(vgroup_ref, FAIL, "Vgetid");
+    CHECK(vgroup_ref, FAIL, "Vgetid");
     vgroup_id = Vattach(fid, vgroup_ref, "w");
-    CHECK_VOID(vgroup_id, FAIL, "Vattach");
+    CHECK(vgroup_id, FAIL, "Vattach");
 
     /* Current number of attributes belong to this vgroup */
     n_attrs = Vnattrs(vgroup_id);
-    CHECK_VOID(n_attrs, FAIL, "Vnattrs");
-    VERIFY_VOID(n_attrs, 2, "Vnattrs");
+    CHECK(n_attrs, FAIL, "Vnattrs");
+    VERIFY(n_attrs, 2, "Vnattrs");
     for (ii = 0; ii < n_attrs; ii++) {
         char  aname[20];
         int32 atype, acount, asize;
@@ -343,37 +372,39 @@ test_vgmixedattrs()
         /* strncmp(iattrname, ATTNAME1, strlen(ATTNAME1)) != 0) */
     }
     n_attrs = Vnoldattrs(vgroup_id);
-    VERIFY_VOID(n_attrs, 0, "Vnoldattrs");
+    VERIFY(n_attrs, 0, "Vnoldattrs");
 
     /* Now, add one attribute with Vsetattr, and two attributes with
         VHstoredatam/Vaddtagref combination */
 
     /* Add one new-style attribute */
     status = Vsetattr(vgroup_id, ATTNAME5, DFNT_CHAR8, 12, attr2);
-    CHECK_VOID(status, FAIL, "Vsetattr vgroup_id");
+    CHECK(status, FAIL, "Vsetattr vgroup_id");
 
     /* Add two old-style attributes */
     attr_ref = VHstoredatam(fid, ATTR_FIELD_NAME, (unsigned char *)attr3, 1, DFNT_CHAR8, ATTNAME6,
                             _HDF_ATTRIBUTE, 13);
-    CHECK_VOID(attr_ref, FAIL, "VHstoredatam");
+    CHECK(attr_ref, FAIL, "VHstoredatam");
     status = Vaddtagref(vgroup_id, DFTAG_VH, attr_ref);
-    CHECK_VOID(status, FAIL, "Vaddtagref");
+    CHECK(status, FAIL, "Vaddtagref");
 
     attr_ref = VHstoredatam(fid, ATTR_FIELD_NAME, (unsigned char *)attr4, 1, DFNT_CHAR8, ATTNAME7,
                             _HDF_ATTRIBUTE, 13);
-    CHECK_VOID(attr_ref, FAIL, "VHstoredatam");
+    CHECK(attr_ref, FAIL, "VHstoredatam");
     status = Vaddtagref(vgroup_id, DFTAG_VH, attr_ref);
-    CHECK_VOID(status, FAIL, "Vaddtagref");
+    CHECK(status, FAIL, "Vaddtagref");
 
     /* Terminate access to any opened elements */
     status_32 = Vdetach(vgroup_id);
-    CHECK_VOID(status_32, FAIL, "Vdetach vgroup_id");
+    CHECK(status_32, FAIL, "Vdetach vgroup_id");
+    vgroup_id = FAIL;
 
     /* Terminate access to the V interface and close the HDF file.  */
     status = Vend(fid);
-    CHECK_VOID(status, FAIL, "Vend");
+    CHECK(status, FAIL, "Vend");
     status = Hclose(fid);
-    CHECK_VOID(status, FAIL, "Hclose");
+    CHECK(status, FAIL, "Hclose");
+    fid = FAIL;
 
     /**************************************************************
         The following element has changed:
@@ -384,25 +415,25 @@ test_vgmixedattrs()
     /* Re-open the file to test Vnattrs2, Vattrinfo2, Vgetattr2, and
         Vgetattdatainfo */
     fid = Hopen(ATTRFILE, DFACC_RDWR, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
     status = Vstart(fid);
-    CHECK_VOID(status, FAIL, "Vstart");
+    CHECK(status, FAIL, "Vstart");
 
     /* Attach to vgroup0 for attribute info and data */
     vgroup_id = Vattach(fid, vgroup_ref, "w"); /* "VG-CLASS-0" */
-    CHECK_VOID(vgroup_id, FAIL, "Vattach");
+    CHECK(vgroup_id, FAIL, "Vattach");
 
     /* Vnattrs returns number of attributes added by Vsetattr */
     n_attrs = Vnattrs(vgroup_id);
-    VERIFY_VOID(n_attrs, 3, "Vnattrs");
+    VERIFY(n_attrs, 3, "Vnattrs");
 
     /* Vnoldattrs returns number of attrs added by VHstoredatam/Vaddtagref */
     n_attrs = Vnoldattrs(vgroup_id);
-    VERIFY_VOID(n_attrs, 2, "Vnoldattrs");
+    VERIFY(n_attrs, 2, "Vnoldattrs");
 
     /* Vnattrs2 returns total number of attrs, regardless how they were added */
     n_attrs = Vnattrs2(vgroup_id);
-    VERIFY_VOID(n_attrs, 5, "Vnattrs2");
+    VERIFY(n_attrs, 5, "Vnattrs2");
 
     /* Test Vattrinfo2 and Vgetattr2 on each attribute */
     for (ii = 0; ii < n_attrs; ii++) {
@@ -422,22 +453,22 @@ test_vgmixedattrs()
         /* Get attribute information and verify its name and number of fields,
            which should be 1 */
         status = Vattrinfo2(vgroup_id, ii, aname, &atype, &acount, &asize, &n_fields, &refnum);
-        VERIFY_CHAR_VOID(aname, check_attr_names[ii], "Vattrinfo2");
-        VERIFY_VOID(n_fields, 1, "Vattrinfo2");
+        VERIFY_CHAR(aname, check_attr_names[ii], "Vattrinfo2");
+        VERIFY(n_fields, 1, "Vattrinfo2");
 
         /* Test Vgetattr2 to make sure it works with mixed attributes */
         switch (atype) {
             case DFNT_CHAR:
                 /* Get and verify values of a char attribute */
                 status = Vgetattr2(vgroup_id, ii, (void *)cvalues);
-                VERIFY_CHAR_VOID(cvalues, check_attr_values[ii], "Vgetattr2 char");
+                VERIFY_CHAR(cvalues, check_attr_values[ii], "Vgetattr2 char");
 
                 /* Add an extra test for Vgetattdatainfo */
 
                 /* Get data info and verify number of data block */
                 status = Vgetattdatainfo(vgroup_id, ii, &offsets[ii], &lengths[ii]);
-                CHECK_VOID(status, FAIL, "Vgetattdatainfo");
-                VERIFY_VOID(status, 1, "Vgetattdatainfo");
+                CHECK(status, FAIL, "Vgetattdatainfo");
+                VERIFY(status, 1, "Vgetattdatainfo");
 
                 /* Read and verify data of an attr without using HDF4 library */
                 status = readnoHDF_char(ATTRFILE, offsets[ii], lengths[ii], check_attr_values[ii]);
@@ -448,7 +479,7 @@ test_vgmixedattrs()
                 /* Get and verify values of an int attribute */
                 status = Vgetattr2(vgroup_id, ii, (void *)ivalues);
                 for (jj = 0; jj < acount; jj++)
-                    VERIFY_VOID(ivalues[jj], (int32)attr1[jj], "Vgetattr2 int");
+                    VERIFY(ivalues[jj], (int32)attr1[jj], "Vgetattr2 int");
                 break;
             default:
                 fprintf(stderr, "type %d is not handled!\n", atype);
@@ -458,14 +489,24 @@ test_vgmixedattrs()
 
     /* Terminate access to the vgroup */
     status_32 = Vdetach(vgroup_id);
-    CHECK_VOID(status_32, FAIL, "Vdetach vgroup_id");
+    CHECK(status_32, FAIL, "Vdetach vgroup_id");
+    vgroup_id = FAIL;
 
     /* Terminate access to the V interface and close the HDF file.  */
     status = Vend(fid);
-    CHECK_VOID(status, FAIL, "Vend");
+    CHECK(status, FAIL, "Vend");
     status = Hclose(fid);
-    CHECK_VOID(status, FAIL, "Hclose");
-} /* test_vgmixedattrs() */
+    CHECK(status, FAIL, "Hclose");
+    fid = FAIL;
+done:
+    /* Release resources */
+    if (vgroup_id != FAIL)
+        Vdetach(vgroup_id);
+    if (fid != FAIL) {
+        Vend(fid);
+        Hclose(fid);
+    }
+}
 
 /****************************************************************************
    Name: test_grattrs() - tests getting attribute data information from
@@ -504,13 +545,13 @@ test_vgmixedattrs()
 static void
 test_grattrs()
 {
-    int32 file_id,      /* HDF file identifier */
-        gr_id,          /* GR interface identifier */
-        ri_id,          /* raster image identifier */
-        start[2],       /* where to start to write for each dimension  */
-        edges[2],       /* how long to write for each dimension */
-        dimsizes[2],    /* sizes of the two dimensions of the image array   */
-        interlace_mode, /* interlace mode of the image */
+    int32 file_id = FAIL, /* HDF file identifier */
+        gr_id     = FAIL, /* GR interface identifier */
+        ri_id     = FAIL, /* raster image identifier */
+        start[2],         /* where to start to write for each dimension  */
+        edges[2],         /* how long to write for each dimension */
+        dimsizes[2],      /* sizes of the two dimensions of the image array   */
+        interlace_mode,   /* interlace mode of the image */
         ii, jj;
     int   status;
     int16 ri_att2_val[RI_ATT2_COUNT] = {1, 2, 3, 4, 5, 6};
@@ -523,11 +564,11 @@ test_grattrs()
 
     /* Create and open the file. */
     file_id = Hopen(GRATTRFILE, DFACC_CREATE, 0);
-    CHECK_VOID(file_id, FAIL, "Hopen");
+    CHECK(file_id, FAIL, "Hopen");
 
     /* Initialize the GR interface. */
     gr_id = GRstart(file_id);
-    CHECK_VOID(gr_id, FAIL, "GRstart");
+    CHECK(gr_id, FAIL, "GRstart");
 
     /* Set the number type, interlace mode, and dimensions of the image. */
     interlace_mode = MFGR_INTERLACE_LINE;
@@ -536,7 +577,7 @@ test_grattrs()
 
     /* Create a raster image array. */
     ri_id = GRcreate(gr_id, IMAGE_NAME, N_COMPS, DFNT_INT8, interlace_mode, dimsizes);
-    CHECK_VOID(ri_id, FAIL, "GRcreate");
+    CHECK(ri_id, FAIL, "GRcreate");
 
     /* Fill the image data buffer with values. */
     for (ii = 0; ii < Y_LENGTH; ii++) {
@@ -554,63 +595,67 @@ test_grattrs()
 
     /* Write the data into the image array and terminate access to the RI. */
     status = GRwriteimage(ri_id, start, NULL, edges, (void *)image_buf);
-    CHECK_VOID(status, FAIL, "GRwriteimage");
+    CHECK(status, FAIL, "GRwriteimage");
     status = GRendaccess(ri_id);
-    CHECK_VOID(status, FAIL, "GRendaccess");
+    CHECK(status, FAIL, "GRendaccess");
+    ri_id = FAIL;
 
     /* Set two file attributes to the file with names, data types, numbers of
      * values, and values of the attributes specified. */
     status = GRsetattr(gr_id, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_COUNT, F_ATT1_VAL);
-    CHECK_VOID(status, FAIL, "GRsetattr F_ATT1_NAME");
+    CHECK(status, FAIL, "GRsetattr F_ATT1_NAME");
 
     status = GRsetattr(gr_id, F_ATT2_NAME, DFNT_CHAR8, F_ATT2_COUNT, F_ATT2_VAL);
-    CHECK_VOID(status, FAIL, "GRsetattr F_ATT2_NAME");
+    CHECK(status, FAIL, "GRsetattr F_ATT2_NAME");
 
     /* Get access to the first and only image in the file */
     ri_id = GRselect(gr_id, 0);
-    CHECK_VOID(ri_id, FAIL, "GRselect index 0");
+    CHECK(ri_id, FAIL, "GRselect index 0");
 
     /* Set two attribute to the image with names, data types, numbers of
      * values, and values of the attributes specified. */
     status = GRsetattr(ri_id, RI_ATT1_NAME, DFNT_CHAR8, RI_ATT1_COUNT, RI_ATT1_VAL);
-    CHECK_VOID(status, FAIL, "GRsetattr RI_ATT1_NAME");
+    CHECK(status, FAIL, "GRsetattr RI_ATT1_NAME");
 
     status = GRsetattr(ri_id, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_COUNT, (void *)ri_att2_val);
-    CHECK_VOID(status, FAIL, "GRsetattr RI_ATT2_NAME");
+    CHECK(status, FAIL, "GRsetattr RI_ATT2_NAME");
 
     /* Terminate access to the raster image and to the GR interface and
      * close the HDF file. */
     status = GRendaccess(ri_id);
-    CHECK_VOID(status, FAIL, "GRendaccess");
+    CHECK(status, FAIL, "GRendaccess");
+    ri_id  = FAIL;
     status = GRend(gr_id);
-    CHECK_VOID(status, FAIL, "GRend");
+    CHECK(status, FAIL, "GRend");
+    gr_id  = FAIL;
     status = Hclose(file_id);
-    CHECK_VOID(status, FAIL, "Hclose");
+    CHECK(status, FAIL, "Hclose");
+    file_id = FAIL;
 
     /* Re-open the file, get data info of some attributes, then verify their
        data */
 
     /* Open the HDF file and initialize the GR interface. */
     file_id = Hopen(GRATTRFILE, DFACC_RDONLY, 0);
-    CHECK_VOID(file_id, FAIL, "Hopen GRATTRFILE");
+    CHECK(file_id, FAIL, "Hopen GRATTRFILE");
     gr_id = GRstart(file_id);
-    CHECK_VOID(gr_id, FAIL, "GRstart GRATTRFILE");
+    CHECK(gr_id, FAIL, "GRstart GRATTRFILE");
 
     /* Get access to the image, first and only */
     ri_id = GRselect(gr_id, 0);
-    CHECK_VOID(ri_id, FAIL, "GRselect index 0");
+    CHECK(ri_id, FAIL, "GRselect index 0");
 
     /* Get data info of file attr and store them in offsets/lengths[0,1] */
     status = GRgetattdatainfo(gr_id, 0, &offsets[0], &lengths[0]);
-    CHECK_VOID(status, FAIL, "GRgetattdatainfo");
+    CHECK(status, FAIL, "GRgetattdatainfo");
     status = GRgetattdatainfo(gr_id, 1, &offsets[1], &lengths[1]);
-    CHECK_VOID(status, FAIL, "GRgetattdatainfo");
+    CHECK(status, FAIL, "GRgetattdatainfo");
 
     /* Get data info of image attr and store them in offsets/lengths[2,3] */
     status = GRgetattdatainfo(ri_id, 0, &offsets[2], &lengths[2]);
-    CHECK_VOID(status, FAIL, "GRgetattdatainfo");
+    CHECK(status, FAIL, "GRgetattdatainfo");
     status = GRgetattdatainfo(ri_id, 1, &offsets[3], &lengths[3]);
-    CHECK_VOID(status, FAIL, "GRgetattdatainfo");
+    CHECK(status, FAIL, "GRgetattdatainfo");
 
     /* This image should be mapped-able by the HDF4 map writer because even
        though it was created by GR, it has 8-bit data, 1 compnonent, and no
@@ -620,19 +665,22 @@ test_grattrs()
         int name_generated;
 
         status = GR2bmapped(ri_id, &is_mappedable, &name_generated);
-        CHECK_VOID(status, FAIL, "GR2bmapped");
-        VERIFY_VOID(is_mappedable, TRUE, "GR2bmapped");
-        VERIFY_VOID(name_generated, FALSE, "GR2bmapped");
+        CHECK(status, FAIL, "GR2bmapped");
+        VERIFY(is_mappedable, TRUE, "GR2bmapped");
+        VERIFY(name_generated, FALSE, "GR2bmapped");
     }
 
     /* Terminate access to the image and to the GR interface and close the
      * HDF file. */
     status = GRendaccess(ri_id);
-    CHECK_VOID(status, FAIL, "GRendaccess");
+    CHECK(status, FAIL, "GRendaccess");
+    ri_id  = FAIL;
     status = GRend(gr_id);
-    CHECK_VOID(status, FAIL, "GRend");
+    CHECK(status, FAIL, "GRend");
+    gr_id  = FAIL;
     status = Hclose(file_id);
-    CHECK_VOID(status, FAIL, "Hclose");
+    CHECK(status, FAIL, "Hclose");
+    file_id = FAIL;
 
     /* Verify data of attributes without the use of HDF4 library */
     status = readnoHDF_char(GRATTRFILE, offsets[0], lengths[0], F_ATT1_VAL);
@@ -642,7 +690,15 @@ test_grattrs()
     status = readnoHDF_char(GRATTRFILE, offsets[2], lengths[2], RI_ATT1_VAL);
     CHECK_STATUS(status, FAIL, "Verifying data without HDF4 library failed");
     /* Note: readnoHDF_char is defined in tdatainfo.c */
-} /* test_grattrs() */
+done:
+    /* Release resources */
+    if (ri_id != FAIL)
+        GRendaccess(ri_id);
+    if (gr_id != FAIL)
+        GRend(gr_id);
+    if (file_id != FAIL)
+        Hclose(file_id);
+}
 
 /* Test driver for testing the public functions VSgetattdatainfo,
    Vgetattdatainfo, and GRgetattdatainfo. */

@@ -1129,11 +1129,11 @@ extern void test_mgr_dup_images();
 static void
 test_mgr_init(void)
 {
-    int32       fid;        /* HDF file ID */
-    int32       grid;       /* GRID for the interface */
-    int32       n_datasets; /* number of datasets */
-    int32       n_attrs;    /* number of attributes */
-    int32       ret;        /* generic return value */
+    int32       fid  = FAIL; /* HDF file ID */
+    int32       grid = FAIL; /* GRID for the interface */
+    int32       n_datasets;  /* number of datasets */
+    int32       n_attrs;     /* number of attributes */
+    int32       ret;         /* generic return value */
     const char *datafile = get_srcdir_filename(DATAFILE);
 
     /* Output message about test being performed */
@@ -1143,61 +1143,68 @@ test_mgr_init(void)
 
     /* Create a new file */
     fid = Hopen(TESTFILE, DFACC_CREATE, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Try initializing the GR interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     /* Test getting the number of datasets and the number of file attributes */
     ret = (int)GRfileinfo(grid, &n_datasets, &n_attrs);
-    CHECK_VOID(ret, FAIL, "GRfileinfo");
+    CHECK(ret, FAIL, "GRfileinfo");
     if (n_datasets != 0 || n_attrs != 0) {
         MESSAGE(3, printf("Error! Number of datasets/attributes in new file incorrect\n"););
         num_errs++;
     } /* end if */
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
 
     MESSAGE(8, printf("Try checking out an existing file\n"););
 
     /* Perform the same test on an existing file */
     fid = Hopen(datafile, DFACC_READ, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Try initializing the GR interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     /* Test getting the number of datasets and the number of file attributes */
     ret = (int)GRfileinfo(grid, &n_datasets, &n_attrs);
-    CHECK_VOID(ret, FAIL, "GRfileinfo");
+    CHECK(ret, FAIL, "GRfileinfo");
     if (n_datasets != 5 || n_attrs != 2) {
         MESSAGE(3, printf("Error! Number of datasets/attributes in existing file incorrect\n"););
         num_errs++;
     } /* end if */
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
-} /* end test_mgr_init() */
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
+
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+}
 
 /* Sub-tests for test_mgr_image() */
 static void
 test_mgr_image_b1a(int flag)
 {
-    int32         fid;               /* HDF file ID */
-    int32         grid;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
     int32         cdims[2] = {1, 1}; /* chunk dims */
     int32        *rcdims;            /* for SDgetchunkinfo() */
@@ -1213,11 +1220,11 @@ test_mgr_image_b1a(int flag)
         fid = Hopen(TESTFILE2, DFACC_RDWR, 0);
     else
         fid = Hopen(TESTFILE, DFACC_RDWR, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Initialize the GR interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     {
         int32   riid;             /* RI ID for the new image */
@@ -1231,7 +1238,7 @@ test_mgr_image_b1a(int flag)
 
         /* Create empty image with default fill value */
         riid = GRcreate(grid, "Empty Image", 3, DFNT_FLOAT32, MFGR_INTERLACE_PIXEL, dims);
-        CHECK_VOID(riid, FAIL, "GRcreate");
+        CHECK(riid, FAIL, "GRcreate");
 
         /* Check if creating chunked GR */
         if (flag) {
@@ -1240,28 +1247,27 @@ test_mgr_image_b1a(int flag)
             cdims[0] = chunk_def.chunk_lengths[0] = 2;
             cdims[1] = chunk_def.chunk_lengths[1] = 2;
             ret                                   = GRsetchunk(riid, chunk_def, HDF_CHUNK);
-            CHECK_VOID(ret, FAIL, "GRsetchunk");
+            CHECK(ret, FAIL, "GRsetchunk");
 
             /* Set Chunk cache to hold 3 chunks */
             ret = GRsetchunkcache(riid, 3, 0);
-            CHECK_VOID(ret, FAIL, "GRsetchunkcache");
+            CHECK(ret, FAIL, "GRsetchunkcache");
         }
 
         /* Save the ref. # for later access */
         ref = GRidtoref(riid);
-        CHECK_VOID(ref, (uint16)FAIL, "GRidtoref");
+        CHECK(ref, (uint16)FAIL, "GRidtoref");
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
 
         /* Get the index of the newly created image */
         index = GRreftoindex(grid, ref);
-        CHECK_VOID(index, FAIL, "GRreftoindex");
+        CHECK(index, FAIL, "GRreftoindex");
 
         /* Select the newly created image */
         riid = GRselect(grid, index);
-        CHECK_VOID(riid, FAIL, "GRselect");
+        CHECK(riid, FAIL, "GRselect");
 
         memset(image, 255, (size_t)(dims[0] * dims[1] * 3) * sizeof(float32));
         /* '0' is the default fill value */
@@ -1270,7 +1276,7 @@ test_mgr_image_b1a(int flag)
         start[0] = start[1] = 0;
         stride[0] = stride[1] = 1;
         ret                   = GRreadimage(riid, start, stride, dims, image);
-        CHECK_VOID(ret, FAIL, "GRreadimage");
+        CHECK(ret, FAIL, "GRreadimage");
 
         if (0 != memcmp(image, image0, sizeof(image0))) {
             MESSAGE(3, printf("Error reading data for image with default fill value\n"););
@@ -1281,7 +1287,7 @@ test_mgr_image_b1a(int flag)
         if (flag) {
             /* Get chunk lengths */
             ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
-            CHECK_VOID(ret, FAIL, "GRgetchunkinfo");
+            CHECK(ret, FAIL, "GRgetchunkinfo");
 
             rcdims = rchunk_def.chunk_lengths;
 
@@ -1295,24 +1301,30 @@ test_mgr_image_b1a(int flag)
         }
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
     }
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
-} /* end test_mgr_image_b1a() */
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
+
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+}
 
 static void
 test_mgr_image_b1b(int flag)
 {
-    int32         fid;               /* HDF file ID */
-    int32         grid;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
     int32         cdims[2] = {1, 1}; /* chunk dims */
     int32        *rcdims;            /* for SDgetchunkinfo() */
@@ -1328,11 +1340,11 @@ test_mgr_image_b1b(int flag)
         fid = Hopen(TESTFILE2, DFACC_RDWR, 0);
     else
         fid = Hopen(TESTFILE, DFACC_RDWR, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Initialize the GR interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     {
         int32   riid;                                     /* RI ID for the new image */
@@ -1347,11 +1359,11 @@ test_mgr_image_b1b(int flag)
 
         /* Create empty image with default fill value */
         riid = GRcreate(grid, "Empty Image2", 4, DFNT_FLOAT64, MFGR_INTERLACE_PIXEL, dims);
-        CHECK_VOID(riid, FAIL, "GRcreate");
+        CHECK(riid, FAIL, "GRcreate");
 
         /* Set the fill-value */
         ret = GRsetattr(riid, FILL_ATTR, DFNT_FLOAT64, sizeof(fill_pixel) / sizeof(float64), fill_pixel);
-        CHECK_VOID(ret, FAIL, "GRsetattr");
+        CHECK(ret, FAIL, "GRsetattr");
 
         /* Check if creating chunked GR */
         if (flag) {
@@ -1360,24 +1372,23 @@ test_mgr_image_b1b(int flag)
             cdims[0] = chunk_def.chunk_lengths[0] = 2;
             cdims[1] = chunk_def.chunk_lengths[1] = 2;
             ret                                   = GRsetchunk(riid, chunk_def, HDF_CHUNK);
-            CHECK_VOID(ret, FAIL, "GRsetchunk");
+            CHECK(ret, FAIL, "GRsetchunk");
         }
 
         /* Save the ref. # for later access */
         ref = GRidtoref(riid);
-        CHECK_VOID(ref, (uint16)FAIL, "GRidtoref");
+        CHECK(ref, (uint16)FAIL, "GRidtoref");
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
 
         /* Get the index of the newly created image */
         index = GRreftoindex(grid, ref);
-        CHECK_VOID(index, FAIL, "GRreftoindex");
+        CHECK(index, FAIL, "GRreftoindex");
 
         /* Select the newly created image */
         riid = GRselect(grid, index);
-        CHECK_VOID(riid, FAIL, "GRselect");
+        CHECK(riid, FAIL, "GRselect");
 
         memset(image, 0, (size_t)(dims[0] * dims[1] * 4) * sizeof(float64));
         /* fill the memory-only with the default pixel fill-value */
@@ -1386,7 +1397,7 @@ test_mgr_image_b1b(int flag)
         start[0] = start[1] = 0;
         stride[0] = stride[1] = 1;
         ret                   = GRreadimage(riid, start, stride, dims, image);
-        CHECK_VOID(ret, FAIL, "GRreadimage");
+        CHECK(ret, FAIL, "GRreadimage");
 
         if (0 != memcmp(image, image0, sizeof(image0))) {
             MESSAGE(3, printf("Error reading data for image with user defined fill-value\n"););
@@ -1397,7 +1408,7 @@ test_mgr_image_b1b(int flag)
         if (flag) {
             /* Get chunk lengths */
             ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
-            CHECK_VOID(ret, FAIL, "GRgetchunkinfo");
+            CHECK(ret, FAIL, "GRgetchunkinfo");
 
             rcdims = rchunk_def.chunk_lengths;
 
@@ -1411,24 +1422,30 @@ test_mgr_image_b1b(int flag)
         }
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
     }
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
-} /* end test_mgr_image_b1b() */
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
+
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+}
 
 static void
 test_mgr_image_b2a1aa(int flag)
 {
-    int32         fid;               /* HDF file ID */
-    int32         grid;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
     int32         cdims[2] = {1, 1}; /* chunk dims */
     int32        *rcdims;            /* for SDgetchunkinfo() */
@@ -1444,11 +1461,11 @@ test_mgr_image_b2a1aa(int flag)
         fid = Hopen(TESTFILE2, DFACC_RDWR, 0);
     else
         fid = Hopen(TESTFILE, DFACC_RDWR, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Initialize the GR interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     {
 #ifdef TEST_XDIM
@@ -1497,7 +1514,7 @@ test_mgr_image_b2a1aa(int flag)
 
         /* Create empty image with default fill value */
         riid = GRcreate(grid, "Test Image B2a1aa", TEST_NCOMP, TEST_NT, MFGR_INTERLACE_PIXEL, dims);
-        CHECK_VOID(riid, FAIL, "GRcreate");
+        CHECK(riid, FAIL, "GRcreate");
 
         /* Check if creating chunked GR */
         if (flag) {
@@ -1506,34 +1523,33 @@ test_mgr_image_b2a1aa(int flag)
             cdims[0] = chunk_def.chunk_lengths[0] = 2;
             cdims[1] = chunk_def.chunk_lengths[1] = 2;
             ret                                   = GRsetchunk(riid, chunk_def, HDF_CHUNK);
-            CHECK_VOID(ret, FAIL, "GRsetchunk");
+            CHECK(ret, FAIL, "GRsetchunk");
         }
 
         /* Save the ref. # for later access */
         ref = GRidtoref(riid);
-        CHECK_VOID(ref, (uint16)FAIL, "GRidtoref");
+        CHECK(ref, (uint16)FAIL, "GRidtoref");
 
         start[0] = start[1] = 0;
         stride[0] = stride[1] = 1;
         ret                   = GRwriteimage(riid, start, stride, dims, image);
-        CHECK_VOID(ret, FAIL, "GRwriteimage");
+        CHECK(ret, FAIL, "GRwriteimage");
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
 
         /* Get the index of the newly created image */
         index = GRreftoindex(grid, ref);
-        CHECK_VOID(index, FAIL, "GRreftoindex");
+        CHECK(index, FAIL, "GRreftoindex");
 
         /* Select the newly created image */
         riid = GRselect(grid, index);
-        CHECK_VOID(riid, FAIL, "GRselect");
+        CHECK(riid, FAIL, "GRselect");
 
         start[0] = start[1] = 0;
         stride[0] = stride[1] = 1;
         ret                   = GRreadimage(riid, start, stride, dims, image);
-        CHECK_VOID(ret, FAIL, "GRreadimage");
+        CHECK(ret, FAIL, "GRreadimage");
 
         if (0 != memcmp(image, image0, sizeof(image0))) {
             MESSAGE(3, printf("%d:Error reading data for new image with default fill-value, whole image\n",
@@ -1545,7 +1561,7 @@ test_mgr_image_b2a1aa(int flag)
         if (flag) {
             /* Get chunk lengths */
             ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
-            CHECK_VOID(ret, FAIL, "GRgetchunkinfo");
+            CHECK(ret, FAIL, "GRgetchunkinfo");
 
             rcdims = rchunk_def.chunk_lengths;
 
@@ -1559,24 +1575,30 @@ test_mgr_image_b2a1aa(int flag)
         }
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
     }
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
-} /* end test_mgr_image_b2a1aa() */
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
+
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+}
 
 static void
 test_mgr_image_b2a1bb1(int flag)
 {
-    int32         fid;               /* HDF file ID */
-    int32         grid;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
     int32         cdims[2] = {1, 1}; /* chunk dims */
     int32        *rcdims;            /* for SDgetchunkinfo() */
@@ -1593,11 +1615,11 @@ test_mgr_image_b2a1bb1(int flag)
         fid = Hopen(TESTFILE2, DFACC_RDWR, 0);
     else
         fid = Hopen(TESTFILE, DFACC_RDWR, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Initialize the GR interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     {
 #ifdef TEST_XDIM
@@ -1658,7 +1680,7 @@ test_mgr_image_b2a1bb1(int flag)
 
         /* Create empty image with default fill value */
         riid = GRcreate(grid, "Test Image B2a1bb", TEST_NCOMP, TEST_NT, MFGR_INTERLACE_PIXEL, dims);
-        CHECK_VOID(riid, FAIL, "GRcreate");
+        CHECK(riid, FAIL, "GRcreate");
 
         /* Check if creating chunked GR */
         if (flag) {
@@ -1667,12 +1689,12 @@ test_mgr_image_b2a1bb1(int flag)
             cdims[0] = chunk_def.chunk_lengths[0] = 2;
             cdims[1] = chunk_def.chunk_lengths[1] = 2;
             ret                                   = GRsetchunk(riid, chunk_def, HDF_CHUNK);
-            CHECK_VOID(ret, FAIL, "GRsetchunk");
+            CHECK(ret, FAIL, "GRsetchunk");
         }
 
         /* Save the ref. # for later access */
         ref = GRidtoref(riid);
-        CHECK_VOID(ref, (uint16)FAIL, "GRidtoref");
+        CHECK(ref, (uint16)FAIL, "GRidtoref");
 
         /* Create sub-setted window with only the filled pixels in it */
         start[XDIM]  = (TEST_XDIM / 4) + 1;
@@ -1681,25 +1703,24 @@ test_mgr_image_b2a1bb1(int flag)
         count[YDIM]  = ((2 * TEST_YDIM / 3) - (TEST_YDIM / 3)) - 1;
         stride[XDIM] = stride[YDIM] = 1;
         ret                         = GRwriteimage(riid, start, stride, count, sub_image);
-        CHECK_VOID(ret, FAIL, "GRwriteimage");
+        CHECK(ret, FAIL, "GRwriteimage");
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
 
         /* Get the index of the newly created image */
         index = GRreftoindex(grid, ref);
-        CHECK_VOID(index, FAIL, "GRreftoindex");
+        CHECK(index, FAIL, "GRreftoindex");
 
         /* Select the newly created image */
         riid = GRselect(grid, index);
-        CHECK_VOID(riid, FAIL, "GRselect");
+        CHECK(riid, FAIL, "GRselect");
 
         /* Get the whole image back */
         start[XDIM] = start[YDIM] = 0;
         stride[XDIM] = stride[YDIM] = 1;
         ret                         = GRreadimage(riid, start, stride, dims, image);
-        CHECK_VOID(ret, FAIL, "GRreadimage");
+        CHECK(ret, FAIL, "GRreadimage");
 
         if (0 != memcmp(image, image0, sizeof(image0))) {
             MESSAGE(3,
@@ -1719,7 +1740,7 @@ test_mgr_image_b2a1bb1(int flag)
         if (flag) {
             /* Get chunk lengths */
             ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
-            CHECK_VOID(ret, FAIL, "GRgetchunkinfo");
+            CHECK(ret, FAIL, "GRgetchunkinfo");
 
             rcdims = rchunk_def.chunk_lengths;
 
@@ -1733,25 +1754,30 @@ test_mgr_image_b2a1bb1(int flag)
         }
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
     }
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
 
-} /* end test_mgr_image_b2a1bb1() */
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+}
 
 static void
 test_mgr_image_b2a1bb2(int flag)
 {
-    int32         fid;               /* HDF file ID */
-    int32         grid;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
     int32         cdims[2] = {1, 1}; /* chunk dims */
     int32        *rcdims;            /* for SDgetchunkinfo() */
@@ -1766,11 +1792,11 @@ test_mgr_image_b2a1bb2(int flag)
         fid = Hopen(TESTFILE2, DFACC_RDWR, 0);
     else
         fid = Hopen(TESTFILE, DFACC_RDWR, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Initialize the GR interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     {
 #ifdef TEST_XDIM
@@ -1831,7 +1857,7 @@ test_mgr_image_b2a1bb2(int flag)
 
         /* Create empty image with default fill value */
         riid = GRcreate(grid, "Test Image B2a1bb2", TEST_NCOMP, TEST_NT, MFGR_INTERLACE_PIXEL, dims);
-        CHECK_VOID(riid, FAIL, "GRcreate");
+        CHECK(riid, FAIL, "GRcreate");
 
         /* Check if creating chunked GR */
         if (flag) {
@@ -1840,34 +1866,33 @@ test_mgr_image_b2a1bb2(int flag)
             cdims[0] = chunk_def.chunk_lengths[0] = 2;
             cdims[1] = chunk_def.chunk_lengths[1] = 2;
             ret                                   = GRsetchunk(riid, chunk_def, HDF_CHUNK);
-            CHECK_VOID(ret, FAIL, "GRsetchunk");
+            CHECK(ret, FAIL, "GRsetchunk");
 
             /* Set Chunk cache to hold 3 chunks */
             ret = GRsetchunkcache(riid, 3, 0);
-            CHECK_VOID(ret, FAIL, "GRsetchunkcache");
+            CHECK(ret, FAIL, "GRsetchunkcache");
         }
 
         /* Save the ref. # for later access */
         ref = GRidtoref(riid);
-        CHECK_VOID(ref, (uint16)FAIL, "GRidtoref");
+        CHECK(ref, (uint16)FAIL, "GRidtoref");
 
         /* Create whole image */
         start[XDIM] = start[YDIM] = 0;
         stride[XDIM] = stride[YDIM] = 1;
         ret                         = GRwriteimage(riid, start, stride, dims, image0);
-        CHECK_VOID(ret, FAIL, "GRwriteimage");
+        CHECK(ret, FAIL, "GRwriteimage");
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
 
         /* Get the index of the newly created image */
         index = GRreftoindex(grid, ref);
-        CHECK_VOID(index, FAIL, "GRreftoindex");
+        CHECK(index, FAIL, "GRreftoindex");
 
         /* Select the newly created image */
         riid = GRselect(grid, index);
-        CHECK_VOID(riid, FAIL, "GRselect");
+        CHECK(riid, FAIL, "GRselect");
 
         /* Get the sub-set image back */
         start[XDIM]  = (TEST_XDIM / 4) + 1;
@@ -1876,7 +1901,7 @@ test_mgr_image_b2a1bb2(int flag)
         count[YDIM]  = ((2 * TEST_YDIM / 3) - (TEST_YDIM / 3)) - 1;
         stride[XDIM] = stride[YDIM] = 1;
         ret                         = GRreadimage(riid, start, stride, count, image);
-        CHECK_VOID(ret, FAIL, "GRreadimage");
+        CHECK(ret, FAIL, "GRreadimage");
 
         if (0 != memcmp(image, sub_image, (size_t)(count[XDIM] * count[YDIM]) * sizeof(fill_pixel))) {
             MESSAGE(3,
@@ -1889,7 +1914,7 @@ test_mgr_image_b2a1bb2(int flag)
         if (flag) {
             /* Get chunk lengths */
             ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
-            CHECK_VOID(ret, FAIL, "GRgetchunkinfo");
+            CHECK(ret, FAIL, "GRgetchunkinfo");
 
             rcdims = rchunk_def.chunk_lengths;
 
@@ -1903,25 +1928,30 @@ test_mgr_image_b2a1bb2(int flag)
         }
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
     }
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
 
-} /* end test_mgr_image_b2a1bb2() */
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+}
 
 static void
 test_mgr_image_b2a1cc1(int flag)
 {
-    int32         fid;               /* HDF file ID */
-    int32         grid;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
     int32         cdims[2] = {1, 1}; /* chunk dims */
     int32        *rcdims;            /* for SDgetchunkinfo() */
@@ -1939,11 +1969,11 @@ test_mgr_image_b2a1cc1(int flag)
         fid = Hopen(TESTFILE2, DFACC_RDWR, 0);
     else
         fid = Hopen(TESTFILE, DFACC_RDWR, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Initialize the GR interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     {
 #ifdef TEST_XDIM
@@ -2003,7 +2033,7 @@ test_mgr_image_b2a1cc1(int flag)
 
         /* Create empty image with default fill value */
         riid = GRcreate(grid, "Test Image B2a1cc", TEST_NCOMP, TEST_NT, MFGR_INTERLACE_PIXEL, dims);
-        CHECK_VOID(riid, FAIL, "GRcreate");
+        CHECK(riid, FAIL, "GRcreate");
 
         /* Check if creating chunked GR */
         if (flag) {
@@ -2012,12 +2042,12 @@ test_mgr_image_b2a1cc1(int flag)
             cdims[0] = chunk_def.chunk_lengths[0] = 2;
             cdims[1] = chunk_def.chunk_lengths[1] = 2;
             ret                                   = GRsetchunk(riid, chunk_def, HDF_CHUNK);
-            CHECK_VOID(ret, FAIL, "GRsetchunk");
+            CHECK(ret, FAIL, "GRsetchunk");
         }
 
         /* Save the ref. # for later access */
         ref = GRidtoref(riid);
-        CHECK_VOID(ref, (uint16)FAIL, "GRidtoref");
+        CHECK(ref, (uint16)FAIL, "GRidtoref");
 
         /* Create sub-sampled window with only the filled pixels in it */
         start[XDIM]  = 1;
@@ -2026,25 +2056,24 @@ test_mgr_image_b2a1cc1(int flag)
         count[YDIM]  = TEST_YDIM / 2;
         stride[XDIM] = stride[YDIM] = 2;
         ret                         = GRwriteimage(riid, start, stride, count, sub_image);
-        CHECK_VOID(ret, FAIL, "GRwriteimage");
+        CHECK(ret, FAIL, "GRwriteimage");
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
 
         /* Get the index of the newly created image */
         index = GRreftoindex(grid, ref);
-        CHECK_VOID(index, FAIL, "GRreftoindex");
+        CHECK(index, FAIL, "GRreftoindex");
 
         /* Select the newly created image */
         riid = GRselect(grid, index);
-        CHECK_VOID(riid, FAIL, "GRselect");
+        CHECK(riid, FAIL, "GRselect");
 
         /* Get the whole image back */
         start[XDIM] = start[YDIM] = 0;
         stride[XDIM] = stride[YDIM] = 1;
         ret                         = GRreadimage(riid, start, stride, dims, image);
-        CHECK_VOID(ret, FAIL, "GRreadimage");
+        CHECK(ret, FAIL, "GRreadimage");
 
         if (0 != memcmp(image, image0, sizeof(TEST_VARTYPE) * TEST_YDIM * TEST_XDIM * TEST_NCOMP)) {
             MESSAGE(3,
@@ -2064,7 +2093,7 @@ test_mgr_image_b2a1cc1(int flag)
         if (flag) {
             /* Get chunk lengths */
             ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
-            CHECK_VOID(ret, FAIL, "GRgetchunkinfo");
+            CHECK(ret, FAIL, "GRgetchunkinfo");
 
             rcdims = rchunk_def.chunk_lengths;
 
@@ -2078,24 +2107,30 @@ test_mgr_image_b2a1cc1(int flag)
         }
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
     }
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
+
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
 }
 
 static void
 test_mgr_image_b2a1cc2(int flag)
 {
-    int32         fid;               /* HDF file ID */
-    int32         grid;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
     int32         cdims[2] = {1, 1}; /* chunk dims */
     int32        *rcdims;            /* for SDgetchunkinfo() */
@@ -2110,11 +2145,11 @@ test_mgr_image_b2a1cc2(int flag)
         fid = Hopen(TESTFILE2, DFACC_RDWR, 0);
     else
         fid = Hopen(TESTFILE, DFACC_RDWR, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Initialize the GR interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     {
 #ifdef TEST_XDIM
@@ -2174,7 +2209,7 @@ test_mgr_image_b2a1cc2(int flag)
 
         /* Create empty image with default fill value */
         riid = GRcreate(grid, "Test Image B2a1cc2", TEST_NCOMP, TEST_NT, MFGR_INTERLACE_PIXEL, dims);
-        CHECK_VOID(riid, FAIL, "GRcreate");
+        CHECK(riid, FAIL, "GRcreate");
 
         /* Check if creating chunked GR */
         if (flag) {
@@ -2183,30 +2218,29 @@ test_mgr_image_b2a1cc2(int flag)
             cdims[0] = chunk_def.chunk_lengths[0] = 2;
             cdims[1] = chunk_def.chunk_lengths[1] = 2;
             ret                                   = GRsetchunk(riid, chunk_def, HDF_CHUNK);
-            CHECK_VOID(ret, FAIL, "GRsetchunk");
+            CHECK(ret, FAIL, "GRsetchunk");
         }
 
         /* Save the ref. # for later access */
         ref = GRidtoref(riid);
-        CHECK_VOID(ref, (uint16)FAIL, "GRidtoref");
+        CHECK(ref, (uint16)FAIL, "GRidtoref");
 
         /* Create whole image */
         start[XDIM] = start[YDIM] = 0;
         stride[XDIM] = stride[YDIM] = 1;
         ret                         = GRwriteimage(riid, start, stride, dims, image0);
-        CHECK_VOID(ret, FAIL, "GRwriteimage");
+        CHECK(ret, FAIL, "GRwriteimage");
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
 
         /* Get the index of the newly created image */
         index = GRreftoindex(grid, ref);
-        CHECK_VOID(index, FAIL, "GRreftoindex");
+        CHECK(index, FAIL, "GRreftoindex");
 
         /* Select the newly created image */
         riid = GRselect(grid, index);
-        CHECK_VOID(riid, FAIL, "GRselect");
+        CHECK(riid, FAIL, "GRselect");
 
         /* Get the sub-sample image back */
         start[XDIM]  = 1;
@@ -2215,7 +2249,7 @@ test_mgr_image_b2a1cc2(int flag)
         count[YDIM]  = TEST_YDIM / 2;
         stride[XDIM] = stride[YDIM] = 2;
         ret                         = GRreadimage(riid, start, stride, count, image);
-        CHECK_VOID(ret, FAIL, "GRreadimage");
+        CHECK(ret, FAIL, "GRreadimage");
 
         if (0 != memcmp(image, sub_image, (size_t)(count[XDIM] * count[YDIM]) * sizeof(fill_pixel))) {
             MESSAGE(3,
@@ -2228,7 +2262,7 @@ test_mgr_image_b2a1cc2(int flag)
         if (flag) {
             /* Get chunk lengths */
             ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
-            CHECK_VOID(ret, FAIL, "GRgetchunkinfo");
+            CHECK(ret, FAIL, "GRgetchunkinfo");
 
             rcdims = rchunk_def.chunk_lengths;
 
@@ -2242,25 +2276,30 @@ test_mgr_image_b2a1cc2(int flag)
         }
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
     }
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
 
-} /* end test_mgr_image_b2a1cc() */
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+}
 
 static void
 test_mgr_image_b2a2bb(int flag)
 {
-    int32         fid;               /* HDF file ID */
-    int32         grid;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
     int32         cdims[2] = {1, 1}; /* chunk dims */
     int32        *rcdims;            /* for SDgetchunkinfo() */
@@ -2278,11 +2317,11 @@ test_mgr_image_b2a2bb(int flag)
         fid = Hopen(TESTFILE2, DFACC_RDWR, 0);
     else
         fid = Hopen(TESTFILE, DFACC_RDWR, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Initialize the GR interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     {
 #ifdef TEST_XDIM
@@ -2347,11 +2386,11 @@ test_mgr_image_b2a2bb(int flag)
 
         /* Create empty image with default fill value */
         riid = GRcreate(grid, "Test Image B2a2bb", TEST_NCOMP, TEST_NT, MFGR_INTERLACE_PIXEL, dims);
-        CHECK_VOID(riid, FAIL, "GRcreate");
+        CHECK(riid, FAIL, "GRcreate");
 
         /* Set the fill-value */
         ret = GRsetattr(riid, FILL_ATTR, TEST_NT, TEST_NCOMP, fill_pixel);
-        CHECK_VOID(ret, FAIL, "GRsetattr");
+        CHECK(ret, FAIL, "GRsetattr");
 
         /* Check if creating chunked GR */
         if (flag) {
@@ -2360,12 +2399,12 @@ test_mgr_image_b2a2bb(int flag)
             cdims[0] = chunk_def.chunk_lengths[0] = 2;
             cdims[1] = chunk_def.chunk_lengths[1] = 2;
             ret                                   = GRsetchunk(riid, chunk_def, HDF_CHUNK);
-            CHECK_VOID(ret, FAIL, "GRsetchunk");
+            CHECK(ret, FAIL, "GRsetchunk");
         }
 
         /* Save the ref. # for later access */
         ref = GRidtoref(riid);
-        CHECK_VOID(ref, (uint16)FAIL, "GRidtoref");
+        CHECK(ref, (uint16)FAIL, "GRidtoref");
 
         /* Create sub-setted window with only the filled pixels in it */
         start[XDIM]  = (TEST_XDIM / 4) + 1;
@@ -2374,25 +2413,24 @@ test_mgr_image_b2a2bb(int flag)
         count[YDIM]  = ((2 * TEST_YDIM / 3) - (TEST_YDIM / 3)) - 1;
         stride[XDIM] = stride[YDIM] = 1;
         ret                         = GRwriteimage(riid, start, stride, count, sub_image);
-        CHECK_VOID(ret, FAIL, "GRwriteimage");
+        CHECK(ret, FAIL, "GRwriteimage");
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
 
         /* Get the index of the newly created image */
         index = GRreftoindex(grid, ref);
-        CHECK_VOID(index, FAIL, "GRreftoindex");
+        CHECK(index, FAIL, "GRreftoindex");
 
         /* Select the newly created image */
         riid = GRselect(grid, index);
-        CHECK_VOID(riid, FAIL, "GRselect");
+        CHECK(riid, FAIL, "GRselect");
 
         /* Get the whole image back */
         start[XDIM] = start[YDIM] = 0;
         stride[XDIM] = stride[YDIM] = 1;
         ret                         = GRreadimage(riid, start, stride, dims, image);
-        CHECK_VOID(ret, FAIL, "GRreadimage");
+        CHECK(ret, FAIL, "GRreadimage");
 
         if (0 != memcmp(image, image0, sizeof(image0))) {
             MESSAGE(
@@ -2412,7 +2450,7 @@ test_mgr_image_b2a2bb(int flag)
         if (flag) {
             /* Get chunk lengths */
             ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
-            CHECK_VOID(ret, FAIL, "GRgetchunkinfo");
+            CHECK(ret, FAIL, "GRgetchunkinfo");
 
             rcdims = rchunk_def.chunk_lengths;
 
@@ -2426,25 +2464,30 @@ test_mgr_image_b2a2bb(int flag)
         }
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
     }
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
 
-} /* end test_mgr_image_b2a2bb() */
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+}
 
 static void
 test_mgr_image_b2a2cc(int flag)
 {
-    int32         fid;               /* HDF file ID */
-    int32         grid;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
     int32         cdims[2] = {1, 1}; /* chunk dims */
     int32        *rcdims;            /* for SDgetchunkinfo() */
@@ -2462,11 +2505,11 @@ test_mgr_image_b2a2cc(int flag)
         fid = Hopen(TESTFILE2, DFACC_RDWR, 0);
     else
         fid = Hopen(TESTFILE, DFACC_RDWR, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Initialize the GR interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     {
 #ifdef TEST_XDIM
@@ -2527,11 +2570,11 @@ test_mgr_image_b2a2cc(int flag)
 
         /* Create empty image with default fill value */
         riid = GRcreate(grid, "Test Image B2a2cc", TEST_NCOMP, TEST_NT, MFGR_INTERLACE_PIXEL, dims);
-        CHECK_VOID(riid, FAIL, "GRcreate");
+        CHECK(riid, FAIL, "GRcreate");
 
         /* Set the fill-value */
         ret = GRsetattr(riid, FILL_ATTR, TEST_NT, TEST_NCOMP, fill_pixel);
-        CHECK_VOID(ret, FAIL, "GRsetattr");
+        CHECK(ret, FAIL, "GRsetattr");
 
         /* Check if creating chunked GR */
         if (flag) {
@@ -2540,12 +2583,12 @@ test_mgr_image_b2a2cc(int flag)
             cdims[0] = chunk_def.chunk_lengths[0] = 2;
             cdims[1] = chunk_def.chunk_lengths[1] = 2;
             ret                                   = GRsetchunk(riid, chunk_def, HDF_CHUNK);
-            CHECK_VOID(ret, FAIL, "GRsetchunk");
+            CHECK(ret, FAIL, "GRsetchunk");
         }
 
         /* Save the ref. # for later access */
         ref = GRidtoref(riid);
-        CHECK_VOID(ref, (uint16)FAIL, "GRidtoref");
+        CHECK(ref, (uint16)FAIL, "GRidtoref");
 
         /* Create sub-sampled window with only the filled pixels in it */
         start[XDIM]  = 1;
@@ -2554,25 +2597,24 @@ test_mgr_image_b2a2cc(int flag)
         count[YDIM]  = TEST_YDIM / 2;
         stride[XDIM] = stride[YDIM] = 2;
         ret                         = GRwriteimage(riid, start, stride, count, sub_image);
-        CHECK_VOID(ret, FAIL, "GRwriteimage");
+        CHECK(ret, FAIL, "GRwriteimage");
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
 
         /* Get the index of the newly created image */
         index = GRreftoindex(grid, ref);
-        CHECK_VOID(index, FAIL, "GRreftoindex");
+        CHECK(index, FAIL, "GRreftoindex");
 
         /* Select the newly created image */
         riid = GRselect(grid, index);
-        CHECK_VOID(riid, FAIL, "GRselect");
+        CHECK(riid, FAIL, "GRselect");
 
         /* Get the whole image back */
         start[XDIM] = start[YDIM] = 0;
         stride[XDIM] = stride[YDIM] = 1;
         ret                         = GRreadimage(riid, start, stride, dims, image);
-        CHECK_VOID(ret, FAIL, "GRreadimage");
+        CHECK(ret, FAIL, "GRreadimage");
 
         if (0 != memcmp(image, image0, sizeof(TEST_VARTYPE) * TEST_YDIM * TEST_XDIM * TEST_NCOMP)) {
             MESSAGE(
@@ -2593,7 +2635,7 @@ test_mgr_image_b2a2cc(int flag)
         if (flag) {
             /* Get chunk lengths */
             ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
-            CHECK_VOID(ret, FAIL, "GRgetchunkinfo");
+            CHECK(ret, FAIL, "GRgetchunkinfo");
 
             rcdims = rchunk_def.chunk_lengths;
 
@@ -2607,27 +2649,36 @@ test_mgr_image_b2a2cc(int flag)
         }
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
     }
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
 
-} /* end test_mgr_image_b2a2cc() */
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+}
 
 static void
 test_mgr_image_b2b1(int flag)
 {
-    int32       fid;  /* HDF file ID */
-    int32       grid; /* GRID for the interface */
-    int32       ret;  /* generic return value */
+    int32       fid  = FAIL; /* HDF file ID */
+    int32       grid = FAIL; /* GRID for the interface */
+    int32       ret;         /* generic return value */
     const char *datafile = get_srcdir_filename(DATAFILE);
+    void       *img_data = NULL; /* buffer for the image data; hoisted out of
+                                     the loop below so it can be freed at
+                                     done: regardless of where an early exit
+                                     happens */
 
     (void)flag;
 
@@ -2636,11 +2687,11 @@ test_mgr_image_b2b1(int flag)
 
     /* Open up the existing datafile and get the image information from it */
     fid = Hopen(datafile, DFACC_READ, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Try initializing the GR interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     {
         int32 n_datasets; /* number of datasets */
@@ -2648,7 +2699,7 @@ test_mgr_image_b2b1(int flag)
         int   i;          /* local counting variables */
 
         ret = (int)GRfileinfo(grid, &n_datasets, &n_attrs);
-        CHECK_VOID(ret, FAIL, "GRfileinfo");
+        CHECK(ret, FAIL, "GRfileinfo");
 
         for (i = 0; i < n_datasets; i++) {
             int32 riid;               /* RI ID for an image */
@@ -2658,16 +2709,15 @@ test_mgr_image_b2b1(int flag)
             int32 il;                 /* interlace of the image data */
             int32 dimsizes[2];        /* dimension sizes of the image */
             int32 n_attr;             /* number of attributes with each image */
-            void *img_data;           /* buffer for the image data */
 
             /* Attach to the image */
             riid = GRselect(grid, i);
-            CHECK_VOID(riid, FAIL, "GRselect");
+            CHECK(riid, FAIL, "GRselect");
 
             /* Get the Image information */
             *name = '\0';
             ret   = GRgetiminfo(riid, name, &ncomp, &nt, &il, dimsizes, &n_attr);
-            CHECK_VOID(ret, FAIL, "GRgetiminfo");
+            CHECK(ret, FAIL, "GRgetiminfo");
 
             /* Check the name for correctness */
             if (strcmp(name, datafile_info[i].name)) {
@@ -2724,7 +2774,7 @@ test_mgr_image_b2b1(int flag)
                 int32 stride[2];
 
                 img_data = malloc((size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
-                CHECK_VOID(img_data, NULL, "malloc");
+                CHECK(img_data, NULL, "malloc");
 
                 memset(img_data, 0,
                        (size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
@@ -2732,7 +2782,7 @@ test_mgr_image_b2b1(int flag)
                 start[0] = start[1] = 0;
                 stride[0] = stride[1] = 1;
                 ret                   = GRreadimage(riid, start, stride, dimsizes, img_data);
-                CHECK_VOID(ret, FAIL, "GRreadimage");
+                CHECK(ret, FAIL, "GRreadimage");
 
                 switch (i) {
                     case 0:
@@ -2773,23 +2823,31 @@ test_mgr_image_b2b1(int flag)
                 } /* end switch */
 
                 free(img_data);
-            } /* end block */
+                img_data = NULL; /* avoid dangling pointer between iterations
+                                     if a later CHECK in this loop jumps to done */
+            }                    /* end block */
 
             /* End access to the image */
-            ret = GRendaccess(riid);
-            CHECK_VOID(ret, FAIL, "GRendaccess");
+            ENDRI(riid, "GRendaccess");
         } /* end for */
     }     /* end block */
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
 
-} /* end test_mgr_image_b2b1() */
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+    free(img_data);
+}
 
 static void
 test_mgr_image_chunk(int flag)
@@ -2799,19 +2857,19 @@ test_mgr_image_chunk(int flag)
     HDF_CHUNK_DEF chunk_def;         /* Chunk definition set */
     HDF_CHUNK_DEF rchunk_def;        /* Chunk definition read */
     int32         cflags;            /* chunk flags */
-    int32         fid;               /* HDF file ID */
-    int32         grid;              /* GRID for the interface */
+    int32         fid  = FAIL;       /* HDF file ID */
+    int32         grid = FAIL;       /* GRID for the interface */
     int32         ret;               /* generic return value */
 
     (void)flag;
 
     /* Open up the existing datafile and get the image information from it */
     fid = Hopen(TESTFILE2, DFACC_RDWR, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Initialize the GR interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     {
 #ifdef TEST_XDIM
@@ -2859,52 +2917,50 @@ test_mgr_image_chunk(int flag)
 
         /* Create empty image with default fill value */
         riid = GRcreate(grid, "Test Chunk Image B2a1aa", TEST_NCOMP, TEST_NT, MFGR_INTERLACE_PIXEL, dims);
-        CHECK_VOID(riid, FAIL, "GRcreate");
+        CHECK(riid, FAIL, "GRcreate");
 
         /* Create chunked GR
            chunk is 2x2 which will create 6 chunks */
         cdims[0] = chunk_def.chunk_lengths[0] = 2;
         cdims[1] = chunk_def.chunk_lengths[1] = 2;
         ret                                   = GRsetchunk(riid, chunk_def, HDF_CHUNK);
-        CHECK_VOID(ret, FAIL, "GRsetchunk");
+        CHECK(ret, FAIL, "GRsetchunk");
 
         /* Set Chunk cache to hold 2 chunks */
         ret = GRsetchunkcache(riid, 2, 0);
-        CHECK_VOID(ret, FAIL, "GRsetchunkcache");
+        CHECK(ret, FAIL, "GRsetchunkcache");
 
         /* Save the ref. # for later access */
         ref = GRidtoref(riid);
-        CHECK_VOID(ref, (uint16)FAIL, "GRidtoref");
+        CHECK(ref, (uint16)FAIL, "GRidtoref");
 
         start[0] = start[1] = 0;
         stride[0] = stride[1] = 1;
         ret                   = GRwriteimage(riid, start, stride, dims, image);
-        CHECK_VOID(ret, FAIL, "GRwriteimage");
+        CHECK(ret, FAIL, "GRwriteimage");
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
 
         /* Shut down the GR interface */
-        ret = GRend(grid);
-        CHECK_VOID(ret, FAIL, "GRend");
+        ENDGR(grid, "GRend");
 
         /* Initialize the GR interface again */
         grid = GRstart(fid);
-        CHECK_VOID(grid, FAIL, "GRstart");
+        CHECK(grid, FAIL, "GRstart");
 
         /* Get the index of the newly created image */
         index = GRreftoindex(grid, ref);
-        CHECK_VOID(index, FAIL, "GRreftoindex");
+        CHECK(index, FAIL, "GRreftoindex");
 
         /* Select the newly created image */
         riid = GRselect(grid, index);
-        CHECK_VOID(riid, FAIL, "GRselect");
+        CHECK(riid, FAIL, "GRselect");
 
         start[0] = start[1] = 0;
         stride[0] = stride[1] = 1;
         ret                   = GRreadimage(riid, start, stride, dims, image);
-        CHECK_VOID(ret, FAIL, "GRreadimage");
+        CHECK(ret, FAIL, "GRreadimage");
 
         if (0 != memcmp(image, image0, sizeof(image0))) {
             MESSAGE(3, printf("%d:Error reading data for new image with default fill-value, whole image\n",
@@ -2914,7 +2970,7 @@ test_mgr_image_chunk(int flag)
 
         /* Get chunk lengths */
         ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
-        CHECK_VOID(ret, FAIL, "GRgetchunkinfo");
+        CHECK(ret, FAIL, "GRgetchunkinfo");
 
         rcdims = rchunk_def.chunk_lengths;
 
@@ -2927,19 +2983,24 @@ test_mgr_image_chunk(int flag)
         }
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
     }
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
 
-} /* end test_mgr_image_chunk() */
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+}
 
 /****************************************************************
 **
@@ -2982,7 +3043,7 @@ test_mgr_image(int flag)
     test_mgr_image_b2a2cc(flag);
     test_mgr_image_b2b1(flag);
     test_mgr_image_chunk(flag);
-} /* end test_mgr_image() */
+}
 
 /****************************************************************
 **
@@ -3002,7 +3063,7 @@ test_mgr_index(int flag)
     MESSAGE(6, printf("Testing Multi-File Raster id/ref/index routines\n"););
 
     /* I believe that these are adequately tested in the test_mgr_image routine -QAK */
-} /* end test_mgr_index() */
+}
 
 /****************************************************************
 **
@@ -3016,12 +3077,16 @@ test_mgr_index(int flag)
 static void
 test_mgr_interlace(int flag)
 {
-    int32 fid;        /* hdf file id */
-    int32 grid;       /* grid for the interface */
-    int32 n_datasets; /* number of datasets */
-    int32 n_attrs;    /* number of attributes */
-    int32 ret;        /* generic return value */
-    void *image;      /* image to retrieve */
+    int32 fid  = FAIL;      /* hdf file id */
+    int32 grid = FAIL;      /* grid for the interface */
+    int32 n_datasets;       /* number of datasets */
+    int32 n_attrs;          /* number of attributes */
+    int32 ret;              /* generic return value */
+    void *image    = NULL;  /* image to retrieve */
+    void *img_data = NULL;  /* buffer for the image data; hoisted out of the
+                                loop below so it can be freed at done: */
+    void *pixel_buf = NULL; /* interlace-converted buffer; hoisted for the
+                                same reason */
 
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Interlace routines\n"););
@@ -3031,17 +3096,17 @@ test_mgr_interlace(int flag)
         fid = Hopen(TESTFILE2, DFACC_RDWR, 0);
     else
         fid = Hopen(TESTFILE, DFACC_RDWR, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* initialize the gr interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     {
         int i, j; /* local counting variables */
 
         ret = (int)GRfileinfo(grid, &n_datasets, &n_attrs);
-        CHECK_VOID(ret, FAIL, "GRfileinfo");
+        CHECK(ret, FAIL, "GRfileinfo");
 
         for (i = 0; i < n_datasets; i++) {
             int32 riid;               /* RI ID for an image */
@@ -3053,19 +3118,18 @@ test_mgr_interlace(int flag)
             int32 stride[2];
             int32 dimsizes[2]; /* dimension sizes of the image */
             int32 n_attr;      /* number of attributes with each image */
-            void *img_data;    /* buffer for the image data */
 
             /* Attach to the image */
             riid = GRselect(grid, i);
-            CHECK_VOID(riid, FAIL, "GRselect");
+            CHECK(riid, FAIL, "GRselect");
 
             /* Get the Image information */
             *name = '\0';
             ret   = GRgetiminfo(riid, name, &ncomp, &nt, &il, dimsizes, &n_attr);
-            CHECK_VOID(ret, FAIL, "GRgetiminfo");
+            CHECK(ret, FAIL, "GRgetiminfo");
 
             image = malloc((size_t)(dimsizes[XDIM] * dimsizes[YDIM] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
-            CHECK_VOID(image, NULL, "malloc");
+            CHECK(image, NULL, "malloc");
 
             start[0] = start[1] = 0;
             stride[0] = stride[1] = 1;
@@ -3073,24 +3137,22 @@ test_mgr_interlace(int flag)
 
             /* Check the image data itself */
             for (j = (int)MFGR_INTERLACE_PIXEL; j <= (int)MFGR_INTERLACE_COMPONENT; j++) {
-                void *pixel_buf;
-
                 img_data = malloc((size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
-                CHECK_VOID(img_data, NULL, "malloc");
+                CHECK(img_data, NULL, "malloc");
 
                 pixel_buf = malloc((size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
-                CHECK_VOID(pixel_buf, NULL, "malloc");
+                CHECK(pixel_buf, NULL, "malloc");
 
                 memset(img_data, 0,
                        (size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
 
                 ret = GRreqimageil(riid, j);
-                CHECK_VOID(ret, FAIL, "GRreqimageil");
+                CHECK(ret, FAIL, "GRreqimageil");
 
                 start[0] = start[1] = 0;
                 stride[0] = stride[1] = 1;
                 ret                   = GRreadimage(riid, start, stride, dimsizes, img_data);
-                CHECK_VOID(ret, FAIL, "GRreadimage");
+                CHECK(ret, FAIL, "GRreadimage");
 
                 GRIil_convert(image, MFGR_INTERLACE_PIXEL, pixel_buf, (gr_interlace_t)j, dimsizes, ncomp, nt);
                 if (0 !=
@@ -3100,25 +3162,39 @@ test_mgr_interlace(int flag)
                     num_errs++;
                 }
                 free(img_data);
+                img_data = NULL; /* avoid dangling pointer if a later CHECK
+                                     in this loop jumps to done */
                 free(pixel_buf);
+                pixel_buf = NULL;
             } /* end for */
 
             free(image);
+            image = NULL; /* avoid dangling pointer between outer-loop
+                              iterations if a later CHECK jumps to done */
 
             /* End access to the image */
-            ret = GRendaccess(riid);
-            CHECK_VOID(ret, FAIL, "GRendaccess");
+            ENDRI(riid, "GRendaccess");
         } /* end for */
     }     /* end block */
 
     /* shut down the gr interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
-} /* end test_mgr_interlace() */
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
+
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+    free(image);
+    free(img_data);
+    free(pixel_buf);
+}
 
 /****************************************************************
 **
@@ -3135,9 +3211,13 @@ test_mgr_interlace(int flag)
 static void
 test_mgr_lut_a(int flag)
 {
-    int32 fid;  /* hdf file id */
-    int32 grid; /* grid for the interface */
-    int32 ret;  /* generic return value */
+    int32  fid  = FAIL;     /* hdf file id */
+    int32  grid = FAIL;     /* grid for the interface */
+    int32  ret;             /* generic return value */
+    uint8 *tmp_data = NULL; /* temporary buffer pointer; hoisted out of the
+                                nested blocks below so it can be freed at done: */
+    void *pal_data  = NULL; /* buffer for the palette data; hoisted for the same reason */
+    void *pixel_buf = NULL; /* interlace-converted buffer; hoisted for the same reason */
 
     (void)flag;
 
@@ -3146,11 +3226,11 @@ test_mgr_lut_a(int flag)
 
     /* open up the existing datafile and get the image information from it */
     fid = Hopen(TESTFILE, DFACC_RDWR, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* initialize the gr interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     /* pick up here -QAK2 */
     {
@@ -3167,29 +3247,27 @@ test_mgr_lut_a(int flag)
         int32  dimsizes[2];        /* dimension sizes of the image */
         int32  pal_entries;        /* number of entries in the palette */
         int32  n_attr;             /* number of attributes with each image */
-        uint8 *tmp_data;           /* temporary buffer pointer */
-        void  *pal_data;           /* buffer for the palette data */
         uint16 pal_ref;            /* reference number of the palette */
 
         /* Attach to the image */
         riid = GRselect(grid, 0);
-        CHECK_VOID(riid, FAIL, "GRselect");
+        CHECK(riid, FAIL, "GRselect");
 
         /* Get the Image information */
         *name = '\0';
         ret   = GRgetiminfo(riid, name, &ncomp, &nt, &il, dimsizes, &n_attr);
-        CHECK_VOID(ret, FAIL, "GRgetiminfo");
+        CHECK(ret, FAIL, "GRgetiminfo");
 
         /* Get the number of palettes */
         ret = GRgetnluts(riid);
-        VERIFY_VOID(ret, 0, "GRgetnluts");
+        VERIFY(ret, 0, "GRgetnluts");
 
         lutid = GRgetlutid(riid, 0);
-        CHECK_VOID(lutid, FAIL, "GRgetlutid");
+        CHECK(lutid, FAIL, "GRgetlutid");
 
         /* Get the Palette information */
         ret = GRgetlutinfo(lutid, &pal_ncomp, &pal_nt, &pal_il, &pal_entries);
-        CHECK_VOID(ret, FAIL, "GRgetlutinfo");
+        CHECK(ret, FAIL, "GRgetlutinfo");
 
         /* Check the palette values, they should all be "nil" values */
         if (pal_ncomp != 0) {
@@ -3216,33 +3294,37 @@ test_mgr_lut_a(int flag)
         pal_entries = 256;
 
         pal_data = malloc((size_t)(pal_entries * pal_ncomp * DFKNTsize(pal_nt | DFNT_NATIVE)));
-        CHECK_VOID(pal_data, NULL, "malloc");
+        CHECK(pal_data, NULL, "malloc");
 
         /* Initialize the palette data, in 'pixel' interlace */
-        tmp_data = (uint8 *)pal_data;
-        for (j = 0; j < pal_entries; j++)
-            for (i = 0; i < pal_ncomp; i++)
-                *tmp_data++ = (uint8)(j * i);
+        {
+            uint8 *cursor = (uint8 *)pal_data; /* non-owning walking pointer into
+                                                   pal_data; must not be confused
+                                                   with tmp_data's own allocation
+                                                   below, or done: would double-free */
+            for (j = 0; j < pal_entries; j++)
+                for (i = 0; i < pal_ncomp; i++)
+                    *cursor++ = (uint8)(j * i);
+        }
 
         /* Write the palette out */
         ret = GRwritelut(lutid, pal_ncomp, pal_nt, pal_il, pal_entries, pal_data);
-        CHECK_VOID(ret, FAIL, "GRwritelut");
+        CHECK(ret, FAIL, "GRwritelut");
 
         /* Check the image data itself */
         for (j = (int)MFGR_INTERLACE_PIXEL; j <= (int)MFGR_INTERLACE_COMPONENT; j++) {
-            void *pixel_buf;
             int32 dimsizes2[2];
 
             tmp_data = malloc((size_t)(pal_entries * pal_ncomp * DFKNTsize(pal_nt | DFNT_NATIVE)));
-            CHECK_VOID(tmp_data, NULL, "malloc");
+            CHECK(tmp_data, NULL, "malloc");
 
             pixel_buf = malloc((size_t)(pal_entries * pal_ncomp * DFKNTsize(pal_nt | DFNT_NATIVE)));
-            CHECK_VOID(pixel_buf, NULL, "malloc");
+            CHECK(pixel_buf, NULL, "malloc");
 
             memset(tmp_data, 0, (size_t)(pal_entries * pal_ncomp * DFKNTsize(pal_nt | DFNT_NATIVE)));
 
             ret = GRreqlutil(lutid, j);
-            CHECK_VOID(ret, FAIL, "GRreqlutil");
+            CHECK(ret, FAIL, "GRreqlutil");
 
             ret = GRreadlut(lutid, tmp_data);
 
@@ -3256,32 +3338,46 @@ test_mgr_lut_a(int flag)
                 num_errs++;
             }
             free(tmp_data);
+            tmp_data = NULL; /* avoid dangling pointer if a later CHECK
+                                 in this loop jumps to done */
             free(pixel_buf);
+            pixel_buf = NULL;
         } /* end for */
 
         free(pal_data);
+        pal_data = NULL; /* avoid dangling pointer if a later CHECK
+                             in this block jumps to done */
 
         /* This lutid should yield a valid reference number, which is not 0 - BMR */
         pal_ref = GRluttoref(lutid);
-        CHECK_VOID(pal_ref, 0, "GRluttoref");
+        CHECK(pal_ref, 0, "GRluttoref");
 
         /* Now, this bogus lutid should cause GRluttoref to return a 0 - BMR */
         pal_ref = GRluttoref(0);
-        VERIFY_VOID(pal_ref, 0, "GRluttoref");
+        VERIFY(pal_ref, 0, "GRluttoref");
 
         /* End access to the image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
     } /* end block */
 
     /* shut down the gr interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
-} /* end test_mgr_lut_a() */
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
+
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+    free(pal_data);
+    free(tmp_data);
+    free(pixel_buf);
+}
 
 #define GR_LUTBFILE      "gr2.hdf"
 #define GR_LUTB_X_LENGTH 15
@@ -3298,7 +3394,7 @@ test_mgr_lut_a(int flag)
 static void
 test_mgr_lut_b(int flag)
 {
-    int32 gr_id, ri_id, file_id, pal_id, status, num_entries, ri_idx = 0;
+    int32 gr_id = FAIL, ri_id = FAIL, file_id = FAIL, pal_id, status, num_entries, ri_idx = 0;
     int32 data_type, ncomp, num_comp, interlace_mode;
     uint8 palette_data[256 * 3];
     uint8 r_palette_data[256 * 3];
@@ -3309,11 +3405,11 @@ test_mgr_lut_b(int flag)
 
     /* Create and open the file. */
     file_id = Hopen(GR_LUTBFILE, DFACC_CREATE, 0);
-    CHECK_VOID(file_id, FAIL, "Hopen");
+    CHECK(file_id, FAIL, "Hopen");
 
     /* Initiate the GR interface. */
     gr_id = GRstart(file_id);
-    CHECK_VOID(gr_id, FAIL, "GRstart");
+    CHECK(gr_id, FAIL, "GRstart");
 
     ncomp          = 1;
     dims[0]        = 20;
@@ -3321,7 +3417,7 @@ test_mgr_lut_b(int flag)
     interlace_mode = MFGR_INTERLACE_PIXEL;
 
     ri_id = GRcreate(gr_id, "Image_1", ncomp, DFNT_UINT8, interlace_mode, dims);
-    CHECK_VOID(ri_id, FAIL, "GRcreate");
+    CHECK(ri_id, FAIL, "GRcreate");
 
     /* Initialize the palette to grayscale. */
     for (i = 0; i < 256; i++) {
@@ -3337,39 +3433,42 @@ test_mgr_lut_b(int flag)
 
     /* Get the id for the palette. */
     pal_id = GRgetlutid(ri_id, ri_idx);
-    CHECK_VOID(pal_id, FAIL, "GRgetlutid");
+    CHECK(pal_id, FAIL, "GRgetlutid");
 
     /* Write the palette to file. */
     status = GRwritelut(pal_id, num_comp, data_type, interlace_mode, num_entries, (void *)palette_data);
-    CHECK_VOID(status, FAIL, "GRgetlutid");
+    CHECK(status, FAIL, "GRgetlutid");
 
     status = GRendaccess(ri_id);
-    CHECK_VOID(status, FAIL, "GRendaccess");
+    CHECK(status, FAIL, "GRendaccess");
+    ri_id = FAIL;
 
     status = GRend(gr_id);
-    CHECK_VOID(status, FAIL, "GRend");
+    CHECK(status, FAIL, "GRend");
+    gr_id = FAIL;
 
     status = Hclose(file_id);
-    CHECK_VOID(status, FAIL, "Hclose");
+    CHECK(status, FAIL, "Hclose");
+    file_id = FAIL;
 
     file_id = Hopen(GR_LUTBFILE, DFACC_READ, 0);
-    CHECK_VOID(file_id, FAIL, "Hopen");
+    CHECK(file_id, FAIL, "Hopen");
 
     gr_id = GRstart(file_id);
-    CHECK_VOID(gr_id, FAIL, "GRstart");
+    CHECK(gr_id, FAIL, "GRstart");
 
     ri_idx = GRnametoindex(gr_id, "Image_1");
-    CHECK_VOID(ri_idx, FAIL, "GRnametoindex");
+    CHECK(ri_idx, FAIL, "GRnametoindex");
 
     ri_id = GRselect(gr_id, ri_idx);
-    CHECK_VOID(ri_id, FAIL, "GRselect");
+    CHECK(ri_id, FAIL, "GRselect");
 
     pal_id = GRgetlutid(ri_id, ri_idx);
-    CHECK_VOID(pal_id, FAIL, "GRgetlutid");
+    CHECK(pal_id, FAIL, "GRgetlutid");
 
     /* Read the palette data. */
     status = GRreadlut(pal_id, (void *)r_palette_data);
-    CHECK_VOID(status, FAIL, "GRreadlut");
+    CHECK(status, FAIL, "GRreadlut");
 
     /* Verify correct palette contents */
     if (memcmp(palette_data, r_palette_data, 256 * 3) != 0) {
@@ -3379,16 +3478,28 @@ test_mgr_lut_b(int flag)
 
     /* Terminate access to the image. */
     status = GRendaccess(ri_id);
-    CHECK_VOID(status, FAIL, "GRendaccess");
+    CHECK(status, FAIL, "GRendaccess");
+    ri_id = FAIL;
 
     /* Terminate access to the GR interface. */
     status = GRend(gr_id);
-    CHECK_VOID(status, FAIL, "GRend");
+    CHECK(status, FAIL, "GRend");
+    gr_id = FAIL;
 
     /* Close the file. */
     status = Hclose(file_id);
-    CHECK_VOID(status, FAIL, "Hclose");
-} /* end test_mgr_lut_b() */
+    CHECK(status, FAIL, "Hclose");
+    file_id = FAIL;
+
+done:
+    /* Release resources */
+    if (ri_id != FAIL)
+        GRendaccess(ri_id);
+    if (gr_id != FAIL)
+        GRend(gr_id);
+    if (file_id != FAIL)
+        Hclose(file_id);
+}
 
 /****************************************************************
 **
@@ -3410,7 +3521,7 @@ test_mgr_lut(int flag)
 
     test_mgr_lut_a(flag);
     test_mgr_lut_b(flag);
-} /* end test_mgr_lut() */
+}
 
 /****************************************************************
 **
@@ -3428,7 +3539,7 @@ test_mgr_special(int flag)
 
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Special Element routines\n"););
-} /* end test_mgr_special() */
+}
 
 #define OLDRLEFILE      "test_files/8bit.dat"
 #define OLDGREYJPEGFILE "test_files/greyjpeg.dat"
@@ -3440,9 +3551,9 @@ test_mgr_special(int flag)
 static void
 test_mgr_old_a(int flag)
 {
-    int32       fid;  /* HDF file ID */
-    int32       grid; /* GRID for the interface */
-    int32       ret;  /* generic return value */
+    int32       fid  = FAIL; /* HDF file ID */
+    int32       grid = FAIL; /* GRID for the interface */
+    int32       ret;         /* generic return value */
     const char *oldrlefile = get_srcdir_filename(OLDRLEFILE);
 
     (void)flag;
@@ -3452,11 +3563,11 @@ test_mgr_old_a(int flag)
 
     /* Open up the existing datafile and get the image information from it */
     fid = Hopen(oldrlefile, DFACC_READ, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Initialize the GR interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     {
         int32 riid;               /* RI ID for the new image */
@@ -3474,13 +3585,13 @@ test_mgr_old_a(int flag)
 
         /* Get the first image in this file */
         riid = GRselect(grid, 0);
-        CHECK_VOID(riid, FAIL, "GRselect");
+        CHECK(riid, FAIL, "GRselect");
 
         /* Read the whole image in */
         start[0] = start[1] = 0;
         stride[0] = stride[1] = 1;
         ret                   = GRreadimage(riid, start, stride, dims, image);
-        CHECK_VOID(ret, FAIL, "GRreadimage");
+        CHECK(ret, FAIL, "GRreadimage");
 
         /* Verify correct image contents */
         if (memcmp(image, image0, 10 * 10) != 0) {
@@ -3489,24 +3600,30 @@ test_mgr_old_a(int flag)
         } /* end if */
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
     }
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
-} /* end test_mgr_old_a() */
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
+
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+}
 
 static void
 test_mgr_old_c(int flag)
 {
-    int32       fid;  /* HDF file ID */
-    int32       grid; /* GRID for the interface */
+    int32       fid      = FAIL; /* HDF file ID */
+    int32       grid     = FAIL; /* GRID for the interface */
     int32       n_images = 0;
     int         status   = 0;
     int32       ret; /* generic return value */
@@ -3519,15 +3636,15 @@ test_mgr_old_c(int flag)
 
     /* Open up the existing datafile and get the image information from it */
     fid = Hopen(oldgreyjpegfile, DFACC_READ, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Initialize the GR interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     /* Verify each image */
     status = GRfileinfo(grid, &n_images, NULL);
-    CHECK_VOID(status, FAIL, "GRfileinfo");
+    CHECK(status, FAIL, "GRfileinfo");
     for (int32 idx = 0; idx < n_images; idx++) {
         int32 riid;                     /* RI ID for the new image */
         int32 dims[2] = {JPEGX, JPEGY}; /* dimensions for the empty image */
@@ -3541,20 +3658,20 @@ test_mgr_old_c(int flag)
 
         /* Get the first image in this file */
         riid = GRselect(grid, idx);
-        CHECK_VOID(riid, FAIL, "GRselect");
+        CHECK(riid, FAIL, "GRselect");
 
         /* Read the whole image in */
         start[0] = start[1] = 0;
         stride[0] = stride[1] = 1;
         ret                   = GRreadimage(riid, start, stride, dims, image);
-        CHECK_VOID(ret, FAIL, "GRreadimage");
+        CHECK(ret, FAIL, "GRreadimage");
 
         n_entries = GRgetdatainfo(riid, 0, 1, &offset, &length);
-        CHECK_VOID(n_entries, FAIL, "GRgetdatainfo");
+        CHECK(n_entries, FAIL, "GRgetdatainfo");
 
         /* Decompress that exact byte range directly via libjpeg */
         ret = decomp_using_jpeglib(oldgreyjpegfile, (long)offset, JPEGY, JPEGX, 1, jpeglib_readbuf);
-        CHECK_VOID(ret, FAIL, "decomp_using_jpeglib");
+        CHECK(ret, FAIL, "decomp_using_jpeglib");
 
         /* Compare data decompressed by HDF against that by JPEG lib, the buffers
            should be identical */
@@ -3565,25 +3682,31 @@ test_mgr_old_c(int flag)
         }
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
     }
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
-} /* end test_mgr_old_c() */
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
+
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+}
 
 static void
 test_mgr_old_e(int flag)
 {
-    int32       fid;  /* HDF file ID */
-    int32       grid; /* GRID for the interface */
-    int32       ret;  /* generic return value */
+    int32       fid  = FAIL; /* HDF file ID */
+    int32       grid = FAIL; /* GRID for the interface */
+    int32       ret;         /* generic return value */
     int32       n_images    = 0;
     const char *oldjpegfile = get_srcdir_filename(OLDJPEGFILE);
     int         status      = 0;
@@ -3595,15 +3718,15 @@ test_mgr_old_e(int flag)
 
     /* Open up the existing datafile and get the image information from it */
     fid = Hopen(oldjpegfile, DFACC_READ, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Initialize the GR interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     /* Verify each image in this file */
     status = GRfileinfo(grid, &n_images, NULL);
-    CHECK_VOID(status, FAIL, "GRfileinfo");
+    CHECK(status, FAIL, "GRfileinfo");
     for (int32 idx = 0; idx < n_images; idx++) {
         int32 riid;                     /* RI ID for the new image */
         int32 dims[2] = {JPEGX, JPEGY}; /* dimensions for the empty image */
@@ -3617,21 +3740,21 @@ test_mgr_old_e(int flag)
 
         /* Get the current image */
         riid = GRselect(grid, idx);
-        CHECK_VOID(riid, FAIL, "GRselect");
+        CHECK(riid, FAIL, "GRselect");
 
         /* Read the whole image in */
         start[0] = start[1] = 0;
         stride[0] = stride[1] = 1;
         ret                   = GRreadimage(riid, start, stride, dims, image);
-        CHECK_VOID(ret, FAIL, "GRreadimage");
+        CHECK(ret, FAIL, "GRreadimage");
 
         /* Get the offset and length of the image's raw data */
         n_entries = GRgetdatainfo(riid, 0, 1, &offset, &length);
-        CHECK_VOID(n_entries, FAIL, "GRgetdatainfo");
+        CHECK(n_entries, FAIL, "GRgetdatainfo");
 
         /* Decompress that exact byte range directly via libjpeg */
         ret = decomp_using_jpeglib(oldjpegfile, (long)offset, JPEGY, JPEGX, 3, jpeglib_readbuf);
-        CHECK_VOID(ret, FAIL, "decomp_using_jpeglib");
+        CHECK(ret, FAIL, "decomp_using_jpeglib");
 
         /* Compare data decompressed by HDF against that by JPEG lib, the buffers
            should be identical */
@@ -3642,18 +3765,24 @@ test_mgr_old_e(int flag)
         }
 
         /* Close the image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
     }
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
-} /* end test_mgr_old_e() */
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
+
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+}
 
 /****************************************************************
 **
@@ -3676,7 +3805,7 @@ test_mgr_old(int flag)
     test_mgr_old_a(flag);
     test_mgr_old_c(flag);
     test_mgr_old_e(flag);
-} /* end test_mgr_old() */
+}
 
 #define GR_R24FILE "test_files/gr_r24.dat"
 #define GR_R24XDIM 8
@@ -3686,9 +3815,9 @@ test_mgr_old(int flag)
 static void
 test_mgr_r24_a(int flag)
 {
-    int32       fid;  /* HDF file ID */
-    int32       grid; /* GRID for the interface */
-    int32       ret;  /* generic return value */
+    int32       fid  = FAIL; /* HDF file ID */
+    int32       grid = FAIL; /* GRID for the interface */
+    int32       ret;         /* generic return value */
     const char *gr_r24file = get_srcdir_filename(GR_R24FILE);
 
     (void)flag;
@@ -3698,11 +3827,11 @@ test_mgr_r24_a(int flag)
 
     /* Open up the existing datafile and get the image information from it */
     fid = Hopen(gr_r24file, DFACC_READ, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Initialize the GR interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     {
         int32 riid;                               /* RI ID for the new image */
@@ -3727,28 +3856,28 @@ test_mgr_r24_a(int flag)
 
         /* Get the first image in this file */
         riid = GRselect(grid, 0);
-        CHECK_VOID(riid, FAIL, "GRselect");
+        CHECK(riid, FAIL, "GRselect");
 
         /* Check the image information */
         ret = GRgetiminfo(riid, NULL, &ncomp, &nt, NULL, dimsizes, NULL);
-        CHECK_VOID(ret, FAIL, "GRgetiminfo");
-        VERIFY_VOID(ncomp, 3, "GRgetiminfo");
-        VERIFY_VOID(nt, DFNT_UCHAR8, "GRgetiminfo");
-        VERIFY_VOID(dimsizes[0], dims[0], "GRgetiminfo");
-        VERIFY_VOID(dimsizes[1], dims[1], "GRgetiminfo");
+        CHECK(ret, FAIL, "GRgetiminfo");
+        VERIFY(ncomp, 3, "GRgetiminfo");
+        VERIFY(nt, DFNT_UCHAR8, "GRgetiminfo");
+        VERIFY(dimsizes[0], dims[0], "GRgetiminfo");
+        VERIFY(dimsizes[1], dims[1], "GRgetiminfo");
 
         /* Test GR2bmapped on this image, should not be mapped-able because */
         /* ncomp=3. (For hmap project only) */
         ret = GR2bmapped(riid, &is_mappedable, &name_generated);
-        CHECK_VOID(ret, FAIL, "GR2bmapped");
-        VERIFY_VOID(is_mappedable, FALSE, "GR2bmapped");
-        VERIFY_VOID(name_generated, TRUE, "GR2bmapped");
+        CHECK(ret, FAIL, "GR2bmapped");
+        VERIFY(is_mappedable, FALSE, "GR2bmapped");
+        VERIFY(name_generated, TRUE, "GR2bmapped");
 
         /* Read the whole image in */
         start[0] = start[1] = 0;
         stride[0] = stride[1] = 1;
         ret                   = GRreadimage(riid, start, stride, dims, image0);
-        CHECK_VOID(ret, FAIL, "GRreadimage");
+        CHECK(ret, FAIL, "GRreadimage");
 
         /* Verify correct image contents */
         if (memcmp(image, image0, GR_R24YDIM * GR_R24XDIM * 3) != 0) {
@@ -3757,18 +3886,24 @@ test_mgr_r24_a(int flag)
         } /* end if */
 
         /* Close the image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
     }
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
-} /* end test_mgr_r24_a() */
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
+
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+}
 
 /****************************************************************
 **
@@ -3785,8 +3920,7 @@ test_mgr_r24(int flag)
     MESSAGE(6, printf("Testing Multi-file Raster/DF24 Compatibility\n"););
 
     test_mgr_r24_a(flag);
-
-} /* end test_mgr_r24() */
+}
 
 #define GR_R8FILE "gr_r8.hdf"
 #define GR_R8XDIM 8
@@ -3796,9 +3930,9 @@ test_mgr_r24(int flag)
 static void
 test_mgr_r8_a(int flag)
 {
-    int32 fid;  /* HDF file ID */
-    int32 grid; /* GRID for the interface */
-    int32 ret;  /* generic return value */
+    int32 fid  = FAIL; /* HDF file ID */
+    int32 grid = FAIL; /* GRID for the interface */
+    int32 ret;         /* generic return value */
     uint8 palette[256][3];
     uint8 picture[GR_R8YDIM][GR_R8XDIM];
     int   i, j; /* indices */
@@ -3824,17 +3958,17 @@ test_mgr_r8_a(int flag)
 
     /* Write out the test data */
     ret = DFR8setpalette((void *)palette);
-    CHECK_VOID(ret, FAIL, "DFR8setpalette");
+    CHECK(ret, FAIL, "DFR8setpalette");
     ret = DFR8putimage(GR_R8FILE, (void *)picture, GR_R8XDIM, GR_R8YDIM, COMP_RLE);
-    CHECK_VOID(ret, FAIL, "DFR8putimage");
+    CHECK(ret, FAIL, "DFR8putimage");
 
     /* Open up the existing datafile and get the image information from it */
     fid = Hopen(GR_R8FILE, DFACC_READ, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
 
     /* Initialize the GR interface */
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     {
         int32 riid;                             /* RI ID for the image */
@@ -3859,28 +3993,28 @@ test_mgr_r8_a(int flag)
 
         /* Get the first image in this file */
         riid = GRselect(grid, 0);
-        CHECK_VOID(riid, FAIL, "GRselect");
+        CHECK(riid, FAIL, "GRselect");
 
         /* Check the image information */
         ret = GRgetiminfo(riid, NULL, &ncomp, &nt, NULL, dimsizes, NULL);
-        CHECK_VOID(ret, FAIL, "GRgetiminfo");
-        VERIFY_VOID(ncomp, 1, "GRgetiminfo");
-        VERIFY_VOID(nt, DFNT_UCHAR8, "GRgetiminfo");
-        VERIFY_VOID(dimsizes[0], dims[0], "GRgetiminfo");
-        VERIFY_VOID(dimsizes[1], dims[1], "GRgetiminfo");
+        CHECK(ret, FAIL, "GRgetiminfo");
+        VERIFY(ncomp, 1, "GRgetiminfo");
+        VERIFY(nt, DFNT_UCHAR8, "GRgetiminfo");
+        VERIFY(dimsizes[0], dims[0], "GRgetiminfo");
+        VERIFY(dimsizes[1], dims[1], "GRgetiminfo");
 
         /* Test GR2bmapped on this image, should be mapped-able */
         /* (For hmap project only) */
         ret = GR2bmapped(riid, &is_mappedable, &name_generated);
-        CHECK_VOID(ret, FAIL, "GR2bmapped");
-        VERIFY_VOID(is_mappedable, TRUE, "GR2bmapped");
-        VERIFY_VOID(name_generated, TRUE, "GR2bmapped");
+        CHECK(ret, FAIL, "GR2bmapped");
+        VERIFY(is_mappedable, TRUE, "GR2bmapped");
+        VERIFY(name_generated, TRUE, "GR2bmapped");
 
         /* Read the whole image in */
         start[0] = start[1] = 0;
         stride[0] = stride[1] = 1;
         ret                   = GRreadimage(riid, start, stride, dims, image0);
-        CHECK_VOID(ret, FAIL, "GRreadimage");
+        CHECK(ret, FAIL, "GRreadimage");
 
         /* Verify correct image contents */
         if (memcmp(image, image0, GR_R8YDIM * GR_R8XDIM) != 0) {
@@ -3889,30 +4023,35 @@ test_mgr_r8_a(int flag)
         } /* end if */
 
         pal_id = GRgetlutid(riid, 0);
-        CHECK_VOID(pal_id, FAIL, "GRgetlutid");
+        CHECK(pal_id, FAIL, "GRgetlutid");
 
         ncomp = nt = 0;
         ret        = GRgetlutinfo(pal_id, &ncomp, &nt, &interlace, &num_entries);
-        CHECK_VOID(ret, FAIL, "GRgetlutinfo");
-        VERIFY_VOID(ncomp, 3, "GRgetlutinfo");
-        VERIFY_VOID(nt, DFNT_UINT8, "GRgetlutinfo");
-        VERIFY_VOID(interlace, 0, "GRgetlutinfo");
-        VERIFY_VOID(num_entries, 256, "GRgetlutinfo");
+        CHECK(ret, FAIL, "GRgetlutinfo");
+        VERIFY(ncomp, 3, "GRgetlutinfo");
+        VERIFY(nt, DFNT_UINT8, "GRgetlutinfo");
+        VERIFY(interlace, 0, "GRgetlutinfo");
+        VERIFY(num_entries, 256, "GRgetlutinfo");
 
         /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK_VOID(ret, FAIL, "GRendaccess");
+        ENDRI(riid, "GRendaccess");
     }
 
     /* Shut down the GR interface */
-    ret = GRend(grid);
-    CHECK_VOID(ret, FAIL, "GRend");
+    ENDGR(grid, "GRend");
 
     /* Close the file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
 
-} /* end test_mgr_r8_a() */
+done:
+    /* Release resources */
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+}
 
 /****************************************************************
 **
@@ -3929,8 +4068,7 @@ test_mgr_r8(int flag)
     MESSAGE(6, printf("Testing Multi-file Raster/DF8 Compatibility\n"););
 
     test_mgr_r8_a(flag);
-
-} /* end test_mgr_r8() */
+}
 
 static void
 test_mgr_chunkwr_pixelone()
@@ -3952,15 +4090,15 @@ test_mgr_chunkwr_pixelone()
 
     /************************* Variable declaration **************************/
 
-    int   status;       /* status for functions returning an int */
-    int32 file_id,      /* HDF file identifier */
-        gr_id,          /* GR interface identifier */
-        ri_id[4],       /* raster image identifier */
-        origin[2],      /* start position to write for each dimension */
-        dim_sizes[2],   /* dimension sizes of the image array */
-        interlace_mode, /* interlace mode of the image */
-        data_type,      /* data type of the image data */
-        comp_flag,      /* compression flag */
+    int   status;                             /* status for functions returning an int */
+    int32 file_id = FAIL,                     /* HDF file identifier */
+        gr_id     = FAIL,                     /* GR interface identifier */
+        ri_id[4]  = {FAIL, FAIL, FAIL, FAIL}, /* raster image identifier */
+        origin[2],                            /* start position to write for each dimension */
+        dim_sizes[2],                         /* dimension sizes of the image array */
+        interlace_mode,                       /* interlace mode of the image */
+        data_type,                            /* data type of the image data */
+        comp_flag,                            /* compression flag */
         index, i;
     int32         start[2], stride[2], edge[2];
     int16         data_out[3 * Y_LENGTH * X_LENGTH];
@@ -3995,13 +4133,13 @@ test_mgr_chunkwr_pixelone()
      * Create and open the file.
      */
     file_id = Hopen(CHUNKFILE, DFACC_WRITE, 0);
-    CHECK_VOID(file_id, FAIL, "Hopen");
+    CHECK(file_id, FAIL, "Hopen");
 
     /*
      * Initialize the GR interface.
      */
     gr_id = GRstart(file_id);
-    CHECK_VOID(gr_id, FAIL, "GRstart");
+    CHECK(gr_id, FAIL, "GRstart");
 
     /*
      * Set the data type, interlace mode, and dimensions of the image.
@@ -4017,7 +4155,7 @@ test_mgr_chunkwr_pixelone()
          * Create the raster image array.
          */
         ri_id[i] = GRcreate(gr_id, image_name[i], N_COMPS, data_type, interlace_mode, dim_sizes);
-        CHECK_VOID(ri_id[i], FAIL, "GRcreate");
+        CHECK(ri_id[i], FAIL, "GRcreate");
 
         /*
          * Create chunked image array.
@@ -4058,14 +4196,14 @@ test_mgr_chunkwr_pixelone()
         } /* end switch */
 
         status = GRsetchunk(ri_id[i], chunk_def, comp_flag);
-        CHECK_VOID(status, FAIL, "GRsetchunk");
+        CHECK(status, FAIL, "GRsetchunk");
 
         /*
          * Write first data chunk ( 0, 0 ).
          */
         origin[0] = origin[1] = 0;
         status                = GRwritechunk(ri_id[i], origin, (void *)chunk00);
-        CHECK_VOID(status, FAIL, "GRwritechunk");
+        CHECK(status, FAIL, "GRwritechunk");
 
         /*
          * Write second data chunk ( 0, 1 ).
@@ -4073,7 +4211,7 @@ test_mgr_chunkwr_pixelone()
         origin[0] = 0;
         origin[1] = 1;
         status    = GRwritechunk(ri_id[i], origin, (void *)chunk01);
-        CHECK_VOID(status, FAIL, "GRwritechunk");
+        CHECK(status, FAIL, "GRwritechunk");
 
         /*
          * Write third data chunk ( 1, 4 ).
@@ -4081,38 +4219,41 @@ test_mgr_chunkwr_pixelone()
         origin[0] = 1;
         origin[1] = 4;
         status    = GRwritechunk(ri_id[i], origin, (void *)chunk14);
-        CHECK_VOID(status, FAIL, "GRwritechunk");
+        CHECK(status, FAIL, "GRwritechunk");
         /*
          * Read third chunk back.
          */
         origin[0] = 1;
         origin[1] = 4;
         status    = GRreadchunk(ri_id[i], origin, (void *)chunk_buf);
-        CHECK_VOID(status, FAIL, "GRreadchunk");
+        CHECK(status, FAIL, "GRreadchunk");
 
         /*
          * Terminate access to the GR interface and close the HDF file.
          */
         status = GRendaccess(ri_id[i]);
-        CHECK_VOID(status, FAIL, "GRendaccess");
+        CHECK(status, FAIL, "GRendaccess");
+        ri_id[i] = FAIL;
     } /* end for*/
     status = GRend(gr_id);
-    CHECK_VOID(status, FAIL, "GRend");
+    CHECK(status, FAIL, "GRend");
+    gr_id  = FAIL;
     status = Hclose(file_id);
-    CHECK_VOID(status, FAIL, "Hclose");
+    CHECK(status, FAIL, "Hclose");
+    file_id = FAIL;
 
     /*
      * Open the file.
      */
 
     file_id = Hopen(CHUNKFILE, DFACC_WRITE, 0);
-    CHECK_VOID(file_id, FAIL, "Hopen");
+    CHECK(file_id, FAIL, "Hopen");
 
     /*
      * Initialize the GR interface.
      */
     gr_id = GRstart(file_id);
-    CHECK_VOID(gr_id, FAIL, "GRstart");
+    CHECK(gr_id, FAIL, "GRstart");
 
     for (i = 0; i < COMP_METH; i++) {
 
@@ -4120,13 +4261,13 @@ test_mgr_chunkwr_pixelone()
          * Find the index of the specified image.
          */
         index = GRnametoindex(gr_id, image_name[i]);
-        CHECK_VOID(index, FAIL, "GRnametoindex");
+        CHECK(index, FAIL, "GRnametoindex");
 
         /*
          * Select the image.
          */
         ri_id[i] = GRselect(gr_id, index);
-        CHECK_VOID(ri_id[i], FAIL, "GRselect");
+        CHECK(ri_id[i], FAIL, "GRselect");
 
         /*
          * Read third chunk back.
@@ -4134,7 +4275,7 @@ test_mgr_chunkwr_pixelone()
         origin[0] = 1;
         origin[1] = 4;
         status    = GRreadchunk(ri_id[i], origin, (void *)chunk_buf);
-        CHECK_VOID(status, FAIL, "GRreadchunk");
+        CHECK(status, FAIL, "GRreadchunk");
         if (0 != memcmp(chunk_buf, chunk14, sizeof(chunk14))) {
             MESSAGE(3, printf("%d: Error in reading chunk\n", __LINE__););
             MESSAGE(3, printf("%d: Compression method\n", (int)i););
@@ -4148,7 +4289,7 @@ test_mgr_chunkwr_pixelone()
         edge[0]               = Y_LENGTH;
         edge[1]               = X_LENGTH;
         status                = GRreadimage(ri_id[i], start, stride, edge, (void *)data_out);
-        CHECK_VOID(status, FAIL, "GRreadimage");
+        CHECK(status, FAIL, "GRreadimage");
         if (0 != memcmp(data_out, data, sizeof(data))) {
             MESSAGE(3, printf("%d: Error reading data for the whole image\n", __LINE__););
             MESSAGE(3, printf("%d: Compression method\n", (int)i););
@@ -4156,16 +4297,29 @@ test_mgr_chunkwr_pixelone()
         } /* end if */
 
         status = GRendaccess(ri_id[i]);
-        CHECK_VOID(status, FAIL, "GRendaccess");
+        CHECK(status, FAIL, "GRendaccess");
+        ri_id[i] = FAIL;
 
     } /* end for */
     /*
      * Terminate access to the GR interface and close the HDF file.
      */
     status = GRend(gr_id);
-    CHECK_VOID(status, FAIL, "GRend");
+    CHECK(status, FAIL, "GRend");
+    gr_id  = FAIL;
     status = Hclose(file_id);
-    CHECK_VOID(status, FAIL, "Hclose");
+    CHECK(status, FAIL, "Hclose");
+    file_id = FAIL;
+
+done:
+    /* Release resources */
+    for (i = 0; i < 4; i++)
+        if (ri_id[i] != FAIL)
+            GRendaccess(ri_id[i]);
+    if (gr_id != FAIL)
+        GRend(gr_id);
+    if (file_id != FAIL)
+        Hclose(file_id);
 }
 static void
 test_mgr_chunkwr_pixel(int flag)
@@ -4190,15 +4344,15 @@ test_mgr_chunkwr_pixel(int flag)
 
     /************************* Variable declaration **************************/
 
-    int   status;       /* status for functions returning an int */
-    int32 file_id,      /* HDF file identifier */
-        gr_id,          /* GR interface identifier */
-        ri_id[4],       /* raster image identifier */
-        origin[2],      /* start position to write for each dimension */
-        dim_sizes[2],   /* dimension sizes of the image array */
-        interlace_mode, /* interlace mode of the image */
-        data_type,      /* data type of the image data */
-        comp_flag,      /* compression flag */
+    int   status;                             /* status for functions returning an int */
+    int32 file_id = FAIL,                     /* HDF file identifier */
+        gr_id     = FAIL,                     /* GR interface identifier */
+        ri_id[4]  = {FAIL, FAIL, FAIL, FAIL}, /* raster image identifier */
+        origin[2],                            /* start position to write for each dimension */
+        dim_sizes[2],                         /* dimension sizes of the image array */
+        interlace_mode,                       /* interlace mode of the image */
+        data_type,                            /* data type of the image data */
+        comp_flag,                            /* compression flag */
         index, i;
     int32         start[2], stride[2], edge[2];
     int           is_mappedable;  /* TRUE if the image is mapped-able (hmap project)*/
@@ -4245,13 +4399,13 @@ test_mgr_chunkwr_pixel(int flag)
     file_id = Hopen (FILE_NAME, DFACC_WRITE, 0);
     */
     file_id = Hopen(file_name[i], DFACC_CREATE, 0);
-    CHECK_VOID(file_id, FAIL, "Hopen");
+    CHECK(file_id, FAIL, "Hopen");
 
     /*
      * Initialize the GR interface.
      */
     gr_id = GRstart(file_id);
-    CHECK_VOID(gr_id, FAIL, "GRstart");
+    CHECK(gr_id, FAIL, "GRstart");
 
     /*
      * Set the data type, interlace mode, and dimensions of the image.
@@ -4267,7 +4421,7 @@ test_mgr_chunkwr_pixel(int flag)
      * Create the raster image array.
      */
     ri_id[i] = GRcreate(gr_id, image_name[i], N_COMPS, data_type, interlace_mode, dim_sizes);
-    CHECK_VOID(ri_id[i], FAIL, "GRcreate");
+    CHECK(ri_id[i], FAIL, "GRcreate");
 
     /*
      * Create chunked image array.
@@ -4309,14 +4463,14 @@ test_mgr_chunkwr_pixel(int flag)
     } /* end switch */
 
     status = GRsetchunk(ri_id[i], chunk_def, comp_flag);
-    CHECK_VOID(status, FAIL, "GRsetchunk");
+    CHECK(status, FAIL, "GRsetchunk");
 
     /*
      * Write first data chunk ( 0, 0 ).
      */
     origin[0] = origin[1] = 0;
     status                = GRwritechunk(ri_id[i], origin, (void *)chunk00);
-    CHECK_VOID(status, FAIL, "GRwritechunk");
+    CHECK(status, FAIL, "GRwritechunk");
 
     /*
      * Write second data chunk ( 0, 1 ).
@@ -4324,7 +4478,7 @@ test_mgr_chunkwr_pixel(int flag)
     origin[0] = 0;
     origin[1] = 1;
     status    = GRwritechunk(ri_id[i], origin, (void *)chunk01);
-    CHECK_VOID(status, FAIL, "GRwritechunk");
+    CHECK(status, FAIL, "GRwritechunk");
 
     /*
      * Write third data chunk ( 1, 4 ).
@@ -4332,7 +4486,7 @@ test_mgr_chunkwr_pixel(int flag)
     origin[0] = 1;
     origin[1] = 4;
     status    = GRwritechunk(ri_id[i], origin, (void *)chunk14);
-    CHECK_VOID(status, FAIL, "GRwritechunk");
+    CHECK(status, FAIL, "GRwritechunk");
     /*
      * Read third chunk back.
      */
@@ -4344,12 +4498,15 @@ test_mgr_chunkwr_pixel(int flag)
      * Terminate access to the GR interface and close the HDF file.
      */
     status = GRendaccess(ri_id[i]);
-    CHECK_VOID(status, FAIL, "GRendaccess");
+    CHECK(status, FAIL, "GRendaccess");
+    ri_id[i] = FAIL;
     /* } */ /* end for*/
     status = GRend(gr_id);
-    CHECK_VOID(status, FAIL, "GRend");
+    CHECK(status, FAIL, "GRend");
+    gr_id  = FAIL;
     status = Hclose(file_id);
-    CHECK_VOID(status, FAIL, "Hclose");
+    CHECK(status, FAIL, "Hclose");
+    file_id = FAIL;
 
     /*
      * Open the file.
@@ -4360,13 +4517,13 @@ test_mgr_chunkwr_pixel(int flag)
     */
     /*   file_id = Hopen (FILE_NAME, DFACC_WRITE, 0); */
     file_id = Hopen(file_name[i], DFACC_WRITE, 0);
-    CHECK_VOID(file_id, FAIL, "Hopen");
+    CHECK(file_id, FAIL, "Hopen");
 
     /*
      * Initialize the GR interface.
      */
     gr_id = GRstart(file_id);
-    CHECK_VOID(gr_id, FAIL, "GRstart");
+    CHECK(gr_id, FAIL, "GRstart");
 
     /*for (i = 0; i < COMP_METH; i++ ) { */
 
@@ -4374,20 +4531,20 @@ test_mgr_chunkwr_pixel(int flag)
      * Find the index of the specified image.
      */
     index = GRnametoindex(gr_id, image_name[i]);
-    CHECK_VOID(index, FAIL, "GRnametoindex");
+    CHECK(index, FAIL, "GRnametoindex");
 
     /*
      * Select the image.
      */
     ri_id[i] = GRselect(gr_id, index);
-    CHECK_VOID(ri_id[i], FAIL, "GRselect");
+    CHECK(ri_id[i], FAIL, "GRselect");
     /*
      * Read third chunk back.
      */
     origin[0] = 1;
     origin[1] = 4;
     status    = GRreadchunk(ri_id[i], origin, (void *)chunk_buf);
-    CHECK_VOID(status, FAIL, "GRreadchunk");
+    CHECK(status, FAIL, "GRreadchunk");
     if (0 != memcmp(chunk_buf, chunk14, sizeof(chunk14))) {
         MESSAGE(3, printf("%d: Error in reading chunk\n", __LINE__););
         MESSAGE(3, printf("%d: Compression method\n", (int)i););
@@ -4401,7 +4558,7 @@ test_mgr_chunkwr_pixel(int flag)
     edge[0]               = Y_LENGTH;
     edge[1]               = X_LENGTH;
     status                = GRreadimage(ri_id[i], start, stride, edge, (void *)data_out);
-    CHECK_VOID(status, FAIL, "GRreadimage");
+    CHECK(status, FAIL, "GRreadimage");
     if (0 != memcmp(data_out, data, sizeof(data))) {
         MESSAGE(3, printf("%d: Error reading data for the whole image\n", __LINE__););
         MESSAGE(3, printf("%d: Compression method\n", (int)i););
@@ -4411,21 +4568,34 @@ test_mgr_chunkwr_pixel(int flag)
     /* Test GR2bmapped on this image, should not be mapped-able because it has */
     /* chunking storage. (For hmap project only) */
     status = GR2bmapped(ri_id[i], &is_mappedable, &name_generated);
-    CHECK_VOID(status, FAIL, "GR2bmapped");
-    VERIFY_VOID(is_mappedable, FALSE, "GR2bmapped");
-    VERIFY_VOID(name_generated, FALSE, "GR2bmapped");
+    CHECK(status, FAIL, "GR2bmapped");
+    VERIFY(is_mappedable, FALSE, "GR2bmapped");
+    VERIFY(name_generated, FALSE, "GR2bmapped");
 
     status = GRendaccess(ri_id[i]);
-    CHECK_VOID(status, FAIL, "GRendaccess");
+    CHECK(status, FAIL, "GRendaccess");
+    ri_id[i] = FAIL;
 
     /*} */ /* end for */
     /*
      * Terminate access to the GR interface and close the HDF file.
      */
     status = GRend(gr_id);
-    CHECK_VOID(status, FAIL, "GRend");
+    CHECK(status, FAIL, "GRend");
+    gr_id  = FAIL;
     status = Hclose(file_id);
-    CHECK_VOID(status, FAIL, "Hclose");
+    CHECK(status, FAIL, "Hclose");
+    file_id = FAIL;
+
+done:
+    /* Release resources */
+    for (i = 0; i < 4; i++)
+        if (ri_id[i] != FAIL)
+            GRendaccess(ri_id[i]);
+    if (gr_id != FAIL)
+        GRend(gr_id);
+    if (file_id != FAIL)
+        Hclose(file_id);
 }
 
 /****************************************************************
@@ -4451,8 +4621,7 @@ test_mgr_chunkwr(void)
     test_mgr_chunkwr_pixel(1);
     test_mgr_chunkwr_pixel(2);
     test_mgr_chunkwr_pixel(3);
-
-} /* end test_mgr_chunkwr() */
+}
 
 /****************************************************************
 **
@@ -4507,5 +4676,4 @@ test_mgr(void)
 
     /* Added after fixing bug #814 to test eliminating of duplicate images */
     test_mgr_dup_images();
-
-} /* test_mgr() */
+}

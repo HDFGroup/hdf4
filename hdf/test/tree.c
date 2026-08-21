@@ -42,7 +42,7 @@ swap_arr(int32 *arr, int a, int b)
         arr[a] = arr[b];
         arr[b] = t;
     } /* end if */
-} /* end swap_arr() */
+}
 
 int
 tcompare(void *k1, void *k2, int cmparg)
@@ -110,4 +110,4 @@ test_tbbt(void)
             tbbtdfree(tree, NULL, NULL);
         } /* end for */
     }     /* end for */
-} /* end test_tbbt() */
+}

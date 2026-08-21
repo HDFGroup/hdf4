@@ -50,12 +50,12 @@ init_cdata(void)
             cdata_f32[i][j] = (float32)(i * 10 + j);
             cdata_f64[i][j] = (float64)(i * 10 + j);
         } /* end for */
-} /* end init_cdata() */
+}
 
 static void
 wrapup_cdata(void)
 {
-} /* end wrapup_cdata() */
+}
 
 static void
 test_little_read(void)
@@ -63,14 +63,14 @@ test_little_read(void)
     int      rank;
     int32    dimsizes[2] = {-1, -1};
     int32    numbertype;
-    int8    *data_i8;
-    uint8   *data_u8;
-    int16   *data_i16;
-    uint16  *data_u16;
-    int32   *data_i32;
-    uint32  *data_u32;
-    float32 *data_f32;
-    float64 *data_f64;
+    int8    *data_i8  = NULL;
+    uint8   *data_u8  = NULL;
+    int16   *data_i16 = NULL;
+    uint16  *data_u16 = NULL;
+    int32   *data_i32 = NULL;
+    uint32  *data_u32 = NULL;
+    float32 *data_f32 = NULL;
+    float64 *data_f64 = NULL;
     int      ret;
 
     const char *filename = get_srcdir_filename(FILENAME);
@@ -103,6 +103,7 @@ test_little_read(void)
                 num_errs++;
             }
             free(data_i8);
+            data_i8 = NULL;
         }
     }
 
@@ -131,6 +132,7 @@ test_little_read(void)
                 num_errs++;
             }
             free(data_u8);
+            data_u8 = NULL;
         }
     }
 
@@ -159,6 +161,7 @@ test_little_read(void)
                 num_errs++;
             }
             free(data_i16);
+            data_i16 = NULL;
         }
     }
 
@@ -187,6 +190,7 @@ test_little_read(void)
                 num_errs++;
             } /* end if */
             free(data_u16);
+            data_u16 = NULL;
         } /* end else */
     }     /* end else */
 
@@ -215,6 +219,7 @@ test_little_read(void)
                 num_errs++;
             } /* end if */
             free(data_i32);
+            data_i32 = NULL;
         } /* end else */
     }     /* end else */
 
@@ -243,6 +248,7 @@ test_little_read(void)
                 num_errs++;
             } /* end if */
             free(data_u32);
+            data_u32 = NULL;
         } /* end else */
     }     /* end else */
 
@@ -271,6 +277,7 @@ test_little_read(void)
                 num_errs++;
             } /* end if */
             free(data_f32);
+            data_f32 = NULL;
         } /* end else */
     }     /* end else */
 
@@ -299,9 +306,20 @@ test_little_read(void)
                 num_errs++;
             } /* end if */
             free(data_f64);
+            data_f64 = NULL;
         } /* end else */
     }     /* end else */
-} /* end test_little_read */
+done:
+    /* Release resources */
+    free(data_i8);
+    free(data_u8);
+    free(data_i16);
+    free(data_u16);
+    free(data_i32);
+    free(data_u32);
+    free(data_f32);
+    free(data_f64);
+}
 
 static void
 test_little_write(void)
@@ -309,14 +327,14 @@ test_little_write(void)
     int      rank;
     int32    dimsizes[2];
     int32    numbertype;
-    int8    *data_i8;
-    uint8   *data_u8;
-    int16   *data_i16;
-    uint16  *data_u16;
-    int32   *data_i32;
-    uint32  *data_u32;
-    float32 *data_f32;
-    float64 *data_f64;
+    int8    *data_i8  = NULL;
+    uint8   *data_u8  = NULL;
+    int16   *data_i16 = NULL;
+    uint16  *data_u16 = NULL;
+    int32   *data_i32 = NULL;
+    uint32  *data_u32 = NULL;
+    float32 *data_f32 = NULL;
+    float64 *data_f64 = NULL;
     int      ret;
 
     MESSAGE(5, printf("Testing Little-Endian Write Routines\n"););
@@ -423,6 +441,7 @@ test_little_write(void)
                 num_errs++;
             } /* end if */
             free(data_i8);
+            data_i8 = NULL;
         } /* end else */
     }     /* end else */
 
@@ -449,6 +468,7 @@ test_little_write(void)
                 num_errs++;
             } /* end if */
             free(data_u8);
+            data_u8 = NULL;
         } /* end else */
     }     /* end else */
 
@@ -475,6 +495,7 @@ test_little_write(void)
                 num_errs++;
             } /* end if */
             free(data_i16);
+            data_i16 = NULL;
         } /* end else */
     }     /* end else */
 
@@ -501,6 +522,7 @@ test_little_write(void)
                 num_errs++;
             } /* end if */
             free(data_u16);
+            data_u16 = NULL;
         } /* end else */
     }     /* end else */
 
@@ -527,6 +549,7 @@ test_little_write(void)
                 num_errs++;
             } /* end if */
             free(data_i32);
+            data_i32 = NULL;
         } /* end else */
     }     /* end else */
 
@@ -553,6 +576,7 @@ test_little_write(void)
                 num_errs++;
             } /* end if */
             free(data_u32);
+            data_u32 = NULL;
         } /* end else */
     }     /* end else */
 
@@ -579,6 +603,7 @@ test_little_write(void)
                 num_errs++;
             } /* end if */
             free(data_f32);
+            data_f32 = NULL;
         } /* end else */
     }     /* end else */
 
@@ -605,9 +630,20 @@ test_little_write(void)
                 num_errs++;
             } /* end if */
             free(data_f64);
+            data_f64 = NULL;
         } /* end else */
     }     /* end else */
-} /* end test_little_write */
+done:
+    /* Release resources */
+    free(data_i8);
+    free(data_u8);
+    free(data_i16);
+    free(data_u16);
+    free(data_i32);
+    free(data_u32);
+    free(data_f32);
+    free(data_f64);
+}
 
 void
 test_litend(void)
@@ -618,4 +654,4 @@ test_litend(void)
     test_little_write();
 
     wrapup_cdata();
-} /* end test_litend() */
+}

@@ -36,7 +36,7 @@ ngetverb(void)
     if (verb_str != NULL)
         verb_level = (int)strtol(verb_str, NULL, 0); /* convert whole string using base 10 */
     return (intf)verb_level;
-} /* end getverb() */
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    hisystem
@@ -60,7 +60,7 @@ nhisystem(_fcd cmd, intf *cmdlen)
     ret = (intf)system(fn);
     free(fn);
     return ret;
-} /* end nhisystem() */
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    fixname
@@ -100,4 +100,4 @@ nfixnamec(_fcd name, intf *name_len, _fcd name_out, intf *name_len_out)
     ret = 0;
     free(c_name);
     return ret;
-} /* end nfixname() */
+}

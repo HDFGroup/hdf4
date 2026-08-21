@@ -56,12 +56,12 @@ static uint8   file_attr_2[F_ATT2_N_VALUES] = {1, 2, 3, 4, 5};
         The number of errors occurred in this routine.
 
 *********************************************************************/
-static int
+static void
 test_mgr_fillvalues()
 {
-    int32        fid;                   /* HDF file ID */
-    int32        grid;                  /* ID for the GR interface */
-    int32        riid;                  /* ID for the RI image */
+    int32        fid  = FAIL;           /* HDF file ID */
+    int32        grid = FAIL;           /* ID for the GR interface */
+    int32        riid = FAIL;           /* ID for the RI image */
     int32        attr_index;            /* attribute index */
     int32        dims[2] = {5, 7};      /* dimensions used on all images */
     uint16       ref;                   /* RI reference number */
@@ -101,6 +101,7 @@ test_mgr_fillvalues()
         /* Close the empty image */
         ret = GRendaccess(riid);
         CHECK(ret, FAIL, "GRendaccess");
+        riid = FAIL;
 
         /* Get the index of the newly created image */
         ri_index = GRreftoindex(grid, ref);
@@ -161,23 +162,36 @@ test_mgr_fillvalues()
         } /* end if */
 
         free(read_fill_vals);
+        read_fill_vals = NULL;
 
         /* Close the empty image */
         ret = GRendaccess(riid);
         CHECK(ret, FAIL, "GRendaccess");
+        riid = FAIL;
     }
 
     /* Shut down the GR interface */
     ret = GRend(grid);
     CHECK(ret, FAIL, "GRend");
+    grid = FAIL;
 
     /* Close the file */
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
 
     /* Return the number of errors that's been kept track of so far */
-    return num_errs;
-} /* end test_mgr_fillvalues() */
+done:
+    /* Release resources */
+    free(read_fill_vals);
+    if (riid != FAIL)
+        GRendaccess(riid);
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+    return;
+}
 
 /********************************************************************
    Name: test_mgr_userattr()
@@ -191,25 +205,25 @@ test_mgr_fillvalues()
         The number of errors occurred in this routine.
 
 *********************************************************************/
-static int
+static void
 test_mgr_userattr()
 {
-    int32 grid, riid, fid, ri_index, f_att_index, /* index of file attributes */
-        ri_att_index,                             /* index of raster image attributes */
-        n_values,                                 /* number of values in an attribute */
-        n_rimages,                                /* number of raster images in the file */
-        n_file_attrs;                             /* number of file attributes */
-    char         attr_name[H4_MAX_GR_NAME];       /* buffer to hold the attribute name */
-    char         ri_name[H4_MAX_GR_NAME];         /* buffer to hold the image name */
-    int32        ncomp;                           /* number of components */
-    int32        ntype;                           /* number type of the components */
-    int32        il;                              /* interlace of the image data */
-    int32        dims[2];                         /* dimension sizes of the image */
-    int32        n_attrs;                         /* number of attributes with each image */
+    int32 grid = FAIL, riid = FAIL, fid = FAIL, ri_index, f_att_index, /* index of file attributes */
+        ri_att_index,                                                  /* index of raster image attributes */
+        n_values,                                                      /* number of values in an attribute */
+        n_rimages,                          /* number of raster images in the file */
+        n_file_attrs;                       /* number of file attributes */
+    char         attr_name[H4_MAX_GR_NAME]; /* buffer to hold the attribute name */
+    char         ri_name[H4_MAX_GR_NAME];   /* buffer to hold the image name */
+    int32        ncomp;                     /* number of components */
+    int32        ntype;                     /* number type of the components */
+    int32        il;                        /* interlace of the image data */
+    int32        dims[2];                   /* dimension sizes of the image */
+    int32        n_attrs;                   /* number of attributes with each image */
     int16        ri_attr_2[RI_ATT2_N_VALUES] = {1, 2, 3, 4, 5, 6};
-    void        *data_buf; /* buffer to hold the attribute values */
-    hdf_ntinfo_t nt_info;  /* struct containing name and byte order of a num type */
-    int          status;   /* status for functions returning an int */
+    void        *data_buf                    = NULL; /* buffer to hold the attribute values */
+    hdf_ntinfo_t nt_info;                            /* struct containing name and byte order of a num type */
+    int          status;                             /* status for functions returning an int */
 
     MESSAGE(8, printf("Reading user-defined attribute\n"););
 
@@ -245,10 +259,13 @@ test_mgr_userattr()
     /* Terminate accesses, and close the HDF file. */
     status = GRendaccess(riid);
     CHECK(status, FAIL, "GRendaccess");
+    riid   = FAIL;
     status = GRend(grid);
     CHECK(status, FAIL, "GRend");
+    grid   = FAIL;
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose");
+    fid = FAIL;
 
     /* Reopen the file again to read the attributes and verify their values.*/
     fid = Hopen(TESTFILE, DFACC_RDWR, 0);
@@ -331,6 +348,7 @@ test_mgr_userattr()
 
             /* Free the space allocated for the data buffer. */
             free(data_buf);
+            data_buf = NULL;
 
         } /* for */
     }     /* if */
@@ -425,20 +443,33 @@ test_mgr_userattr()
 
             /* Free the space allocated for the data buffer. */
             free(data_buf);
+            data_buf = NULL;
 
         } /* for */
     }     /* if */
     /* Terminate accesses, and close the HDF file. */
     status = GRendaccess(riid);
     CHECK(status, FAIL, "GRendaccess");
+    riid   = FAIL;
     status = GRend(grid);
     CHECK(status, FAIL, "GRend");
+    grid   = FAIL;
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose");
+    fid = FAIL;
 
     /* Return the number of errors that's been kept track of so far */
-    return num_errs;
-} /* test_mgr_userattr */
+done:
+    /* Release resources */
+    free(data_buf);
+    if (riid != FAIL)
+        GRendaccess(riid);
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+    return;
+}
 
 /****************************************************************
 **
@@ -462,12 +493,12 @@ test_mgr_attr()
     MESSAGE(5, printf("Testing Multi-file Raster Attribute routines\n"););
 
     /* Test attribute functions with fill-values attributes */
-    num_errs = num_errs + test_mgr_fillvalues();
+    test_mgr_fillvalues();
 
     /* Test attribute functions with user-defined attributes */
-    num_errs = num_errs + test_mgr_userattr();
+    test_mgr_userattr();
 
     if (num_errs != 0) {
         H4_FAILED();
     }
-} /* test_mgr_attr() */
+}

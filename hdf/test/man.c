@@ -92,8 +92,7 @@ gen2Dfloat(int height, int width, float32 *data)
     for (i = 0; i < height; i++)
         for (j = 0; j < width; j++)
             *pdata++ = (float32)(i + 1);
-
-} /* gen2Dfloat() */
+}
 
 /****************************************************************
 **
@@ -120,7 +119,7 @@ genimage(int height, int width, float32 *data, uint8 *image)
     multiplier = 255.0F / (max - min);
     for (i = 0; i < limit; i++)
         *image++ = (uint8)(((*pdata++) - min) * multiplier);
-} /* geniamge() */
+}
 
 /****************************************************************
 **
@@ -131,18 +130,18 @@ genimage(int height, int width, float32 *data, uint8 *image)
 static int32
 check_fann_rewrite(const char *fname)
 {
-    int32 ret = SUCCEED;     /* return value */
-    int32 file_handle;       /* file handle */
-    int32 an_handle;         /* annotation interface handle */
-    int32 ann_handle;        /* annotation handle */
-    int32 nflabs,            /* number of file labels */
-        nfdescs,             /* number of file descs */
-        nolabs,              /* total number of data labels */
-        nodescs;             /* total number of data descs */
-    int32  ann_len;          /* length of annotation */
-    uint16 atag;             /* annotation tag */
-    uint16 aref;             /* annotation ref */
-    char  *ann_label = NULL; /* annotation label */
+    int32 ret         = SUCCEED; /* return value */
+    int32 file_handle = FAIL;    /* file handle */
+    int32 an_handle   = FAIL;    /* annotation interface handle */
+    int32 ann_handle  = FAIL;    /* annotation handle */
+    int32 nflabs,                /* number of file labels */
+        nfdescs,                 /* number of file descs */
+        nolabs,                  /* total number of data labels */
+        nodescs;                 /* total number of data descs */
+    int32  ann_len;              /* length of annotation */
+    uint16 atag;                 /* annotation tag */
+    uint16 aref;                 /* annotation ref */
+    char  *ann_label = NULL;     /* annotation label */
     int32  ann_id;
     uint16 ann_tag;
     uint16 ann_ref;
@@ -173,11 +172,9 @@ check_fann_rewrite(const char *fname)
     ret = ANwriteann(ann_handle, file_lab[2], (int32)strlen(file_lab[2]));
     RESULT("ANwriteann");
 
-    ret = ANendaccess(ann_handle);
-    RESULT("ANendaccess");
+    ENDANNO(ann_handle, "ANendaccess");
 
-    ret = ANend(an_handle);
-    RESULT("ANend");
+    ENDAN(an_handle, "ANend");
 
     /* Now get ready to read the first file label back in */
 
@@ -254,8 +251,7 @@ check_fann_rewrite(const char *fname)
     RESULT("ANreadann");
 
     /* end access to label */
-    ret = ANendaccess(ann_handle);
-    RESULT("ANendaccess");
+    ENDANNO(ann_handle, "ANendaccess");
 
     /* check read label against 3rd label*/
     if (strncmp((const char *)ann_label, (const char *)file_lab[2], (size_t)(ann_len + 1)) != 0) {
@@ -268,14 +264,28 @@ check_fann_rewrite(const char *fname)
     ann_label = NULL;
 
     /* end access to annotations */
-    ret = ANend(an_handle);
-    RESULT("ANend");
+    ENDAN(an_handle, "ANend");
 
     ret = Hclose(file_handle); /* close file */
     RESULT("Hclose");
+    file_handle = FAIL;
 
-    return SUCCEED;
-} /* check_fann_rewrite() */
+    ret = SUCCEED;
+
+done:
+    /* Safety net: if a RESULT/CHECK above jumped here before the explicit
+     * free/close below ran, these are still non-FAIL/non-NULL and get
+     * closed/freed here. Already-closed/freed occurrences are FAIL/NULL,
+     * so this is a no-op then. */
+    free(ann_label);
+    if (ann_handle != FAIL)
+        ANendaccess(ann_handle);
+    if (an_handle != FAIL)
+        ANend(an_handle);
+    if (file_handle != FAIL)
+        Hclose(file_handle);
+    return ret;
+}
 
 /****************************************************************
 **
@@ -285,19 +295,19 @@ check_fann_rewrite(const char *fname)
 static int32
 check_fann(const char *fname)
 {
-    int32 ret = SUCCEED;     /* return value */
-    int32 file_handle;       /* file handle */
-    int32 an_handle;         /* annotation interface handle */
-    int32 ann_handle;        /* annotation handle */
-    int32 nflabs,            /* number of file labels */
-        nfdescs,             /* number of file descs */
-        nolabs,              /* total number of data labels */
-        nodescs;             /* total number of data descs */
-    int32  ann_len;          /* length of annotation */
-    uint16 atag;             /* annotation tag */
-    uint16 aref;             /* annotation ref */
-    char  *ann_label = NULL; /* annotation label */
-    char  *ann_desc  = NULL; /* annotation desc */
+    int32 ret         = SUCCEED; /* return value */
+    int32 file_handle = FAIL;    /* file handle */
+    int32 an_handle   = FAIL;    /* annotation interface handle */
+    int32 ann_handle  = FAIL;    /* annotation handle */
+    int32 nflabs,                /* number of file labels */
+        nfdescs,                 /* number of file descs */
+        nolabs,                  /* total number of data labels */
+        nodescs;                 /* total number of data descs */
+    int32  ann_len;              /* length of annotation */
+    uint16 atag;                 /* annotation tag */
+    uint16 aref;                 /* annotation ref */
+    char  *ann_label = NULL;     /* annotation label */
+    char  *ann_desc  = NULL;     /* annotation desc */
     int    indx;
     int32  ann_id;
     uint16 ann_tag;
@@ -369,8 +379,7 @@ check_fann(const char *fname)
         RESULT("ANreadann");
 
         /* end access to label */
-        ret = ANendaccess(ann_handle);
-        RESULT("ANendaccess");
+        ENDANNO(ann_handle, "ANendaccess");
 
         /* check label */
         if (strncmp((const char *)ann_label, (const char *)file_lab[i], (size_t)(ann_len + 1)) != 0) {
@@ -413,8 +422,7 @@ check_fann(const char *fname)
         RESULT("ANreadann");
 
         /* end access to desc */
-        ret = ANendaccess(ann_handle);
-        RESULT("ANendaccess");
+        ENDANNO(ann_handle, "ANendaccess");
 
         /* check desc */
         if (strncmp((const char *)ann_desc, (const char *)file_desc[i], (size_t)(ann_len + 1)) != 0) {
@@ -426,16 +434,28 @@ check_fann(const char *fname)
         ann_desc = NULL;
     } /* end for nfdescs */
 
-    /* Clean up */
-    free(ann_label);
-    free(ann_desc);
-
     /* end access to annotations */
     ANend(an_handle);
+    an_handle = FAIL;
     Hclose(file_handle); /* close file */
+    file_handle = FAIL;
 
-    return SUCCEED;
-} /* check_fann() */
+    ret = SUCCEED;
+
+done:
+    /* Safety net: covers a RESULT jump mid-loop, before that iteration's
+     * own free()/close ran. Already-freed/closed values are NULL/FAIL,
+     * so this is a no-op then. */
+    free(ann_label);
+    free(ann_desc);
+    if (ann_handle != FAIL)
+        ANendaccess(ann_handle);
+    if (an_handle != FAIL)
+        ANend(an_handle);
+    if (file_handle != FAIL)
+        Hclose(file_handle);
+    return ret;
+}
 
 /****************************************************************
 **
@@ -446,20 +466,20 @@ check_fann(const char *fname)
 static int32
 check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[], const char *desc[])
 {
-    int32 ret = SUCCEED;    /* return value */
-    int32 file_handle;      /* file handle */
-    int32 an_handle;        /* annotation interface handle */
-    int32 nflabs,           /* number of file labels */
-        nfdescs,            /* number of file descs */
-        nolabs,             /* total number of data labels */
-        nodescs;            /* total number of data descs */
-    int32 ann_len;          /* length of annotation */
-    char *ann_label = NULL; /* annotation label */
-    char *ann_desc  = NULL; /* annotation desc */
-    int   num_dlabels,      /* number of data labels for an element */
-        num_ddescs;         /* number of data descs for an element */
-    int32 *dlabels = NULL;  /* array of data labels for an element */
-    int32 *ddescs  = NULL;  /* array of data descs for an element */
+    int32 ret         = SUCCEED; /* return value */
+    int32 file_handle = FAIL;    /* file handle */
+    int32 an_handle   = FAIL;    /* annotation interface handle */
+    int32 nflabs,                /* number of file labels */
+        nfdescs,                 /* number of file descs */
+        nolabs,                  /* total number of data labels */
+        nodescs;                 /* total number of data descs */
+    int32 ann_len;               /* length of annotation */
+    char *ann_label = NULL;      /* annotation label */
+    char *ann_desc  = NULL;      /* annotation desc */
+    int   num_dlabels,           /* number of data labels for an element */
+        num_ddescs;              /* number of data descs for an element */
+    int32 *dlabels = NULL;       /* array of data labels for an element */
+    int32 *ddescs  = NULL;       /* array of data descs for an element */
     int    i;
 
     /* open file again */
@@ -598,18 +618,28 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[], c
         ann_desc = NULL;
     } /* end for descs */
 
-    /* free space */
+    /* End annotation interface */
+    ANend(an_handle);
+    an_handle = FAIL;
+    Hclose(file_handle); /* close file */
+    file_handle = FAIL;
+
+    ret = SUCCEED;
+
+done:
+    /* Safety net: covers a RESULT jump before the explicit frees/closes
+     * below ran. Already-freed/closed values are NULL/FAIL, so this is a
+     * no-op for those. */
     free(dlabels);
     free(ddescs);
     free(ann_label);
     free(ann_desc);
-
-    /* End annotation interface */
-    ANend(an_handle);
-    Hclose(file_handle); /* close file */
-
-    return SUCCEED;
-} /* check_lab_desc() */
+    if (an_handle != FAIL)
+        ANend(an_handle);
+    if (file_handle != FAIL)
+        Hclose(file_handle);
+    return ret;
+}
 
 /****************************************************************
 **
@@ -650,23 +680,23 @@ test_man(void)
     int      rank;
     int      i, j;
     int32    dimsizes[2];
-    float32 *data = NULL;
-    int32    file_handle; /* file handle */
-    int32    an_handle;   /* annotation interface handle */
-    int32    ann_handle;  /* annotation handle */
+    float32 *data        = NULL;
+    int32    file_handle = FAIL; /* file handle */
+    int32    an_handle   = FAIL; /* annotation interface handle */
+    int32    ann_handle  = FAIL; /* annotation handle */
 
     /***** generate float array and image *****/
     if ((data = (float32 *)malloc(ROWS * COLS * sizeof(float32))) == NULL) {
         fprintf(stderr, "Error: unable to allocate space\n");
-        return;
+        goto done;
     }
     if ((image = (uint8 *)malloc(ROWS * COLS * sizeof(char))) == NULL) {
         fprintf(stderr, "Error: unable to allocate space\n");
-        return;
+        goto done;
     }
     if ((newimage = (uint8 *)malloc(ROWS * COLS * sizeof(char))) == NULL) {
         fprintf(stderr, "Error: unable to allocate space\n");
-        return;
+        goto done;
     }
 
     /* dimensions of SDS/image */
@@ -692,8 +722,7 @@ test_man(void)
         RESULT("ANcreatef");
         ret = ANwriteann(ann_handle, file_lab[i], (int32)strlen(file_lab[i]));
         RESULT("ANwriteann");
-        ret = ANendaccess(ann_handle);
-        RESULT("ANendaccess");
+        ENDANNO(ann_handle, "ANendaccess");
     }
 
     /* create and write file descriptions */
@@ -702,8 +731,7 @@ test_man(void)
         RESULT("ANcreatef");
         ret = ANwriteann(ann_handle, file_desc[i], (int32)strlen(file_desc[i]));
         RESULT("ANwriteann");
-        ret = ANendaccess(ann_handle);
-        RESULT("ANendaccess");
+        ENDANNO(ann_handle, "ANendaccess");
     }
 
     /* set dimensions for SDS */
@@ -732,8 +760,7 @@ test_man(void)
                 RESULT("ANcreate");
                 ret = ANwriteann(ann_handle, labsds[i], (int32)strlen(labsds[i]));
                 RESULT("ANwriteann");
-                ret = ANendaccess(ann_handle);
-                RESULT("ANendaccess");
+                ENDANNO(ann_handle, "ANendaccess");
             }
 
             /* create and write data descriptions */
@@ -742,8 +769,7 @@ test_man(void)
                 RESULT("ANcreate");
                 ret = ANwriteann(ann_handle, descsds[i], (int32)strlen(descsds[i]));
                 RESULT("ANwriteann");
-                ret = ANendaccess(ann_handle);
-                RESULT("ANendaccess");
+                ENDANNO(ann_handle, "ANendaccess");
             }
         }
 
@@ -759,8 +785,7 @@ test_man(void)
             RESULT("ANcreate");
             ret = ANwriteann(ann_handle, labris[i], (int32)strlen(labris[i]));
             RESULT("ANwriteann");
-            ret = ANendaccess(ann_handle);
-            RESULT("ANendaccess");
+            ENDANNO(ann_handle, "ANendaccess");
         }
 
         /* create and write image descriptions */
@@ -769,14 +794,15 @@ test_man(void)
             RESULT("ANcreate");
             ret = ANwriteann(ann_handle, descris[i], (int32)strlen(descris[i]));
             RESULT("ANwriteann");
-            ret = ANendaccess(ann_handle);
-            RESULT("ANendaccess");
+            ENDANNO(ann_handle, "ANendaccess");
         }
     } /* end for j */
 
     /* End writing annotations */
     ANend(an_handle);
+    an_handle = FAIL;
     Hclose(file_handle); /* close file */
+    file_handle = FAIL;
 
     /********  Read labels and descriptions *********/
     MESSAGE(5, printf("*** Reading labels and descriptions for SDS and RIS ***\n"););
@@ -791,7 +817,7 @@ test_man(void)
         if ((j % 2) != 0) /* read in annotations for 2 out of every 3 */
         {
             if (check_lab_desc(TESTFILE, DFTAG_NDG, refnum, labsds, descsds) == FAIL)
-                return; /* end of test */
+                goto done; /* end of test */
         }
 
         /* get image */
@@ -802,7 +828,7 @@ test_man(void)
 
         /* Check image labels/descriptions of image */
         if (check_lab_desc(TESTFILE, DFTAG_RIG, refnum, labris, descris) == FAIL)
-            return; /* end of test */
+            goto done; /* end of test */
     }
 
     /***************** Read file labels and descriptions */
@@ -810,16 +836,24 @@ test_man(void)
 
     /* Verify file labels/descs */
     if (check_fann(TESTFILE) == FAIL)
-        return; /* end of test */
+        goto done; /* end of test */
 
     /* check the re-writing of annotations works.
        Only file labels are tested but it should suffice to
        test the internals */
     if (check_fann_rewrite(TESTFILE) == FAIL)
-        return; /* end of test */
+        goto done; /* end of test */
 
-    /* free up space */
+done:
+    /* Release resources */
+    if (ann_handle != FAIL)
+        ANendaccess(ann_handle);
+    if (an_handle != FAIL)
+        ANend(an_handle);
+    if (file_handle != FAIL)
+        Hclose(file_handle);
+
     free(data);
     free(image);
     free(newimage);
-} /* test_man() */
+}

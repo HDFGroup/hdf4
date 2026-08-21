@@ -477,7 +477,7 @@ test_r24(void)
     char   in2[3][YSIZE][XSIZE];
     int    i, j, ret;
     uint16 ref0, ref1, ref2;
-    uint8 *jpeg_24bit_temp;
+    uint8 *jpeg_24bit_temp = NULL;
 
     jpeg_24bit_temp = (uint8 *)malloc(JPEGX * JPEGY * 3);
     if (!jpeg_24bit_temp) {
@@ -789,6 +789,11 @@ test_r24(void)
 
     /* Test 24-bit images with JPEG compression */
     test_r24_jpeg();
+    return;
+
+done:
+    /* Release resources */
+    free(jpeg_24bit_temp);
 }
 
 /**********************************************************************
@@ -833,14 +838,14 @@ read_binary_block(const char *filename, /* file to be read */
 void
 test_r24_jpeg(void)
 {
-    int32 fid, grid,            /* file ID and GR interface ID */
-        riid;                   /* raster image ID */
-    comp_info cinfo;            /* compression information for the JPEG */
-    int32     xd, yd;           /* image's dimensions */
-    int       il;               /* image's interlace */
-    long      begin_offset = 0, /* offset at the beginning of image's data */
-        end_offset         = 0; /* offset at the end of image's data */
-    uint8 *jpeg_24bit_temp;     /* buffer for 24-bit image data */
+    int32 fid = FAIL, grid = FAIL, /* file ID and GR interface ID */
+        riid = FAIL;               /* raster image ID */
+    comp_info cinfo;               /* compression information for the JPEG */
+    int32     xd, yd;              /* image's dimensions */
+    int       il;                  /* image's interlace */
+    long      begin_offset = 0,    /* offset at the beginning of image's data */
+        end_offset         = 0;    /* offset at the end of image's data */
+    uint8 *jpeg_24bit_temp = NULL; /* buffer for 24-bit image data */
     uint8  jpeglib_readbuf[JPEGY * JPEGX * NCOMPS];
     /* buffer for data read by JPEG function */
     int32  offset, length;     /* offset/length in the HDF file */
@@ -848,8 +853,8 @@ test_r24_jpeg(void)
     int    status;             /* status returned from GR routines */
     int    ii;                 /* indices */
     int32  n_images, n_fattrs; /* number of images and number of file attrs */
-    uint8 *hdf_buffer,         /* buffer of data read from HDF file */
-        *nonhdf_buffer;        /* buffer of data read from non-HDF file */
+    uint8 *hdf_buffer  = NULL, /* buffer of data read from HDF file */
+        *nonhdf_buffer = NULL; /* buffer of data read from non-HDF file */
     int ret;
 
     /* Allocate buffer for DF24getimage to store read data */
@@ -984,6 +989,7 @@ test_r24_jpeg(void)
     }
 
     free(jpeg_24bit_temp);
+    jpeg_24bit_temp = NULL; /* avoid dangling pointer if a later CHECK/VERIFY jumps to done */
 
     /********************************************************************
       Verify raw data in HDF and NON-HDF files using offsets and lengths.
@@ -991,14 +997,14 @@ test_r24_jpeg(void)
 
     /* Re-open the file with GR interface */
     fid = Hopen(JPEGFILE, DFACC_RDONLY, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
+    CHECK(fid, FAIL, "Hopen");
     grid = GRstart(fid);
-    CHECK_VOID(grid, FAIL, "GRstart");
+    CHECK(grid, FAIL, "GRstart");
 
     /* Get the number of images in the file */
     status = GRfileinfo(grid, &n_images, &n_fattrs);
-    CHECK_VOID(status, FAIL, "GRfileinfo");
-    VERIFY_VOID(n_images, N_IMAGES, "GRfileinfo");
+    CHECK(status, FAIL, "GRfileinfo");
+    VERIFY(n_images, N_IMAGES, "GRfileinfo");
 
     /* Open each image and get its data information.  Read the block of
        binary data from the HDF file and the non-HDF file.  Then, verify
@@ -1010,11 +1016,11 @@ test_r24_jpeg(void)
 
         /* Get access to each image */
         riid = GRselect(grid, ii);
-        CHECK_VOID(riid, FAIL, "GRselect");
+        CHECK(riid, FAIL, "GRselect");
 
         /* Get the image's data information */
         status = GRgetdatainfo(riid, 0, 1, &offset, &length);
-        CHECK_VOID(status, FAIL, "GRgetdatainfo");
+        CHECK(status, FAIL, "GRgetdatainfo");
 
         /* Allocate buffers for the data from the HDF file and non-HDF file */
         hdf_buffer = (uint8 *)malloc((size_t)length * sizeof(uint8));
@@ -1025,13 +1031,13 @@ test_r24_jpeg(void)
         /* Read the block of data from the HDF file using offset/length returned by
            GRgetdatainfo and verify that the specified length of data was read */
         read_len = read_binary_block(JPEGFILE, offset, (size_t)length, hdf_buffer);
-        VERIFY_VOID(read_len, (size_t)length, "read_binary_block");
+        VERIFY(read_len, (size_t)length, "read_binary_block");
 
         /* Read the block of data from the non-HDF file using nonhdf_offset and
            the length returned by GRgetdatainfo and verify that the specified
            length of data was read */
         read_len = read_binary_block(NONHDF_JPEGFILE, nonhdf_offset, (size_t)length, nonhdf_buffer);
-        VERIFY_VOID(read_len, (size_t)length, "read_binary_block");
+        VERIFY(read_len, (size_t)length, "read_binary_block");
 
         /* Compare compressed data from the HDF file against that from the
            non-HDF file.  The two buffers should be identical */
@@ -1042,7 +1048,10 @@ test_r24_jpeg(void)
         }
 
         free(nonhdf_buffer);
+        nonhdf_buffer = NULL; /* avoid dangling pointer if a later CHECK
+                                  in this loop jumps to done */
         free(hdf_buffer);
+        hdf_buffer = NULL;
 
         /* Move forward to the next set of non-HDF data, equivalent to the next
            image in the HDF file JPEGFILE */
@@ -1050,14 +1059,28 @@ test_r24_jpeg(void)
 
         /* Close the image */
         status = GRendaccess(riid);
-        CHECK_VOID(status, FAIL, "GRendaccess");
+        CHECK(status, FAIL, "GRendaccess");
+        riid = FAIL;
     } /* for n_images */
 
     /* Terminate access to the GR interface and close the file */
     status = GRend(grid);
-    CHECK_VOID(status, FAIL, "GRend");
+    CHECK(status, FAIL, "GRend");
+    grid   = FAIL;
     status = Hclose(fid);
-    CHECK_VOID(status, FAIL, "Hclose");
+    CHECK(status, FAIL, "Hclose");
+    fid = FAIL;
+done:
+    /* Release resources */
+    if (riid != FAIL)
+        GRendaccess(riid);
+    if (grid != FAIL)
+        GRend(grid);
+    if (fid != FAIL)
+        Hclose(fid);
+    free(jpeg_24bit_temp);
+    free(hdf_buffer);
+    free(nonhdf_buffer);
 }
 
 static void
@@ -1114,17 +1137,17 @@ void
 test_r8(void)
 {
     comp_info cinfo; /* compression information for the JPEG */
-    uint8    *im3, *ii3;
-    uint8    *im2, *ii2;
-    uint8    *im1, *ii1;
-    uint8    *pal1, *pal2, *ipal;
+    uint8    *im3 = NULL, *ii3 = NULL;
+    uint8    *im2 = NULL, *ii2 = NULL;
+    uint8    *im1 = NULL, *ii1 = NULL;
+    uint8    *pal1 = NULL, *pal2 = NULL, *ipal = NULL;
 
     int    x, y;
     int    ret, num_images = 0;
     uint16 ref1, ref2;
     int32  xd, yd;
     int    ispal;
-    uint8 *jpeg_8bit_temp;
+    uint8 *jpeg_8bit_temp = NULL;
 
     im1 = (uint8 *)malloc(XD1 * YD1 * sizeof(uint8));
     ii1 = (uint8 *)malloc(XD1 * YD1 * sizeof(uint8));
@@ -1335,6 +1358,20 @@ test_r8(void)
     /* Temporarily call to test GRgetcomptype() for hmap project; these tests
        will need to be reformatted. Mar 13, 2011 -BMR */
     test_GRgetcomptype();
+    return;
+
+done:
+    /* Release resources */
+    free(im1);
+    free(ii1);
+    free(im2);
+    free(ii2);
+    free(im3);
+    free(ii3);
+    free(pal1);
+    free(pal2);
+    free(ipal);
+    free(jpeg_8bit_temp);
 }
 
 void
@@ -1344,7 +1381,7 @@ test_pal(void)
     int    ret;
     uint16 ref1, ref2;
 
-    uint8 *pal1, *pal2, *ipal;
+    uint8 *pal1 = NULL, *pal2 = NULL, *ipal = NULL;
 
     pal1 = (uint8 *)malloc(768 * sizeof(uint8));
     pal2 = (uint8 *)malloc(768 * sizeof(uint8));
@@ -1447,6 +1484,9 @@ test_pal(void)
         for (i = 0; i < 768; i++)
             if (ipal[i] != pal1[i])
                 printf("(%d) Error at %d, ipal %d pal1 %d\n", __LINE__, i, ipal[i], pal1[i]);
+
+done:
+    /* Release resources */
     free(pal1);
     free(pal2);
     free(ipal);

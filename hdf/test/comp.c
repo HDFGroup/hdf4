@@ -98,7 +98,7 @@ init_model_info(comp_model_t m_type, model_info *m_info, int32 test_ntype)
             /* don't do anything for this case */
             break;
     } /* end switch */
-} /* end init_model_info() */
+}
 
 static void
 init_coder_info(comp_coder_t c_type, comp_info *c_info, int32 test_ntype)
@@ -114,7 +114,7 @@ init_coder_info(comp_coder_t c_type, comp_info *c_info, int32 test_ntype)
             /* don't do anything for this case */
             break;
     } /* end switch */
-} /* end init_coder_info() */
+}
 
 static void
 allocate_buffers(void)
@@ -122,20 +122,32 @@ allocate_buffers(void)
     int i;
 
     for (i = 0; i < NUM_OUTBUFS; i++) {
-        outbuf_int8[i]   = (int8 *)malloc(BUFSIZE * sizeof(int8));
-        outbuf_uint8[i]  = (uint8 *)malloc(BUFSIZE * sizeof(uint8));
-        outbuf_int16[i]  = (int16 *)malloc(BUFSIZE * sizeof(int16));
+        outbuf_int8[i] = (int8 *)malloc(BUFSIZE * sizeof(int8));
+        CHECK_ALLOC(outbuf_int8[i], "outbuf_int8", "allocate_buffers");
+        outbuf_uint8[i] = (uint8 *)malloc(BUFSIZE * sizeof(uint8));
+        CHECK_ALLOC(outbuf_uint8[i], "outbuf_uint8", "allocate_buffers");
+        outbuf_int16[i] = (int16 *)malloc(BUFSIZE * sizeof(int16));
+        CHECK_ALLOC(outbuf_int16[i], "outbuf_int16", "allocate_buffers");
         outbuf_uint16[i] = (uint16 *)malloc(BUFSIZE * sizeof(uint16));
-        outbuf_int32[i]  = (int32 *)malloc(BUFSIZE * sizeof(int32));
+        CHECK_ALLOC(outbuf_uint16[i], "outbuf_uint16", "allocate_buffers");
+        outbuf_int32[i] = (int32 *)malloc(BUFSIZE * sizeof(int32));
+        CHECK_ALLOC(outbuf_int32[i], "outbuf_int32", "allocate_buffers");
         outbuf_uint32[i] = (uint32 *)malloc(BUFSIZE * sizeof(uint32));
+        CHECK_ALLOC(outbuf_uint32[i], "outbuf_uint32", "allocate_buffers");
     } /* end for */
-    inbuf_int8   = (int8 *)calloc(BUFSIZE, sizeof(int8));
-    inbuf_uint8  = (uint8 *)calloc(BUFSIZE, sizeof(uint8));
-    inbuf_int16  = (int16 *)calloc(BUFSIZE, sizeof(int16));
+    inbuf_int8 = (int8 *)calloc(BUFSIZE, sizeof(int8));
+    CHECK_ALLOC(inbuf_int8, "inbuf_int8", "allocate_buffers");
+    inbuf_uint8 = (uint8 *)calloc(BUFSIZE, sizeof(uint8));
+    CHECK_ALLOC(inbuf_uint8, "inbuf_uint8", "allocate_buffers");
+    inbuf_int16 = (int16 *)calloc(BUFSIZE, sizeof(int16));
+    CHECK_ALLOC(inbuf_int16, "inbuf_int16", "allocate_buffers");
     inbuf_uint16 = (uint16 *)calloc(BUFSIZE, sizeof(uint16));
-    inbuf_int32  = (int32 *)calloc(BUFSIZE, sizeof(int32));
+    CHECK_ALLOC(inbuf_uint16, "inbuf_uint16", "allocate_buffers");
+    inbuf_int32 = (int32 *)calloc(BUFSIZE, sizeof(int32));
+    CHECK_ALLOC(inbuf_int32, "inbuf_int32", "allocate_buffers");
     inbuf_uint32 = (uint32 *)calloc(BUFSIZE, sizeof(uint32));
-} /* allocate_buffers() */
+    CHECK_ALLOC(inbuf_uint32, "inbuf_uint32", "allocate_buffers");
+}
 
 static void
 init_buffers(void)
@@ -208,7 +220,7 @@ init_buffers(void)
             break;
         } /* end switch */
     }     /* end for */
-} /* init_buffers() */
+}
 
 static void
 free_buffers(void)
@@ -217,25 +229,37 @@ free_buffers(void)
 
     for (i = 0; i < NUM_OUTBUFS; i++) {
         free(outbuf_int8[i]);
+        outbuf_int8[i] = NULL;
         free(outbuf_uint8[i]);
+        outbuf_uint8[i] = NULL;
         free(outbuf_int16[i]);
+        outbuf_int16[i] = NULL;
         free(outbuf_uint16[i]);
+        outbuf_uint16[i] = NULL;
         free(outbuf_int32[i]);
+        outbuf_int32[i] = NULL;
         free(outbuf_uint32[i]);
+        outbuf_uint32[i] = NULL;
     }
     free(inbuf_int8);
+    inbuf_int8 = NULL;
     free(inbuf_uint8);
+    inbuf_uint8 = NULL;
     free(inbuf_int16);
+    inbuf_int16 = NULL;
     free(inbuf_uint16);
+    inbuf_uint16 = NULL;
     free(inbuf_int32);
+    inbuf_int32 = NULL;
     free(inbuf_uint32);
-} /* free_buffers() */
+    inbuf_uint32 = NULL;
+}
 
 static int
 write_data(int32 fid, comp_model_t m_type, model_info *m_info, comp_coder_t c_type, comp_info *c_info,
            int test_num, int32 ntype)
 {
-    int32  aid;
+    int32  aid = FAIL;
     uint16 ret_ref;
     int32  err_ret;
     int32  write_size;
@@ -286,14 +310,19 @@ write_data(int32 fid, comp_model_t m_type, model_info *m_info, comp_coder_t c_ty
 
     err_ret = Hendaccess(aid);
     CHECK(err_ret, FAIL, "Hendaccess");
+    aid = FAIL;
+
+done:
+    if (aid != FAIL)
+        Hendaccess(aid);
 
     return ret_ref;
-} /* end write_data() */
+}
 
 static void
 read_data(int32 fid, uint16 ref_num, int test_num, int32 ntype)
 {
-    int32           aid;
+    int32           aid = FAIL;
     int32           err_ret;
     int32           read_size;
     void           *out_ptr;
@@ -308,7 +337,7 @@ read_data(int32 fid, uint16 ref_num, int test_num, int32 ntype)
     })
 
     aid = Hstartread(fid, COMP_TAG, ref_num);
-    CHECK_VOID(aid, FAIL, "Hstartread");
+    CHECK(aid, FAIL, "Hstartread");
     if (aid == FAIL)
         return;
 
@@ -367,16 +396,24 @@ read_data(int32 fid, uint16 ref_num, int test_num, int32 ntype)
     } /* end if */
 
     err_ret = Hendaccess(aid);
-    CHECK_VOID(err_ret, FAIL, "Hendaccess");
-} /* end read_data() */
+    CHECK(err_ret, FAIL, "Hendaccess");
+    aid = FAIL;
+
+done:
+    if (aid != FAIL)
+        Hendaccess(aid);
+
+    return;
+}
 
 void
 test_comp(void)
 {
+    int32      fid = FAIL; /* file ID of HDF file for testing */
+    int32      aid = FAIL;
     model_info m_info;
     comp_info  c_info;
     uint16     ref_num; /* reference number of the data written out */
-    int32      fid;     /* file ID of HDF file for testing */
     int        test_num, ntype_num, model_num, coder_num;
     int32      ret;
 
@@ -390,6 +427,7 @@ test_comp(void)
 
     /* open the HDF file */
     fid = Hopen(TESTFILE_NAME, DFACC_ALL, 0);
+    CHECK(fid, FAIL, "Hopen");
 
     /* Cycle through the different testing data, the number types, */
     /* the different modeling layers and the different coding layers, */
@@ -407,12 +445,15 @@ test_comp(void)
                                                  &c_info, test_num, test_ntypes[ntype_num]);
                     read_data(fid, ref_num, test_num, test_ntypes[ntype_num]);
                     MESSAGE(6, {
-                        int32           aid;
                         sp_info_block_t info_block;
 
                         aid = Hstartread(fid, COMP_TAG, ref_num);
-                        HDget_special_info(aid, &info_block);
-                        Hendaccess(aid);
+                        CHECK(aid, FAIL, "Hstartread");
+                        ret = HDget_special_info(aid, &info_block);
+                        CHECK(ret, FAIL, "HDget_special_info");
+                        ret = Hendaccess(aid);
+                        CHECK(ret, FAIL, "Hendaccess");
+                        aid = FAIL;
                         printf("size of original HDF element=%ld\n", (long)Hlength(fid, COMP_TAG, ref_num));
                         printf("size of compressed HDF element=%ld\n", (long)info_block.comp_size);
                     })
@@ -423,10 +464,17 @@ test_comp(void)
 
     /* close the HDF file */
     ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
-
-    /* free the input and output buffers */
-    free_buffers();
+    CHECK(ret, FAIL, "Hclose");
+    fid = FAIL;
 
     MESSAGE(6, printf("Finished compression test\n");)
-} /* end test_comp() */
+
+done:
+    /* Release resources */
+    if (aid != FAIL)
+        Hendaccess(aid);
+    if (fid != FAIL)
+        Hclose(fid);
+    free_buffers();
+    return;
+}
