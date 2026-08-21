@@ -722,15 +722,21 @@ done:
 
 /* ---------------------------- hdf_get_vp_aid ---------------------------- */
 /*
+  Gets an AID for the vp's data and ensures that it supports the provided
+  'access', which can be either DFACC_READ or DFACC_WRITE and may require
+  opening or reopening it, depending on the current aid.
+    - vp->aid == FAIL: opens fresh, deriving vp->data_ref first (via
+      hdf_get_data()) if it isn't already set
+    - vp->aid is available but was opened DFACC_READ-only, and 'access'
+      includes DFACC_WRITE: closes it and reopens with write access
+    - vp->aid already has sufficient access: returns as-is, unchanged
 
-  Ensure vp->aid is open and has (at least) the requested access, opening
-  it fresh if necessary.
+  The function itself is the general entry point for getting var->aid
+  regardless of access direction, thus, use it when a var->aid is needed
+  for subsequent calls.
 
-  vp->aid is cached and reused across calls, so an AID opened DFACC_READ
-  only (via Hstartread()) must not be silently reused for a write --
-  Hwrite() does gate on the DFACC_WRITE flag. The reverse is safe: Hread()
-  does not check the access flag at all, so a write-mode AID can always
-  be read from regardless of what access it was opened with.
+  Do not guard the call with a vp->aid == FAIL check first, because that
+  is done internally.
 
   'access' is a DFACC_READ / DFACC_WRITE flag, same vocabulary as
   Hstartaccess() and access_rec->access use throughout the rest of the
@@ -775,20 +781,19 @@ hdf_get_vp_aid(NC *handle, NC_var *vp, uint32 access)
         if (!(access & DFACC_WRITE))
             vp->aid = Hstartread(handle->hdf_file, vp->data_tag, vp->data_ref);
         else if (!IS_RECVAR(vp)) {
-            vp->aid = Hstartaccess(handle->hdf_file, vp->data_tag, vp->data_ref, DFACC_WRITE);
+            vp->aid = Hstartaccess(handle->hdf_file, vp->data_tag, vp->data_ref, access);
             if (vp->aid != FAIL && vp->set_length == TRUE) {
                 if (Hsetlength(vp->aid, vp->len) == FAIL) {
                     Hendaccess(vp->aid);
-                    vp->aid   = FAIL;
-                    ret_value = FAIL;
+                    vp->aid    = FAIL;
+                    ret_value  = FAIL;
                     goto done;
                 }
                 vp->set_length = FALSE;
             }
         }
         else
-            vp->aid =
-                Hstartaccess(handle->hdf_file, vp->data_tag, vp->data_ref, DFACC_WRITE | DFACC_APPENDABLE);
+            vp->aid = Hstartaccess(handle->hdf_file, vp->data_tag, vp->data_ref, access | DFACC_APPENDABLE);
     }
 
     ret_value = vp->aid;
@@ -830,7 +835,8 @@ hdf_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint3
 
     (void)type;
 
-    if (hdf_get_vp_aid(handle, vp, (handle->xdrs->x_op == XDR_ENCODE) ? DFACC_WRITE : DFACC_READ) == FAIL) {
+    if (hdf_get_vp_aid(handle, vp, (handle->xdrs->x_op == XDR_ENCODE) ? DFACC_WRITE : DFACC_READ) ==
+        FAIL) {
         /*
          * Fail if there is no data *AND* we were trying to read...
          * Otherwise, we should fill with the fillvalue

@@ -11,21 +11,11 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/*
- *  SZIP support eliminated for HDF4.2R1
- */
 #include "hdf.h"
 #include "tutils.h"
 
-#ifdef H4_HAVE_LIBSZ
+#ifdef H4_HAVE_SZIP_ENCODER
 #include "szlib.h"
-
-/*
- *  NOTE: these tests should be elaborated:
- *     - use NN and EC options
- *     - bigger datasets
- *     - more data types
- */
 
 #define FILE_NAME8    "RI_8_sziped.hdf"
 #define FILE_NAME16   "RI_16_sziped.hdf"
@@ -1330,7 +1320,7 @@ test_szip_chunk()
     CHECK_VOID(status, FAIL, "Hclose");
 
 } /* end of test_szip_chunk */
-#endif /* H4_HAVE_LIBSZ */
+#endif /* H4_HAVE_SZIP_ENCODER */
 
 /****************************************************************
  *
@@ -1349,7 +1339,7 @@ test_szip_chunk()
 extern void
 test_mgr_szip()
 {
-#ifdef H4_HAVE_LIBSZ
+#ifdef H4_HAVE_SZIP_ENCODER
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing GR szip compression WRITE/READ\n"););
 

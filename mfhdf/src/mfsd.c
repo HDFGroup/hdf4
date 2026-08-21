@@ -5017,12 +5017,9 @@ SDgetchunkinfo(int32          sdsid,     /* IN: sds access id */
         HGOTO_DONE(SUCCEED);
     }
 
-    /* Need to get access id for the subsequent calls */
-    if (var->aid == FAIL) {
-        var->aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
-        if (var->aid == FAIL) /* catch FAIL from Hstartread */
-            HGOTO_ERROR(DFE_INTERNAL, FAIL);
-    }
+    /* Get access id for the following calls */
+    if (hdf_get_vp_aid(handle, var, DFACC_READ) == FAIL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Inquire about element's specialness */
     ret_value = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
@@ -5413,10 +5410,6 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
-    /* Dev note: empty SDS should have been checked here and SDreadchunk would
-       have failed, but since it wasn't, for backward compatibility, we won't
-       do it now either. -BMR 2011 */
-
     /* Check compression method is enabled */
     status = HCPgetcomptype(handle->hdf_file, var->data_tag, var->data_ref, &comp_type);
 
@@ -5430,12 +5423,9 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
             }
         }
 
-    /* Need to get access id for the following calls */
-    if (var->aid == FAIL) {
-        var->aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
-        if (var->aid == FAIL) /* catch FAIL from Hstartread */
-            HGOTO_ERROR(DFE_CANTACCESS, FAIL);
-    }
+    /* Get access id for the following calls */
+    if (hdf_get_vp_aid(handle, var, DFACC_READ) == FAIL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* inquire about element */
     ret_value = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
@@ -5579,13 +5569,11 @@ RETURNS
      Returns the 'maxcache' value for the chunk cache if successful
      and FAIL otherwise
 
-AUTHOR
-      -GeorgeV
 ******************************************************************************/
 int
 SDsetchunkcache(int32 sdsid,    /* IN: access aid to mess with */
                 int32 maxcache, /* IN: max number of chunks to cache */
-                int32 flags /* IN: flags = 0, HDF_CACHEALL */)
+                int32 flags     /* IN: flags = 0, HDF_CACHEALL */)
 {
     NC     *handle = NULL; /* file handle */
     NC_var *var    = NULL; /* SDS variable */
@@ -5617,14 +5605,9 @@ SDsetchunkcache(int32 sdsid,    /* IN: access aid to mess with */
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
-    /* This function is read-only (only queries/adjusts the chunk cache),
-       so a cached AID -- however it was opened -- already suffices; no
-       need to route through hdf_get_vp_aid()'s read/write logic. */
-    if (var->aid == FAIL) {
-        var->aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
-        if (var->aid == FAIL)
-            HGOTO_ERROR(DFE_ARGS, FAIL);
-    }
+    /* Get access id for the following calls */
+    if (hdf_get_vp_aid(handle, var, DFACC_READ) == FAIL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* inquire about element */
     ret_value = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
