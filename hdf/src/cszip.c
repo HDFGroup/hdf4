@@ -376,7 +376,7 @@ HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
     (void)length;
     (void)buf;
 
-    HRETURN_ERROR(DFE_CANTDECOMP, FAIL);
+    HRETURN_ERROR(DFE_CANTCOMP, FAIL);
 #endif /* H4_HAVE_SZIP_ENCODER */
 
 } /* end HCIcszip_encode() */
