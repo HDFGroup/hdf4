@@ -63,13 +63,13 @@ main(int ac, char **av)
     int32   vsno = 0;
     int32   vstag;
 
-    int32  i, t, nvg, n, ne, nv, interlace, vsize;
+    int32  i, t, nvg, nentries, ne, nv, interlace, vsize;
     int32 *lonevs;   /* array to store refs of all lone vdatas */
     int32  nlone;    /* total number of lone vdatas */
     uint16 name_len; /* length of vgroup's name or classname */
 
     char  fields[VSFIELDMAX * FIELDNAMELENMAX];
-    char *vgname, *vgclass;
+    char *vgname = NULL, *vgclass = NULL;
     char  vsname[VSNAMELENMAX];
     char  vsclass[VSNAMELENMAX];
     char *name;
@@ -114,33 +114,33 @@ main(int ac, char **av)
         if (vg == FAIL) {
             printf("cannot open vg id=%d\n", (int)vgid);
         }
-        /* get the length of the vgname to allocate enough space */
-        Vgetnamelen(vg, &name_len);
-        vgname = (char *)malloc(sizeof(char *) * (name_len + 1));
-        if (vgname == NULL) {
-            printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", name_len + 1);
-            return (0);
+
+        /* get the vgname */
+        vgname = vgetvgname(vg);
+        if (vgname == NULL || strlen(vgname) == 0) {
+            free(vgname); // Safe
+            vgname = strdup("NoName");
         }
-        Vinquire(vg, &n, vgname);
-        if (strlen(vgname) == 0)
-            strcat(vgname, "NoName");
+
+        /* get the vgclass */
+        vgclass = vgetvgclass(vg);
+        if (vgclass == NULL || strlen(vgclass) == 0) {
+            free(vgclass); // Safe
+            vgclass = strdup("NoClass");
+        }
+
+        if (Vinquire(vg, &nentries, 0, NULL) == FAIL)
+            printf("cannot retrieve number of entries for vg id=%d\n", (int)vgid);
 
         vgotag = VQuerytag(vg);
         vgoref = VQueryref(vg);
 
-        /* get the length of the vgname to allocate enough space */
-        Vgetclassnamelen(vg, &name_len);
-        vgclass = (char *)malloc(sizeof(char *) * (name_len + 1));
-        if (vgclass == NULL) {
-            printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", name_len + 1);
-            return (0);
-        }
-        Vgetclass(vg, vgclass);
-        if (strlen(vgclass) == 0)
-            strcat(vgclass, "NoClass");
-
         printf("\nvg:%d <%d/%d> (%s {%s}) has %d entries:\n", (int)nvg, (int)vgotag, (int)vgoref, vgname,
-               vgclass, (int)n);
+               vgclass, (int)nentries);
+        free(vgname);
+        free(vgclass);
+
+        /* Dump the attribute */
         dumpattr(vg, fulldump, 0);
         for (t = 0; t < Vntagrefs(vg); t++) {
             Vgettagref(vg, t, &vstag, &vsid);
@@ -182,34 +182,35 @@ main(int ac, char **av)
                     continue;
                 }
 
-                /* get length of the vgclass to allocate enough space */
-                Vgetclassnamelen(vgt, &name_len);
-                vgclass = (char *)malloc(sizeof(char *) * (name_len + 1));
-                if (vgclass == NULL) {
-                    printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", name_len + 1);
-                    return (0);
-                }
-                Vgetclass(vg, vgclass);
-                if (strlen(vgclass) == 0)
-                    strcat(vgclass, "NoClass");
+                /* get the vgname */
+                vgname = vgetvgname(vgt);
+                if (!vgname)
+                    if (strlen(vgname) == 0)
+                        strcpy(vgname, "NoName");
 
-                /* get length of the vgname to allocate enough space */
-                Vgetnamelen(vgt, &name_len);
-                vgname = (char *)malloc(sizeof(char *) * (name_len + 1));
-                if (vgname == NULL) {
-                    printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", name_len + 1);
-                    return (0);
-                }
-                Vinquire(vgt, &ne, vgname);
-                if (strlen(vgname) == 0)
-                    strcat(vgname, "NoName");
+                /* get the vgclass */
+                vgclass = vgetvgclass(vgt);
+                if (!vgclass)
+                    if (strlen(vgclass) == 0)
+                        strcpy(vgclass, "NoClass");
+
+                if (Vinquire(vg, &nentries, 0, NULL) == FAIL)
+                    printf("cannot retrieve number of entries for vg id=%d\n", (int)vgid);
+
                 vgotag = VQuerytag(vgt);
                 vgoref = VQueryref(vgt);
-                Vgetclass(vgt, vgclass);
+
                 printf("  vg:%d <%d/%d> ne=%d (%s {%s})\n", (int)t, (int)vgotag, (int)vgoref, (int)ne, vgname,
                        vgclass);
+
+                /* Dump the attribute */
                 dumpattr(vg, fulldump, 0);
-                Vdetach(vgt);
+
+                /* Release resources */
+                if (Vdetach(vgt) == FAIL)
+                    printf("cannot end access to vgroup\n");
+                free(vgname);
+                free(vgclass);
             }
             else {
                 name = HDgettagsname((uint16)vstag);

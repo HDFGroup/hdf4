@@ -33,7 +33,7 @@ test_vglongnames(void)
     int32  file_id = FAIL; /* File ID */
     int32  vg1     = FAIL; /* Vdata ID */
     int32  ref;            /* Vdata ref */
-    uint16 name_len;       /* Length of a vgroup's name or class name */
+    size_t buf_size = 0;   /* Size for name or class buffer */
     char  *vgname = NULL, *vgclass = NULL;
     int    is_internal;
     int32  status; /* Status values from routines */
@@ -101,29 +101,33 @@ test_vglongnames(void)
     CHECK(is_internal, FAIL, "Vgisinternal");
     VERIFY(is_internal, FALSE, "Vgisinternal");
 
-    /* get the vgroup's name */
-    status = Vgetnamelen(vg1, &name_len);
-    CHECK(status, FAIL, "Vgetnamelen");
+    /* Get the vgroup's name */
+    buf_size = Vgetname(vg1, 0, NULL);
+    CHECK(buf_size, FAIL, "Vgetname");
+    VERIFY(buf_size, strlen(VG_LONGNAME), "Vgetname");
 
-    vgname = (char *)malloc(sizeof(char) * (name_len + 1));
+    vgname = (char *)malloc(sizeof(char) * (buf_size + 1));
     CHECK_ALLOC(vgname, "vgname", "test_vglongnames");
 
-    status = Vgetname(vg1, vgname);
-    CHECK(status, FAIL, "VSgetname");
+    buf_size = Vgetname(vg1, buf_size + 1, vgname);
+    CHECK(buf_size, FAIL, "Vgetname:vg1");
+    VERIFY(buf_size, strlen(VG_LONGNAME), "Vgetname");
     VERIFY_CHAR(vgname, VG_LONGNAME, "Vgetname");
 
     free(vgname);
     vgname = NULL;
 
-    /* get the vgroup's class */
-    status = Vgetclassnamelen(vg1, &name_len);
-    CHECK(status, FAIL, "Vgetnamelen");
+    /* Get the vgroup's class */
+    buf_size = Vgetclass(vg1, 0, NULL);
+    CHECK(buf_size, FAIL, "Vgetclass");
+    VERIFY(buf_size, strlen(VG_LONGCLASS), "Vgetclass");
 
-    vgclass = (char *)malloc(sizeof(char) * (name_len + 1));
+    vgclass = (char *)malloc(sizeof(char) * (buf_size + 1));
     CHECK_ALLOC(vgclass, "vgclass", "test_vglongnames");
 
-    status = Vgetclass(vg1, vgclass);
-    CHECK(status, FAIL, "VSgetclass");
+    buf_size = Vgetclass(vg1, buf_size + 1, vgclass);
+    CHECK(buf_size, FAIL, "Vgetclass:vg1");
+    VERIFY(buf_size, strlen(VG_LONGCLASS), "Vgetclass");
     VERIFY_CHAR(vgclass, VG_LONGCLASS, "Vgetclass");
 
     free(vgclass);
@@ -140,40 +144,40 @@ test_vglongnames(void)
     vg1 = Vattach(file_id, ref, "r");
     CHECK(vg1, FAIL, "VSattach");
 
-    /* get the vgroup's name */
-    status = Vgetnamelen(vg1, &name_len);
-    CHECK(status, FAIL, "Vgetnamelen");
+    /* Get the vgroup's name */
+    buf_size = Vgetname(vg1, 0, NULL);
+    CHECK(buf_size, FAIL, "Vgetname");
+    VERIFY(buf_size, strlen(VGROUP1), "Vgetname");
 
-    vgname = (char *)malloc(sizeof(char) * (name_len + 1));
+    vgname = (char *)malloc(sizeof(char) * (buf_size + 1));
     CHECK_ALLOC(vgname, "vgname", "test_vglongnames");
 
-    status = Vgetname(vg1, vgname);
-    CHECK(status, FAIL, "VSgetname");
+    buf_size = Vgetname(vg1, buf_size + 1, vgname);
+    CHECK(buf_size, FAIL, "Vgetname:vg1");
+    VERIFY(buf_size, strlen(VGROUP1), "Vgetname");
+    VERIFY_CHAR(vgname, VGROUP1, "Vgetname");
 
-    if (strcmp(vgname, VGROUP1)) {
-        num_errs++;
-        printf(">>> Got bogus Vgroup name : %s\n", vgname);
-    }
+    /* Should have the same class */
+    buf_size = Vgetclass(vg1, 0, NULL);
+    CHECK(buf_size, FAIL, "Vgetclass");
+    VERIFY(buf_size, strlen(VG_LONGCLASS), "Vgetclass");
 
-    free(vgname);
-    vgname = NULL;
-
-    /* get the vgroup's class */
-    status = Vgetclassnamelen(vg1, &name_len);
-    CHECK(status, FAIL, "Vgetnamelen");
-
-    vgclass = (char *)malloc(sizeof(char) * (name_len + 1));
+    vgclass = (char *)malloc(sizeof(char) * (buf_size + 1));
     CHECK_ALLOC(vgclass, "vgclass", "test_vglongnames");
 
-    status = Vgetclass(vg1, vgclass);
-    CHECK(status, FAIL, "VSgetclass");
+    buf_size = Vgetclass(vg1, buf_size + 1, vgclass);
+    CHECK(buf_size, FAIL, "Vgetclass:vg1");
+    VERIFY(buf_size, strlen(VG_LONGCLASS), "Vgetclass");
+    VERIFY_CHAR(vgclass, VG_LONGCLASS, "Vgetclass");
 
     if (strcmp(vgclass, VG_LONGCLASS)) {
         num_errs++;
         printf(">>> Got bogus Vgroup class : %s\n", vgclass);
     }
 
+    free(vgname);
     free(vgclass);
+    vgname  = NULL;
     vgclass = NULL;
 
     status = Vdetach(vg1);
@@ -202,14 +206,13 @@ done:
 static void
 test_undefined(void)
 {
-    int32  status;         /* Status values from routines */
-    int32  file_id = FAIL; /* File ID */
-    int32  vg1     = FAIL; /* Vdata ID */
-    int32  ref;            /* Vdata ref */
-    int    is_internal;    /* to test Vgisinternal */
-    uint16 name_len;       /* Length of a vgroup's name or class name */
-    /* to simulate calls to Vgetclass/Vgetname in older applications */
-    char vgname[VGNAMELENMAX + 1], vgclass[VGNAMELENMAX + 1];
+    int32   status;         /* Status values from routines */
+    int32   file_id = FAIL; /* File ID */
+    int32   vg1     = FAIL; /* Vdata ID */
+    int32   ref;            /* Vdata ref */
+    int     is_internal;    /* to test Vgisinternal */
+    ssize_t name_len;       /* Length of a vgroup's name or class name */
+    char   *vgname = NULL, *vgclass = NULL;
 
     /* Open the HDF file. */
     file_id = Hopen(NONAMECLASS, DFACC_CREATE, 0);
@@ -268,16 +271,10 @@ test_undefined(void)
     CHECK(is_internal, FAIL, "Vgisinternal");
     VERIFY(is_internal, FALSE, "Vgisinternal");
 
-    /* Try getting the vgroup's class without calling first Vgetclassnamelen.
-       This shows that bug HDFFR-1288 is fixed. */
-    status = Vgetclass(vg1, vgclass);
-    CHECK(status, FAIL, "Vgetclass");
-    VERIFY(strlen(vgclass), 0, "VSgetclass");
-
-    /* The length of the class name should be 0 */
-    status = Vgetclassnamelen(vg1, &name_len);
-    CHECK(status, FAIL, "Vgetclassnamelen");
-    VERIFY(name_len, 0, "VSgetclassnamelen");
+    /* Test Vgetclass on vgroup with no class */
+    name_len = Vgetclass(vg1, 0, NULL);
+    CHECK(name_len, FAIL, "Vgetclass");
+    VERIFY(name_len, 0, "VSgetclass");
 
     status = Vdetach(vg1);
     CHECK(status, FAIL, "Vdetach");
@@ -290,16 +287,10 @@ test_undefined(void)
     vg1 = Vattach(file_id, ref, "r");
     CHECK(vg1, FAIL, "VSattach");
 
-    /* Try getting the vgroup's name without calling first Vgetclassnamelen.
-       Similar to class name in bug HDFFR-1288. */
-    status = Vgetname(vg1, vgname);
-    CHECK(status, FAIL, "Vgetname");
-    VERIFY(strlen(vgname), 0, "VSgetname");
-
-    /* The length of the name should be 0 */
-    status = Vgetnamelen(vg1, &name_len);
-    CHECK(status, FAIL, "Vgetnamelen");
-    VERIFY(name_len, 0, "VSgetnamelen");
+    /* Test Vgetname on vgroup with no name */
+    name_len = Vgetname(vg1, 0, NULL);
+    CHECK(name_len, FAIL, "Vgetname");
+    VERIFY(name_len, 0, "Vgetname");
 
     status = Vdetach(vg1);
     CHECK(status, FAIL, "Vdetach");
@@ -327,7 +318,6 @@ done:
  *   - Use an existing GR file created during the period when GR vgroup had no
  *	class name, and had name set to GR_NAME
  *   - Get each vgroup, verify that it is internal or not
- * Jan 6, 2012 -BMR
  ****************************************************************************/
 
 #define GR_FILE "test_files/grtdfui83.hdf"

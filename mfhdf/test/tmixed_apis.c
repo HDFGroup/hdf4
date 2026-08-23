@@ -29,6 +29,7 @@
 #include <string.h>
 
 #include "mfhdf.h"
+#include "vg_priv.h"
 #include "hdftest.h"
 
 #define IDTYPE_FILE "idtypes.hdf" /* data file to test ID types */
@@ -265,8 +266,8 @@ test_vdatavgroups()
     float32     att1_values[2] = {2., 10.};
     char8       att2_values[]  = "Seconds";
     uint16     *refarray       = NULL;
-    uint16      name_len       = 0;
     int         ii, status;
+    size_t      buf_size          = 0;
     char       *vg_name           = NULL, vd_name[10];
     const char *check_vg_names[3] = {"Vgroup_1", "Vgroup_2", "Vgroup_3"};
     const char *check_vd_names[1] = {"Vdata_1"};
@@ -395,24 +396,16 @@ test_vdatavgroups()
         vgroup_id = Vattach(fid, refarray[ii], "r");
         CHECK(vgroup_id, FAIL, "Vattach");
 
-        status = Vgetnamelen(vgroup_id, &name_len);
-        CHECK(status, FAIL, "Vgetnamelen");
+        vg_name = vgetvgname(vgroup_id);
+        CHECK(vg_name, NULL, "vgetvgname");
 
-        vg_name = (char *)malloc((sizeof(char) * name_len) + 1);
-        CHECK_ALLOC(vg_name, "vg_name", "test_vdatavgroups");
-
-        status = Vgetname(vgroup_id, vg_name);
-        CHECK(status, FAIL, "Vgetname");
-        VERIFY_CHAR(vg_name, check_vg_names[ii], "");
-
-        if (strncmp(vg_name, check_vg_names[ii], name_len) != 0)
+        if (strcmp(vg_name, check_vg_names[ii]) != 0)
             fprintf(stderr, "vg %d: name is %s, should be %s\n", ii, vg_name, check_vg_names[ii]);
 
         /* Release resource */
-        free(vg_name);
-        vg_name = NULL;
-        status  = Vdetach(vgroup_id);
+        status = Vdetach(vgroup_id);
         CHECK(status, FAIL, "Vdetach");
+        HDfreenclear(vg_name);
     }
     /* Release resource */
     free(refarray);
@@ -442,7 +435,7 @@ test_vdatavgroups()
 
         VERIFY_CHAR(vd_name, check_vd_names[ii], "");
 
-        if (strncmp(vd_name, check_vd_names[ii], name_len) != 0)
+        if (strcmp(vd_name, check_vd_names[ii]) != 0)
             fprintf(stderr, "vd %d: name is %s, should be %s\n", ii, vd_name, check_vd_names[ii]);
         status = VSdetach(vdata_id);
         CHECK(status, FAIL, "VSdetach");

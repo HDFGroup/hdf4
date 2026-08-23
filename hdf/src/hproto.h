@@ -1402,15 +1402,11 @@ HDFLIBAPI int32 Vgetid(HFILEID f, int32 vgid);
 
 HDFLIBAPI int32 Vgetnext(int32 vkey, int32 id);
 
-HDFLIBAPI int32 Vgetname(int32 vkey, char *vgname);
+HDFLIBAPI ssize_t Vgetname(int32 vkey, size_t buf_size, char *vgname);
 
-HDFLIBAPI int32 Vgetnamelen(int32 vkey, uint16 *name_len);
+HDFLIBAPI ssize_t Vgetclass(int32 vkey, size_t buf_size, char *vgclass);
 
-HDFLIBAPI int32 Vgetclassnamelen(int32 vkey, uint16 *classname_len);
-
-HDFLIBAPI int32 Vgetclass(int32 vkey, char *vgclass);
-
-HDFLIBAPI int Vinquire(int32 vkey, int32 *nentries, char *vgname);
+HDFLIBAPI ssize_t Vinquire(int32 vkey, int32 *nentries, size_t buf_size, char *vgname);
 
 HDFLIBAPI int32 Vdelete(int32 f, int32 ref);
 

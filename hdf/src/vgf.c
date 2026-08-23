@@ -143,9 +143,21 @@ nvdtchc(intf *vkey)
  */
 
 intf
-nvgnamc(intf *vkey, _fcd vgname)
+nvgnamc(intf *vkey, _fcd vgname, intf *vgnamelen)
 {
-    return Vgetname(*vkey, _fcdtocp(vgname));
+    char   *tvgname;
+    ssize_t len;
+
+    tvgname = (char *)malloc(*vgnamelen + 1);
+    if (!tvgname)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+
+    len = Vgetname((int32)*vkey, (size_t)(*vgnamelen + 1), tvgname);
+    if (len != FAIL)
+        HDpackFstring(tvgname, _fcdtocp(vgname), (int)*vgnamelen);
+
+    free(tvgname);
+    return (len == FAIL) ? FAIL : SUCCEED;
 } /* VGNAMC */
 
 /* ------------------------------------------------------------------ */
@@ -155,9 +167,21 @@ nvgnamc(intf *vkey, _fcd vgname)
  */
 
 intf
-nvgclsc(intf *vkey, _fcd vgclass)
+nvgclsc(intf *vkey, _fcd vgclass, intf *vgclasslen)
 {
-    return Vgetclass(*vkey, _fcdtocp(vgclass));
+    char   *tvgclass;
+    ssize_t len;
+
+    tvgclass = (char *)malloc(*vgclasslen + 1);
+    if (!tvgclass)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+
+    len = Vgetclass((int32)*vkey, (size_t)(*vgclasslen + 1), tvgclass);
+    if (len != FAIL)
+        HDpackFstring(tvgclass, _fcdtocp(vgclass), (int)*vgclasslen);
+
+    free(tvgclass);
+    return (len == FAIL) ? FAIL : SUCCEED;
 } /* VGCLSC */
 
 /* ------------------------------------------------------------------ */
@@ -167,9 +191,24 @@ nvgclsc(intf *vkey, _fcd vgclass)
  */
 
 intf
-nvinqc(intf *vkey, intf *nentries, _fcd vgname)
+nvinqc(intf *vkey, intf *nentries, _fcd vgname, intf *vgnamelen)
 {
-    return (intf)Vinquire(*vkey, (int32 *)nentries, _fcdtocp(vgname));
+    char   *tvgname;
+    int32   tnentries;
+    ssize_t len;
+
+    tvgname = (char *)malloc(*vgnamelen + 1);
+    if (!tvgname)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+
+    len = Vinquire((int32)*vkey, &tnentries, (size_t)(*vgnamelen + 1), tvgname);
+    if (len != FAIL) {
+        *nentries = (intf)tnentries;
+        HDpackFstring(tvgname, _fcdtocp(vgname), (int)*vgnamelen);
+    }
+
+    free(tvgname);
+    return (len == FAIL) ? FAIL : SUCCEED;
 } /* VINQC */
 
 /* ------------------------------------------------------------------ */
