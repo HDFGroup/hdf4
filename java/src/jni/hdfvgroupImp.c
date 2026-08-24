@@ -117,15 +117,12 @@ done:
 JNIEXPORT void JNICALL
 Java_hdf_hdflib_HDFLibrary_Vgetclass(JNIEnv *env, jclass clss, jlong vgroup_id, jobjectArray hdfclassname)
 {
-    int32   rval     = FAIL;
-    char   *data     = NULL;
-    ssize_t buf_size = 0;
-    jstring rstring;
+    int32     rval     = FAIL;
+    char     *data     = NULL;
+    ptrdiff_t buf_size = 0;
+    jstring   rstring;
 
     UNUSED(clss);
-
-    if ((data = (char *)malloc(H4_MAX_NC_CLASS + 1)) == NULL)
-        H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vgetclass: failed to allocate data buffer");
 
     if (hdfclassname == NULL)
         H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vgetclass: hdfclassname is NULL");
@@ -161,10 +158,10 @@ done:
 JNIEXPORT void JNICALL
 Java_hdf_hdflib_HDFLibrary_Vgetname(JNIEnv *env, jclass clss, jlong vgroup_id, jobjectArray hdfname)
 {
-    int32   rval     = FAIL;
-    char   *data     = NULL;
-    ssize_t buf_size = 0;
-    jstring rstring;
+    int32     rval     = FAIL;
+    char     *data     = NULL;
+    ptrdiff_t buf_size = 0; /* portable substitute for POSIX ssize_t */
+    jstring   rstring;
 
     UNUSED(clss);
 
