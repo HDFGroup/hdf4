@@ -2565,8 +2565,8 @@ Vgetname(int32  vkey,     /* IN: vgroup key */
          size_t buf_size, /* IN: name buffer size */
          char  *vgname /* OUT: vgroup name */)
 {
-    VGROUP *vg        = NULL;
-    size_t  name_len  = 0;
+    VGROUP   *vg        = NULL;
+    size_t    name_len  = 0;
     ptrdiff_t ret_value = SUCCEED;
 
     /* Clear error stack */
@@ -2622,8 +2622,8 @@ Vgetclass(int32  vkey,     /* IN: vgroup key */
           size_t buf_size, /* IN: class buffer size */
           char  *vgclass /* OUT: vgroup class */)
 {
-    VGROUP *vg        = NULL;
-    size_t  class_len = 0;
+    VGROUP   *vg        = NULL;
+    size_t    class_len = 0;
     ptrdiff_t ret_value = SUCCEED;
 
     /* Clear error stack */
@@ -2681,8 +2681,8 @@ Vinquire(int32  vkey,     /* IN: vgroup key */
          size_t buf_size, /* IN: size of vgname buffer */
          char  *vgname /* OUT: vgroup name */)
 {
-    VGROUP *vg        = NULL;
-    size_t  name_len  = 0;
+    VGROUP   *vg        = NULL;
+    size_t    name_len  = 0;
     ptrdiff_t ret_value = SUCCEED;
 
     /* Clear error stack */

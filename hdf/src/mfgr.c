@@ -621,7 +621,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                 switch (grp_tag) {
                     case DFTAG_VG: /* should be an image */
                         if ((img_key = Vattach(file_id, grp_ref, "r")) != FAIL) {
-                            char     *class    = NULL;
+                            char *class        = NULL;
                             ptrdiff_t buf_size = 0; /* portable substitute for POSIX ssize_t */
 
                             /* If unable to get class len, release vg, move on to next vg */
