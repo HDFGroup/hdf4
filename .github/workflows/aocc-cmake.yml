@@ -17,8 +17,8 @@ jobs:
     name: "aocc ${{ inputs.build_mode }}"
     runs-on: ubuntu-latest
     env:
-      AOCCVERDOT: "5.0.0"
-      AOCCVERDASH: "5-0"
+      AOCCVERDOT: "5.2.0"
+      AOCCVERDASH: "5-2"
 
     steps:
       - name: Get Sources
