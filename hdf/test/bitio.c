@@ -445,7 +445,6 @@ test_bitio(void)
     test_bitio_write();
     test_bitio_seek();
 
-done:
     /* Release resources */
     free(outbuf);
     free(inbuf);
