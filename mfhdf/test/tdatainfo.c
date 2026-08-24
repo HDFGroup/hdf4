@@ -44,7 +44,6 @@
 
 #if defined H4_HAVE_WIN32_API
 #define snprintf sprintf_s
-#define ssize_t  int32
 #endif
 
 #ifdef H4_HAVE_LIBSZ
@@ -353,9 +352,9 @@ test_nonspecial_SDSs()
 
     /* Open file and read in data without using SD API */
     {
-        int32   ret32;       /* for DFKconvert */
-        ssize_t readlen = 0; /* for read */
-        int     kk;
+        int32     ret32;       /* for DFKconvert */
+        ptrdiff_t readlen = 0; /* for read, portable ssize_t substitute */
+        int       kk;
 
         /* Open the file for reading without SD API */
         fd = open(SIMPLE_FILE, O_RDONLY);
@@ -1093,8 +1092,8 @@ test_chunked_partial()
 
     /* Read each chunk and compare values */
     for (chk_num = 0; chk_num < info_count; chk_num++) {
-        int32   ret32;       /* for DFKconvert */
-        ssize_t readlen = 0; /* for read */
+        int32     ret32;       /* for DFKconvert */
+        ptrdiff_t readlen = 0; /* for read, portable ssize_t substitute */
 
         /* Forward to the position of the data of the SDS */
         if (lseek(fd, (off_t)sds_info.offsets[chk_num], SEEK_SET) == -1) {

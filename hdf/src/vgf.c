@@ -145,8 +145,8 @@ nvdtchc(intf *vkey)
 intf
 nvgnamc(intf *vkey, _fcd vgname, intf *vgnamelen)
 {
-    char   *tvgname;
-    ssize_t len;
+    char     *tvgname;
+    ptrdiff_t len; /* portable substitute for POSIX ssize_t */
 
     tvgname = (char *)malloc(*vgnamelen + 1);
     if (!tvgname)
@@ -169,8 +169,8 @@ nvgnamc(intf *vkey, _fcd vgname, intf *vgnamelen)
 intf
 nvgclsc(intf *vkey, _fcd vgclass, intf *vgclasslen)
 {
-    char   *tvgclass;
-    ssize_t len;
+    char     *tvgclass;
+    ptrdiff_t len;
 
     tvgclass = (char *)malloc(*vgclasslen + 1);
     if (!tvgclass)
@@ -193,9 +193,9 @@ nvgclsc(intf *vkey, _fcd vgclass, intf *vgclasslen)
 intf
 nvinqc(intf *vkey, intf *nentries, _fcd vgname, intf *vgnamelen)
 {
-    char   *tvgname;
-    int32   tnentries;
-    ssize_t len;
+    char     *tvgname;
+    int32     tnentries;
+    ptrdiff_t len;
 
     tvgname = (char *)malloc(*vgnamelen + 1);
     if (!tvgname)

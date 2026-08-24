@@ -20,6 +20,7 @@
 #include "h4config.h"
 
 #include <inttypes.h>
+#include <stddef.h> /* for ptrdiff_t, used as a portable substitute for POSIX ssize_t */
 
 /* Library limits */
 #include "hlimits.h"

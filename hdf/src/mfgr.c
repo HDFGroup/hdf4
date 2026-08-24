@@ -621,8 +621,8 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                 switch (grp_tag) {
                     case DFTAG_VG: /* should be an image */
                         if ((img_key = Vattach(file_id, grp_ref, "r")) != FAIL) {
-                            char *class      = NULL;
-                            ssize_t buf_size = 0;
+                            char     *class    = NULL;
+                            ptrdiff_t buf_size = 0; /* portable substitute for POSIX ssize_t */
 
                             /* If unable to get class len, release vg, move on to next vg */
                             if ((buf_size = Vgetclass(img_key, 0, NULL)) == FAIL) {
@@ -847,7 +847,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                     uint8      GRtbuf[64];                /* local buffer for reading RIG info */
 
                     if ((img_key = Vattach(file_id, (int32)img_info[i].grp_ref, "r")) != FAIL) {
-                        ssize_t buf_size;
+                        ptrdiff_t buf_size;
                         if ((new_image = (ri_info_t *)malloc(sizeof(ri_info_t))) == NULL) {
                             free(img_info); /* free offsets */
                             Hclose(file_id);

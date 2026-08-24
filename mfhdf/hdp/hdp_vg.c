@@ -226,11 +226,11 @@ int32
 Vstr_ref(int32 file_id, char *searched_str,          /* vg's class name */
          int is_name, int32 *find_ref, int32 *index) /* index of the vgroup w/ref# *find_ref */
 {
-    int32   vg_id     = FAIL;
-    char   *name      = NULL;
-    ssize_t name_len  = 0;
-    int32   status_32 = FAIL;
-    int32   ret_value = FAIL;
+    int32     vg_id     = FAIL;
+    char     *name      = NULL;
+    ptrdiff_t name_len  = 0; /* portable substitute for POSIX ssize_t */
+    int32     status_32 = FAIL;
+    int32     ret_value = FAIL;
 
     /* starting from the ref# *find_ref, search for the vgroup having a
        name or class the same as the given string searched_name; when no
@@ -409,9 +409,9 @@ int
 get_VGandInfo(int32 *vg_id, int32 file_id, int32 vg_ref, const char *file_name, int32 *n_entries,
               char **vgname, char **vgclass)
 {
-    int     status, ret_value = SUCCEED;
-    int32   status_32;
-    ssize_t name_len = 0;
+    int       status, ret_value = SUCCEED;
+    int32     status_32;
+    ptrdiff_t name_len = 0;
 
     /* detach the current vgroup if it's attached to cover the case
       where a library routine fails and must continue to the next vgroup

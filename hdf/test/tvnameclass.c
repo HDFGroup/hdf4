@@ -206,13 +206,13 @@ done:
 static void
 test_undefined(void)
 {
-    int32   status;         /* Status values from routines */
-    int32   file_id = FAIL; /* File ID */
-    int32   vg1     = FAIL; /* Vdata ID */
-    int32   ref;            /* Vdata ref */
-    int     is_internal;    /* to test Vgisinternal */
-    ssize_t name_len;       /* Length of a vgroup's name or class name */
-    char   *vgname = NULL, *vgclass = NULL;
+    int32     status;         /* Status values from routines */
+    int32     file_id = FAIL; /* File ID */
+    int32     vg1     = FAIL; /* Vdata ID */
+    int32     ref;            /* Vdata ref */
+    int       is_internal;    /* to test Vgisinternal */
+    ptrdiff_t name_len;       /* Length of a vgroup's name or class name (portable ssize_t substitute) */
+    char     *vgname = NULL, *vgclass = NULL;
 
     /* Open the HDF file. */
     file_id = Hopen(NONAMECLASS, DFACC_CREATE, 0);

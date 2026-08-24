@@ -1402,11 +1402,12 @@ HDFLIBAPI int32 Vgetid(HFILEID f, int32 vgid);
 
 HDFLIBAPI int32 Vgetnext(int32 vkey, int32 id);
 
-HDFLIBAPI ssize_t Vgetname(int32 vkey, size_t buf_size, char *vgname);
+/* ptrdiff_t used below as a portable, standard-C substitute for POSIX ssize_t */
+HDFLIBAPI ptrdiff_t Vgetname(int32 vkey, size_t buf_size, char *vgname);
 
-HDFLIBAPI ssize_t Vgetclass(int32 vkey, size_t buf_size, char *vgclass);
+HDFLIBAPI ptrdiff_t Vgetclass(int32 vkey, size_t buf_size, char *vgclass);
 
-HDFLIBAPI ssize_t Vinquire(int32 vkey, int32 *nentries, size_t buf_size, char *vgname);
+HDFLIBAPI ptrdiff_t Vinquire(int32 vkey, int32 *nentries, size_t buf_size, char *vgname);
 
 HDFLIBAPI int32 Vdelete(int32 f, int32 ref);
 

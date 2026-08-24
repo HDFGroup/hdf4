@@ -2559,14 +2559,15 @@ RETURNS
    Length of vgroup name / FAIL
 
 *******************************************************************************/
-ssize_t
+/* ptrdiff_t used here as a portable, standard-C substitute for POSIX ssize_t */
+ptrdiff_t
 Vgetname(int32  vkey,     /* IN: vgroup key */
          size_t buf_size, /* IN: name buffer size */
          char  *vgname /* OUT: vgroup name */)
 {
     VGROUP *vg        = NULL;
     size_t  name_len  = 0;
-    ssize_t ret_value = SUCCEED;
+    ptrdiff_t ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -2584,7 +2585,7 @@ Vgetname(int32  vkey,     /* IN: vgroup key */
 
     /* If vgname is NULL or buf_size is 0, return the length of the name */
     if (vgname == NULL || buf_size == 0)
-        HGOTO_DONE((ssize_t)name_len);
+        HGOTO_DONE((ptrdiff_t)name_len);
 
     /* Copy vgroup name, truncating if necessary */
     if (vg->vgname != NULL) {
@@ -2594,7 +2595,7 @@ Vgetname(int32  vkey,     /* IN: vgroup key */
     else
         vgname[0] = '\0';
 
-    ret_value = (ssize_t)name_len;
+    ret_value = (ptrdiff_t)name_len;
 
 done:
     return ret_value;
@@ -2616,14 +2617,14 @@ RETURNS
    Length of the class's name / FAIL
 
 *******************************************************************************/
-ssize_t
+ptrdiff_t
 Vgetclass(int32  vkey,     /* IN: vgroup key */
           size_t buf_size, /* IN: class buffer size */
           char  *vgclass /* OUT: vgroup class */)
 {
     VGROUP *vg        = NULL;
     size_t  class_len = 0;
-    ssize_t ret_value = SUCCEED;
+    ptrdiff_t ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -2641,7 +2642,7 @@ Vgetclass(int32  vkey,     /* IN: vgroup key */
 
     /* If vgclass is NULL or buf_size is 0, return the length of the class */
     if (vgclass == NULL || buf_size == 0)
-        HGOTO_DONE((ssize_t)class_len);
+        HGOTO_DONE((ptrdiff_t)class_len);
 
     /* Copy vgroup class, truncating if necessary */
     if (vg->vgclass != NULL) {
@@ -2651,7 +2652,7 @@ Vgetclass(int32  vkey,     /* IN: vgroup key */
     else
         vgclass[0] = '\0';
 
-    ret_value = (ssize_t)class_len;
+    ret_value = (ptrdiff_t)class_len;
 
 done:
     return ret_value;
@@ -2674,7 +2675,7 @@ RETURNS
     The length of the vgroup name / FAIL on failure
 
 *******************************************************************************/
-ssize_t
+ptrdiff_t
 Vinquire(int32  vkey,     /* IN: vgroup key */
          int32 *nentries, /* OUT: number of entries in vgroup */
          size_t buf_size, /* IN: size of vgname buffer */
@@ -2682,7 +2683,7 @@ Vinquire(int32  vkey,     /* IN: vgroup key */
 {
     VGROUP *vg        = NULL;
     size_t  name_len  = 0;
-    ssize_t ret_value = SUCCEED;
+    ptrdiff_t ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -2704,7 +2705,7 @@ Vinquire(int32  vkey,     /* IN: vgroup key */
 
     /* If vgname is NULL or buf_size is 0, return the length of the name */
     if (vgname == NULL || buf_size == 0)
-        HGOTO_DONE((ssize_t)name_len);
+        HGOTO_DONE((ptrdiff_t)name_len);
 
     /* Copy vgroup name, truncating if necessary */
     if (vg->vgname != NULL) {
@@ -2714,7 +2715,7 @@ Vinquire(int32  vkey,     /* IN: vgroup key */
     else
         vgname[0] = '\0';
 
-    ret_value = (ssize_t)name_len;
+    ret_value = (ptrdiff_t)name_len;
 
 done:
     return ret_value;
