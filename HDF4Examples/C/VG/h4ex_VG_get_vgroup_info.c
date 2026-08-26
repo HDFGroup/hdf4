@@ -14,8 +14,8 @@ main()
     int32  lone_vg_number;      /* current lone vgroup number */
     int32  num_of_lones = 0;    /* number of lone vgroups */
     int32 *ref_array    = NULL; /* buffer to hold the ref numbers of lone vgroups   */
-    char  *vgroup_name, *vgroup_class;
-    uint16 name_len;
+    char  *vgroup_name = NULL, *vgroup_class = NULL;
+    size_t name_len;
 
     /********************** End of variable declaration **********************/
 
@@ -65,7 +65,9 @@ main()
              * moving to the next.
              */
             vgroup_id = Vattach(file_id, ref_array[lone_vg_number], "r");
-            if ((name_len = Vgetname(vgroup_id, NULL, 0)) == FAIL)
+
+            /* Get the vgroup name */
+            if (Vgetname(vgroup_id, NULL, &name_len) == FAIL)
                 printf("*** ERROR from Vgetname to get length of vgroup name\n");
             vgroup_name = (char *)malloc(sizeof(char *) * (name_len + 1));
             if (vgroup_name == NULL) {
@@ -76,7 +78,8 @@ main()
             if (Vgetname(vgroup_id, vgroup_name, &name_len) == FAIL)
                 printf("*** ERROR from Vgetname to get vgroup name\n");
 
-            if ((name_len = Vgetclass(vgroup_id, NULL, 0)) == FAIL)
+            /* Get the vgroup class */
+            if (Vgetclass(vgroup_id, NULL, &name_len) == FAIL)
                 printf("*** ERROR from Vgetclass to get length of vgroup class\n");
             vgroup_class = (char *)malloc(sizeof(char *) * (name_len + 1));
             if (vgroup_class == NULL) {
@@ -84,9 +87,12 @@ main()
                 exit(1);
             }
             name_len++;
-            if (Vgetclass(vgroup_id, vgroup_class, name_len + 1) == FAIL)
+            if (Vgetclass(vgroup_id, vgroup_class, &name_len) == FAIL)
                 printf("*** ERROR from Vgetclass to get vgroup class\n");
+
             fprintf(stderr, "   Vgroup name %s and class %s\n", vgroup_name, vgroup_class);
+
+            /* Release resources */
             if (Vdetach(vgroup_id) == FAIL)
                 printf("*** ERROR from Vdetach\n");
             free(vgroup_name);
