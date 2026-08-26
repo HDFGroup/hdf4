@@ -611,9 +611,9 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
         gr_ptr->gr_ref = gr_ref; /* squirrel this away for later use */
         if ((gr_key = Vattach(file_id, (int32)gr_ref, "r")) != FAIL) {
             int32 nobjs = Vntagrefs(gr_key); /* The number of objects in the Vgroup */
-            int32  grp_tag, grp_ref;          /* a tag/ref in the Vgroup */
-            int32  img_tag, img_ref;          /* image tag/ref in the Vgroup */
-            char   textbuf[VGNAMELENMAX + 1]; /* buffer to store the name in */
+            int32 grp_tag, grp_ref;          /* a tag/ref in the Vgroup */
+            int32 img_tag, img_ref;          /* image tag/ref in the Vgroup */
+            char  textbuf[VGNAMELENMAX + 1]; /* buffer to store the name in */
 
             for (i = 0; i < nobjs; i++) {
                 if (Vgettagref(gr_key, i, &grp_tag, &grp_ref) == FAIL)
@@ -622,7 +622,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                 switch (grp_tag) {
                     case DFTAG_VG: /* should be an image */
                         if ((img_key = Vattach(file_id, grp_ref, "r")) != FAIL) {
-                            char  *class    = NULL;
+                            char *class     = NULL;
                             size_t buf_size = 0;
 
                             /* If unable to get class len, release vg, move on to next vg */

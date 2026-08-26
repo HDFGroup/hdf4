@@ -207,10 +207,10 @@ nvgclsc(intf *vkey, _fcd vgclass, intf *vgclasslen)
 intf
 nvinqc(intf *vkey, intf *nentries, _fcd vgname, intf *vgnamelen)
 {
-    char   *tvgname;
-    int32   tnentries;
-    size_t  buf_size = 0;
-    int     ret;
+    char  *tvgname;
+    int32  tnentries;
+    size_t buf_size = 0;
+    int    ret;
 
     /* Query the actual name length first */
     ret = Vinquire((int32)*vkey, &tnentries, NULL, &buf_size);

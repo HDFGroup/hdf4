@@ -2560,8 +2560,8 @@ RETURNS
 
 *******************************************************************************/
 int
-Vgetname(int32   vkey,     /* IN: vgroup key */
-         char   *vgname,   /* OUT: vgroup name */
+Vgetname(int32   vkey,   /* IN: vgroup key */
+         char   *vgname, /* OUT: vgroup name */
          size_t *buf_size /* IN/OUT: name buffer size */)
 {
     VGROUP *vg        = NULL;
@@ -2622,8 +2622,8 @@ RETURNS
 
 *******************************************************************************/
 int
-Vgetclass(int32   vkey,     /* IN: vgroup key */
-          char   *vgclass,  /* OUT: vgroup class buffer */
+Vgetclass(int32   vkey,    /* IN: vgroup key */
+          char   *vgclass, /* OUT: vgroup class buffer */
           size_t *buf_size /* IN/OUT: class buffer size */)
 {
     VGROUP *vg        = NULL;
@@ -3249,4 +3249,3 @@ Vgetvgroups(int32    id,       /* IN: file id or vgroup id */
 done:
     return ret_value;
 } /* Vgetvgroups */
-

@@ -257,8 +257,7 @@ Vstr_ref(int32 file_id, char *searched_str,          /* vg's class name */
         }
 
         if (FAIL == Vdetach(vg_id))
-            ERROR_GOTO_2("in %s: Vdetach failed for vgroup with ref#(%d)", "Vstr_ref",
-                         (int)*find_ref);
+            ERROR_GOTO_2("in %s: Vdetach failed for vgroup with ref#(%d)", "Vstr_ref", (int)*find_ref);
         vg_id = FAIL;
 
         /* if the vg's name or vg's class is the given string, return the
@@ -270,10 +269,10 @@ Vstr_ref(int32 file_id, char *searched_str,          /* vg's class name */
             (*index)++;
             goto done;
         }
-            (*index)++;
+        (*index)++;
 
         SAFE_FREE(name); /* free name and set it to NULL */
-    }   /* end while getting vgroups */
+    }                    /* end while getting vgroups */
 
     /* when Vgetid returned FAIL in while above, search should stop */
     ret_value = FAIL;
@@ -479,7 +478,7 @@ get_VGandInfo(int32 *vg_id, int32 file_id, int32 vg_ref, const char *file_name, 
 
 done:
     if (ret_value == FAIL) {
-        HDfreenclear(*vgname); /* free temp memory */
+        HDfreenclear(*vgname);  /* free temp memory */
         HDfreenclear(*vgclass); /* free temp memory */
     }
 
@@ -1311,7 +1310,7 @@ dvg(dump_info_t *dumpvg_opts, int curr_arg, int argc, char *argv[])
             status = get_VGandInfo(&vg_id, file_id, vg_ref, file_name, &n_entries, &vgname, &vgclass);
             if (status == FAIL)
                 ERROR_NOTIFY_2("in dvg: %s failed in getting vgroup with ref#=%d", "get_VGandInfo",
-                             (int)vg_ref);
+                               (int)vg_ref);
 
             /* since the succeeding processing depends heavily on these
                we decided to just skip the current file */

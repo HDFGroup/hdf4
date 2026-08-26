@@ -117,8 +117,8 @@ done:
 JNIEXPORT void JNICALL
 Java_hdf_hdflib_HDFLibrary_Vgetclass(JNIEnv *env, jclass clss, jlong vgroup_id, jobjectArray hdfclassname)
 {
-    int32   rval = FAIL;
-    char   *data = NULL;
+    int32   rval     = FAIL;
+    char   *data     = NULL;
     size_t  buf_size = 0;
     jstring rstring;
 
@@ -140,9 +140,9 @@ Java_hdf_hdflib_HDFLibrary_Vgetclass(JNIEnv *env, jclass clss, jlong vgroup_id, 
     /* get the null-terminated class name of the vgroup */
     if ((rval = Vgetclass((int32)vgroup_id, data, &buf_size)) == FAIL)
 
-    /* convert it to java string */
-    if (NULL == (rstring = ENVPTR->NewStringUTF(ENVONLY, data)))
-        CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
+        /* convert it to java string */
+        if (NULL == (rstring = ENVPTR->NewStringUTF(ENVONLY, data)))
+            CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
 
     ENVPTR->SetObjectArrayElement(ENVONLY, hdfclassname, 0, rstring);
     CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
@@ -181,9 +181,9 @@ Java_hdf_hdflib_HDFLibrary_Vgetname(JNIEnv *env, jclass clss, jlong vgroup_id, j
     /* get the null-terminated name of the vgroup */
     if ((rval = Vgetname((int32)vgroup_id, data, &buf_size)) == FAIL)
 
-    /* convert it to java string */
-    if (NULL == (rstring = ENVPTR->NewStringUTF(ENVONLY, data)))
-        CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
+        /* convert it to java string */
+        if (NULL == (rstring = ENVPTR->NewStringUTF(ENVONLY, data)))
+            CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
 
     ENVPTR->SetObjectArrayElement(ENVONLY, hdfname, 0, rstring);
     CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
@@ -476,10 +476,10 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_Vinquire(JNIEnv *env, jclass clss, jlong vgroup_id, jintArray n_entries,
                                     jobjectArray vgroup_name)
 {
-    int    rval     = FAIL;
-    jint  *theArg   = NULL;
-    char  *data     = NULL;
-    size_t buf_size = 0;
+    int      rval     = FAIL;
+    jint    *theArg   = NULL;
+    char    *data     = NULL;
+    size_t   buf_size = 0;
     jstring  rstring;
     jboolean isCopy;
 
