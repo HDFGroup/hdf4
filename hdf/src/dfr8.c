@@ -431,7 +431,7 @@ done:
 static int
 DFR8Iputimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress, int append)
 {
-    int   acc_mode = 0; /* create if op 0, write if op 1 */
+    int    acc_mode = 0; /* create if op 0, write if op 1 */
     int32  file_id  = (-1);
     uint16 r8tag;                       /* RIG and raster tags of image being written */
     uint8 *pal                  = NULL; /* pointer to palette to be written */
