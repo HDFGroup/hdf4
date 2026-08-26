@@ -228,7 +228,6 @@ Vstr_ref(int32 file_id, char *searched_str,          /* vg's class name */
 {
     int32   vg_id     = FAIL;
     char   *name      = NULL;
-    ssize_t name_len  = 0;
     int32   status_32 = FAIL;
     int32   ret_value = FAIL;
 
