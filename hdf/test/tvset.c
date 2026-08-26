@@ -13,12 +13,7 @@
 
 /*
  *
- * Vset tests
- *
- *
- * This file needs another pass at making sure all the return
- * values from function calls are checked in addition to
- * verifying that the proper tests are performed on all Vxx fcns - GV 9/5/97
+ * Vset tests - Tests VS functions
  *
  */
 #include "hdf.h"
@@ -50,6 +45,8 @@
 #define MX               "STATION_NAME,VALUES,FLOATS"
 #define EMPTY_VDATA      "Empty"
 #define VGROUP1          "VGROUP1"
+#define VGROUP2          "Test object"
+#define SECONDVG         "Second Vgroup"
 #define VG_LONGNAME      "Vgroup with more than 64 characters in length, 74 characters to be exact!"
 #define VG_LONGCLASS     "Very long class name to classify all Vgroups with more than 64 characters in name"
 #define APPENDABLE_VDATA "Appendable"
@@ -67,7 +64,9 @@ static void  test_blockinfo_oneLB(void);
 static void  test_blockinfo_multLBs(void);
 static void  test_VSofclass(void);
 
-/* write some stuff to the file */
+/*
+   Testing writing vgroup and vdata metadata and data.
+*/
 static int32
 write_vset_stuff(void)
 {
@@ -85,6 +84,7 @@ write_vset_stuff(void)
     char       *p;
     char8       c;
     float32     f;
+    int32       ret_value = SUCCEED;
 
     ibuf  = (int32 *)malloc(sizeof(float32) * 2000);
     fbuf  = (float32 *)malloc(sizeof(float32) * 2000);
@@ -98,18 +98,12 @@ write_vset_stuff(void)
     CHECK_ALLOC(gbuf2, "gbuf2", "write_vset_stuff");
 
     fid = Hopen(FNAME0, DFACC_CREATE, 100);
-    if (fid == FAIL) {
-        num_errs++;
-        goto done;
-    }
+    CHECK(fid, FAIL, "Hopen");
 
-    if (Vstart(fid) == FAIL) {
-        num_errs++;
-        goto done;
-    }
+    status = Vstart(fid);
+    CHECK(status, FAIL, "Vstart");
 
     /*
-
      * Vgroup Generation routines
      *
      */
@@ -118,15 +112,12 @@ write_vset_stuff(void)
      *  start simple --- create a simple Vgroup
      */
     vg1 = Vattach(fid, -1, "w");
-    if (vg1 == FAIL) {
-        num_errs++;
-        printf(">>> Failed creating initial Vgroup\n");
-    }
+    CHECK(vg1, FAIL, "Failed creating initial Vgroup");
 
     status = Vsetname(vg1, "Simple Vgroup");
     CHECK(status, FAIL, "Vsetname:vg1");
 
-    status = Vsetclass(vg1, "Test object");
+    status = Vsetclass(vg1, VGROUP2);
     CHECK(status, FAIL, "Vsetclass:vg1");
 
     MESSAGE(5, printf("created Vgroup %s (empty)\n", "Simple Vgroup"););
@@ -135,38 +126,24 @@ write_vset_stuff(void)
      * Lets do some more complex ones now
      */
     vg2 = Vattach(fid, -1, "w");
-    if (vg2 == FAIL) {
-        num_errs++;
-        printf(">>> Failed creating second Vgroup\n");
-    }
+    CHECK(vg2, FAIL, "Failed creating second Vgroup");
 
     /* keep track of how many in Vgroup */
     num = 0;
 
     /* add first group into the other */
     status = Vinsert(vg2, vg1);
-    if (status == FAIL) {
-        num_errs++;
-        printf(">>> Vinsert failed\n");
-    }
-    else
-        num++;
+    CHECK(status, FAIL, "Vinsert failed");
+    num++;
 
     /* add a bogus element */
     status = Vaddtagref(vg2, (int32)1000, (int32)12345);
-    if (status == FAIL) {
-        num_errs++;
-        printf(">>> Vaddtagref failed for bogus element\n");
-    }
-    else
-        num++;
+    CHECK(status, FAIL, "Vaddtagref failed for bogus element");
+    num++;
 
     /* create an element and insert that */
     aid = Hstartwrite(fid, (uint16)123, (uint16)1234, 10);
-    if (aid == FAIL) {
-        num_errs++;
-        printf(">>> Hstartwrite failed\n");
-    }
+    CHECK(aid, FAIL, "Hstartwrite failed");
 
     status = Hendaccess(aid);
     CHECK(status, FAIL, "Hendaccess:aid");
@@ -174,12 +151,8 @@ write_vset_stuff(void)
 
     /* add an existing HDF element */
     status = Vaddtagref(vg2, (int32)123, (int32)1234);
-    if (status == FAIL) {
-        num_errs++;
-        printf(">>> Vaddtagref failed for legit element\n");
-    }
-    else
-        num++;
+    CHECK(status, FAIL, "Vaddtagref failed for legit element");
+    num++;
 
 #ifdef NO_DUPLICATES
     /* attempt to add an element already in the Vgroup */
@@ -209,10 +182,10 @@ write_vset_stuff(void)
         printf(">>> Vinqtagref found a bogus element\n");
     }
 
-    status = Vsetname(vg2, "Second Vgroup");
+    status = Vsetname(vg2, SECONDVG);
     CHECK(status, FAIL, "Vsetname:for vg2");
 
-    Vsetclass(vg2, "Test object");
+    Vsetclass(vg2, VGROUP2);
     CHECK(status, FAIL, "Vsetclass: for vg2");
 
     status = Vdetach(vg1);
@@ -223,12 +196,10 @@ write_vset_stuff(void)
     CHECK(status, FAIL, "Vdetach:vg2");
     vg2 = FAIL;
 
-    MESSAGE(5, printf("created Vgroup %s with %d elements\n", "Second Vgroup", (int)num););
+    MESSAGE(5, printf("created Vgroup %s with %d elements\n", SECONDVG, (int)num););
 
     /*
-
      * Vdata Generation routines
-     *
      */
 
     /* Float32 Vdata */
@@ -239,22 +210,19 @@ write_vset_stuff(void)
     status = VSsetname(vs1, name);
     CHECK(status, FAIL, "VSsetname");
 
-    status = VSsetclass(vs1, "Test object");
+    status = VSsetclass(vs1, VGROUP2);
     CHECK(status, FAIL, "VSsetclass");
 
     status = VSfdefine(vs1, FIELD1, DFNT_FLOAT32, 1);
     CHECK(status, FAIL, "VSfdefine");
 
     /* Verify that VSsetfields will return FAIL when passing in a NULL
-       for field name list (bug #554) - BMR 5/17/01 */
+       for field name list (bug #554) */
     status = VSsetfields(vs1, NULL);
     VERIFY(status, FAIL, "VSsetfields");
 
     status = VSsetfields(vs1, FIELD1);
-    if (status == FAIL) {
-        num_errs++;
-        printf(">>> Vsetfields failed for %s\n", name);
-    }
+    CHECK(status, FAIL, "VSsetfields");
 
     /* create some bogus data */
     for (i = 0, count = 100; i < count; i++)
@@ -263,11 +231,6 @@ write_vset_stuff(void)
     /* store it */
     status = VSwrite(vs1, (unsigned char *)fbuf, count, FULL_INTERLACE);
     CHECK(status, FAIL, "VSwrite:vs1");
-
-    /* Test VSgetexternalfile on a vdata without external element */
-    /*  status = VSgetexternalfile(vs1, 0, NULL, NULL);
-    VERIFY(status, FAIL, "VSgetexternalfile");
- */
 
     /* Test VSgetexternalinfo on a vdata without external element */
     status = VSgetexternalinfo(vs1, 0, NULL, NULL, NULL);
@@ -287,23 +250,17 @@ write_vset_stuff(void)
     status = VSsetname(vs1, name);
     CHECK(status, FAIL, "VSsetname:vs1");
 
-    status = VSsetclass(vs1, "Test object");
+    status = VSsetclass(vs1, VGROUP2);
     CHECK(status, FAIL, "VSsetclass:vs1");
 
     status = VSfdefine(vs1, FIELD2, DFNT_INT32, 2);
     CHECK(status, FAIL, "VSfdefine:vs1");
 
     status = VSsetfields(vs1, FIELD2);
-    if (status == FAIL) {
-        num_errs++;
-        printf(">>> Vsetfields failed for %s\n", name);
-    }
+    CHECK(status, FAIL, "VSsetfields");
     /* change this vdata to store in an external file */
     status = VSsetexternalfile(vs1, EXTFNM, (int32)0);
-    if (status == FAIL) {
-        num_errs++;
-        printf(">>> VSsetexternalfile failed\n");
-    }
+    CHECK(status, FAIL, "VSsetexternalfile failed");
 
     /* create some bogus data */
     for (i = 0, count = 100; i < 2 * count; i++)
@@ -337,10 +294,7 @@ write_vset_stuff(void)
     CHECK(status, FAIL, "VSfdefine:vs1");
 
     status = VSsetfields(vs1, "A, B");
-    if (status == FAIL) {
-        num_errs++;
-        printf(">>> Vsetfields failed for %s\n", name);
-    }
+    CHECK(status, FAIL, "VSsetfields");
 
     /* create some bogus data */
     p = gbuf;
@@ -383,10 +337,7 @@ write_vset_stuff(void)
     CHECK(status, FAIL, "VSfdefine:vs1");
 
     status = VSsetfields(vs1, MX);
-    if (status == FAIL) {
-        num_errs++;
-        printf(">>> Vsetfields failed for %s\n", name);
-    }
+    CHECK(status, FAIL, "VSsetfields");
 
     /* create some bogus data */
     p = gbuf;
@@ -436,10 +387,7 @@ write_vset_stuff(void)
     CHECK(status, FAIL, "VSfdefine:vs1");
 
     status = VSsetfields(vs1, "max_order");
-    if (status == FAIL) {
-        num_errs++;
-        printf(">>> Vsetfields failed for %s\n", name);
-    }
+    CHECK(status, FAIL, "VSsetfields");
 
     /* create some bogus data */
     for (i = 0; i < MAX_ORDER; i++)
@@ -466,10 +414,7 @@ write_vset_stuff(void)
     CHECK(status, FAIL, "VSfdefine:vs1");
 
     status = VSsetfields(vs1, "max_fldsize");
-    if (status == FAIL) {
-        num_errs++;
-        printf(">>> Vsetfields failed for %s\n", name);
-    }
+    CHECK(status, FAIL, "VSsetfields");
 
     /* create some bogus data */
     for (i = 0; i < max_order; i++)
@@ -494,16 +439,10 @@ write_vset_stuff(void)
 
     max_order = MAX_FIELD_SIZE / SIZE_FLOAT32 + 1;
     status    = VSfdefine(vs1, "bad_fldsize", DFNT_FLOAT32, max_order);
-    if (status != FAIL) {
-        num_errs++;
-        printf(">>> Vsetfields failed for %s\n", name);
-    }
+    VERIFY(status, FAIL, "VSfdefine");
 
     status = VSsetfields(vs1, "bad_fldsize");
-    if (status != FAIL) {
-        num_errs++;
-        printf(">>> Vsetfields failed for %s\n", name);
-    }
+    VERIFY(status, FAIL, "VSsetfields");
 
     status = VSdetach(vs1);
     CHECK(status, FAIL, "VSdetach:vs1");
@@ -571,7 +510,9 @@ done:
     return SUCCEED;
 }
 
-/* read everything back in and check it */
+/*
+   Testing reading vgroup and vdata metadata and data.
+*/
 static int32
 read_vset_stuff(void)
 {
@@ -590,7 +531,7 @@ read_vset_stuff(void)
     float32  fl_expected;
     int32    in_expected;
     char8    c_expected;
-    uint16   name_len;
+    size_t   buf_size = 0;
 
     ibuf = (int32 *)malloc(sizeof(float32) * 2000);
     fbuf = (float32 *)malloc(sizeof(float32) * 2000);
@@ -600,10 +541,7 @@ read_vset_stuff(void)
     CHECK_ALLOC(gbuf, "gbuf", "write_vset_stuff");
 
     fid = Hopen(FNAME0, DFACC_RDONLY, 0);
-    if (fid == FAIL) {
-        num_errs++;
-        goto done;
-    }
+    CHECK(fid, FAIL, "Hopen");
 
     status = Vstart(fid);
     CHECK(status, FAIL, "Vstart:fid");
@@ -627,39 +565,41 @@ read_vset_stuff(void)
         printf(">>> Was not able to attach (r) Vgroup %d\n", (int)list[0]);
     }
 
-    status = Vgetnamelen(vg1, &name_len);
-    CHECK(status, FAIL, "Vgetnamelen:vg1");
+    /* Get the vgroup's name */
+    status = Vgetname(vg1, NULL, &buf_size);
+    CHECK(status, FAIL, "Vgetname");
 
-    vgname = (char *)malloc(sizeof(char) * (name_len + 1));
+    vgname = (char *)malloc(sizeof(char) * (buf_size + 1));
     CHECK_ALLOC(vgname, "vgname", "read_vset_stuff");
 
-    status = Vgetname(vg1, vgname);
+    buf_size++;
+    status = Vgetname(vg1, vgname, &buf_size);
     CHECK(status, FAIL, "Vgetname:vg1");
 
-    status = Vgetclassnamelen(vg1, &name_len);
-    CHECK(status, FAIL, "Vgetclassnamelen:vg1");
+    /* Get the vgroup's class */
+    status = Vgetclass(vg1, NULL, &buf_size);
+    CHECK(status, FAIL, "Vgetclass");
 
-    vgclass = (char *)malloc(sizeof(char) * (name_len + 1));
+    vgclass = (char *)malloc(sizeof(char) * (buf_size + 1));
     CHECK_ALLOC(vgclass, "vgclass", "read_vset_stuff");
 
-    status = Vgetclass(vg1, vgclass);
+    buf_size++;
+    status = Vgetclass(vg1, vgclass, &buf_size);
     CHECK(status, FAIL, "Vgetclass:vg1");
 
-    if (strcmp(vgname, "Second Vgroup")) {
+    if (strcmp(vgname, SECONDVG)) {
         num_errs++;
         printf(">>> Got bogus Vgroup name : %s\n", vgname);
     }
 
-    free(vgname);
-    vgname = NULL;
+    HDfreenclear(vgname);
 
-    if (strcmp(vgclass, "Test object")) {
+    if (strcmp(vgclass, VGROUP2)) {
         num_errs++;
         printf(">>> Got bogus Vgroup class : %s\n", vgclass);
     }
 
-    free(vgclass);
-    vgclass = NULL;
+    HDfreenclear(vgclass);
 
     num    = 3;
     status = Vgettagrefs(vg1, tags, refs, 100);
@@ -692,10 +632,7 @@ read_vset_stuff(void)
 
     /* test Vgetid */
     ref = Vgetid(fid, -1);
-    if (ref == FAIL) {
-        num_errs++;
-        printf(">>> Vgetid was unable to find first Vgroup\n");
-    }
+    CHECK(ref, FAIL, "Vgetid was unable to find first Vgroup");
 
     ref = Vgetid(fid, ref);
     if (ref != list[0]) {
@@ -704,17 +641,12 @@ read_vset_stuff(void)
     }
 
     /*
-
      *   Verify the Vdatas
-     *
      */
 
     /* test VSgetid */
     ref = VSgetid(fid, -1);
-    if (ref == FAIL) {
-        num_errs++;
-        printf(">>> VSgetid was unable to find first Vdata\n");
-    }
+    CHECK(ref, FAIL, "VSgetid was unable to find first Vdata");
 
     /* read in the first data and verify metadata and contents */
     vs1 = VSattach(fid, ref, "r");
@@ -731,16 +663,13 @@ read_vset_stuff(void)
         printf(">>> Got bogus Vdata name (VSgetname) : %s\n", vsname);
     }
 
-    if (strcmp(vsclass, "Test object")) {
+    if (strcmp(vsclass, VGROUP2)) {
         num_errs++;
         printf(">>> Got bogus Vdata class : %s\n", vsclass);
     }
 
     status = VSinquire(vs1, &count, &intr, fields, &sz, vsname);
-    if (status == FAIL) {
-        num_errs++;
-        printf(">>> VSinquire failed on float Vdata\n");
-    }
+    CHECK(status, FAIL, "VSinquire failed on float Vdata");
 
     if (strcmp(vsname, "Float Vdata")) {
         num_errs++;
@@ -793,10 +722,7 @@ read_vset_stuff(void)
 
     /* Move to the next one (integers) */
     ref = VSgetid(fid, ref);
-    if (ref == FAIL) {
-        num_errs++;
-        printf(">>> VSgetid was unable to find second Vdata\n");
-    }
+    CHECK(ref, FAIL, "VSgetid was unable to find second Vdata");
 
     /* read in the first data and verify metadata and contents */
     vs1 = VSattach(fid, ref, "r");
@@ -813,16 +739,13 @@ read_vset_stuff(void)
         printf(">>> Got bogus Vdata name (VSgetname) : %s\n", vsname);
     }
 
-    if (strcmp(vsclass, "Test object")) {
+    if (strcmp(vsclass, VGROUP2)) {
         num_errs++;
         printf(">>> Got bogus Vdata class : %s\n", vsclass);
     }
 
     status = VSinquire(vs1, &count, &intr, fields, &sz, vsname);
-    if (status == FAIL) {
-        num_errs++;
-        printf(">>> VSinquire failed on float Vdata\n");
-    }
+    CHECK(status, FAIL, "VSinquire failed on float Vdata");
 
     if (strcmp(vsname, "Integer Vdata")) {
         num_errs++;
@@ -906,10 +829,7 @@ read_vset_stuff(void)
 
     /* Move to the next one (integers + floats) */
     ref = VSgetid(fid, ref);
-    if (ref == FAIL) {
-        num_errs++;
-        printf(">>> VSgetid was unable to find third Vdata\n");
-    }
+    CHECK(ref, FAIL, "VSgetid was unable to find third Vdata");
 
     /* read in the first data and verify metadata and contents */
     vs1 = VSattach(fid, ref, "r");
@@ -932,10 +852,7 @@ read_vset_stuff(void)
     }
 
     status = VSinquire(vs1, &count, &intr, fields, &sz, vsname);
-    if (status == FAIL) {
-        num_errs++;
-        printf(">>> VSinquire failed on float Vdata\n");
-    }
+    CHECK(status, FAIL, "VSinquire failed on float Vdata");
 
     if (strcmp(vsname, "Mixed Vdata")) {
         num_errs++;
@@ -995,10 +912,7 @@ read_vset_stuff(void)
 
     /* Move to the next one (multi-order) */
     ref = VSgetid(fid, ref);
-    if (ref == FAIL) {
-        num_errs++;
-        printf(">>> VSgetid was unable to find multi-order Vdata\n");
-    }
+    CHECK(ref, FAIL, "VSgetid was unable to find multi-order Vdata");
 
     /* read in the first data and verify metadata and contents */
     vs1 = VSattach(fid, ref, "r");
@@ -1021,10 +935,7 @@ read_vset_stuff(void)
     }
 
     status = VSinquire(vs1, &count, &intr, fields, &sz, vsname);
-    if (status == FAIL) {
-        num_errs++;
-        printf(">>> VSinquire failed on multi-order Vdata\n");
-    }
+    CHECK(status, FAIL, "VSinquire failed on multi-order Vdata");
 
     if (count != 10) {
         num_errs++;
@@ -1245,16 +1156,14 @@ done:
 }
 
 /*
-   Testing VSdelete for vdatas.
-   Modification:
-        2011/12/22: added a test for VSgetexternalinfo on non-external vdata.
- */
-static void
-test_vsdelete(void)
-{
+   Testing VSdelete for vdatas and VSgetexternalinfo on non-external vdata.
+*/
 #define FIELD_NAME     "Field Entries"
 #define NUMBER_OF_ROWS 10
 #define ORDER          3
+static void
+test_vsdelete(void)
+{
     int32 fid      = FAIL;
     int32 vdata_id = FAIL;
     int32 status;
@@ -1391,7 +1300,9 @@ done:
     return;
 }
 
-/* Testing Vdelete for vgroups. */
+/*
+   Testing Vdelete for vgroups.
+*/
 static void
 test_vdelete(void)
 {
@@ -1502,7 +1413,9 @@ done:
     return;
 }
 
-/* Testing Vdeletetagref() for vgroups. */
+/*
+   Testing Vdeletetagref() for vgroups.
+*/
 static void
 test_vdeletetagref(void)
 {
@@ -1692,6 +1605,9 @@ done:
     return;
 }
 
+/*
+   Testing behavior of empty vdata.
+*/
 static void
 test_emptyvdata(void)
 {
@@ -1763,7 +1679,7 @@ test_emptyvdata(void)
 
     /* Verify that VSgetfields will return FAIL when passing in a NULL
        for field name list (from bug #554), although this might never
-       happen - BMR 5/17/01 */
+       happen */
     status = VSgetfields(vs1, NULL);
     VERIFY(status, FAIL, "VSgetfields");
 
@@ -1811,10 +1727,7 @@ test_emptyvdata(void)
     CHECK(status, FAIL, "VSfdefine");
 
     status = VSsetfields(vs1, FIELD1 "," FIELD2);
-    if (status == FAIL) {
-        num_errs++;
-        printf(">>> Vsetfields failed for %s\n", vsname);
-    }
+    CHECK(status, FAIL, "VSsetfields");
 
     status = VSdetach(vs1);
     CHECK(status, FAIL, "Vdetach");
@@ -1879,14 +1792,17 @@ done:
     return;
 }
 
+/*
+   Testing vgroups with long name and class.
+*/
 static void
 test_vglongnames(void)
 {
-    int32  status;     /* Status values from routines */
-    int32  fid = FAIL; /* File ID */
-    int32  vg1 = FAIL; /* Vdata ID */
-    int32  ref;        /* Vdata ref */
-    uint16 name_len;   /* Length of a vgroup's name or class name */
+    int32  status;       /* Status values from routines */
+    int32  fid = FAIL;   /* File ID */
+    int32  vg1 = FAIL;   /* Vdata ID */
+    int32  ref;          /* Vdata ref */
+    size_t buf_size = 0; /* Size for name or class buffer */
     char  *vgname = NULL, *vgclass = NULL;
 
     /* Open the HDF file. */
@@ -1948,40 +1864,40 @@ test_vglongnames(void)
     CHECK(vg1, FAIL, "VSattach");
 
     /* get the vgroup's name */
-    status = Vgetnamelen(vg1, &name_len);
-    CHECK(status, FAIL, "Vgetnamelen");
+    status = Vgetname(vg1, NULL, &buf_size);
+    CHECK(status, FAIL, "Vgetname");
 
-    vgname = (char *)malloc(sizeof(char) * (name_len + 1));
+    vgname = (char *)malloc(sizeof(char) * (buf_size + 1));
     CHECK_ALLOC(vgname, "vgname", "test_vglongnames");
 
-    status = Vgetname(vg1, vgname);
-    CHECK(status, FAIL, "VSgetname");
+    buf_size++;
+    status = Vgetname(vg1, vgname, &buf_size);
+    CHECK(status, FAIL, "Vgetname");
 
     if (strcmp(vgname, VG_LONGNAME)) {
         num_errs++;
         printf(">>> Got bogus Vgroup name : %s\n", vgname);
     }
 
-    free(vgname);
-    vgname = NULL;
+    HDfreenclear(vgname);
 
     /* get the vgroup's class */
-    status = Vgetclassnamelen(vg1, &name_len);
-    CHECK(status, FAIL, "Vgetnamelen");
+    status = Vgetclass(vg1, NULL, &buf_size);
+    CHECK(status, FAIL, "Vgetclass");
 
-    vgclass = (char *)malloc(sizeof(char) * (name_len + 1));
+    vgclass = (char *)malloc(sizeof(char) * (buf_size + 1));
     CHECK_ALLOC(vgclass, "vgclass", "test_vglongnames");
 
-    status = Vgetclass(vg1, vgclass);
-    CHECK(status, FAIL, "VSgetclass");
+    buf_size++;
+    status = Vgetclass(vg1, vgclass, &buf_size);
+    CHECK(status, FAIL, "Vgetclass");
 
     if (strcmp(vgclass, VG_LONGCLASS)) {
         num_errs++;
         printf(">>> Got bogus Vgroup class : %s\n", vgclass);
     }
 
-    free(vgclass);
-    vgclass = NULL;
+    HDfreenclear(vgclass);
 
     status = Vdetach(vg1);
     CHECK(status, FAIL, "Vdetach");
@@ -1995,40 +1911,40 @@ test_vglongnames(void)
     CHECK(vg1, FAIL, "VSattach");
 
     /* get the vgroup's name */
-    status = Vgetnamelen(vg1, &name_len);
-    CHECK(status, FAIL, "Vgetnamelen");
+    status = Vgetname(vg1, NULL, &buf_size);
+    CHECK(status, FAIL, "Vgetname");
 
-    vgname = (char *)malloc(sizeof(char) * (name_len + 1));
+    vgname = (char *)malloc(sizeof(char) * (buf_size + 1));
     CHECK_ALLOC(vgname, "vgname", "test_vglongnames");
 
-    status = Vgetname(vg1, vgname);
-    CHECK(status, FAIL, "VSgetname");
+    buf_size++;
+    status = Vgetname(vg1, vgname, &buf_size);
+    CHECK(status, FAIL, "Vgetname");
 
     if (strcmp(vgname, VGROUP1)) {
         num_errs++;
         printf(">>> Got bogus Vgroup name : %s\n", vgname);
     }
 
-    free(vgname);
-    vgname = NULL;
+    HDfreenclear(vgname);
 
     /* get the vgroup's class */
-    status = Vgetclassnamelen(vg1, &name_len);
-    CHECK(status, FAIL, "Vgetnamelen");
+    status = Vgetclass(vg1, NULL, &buf_size);
+    CHECK(status, FAIL, "Vgetclass");
 
-    vgclass = (char *)malloc(sizeof(char) * (name_len + 1));
+    vgclass = (char *)malloc(sizeof(char) * (buf_size + 1));
     CHECK_ALLOC(vgclass, "vgclass", "test_vglongnames");
 
-    status = Vgetclass(vg1, vgclass);
-    CHECK(status, FAIL, "VSgetclass");
+    buf_size++;
+    status = Vgetclass(vg1, vgclass, &buf_size);
+    CHECK(status, FAIL, "Vgetclass");
 
     if (strcmp(vgclass, VG_LONGCLASS)) {
         num_errs++;
         printf(">>> Got bogus Vgroup class : %s\n", vgclass);
     }
 
-    free(vgclass);
-    vgclass = NULL;
+    HDfreenclear(vgclass);
 
     status = Vdetach(vg1);
     CHECK(status, FAIL, "Vdetach");
@@ -2054,6 +1970,9 @@ done:
     return;
 }
 
+/*
+   Testing Vgetvgroups.
+*/
 #define USERVGROUPS "tuservgs.hdf"
 #define NUM_VGROUPS 10
 static void
@@ -2393,19 +2312,30 @@ done:
     return;
 }
 
-int
-check_vgs(int32 id, unsigned start_vg, unsigned n_vgs,
-          const char *ident_text,  /* just for debugging, remove when done */
-          int         resultcount, /* expected number of vgroups */
-          uint16     *resultarray)     /* array containing expected values */
-{
-    uint16 *refarray = NULL;
-    int     count    = 0, ii;
-    char    message[30];
-    int     ret_value = SUCCEED;
+/*******************************************************************************
+NAME
+   check_vgs
 
-    strcpy(message, "Vgetvgroups: ");
-    strcat(message, ident_text);
+DESCRIPTION
+   Retrieves the refs of vgroups contained in the vgroup/file identified by
+   'id', starting at index 'start_vg' and retrieving up to 'n_vgs' of them
+   (or all of them, if 'n_vgs' is 0), and verifies the retrieved refs against
+   the expected values in 'resultarray'.
+
+RETURNS
+   SUCCEED/FAIL
+
+*******************************************************************************/
+static int
+check_vgs(int32    id,          /* IN: vgroup or file key */
+          unsigned start_vg,    /* IN: index of first vgroup to retrieve */
+          unsigned n_vgs,       /* IN: number of vgroups to retrieve, or 0 for all */
+          int      resultcount, /* IN: expected number of vgroups */
+          uint16  *resultarray /* IN: array containing expected ref values */)
+{
+    uint16 *refarray  = NULL;
+    int     count     = 0, ii;
+    int     ret_value = SUCCEED;
 
     /* Get and verify the number of vgroups in the file */
     count = Vgetvgroups(id, start_vg, n_vgs, NULL);
@@ -2414,10 +2344,7 @@ check_vgs(int32 id, unsigned start_vg, unsigned n_vgs,
 
     /* Allocate space to retrieve the reference numbers of 'count' vgroups */
     refarray = (uint16 *)malloc(sizeof(uint16) * (size_t)count);
-    if (refarray == NULL) {
-        fprintf(stderr, "check_vgs: Allocation refarray failed\n");
-        return -1;
-    }
+    CHECK_ALLOC(refarray, "refarray", "check_vgs");
 
     /* Get all the vgroups in the file */
     count = Vgetvgroups(id, start_vg, (unsigned)count, refarray);
@@ -2425,9 +2352,11 @@ check_vgs(int32 id, unsigned start_vg, unsigned n_vgs,
     VERIFY(count, resultcount, "Vgetvgroups");
 
     for (ii = 0; ii < count; ii++)
-        if (refarray[ii] != resultarray[ii])
-            fprintf(stderr, "%s: at index %d - read value=%d, should be %d\n", ident_text, ii, refarray[ii],
+        if (refarray[ii] != resultarray[ii]) {
+            num_errs++;
+            fprintf(stderr, "check_vgs: at index %d - read value=%d, should be %d\n", ii, refarray[ii],
                     resultarray[ii]);
+        }
 
     free(refarray);
     refarray = NULL;
@@ -2438,41 +2367,51 @@ done:
     return ret_value;
 }
 
-static int
-check_vds(int32 id, unsigned start_vd, unsigned n_vds,
-          const char *ident_text,  /* just for debugging, remove when done */
-          int         resultcount, /* expected number of vdatas */
-          uint16     *resultarray)     /* array containing expected values */
-{
-    uint16 *refarray = NULL;
-    int     count    = 0, ii;
-    char    message[30];
-    int     ret_value = SUCCEED;
+/*******************************************************************************
+NAME
+   check_vds
 
-    strcpy(message, "VSgetvdatas: ");
-    strcat(message, ident_text);
+DESCRIPTION
+   Retrieves the refs of vdatas contained in the vgroup/file identified by
+   'id', starting at index 'start_vd' and retrieving up to 'n_vds' of them
+   (or all of them, if 'n_vds' is 0), and verifies the retrieved refs against
+   the expected values in 'resultarray'.
+
+RETURNS
+   SUCCEED/FAIL
+
+*******************************************************************************/
+static int
+check_vds(int32    id,          /* IN: vgroup or file key */
+          unsigned start_vd,    /* IN: index of first vdata to retrieve */
+          unsigned n_vds,       /* IN: number of vdatas to retrieve, or 0 for all */
+          int      resultcount, /* IN: expected number of vdatas */
+          uint16  *resultarray /* IN: array containing expected ref values */)
+{
+    uint16 *refarray  = NULL;
+    int     count     = 0, ii;
+    int     ret_value = SUCCEED;
 
     /* Get and verify the number of vdatas in the file */
     count = VSgetvdatas(id, start_vd, n_vds, NULL);
-    CHECK(count, FAIL, message);
-    VERIFY(count, resultcount, message);
+    CHECK(count, FAIL, "VSgetvdatas");
+    VERIFY(count, resultcount, "VSgetvdatas");
 
     /* Allocate space to retrieve the reference numbers of 'count' vdatas */
     refarray = (uint16 *)malloc(sizeof(uint16) * (size_t)count);
-    if (refarray == NULL) {
-        fprintf(stderr, "check_vds: Allocation refarray failed\n");
-        return -1;
-    }
+    CHECK_ALLOC(refarray, "refarray", "check_vds");
 
     /* Get all the vdatas in the file */
     count = VSgetvdatas(id, start_vd, (unsigned)count, refarray);
-    CHECK(count, FAIL, message);
-    VERIFY(count, resultcount, message);
+    CHECK(count, FAIL, "VSgetvdatas");
+    VERIFY(count, resultcount, "VSgetvdatas");
 
     for (ii = 0; ii < count; ii++)
-        if (refarray[ii] != resultarray[ii])
-            fprintf(stderr, "%s: at index %d - read value=%d, should be %d\n", ident_text, ii, refarray[ii],
+        if (refarray[ii] != resultarray[ii]) {
+            num_errs++;
+            fprintf(stderr, "check_vds: at index %d - read value=%d, should be %d\n", ii, refarray[ii],
                     resultarray[ii]);
+        }
 
     free(refarray);
     refarray = NULL;
@@ -2714,14 +2653,14 @@ test_getvdatas(void)
     /* Test getting all vgroups in the file: fid, start_vg=0, n_vgs=0 */
     {
         uint16 result[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
-        status          = check_vgs(fid, 0, 0, "file, 0, 0", NUM_VGROUPS, result);
+        status          = check_vgs(fid, 0, 0, NUM_VGROUPS, result);
         CHECK(status, FAIL, "Vgetvgroups fid");
     }
 
     /* Test getting all vdatas in the file: fid, start_vd=0, n_vds=0 */
     {
         uint16 result[] = {12, 13, 14, 15, 16, 17, 18, 19};
-        status          = check_vds(fid, 0, 0, "file, 0, 0", NUM_VDATAS, result);
+        status          = check_vds(fid, 0, 0, NUM_VDATAS, result);
         CHECK(status, FAIL, "VSgetvdatas fid");
     }
 
@@ -2731,14 +2670,14 @@ test_getvdatas(void)
     /* Test getting vgroups in vg0: vgroup0_id, start_vd=0, n_vds=0 */
     {
         uint16 result[] = {9, 11};
-        status          = check_vgs(vgroup0_id, 0, 0, "vgroup0_id, 0, 0", 2, result);
+        status          = check_vgs(vgroup0_id, 0, 0, 2, result);
         CHECK(status, FAIL, "VSgetvgroups vgroup0_id");
     }
 
     /* Test getting vdatas in vg0: vgroup0_id, start_vd=0, n_vds=0 */
     {
         uint16 result[] = {13, 14};
-        status          = check_vds(vgroup0_id, 0, 0, "vgroup0_id, 0, 0", 2, result);
+        status          = check_vds(vgroup0_id, 0, 0, 2, result);
         CHECK(status, FAIL, "VSgetvdatas fid");
     }
 
@@ -2748,14 +2687,14 @@ test_getvdatas(void)
     /* Test getting vgroups in vg1: vgroup1_id, start_vd=0, n_vds=0 */
     {
         uint16 result[] = {6, 8}; /* vg4 and vg6 */
-        status          = check_vgs(vgroup1_id, 0, 0, "vgroup1_id, 0, 0", 2, result);
+        status          = check_vgs(vgroup1_id, 0, 0, 2, result);
         CHECK(status, FAIL, "Vgetvgroups vgroup1_id");
     }
 
     /* Test getting vdatas in vg1: vgroup1_id, start_vd=0, n_vds=0 */
     {
         uint16 result[] = {19}; /* vd7 */
-        status          = check_vds(vgroup1_id, 0, 0, "vgroup1_id, 0, 0", 1, result);
+        status          = check_vds(vgroup1_id, 0, 0, 1, result);
         CHECK(status, FAIL, "VSgetvdata vgroup1_id");
     }
 
@@ -2765,14 +2704,14 @@ test_getvdatas(void)
     /* Test getting vgroups in vg6: vgroup6_id, start_vd=0, n_vds=0 */
     {
         uint16 result[] = {4}; /* vg2 */
-        status          = check_vgs(vgroup6_id, 0, 0, "vgroup6_id, 0, 0", 1, result);
+        status          = check_vgs(vgroup6_id, 0, 0, 1, result);
         CHECK(status, FAIL, "Vgetvgroups vgroup6_id");
     }
 
     /* Test getting vdatas in vg6: vgroup6_id, start_vd=0, n_vds=0 */
     {
         uint16 result[] = {18}; /* vd6 */
-        status          = check_vds(vgroup6_id, 0, 0, "vgroup6_id, 0, 0", 1, result);
+        status          = check_vds(vgroup6_id, 0, 0, 1, result);
         CHECK(status, FAIL, "VSgetvdata vgroup6_id");
     }
 
@@ -2797,14 +2736,14 @@ test_getvdatas(void)
     /* Test getting vdatas in vg9: vgroup9_id, start_vd=2, n_vds=2 */
     {
         uint16 result[] = {17}; /* vd5 */
-        status          = check_vds(vgroup9_id, 2, 2, "vgroup9_id, 2, 2", 1, result);
+        status          = check_vds(vgroup9_id, 2, 2, 1, result);
         CHECK(status, FAIL, "VSgetvdata vgroup9_id");
     }
 
     /* Test getting vgroups in vg1: vgroup1_id, start_vd=1, n_vds=3 */
     {
         uint16 result[] = {8}; /* vg6 */
-        status          = check_vgs(vgroup1_id, 1, 3, "vgroup1_id, 1, 3", 1, result);
+        status          = check_vgs(vgroup1_id, 1, 3, 1, result);
         CHECK(status, FAIL, "Vgetvgroups vgroup1_id");
     }
 
@@ -3002,24 +2941,6 @@ test_extfile(void)
     /* Create the first vdata */
     vdata1_id = VSattach(fid, vdata1_ref, "r");
     CHECK(vdata1_id, FAIL, "VSattach");
-
-    { /* This is an old test, will be removed when VSgetexternalfile is */
-        /* Get the length of the external file name first - VSgetexternalfile
-           is deprecated as of 4.2.7 */
-        name_len = VSgetexternalfile(vdata1_id, 0, NULL, NULL);
-        VERIFY(name_len, (int)strlen(EXTERNAL_FILE), "VSgetexternalfile");
-
-        extfile_name = (char *)malloc(sizeof(char) * (size_t)(name_len + 1));
-        CHECK_ALLOC(extfile_name, "extfile_name", "test_extfile");
-
-        /* Old function: Get the external file name - VSgetexternalfile
-           is deprecated as of 4.2.7 */
-        name_len = VSgetexternalfile(vdata1_id, (unsigned)name_len + 1, extfile_name, &offset);
-        VERIFY(name_len, (int)strlen(EXTERNAL_FILE), "VSgetexternalfile");
-        VERIFY_CHAR(extfile_name, EXTERNAL_FILE, "VSgetexternalfile");
-        free(extfile_name);
-        extfile_name = NULL;
-    } /* old test */
 
     /* Get the length of the external file name first */
     name_len = VSgetexternalinfo(vdata1_id, 0, NULL, NULL, NULL);

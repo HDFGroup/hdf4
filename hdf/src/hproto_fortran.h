@@ -944,11 +944,11 @@ HDFFCLIBAPI intf nvatchc(intf *f, intf *vgid, _fcd accesstype);
 
 HDFFCLIBAPI intf nvdtchc(intf *vkey);
 
-HDFFCLIBAPI intf nvgnamc(intf *vkey, _fcd vgname);
+HDFFCLIBAPI intf nvgnamc(intf *vkey, _fcd vgname, intf *vgnamelen);
 
-HDFFCLIBAPI intf nvgclsc(intf *vkey, _fcd vgclass);
+HDFFCLIBAPI intf nvgclsc(intf *vkey, _fcd vgclass, intf *vgclasslen);
 
-HDFFCLIBAPI intf nvinqc(intf *vkey, intf *nentries, _fcd vgname);
+HDFFCLIBAPI intf nvinqc(intf *vkey, intf *nentries, _fcd vgname, intf *vgnamelen);
 
 HDFFCLIBAPI intf nvdeletec(intf *f, intf *vkey);
 

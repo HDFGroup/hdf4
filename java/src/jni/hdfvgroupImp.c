@@ -119,12 +119,10 @@ Java_hdf_hdflib_HDFLibrary_Vgetclass(JNIEnv *env, jclass clss, jlong vgroup_id, 
 {
     int32   rval = FAIL;
     char   *data = NULL;
+    size_t  buf_size = 0;
     jstring rstring;
 
     UNUSED(clss);
-
-    if ((data = (char *)malloc(H4_MAX_NC_CLASS + 1)) == NULL)
-        H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vgetclass: failed to allocate data buffer");
 
     if (hdfclassname == NULL)
         H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vgetclass: hdfclassname is NULL");
@@ -132,11 +130,16 @@ Java_hdf_hdflib_HDFLibrary_Vgetclass(JNIEnv *env, jclass clss, jlong vgroup_id, 
     if (ENVPTR->GetArrayLength(ENVONLY, hdfclassname) < 1)
         H4_BAD_ARGUMENT_ERROR(ENVONLY, "Vgetclass: output array hdfclassname < order 1");
 
-    /* get the class name of the vgroup */
-    if ((rval = Vgetclass((int32)vgroup_id, data)) < 0)
+    /* query the actual length of the class name first */
+    if ((rval = Vgetclass((int32)vgroup_id, NULL, &buf_size)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
-    data[H4_MAX_NC_CLASS] = '\0';
+    if ((data = (char *)malloc(buf_size + 1)) == NULL)
+        H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vgetclass: failed to allocate data buffer");
+
+    /* get the null-terminated class name of the vgroup */
+    if ((rval = Vgetclass((int32)vgroup_id, data, &buf_size)) == FAIL)
+
     /* convert it to java string */
     if (NULL == (rstring = ENVPTR->NewStringUTF(ENVONLY, data)))
         CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
@@ -155,14 +158,12 @@ done:
 JNIEXPORT void JNICALL
 Java_hdf_hdflib_HDFLibrary_Vgetname(JNIEnv *env, jclass clss, jlong vgroup_id, jobjectArray hdfname)
 {
-    int32   rval = FAIL;
-    char   *data = NULL;
+    int32   rval     = FAIL;
+    char   *data     = NULL;
+    size_t  buf_size = 0;
     jstring rstring;
 
     UNUSED(clss);
-
-    if ((data = (char *)malloc(H4_MAX_GR_NAME + 1)) == NULL)
-        H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vgetname: failed to allocate data buffer");
 
     if (hdfname == NULL)
         H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vgetname: hdfname is NULL");
@@ -170,10 +171,16 @@ Java_hdf_hdflib_HDFLibrary_Vgetname(JNIEnv *env, jclass clss, jlong vgroup_id, j
     if (ENVPTR->GetArrayLength(ENVONLY, hdfname) < 1)
         H4_BAD_ARGUMENT_ERROR(ENVONLY, "Vgetname: array hdfname < order 1");
 
-    if ((rval = Vgetname((int32)vgroup_id, data)) == FAIL)
+    /* query the actual name length first */
+    if ((rval = Vgetname((int32)vgroup_id, NULL, &buf_size)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
-    data[H4_MAX_GR_NAME] = '\0';
+    if ((data = (char *)malloc(buf_size + 1)) == NULL)
+        H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vgetname: failed to allocate data buffer");
+
+    /* get the null-terminated name of the vgroup */
+    if ((rval = Vgetname((int32)vgroup_id, data, &buf_size)) == FAIL)
+
     /* convert it to java string */
     if (NULL == (rstring = ENVPTR->NewStringUTF(ENVONLY, data)))
         CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
@@ -469,16 +476,14 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_Vinquire(JNIEnv *env, jclass clss, jlong vgroup_id, jintArray n_entries,
                                     jobjectArray vgroup_name)
 {
-    int      rval   = FAIL;
-    jint    *theArg = NULL;
-    char    *data   = NULL;
+    int    rval     = FAIL;
+    jint  *theArg   = NULL;
+    char  *data     = NULL;
+    size_t buf_size = 0;
     jstring  rstring;
     jboolean isCopy;
 
     UNUSED(clss);
-
-    if ((data = (char *)malloc(H4_MAX_NC_NAME + 1)) == NULL)
-        H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vinquire: failed to allocate data buffer");
 
     if (n_entries == NULL)
         H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vinquire: n_entries is NULL");
@@ -494,10 +499,16 @@ Java_hdf_hdflib_HDFLibrary_Vinquire(JNIEnv *env, jclass clss, jlong vgroup_id, j
 
     PIN_INT_ARRAY(ENVONLY, n_entries, theArg, &isCopy, "Vinquire:  n_entries not pinned");
 
-    if ((rval = Vinquire((int32)vgroup_id, (int32 *)&(theArg[0]), data)) == FAIL)
+    /* query the actual name length first */
+    if ((rval = Vinquire((int32)vgroup_id, (int32 *)&(theArg[0]), &buf_size, NULL)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
-    data[H4_MAX_NC_NAME] = '\0';
+    if ((data = (char *)malloc(buf_size + 1)) == NULL)
+        H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vinquire: failed to allocate data buffer");
+
+    if ((rval = Vinquire((int32)vgroup_id, (int32 *)&(theArg[0]), &buf_size, data)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
     /* convert it to java string */
     if (NULL == (rstring = ENVPTR->NewStringUTF(ENVONLY, data)))
         CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);

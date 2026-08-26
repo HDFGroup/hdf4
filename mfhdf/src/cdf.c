@@ -15,11 +15,12 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "nc_priv.h"
+#include "vg_priv.h"
 #include "herr_priv.h"
 
 #include "hfile_priv.h"
 
-int32 hdf_get_magicnum(const char *filename);
+static int32 hdf_get_magicnum(const char *filename);
 
 static int hdf_num_attrs(NC   *handle, /* IN: handle to SDS */
                          int32 vg /* IN: ref of top Vgroup */);
@@ -79,6 +80,13 @@ NC_free_cdf(NC *handle)
     }
 
 done:
+    if (ret_value == FAIL) {
+        if (handle->file_type == HDF_FILE) {
+            Vend(handle->hdf_file);
+            Hclose(handle->hdf_file);
+        }
+    }
+
     return ret_value;
 }
 
@@ -88,7 +96,7 @@ done:
   can be used to determine the format type of a file, such as HDF, CDF, or
   netCDF/64-bit.
 */
-int32
+static int32
 hdf_get_magicnum(const char *filename)
 {
     hdf_file_t fp;
@@ -1153,15 +1161,16 @@ done:
 int
 hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
 {
-    char     vgname[H4_MAX_NC_NAME]   = "";
-    char     vsclass[H4_MAX_NC_CLASS] = "";
-    char     vgclass[H4_MAX_NC_CLASS] = "";
     int      id, count, i, found;
     int      sub_id;
+    char    *vgname                   = NULL; /* name of a vgroup, used by new Vgetname */
+    char    *vgclass                  = NULL; /* class of a vgroup, used by new Vgetclass */
+    size_t   buf_size                 = 0;    /* length of the name or class of a vgroup */
+    char     vsclass[H4_MAX_NC_CLASS] = "";   /* name of vdata */
     int32    dim_size;
     NC_dim **dimension = NULL;
-    int32    dim, entries;
-    int32    vs;
+    int32    dimvg     = -1;
+    int32    vs        = -1;
     int      ret_value = SUCCEED;
 
     (void)xdrs;
@@ -1181,34 +1190,40 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
     }
 
     /*
-     * Look through for a Vgroup of class _HDF_DIMENSION
+     * Look through cdf vg for a Vgroup of class _HDF_[U]DIMENSION, then in that dim
+     * Vgroup, look for the Vdata of class DIM_VALS01 or DIM_VALS to get the size
      */
     while ((id = Vgetnext(vg, id)) != FAIL) {
         if (Visvg(vg, id)) {
-            dim = Vattach(handle->hdf_file, id, "r");
-            if (dim == FAIL)
-                continue; /* why do we continue? does this failure here
-                                not matter? -GV */
-            if (Vgetclass(dim, vgclass) == FAIL)
+            dimvg = Vattach(handle->hdf_file, id, "r");
+            if (dimvg == FAIL)
+                continue; /* to the next vg */
+
+            /* Get the class of the vgroup, should be a dimension */
+            vgclass = vgetvgclass(dimvg);
+            if (!vgclass)
                 HGOTO_FAIL(FAIL);
 
+            /* Process if the dimension vgroup */
             if (!strcmp(vgclass, _HDF_DIMENSION) || !strcmp(vgclass, _HDF_UDIMENSION)) {
                 int is_dimval, is_dimval01;
 
-                /* init both flags to FALSE  */
+                /* Init both flags to FALSE  */
                 is_dimval   = FALSE;
                 is_dimval01 = FALSE;
 
-                if (Vinquire(dim, &entries, vgname) == FAIL)
+                /* Get the vgroup name */
+                vgname = vgetvgname(dimvg);
+                if (!vgname)
                     HGOTO_FAIL(FAIL);
 
                 /*
-                 * look through for a Vdata of class DIM_VALS01 and/or DIM_VALS
+                 * Look through for a Vdata of class DIM_VALS01 and/or DIM_VALS
                  * to get size
                  */
                 sub_id = -1;
-                while (((sub_id = Vgetnext(dim, sub_id)) != FAIL)) {
-                    if (Visvs(dim, sub_id)) {
+                while (((sub_id = Vgetnext(dimvg, sub_id)) != FAIL)) {
+                    if (Visvs(dimvg, sub_id)) {
                         vs = VSattach(handle->hdf_file, sub_id, "r");
                         if (vs == FAIL)
                             HGOTO_FAIL(FAIL);
@@ -1285,7 +1300,7 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
                                 dimension[count]->dim00_compat = 0;
 
                             /* record vgroup id here so we can use later */
-                            /* Note: this is only for later file -BMR */
+                            /* Note: this is only for later file */
                             dimension[count]->vgid = id;
 
                             count++;
@@ -1294,8 +1309,13 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
                 }         /* while in dimension vg  */
             }             /* is vg  */
 
-            if (Vdetach(dim) == FAIL)
+            if (Vdetach(dimvg) == FAIL)
                 HGOTO_FAIL(FAIL);
+            dimvg = FAIL;
+            free(vgclass);
+            vgclass = NULL;
+            free(vgname);
+            vgname = NULL;
         } /* while */
     }
 
@@ -1309,6 +1329,8 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
 
 done:
     if (ret_value == FAIL) {
+        if (dimvg != -1)
+            Vdetach(dimvg);
         if (handle->dims != NULL) {
             NC_free_array(handle->dims);
             handle->dims = NULL;
@@ -1316,6 +1338,8 @@ done:
     }
 
     free(dimension);
+    free(vgname);
+    free(vgclass);
 
     return ret_value;
 } /* hdf_read_dims */
@@ -1505,11 +1529,8 @@ done:
 int
 hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
 {
-    char vgname[H4_MAX_NC_NAME]  = "";
-    char subname[H4_MAX_NC_NAME] = "";
-    char class[H4_MAX_NC_CLASS]  = "";
-    NC_var      **variables      = NULL;
-    NC_var       *vp             = NULL;
+    NC_var      **variables = NULL;
+    NC_var       *vp        = NULL;
     int           ndims, *dims = NULL;
     uint8         ntstring[4];
     int           data_ref, is_rec_var, vg_size, count;
@@ -1517,7 +1538,6 @@ hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
     int32         HDFtype = FAIL;
     int32         tag;
     int32         id;
-    int32         n;
     int32         sub_id;
     int32         entries;
     int32         ndg_ref = 0;
@@ -1526,8 +1546,13 @@ hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
     hdf_vartype_t var_type = UNKNOWN;
     int           t, i;
     nc_type       type;
-    int32         var, sub;
-    int           ret_value = SUCCEED;
+    int32         varvg, subvg;
+    char         *vgname     = NULL;
+    char         *vgclass    = NULL;
+    char         *dimvgname  = NULL;
+    char         *dimvgclass = NULL;
+    size_t        buf_size   = 0; /* Length of buffer for name or class */
+    int           ret_value  = SUCCEED;
 
     count = 0;
     id    = -1;
@@ -1561,17 +1586,18 @@ hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
         }
 
         if (tag == DFTAG_VG) {
-            var = Vattach(handle->hdf_file, id, "r");
-            if (var == FAIL)
-                continue; /* isn't this bad? -GV */
+            varvg = Vattach(handle->hdf_file, id, "r");
+            if (varvg == FAIL)
+                continue; /* skip a bad var */
 
-            if (Vgetclass(var, class) == FAIL) {
+            /* Get the class of the variable vgroup */
+            vgclass = vgetvgclass(varvg);
+            if (!vgclass)
                 HGOTO_FAIL(FAIL);
-            }
 
             /* Process as below if this VGroup represents a Variable or
             a Coordinate Variable */
-            if (!strcmp(class, _HDF_VARIABLE)) {
+            if (!strcmp(vgclass, _HDF_VARIABLE)) {
 
                 /*
                  * We have found a VGroup representing a Variable or a
@@ -1584,59 +1610,62 @@ hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
                 rag_ref    = 0;
                 is_rec_var = FALSE;
 
-                if (Vinquire(var, &n, vgname) == FAIL) {
+                /* Get the number of entries in the variable vgroup */
+                if (Vinquire(varvg, &entries, NULL, &buf_size) == FAIL)
                     HGOTO_FAIL(FAIL);
-                }
 
                 /*
                  * Loop through contents looking for dimensions
                  */
-                for (t = 0; t < n; t++) {
-                    char dimclass[H4_MAX_NC_CLASS] = "";
-                    char vsclass[H4_MAX_NC_CLASS]  = "";
-                    if (Vgettagref(var, t, &tag, &sub_id) == FAIL) {
+                for (t = 0; t < entries; t++) {
+                    char vsclass[H4_MAX_NC_CLASS] = "";
+                    if (Vgettagref(varvg, t, &tag, &sub_id) == FAIL) {
                         HGOTO_FAIL(FAIL);
                     }
 
                     switch (tag) {
                         case DFTAG_VG: /* ------ V G R O U P ---------- */
-                            sub = Vattach(handle->hdf_file, sub_id, "r");
-                            if (FAIL == sub) {
+                            subvg = Vattach(handle->hdf_file, sub_id, "r");
+                            if (FAIL == subvg) {
                                 HGOTO_FAIL(FAIL);
                             }
-
-                            if (FAIL == Vgetclass(sub, dimclass)) {
+                            /* Get the class of the dimension vgroup */
+                            dimvgclass = vgetvgclass(subvg);
+                            if (!dimvgclass)
                                 HGOTO_FAIL(FAIL);
-                            }
 
-                            if (!strcmp(dimclass, _HDF_DIMENSION) || !strcmp(dimclass, _HDF_UDIMENSION)) {
+                            if (!strcmp(dimvgclass, _HDF_DIMENSION) || !strcmp(dimvgclass, _HDF_UDIMENSION)) {
 
-                                if (!strcmp(dimclass, _HDF_UDIMENSION))
+                                /* Mark if the dimension is an unlimited dimension */
+                                if (!strcmp(dimvgclass, _HDF_UDIMENSION))
                                     is_rec_var = TRUE;
 
-                                if (FAIL == Vinquire(sub, &entries, subname)) {
+                                /* Get the name of the dimension vg */
+                                dimvgname = vgetvgname(subvg);
+                                if (!dimvgname)
                                     HGOTO_FAIL(FAIL);
-                                }
 
-                                dims[ndims] = (int)NC_dimid(handle, subname);
-                                if (-1 == dims[ndims]) /* should change to FAIL */
-                                {
+                                dims[ndims] = NC_dimid(handle, dimvgname);
+                                free(dimvgname);
+                                if (dims[ndims] == -1)
                                     HGOTO_FAIL(FAIL);
-                                }
 
+                                /* Increment the number of dimensions in varvg */
                                 ndims++;
                             }
-                            if (FAIL == Vdetach(sub)) {
+                            if (FAIL == Vdetach(subvg)) {
                                 HGOTO_FAIL(FAIL);
                             }
+                            subvg = FAIL;
+                            HDfreenclear(dimvgclass);
 
                             break;
                         case DFTAG_VH: /* ----- V D A T A ----- */
-                            sub = VSattach(handle->hdf_file, sub_id, "r");
-                            if (FAIL == sub)
+                            subvg = VSattach(handle->hdf_file, sub_id, "r");
+                            if (FAIL == subvg)
                                 HGOTO_FAIL(FAIL);
 
-                            if (FAIL == VSgetclass(sub, vsclass))
+                            if (FAIL == VSgetclass(subvg, vsclass))
                                 HGOTO_FAIL(FAIL);
 
                             if (!strcmp(vsclass, _HDF_SDSVAR))
@@ -1646,7 +1675,7 @@ hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
                             else
                                 var_type = UNKNOWN;
 
-                            if (FAIL == VSdetach(sub))
+                            if (FAIL == VSdetach(subvg))
                                 HGOTO_FAIL(FAIL);
                             break;
                         case DFTAG_NDG: /* ----- NDG Tag for HDF 3.2 ----- */
@@ -1709,6 +1738,11 @@ hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
                     }
                 }
 
+                /* Get the name of the variable vgroup */
+                vgname = vgetvgname(varvg);
+                if (!vgname)
+                    HGOTO_FAIL(FAIL);
+
                 variables[count] = NC_new_var(vgname, type, ndims, dims);
                 /* BMR: put back hdf type that was set wrong by
                 NC_new_var; please refer to the cvs history of
@@ -1722,8 +1756,8 @@ hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
                 }
 
                 /* Read in the attributes if any */
-                if ((nattrs = hdf_num_attrs(handle, var)) > 0)
-                    vp->attrs = hdf_read_attrs(xdrs, handle, var);
+                if ((nattrs = hdf_num_attrs(handle, varvg)) > 0)
+                    vp->attrs = hdf_read_attrs(xdrs, handle, varvg);
                 else
                     vp->attrs = NULL;
 
@@ -1772,12 +1806,8 @@ hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
                          * Deallocate the shape info as it will be recomputed
                          *  at a higher level later
                          */
-                        free(vp->shape);
-                        free(vp->dsizes);
-                        /* Reset these two pointers to NULL after
-                            freeing.  BMR 4/11/01 */
-                        vp->shape  = NULL;
-                        vp->dsizes = NULL;
+                        HDfreenclear(vp->shape);
+                        HDfreenclear(vp->dsizes);
                     }
                     else {
                         /* Not a rec var, don't worry about it */
@@ -1789,8 +1819,12 @@ hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
 
 bad_number_type: /* ? */
 
-            if (FAIL == Vdetach(var))
+            if (FAIL == Vdetach(varvg))
                 HGOTO_FAIL(FAIL);
+            varvg = FAIL;
+
+            HDfreenclear(vgclass);
+            HDfreenclear(vgname);
 
         } /* end if DTAG_VG */
     }     /* end for vg_size */
@@ -1812,6 +1846,9 @@ done:
 
     free(variables);
     free(dims);
+    free(vgname);
+    free(vgclass);
+    free(dimvgclass);
 
     return ret_value;
 } /* hdf_read_vars */
@@ -1996,7 +2033,7 @@ done:
 int
 hdf_cdf_clobber(NC *handle)
 {
-    int32 vg, tag, ref;
+    int32 vg = FAIL, tag, ref;
     int   n, t, status;
     int   ret_value = SUCCEED;
 
@@ -2064,6 +2101,7 @@ hdf_cdf_clobber(NC *handle)
     if (FAIL == Vdetach(vg)) {
         HGOTO_FAIL(FAIL);
     }
+    vg = FAIL;
 
     status = Vdelete(handle->hdf_file, (int32)handle->vgid);
     if (FAIL == status) {
@@ -2073,6 +2111,9 @@ hdf_cdf_clobber(NC *handle)
     handle->vgid = 0; /* reset ref of SDS vgroup to invalid ref */
 
 done:
+    if (vg != FAIL)
+        Vdetach(vg);
+
     return ret_value;
 } /* hdf_cdf_clobber */
 
@@ -2097,10 +2138,10 @@ hdf_close(NC *handle)
     uint8_t  *vars = NULL;
     int       i;
     int       id, sub_id;
-    int32     vg, dim;
-    int32     vs;
-    char class[H4_MAX_NC_CLASS] = "";
-    int ret_value               = SUCCEED;
+    int32     vg = FAIL, dim = FAIL, vs = FAIL;
+    char     *vgclass                  = NULL;
+    char      vsclass[H4_MAX_NC_CLASS] = "";
+    int       ret_value                = SUCCEED;
 
     /* loop through and detach from variable data VDatas */
     if (handle->vars) {
@@ -2138,12 +2179,12 @@ hdf_close(NC *handle)
                     HGOTO_FAIL(FAIL);
                 }
 
-                if (FAIL == Vgetclass(dim, class)) {
+                vgclass = vgetvgclass(dim);
+                if (!vgclass)
                     HGOTO_FAIL(FAIL);
-                }
 
                 /* look for proper vgroup */
-                if (!strcmp(class, _HDF_UDIMENSION)) {
+                if (!strcmp(vgclass, _HDF_UDIMENSION)) {
                     sub_id = -1;
                     /* look for vdata in vgroup */
                     while ((sub_id = Vgetnext(dim, sub_id)) != FAIL) {
@@ -2154,12 +2195,12 @@ hdf_close(NC *handle)
                                 /* HEprint(stdout, 0); */
                             }
                             /* get class of vdata */
-                            if (FAIL == VSgetclass(vs, class)) {
+                            if (FAIL == VSgetclass(vs, vsclass)) {
                                 HGOTO_FAIL(FAIL);
                             }
 
                             /* are these dimension vdatas? */
-                            if (!strcmp(class, DIM_VALS) || !strcmp(class, DIM_VALS01)) { /* yes */
+                            if (!strcmp(vsclass, DIM_VALS) || !strcmp(vsclass, DIM_VALS01)) { /* yes */
                                 int32 val = handle->numrecs;
 
                                 if (FAIL == VSsetfields(vs, "Values")) {
@@ -2177,9 +2218,9 @@ hdf_close(NC *handle)
                             }
 
                             /* detach from vdata */
-                            if (FAIL == VSdetach(vs)) {
+                            if (FAIL == VSdetach(vs))
                                 HGOTO_FAIL(FAIL);
-                            }
+                            vs = FAIL;
 
                         } /* end if vdata */
                     }     /* end while looking for vdata in vgroup */
@@ -2189,17 +2230,29 @@ hdf_close(NC *handle)
                     fprintf(stderr, "hdf_close: Vdetach failed for vgroup ref %d\n", id);
                     HGOTO_FAIL(FAIL);
                 }
+                dim = FAIL;
+                HDfreenclear(vgclass);
 
             } /* end if vgroup */
         }     /* end if looking through toplevel vgroup hierarchy */
 
-        if (FAIL == Vdetach(vg)) {
+        if (FAIL == Vdetach(vg))
             HGOTO_FAIL(FAIL);
-        }
+        vg = FAIL;
 
     } /* end if we need to flush out unlimited dimensions? */
 
 done:
+    if (ret_value == FAIL) {
+        if (dim != FAIL)
+            Vdetach(dim);
+        if (vs != FAIL)
+            VSdetach(vs);
+        if (vg != FAIL)
+            Vdetach(vg);
+        free(vgclass);
+    }
+
     return ret_value;
 } /* hdf_close */
 
