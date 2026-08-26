@@ -226,10 +226,10 @@ int32
 Vstr_ref(int32 file_id, char *searched_str,          /* vg's class name */
          int is_name, int32 *find_ref, int32 *index) /* index of the vgroup w/ref# *find_ref */
 {
-    int32   vg_id     = FAIL;
-    char   *name      = NULL;
-    int32   status_32 = FAIL;
-    int32   ret_value = FAIL;
+    int32 vg_id     = FAIL;
+    char *name      = NULL;
+    int32 status_32 = FAIL;
+    int32 ret_value = FAIL;
 
     /* starting from the ref# *find_ref, search for the vgroup having a
        name or class the same as the given string searched_name; when no
