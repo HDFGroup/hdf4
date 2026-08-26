@@ -17,6 +17,25 @@ on:
         type: string
         required: false
         default: check
+    secrets:
+      APPLE_CERTS_BASE64:
+          required: true
+      APPLE_CERTS_BASE64_PASSWD:
+          required: true
+      KEYCHAIN_PASSWD:
+          required: true
+      AZURE_TENANT_ID:
+          required: true
+      AZURE_CLIENT_ID:
+          required: true
+      AZURE_CLIENT_SECRET:
+          required: true
+      AZURE_ENDPOINT:
+          required: true
+      AZURE_CODE_SIGNING_NAME:
+          required: true
+      AZURE_CERT_PROFILE_NAME:
+          required: true
 
 permissions:
   contents: read
