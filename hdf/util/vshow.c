@@ -62,11 +62,9 @@ main(int ac, char **av)
     int32   vsid = -1;
     int32   vsno = 0;
     int32   vstag;
-
-    int32  i, t, nvg, nentries, ne, nv, interlace, vsize;
-    int32 *lonevs;   /* array to store refs of all lone vdatas */
-    int32  nlone;    /* total number of lone vdatas */
-    uint16 name_len; /* length of vgroup's name or classname */
+    int32   i, t, nvg, nentries = 0, nv, interlace, vsize;
+    int32  *lonevs;   /* array to store refs of all lone vdatas */
+    int32   nlone;    /* total number of lone vdatas */
 
     char  fields[VSFIELDMAX * FIELDNAMELENMAX];
     char *vgname = NULL, *vgclass = NULL;
@@ -116,6 +114,7 @@ main(int ac, char **av)
         }
 
         /* get the vgname */
+        free(vgname);
         vgname = vgetvgname(vg);
         if (vgname == NULL || strlen(vgname) == 0) {
             free(vgname); // Safe
@@ -123,6 +122,7 @@ main(int ac, char **av)
         }
 
         /* get the vgclass */
+        free(vgclass);
         vgclass = vgetvgclass(vg);
         if (vgclass == NULL || strlen(vgclass) == 0) {
             free(vgclass); // Safe
@@ -131,12 +131,12 @@ main(int ac, char **av)
 
         if (Vinquire(vg, &nentries, 0, NULL) == FAIL)
             printf("cannot retrieve number of entries for vg id=%d\n", (int)vgid);
+        else {
+            vgotag = VQuerytag(vg);
+            vgoref = VQueryref(vg);
 
-        vgotag = VQuerytag(vg);
-        vgoref = VQueryref(vg);
-
-        printf("\nvg:%d <%d/%d> (%s {%s}) has %d entries:\n", (int)nvg, (int)vgotag, (int)vgoref, vgname,
-               vgclass, (int)nentries);
+            printf("\nvg:%d <%d/%d> (%s {%s}) has %d entries:\n", (int)nvg, (int)vgotag, (int)vgoref, vgname, vgclass, (int)nentries);
+        }
         free(vgname);
         free(vgclass);
 
@@ -183,25 +183,30 @@ main(int ac, char **av)
                 }
 
                 /* get the vgname */
+                free(vgname);
                 vgname = vgetvgname(vgt);
-                if (!vgname)
-                    if (strlen(vgname) == 0)
-                        strcpy(vgname, "NoName");
+                if (vgname == NULL || strlen(vgname) == 0) {
+                    free(vgname);
+                    vgname = strdup("NoName");
+                }
 
                 /* get the vgclass */
+                free(vgclass);
                 vgclass = vgetvgclass(vgt);
-                if (!vgclass)
-                    if (strlen(vgclass) == 0)
-                        strcpy(vgclass, "NoClass");
+                if (vgclass == NULL || strlen(vgclass) == 0) {
+                    free(vgclass);
+                    vgclass = strdup("NoClass");
+                }
 
+                nentries = 0;
                 if (Vinquire(vg, &nentries, 0, NULL) == FAIL)
                     printf("cannot retrieve number of entries for vg id=%d\n", (int)vgid);
+                else {
+                    vgotag = VQuerytag(vgt);
+                    vgoref = VQueryref(vgt);
 
-                vgotag = VQuerytag(vgt);
-                vgoref = VQueryref(vgt);
-
-                printf("  vg:%d <%d/%d> ne=%d (%s {%s})\n", (int)t, (int)vgotag, (int)vgoref, (int)ne, vgname,
-                       vgclass);
+                    printf("  vg:%d <%d/%d> nentries=%d (%s {%s})\n", (int)t, (int)vgotag, (int)vgoref, (int)nentries, vgname, vgclass);
+                }
 
                 /* Dump the attribute */
                 dumpattr(vg, fulldump, 0);
@@ -221,7 +226,7 @@ main(int ac, char **av)
                     free(name);
                 }
             }
-        } /* while */
+        }
 
         Vdetach(vg);
         nvg++;
