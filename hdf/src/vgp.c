@@ -359,10 +359,10 @@ RETURNS
 static int
 Load_vfile(HFILEID f /* IN: file handle */)
 {
-    vfile_t      *vf = NULL;
-    vginstance_t *v  = NULL;
-    vsinstance_t *w  = NULL;
-    int32         aid;
+    vfile_t      *vf  = NULL;
+    vginstance_t *v   = NULL;
+    vsinstance_t *w   = NULL;
+    int32         aid = FAIL;
     int32         ret;
     uint16        tag       = DFTAG_NULL;
     uint16        ref       = DFTAG_NULL;
