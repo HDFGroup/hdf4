@@ -1050,23 +1050,23 @@ hdf_read_ndgs(NC *handle)
                             dimsizes = malloc((size_t)rank * sizeof(int32));
                         else
                             dimsizes = malloc(sizeof(int32));
-                        if (dimsizes == NULL) 
+                        if (dimsizes == NULL)
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                         if (rank > 0)
                             vardims = malloc((size_t)rank * sizeof(int));
                         else
                             vardims = malloc(sizeof(int));
-                        if (vardims == NULL) 
+                        if (vardims == NULL)
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                         if (rank > 0)
                             scaletypes = malloc((size_t)rank * sizeof(int32));
                         else
                             scaletypes = malloc(sizeof(int32));
-                        if (scaletypes == NULL) 
+                        if (scaletypes == NULL)
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                        
+
                         /* read dimension record */
                         err_code = hdf_read_dimsizes(aid1, rank, dimsizes);
                         if (err_code != DFE_NONE)
