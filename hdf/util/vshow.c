@@ -63,8 +63,8 @@ main(int ac, char **av)
     int32   vsno = 0;
     int32   vstag;
     int32   i, t, nvg, nentries = 0, nv, interlace, vsize;
-    int32  *lonevs;   /* array to store refs of all lone vdatas */
-    int32   nlone;    /* total number of lone vdatas */
+    int32  *lonevs; /* array to store refs of all lone vdatas */
+    int32   nlone;  /* total number of lone vdatas */
 
     char  fields[VSFIELDMAX * FIELDNAMELENMAX];
     char *vgname = NULL, *vgclass = NULL;
@@ -135,7 +135,8 @@ main(int ac, char **av)
             vgotag = VQuerytag(vg);
             vgoref = VQueryref(vg);
 
-            printf("\nvg:%d <%d/%d> (%s {%s}) has %d entries:\n", (int)nvg, (int)vgotag, (int)vgoref, vgname, vgclass, (int)nentries);
+            printf("\nvg:%d <%d/%d> (%s {%s}) has %d entries:\n", (int)nvg, (int)vgotag, (int)vgoref, vgname,
+                   vgclass, (int)nentries);
         }
         free(vgname);
         free(vgclass);
@@ -205,7 +206,8 @@ main(int ac, char **av)
                     vgotag = VQuerytag(vgt);
                     vgoref = VQueryref(vgt);
 
-                    printf("  vg:%d <%d/%d> nentries=%d (%s {%s})\n", (int)t, (int)vgotag, (int)vgoref, (int)nentries, vgname, vgclass);
+                    printf("  vg:%d <%d/%d> nentries=%d (%s {%s})\n", (int)t, (int)vgotag, (int)vgoref,
+                           (int)nentries, vgname, vgclass);
                 }
 
                 /* Dump the attribute */
