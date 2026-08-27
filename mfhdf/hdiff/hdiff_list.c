@@ -146,7 +146,6 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
     int32  ref_vg;
     char  *vg_name  = NULL;
     char  *vg_class = NULL;
-    size_t name_len;
     int32  i;
 
     /* initialize the V interface */
@@ -194,14 +193,14 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
             /* Get vgroup's name */
             vg_name = vgetvgname(vg_id);
             if (!vg_name) {
-                printf("Error: Could not get name length for group with ref <%d>\n", ref);
+                printf("Error: Could not get name for group with ref <%d>\n", ref);
                 goto out;
             }
 
             /* Get vgroup's class */
             vg_class = vgetvgclass(vg_id);
             if (!vg_class) {
-                printf("Error: Could not get class length for group with ref <%d>\n", ref);
+                printf("Error: Could not get class for group with ref <%d>\n", ref);
                 goto out;
             }
 
@@ -260,9 +259,7 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
             }
 
             HDfreenclear(vg_name);
-            vg_name = NULL;
             HDfreenclear(vg_class);
-            vg_class = NULL;
         } /* for */
 
         /* free the space allocated */
@@ -316,7 +313,6 @@ insert_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identif
     char  *vg_class = NULL;
     char  *path     = NULL;
     int    i;
-    size_t name_len;
 
     for (i = 0; i < npairs; i++) {
         tag = in_tags[i];
@@ -341,6 +337,7 @@ insert_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identif
                 }
 
                 /* Get vgroup's name */
+                free(vg_name);
                 vg_name = vgetvgname(vg_id);
                 if (!vg_name) {
                     printf("Error: Could not get name for group with ref <%d>\n", ref);
@@ -348,9 +345,10 @@ insert_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identif
                 }
 
                 /* Get vgroup's class */
+                free(vg_class);
                 vg_class = vgetvgclass(vg_id);
                 if (!vg_class) {
-                    printf("Error: Could not get class length for group with ref <%d>\n", ref);
+                    printf("Error: Could not get class for group with ref <%d>\n", ref);
                     break;
                 }
 

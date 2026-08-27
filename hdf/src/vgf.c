@@ -158,7 +158,7 @@ nvgnamc(intf *vkey, _fcd vgname, intf *vgnamelen)
     if (!tvgname)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    buf_size++; /* the fetch call needs the actual buffer capacity, not the name length */
+    buf_size++; /* for null-terminator */
     ret = Vgetname((int32)*vkey, tvgname, &buf_size);
     if (ret != FAIL)
         HDpackFstring(tvgname, _fcdtocp(vgname), (int)*vgnamelen);
@@ -189,7 +189,7 @@ nvgclsc(intf *vkey, _fcd vgclass, intf *vgclasslen)
     if (!tvgclass)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    buf_size++; /* the fetch call needs the actual buffer capacity, not the class length */
+    buf_size++; /* for null-terminator */
     ret = Vgetclass((int32)*vkey, tvgclass, &buf_size);
     if (ret != FAIL)
         HDpackFstring(tvgclass, _fcdtocp(vgclass), (int)*vgclasslen);
@@ -221,7 +221,7 @@ nvinqc(intf *vkey, intf *nentries, _fcd vgname, intf *vgnamelen)
     if (!tvgname)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    buf_size++; /* the fetch call needs the actual buffer capacity, not the name length */
+    buf_size++; /* for null-terminator */
     ret = Vinquire((int32)*vkey, &tnentries, tvgname, &buf_size);
     if (ret != FAIL) {
         *nentries = (intf)tnentries;

@@ -423,9 +423,8 @@ get_VGandInfo(int32 *vg_id, int32 file_id, int32 vg_ref, const char *file_name, 
     /* get the length of the vgname to allocate enough space */
     status = Vgetname(*vg_id, NULL, &buf_size);
     if (status == FAIL) /* go to done and return a FAIL */
-    {
         ERROR_GOTO_2("in %s: Vgetname failed for vg ref=%d", "get_VGandInfo", (int)vg_ref);
-    }
+
     if (buf_size > 0) {
         *vgname = (char *)malloc(sizeof(char) * (buf_size + 1));
 
