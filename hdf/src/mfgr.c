@@ -756,7 +756,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
             }     /* end if */
         }         /* end while */
         DFdifree(group_id);
-    }             /* end while */
+    } /* end while */
 
     /* go through the RI8s */
     noldimages = Get_oldimgs(file_id, &img_info[curr_image], DFTAG_RI8);
