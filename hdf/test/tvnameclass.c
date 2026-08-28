@@ -25,8 +25,6 @@
 #define VG_LONGNAME  "Vgroup with more than 64 characters in length, 74 characters to be exact!"
 #define VG_LONGCLASS "Very long class name to classify all Vgroups with more than 64 characters in name"
 
-static void test_vglongnames(void);
-
 static void
 test_vglongnames(void)
 {
@@ -317,6 +315,271 @@ done:
 }
 
 /****************************************************************************
+ * test_vinquire_buf_size - tests Vinquire's buf_size handling
+ *   - buf_size == NULL, Vinquire should fail
+ *   - a non-NULL buffer with *buf_size == 0, Vinquire should behave as
+ *     a length-only query
+ *   - a too-small buffer, Vinquire should truncate the name while still
+ *     reporting the actual name length and correct entry count.
+ ****************************************************************************/
+
+#define INQUIRETEST "tvinquire.hdf"
+
+static void
+test_vinquire_buf_size(void)
+{
+    int32  file_id = FAIL; /* File ID */
+    int32  vg1     = FAIL; /* Vgroup ID */
+    int32  vs1     = FAIL; /* Vdata ID, used as vgroup's one entry */
+    int32  ref;            /* Vgroup ref */
+    int32  nentries;       /* Number of entries returned by Vinquire */
+    size_t buf_size;       /* Size for name buffer */
+    char   smallbuf[10];   /* deliberately too-small buffer, for truncation test */
+    int32  status;         /* Status values from routines */
+
+    /* Create the HDF file and a vgroup with one entry and a known,
+       long name for the truncation test. */
+    file_id = Hopen(INQUIRETEST, DFACC_CREATE, 0);
+    CHECK(file_id, FAIL, "Hopen");
+
+    status = Vstart(file_id);
+    CHECK(status, FAIL, "Vstart");
+
+    vg1 = Vattach(file_id, -1, "w");
+    CHECK(vg1, FAIL, "Vattach");
+
+    status = Vsetname(vg1, VG_LONGNAME);
+    CHECK(status, FAIL, "Vsetname");
+
+    vs1 = VSattach(file_id, -1, "w");
+    CHECK(vs1, FAIL, "VSattach");
+
+    status = Vinsert(vg1, vs1);
+    CHECK(status, FAIL, "Vinsert");
+
+    status = VSdetach(vs1);
+    CHECK(status, FAIL, "VSdetach");
+    vs1 = FAIL;
+
+    status = Vdetach(vg1);
+    CHECK(status, FAIL, "Vdetach");
+    vg1 = FAIL;
+
+    status = Vend(file_id);
+    CHECK(status, FAIL, "Vend");
+
+    status = Hclose(file_id);
+    CHECK(status, FAIL, "Hclose");
+    file_id = FAIL;
+
+    /* Re-open the file and attach the vgroup for read-only testing. */
+    file_id = Hopen(INQUIRETEST, DFACC_RDWR, 0);
+    CHECK(file_id, FAIL, "Hopen");
+
+    status = Vstart(file_id);
+    CHECK(status, FAIL, "Vstart");
+
+    ref = Vfind(file_id, VG_LONGNAME);
+    CHECK(ref, FAIL, "Vfind");
+
+    vg1 = Vattach(file_id, ref, "r");
+    CHECK(vg1, FAIL, "Vattach");
+
+    /* Tests buf_size == NULL should fail, regardless of the buffer
+       pointer. */
+    nentries = FAIL;
+    status   = Vinquire(vg1, &nentries, smallbuf, NULL);
+    VERIFY(status, FAIL, "Vinquire:NULL buf_size");
+
+    /* Tests a non-NULL buffer with *buf_size == 0 is a length-only
+       query verifies the real name length */
+    smallbuf[0] = 'X'; /* to confirm the buffer is untouched */
+    buf_size    = 0;
+    status      = Vinquire(vg1, &nentries, smallbuf, &buf_size);
+    CHECK(status, FAIL, "Vinquire:query");
+    VERIFY(buf_size, strlen(VG_LONGNAME), "Vinquire:query");
+    VERIFY(nentries, 1, "Vinquire:query");
+    VERIFY(smallbuf[0], 'X', "Vinquire:query must not write to buffer");
+
+    /* Tests calling Vinquire with a buffer smaller than the actual
+       name. The vgroup name should be truncated, while
+       buf_size still reports the actual length. */
+    buf_size = sizeof(smallbuf);
+    nentries = FAIL;
+    status   = Vinquire(vg1, &nentries, smallbuf, &buf_size);
+    CHECK(status, FAIL, "Vinquire:truncate");
+    VERIFY(buf_size, strlen(VG_LONGNAME), "Vinquire:truncate");
+    VERIFY(nentries, 1, "Vinquire:truncate");
+    if (strlen(smallbuf) != sizeof(smallbuf) - 1) {
+        num_errs++;
+        printf(">>> Vinquire:truncate - name not truncated to buffer size\n");
+    }
+    if (strncmp(smallbuf, VG_LONGNAME, sizeof(smallbuf) - 1)) {
+        num_errs++;
+        printf(">>> Vinquire:truncate - truncated name doesn't match\n");
+    }
+
+    status = Vdetach(vg1);
+    CHECK(status, FAIL, "Vdetach");
+    vg1 = FAIL;
+
+    status = Vend(file_id);
+    CHECK(status, FAIL, "Vend");
+
+    status = Hclose(file_id);
+    CHECK(status, FAIL, "Hclose");
+    file_id = FAIL;
+
+done:
+    /* Release resources */
+    if (vs1 != FAIL)
+        VSdetach(vs1);
+    if (vg1 != FAIL)
+        Vdetach(vg1);
+    if (file_id != FAIL) {
+        Vend(file_id);
+        Hclose(file_id);
+    }
+}
+
+/****************************************************************************
+ * test_vgetname_vgetclass_buf_size - tests Vgetname's and Vgetclass's
+ * buf_size handling
+ *   - buf_size == NULL, Vgetname/Vgetclass should fail
+ *   - a non-NULL buffer with *buf_size == 0, Vgetname/Vgetclass should
+ *     behave as a length-only query and must not write to the buffer
+ *   - a too-small buffer, Vgetname/Vgetclass should truncate the
+ *     name/class while still reporting the actual length
+ ****************************************************************************/
+
+#define GETNAMETEST "tgetname.hdf"
+
+static void
+test_vgetname_vgetclass_buf_size(void)
+{
+    int32  file_id = FAIL; /* File ID */
+    int32  vg1     = FAIL; /* Vgroup ID */
+    int32  ref;            /* Vgroup ref */
+    size_t buf_size;       /* Size for name or class buffer */
+    char   smallbuf[10];   /* deliberately too-small buffer, for truncation test */
+    int32  status;         /* Status values from routines */
+
+    /* Create the HDF file and a vgroup with known, long name and class
+       name for the truncation test. */
+    file_id = Hopen(GETNAMETEST, DFACC_CREATE, 0);
+    CHECK(file_id, FAIL, "Hopen");
+
+    status = Vstart(file_id);
+    CHECK(status, FAIL, "Vstart");
+
+    vg1 = Vattach(file_id, -1, "w");
+    CHECK(vg1, FAIL, "Vattach");
+
+    status = Vsetname(vg1, VG_LONGNAME);
+    CHECK(status, FAIL, "Vsetname");
+
+    status = Vsetclass(vg1, VG_LONGCLASS);
+    CHECK(status, FAIL, "Vsetclass");
+
+    status = Vdetach(vg1);
+    CHECK(status, FAIL, "Vdetach");
+    vg1 = FAIL;
+
+    status = Vend(file_id);
+    CHECK(status, FAIL, "Vend");
+
+    status = Hclose(file_id);
+    CHECK(status, FAIL, "Hclose");
+    file_id = FAIL;
+
+    /* Re-open the file and attach the vgroup for read-only testing. */
+    file_id = Hopen(GETNAMETEST, DFACC_RDWR, 0);
+    CHECK(file_id, FAIL, "Hopen");
+
+    status = Vstart(file_id);
+    CHECK(status, FAIL, "Vstart");
+
+    ref = Vfind(file_id, VG_LONGNAME);
+    CHECK(ref, FAIL, "Vfind");
+
+    vg1 = Vattach(file_id, ref, "r");
+    CHECK(vg1, FAIL, "Vattach");
+
+    /* Tests buf_size == NULL should fail, for both Vgetname and
+       Vgetclass, regardless of the buffer pointer. */
+    status = Vgetname(vg1, smallbuf, NULL);
+    VERIFY(status, FAIL, "Vgetname:NULL buf_size");
+
+    status = Vgetclass(vg1, smallbuf, NULL);
+    VERIFY(status, FAIL, "Vgetclass:NULL buf_size");
+
+    /* Tests a non-NULL buffer with *buf_size == 0 is a length-only
+       query verifies the real name/class length */
+    smallbuf[0] = 'X'; /* to confirm the buffer is untouched */
+    buf_size    = 0;
+    status      = Vgetname(vg1, smallbuf, &buf_size);
+    CHECK(status, FAIL, "Vgetname:query");
+    VERIFY(buf_size, strlen(VG_LONGNAME), "Vgetname:query");
+    VERIFY(smallbuf[0], 'X', "Vgetname:query must not write to buffer");
+
+    smallbuf[0] = 'X';
+    buf_size    = 0;
+    status      = Vgetclass(vg1, smallbuf, &buf_size);
+    CHECK(status, FAIL, "Vgetclass:query");
+    VERIFY(buf_size, strlen(VG_LONGCLASS), "Vgetclass:query");
+    VERIFY(smallbuf[0], 'X', "Vgetclass:query must not write to buffer");
+
+    /* Tests calling the functions with a buffer smaller than the actual
+       name/class name. The name/class name should be truncated, while
+       buf_size still reports the actual length. */
+    buf_size = sizeof(smallbuf);
+    status   = Vgetname(vg1, smallbuf, &buf_size);
+    CHECK(status, FAIL, "Vgetname:truncate");
+    VERIFY(buf_size, strlen(VG_LONGNAME), "Vgetname:truncate");
+    if (strlen(smallbuf) != sizeof(smallbuf) - 1) {
+        num_errs++;
+        printf(">>> Vgetname:truncate - name not truncated to buffer size\n");
+    }
+    if (strncmp(smallbuf, VG_LONGNAME, sizeof(smallbuf) - 1)) {
+        num_errs++;
+        printf(">>> Vgetname:truncate - truncated name doesn't match\n");
+    }
+
+    buf_size = sizeof(smallbuf);
+    status   = Vgetclass(vg1, smallbuf, &buf_size);
+    CHECK(status, FAIL, "Vgetclass:truncate");
+    VERIFY(buf_size, strlen(VG_LONGCLASS), "Vgetclass:truncate");
+    if (strlen(smallbuf) != sizeof(smallbuf) - 1) {
+        num_errs++;
+        printf(">>> Vgetclass:truncate - class not truncated to buffer size\n");
+    }
+    if (strncmp(smallbuf, VG_LONGCLASS, sizeof(smallbuf) - 1)) {
+        num_errs++;
+        printf(">>> Vgetclass:truncate - truncated class doesn't match\n");
+    }
+
+    status = Vdetach(vg1);
+    CHECK(status, FAIL, "Vdetach");
+    vg1 = FAIL;
+
+    status = Vend(file_id);
+    CHECK(status, FAIL, "Vend");
+
+    status = Hclose(file_id);
+    CHECK(status, FAIL, "Hclose");
+    file_id = FAIL;
+
+done:
+    /* Release resources */
+    if (vg1 != FAIL)
+        Vdetach(vg1);
+    if (file_id != FAIL) {
+        Vend(file_id);
+        Hclose(file_id);
+    }
+}
+
+/****************************************************************************
  * test_vgisinternal - tests the API function Vgisinternal
  *   - Use an existing GR file created during the period when GR vgroup had no
  *	class name, and had name set to GR_NAME
@@ -383,6 +646,12 @@ test_vnameclass(void)
 
     /* test Vgetname and Vgetclass when either name or class is not defined. */
     test_undefined();
+
+    /* test Vinquire post new argument buf_size */
+    test_vinquire_buf_size();
+
+    /* test Vgetname and Vgetclass post new argument buf_size */
+    test_vgetname_vgetclass_buf_size();
 
     /* test Vgisinternal when there is no class name */
     test_vgisinternal();
