@@ -1059,7 +1059,6 @@ hdf_read_ndgs(NC *handle)
                         if (dimsizes == NULL || vardims == NULL || scaletypes == NULL) 
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-                        
                         /* read dimension record */
                         err_code = hdf_read_dimsizes(aid1, rank, dimsizes);
                         if (err_code != DFE_NONE)
