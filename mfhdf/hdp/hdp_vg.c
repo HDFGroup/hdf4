@@ -13,7 +13,7 @@
 
 #include <math.h>
 
-#include "vg_priv.h" 
+#include "vg_priv.h"
 #include "vg.h"
 #include "hdp.h"
 
@@ -422,9 +422,9 @@ get_VGandInfo(int32 *vg_id, int32 file_id, int32 vg_ref, const char *file_name, 
               char **vgname, char **vgclass)
 {
     int    status, ret_value = SUCCEED;
-    size_t buf_size = 0;
-    char *tmp_vgname = NULL;
-    char *tmp_vgclass = NULL;
+    size_t buf_size    = 0;
+    char  *tmp_vgname  = NULL;
+    char  *tmp_vgclass = NULL;
 
     /* detach the current vgroup if it's attached to cover the case
       where a library routine fails and must continue to the next vgroup
@@ -490,9 +490,9 @@ get_VGandInfo(int32 *vg_id, int32 file_id, int32 vg_ref, const char *file_name, 
         strcpy(tmp_vgclass, NONAME_TXT);
     }
 
-    *vgname = tmp_vgname;
-    tmp_vgname = NULL;
-    *vgclass = tmp_vgclass;
+    *vgname     = tmp_vgname;
+    tmp_vgname  = NULL;
+    *vgclass    = tmp_vgclass;
     tmp_vgclass = NULL;
 
 done:
