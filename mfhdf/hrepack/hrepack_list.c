@@ -386,7 +386,7 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
             /* Get vgroup's class */
             vg_class = vgetvgclass(vg_id);
             if (!vg_class) {
-                printf("Error: Could not get class length for group with ref <%d>\n", ref);
+                printf("Error: Could not get class name for vgroup with ref <%d>\n", ref);
                 goto out;
             }
 
@@ -578,14 +578,14 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                 /* Get vgroup's name */
                 vg_name = vgetvgname(vg_id);
                 if (!vg_name) {
-                    printf("Error: Could not get name length for group with ref <%d>\n", ref);
+                    printf("Error: Could not get name for vgroup with ref <%d>\n", ref);
                     goto out;
                 }
 
                 /* Get vgroup's class name */
                 vg_class = vgetvgclass(vg_id);
                 if (!vg_class) {
-                    printf("Error: Could not get class length for group with ref <%d>\n", ref);
+                    printf("Error: Could not get class name for vgroup with ref <%d>\n", ref);
                     goto out;
                 }
 

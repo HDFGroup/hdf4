@@ -868,13 +868,14 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
 
                         /* Get the name of the image */
                         if ((new_image->name = vgetvgname(img_key)) == NULL) {
-                            if ((new_image->name = (char *)malloc(20)) == NULL) {
+                            sprintf(textbuf, "Raster Image #%d", (int)i);
+                            if ((new_image->name = (char *)malloc(strlen(textbuf) + 1)) == NULL) {
                                 free(new_image);
                                 Vdetach(img_key);
                                 img_key = FAIL;
                                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
                             }
-                            sprintf(new_image->name, "Raster Image #%d", (int)i);
+                            strcpy(new_image->name, textbuf);
                         }
 
                         /* Initialize the local attribute tree */

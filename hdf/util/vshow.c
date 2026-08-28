@@ -117,7 +117,7 @@ main(int ac, char **av)
         free(vgname);
         vgname = vgetvgname(vg);
         if (vgname == NULL || strlen(vgname) == 0) {
-            free(vgname); // Safe
+            free(vgname);
             vgname = strdup("NoName");
         }
 
@@ -125,7 +125,7 @@ main(int ac, char **av)
         free(vgclass);
         vgclass = vgetvgclass(vg);
         if (vgclass == NULL || strlen(vgclass) == 0) {
-            free(vgclass); // Safe
+            free(vgclass);
             vgclass = strdup("NoClass");
         }
 
