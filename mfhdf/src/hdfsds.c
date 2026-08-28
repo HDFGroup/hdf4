@@ -1046,17 +1046,17 @@ hdf_read_ndgs(NC *handle)
 
                         /* get space for dimensions, variable dimensions, and scale types */
                         if (rank > 0) {
-                            dimsizes = malloc((size_t)rank * sizeof(int32));
-                            vardims = malloc((size_t)rank * sizeof(int));
+                            dimsizes   = malloc((size_t)rank * sizeof(int32));
+                            vardims    = malloc((size_t)rank * sizeof(int));
                             scaletypes = malloc(sizeof(int32));
                         }
                         else {
                             /* when rank = 0, use rank = 1, assuming the data is scalar */
-                            dimsizes = malloc(sizeof(int32));
-                            vardims = malloc(sizeof(int));
+                            dimsizes   = malloc(sizeof(int32));
+                            vardims    = malloc(sizeof(int));
                             scaletypes = malloc(sizeof(int32));
                         }
-                        if (dimsizes == NULL || vardims == NULL || scaletypes == NULL) 
+                        if (dimsizes == NULL || vardims == NULL || scaletypes == NULL)
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                         /* read dimension record */
