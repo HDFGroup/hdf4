@@ -1023,6 +1023,14 @@ vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 num_entri
                     strcpy(vgname, "<Undefined>");
                 }
 
+                /* vgroup has no class */
+                if (vgclass == NULL || strlen(vgclass) == 0) {
+                    free(vgclass);
+                    vgclass = (char *)malloc(sizeof(char) * (NONAME_LEN));
+                    CHECK_ALLOC(vgclass, "vgclass", "vgdumpfull");
+                    strcpy(vgclass, "<Undefined>");
+                }
+
                 /* add the name and type of this element to the current graph */
                 aNode->children[entry_num] = alloc_string_of_chars(vgname);
                 aNode->type[entry_num]     = alloc_string_of_chars("vg");
@@ -1315,6 +1323,25 @@ dvg(dump_info_t *dumpvg_opts, int curr_arg, int argc, char *argv[])
             if (vg_id == FAIL || n_entries == -1) {
                 skipfile = TRUE; /* so Graphical Rep won't be printed */
                 break;           /* to get out of this current file */
+            }
+
+            /* attach succeeded but if name/class fetch failed, get_VGandInfo
+               already freed and NULL'd vgname/vgclass on this path */
+
+            /* vgroup has no name */
+            if (vgname == NULL || strlen(vgname) == 0) {
+                free(vgname);
+                vgname = (char *)malloc(sizeof(char) * (NONAME_LEN));
+                CHECK_ALLOC(vgname, "vgname", "dvg");
+                strcpy(vgname, "<Undefined>");
+            }
+
+            /* vgroup has no class */
+            if (vgclass == NULL || strlen(vgclass) == 0) {
+                free(vgclass);
+                vgclass = (char *)malloc(sizeof(char) * (NONAME_LEN));
+                CHECK_ALLOC(vgclass, "vgclass", "dvg");
+                strcpy(vgclass, "<Undefined>");
             }
 
             if (!skipvg)

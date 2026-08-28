@@ -246,7 +246,7 @@ done:
     VGROUP record pointer or NULL if failed.
 
 *******************************************************************************/
-VGROUP *
+static VGROUP *
 VIGet_vgdesc(int32 vkey /* IN: vgroup key */)
 {
 
@@ -803,11 +803,14 @@ NAME
    vgetvgclass
 
 DESCRIPTION
-   Is a utility function for common code that get the class of a vgroup.
+   A utility function that returns the glass of a vgroup, allocating the buffer
+   internally so the caller does not need to know the length of the glass in
+   advance.  Intended for use within the library and tools only; the caller is
+   responsible for freeing the returned buffer.
 
 RETURNS
-   returns FAIL if not found,
-   returns TRUE if found.
+   Returns the vgroup's glass, which can be an empty string if there is no glass,
+   if successful, otherwise, returns NULL.
 
 *******************************************************************************/
 char *

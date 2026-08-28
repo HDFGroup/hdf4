@@ -58,35 +58,37 @@ NC_free_cdf(NC *handle)
 {
     int ret_value = SUCCEED;
 
-    if (handle != NULL) {
-        if (NC_free_xcdf(handle) == FAIL)
-            HGOTO_FAIL(FAIL);
+    if (handle == NULL) {
+        return FAIL;
+    }
 
-        /* destroy xdr struct */
+    /* Free internal XDR structures */
+    if (NC_free_xcdf(handle) == FAIL) {
+        ret_value = FAIL;
+        goto done;
+    }
+
+    if (handle->xdrs != NULL) {
         hdf_xdr_destroy(handle->xdrs);
         free(handle->xdrs);
         handle->xdrs = NULL;
-
-        if (handle->file_type == HDF_FILE) {
-            if (Vend(handle->hdf_file) == FAIL)
-                HGOTO_FAIL(FAIL);
-
-            if (Hclose(handle->hdf_file) == FAIL)
-                HGOTO_FAIL(FAIL);
-        }
-
-        free(handle);
-        handle = NULL;
     }
 
+    /* Close file descriptors if it's an HDF file */
+    if (handle->file_type == HDF_FILE) {
+        if (Vend(handle->hdf_file) == FAIL) {
+            ret_value = FAIL;
+            goto done; /* skip Hclose if Vend fails */
+        }
+
+        if (Hclose(handle->hdf_file) == FAIL) {
+            ret_value = FAIL;
+            goto done;
+        }
+    }
 done:
-    if (ret_value == FAIL) {
-        if (handle->file_type == HDF_FILE) {
-            Vend(handle->hdf_file);
-            Hclose(handle->hdf_file);
-        }
-    }
-
+    /* Free the top-level handle, even on failure paths */
+    free(handle);
     return ret_value;
 }
 
@@ -1165,7 +1167,6 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
     int      sub_id;
     char    *vgname                   = NULL; /* name of a vgroup, used by new Vgetname */
     char    *vgclass                  = NULL; /* class of a vgroup, used by new Vgetclass */
-    size_t   buf_size                 = 0;    /* length of the name or class of a vgroup */
     char     vsclass[H4_MAX_NC_CLASS] = "";   /* name of vdata */
     int32    dim_size;
     NC_dim **dimension = NULL;
@@ -1329,6 +1330,8 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
 
 done:
     if (ret_value == FAIL) {
+        if (vs != -1)
+            VSdetach(vs);
         if (dimvg != -1)
             Vdetach(dimvg);
         if (handle->dims != NULL) {
