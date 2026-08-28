@@ -803,13 +803,13 @@ NAME
    vgetvgclass
 
 DESCRIPTION
-   A utility function that returns the glass of a vgroup, allocating the buffer
-   internally so the caller does not need to know the length of the glass in
+   A utility function that returns the class of a vgroup, allocating the buffer
+   internally so the caller does not need to know the length of the class in
    advance.  Intended for use within the library and tools only; the caller is
    responsible for freeing the returned buffer.
 
 RETURNS
-   Returns the vgroup's glass, which can be an empty string if there is no glass,
+   Returns the vgroup's class, which can be an empty string if there is no class,
    if successful, otherwise, returns NULL.
 
 *******************************************************************************/
