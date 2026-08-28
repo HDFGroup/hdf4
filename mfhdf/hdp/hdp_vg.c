@@ -13,10 +13,12 @@
 
 #include <math.h>
 
+#include "vg_priv.h" 
 #include "vg.h"
 #include "hdp.h"
 
 #define NONAME_LEN 12
+#define NONAME_TXT "<Undefined>"
 
 void   dumpvg_usage(int argc, char *argv[]);
 int32  Vref_index(int32 file_id, int32 vg_ref);
@@ -227,8 +229,8 @@ Vstr_ref(int32 file_id, char *searched_str,          /* vg's class name */
 {
     int32  vg_id     = FAIL;
     char  *name      = NULL;
-    uint16 name_len  = 0;
-    int32  status_32 = FAIL;
+    size_t buf_size  = 0;
+    int32  status    = FAIL;
     int32  ret_value = FAIL;
 
     /* starting from the ref# *find_ref, search for the vgroup having a
@@ -236,36 +238,38 @@ Vstr_ref(int32 file_id, char *searched_str,          /* vg's class name */
        more vgroups to search, return FAIL */
     while ((*find_ref = Vgetid(file_id, *find_ref)) != FAIL) {
         vg_id = Vattach(file_id, *find_ref, "r");
-        if (FAIL == vg_id)
+        if (vg_id == FAIL)
             ERROR_GOTO_2("in %s: Vattach failed for vgroup with ref#(%d)", "Vstr_ref", (int)*find_ref);
 
         /* get the length of the vgname to allocate enough space */
         if (is_name)
-            status_32 = Vgetnamelen(vg_id, &name_len);
+            status = Vgetname(vg_id, NULL, &buf_size);
         else
-            status_32 = Vgetclassnamelen(vg_id, &name_len);
-        if (FAIL == status_32) /* go to done and return a FAIL */
+            status = Vgetclass(vg_id, NULL, &buf_size);
+        if (FAIL == status) /* go to done and return a FAIL */
         {
             ERROR_GOTO_2("in %s: Vgetclassnamelen failed for vg ref=%d", "Vstr_ref", (int)*find_ref);
         }
-        name = (char *)malloc(sizeof(char) * (name_len + 1));
+        name = (char *)malloc(sizeof(char) * (buf_size + 1));
         /* If allocation fails, Vstr_ref simply terminates hdp. */
-        CHECK_ALLOC(name, "vgroup classname", "Vstr_ref");
+        CHECK_ALLOC(name, "name", "Vstr_ref");
 
-        if (name_len > 0) {
+        if (buf_size > 0) {
+            buf_size++;
             if (is_name) {
-                if (FAIL == Vgetname(vg_id, name))
-                    ERROR_GOTO_2("in %s: Vgetclass failed for vgroup with ref#(%d)", "Vstr_ref",
+                if (FAIL == Vgetname(vg_id, name, &buf_size))
+                    ERROR_GOTO_2("in %s: Vgetname failed for vgroup with ref#(%d)", "Vstr_ref",
                                  (int)*find_ref);
             }
             else {
-                if (FAIL == Vgetclass(vg_id, name))
+                if (FAIL == Vgetclass(vg_id, name, &buf_size))
                     ERROR_GOTO_2("in %s: Vgetclass failed for vgroup with ref#(%d)", "Vstr_ref",
                                  (int)*find_ref);
             }
 
             if (FAIL == Vdetach(vg_id))
                 ERROR_GOTO_2("in %s: Vdetach failed for vgroup with ref#(%d)", "Vstr_ref", (int)*find_ref);
+            vg_id = FAIL;
 
             /* if the vg's name or vg's class is the given string, return the
             index of the vgroup found */
@@ -277,7 +281,7 @@ Vstr_ref(int32 file_id, char *searched_str,          /* vg's class name */
                 goto done;
             }
             (*index)++;
-        } /* name_len > 0 */
+        } /* buf_size > 0 */
 
         SAFE_FREE(name); /* free name and set it to NULL */
     }                    /* end while getting vgroups */
@@ -286,6 +290,8 @@ Vstr_ref(int32 file_id, char *searched_str,          /* vg's class name */
     ret_value = FAIL;
 
 done:
+    if (vg_id != FAIL)
+        Vdetach(vg_id);
     SAFE_FREE(name); /* free name and set it to NULL */
 
     return ret_value;
@@ -416,8 +422,9 @@ get_VGandInfo(int32 *vg_id, int32 file_id, int32 vg_ref, const char *file_name, 
               char **vgname, char **vgclass)
 {
     int    status, ret_value = SUCCEED;
-    int32  status_32;
-    uint16 name_len = 0;
+    size_t buf_size = 0;
+    char *tmp_vgname = NULL;
+    char *tmp_vgclass = NULL;
 
     /* detach the current vgroup if it's attached to cover the case
       where a library routine fails and must continue to the next vgroup
@@ -429,18 +436,19 @@ get_VGandInfo(int32 *vg_id, int32 file_id, int32 vg_ref, const char *file_name, 
         ERROR_GOTO_2("in %s: Vattach failed for vgroup ref=%d", "get_VGandInfo", (int)vg_ref);
 
     /* get the length of the vgname to allocate enough space */
-    status_32 = Vgetnamelen(*vg_id, &name_len);
-    if (FAIL == status_32) /* go to done and return a FAIL */
+    status = Vgetname(*vg_id, NULL, &buf_size);
+    if (FAIL == status) /* go to done and return a FAIL */
     {
         ERROR_GOTO_2("in %s: Vgetnamelen failed for vg ref=%d", "get_VGandInfo", (int)vg_ref);
     }
-    if (name_len > 0) {
-        *vgname = (char *)malloc(sizeof(char) * (name_len + 1));
+    if (buf_size > 0) {
+        tmp_vgname = (char *)malloc(sizeof(char) * (buf_size + 1));
 
         /* If allocation fails, get_VGandInfo simply terminates hdp. */
-        CHECK_ALLOC(*vgname, "*vgname", "get_VGandInfo");
+        CHECK_ALLOC(tmp_vgname, "tmp_vgname", "get_VGandInfo");
 
-        status = Vinquire(*vg_id, n_entries, *vgname);
+        buf_size++;
+        status = Vinquire(*vg_id, n_entries, tmp_vgname, &buf_size);
         if (FAIL == status) /* go to done and return a FAIL */
         {
             *n_entries = -1;
@@ -448,9 +456,9 @@ get_VGandInfo(int32 *vg_id, int32 file_id, int32 vg_ref, const char *file_name, 
         }
     }
     else {
-        *vgname = (char *)malloc(sizeof(char) * (NONAME_LEN));
-        strcpy(*vgname, "<Undefined>");
-        status = Vinquire(*vg_id, n_entries, NULL);
+        tmp_vgname = (char *)malloc(sizeof(char) * (NONAME_LEN));
+        strcpy(tmp_vgname, NONAME_TXT);
+        status = Vinquire(*vg_id, n_entries, NULL, &buf_size);
         if (FAIL == status) /* go to done and return a FAIL */
         {
             *n_entries = -1;
@@ -459,35 +467,38 @@ get_VGandInfo(int32 *vg_id, int32 file_id, int32 vg_ref, const char *file_name, 
     }
 
     /* get the length of the vgclass to allocate enough space */
-    status_32 = Vgetclassnamelen(*vg_id, &name_len);
-    if (FAIL == status_32) /* go to done and return a FAIL */
+    status = Vgetclass(*vg_id, NULL, &buf_size);
+    if (FAIL == status) /* go to done and return a FAIL */
     {
         ERROR_GOTO_2("in %s: Vgetclassnamelen failed for vg ref=%d", "get_VGandInfo", (int)vg_ref);
     }
-    if (name_len > 0) {
-        *vgclass = (char *)malloc(sizeof(char) * (name_len + 1));
+    if (buf_size > 0) {
+        tmp_vgclass = (char *)malloc(sizeof(char) * (buf_size + 1));
 
         /* If allocation fails, get_VGandInfo simply terminates hdp. */
-        CHECK_ALLOC(*vgclass, "*vgclass", "get_VGandInfo");
+        CHECK_ALLOC(tmp_vgclass, "tmp_vgclass", "get_VGandInfo");
 
-        status_32 = Vgetclass(*vg_id, *vgclass);
-        if (FAIL == status_32) /* go to done and return a FAIL */
+        buf_size++;
+        status = Vgetclass(*vg_id, tmp_vgclass, &buf_size);
+        if (FAIL == status) /* go to done and return a FAIL */
         {
             ERROR_GOTO_2("in %s: Vgetclass failed for vgroup ref#=%d", "get_VGandInfo", (int)vg_ref);
         }
     }
     else {
-        *vgclass = (char *)malloc(sizeof(char) * (NONAME_LEN));
-        strcpy(*vgclass, "<Undefined>");
+        tmp_vgclass = (char *)malloc(sizeof(char) * (NONAME_LEN));
+        strcpy(tmp_vgclass, NONAME_TXT);
     }
+
+    *vgname = tmp_vgname;
+    tmp_vgname = NULL;
+    *vgclass = tmp_vgclass;
+    tmp_vgclass = NULL;
 
 done:
     if (ret_value == FAIL) {
-        free(*vgname); /* free temp memory */
-        *vgname = NULL;
-
-        free(*vgclass); /* free temp memory */
-        *vgclass = NULL;
+        free(tmp_vgname);
+        free(tmp_vgclass);
     }
 
     return (ret_value);
@@ -533,9 +544,6 @@ alloc_list_of_strings(int32 num_entries)
 {
     char **ptr = NULL;
 
-    /* I don't know why +1 here and only i<num_entries at for loop - BMR*/
-    /* probably, +1 so that malloc won't fail when num_entries = 0, was */
-    /* added in r1842.  But, that means possible memory leak! */
     ptr = (char **)malloc(sizeof(char *) * (size_t)num_entries);
 
     /* If allocation fails, alloc_list_of_string simply terminates hdp. */
@@ -584,7 +592,7 @@ print_fields(const char *fields, const char *field_title, FILE *fp)
     CHECK_ALLOC(tempflds, "tempflds", "print_fields");
 
     /* if fields are not defined by VSsetfields and VSfdefine */
-    if (fields[0] == '\0' || fields == NULL)
+    if (fields == NULL || fields[0] == '\0')
         fprintf(fp, "%s <Undefined>;\n", field_title);
 
     else { /* there are fields to print */
@@ -871,9 +879,11 @@ vgBuildGraph(int32 vg_id, int32 file_id, int32 num_entries, const char *file_nam
                 }
 
                 /* vgroup has no name */
-                if (strlen(vgname) == 0 || vgname == NULL) {
+                if (vgname == NULL || strlen(vgname) == 0) {
+                    free(vgname);
                     vgname = (char *)malloc(sizeof(char) * (NONAME_LEN));
-                    strcat(vgname, "<Undefined>");
+                    CHECK_ALLOC(vgname, "vgname", "vgBuildGraph");
+                    strcpy(vgname, NONAME_TXT);
                 }
 
                 resetVG(&vgt, file_name);
@@ -881,10 +891,8 @@ vgBuildGraph(int32 vg_id, int32 file_id, int32 num_entries, const char *file_nam
                 /* add the name and type of this element to the current graph */
                 aNode->children[entry_num] = alloc_string_of_chars(vgname);
                 aNode->type[entry_num]     = alloc_string_of_chars("vg");
-                free(vgname);
-                vgname = NULL;
-                free(vgclass);
-                vgclass = NULL;
+                HDfreenclear(vgname);
+                HDfreenclear(vgclass);
 
             }                                 /* if current element is vgroup */
             else if (elem_tag == VSDESCTAG) { /* vdata */
@@ -933,6 +941,7 @@ vgBuildGraph(int32 vg_id, int32 file_id, int32 num_entries, const char *file_nam
                 aNode->children[entry_num] = alloc_string_of_chars("***");
 
                 if (!strcmp(name, "Unknown Tag")) {
+                    free(name);
                     aNode->type[entry_num] = alloc_string_of_chars("Unknown Object");
                 }
                 else
@@ -942,8 +951,8 @@ vgBuildGraph(int32 vg_id, int32 file_id, int32 num_entries, const char *file_nam
         }     /* for */
     }
 done:
-    SAFE_FREE(vgname);  /* free vg name and set it to NULL */
-    SAFE_FREE(vgclass); /* free vg class name and set it to NULL */
+    free(vgname);
+    free(vgclass);
 
     return ret_value;
 } /* vgBuildGraph */
@@ -1024,8 +1033,18 @@ vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 num_entri
                 }
                 /* vgroup has no name */
                 if (strlen(vgname) == 0 || vgname == NULL) {
+                    free(vgname);
                     vgname = (char *)malloc(sizeof(char) * (NONAME_LEN));
-                    strcat(vgname, "<Undefined>");
+                    CHECK_ALLOC(vgname, "vgname", "vgdumpfull");
+                    strcat(vgname, NONAME_TXT);
+                }
+
+                /* vgroup has no class */
+                if (vgname == NULL || strlen(vgname) == 0) {
+                    free(vgclass);
+                    vgclass = (char *)malloc(sizeof(char) * (NONAME_LEN));
+                    CHECK_ALLOC(vgclass, "vgclass", "vgdumpfull");
+                    strcat(vgclass, NONAME_TXT);
                 }
 
                 /* add the name and type of this element to the current graph */
@@ -1318,6 +1337,22 @@ dvg(dump_info_t *dumpvg_opts, int curr_arg, int argc, char *argv[])
                 break;           /* to get out of this current file */
             }
 
+            /* vgroup has no name */
+            if (vgname == NULL || strlen(vgname) == 0) {
+                free(vgname);
+                vgname = (char *)malloc(sizeof(char) * (NONAME_LEN));
+                CHECK_ALLOC(vgname, "vgname", "dvg");
+                strcpy(vgname, NONAME_TXT);
+            }
+
+            /* vgroup has no class */
+            if (vgclass == NULL || strlen(vgclass) == 0) {
+                free(vgclass);
+                vgclass = (char *)malloc(sizeof(char) * (NONAME_LEN));
+                CHECK_ALLOC(vgclass, "vgclass", "dvg");
+                strcpy(vgclass, NONAME_TXT);
+            }
+
             if (!skipvg)
                 vg_count++;
 
@@ -1331,7 +1366,7 @@ dvg(dump_info_t *dumpvg_opts, int curr_arg, int argc, char *argv[])
                 CHECK_ALLOC(list, "list", "dvg");
             }
 
-            list[curr_vg] = (vg_info_t *)malloc(sizeof(vg_info_t));
+            list[curr_vg] = (vg_info_t *)calloc(1, sizeof(vg_info_t));
             CHECK_ALLOC(list[curr_vg], "list[curr_vg]", "dvg");
             list[curr_vg]->children = NULL;
             list[curr_vg]->type     = NULL;
@@ -1373,8 +1408,7 @@ dvg(dump_info_t *dumpvg_opts, int curr_arg, int argc, char *argv[])
                     ERROR_NOTIFY_3("in dvg: %s failed on vgroup with ref=%d in file %s", "dumpattr",
                                    (int)vg_ref, file_name);
             } /* not skipped */
-            free(vgclass);
-            vgclass = NULL;
+            HDfreenclear(vgclass);
 
             if (skipvg || dumpvg_opts->contents == DHEADER) {
                 status = vgBuildGraph(vg_id, file_id, n_entries, file_name, list[curr_vg], &skipfile);
@@ -1406,9 +1440,8 @@ dvg(dump_info_t *dumpvg_opts, int curr_arg, int argc, char *argv[])
             list[curr_vg]->vg_name = (char *)malloc(sizeof(char) * (strlen(vgname) + 1));
             strcpy(list[curr_vg]->vg_name, vgname);
             list[curr_vg]->displayed     = FALSE;
-            list[curr_vg]->treedisplayed = FALSE; /* BMR - 01/16/99 */
-            free(vgname);
-            vgname = NULL;
+            list[curr_vg]->treedisplayed = FALSE;
+            HDfreenclear(vgname);
 
             vg_ref = Vgetid(file_id, vg_ref);
             if (vg_ref != FAIL)
@@ -1451,8 +1484,8 @@ done:
         resetVG(&vg_id, file_name);
         list = free_vginfo_list(list, curr_vg);
         closeVG(&file_id, &vg_chosen, file_name);
-        SAFE_FREE(vgname);  /* free vg name and set it to NULL */
-        SAFE_FREE(vgclass); /* free vg class name and set it to NULL */
+        free(vgname);
+        free(vgclass);
     }
 
     return ret_value;
