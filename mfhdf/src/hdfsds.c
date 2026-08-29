@@ -1052,7 +1052,7 @@ hdf_read_ndgs(NC *handle)
                         }
                         else {
                             /* when rank = 0, use rank = 1, assuming the data is scalar */
-                            rank = 1;
+                            rank       = 1;
                             dimsizes   = malloc(sizeof(int32));
                             vardims    = malloc(sizeof(int));
                             scaletypes = malloc(sizeof(int32));
