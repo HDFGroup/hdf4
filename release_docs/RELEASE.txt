@@ -276,6 +276,42 @@ New features and changes
       retained in hdf.h so old code will compile, but other public headers
       now use int and unsigned in place of these types.
 
+    - Vgroup API breaking changes: Vgetname, Vgetclass, Vinquire
+
+      The unbounded write in Vgetname, Vgetclass, and Vinquire could
+      overflow caller-supplied buffers.  Their signature of these
+      functions changed to take a size_t *buf_size (IN/OUT) parameter
+      to address that security vulnerability. In addition, Vgetnamelen
+      and Vgetclassnamelen are removed because applications can now use
+      Vgetname/Vgetclass to query the required length instead.
+
+      The new prototypes are:
+        int Vgetname(int32 vkey, char *vgname, size_t *buf_size);
+        int Vgetclass(int32 vkey, char *vgclass, size_t *buf_size);
+        int Vinquire(int32 vkey, int32 *nentries, char *vgname, size_t *buf_size);
+
+      Callers must update all call sites accordingly by calling
+      Vgetname/Vgetclass the first time passing in NULL for the buffer
+      to retrieve the size of the name/class.  The size then must be
+      incremented to account for the null-terminator prior to being
+      passed into the fetch call.
+
+      The Fortran bindings (VFGNAM, VFGCLS, VFINQ) had no buffer-length
+      information anywhere in the call chain and were independently
+      exposed to the same overflow. This is fixed as part of the
+      same change — the Fortran stubs now query the actual length
+      internally and allocate correctly-sized buffers before copying
+      into the caller's CHARACTER variable.
+
+      For the Java API, no changes to public method signatures —
+      buf_size handling is fully internal to the JNI layer. The
+      old JNI implementations exposed Java applications to the same
+      overflow risk as C by writing directly into fixed-size buffers
+      (H4_MAX_NC_CLASS/H4_MAX_GR_NAME). The JNI layer now queries the
+      actual required length and allocates correctly-sized buffers
+      before fetching.
+
+
 Bugs fixed since HDF 4.3.1
 ===========================
     -
