@@ -29,6 +29,7 @@ LOCAL ROUTINES
  New_vfile    -- create new vgroup file record
  Load_vfile   -- loads vgtab table with info of all vgroups in file.
  Remove_vfile -- removes the file ptr from the vfile[] table.
+ VIGet_vgdesc -- get and verify the vgroup
 
  VPgetinfo  --  Read in the "header" information about the Vgroup.
  VIstart    --  V-level initialization routine
@@ -36,7 +37,7 @@ LOCAL ROUTINES
 
 EXPORTED ROUTINES
 =================
- Following 4 routines are solely for B-tree routines.
+ Following 5 routines are solely for B-tree routines.
  vcompare     -- Compares two TBBT-tree keys for equality.  Similar to memcmp.
  vprint       -- Prints out the key and reference number of VDatas and Vgroups
  vdestroynode -- destroy vgroup node in TBBT
@@ -49,6 +50,8 @@ EXPORTED ROUTINES
  vginstance   -- Looks thru vgtab for vgid and return the addr of the vg
                   instance where vgid is found.
  vexistvg     -- Tests if a vgroup with id "vgid" is in the file's vgtab.
+ vgetvgname   -- Returns the name of a vgroup
+ vgetvgclass  -- Returns the class of a vgroup
  vpackvg      -- Extracts fields from a VGROUP struct "vg" and packs the
                   fields into array buf in preparation for storage in the
                   HDF file.
@@ -73,19 +76,17 @@ EXPORTED ROUTINES
  Vaddtagref   -- Inserts a tag/ref pair into the attached vgroup vg.
  vinsertpair  -- Inserts a tag/ref pair into the attached vgroup vg.
  Ventries     -- Returns the num of entries (+ve integer) in the vgroup vgid.
- Vsetname     -- Gives a name to the VGROUP vg.
- Vsetclass    -- Assigns a class name to the VGROUP vg.
+ Vsetname     -- Gives a name to the Vgroup vg.
+ Vsetclass    -- Assigns a class name to the Vgroup vg.
  Visvg        -- Tests if the given entry in the vgroup vg is a VGROUP.
  Visvs        -- Checks if an id in a vgroup refers to a VDATA.
  Vgetid       -- Given a vgroup's id, returns the next vgroup's id in the file.
  Vgetnext     -- Given the id of an entry from a vgroup vg, looks in vg
                   for the next entry after it, and returns its id.
- Vgetnamelen  -- Retrieves the length of the vgroup's name.
- Vgetclassnamelen  -- Retrieves the length of the vgroup's classname.
  Vgetname     -- Returns the vgroup's name.
- Vgetclass    -- Returns the vgroup's class name .
+ Vgetclass    -- Returns the vgroup's class.
  Vgetvgroups  -- Gets user-created vgroups in a file or in a vgroup
- Vinquire     -- General inquiry routine for VGROUP.
+ Vinquire     -- General inquiry routine for Vgroup.
  Vopen        -- This routine opens the HDF file and initializes it for
                   Vset operations.(i.e." Hopen(); Vinitialize(f)").
  Vclose       -- This routine closes the HDF file, after it has freed
@@ -95,9 +96,6 @@ EXPORTED ROUTINES
                   remove the Vgoup from the internal Vset data structures
                   as well as from the file.
  Vdeletetagref - delete tag/ref pair in Vgroup
-
- NOTE: Another pass needs to made through this file to update some of
-       the comments about certain sections of the code. -GV 9/8/97
 
 *************************************************************************/
 
@@ -237,6 +235,39 @@ done:
     return ret_value;
 } /* VIget_vginstance_node */
 
+/*******************************************************************************
+ NAME
+    VIget_vgdesc -- get and verify the vgroup
+
+ DESCRIPTION
+    Return a pointer to a VGROUP for subsequent accesses of the vgroup.
+
+ RETURNS
+    VGROUP record pointer or NULL if failed.
+
+*******************************************************************************/
+static VGROUP *
+VIGet_vgdesc(int32 vkey /* IN: vgroup key */)
+{
+
+    vginstance_t *v         = NULL;
+    VGROUP       *vg        = NULL;
+    VGROUP       *ret_value = NULL;
+
+    /* get and verify the vgroup */
+    if (NULL == (v = (vginstance_t *)HAatom_object(vkey)))
+        HGOTO_ERROR(DFE_NOVS, NULL);
+    vg = v->vg;
+    if (vg == NULL)
+        HGOTO_ERROR(DFE_BADPTR, NULL);
+    if (vg->otag != DFTAG_VG)
+        HGOTO_ERROR(DFE_ARGS, NULL);
+
+    ret_value = vg;
+done:
+    return ret_value;
+}
+
 /******************************************************************************
  NAME
     VIrelease_vginstance_node -- Releases a vginstance node
@@ -328,10 +359,10 @@ RETURNS
 static int
 Load_vfile(HFILEID f /* IN: file handle */)
 {
-    vfile_t      *vf = NULL;
-    vginstance_t *v  = NULL;
-    vsinstance_t *w  = NULL;
-    int32         aid;
+    vfile_t      *vf  = NULL;
+    vginstance_t *v   = NULL;
+    vsinstance_t *w   = NULL;
+    int32         aid = FAIL;
     int32         ret;
     uint16        tag       = DFTAG_NULL;
     uint16        ref       = DFTAG_NULL;
@@ -372,7 +403,7 @@ Load_vfile(HFILEID f /* IN: file handle */)
 
     ret = aid = Hstartread(f, DFTAG_VG, DFREF_WILDCARD);
     while (ret != FAIL) {
-        /* get tag/ref for this vgroup */
+        /* get tag/ref for this Vgroup */
         HQuerytagref(aid, &tag, &ref);
 
         /* get a vgroup struct to fill */
@@ -398,8 +429,10 @@ Load_vfile(HFILEID f /* IN: file handle */)
         ret = Hnextread(aid, DFTAG_VG, DFREF_WILDCARD, DF_CURRENT);
     }
 
-    if (aid != FAIL)
+    if (aid != FAIL) {
         Hendaccess(aid);
+        aid = FAIL;
+    }
 
     /* clear error stack - this is to remove the faux errors about DD not
        found from when Hstartread is called on a new file */
@@ -445,8 +478,10 @@ Load_vfile(HFILEID f /* IN: file handle */)
         ret = Hnextread(aid, VSDESCTAG, DFREF_WILDCARD, DF_CURRENT);
     }
 
-    if (aid != FAIL)
+    if (aid != FAIL) {
         Hendaccess(aid);
+        aid = FAIL;
+    }
 
     /* clear error stack - this is to remove the faux errors about DD not
        found from when Hstartread is called on a new file */
@@ -462,6 +497,10 @@ Load_vfile(HFILEID f /* IN: file handle */)
     }
 
 done:
+    if (ret_value == FAIL) {
+        if (aid != FAIL)
+            Hendaccess(aid);
+    }
     return ret_value;
 } /* Load_vfile */
 
@@ -585,8 +624,7 @@ vdestroynode(void *n /* IN: node to free */)
 
             /* Free the old-style attr list and reset associated fields */
             if (vg->old_alist != NULL) {
-                free(vg->old_alist);
-                vg->old_alist = NULL;
+                HDfreenclear(vg->old_alist);
                 vg->noldattrs = 0;
             }
 
@@ -759,6 +797,110 @@ vexistvg(HFILEID f, /* IN: file handle */
 
     return ret_value;
 } /* vexistvg */
+
+/*******************************************************************************
+NAME
+   vgetvgclass
+
+DESCRIPTION
+   A utility function that returns the class of a vgroup, allocating the buffer
+   internally so the caller does not need to know the length of the class in
+   advance.  Intended for use within the library and tools only; the caller is
+   responsible for freeing the returned buffer.
+
+RETURNS
+   Returns the vgroup's class, which can be an empty string if there is no class,
+   if successful, otherwise, returns NULL.
+
+*******************************************************************************/
+char *
+vgetvgclass(int32 vkey)
+{
+    VGROUP *vg        = NULL;
+    size_t  class_len = 0;
+    char   *vgclass   = NULL;
+    char   *ret_value = NULL;
+
+    /* Check arguments */
+    if (HAatom_group(vkey) != VGIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, NULL);
+
+    /* Get the vgroup struct for access */
+    if ((vg = VIGet_vgdesc(vkey)) == NULL)
+        HGOTO_ERROR(DFE_BADPTR, NULL);
+
+    /* Get the length of the vgroup class */
+    class_len = (vg->vgclass != NULL) ? strlen(vg->vgclass) : 0;
+
+    vgclass = (char *)malloc(class_len + 1);
+    if (!vgclass)
+        HGOTO_ERROR(DFE_NOSPACE, NULL);
+
+    /* Copy vgroup class or set it null-terminated */
+    if (class_len > 0)
+        strcpy(vgclass, vg->vgclass);
+    else
+        vgclass[0] = '\0';
+
+    ret_value = vgclass;
+
+done:
+    if (ret_value == NULL)
+        free(vgclass);
+    return ret_value;
+}
+
+/*******************************************************************************
+NAME
+   vgetvgname
+
+DESCRIPTION
+   A utility function that returns the name of a vgroup, allocating the buffer
+   internally so the caller does not need to know the length of the name in
+   advance.  Intended for use within the library and tools only; the caller is
+   responsible for freeing the returned buffer.
+
+RETURNS
+   Returns the vgroup's name, which can be an empty string if there is no name,
+   if successful, otherwise, returns NULL.
+
+*******************************************************************************/
+char *
+vgetvgname(int32 vkey)
+{
+    VGROUP *vg        = NULL;
+    size_t  name_len  = 0;
+    char   *vgname    = NULL;
+    char   *ret_value = NULL;
+
+    /* Check arguments */
+    if (HAatom_group(vkey) != VGIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, NULL);
+
+    /* Get the vgroup struct for access */
+    if ((vg = VIGet_vgdesc(vkey)) == NULL)
+        HGOTO_ERROR(DFE_BADPTR, NULL);
+
+    /* Get the length of the vgroup name */
+    name_len = (vg->vgname != NULL) ? strlen(vg->vgname) : 0;
+
+    vgname = (char *)malloc(name_len + 1);
+    if (!vgname)
+        HGOTO_ERROR(DFE_NOSPACE, NULL);
+
+    /* Copy vgroup name or set it null-terminated */
+    if (name_len > 0)
+        strcpy(vgname, vg->vgname);
+    else
+        vgname[0] = '\0';
+
+    ret_value = vgname;
+
+done:
+    if (ret_value == NULL)
+        free(vgname);
+    return ret_value;
+}
 
 /* ==================================================================== */
 /*
@@ -1289,8 +1431,7 @@ Vdetach(int32 vkey /* IN: vgroup key */)
 
     /* Free the old-style attribute list and reset associated fields */
     if (vg->old_alist != NULL) {
-        free(vg->old_alist);
-        vg->old_alist = NULL;
+        HDfreenclear(vg->old_alist);
         vg->noldattrs = 0;
     }
 
@@ -2034,13 +2175,13 @@ NAME
    Vsetname
 
 DESCRIPTION
-   gives a name to the VGROUP vg.
+   Assigns a name to the vgroup vkey.
 
 RETURNS
     RETURN VALUES: SUCCEED/FAIL
 
 *******************************************************************************/
-int32
+int
 Vsetname(int32       vkey, /* IN: vgroup key */
          const char *vgname /* IN: name to set for vgroup */)
 {
@@ -2093,16 +2234,16 @@ NAME
    Vsetclass
 
 DESCRIPTION
-    Assigns a class name to the VGROUP vg.
+    Assigns a class name to the vgroup vkey
 
 RETURNS
-    RETURN VALUES: SUCCEED for success, FAIL for failure
+    SUCCEED/FAIL
 
 MODIFICATION
     2010/01/26 No longer truncates classname to max length of VGNAMELENMAX.
 
 *******************************************************************************/
-int32
+int
 Vsetclass(int32       vkey, /* IN: vgroup key */
           const char *vgclass /* IN: class to set for vgroup */)
 {
@@ -2405,144 +2546,61 @@ done:
 
 /*******************************************************************************
 NAME
-   Vgetnamelen
+   Vgetname - Retrieves the vgroup's name
 
 DESCRIPTION
-   Retrieves the length of the vgroup's name.
-
-RETURNS
-   Returns SUCCEED/FAIL
-   BMR - 2006/09/10
-
-*******************************************************************************/
-int32
-Vgetnamelen(int32   vkey, /* IN: vgroup key */
-            uint16 *name_len /* OUT: length of vgroup's name */)
-{
-    vginstance_t *v         = NULL;
-    VGROUP       *vg        = NULL;
-    int32         ret_value = SUCCEED;
-
-    /* clear error stack */
-    HEclear();
-
-    /* check if vgroup is valid and the vgname */
-    if (HAatom_group(vkey) != VGIDGROUP)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* get instance of vgroup */
-    if (NULL == (v = (vginstance_t *)HAatom_object(vkey)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
-
-    /* get vgroup itself and check */
-    vg = v->vg;
-    if (vg == NULL)
-        HGOTO_ERROR(DFE_BADPTR, FAIL);
-
-    /*
-     * Obtain the name length
-     */
-
-    if (vg->vgname == NULL)
-        /* if there is no name... */
-        *name_len = 0;
-    else
-        /* if name had been set... */
-        *name_len = (uint16)strlen(vg->vgname);
-
-done:
-    return ret_value;
-} /* Vgetnamelen */
-
-/*******************************************************************************
-NAME
-   Vgetclassnamelen
-
-DESCRIPTION
-   Retrieves the length of the vgroup's name.
-
-RETURNS
-   Returns SUCCEED/FAIL
-   BMR - 2006/09/10
-
-*******************************************************************************/
-int32
-Vgetclassnamelen(int32   vkey, /* IN: vgroup key */
-                 uint16 *classname_len /* OUT: length of vgroup's classname */)
-{
-    vginstance_t *v         = NULL;
-    VGROUP       *vg        = NULL;
-    int32         ret_value = SUCCEED;
-
-    /* clear error stack */
-    HEclear();
-
-    /* check if vgroup is valid and the vgname */
-    if (HAatom_group(vkey) != VGIDGROUP)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* get instance of vgroup */
-    if (NULL == (v = (vginstance_t *)HAatom_object(vkey)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
-
-    /* get vgroup itself and check */
-    vg = v->vg;
-    if (vg == NULL)
-        HGOTO_ERROR(DFE_BADPTR, FAIL);
-
-    /* obtain the class name length */
-    if (vg->vgclass == NULL)
-        *classname_len = 0;
-    else
-        /* if name had been set... */
-        *classname_len = (uint16)strlen(vg->vgclass);
-
-done:
-    return ret_value;
-} /* Vgetclassnamelen */
-
-/*******************************************************************************
-NAME
-   Vgetname
-
-DESCRIPTION
-   returns the vgroup's name
-   ASSUME that vgname has been allocated large enough to hold
-   the name
+    This function retrieves the name of a vgroup.  buf_size is an IN/OUT
+    parameter.  When vgname is NULL or *buf_size is 0, the function returns
+    the length of the vgroup name in *buf_size without copying.  Otherwise,
+    up to *buf_size-1 characters are stored in vgname followed by a null
+    terminator, and the actual name length is returned in *buf_size.  If the
+    name of the vgroup is longer than *buf_size-1, the string will be truncated
+    and the null terminator is stored in the last position of the buffer.
+    buf_size must not be NULL.
 
 RETURNS
    SUCCEED / FAIL
 
 *******************************************************************************/
-int32
-Vgetname(int32 vkey, /* IN: vgroup key */
-         char *vgname /* IN/OUT: vgroup name */)
+int
+Vgetname(int32   vkey,   /* IN: vgroup key */
+         char   *vgname, /* OUT: vgroup name */
+         size_t *buf_size /* IN/OUT: name buffer size */)
 {
-    vginstance_t *v         = NULL;
-    VGROUP       *vg        = NULL;
-    int32         ret_value = SUCCEED;
+    VGROUP *vg        = NULL;
+    size_t  name_len  = 0;
+    int     ret_value = SUCCEED;
 
-    /* clear error stack */
+    /* Clear error stack */
     HEclear();
 
-    /* check if vgroup is valid and the vgname */
-    if (HAatom_group(vkey) != VGIDGROUP || vgname == NULL)
+    /* Check arguments */
+    if (HAatom_group(vkey) != VGIDGROUP || buf_size == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* get instance of vgroup */
-    if (NULL == (v = (vginstance_t *)HAatom_object(vkey)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
-
-    /* get vgroup itself and check */
-    vg = v->vg;
-    if (vg == NULL)
+    /* Get the vgroup struct for access */
+    if ((vg = VIGet_vgdesc(vkey)) == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    /* copy vgroup name over if it had been set */
-    if (vg->vgname != NULL)
-        strcpy(vgname, vg->vgname);
+    /* Get the length of the vgroup name */
+    name_len = (vg->vgname != NULL) ? strlen(vg->vgname) : 0;
+
+    /* If vgname is NULL or *buf_size is 0, return the length of the name */
+    if (vgname == NULL || *buf_size == 0) {
+        *buf_size = name_len;
+        HGOTO_DONE(ret_value);
+    }
+
+    /* Copy vgroup name, truncating if necessary */
+    if (vg->vgname != NULL) {
+        strncpy(vgname, vg->vgname, *buf_size - 1);
+        vgname[*buf_size - 1] = '\0';
+    }
     else
         vgname[0] = '\0';
+
+    /* Return the actual name length */
+    *buf_size = name_len;
 
 done:
     return ret_value;
@@ -2550,46 +2608,61 @@ done:
 
 /*******************************************************************************
 NAME
-   Vgetclass
+   Vgetclass - Retrieves the vgroup's class
 
 DESCRIPTION
-   returns the vgroup's class name
-   ASSUME that vgclass has been allocated large enough to hold
-   the name
+    This function retrieves the class of a vgroup.  buf_size is an IN/OUT
+    parameter.  When vgclass is NULL or *buf_size is 0, the function returns
+    the length of the vgroup class in *buf_size without copying.  Otherwise,
+    up to *buf_size-1 characters are stored in vgclass followed by a null
+    terminator, and the actual class length is returned in *buf_size.  If the
+    class of the vgroup is longer than *buf_size-1, the string will be truncated
+    and the null terminator is stored in the last position of the buffer.
+    buf_size must not be NULL.
 
 RETURNS
-   SUCCEED/FAIL
+   SUCCEED / FAIL
 
 *******************************************************************************/
-int32
-Vgetclass(int32 vkey, /* IN: vgroup key */
-          char *vgclass /* IN/OUT: vgroup class */)
+int
+Vgetclass(int32   vkey,    /* IN: vgroup key */
+          char   *vgclass, /* OUT: vgroup class buffer */
+          size_t *buf_size /* IN/OUT: class buffer size */)
 {
-    vginstance_t *v         = NULL;
-    VGROUP       *vg        = NULL;
-    int32         ret_value = SUCCEED;
+    VGROUP *vg        = NULL;
+    size_t  class_len = 0;
+    int     ret_value = SUCCEED;
 
-    /* clear error stack */
+    /* Clear error stack */
     HEclear();
 
-    /* check if vgroup is valid and also vgroup class */
-    if (HAatom_group(vkey) != VGIDGROUP || vgclass == NULL)
+    /* Check arguments */
+    if (HAatom_group(vkey) != VGIDGROUP || buf_size == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* get instance of vgroup */
-    if (NULL == (v = (vginstance_t *)HAatom_object(vkey)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
-
-    /* get vgroup itself and check */
-    vg = v->vg;
-    if (vg == NULL)
+    /* Get the vgroup struct for access */
+    if ((vg = VIGet_vgdesc(vkey)) == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    /* copy class over if it had been set */
-    if (vg->vgclass != NULL)
-        strcpy(vgclass, vg->vgclass);
+    /* Get the length of the vgroup class */
+    class_len = (vg->vgclass != NULL) ? strlen(vg->vgclass) : 0;
+
+    /* If vgclass is NULL or *buf_size is 0, return the length of the class */
+    if (vgclass == NULL || *buf_size == 0) {
+        *buf_size = class_len;
+        HGOTO_DONE(ret_value);
+    }
+
+    /* Copy vgroup class, truncating if necessary */
+    if (vg->vgclass != NULL) {
+        strncpy(vgclass, vg->vgclass, *buf_size - 1);
+        vgclass[*buf_size - 1] = '\0';
+    }
     else
         vgclass[0] = '\0';
+
+    /* Return the actual class length */
+    *buf_size = class_len;
 
 done:
     return ret_value;
@@ -2600,52 +2673,63 @@ NAME
    Vinquire
 
 DESCRIPTION
-   General inquiry routine for VGROUP.
-   output parameters:
-         nentries - no of entries in the vgroup
-         vgname  - the vgroup's name
+   General inquiry routine for VGROUP.  buf_size is an IN/OUT parameter.
+   When vgname is NULL or *buf_size is 0, the function returns the length
+   of the vgroup name in *buf_size without copying.  Otherwise, up to
+   *buf_size-1 characters are stored in vgname followed by a null
+   terminator, and the actual name length is returned in *buf_size.  If the
+   name of the vgroup is longer than *buf_size-1, the string will be truncated
+   and the null terminator is stored in the last position of the buffer.
+   buf_size must not be NULL.
 
 RETURNS
-   RETURNS FAIL if error
-   RETURNS SUCCEED if ok
+   SUCCEED / FAIL
 
 *******************************************************************************/
 int
-Vinquire(int32  vkey,     /* IN: vgroup key */
-         int32 *nentries, /* IN/OUT: number of entries in vgroup */
-         char  *vgname /* IN/OUT: vgroup name */)
+Vinquire(int32   vkey,     /* IN: vgroup key */
+         int32  *nentries, /* OUT: number of entries in vgroup */
+         char   *vgname,   /* OUT: vgroup name */
+         size_t *buf_size /* IN/OUT: vgname buffer size */)
 {
-    vginstance_t *v         = NULL;
-    VGROUP       *vg        = NULL;
-    int           ret_value = SUCCEED;
+    VGROUP *vg        = NULL;
+    size_t  name_len  = 0;
+    int     ret_value = SUCCEED;
 
-    /* clear error stack */
+    /* Clear error stack */
     HEclear();
 
-    /* check if vgroup is valid */
-    if (HAatom_group(vkey) != VGIDGROUP)
+    /* Check argument */
+    if (HAatom_group(vkey) != VGIDGROUP || buf_size == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* get instance of vgroup */
-    if (NULL == (v = (vginstance_t *)HAatom_object(vkey)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
-
-    /* get vgroup itself and check */
-    vg = v->vg;
-    if (vg == NULL)
+    /* Get the vgroup struct for access */
+    if ((vg = VIGet_vgdesc(vkey)) == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    /* check tag of vgroup */
-    if (vg->otag != DFTAG_VG)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* copy vgroup name if requested.  Assumes 'vgname' has sufficient space */
-    if (vgname != NULL)
-        strcpy(vgname, vg->vgname);
-
-    /* set number of entries in vgroup if requested */
+    /* Get the number of entries in vgroup, if requested */
     if (nentries != NULL)
         *nentries = (int32)vg->nvelt;
+
+    /* Get the length of the vgroup name */
+    name_len = (vg->vgname != NULL) ? strlen(vg->vgname) : 0;
+
+    /* If vgname is NULL or *buf_size is 0, return the length of the name */
+    if (vgname == NULL || *buf_size == 0) {
+        *buf_size = name_len;
+        HGOTO_DONE(ret_value);
+    }
+
+    /* Copy vgroup name, truncating if necessary */
+    if (vg->vgname != NULL) {
+        strncpy(vgname, vg->vgname, *buf_size - 1);
+        vgname[*buf_size - 1] = '\0';
+    }
+    else
+        vgname[0] = '\0';
+
+    /* Return the actual name length */
+    *buf_size = name_len;
 
 done:
     return ret_value;
@@ -2873,8 +2957,7 @@ VPshutdown(void)
     }
 
     if (Vgbuf != NULL) {
-        free(Vgbuf);
-        Vgbuf     = NULL;
+        HDfreenclear(Vgbuf);
         Vgbufsize = 0;
     }
 

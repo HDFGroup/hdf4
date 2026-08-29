@@ -17,6 +17,7 @@
 
 #include "hdf.h"
 #include "mfhdf.h"
+#include "vg_priv.h"
 #include "hdiff_list.h"
 
 static int   is_reserved(char *vg_class);
@@ -145,7 +146,6 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
     int32  ref_vg;
     char  *vg_name  = NULL;
     char  *vg_class = NULL;
-    uint16 name_len;
     int32  i;
 
     /* initialize the V interface */
@@ -190,28 +190,16 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
                 goto out;
             }
 
-            if (Vgetnamelen(vg_id, &name_len) == FAIL) {
-                printf("Error: Could not get name length for group with ref <%d>\n", ref);
-                goto out;
-            }
-
-            free(vg_name);
-            vg_name = (char *)malloc(sizeof(char) * (name_len + 1));
-
-            if (Vgetname(vg_id, vg_name) == FAIL) {
+            /* Get vgroup's name */
+            vg_name = vgetvgname(vg_id);
+            if (!vg_name) {
                 printf("Error: Could not get name for group with ref <%d>\n", ref);
                 goto out;
             }
 
-            if (Vgetclassnamelen(vg_id, &name_len) == FAIL) {
-                printf("Error: Could not get classname length for group with ref <%d>\n", ref);
-                goto out;
-            }
-
-            free(vg_class);
-            vg_class = (char *)malloc(sizeof(char) * (name_len + 1));
-
-            if (Vgetclass(vg_id, vg_class) == FAIL) {
+            /* Get vgroup's class */
+            vg_class = vgetvgclass(vg_id);
+            if (!vg_class) {
                 printf("Error: Could not get class for group with ref <%d>\n", ref);
                 goto out;
             }
@@ -270,17 +258,13 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
                 goto out;
             }
 
-            free(vg_name);
-            vg_name = NULL;
-            free(vg_class);
-            vg_class = NULL;
+            HDfreenclear(vg_name);
+            HDfreenclear(vg_class);
         } /* for */
 
         /* free the space allocated */
         free(ref_array);
     } /* if */
-    free(vg_name);
-    free(vg_class);
 
     /* terminate access to the V interface */
     if (Vend(file_id) == FAIL) {
@@ -329,7 +313,6 @@ insert_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identif
     char  *vg_class = NULL;
     char  *path     = NULL;
     int    i;
-    uint16 name_len;
 
     for (i = 0; i < npairs; i++) {
         tag = in_tags[i];
@@ -348,25 +331,26 @@ insert_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identif
                 }
 
                 vg_id = Vattach(file_id, ref, "r");
-                if (Vgetnamelen(vg_id, &name_len) == FAIL) {
-                    printf("Error: Could not get name length for group with ref <%d>\n", ref);
+                if (vg_id == FAIL) {
+                    printf("Error: Could not attach group with ref <%d>\n", ref);
                     break;
                 }
 
+                /* Get vgroup's name */
                 free(vg_name);
-                vg_name = (char *)malloc(sizeof(char) * (name_len + 1));
-
-                Vgetname(vg_id, vg_name);
-
-                if (Vgetclassnamelen(vg_id, &name_len) == FAIL) {
-                    printf("Error: Could not get classname length for group with ref <%d>\n", ref);
+                vg_name = vgetvgname(vg_id);
+                if (!vg_name) {
+                    printf("Error: Could not get name for group with ref <%d>\n", ref);
                     break;
                 }
 
+                /* Get vgroup's class */
                 free(vg_class);
-                vg_class = (char *)malloc(sizeof(char) * (name_len + 1));
-
-                Vgetclass(vg_id, vg_class);
+                vg_class = vgetvgclass(vg_id);
+                if (!vg_class) {
+                    printf("Error: Could not get class for group with ref <%d>\n", ref);
+                    break;
+                }
 
                 /* ignore reserved HDF groups/vdatas */
                 if (is_reserved(vg_class)) {
