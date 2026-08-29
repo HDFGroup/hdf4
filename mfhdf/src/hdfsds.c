@@ -1055,7 +1055,7 @@ hdf_read_ndgs(NC *handle)
                             dimsizes   = malloc(sizeof(int32));
                             vardims    = malloc(sizeof(int));
                             scaletypes = malloc(sizeof(int32));
-                            rank = max(rank, 1);
+                            rank       = max(rank, 1);
                         }
                         if (dimsizes == NULL || vardims == NULL || scaletypes == NULL)
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
