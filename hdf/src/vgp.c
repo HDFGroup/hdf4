@@ -941,6 +941,8 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
         if (uint16var == 0)
             vg->vgname = NULL;
         else {
+            if (NULL == (vg->vgname = (char *)malloc(uint16var + 1)))
+                HGOTO_ERROR(DFE_NOSPACE, FAIL);
             vg->vgname = (char *)malloc(uint16var + 1);
             HIstrncpy(vg->vgname, (char *)bb, (int)uint16var + 1);
             bb += (size_t)uint16var;
@@ -951,7 +953,8 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
         if (uint16var == 0)
             vg->vgclass = NULL;
         else {
-            vg->vgclass = (char *)malloc(uint16var + 1);
+            if (NULL == (vg->vgclass = (char *)malloc(uint16var + 1)))
+                HGOTO_ERROR(DFE_NOSPACE, FAIL);
             HIstrncpy(vg->vgclass, (char *)bb, (int)uint16var + 1);
             bb += (size_t)uint16var;
         }
@@ -2838,6 +2841,20 @@ VPshutdown(void)
     vginstance_t *vg        = NULL;
     int           ret_value = SUCCEED;
 
+    if (vtree != NULL) {
+        /* Free the vfile tree */
+        tbbtdfree(vtree, vfdestroynode, NULL);
+
+        /* Destroy the atom groups for Vdatas and Vgroups */
+        if (HAdestroy_group(VSIDGROUP) == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+        if (HAdestroy_group(VGIDGROUP) == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+        vtree = NULL;
+    }
+
     /* Release the vdata free-list if it exists */
     if (vgroup_free_list != NULL) {
         while (vgroup_free_list != NULL) {
@@ -2858,23 +2875,8 @@ VPshutdown(void)
         }
     }
 
-    if (vtree != NULL) {
-        /* Free the vfile tree */
-        tbbtdfree(vtree, vfdestroynode, NULL);
-
-        /* Destroy the atom groups for Vdatas and Vgroups */
-        if (HAdestroy_group(VSIDGROUP) == FAIL)
-            HGOTO_ERROR(DFE_INTERNAL, FAIL);
-
-        if (HAdestroy_group(VGIDGROUP) == FAIL)
-            HGOTO_ERROR(DFE_INTERNAL, FAIL);
-
-        vtree = NULL;
-    }
-
     if (Vgbuf != NULL) {
-        free(Vgbuf);
-        Vgbuf     = NULL;
+        HDfreenclear(Vgbuf);
         Vgbufsize = 0;
     }
 
