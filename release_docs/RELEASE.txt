@@ -279,10 +279,10 @@ New features and changes
     - Vgroup API breaking changes: Vgetname, Vgetclass, Vinquire
 
       The unbounded write in Vgetname, Vgetclass, and Vinquire could
-      overflow caller-supplied buffers.  Their signature of these
-      functions changed to take a size_t *buf_size (IN/OUT) parameter
+      previously overflow caller-supplied buffers.  The signature of these
+      functions has been changed to take a size_t *buf_size (IN/OUT) parameter
       to address that security vulnerability. In addition, Vgetnamelen
-      and Vgetclassnamelen are removed because applications can now use
+      and Vgetclassnamelen were removed because applications can now use
       Vgetname/Vgetclass to query the required length instead.
 
       The new prototypes are:
@@ -298,7 +298,7 @@ New features and changes
 
       The Fortran bindings (VFGNAM, VFGCLS, VFINQ) had no buffer-length
       information anywhere in the call chain and were independently
-      exposed to the same overflow. This is fixed as part of the
+      exposed to the same overflow. This was fixed as part of the
       same change — the Fortran stubs now query the actual length
       internally and allocate correctly-sized buffers before copying
       into the caller's CHARACTER variable.
