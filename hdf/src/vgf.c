@@ -143,9 +143,28 @@ nvdtchc(intf *vkey)
  */
 
 intf
-nvgnamc(intf *vkey, _fcd vgname)
+nvgnamc(intf *vkey, _fcd vgname, intf *vgnamelen)
 {
-    return Vgetname(*vkey, _fcdtocp(vgname));
+    char  *tvgname;
+    size_t buf_size = 0;
+    int    ret;
+
+    /* Query the actual name length first */
+    ret = Vgetname((int32)*vkey, NULL, &buf_size);
+    if (ret == FAIL)
+        return FAIL;
+
+    tvgname = (char *)malloc(buf_size + 1);
+    if (!tvgname)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+
+    buf_size++; /* for null-terminator */
+    ret = Vgetname((int32)*vkey, tvgname, &buf_size);
+    if (ret != FAIL)
+        HDpackFstring(tvgname, _fcdtocp(vgname), (int)*vgnamelen);
+
+    free(tvgname);
+    return (intf)ret;
 } /* VGNAMC */
 
 /* ------------------------------------------------------------------ */
@@ -155,9 +174,28 @@ nvgnamc(intf *vkey, _fcd vgname)
  */
 
 intf
-nvgclsc(intf *vkey, _fcd vgclass)
+nvgclsc(intf *vkey, _fcd vgclass, intf *vgclasslen)
 {
-    return Vgetclass(*vkey, _fcdtocp(vgclass));
+    char  *tvgclass;
+    size_t buf_size = 0;
+    int    ret;
+
+    /* Query the actual class length first */
+    ret = Vgetclass((int32)*vkey, NULL, &buf_size);
+    if (ret == FAIL)
+        return FAIL;
+
+    tvgclass = (char *)malloc(buf_size + 1);
+    if (!tvgclass)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+
+    buf_size++; /* for null-terminator */
+    ret = Vgetclass((int32)*vkey, tvgclass, &buf_size);
+    if (ret != FAIL)
+        HDpackFstring(tvgclass, _fcdtocp(vgclass), (int)*vgclasslen);
+
+    free(tvgclass);
+    return (intf)ret;
 } /* VGCLSC */
 
 /* ------------------------------------------------------------------ */
@@ -167,9 +205,31 @@ nvgclsc(intf *vkey, _fcd vgclass)
  */
 
 intf
-nvinqc(intf *vkey, intf *nentries, _fcd vgname)
+nvinqc(intf *vkey, intf *nentries, _fcd vgname, intf *vgnamelen)
 {
-    return (intf)Vinquire(*vkey, (int32 *)nentries, _fcdtocp(vgname));
+    char  *tvgname;
+    int32  tnentries;
+    size_t buf_size = 0;
+    int    ret;
+
+    /* Query the actual name length first */
+    ret = Vinquire((int32)*vkey, &tnentries, NULL, &buf_size);
+    if (ret == FAIL)
+        return FAIL;
+
+    tvgname = (char *)malloc(buf_size + 1);
+    if (!tvgname)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+
+    buf_size++; /* for null-terminator */
+    ret = Vinquire((int32)*vkey, &tnentries, tvgname, &buf_size);
+    if (ret != FAIL) {
+        *nentries = (intf)tnentries;
+        HDpackFstring(tvgname, _fcdtocp(vgname), (int)*vgnamelen);
+    }
+
+    free(tvgname);
+    return (intf)ret;
 } /* VINQC */
 
 /* ------------------------------------------------------------------ */
@@ -1349,12 +1409,10 @@ nvsfccpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz, intf *nr
         return FAIL;
     }
     if (*flds_in_buf == '\0') {
-        free(flds_in_buf);
-        flds_in_buf = NULL;
+        HDfreenclear(flds_in_buf);
     }
     if (*afield == '\0') {
-        free(afield);
-        afield = NULL;
+        HDfreenclear(afield);
     }
     fldbufpt[0] = _fcdtocp(fldbuf);
     ret = VSfpack((int32)*vs, (int)*packtype, flds_in_buf, (void *)buf, (int)*bufsz, (int)*nrecs, afield,
@@ -1386,12 +1444,10 @@ nvsfncpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz, intf *nr
         return FAIL;
     }
     if (*flds_in_buf == '\0') {
-        free(flds_in_buf);
-        flds_in_buf = NULL;
+        HDfreenclear(flds_in_buf);
     }
     if (*afield == '\0') {
-        free(afield);
-        afield = NULL;
+        HDfreenclear(afield);
     }
     fldbufpt[0] = fldbuf;
     ret = VSfpack((int32)*vs, (int)*packtype, flds_in_buf, (void *)buf, (int)*bufsz, (int)*nrecs, afield,
@@ -1472,11 +1528,8 @@ intf
 nvscsetnmbl(intf *id, intf *num_blocks)
 {
     intf ret;
-    int  c_ret;
 
-    c_ret = VSsetnumblocks(*id, *num_blocks);
-    if (c_ret == 0)
-        ret = 0;
+    ret = VSsetnumblocks(*id, *num_blocks);
     return ret;
 }
 /*------------------------------------------------------------------------

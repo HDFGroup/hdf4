@@ -255,6 +255,10 @@ HDFLIBAPI vginstance_t *vginst(HFILEID f, uint16 vgid);
 
 HDFLIBAPI DYN_VWRITELIST *vswritelist(int32 vskey);
 
+HDFLIBAPI char *vgetvgname(int32 vkey);
+
+HDFLIBAPI char *vgetvgclass(int32 vkey);
+
 HDFLIBAPI int vpackvg(VGROUP *vg, uint8 buf[], int32 *size);
 
 HDFLIBAPI int32 vinsertpair(VGROUP *vg, uint16 tag, uint16 ref);

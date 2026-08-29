@@ -16,6 +16,7 @@
 
 #include "hdf.h"
 #include "mfhdf.h"
+#include "vg_priv.h"
 #include "hrepack.h"
 #include "hrepack_utils.h"
 #include "hrepack_parse.h"
@@ -235,6 +236,7 @@ list_main(const char *infname, const char *outfname, options_t *options)
         printf("Failed to close file <%s>\n", infname);
     if (Hclose(infile_id) == FAIL)
         printf("Failed to close file <%s>\n", infname);
+    infile_id = FAIL;
 
     if (options->trip == 1) {
         if (has_GRelems)
@@ -284,6 +286,7 @@ out:
     if (infile_id != FAIL) {
         if (Hclose(infile_id) == FAIL)
             printf("Failed to close file <%s>\n", infname);
+        infile_id = FAIL;
     }
     if (outfile_id != FAIL) {
         if (Hclose(outfile_id) == FAIL)
@@ -361,8 +364,7 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
          */
         for (i = 0; i < nlones; i++) {
 
-            int32  ref = ref_array[i];
-            uint16 name_len;
+            int32 ref = ref_array[i];
 
             /*
              * attach to the current vgroup then get its
@@ -375,30 +377,16 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
             }
 
             /* Get vgroup's name */
-            if (Vgetnamelen(vg_id, &name_len) == FAIL) {
-                printf("Error: Could not get name length for group with ref <%d>\n", ref);
+            vg_name = vgetvgname(vg_id);
+            if (!vg_name) {
+                printf("Error: Could not get name for group with ref <%d>\n", ref);
                 goto out;
             }
 
-            free(vg_name);
-            vg_name = (char *)malloc(sizeof(char) * (name_len + 1));
-
-            if (Vgetname(vg_id, vg_name) == FAIL) {
-                printf("Could not get name for group\n");
-                goto out;
-            }
-
-            /* Get vgroup's class name */
-            if (Vgetclassnamelen(vg_id, &name_len) == FAIL) {
-                printf("Error: Could not get name length for group with ref <%d>\n", ref);
-                goto out;
-            }
-
-            free(vg_class);
-            vg_class = (char *)malloc(sizeof(char) * (name_len + 1));
-
-            if (Vgetclass(vg_id, vg_class) == FAIL) {
-                printf("Could not get class for group\n");
+            /* Get vgroup's class */
+            vg_class = vgetvgclass(vg_id);
+            if (!vg_class) {
+                printf("Error: Could not get class name for vgroup with ref <%d>\n", ref);
                 goto out;
             }
 
@@ -472,10 +460,8 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
                     goto out;
                 }
 
-                free(tags);
-                tags = NULL;
-                free(refs);
-                refs = NULL;
+                HDfreenclear(tags);
+                HDfreenclear(refs);
             }
 
             if (Vdetach(vg_id) == FAIL) {
@@ -489,14 +475,12 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
                 }
             }
 
-            free(vg_class);
-            vg_class = NULL;
-            free(vg_name);
-            vg_name = NULL;
+            HDfreenclear(vg_class);
+            HDfreenclear(vg_name);
         } /* for nlones */
 
         /* free the space allocated */
-        free(ref_array);
+        HDfreenclear(ref_array);
 
     } /* if  nlones */
 
@@ -509,6 +493,7 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
         printf("Error: Could not end infile group interface\n");
         return FAIL;
     }
+    infile_id = FAIL;
     if (options->trip == 1) {
         if (Vend(outfile_id) == FAIL) {
             printf("Error: Could not end outfile group interface\n");
@@ -516,8 +501,8 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
         }
     }
 
-    free(vg_class);
-    free(vg_name);
+    HDfreenclear(vg_class);
+    HDfreenclear(vg_name);
 
     return SUCCEED;
 
@@ -565,7 +550,6 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
     char  *vg_name       = NULL;
     char  *vg_class      = NULL;
     char  *path          = NULL;
-    uint16 name_len;
     int    visited;
     int32  tag;
     int32  ref;
@@ -592,27 +576,16 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                 vg_id = Vattach(infile_id, ref, "r");
 
                 /* Get vgroup's name */
-                if (Vgetnamelen(vg_id, &name_len) == FAIL) {
-                    printf("Error: Could not get name length for group with ref <%d>\n", ref);
-                    goto out;
-                }
-                free(vg_name);
-                vg_name = (char *)malloc(sizeof(char) * (name_len + 1));
-                if (Vgetname(vg_id, vg_name) == FAIL) {
-                    printf("Could not get name for group\n");
+                vg_name = vgetvgname(vg_id);
+                if (!vg_name) {
+                    printf("Error: Could not get name for vgroup with ref <%d>\n", ref);
                     goto out;
                 }
 
                 /* Get vgroup's class name */
-                if (Vgetclassnamelen(vg_id, &name_len) == FAIL) {
-                    printf("Error: Could not get name length for group with ref <%d>\n", ref);
-                    goto out;
-                }
-
-                free(vg_class);
-                vg_class = (char *)malloc(sizeof(char) * (name_len + 1));
-                if (Vgetclass(vg_id, vg_class) == FAIL) {
-                    printf("Could not get class for group\n");
+                vg_class = vgetvgclass(vg_id);
+                if (!vg_class) {
+                    printf("Error: Could not get class name for vgroup with ref <%d>\n", ref);
                     goto out;
                 }
 
@@ -629,6 +602,7 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                         printf("Could not detach group\n");
                         goto out;
                     }
+                    vg_id = FAIL;
                     continue;
                 }
 
@@ -774,8 +748,8 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                 }
                 break;
         } /* switch */
-        free(vg_name);
-        vg_name = NULL;
+        HDfreenclear(vg_name);
+        HDfreenclear(vg_class);
     } /* i */
     free(vg_class);
     free(vg_name);

@@ -57,7 +57,7 @@ c	related: Vgetname--vgnamc--VFGNAM
       character*(*)   vgname
       integer         vgnamc
 
-      vfgnam = vgnamc (vg, vgname)
+      vfgnam = vgnamc (vg, vgname, len(vgname))
       end
 c	------------------------------------------------------------
 c	get the class name of a vgroup
@@ -69,7 +69,7 @@ c	related: Vgetclass--vgclsc--VFGCLS
       character*(*)   vgclass
       integer       vgclsc
 
-      vfgcls = vgclsc  (vg, vgclass)
+      vfgcls = vgclsc  (vg, vgclass, len(vgclass))
       end
 c   ------------------------------------------------------------
 c	general inquiry on a vgroup
@@ -80,7 +80,7 @@ c	related: Vinquire--vinqc--VFINQ
       character*(*)   vgname
       integer   vinqc
 
-      vfinq = vinqc (vg, nentries, vgname)
+      vfinq = vinqc (vg, nentries, vgname, len(vgname))
       end
 
 c   ------------------------------------------------------------
