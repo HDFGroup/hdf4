@@ -943,7 +943,6 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
         else {
             if (NULL == (vg->vgname = (char *)malloc(uint16var + 1)))
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
-            vg->vgname = (char *)malloc(uint16var + 1);
             HIstrncpy(vg->vgname, (char *)bb, (int)uint16var + 1);
             bb += (size_t)uint16var;
         }
