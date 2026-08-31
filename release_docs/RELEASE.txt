@@ -72,6 +72,8 @@ Breaking changes
       actual required length and allocates correctly-sized buffers
       before fetching.
 
+      Fixes GitHub issue [#872](https://github.com/HDFGroup/hdf4/issues/872)
+
 
 New features and changes
 ========================
@@ -381,7 +383,7 @@ Bugs fixed since HDF 4.3.1
 
     - Removed a potential double free situation
 
-      Reset a poiner NULL after free in vimakecompat() to avoid a possible
+      Reset a pointer NULL after free in vimakecompat() to avoid a possible
       double free situation.
 
     - Fixed an incorrect replacement of a memset
