@@ -86,21 +86,21 @@ int list_an(int32 infile_id, int32 outfile_id, options_t *options);
 int
 list_main(const char *infname, const char *outfname, options_t *options)
 {
-    list_table_t *list_tbl   = NULL; /* list of objects */
-    dim_table_t  *td1        = NULL; /* dimensions */
-    dim_table_t  *td2        = NULL; /* dimensions */
-    int32         sd_id      = -1,   /* SD interface identifier */
-                  sd_out     = -1,   /* SD interface identifier */
-                  gr_id      = -1,   /* GR interface identifier */
-                  gr_out     = -1,   /* GR interface identifier */
-                  infile_id  = -1,   /* input file identifier */
-                  outfile_id = -1;   /* output file identifier */
-    int32         n_rimages,         /* number of raster images in the file */
-                  n_file_attrs;      /* number of file attributes */
-    int           has_GRelems = 0;   /* set to 1 when there are GR images or */
-                                     /* attributes in the file (HDFFR-1428) */
-    int           i;
-    const char   *err;
+    list_table_t *list_tbl = NULL; /* list of objects */
+    dim_table_t  *td1      = NULL; /* dimensions */
+    dim_table_t  *td2      = NULL; /* dimensions */
+    int32         sd_id    = -1,   /* SD interface identifier */
+        sd_out             = -1,   /* SD interface identifier */
+        gr_id              = -1,   /* GR interface identifier */
+        gr_out             = -1,   /* GR interface identifier */
+        infile_id          = -1,   /* input file identifier */
+        outfile_id         = -1;   /* output file identifier */
+    int32 n_rimages,               /* number of raster images in the file */
+        n_file_attrs;              /* number of file attributes */
+    int has_GRelems = 0;           /* set to 1 when there are GR images or */
+                                   /* attributes in the file (HDFFR-1428) */
+    int         i;
+    const char *err;
 
     /*-------------------------------------------------------------------------
      * initialize tables
@@ -307,7 +307,7 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
         list_table_t *list_tbl, dim_table_t *td1, dim_table_t *td2, options_t *options)
 {
 
-    int32  vg_id = -1;           /* vgroup identifier */
+    int32  vg_id  = -1;          /* vgroup identifier */
     int32  nlones = 0;           /* number of lone vgroups */
     int32  ntagrefs;             /* number of tag/ref pairs in a vgroup */
     int32 *ref_array     = NULL; /* buffer to hold the ref numbers of lone vgroups   */
@@ -575,9 +575,9 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
         ref = in_refs[i];
 
         switch (tag) { /*-------------------------------------------------------------------------
-             * DFTAG_VG
-             *-------------------------------------------------------------------------
-             */
+                        * DFTAG_VG
+                        *-------------------------------------------------------------------------
+                        */
             case DFTAG_VG:
 
                 visited = list_table_search(list_tbl, DFTAG_VG, ref);
@@ -957,10 +957,10 @@ out:
 int
 list_vs(int32 infile_id, int32 outfile_id, list_table_t *list_tbl, options_t *options)
 {
-    int32 nlones     = 0,    /* number of lone vdatas */
-         *ref_array  = NULL, /* buffer to hold the ref numbers of lone vdatas */
-          ref;               /* temporary ref number  */
-    int   i;
+    int32 nlones   = 0,    /* number of lone vdatas */
+        *ref_array = NULL, /* buffer to hold the ref numbers of lone vdatas */
+        ref;               /* temporary ref number  */
+    int i;
 
     /*-------------------------------------------------------------------------
      * initialize the V interface
@@ -1129,12 +1129,12 @@ list_glb(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_
 int
 list_an(int32 infile_id, int32 outfile_id, options_t *options)
 {
-    int32 an_id = -1,  /* AN interface identifier */
-        ann_id = -1,   /* an annotation identifier */
-        ann_length,    /* length of the text in an annotation */
-        an_out = -1,   /* AN interface identifier */
+    int32 an_id = -1,       /* AN interface identifier */
+        ann_id  = -1,       /* an annotation identifier */
+        ann_length,         /* length of the text in an annotation */
+        an_out        = -1, /* AN interface identifier */
         file_label_id = -1, /* file label identifier */
-        file_desc_id = -1,  /* file description identifier */
+        file_desc_id  = -1, /* file description identifier */
         n_file_labels, n_file_descs, n_data_labels, n_data_descs;
     char *ann_buf = NULL; /* buffer to hold the read annotation */
     int   i;              /* position of an annotation in all of the same type*/
@@ -1144,7 +1144,7 @@ list_an(int32 infile_id, int32 outfile_id, options_t *options)
     }
 
     /* Initialize the AN interface  */
-    an_id  = ANstart(infile_id);
+    an_id = ANstart(infile_id);
     if (an_id == FAIL)
         goto out;
 
@@ -1216,8 +1216,8 @@ list_an(int32 infile_id, int32 outfile_id, options_t *options)
             printf("Could not end AN\n");
             goto out;
         }
-        ann_id = -1;  
-        file_label_id = -1;  
+        ann_id        = -1;
+        file_label_id = -1;
 
         /* Free the space allocated for the annotation buffer */
         HDfreenclear(ann_buf);
@@ -1270,7 +1270,7 @@ list_an(int32 infile_id, int32 outfile_id, options_t *options)
             printf("Could not read AN\n");
             goto out;
         }
-        ann_id = -1;
+        ann_id       = -1;
         file_desc_id = -1;
 
         /* Free the space allocated for the annotation buffer */
@@ -1282,7 +1282,7 @@ list_an(int32 infile_id, int32 outfile_id, options_t *options)
         printf("Could not end AN\n");
         goto out;
     }
-    an_id = -1;
+    an_id  = -1;
     an_out = -1;
 
     return SUCCEED;
