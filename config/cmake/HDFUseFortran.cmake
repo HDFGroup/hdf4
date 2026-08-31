@@ -121,6 +121,11 @@ check_fortran_source_compiles (${STORAGE_SIZE_CODE} ${HDF_PREFIX}_FORTRAN_HAVE_S
 check_fortran_source_compiles (${ISO_FORTRAN_ENV_CODE} ${HDF_PREFIX}_HAVE_ISO_FORTRAN_ENV SRC_EXT f90)
 check_fortran_source_compiles (${REALISNOTDOUBLE_CODE} ${HDF_PREFIX}_FORTRAN_DEFAULT_REAL_NOT_DOUBLE SRC_EXT f90)
 check_fortran_source_compiles (${ISO_C_BINDING_CODE} ${HDF_PREFIX}_FORTRAN_HAVE_ISO_C_BINDING SRC_EXT f90)
+if (NOT ${HDF_PREFIX}_FORTRAN_HAVE_ISO_C_BINDING OR NOT ${HDF_PREFIX}_HAVE_ISO_FORTRAN_ENV)
+	message (FATAL_ERROR "HDF4 Fortran requires a Fortran 2003 compiler (ISO_C_BINDING / ISO_FORTRAN_ENV)")
+endif ()
+
+
 
 #-----------------------------------------------------------------------------
 # Add debug information (intel Fortran : JB)
