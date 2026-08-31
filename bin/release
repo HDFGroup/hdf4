@@ -235,8 +235,8 @@ if [ X$revmode = Xyes ]; then
     # use a generic directory name for revision releases
     HDF4_IN_VERS=hdfsrc
 else
-    # Store hdf4-$VERS ("hdf-4.2.15", e.g.) to a variable to avoid typos
-    HDF4_VERS=hdf-$VERS
+    # Store hdf4$VERS ("hdf4.2.15", e.g.) to a variable to avoid typos
+    HDF4_VERS=hdf$VERS
     # directory name matches tar file name for non-revision releases
     HDF4_IN_VERS=$HDF4_VERS
 fi
