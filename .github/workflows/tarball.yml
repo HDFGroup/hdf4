@@ -119,7 +119,7 @@ jobs:
             then
               FILE_NAME_BASE=$(echo "snapshot")
             else
-              FILE_NAME_BASE=$(echo "hdf-${{ steps.version.outputs.SOURCE_TAG }}")
+              FILE_NAME_BASE=$(echo "hdf${{ steps.version.outputs.SOURCE_TAG }}")
             fi
           fi
           echo "FILE_BASE=$FILE_NAME_BASE" >> $GITHUB_OUTPUT
