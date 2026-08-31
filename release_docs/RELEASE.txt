@@ -34,6 +34,45 @@ CONTENTS
 - Known problems
 
 
+Breaking changes
+================
+
+    - Vgroup API prototype changed: Vgetname, Vgetclass, Vinquire
+
+      The unbounded write in Vgetname, Vgetclass, and Vinquire could
+      previously overflow caller-supplied buffers.  The signature of these
+      functions has been changed to take a size_t *buf_size (IN/OUT) parameter
+      to address that security vulnerability. In addition, Vgetnamelen
+      and Vgetclassnamelen were removed because applications can now use
+      Vgetname/Vgetclass to query the required length instead.
+
+      The new prototypes are:
+        int Vgetname(int32 vkey, char *vgname, size_t *buf_size);
+        int Vgetclass(int32 vkey, char *vgclass, size_t *buf_size);
+        int Vinquire(int32 vkey, int32 *nentries, char *vgname, size_t *buf_size);
+
+      Callers must update all call sites accordingly by calling
+      Vgetname/Vgetclass the first time passing in NULL for the buffer
+      to retrieve the size of the name/class.  The size then must be
+      incremented to account for the null-terminator prior to being
+      passed into the fetch call.
+
+      The Fortran bindings (VFGNAM, VFGCLS, VFINQ) had no buffer-length
+      information anywhere in the call chain and were independently
+      exposed to the same overflow. This was fixed as part of the
+      same change — the Fortran stubs now query the actual length
+      internally and allocate correctly-sized buffers before copying
+      into the caller's CHARACTER variable.
+
+      For the Java API, no changes to public method signatures —
+      buf_size handling is fully internal to the JNI layer. The
+      old JNI implementations exposed Java applications to the same
+      overflow risk as C by writing directly into fixed-size buffers
+      (H4_MAX_NC_CLASS/H4_MAX_GR_NAME). The JNI layer now queries the
+      actual required length and allocates correctly-sized buffers
+      before fetching.
+
+
 New features and changes
 ========================
     Configuration:
@@ -276,45 +315,86 @@ New features and changes
       retained in hdf.h so old code will compile, but other public headers
       now use int and unsigned in place of these types.
 
-    - Vgroup API breaking changes: Vgetname, Vgetclass, Vinquire
-
-      The unbounded write in Vgetname, Vgetclass, and Vinquire could
-      previously overflow caller-supplied buffers.  The signature of these
-      functions has been changed to take a size_t *buf_size (IN/OUT) parameter
-      to address that security vulnerability. In addition, Vgetnamelen
-      and Vgetclassnamelen were removed because applications can now use
-      Vgetname/Vgetclass to query the required length instead.
-
-      The new prototypes are:
-        int Vgetname(int32 vkey, char *vgname, size_t *buf_size);
-        int Vgetclass(int32 vkey, char *vgclass, size_t *buf_size);
-        int Vinquire(int32 vkey, int32 *nentries, char *vgname, size_t *buf_size);
-
-      Callers must update all call sites accordingly by calling
-      Vgetname/Vgetclass the first time passing in NULL for the buffer
-      to retrieve the size of the name/class.  The size then must be
-      incremented to account for the null-terminator prior to being
-      passed into the fetch call.
-
-      The Fortran bindings (VFGNAM, VFGCLS, VFINQ) had no buffer-length
-      information anywhere in the call chain and were independently
-      exposed to the same overflow. This was fixed as part of the
-      same change — the Fortran stubs now query the actual length
-      internally and allocate correctly-sized buffers before copying
-      into the caller's CHARACTER variable.
-
-      For the Java API, no changes to public method signatures —
-      buf_size handling is fully internal to the JNI layer. The
-      old JNI implementations exposed Java applications to the same
-      overflow risk as C by writing directly into fixed-size buffers
-      (H4_MAX_NC_CLASS/H4_MAX_GR_NAME). The JNI layer now queries the
-      actual required length and allocates correctly-sized buffers
-      before fetching.
-
 
 Bugs fixed since HDF 4.3.1
 ===========================
-    -
+
+    - Removed memory issues in low-level Vgroup code
+
+      The code that destroys the atom groups for Vdatas and Vgroups was
+      placed after the free lists had already been freed, so, that code
+      added more released memory to the free lists, which were never
+      freed, causing many memory leaks.  This is now fixed.
+
+      Fixes GitHub issue [#819](https://github.com/HDFGroup/hdf4/issues/819)
+
+    - Removed an invalid read in the DD management code
+
+      HTIcount_dd had a block of incorrect code that caused invalid read
+      errors. This is now fixed.
+
+      Fixes GitHub issue [#808](https://github.com/HDFGroup/hdf4/issues/808)
+
+    - Fixed SDgetcompinfo incorrect behavior
+
+      When SZIP library is not available, SDgetcompinfo() fails even
+      though it only needs to retrieve compression metadata, not actually
+      compress/decompress data. The function should succeed in returning
+      compression information regardless of whether the SZIP library
+      is present.
+
+      This restriction is now removed from HCIinit_coder() to allow
+      metadata queries without the szip library.
+
+      Fixes GitHub issue [#867](https://github.com/HDFGroup/hdf4/issues/867)
+
+    - Fixed a bug introduced by a previous fix in 3.1 release
+      When opened files were closed in different order than when they
+      were created, segfault and memory leaks occurred.  This fix
+      checks _curr_opened == 0 and resets _ncdf and _curr_opened to 0
+      in ncreset_cdflist on teardown, which would have been correct in
+      the previous fix.  The fix has been verified with an out-of-order
+      LIFO file-closure program under Valgrind.
+
+      Fixes GitHub issue [#862](https://github.com/HDFGroup/hdf4/issues/862)
+
+    - SDreaddata fails with DFACC_RDWR/no encoder combo
+
+      Reading szip-compressed data from files opened with DFACC_RDWR
+      when only decoder is available may fail. This is a pre-existing
+      architectural issue where file open mode is conflated with operation
+      type. This issue is now fixed by updating the internal function
+      hdf_get_vp_aid() to take the correct access mode and all the call
+      sites to provide the appropriate one.
+
+      Fixes GitHub issue [#870](https://github.com/HDFGroup/hdf4/issues/870)
+
+    - Fixed memory issues in hdiff and hrepack
+
+      There are a large number of unchecked API calls and unreleased
+      resources in hdiff and hrepack. They are now fixed.
+
+    - Removed a potential overflowing in DAset_elem
+
+      Changed to use size_t instead of int to avoid overflowing a 32-bit
+      int in DAset_elem.
+
+    - Removed a potential double free situation
+
+      Reset a poiner NULL after free in vimakecompat() to avoid a possible
+      double free situation.
+
+    - Fixed an incorrect replacement of a memset
+
+      The memset was placed in done: in HAIget_atom_node(), causing the
+      memset to happen in the case of failures. This is now fixed.
+
+    - Fixed an integer overflow and a memory leak
+
+      They occurred in the DD management code. This is now fixed. A
+      utility function, HTPmemory_cleanup() was also added for future
+      uses.
+
 
 Documentation
 =============
