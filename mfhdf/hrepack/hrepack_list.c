@@ -86,19 +86,21 @@ int list_an(int32 infile_id, int32 outfile_id, options_t *options);
 int
 list_main(const char *infname, const char *outfname, options_t *options)
 {
-    list_table_t *list_tbl = NULL;                      /* list of objects */
-    dim_table_t  *td1      = NULL;                      /* dimensions */
-    dim_table_t  *td2      = NULL;                      /* dimensions */
-    int32         sd_id    = FAIL,                      /* SD interface identifier */
-        sd_out             = FAIL,                      /* SD interface identifier */
-        gr_id              = FAIL,                      /* GR interface identifier */
-        gr_out             = FAIL,                      /* GR interface identifier */
-        infile_id = FAIL, outfile_id = FAIL, n_rimages, /* number of raster images in the file */
-        n_file_attrs;                                   /* number of file attributes */
-    int has_GRelems = 0;                                /* set to 1 when there are GR images or */
-                                                        /* attributes in the file (HDFFR-1428) */
-    int         i;
-    const char *err;
+    list_table_t *list_tbl   = NULL; /* list of objects */
+    dim_table_t  *td1        = NULL; /* dimensions */
+    dim_table_t  *td2        = NULL; /* dimensions */
+    int32         sd_id      = -1,   /* SD interface identifier */
+                  sd_out     = -1,   /* SD interface identifier */
+                  gr_id      = -1,   /* GR interface identifier */
+                  gr_out     = -1,   /* GR interface identifier */
+                  infile_id  = -1,   /* input file identifier */
+                  outfile_id = -1;   /* output file identifier */
+    int32         n_rimages,         /* number of raster images in the file */
+                  n_file_attrs;      /* number of file attributes */
+    int           has_GRelems = 0;   /* set to 1 when there are GR images or */
+                                     /* attributes in the file (HDFFR-1428) */
+    int           i;
+    const char   *err;
 
     /*-------------------------------------------------------------------------
      * initialize tables
@@ -230,13 +232,21 @@ list_main(const char *infname, const char *outfname, options_t *options)
      * close interfaces
      *-------------------------------------------------------------------------
      */
-    if (GRend(gr_id) == FAIL)
+    if (GRend(gr_id) == FAIL) {
         printf("Failed to close GR interface <%s>\n", infname);
-    if (SDend(sd_id) == FAIL)
+        goto out;
+    }
+    gr_id = -1;
+    if (SDend(sd_id) == FAIL) {
         printf("Failed to close file <%s>\n", infname);
-    if (Hclose(infile_id) == FAIL)
+        goto out;
+    }
+    sd_id = -1;
+    if (Hclose(infile_id) == FAIL) {
         printf("Failed to close file <%s>\n", infname);
-    infile_id = FAIL;
+        goto out;
+    }
+    infile_id = -1;
 
     if (options->trip == 1) {
         if (has_GRelems)
@@ -267,31 +277,18 @@ out:
         dim_table_free(td1);
     if (td2 != NULL)
         dim_table_free(td2);
-    if (gr_id != FAIL) {
-        if (GRend(gr_id) == FAIL)
-            printf("Failed to close GR interface <%s>\n", infname);
-    }
-    if (gr_out != FAIL) {
-        if (GRend(gr_out) == FAIL)
-            printf("Failed to close GR interface <%s>\n", outfname);
-    }
-    if (sd_id != FAIL) {
-        if (SDend(sd_id) == FAIL)
-            printf("Failed to close SD interface for <%s>\n", infname);
-    }
-    if (sd_out != FAIL) {
-        if (SDend(sd_out) == FAIL)
-            printf("Failed to close SD interface for <%s>\n", outfname);
-    }
-    if (infile_id != FAIL) {
-        if (Hclose(infile_id) == FAIL)
-            printf("Failed to close file <%s>\n", infname);
-        infile_id = FAIL;
-    }
-    if (outfile_id != FAIL) {
-        if (Hclose(outfile_id) == FAIL)
-            printf("Failed to close file <%s>\n", outfname);
-    }
+    if (gr_id != FAIL)
+        GRend(gr_id);
+    if (gr_out != FAIL)
+        GRend(gr_out);
+    if (sd_id != FAIL)
+        SDend(sd_id);
+    if (sd_out != FAIL)
+        SDend(sd_out);
+    if (infile_id != FAIL)
+        Hclose(infile_id);
+    if (outfile_id != FAIL)
+        Hclose(outfile_id);
 
     return FAIL;
 }
@@ -310,13 +307,13 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
         list_table_t *list_tbl, dim_table_t *td1, dim_table_t *td2, options_t *options)
 {
 
-    int32  vg_id;                /* vgroup identifier */
+    int32  vg_id = -1;           /* vgroup identifier */
     int32  nlones = 0;           /* number of lone vgroups */
     int32  ntagrefs;             /* number of tag/ref pairs in a vgroup */
     int32 *ref_array     = NULL; /* buffer to hold the ref numbers of lone vgroups   */
     int32 *tags          = NULL; /* buffer to hold the tag numbers of vgroups   */
     int32 *refs          = NULL; /* buffer to hold the ref numbers of vgroups   */
-    int32  vgroup_id_out = 0;    /* vgroup identifier */
+    int32  vgroup_id_out = -1;   /* vgroup identifier */
     int32  tag_vg;
     int32  ref_vg;
     char  *vg_name  = NULL;
@@ -344,7 +341,8 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
      * lone vgroups in the file, but not to get their reference numbers.
      *-------------------------------------------------------------------------
      */
-    nlones = Vlone(infile_id, NULL, nlones);
+    if ((nlones = Vlone(infile_id, NULL, nlones)) == FAIL)
+        goto out;
 
     if (nlones > 0) {
         /*
@@ -352,12 +350,17 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
          * buffer ref_array to hold the reference numbers of all lone vgroups,
          */
         ref_array = (int32 *)malloc(sizeof(int32) * (size_t)nlones);
+        if (ref_array == NULL) {
+            printf("Not enough memory!\n");
+            exit(-1);
+        }
 
         /*
          * and call Vlone again to retrieve the reference numbers into
          * the buffer ref_array.
          */
-        nlones = Vlone(infile_id, ref_array, nlones);
+        if ((nlones = Vlone(infile_id, ref_array, nlones)) == FAIL)
+            goto out;
 
         /*
          * iterate through each lone vgroup.
@@ -396,6 +399,8 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
                     printf("Could not detach group\n");
                     goto out;
                 }
+                HDfreenclear(vg_name);
+                HDfreenclear(vg_class);
                 continue;
             }
             if (strcmp(vg_name, GR_NAME) == 0) {
@@ -403,6 +408,8 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
                     printf("Could not detach group\n");
                     goto out;
                 }
+                HDfreenclear(vg_name);
+                HDfreenclear(vg_class);
                 continue;
             }
 
@@ -451,7 +458,15 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
             ntagrefs = Vntagrefs(vg_id);
             if (ntagrefs > 0) {
                 tags = (int32 *)malloc(sizeof(int32) * (size_t)ntagrefs);
+                if (tags == NULL) {
+                    printf("Not enough memory!\n");
+                    exit(-1);
+                }
                 refs = (int32 *)malloc(sizeof(int32) * (size_t)ntagrefs);
+                if (refs == NULL) {
+                    printf("Not enough memory!\n");
+                    exit(-1);
+                }
                 if (Vgettagrefs(vg_id, tags, refs, ntagrefs) < 0)
                     goto out;
 
@@ -482,7 +497,7 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
         /* free the space allocated */
         HDfreenclear(ref_array);
 
-    } /* if  nlones */
+    } /* if nlones */
 
     /*-------------------------------------------------------------------------
      * terminate access to the V interface
@@ -493,7 +508,6 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
         printf("Error: Could not end infile group interface\n");
         return FAIL;
     }
-    infile_id = FAIL;
     if (options->trip == 1) {
         if (Vend(outfile_id) == FAIL) {
             printf("Error: Could not end outfile group interface\n");
@@ -501,12 +515,13 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
         }
     }
 
-    HDfreenclear(vg_class);
-    HDfreenclear(vg_name);
-
     return SUCCEED;
 
 out:
+    if (vg_id != -1)
+        Vdetach(vg_id);
+    if (vgroup_id_out != -1)
+        Vdetach(vgroup_id_out);
     Vend(infile_id);
     if (options->trip == 1)
         Vend(outfile_id);
@@ -542,7 +557,7 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
               int           npairs,                           /* number tag/ref pairs for parent group */
               list_table_t *list_tbl, dim_table_t *td1, dim_table_t *td2, options_t *options)
 {
-    int32  vg_id;                /* vgroup identifier for opened group in input */
+    int32  vg_id = -1;           /* vgroup identifier for opened group in input */
     int32  ntagrefs;             /* number of tag/ref pairs in a vgroup */
     int32 *tags          = NULL; /* buffer to hold the tag numbers of vgroups   */
     int32 *refs          = NULL; /* buffer to hold the ref numbers of vgroups   */
@@ -559,8 +574,7 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
         tag = in_tags[i];
         ref = in_refs[i];
 
-        switch (tag) {
-            /*-------------------------------------------------------------------------
+        switch (tag) { /*-------------------------------------------------------------------------
              * DFTAG_VG
              *-------------------------------------------------------------------------
              */
@@ -573,7 +587,10 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                  *-------------------------------------------------------------------------
                  */
 
-                vg_id = Vattach(infile_id, ref, "r");
+                if ((vg_id = Vattach(infile_id, ref, "r")) == FAIL) {
+                    printf("Error: Could not attach group with ref <%d>\n", ref);
+                    goto out;
+                }
 
                 /* Get vgroup's name */
                 vg_name = vgetvgname(vg_id);
@@ -595,6 +612,8 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                         printf("Could not detach group\n");
                         goto out;
                     }
+                    HDfreenclear(vg_name);
+                    HDfreenclear(vg_class);
                     continue;
                 }
                 if (strcmp(vg_name, GR_NAME) == 0) {
@@ -602,7 +621,9 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                         printf("Could not detach group\n");
                         goto out;
                     }
-                    vg_id = FAIL;
+                    vg_id = -1;
+                    HDfreenclear(vg_name);
+                    HDfreenclear(vg_class);
                     continue;
                 }
 
@@ -667,10 +688,19 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                     }
 
                     /* insert objects for this group */
-                    ntagrefs = Vntagrefs(vg_id);
+                    if ((ntagrefs = Vntagrefs(vg_id)) == FAIL)
+                        goto out;
                     if (ntagrefs > 0) {
                         tags = (int32 *)malloc(sizeof(int32) * (size_t)ntagrefs);
+                        if (tags == NULL) {
+                            printf("Not enough memory!\n");
+                            exit(-1);
+                        }
                         refs = (int32 *)malloc(sizeof(int32) * (size_t)ntagrefs);
+                        if (refs == NULL) {
+                            printf("Not enough memory!\n");
+                            exit(-1);
+                        }
                         if (Vgettagrefs(vg_id, tags, refs, ntagrefs) < 0)
                             goto out;
                         /* recurse */
@@ -678,14 +708,11 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                                           path, tags, refs, ntagrefs, list_tbl, td1, td2, options) < 0) {
                             goto out;
                         }
-                        free(tags);
-                        tags = NULL;
-                        free(refs);
-                        refs = NULL;
+                        HDfreenclear(tags);
+                        HDfreenclear(refs);
                     } /* ntagrefs > 0 */
 
-                    free(path);
-                    path = NULL;
+                    HDfreenclear(path);
 
                 } /* check if already visited */
 
@@ -749,14 +776,18 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                 break;
         } /* switch */
         HDfreenclear(vg_name);
-        HDfreenclear(vg_class);
     } /* i */
-    free(vg_class);
-    free(vg_name);
+    HDfreenclear(vg_class);
+    HDfreenclear(vg_name);
 
     return SUCCEED;
 
 out:
+    if (vg_id != -1)
+        Vdetach(vg_id);
+    if (vgroup_id_out != -1)
+        Vdetach(vgroup_id_out);
+
     free(vg_class);
     free(vg_name);
     free(tags);
@@ -780,7 +811,7 @@ list_gr(int32 infile_id, int32 outfile_id, int32 gr_id, /* GR interface identifi
         int32         gr_out,                           /* GR interface identifier */
         list_table_t *list_tbl, options_t *options)
 {
-    int32 ri_id,               /* raster image identifier */
+    int32 ri_id = -1,          /* raster image identifier */
         n_rimages,             /* number of raster images in the file */
         n_file_attrs,          /* number of file attributes */
         ri_index,              /* index of a image */
@@ -799,13 +830,19 @@ list_gr(int32 infile_id, int32 outfile_id, int32 gr_id, /* GR interface identifi
     }
 
     for (ri_index = 0; ri_index < n_rimages; ri_index++) {
-        ri_id = GRselect(gr_id, ri_index);
+        if ((ri_id = GRselect(gr_id, ri_index)) == FAIL) {
+            printf("Could not open image %d\n", ri_index);
+            goto out;
+        }
         if (GRgetiminfo(ri_id, name, &n_comps, &data_type, &interlace_mode, dim_sizes, &n_attrs) == FAIL) {
             printf("Could not get GR info\n");
             goto out;
         }
 
-        gr_ref = GRidtoref(ri_id);
+        if ((gr_ref = GRidtoref(ri_id)) == FAIL) {
+            printf("Could not get ref = %d\n", gr_ref);
+            goto out;
+        }
 
         /* check if already inserted in Vgroup; search all image tags */
         if (list_table_search(list_tbl, DFTAG_RI, gr_ref) >= 0 ||
@@ -835,7 +872,8 @@ list_gr(int32 infile_id, int32 outfile_id, int32 gr_id, /* GR interface identifi
     return SUCCEED;
 
 out:
-    GRendaccess(ri_id);
+    if (ri_id != -1)
+        GRendaccess(ri_id);
     return FAIL;
 }
 
@@ -852,7 +890,7 @@ int
 list_sds(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, list_table_t *list_tbl,
          dim_table_t *td1, dim_table_t *td2, options_t *options)
 {
-    int32 sds_id,                   /* dataset identifier */
+    int32 sds_id = -1,              /* dataset identifier */
         n_datasets,                 /* number of datasets in the file */
         n_file_attrs,               /* number of file attributes */
         index,                      /* index of a dataset */
@@ -866,19 +904,26 @@ list_sds(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, list_tabl
     /* determine the number of data sets in the file and the number of file attributes */
     if (SDfileinfo(sd_id, &n_datasets, &n_file_attrs) == FAIL) {
         printf("Could not get SDS info\n");
-        return FAIL;
+        goto out;
     }
 
     for (index = 0; index < n_datasets; index++) {
-        sds_id = SDselect(sd_id, index);
-        SDgetinfo(sds_id, name, &rank, dim_sizes, &data_type, &n_attrs);
-        sds_ref = SDidtoref(sds_id);
+        if ((sds_id = SDselect(sd_id, index)) == FAIL)
+            goto out;
+        if (SDgetinfo(sds_id, name, &rank, dim_sizes, &data_type, &n_attrs) == FAIL)
+            goto out;
+        if ((sds_ref = SDidtoref(sds_id)) == FAIL)
+            goto out;
 
         /* check if already inserted in Vgroup; search all SDS tags */
         if (list_table_search(list_tbl, DFTAG_SD, sds_ref) >= 0 ||
             list_table_search(list_tbl, DFTAG_SDG, sds_ref) >= 0 ||
             list_table_search(list_tbl, DFTAG_NDG, sds_ref) >= 0) {
-            SDendaccess(sds_id);
+            if (SDendaccess(sds_id) == FAIL) {
+                printf("Could not close SDS\n");
+                goto out;
+            }
+            sds_id = -1;
             continue;
         }
 
@@ -889,12 +934,14 @@ list_sds(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, list_tabl
 
         /* terminate access to the current dataset */
         SDendaccess(sds_id);
+        sds_id = -1;
     }
-
     return SUCCEED;
 
 out:
-    SDendaccess(sds_id);
+    if (sds_id != -1)
+        SDendaccess(sds_id);
+
     return FAIL;
 }
 
@@ -910,22 +957,22 @@ out:
 int
 list_vs(int32 infile_id, int32 outfile_id, list_table_t *list_tbl, options_t *options)
 {
-    int32 nlones   = 0,    /* number of lone vdatas */
-        *ref_array = NULL, /* buffer to hold the ref numbers of lone vdatas   */
-        ref;               /* temporary ref number  */
-    int i;
+    int32 nlones     = 0,    /* number of lone vdatas */
+         *ref_array  = NULL, /* buffer to hold the ref numbers of lone vdatas */
+          ref;               /* temporary ref number  */
+    int   i;
 
     /*-------------------------------------------------------------------------
      * initialize the V interface
      *-------------------------------------------------------------------------
      */
 
-    if (Vstart(infile_id) == FAIL) {
+    if (Vstart(infile_id) == FAIL)
         return FAIL;
-    }
 
     if (options->trip == 1) {
         if (Vstart(outfile_id) == FAIL) {
+            Vend(infile_id);
             return FAIL;
         }
     }
@@ -937,7 +984,8 @@ list_vs(int32 infile_id, int32 outfile_id, list_table_t *list_tbl, options_t *op
      *
      *-------------------------------------------------------------------------
      */
-    nlones = VSlone(infile_id, NULL, nlones);
+    if ((nlones = VSlone(infile_id, NULL, nlones)) == FAIL)
+        goto out;
 
     if (nlones > 0) {
         /*
@@ -945,12 +993,17 @@ list_vs(int32 infile_id, int32 outfile_id, list_table_t *list_tbl, options_t *op
          * buffer ref_array to hold the reference numbers of all lone vgroups,
          */
         ref_array = (int32 *)malloc(sizeof(int32) * (size_t)nlones);
+        if (ref_array == NULL) {
+            printf("Not enough memory!\n");
+            exit(-1);
+        }
 
         /*
          * and call VSlone again to retrieve the reference numbers into
          * the buffer ref_array.
          */
-        nlones = VSlone(infile_id, ref_array, nlones);
+        if ((nlones = VSlone(infile_id, ref_array, nlones)) == FAIL)
+            goto out;
 
         /*
          * iterate through each lone vdata.
@@ -976,8 +1029,7 @@ list_vs(int32 infile_id, int32 outfile_id, list_table_t *list_tbl, options_t *op
         } /* for */
 
         /* free the space allocated */
-        free(ref_array);
-        ref_array = NULL;
+        HDfreenclear(ref_array);
     } /* if */
 
     /*-------------------------------------------------------------------------
@@ -986,11 +1038,14 @@ list_vs(int32 infile_id, int32 outfile_id, list_table_t *list_tbl, options_t *op
      */
     if (Vend(infile_id) == FAIL) {
         printf("Error: Could not end Vdata interface\n");
+        HDfreenclear(ref_array);
         return FAIL;
     }
+
     if (options->trip == 1) {
         if (Vend(outfile_id) == FAIL) {
             printf("Error: Could not end Vdata interface\n");
+            HDfreenclear(ref_array);
             return FAIL;
         }
     }
@@ -998,7 +1053,6 @@ list_vs(int32 infile_id, int32 outfile_id, list_table_t *list_tbl, options_t *op
     return SUCCEED;
 
 out:
-
     Vend(infile_id);
     if (options->trip == 1)
         Vend(outfile_id);
@@ -1075,12 +1129,12 @@ list_glb(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_
 int
 list_an(int32 infile_id, int32 outfile_id, options_t *options)
 {
-    int32 an_id,       /* AN interface identifier */
-        ann_id,        /* an annotation identifier */
+    int32 an_id = -1,  /* AN interface identifier */
+        ann_id = -1,   /* an annotation identifier */
         ann_length,    /* length of the text in an annotation */
-        an_out,        /* AN interface identifier */
-        file_label_id, /* file label identifier */
-        file_desc_id,  /* file description identifier */
+        an_out = -1,   /* AN interface identifier */
+        file_label_id = -1, /* file label identifier */
+        file_desc_id = -1,  /* file description identifier */
         n_file_labels, n_file_descs, n_data_labels, n_data_descs;
     char *ann_buf = NULL; /* buffer to hold the read annotation */
     int   i;              /* position of an annotation in all of the same type*/
@@ -1091,7 +1145,12 @@ list_an(int32 infile_id, int32 outfile_id, options_t *options)
 
     /* Initialize the AN interface  */
     an_id  = ANstart(infile_id);
+    if (an_id == FAIL)
+        goto out;
+
     an_out = ANstart(outfile_id);
+    if (an_out == FAIL)
+        goto out;
 
     /*
      * Get the annotation information, e.g., the numbers of file labels, file
@@ -1109,13 +1168,23 @@ list_an(int32 infile_id, int32 outfile_id, options_t *options)
 
     for (i = 0; i < n_file_labels; i++) {
         /* Get the identifier of the current data label */
-        ann_id = ANselect(an_id, i, AN_FILE_LABEL);
+        if ((ann_id = ANselect(an_id, i, AN_FILE_LABEL)) == FAIL) {
+            printf("Failed to open file label %d\n", i);
+            goto out;
+        }
 
         /* Get the length of the data label */
-        ann_length = ANannlen(ann_id);
+        if ((ann_length = ANannlen(ann_id)) == FAIL) {
+            printf("Failed to get length of label %d\n", i);
+            goto out;
+        }
 
         /* Allocate space for the buffer to hold the data label text */
         ann_buf = malloc((size_t)(ann_length + 1) * sizeof(char));
+        if (ann_buf == NULL) {
+            printf("Not enough memory!\n");
+            exit(-1);
+        }
 
         /*
          * Read and display the file label.  Note that the size of the buffer,
@@ -1131,7 +1200,10 @@ list_an(int32 infile_id, int32 outfile_id, options_t *options)
         }
 
         /* Create the file label */
-        file_label_id = ANcreatef(an_out, AN_FILE_LABEL);
+        if ((file_label_id = ANcreatef(an_out, AN_FILE_LABEL)) == FAIL) {
+            printf("Could not create file label\n");
+            goto out;
+        }
 
         /* Write the annotations  */
         if (ANwriteann(file_label_id, ann_buf, ann_length) == FAIL) {
@@ -1144,9 +1216,11 @@ list_an(int32 infile_id, int32 outfile_id, options_t *options)
             printf("Could not end AN\n");
             goto out;
         }
+        ann_id = -1;  
+        file_label_id = -1;  
 
         /* Free the space allocated for the annotation buffer */
-        free(ann_buf);
+        HDfreenclear(ann_buf);
     }
 
     /*-------------------------------------------------------------------------
@@ -1156,13 +1230,23 @@ list_an(int32 infile_id, int32 outfile_id, options_t *options)
 
     for (i = 0; i < n_file_descs; i++) {
         /* Get the identifier of the current data label */
-        ann_id = ANselect(an_id, i, AN_FILE_DESC);
+        if ((ann_id = ANselect(an_id, i, AN_FILE_DESC)) == FAIL) {
+            printf("Failed to open file description %d\n", i);
+            goto out;
+        }
 
         /* Get the length of the data label */
-        ann_length = ANannlen(ann_id);
+        if ((ann_length = ANannlen(ann_id)) == FAIL) {
+            printf("Failed to get length of label %d\n", i);
+            goto out;
+        }
 
         /* Allocate space for the buffer to hold the data label text */
         ann_buf = malloc((size_t)(ann_length + 1) * sizeof(char));
+        if (ann_buf == NULL) {
+            printf("Not enough memory!\n");
+            exit(-1);
+        }
 
         if (ANreadann(ann_id, ann_buf, ann_length + 1) == FAIL) {
             printf("Could not read AN\n");
@@ -1170,7 +1254,10 @@ list_an(int32 infile_id, int32 outfile_id, options_t *options)
         }
 
         /* Create the label */
-        file_desc_id = ANcreatef(an_out, AN_FILE_DESC);
+        if ((file_desc_id = ANcreatef(an_out, AN_FILE_DESC)) == FAIL) {
+            printf("Could not create file description\n");
+            goto out;
+        }
 
         /* Write the annotations  */
         if (ANwriteann(file_desc_id, ann_buf, ann_length) == FAIL) {
@@ -1183,10 +1270,11 @@ list_an(int32 infile_id, int32 outfile_id, options_t *options)
             printf("Could not read AN\n");
             goto out;
         }
+        ann_id = -1;
+        file_desc_id = -1;
 
         /* Free the space allocated for the annotation buffer */
-        free(ann_buf);
-        ann_buf = NULL;
+        HDfreenclear(ann_buf);
     }
 
     /* Terminate access to the AN interface */
@@ -1194,13 +1282,22 @@ list_an(int32 infile_id, int32 outfile_id, options_t *options)
         printf("Could not end AN\n");
         goto out;
     }
+    an_id = -1;
+    an_out = -1;
 
     return SUCCEED;
 
 out:
-    if (ANend(an_id) == FAIL || ANend(an_out) == FAIL) {
-        printf("Could not end AN\n");
-    }
+    if (ann_id != -1)
+        ANendaccess(ann_id);
+    if (file_desc_id != -1)
+        ANendaccess(file_desc_id);
+    if (file_label_id != -1)
+        ANendaccess(file_desc_id);
+    if (an_id != -1)
+        ANend(an_id);
+    if (an_id != -1)
+        ANend(an_out);
     free(ann_buf);
 
     return FAIL;
