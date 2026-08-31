@@ -699,6 +699,8 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                         goto out;
                     }
                 }
+                HDfreenclear(vg_name);
+                HDfreenclear(vg_class);
 
                 break;
 
