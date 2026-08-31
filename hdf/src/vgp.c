@@ -1019,7 +1019,7 @@ vpackvg(VGROUP *vg,    /* IN: */
 
 /*******************************************************************************
 NAME
-   vunpackvg:
+   vunpackvg
 
 DESCRIPTION
    Unpacks the fields from a buf (ie a DFTAG_VG data object just

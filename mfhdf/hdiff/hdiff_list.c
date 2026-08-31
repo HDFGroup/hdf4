@@ -95,14 +95,17 @@ hdiff_list(const char *fname, dtable_t *table, diff_dim_table_t *td1, diff_dim_t
         printf("Failed to close GR interface <%s>\n", fname);
         goto out;
     }
+    gr_id = FAIL;
     if (SDend(sd_id) == FAIL) {
         printf("Failed to close SD interface <%s>\n", fname);
         goto out;
     }
+    sd_id = FAIL;
     if (Hclose(file_id) == FAIL) {
         printf("Failed to close file <%s>\n", fname);
         goto out;
     }
+    file_id = FAIL;
 
     *err = 0;
     return table->nobjs;
@@ -210,6 +213,8 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
                     printf("Error: Could not detach group <%s>\n", vg_class);
                     goto out;
                 }
+                HDfreenclear(vg_name);
+                HDfreenclear(vg_class);
                 continue;
             }
 
@@ -218,6 +223,8 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
                     printf("Error: Could not detach group <%s>\n", vg_class);
                     goto out;
                 }
+                HDfreenclear(vg_name);
+                HDfreenclear(vg_class);
                 continue;
             }
 
@@ -249,8 +256,8 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
 
                 insert_vg(fname, file_id, sd_id, gr_id, vg_name, tags, refs, ntagrefs, table, td1, td2);
 
-                free(tags);
-                free(refs);
+                HDfreenclear(tags);
+                HDfreenclear(refs);
             }
 
             if (Vdetach(vg_id) == FAIL) {
@@ -263,7 +270,7 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
         } /* for */
 
         /* free the space allocated */
-        free(ref_array);
+        HDfreenclear(ref_array);
     } /* if */
 
     /* terminate access to the V interface */
