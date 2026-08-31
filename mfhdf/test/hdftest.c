@@ -28,6 +28,7 @@ extern int test_idtest();
 extern int test_sd();
 extern int test_mixed_apis();
 extern int test_files();
+extern int test_rank0();
 extern int test_SDSprops();
 extern int test_coordvar();
 extern int test_chunk();
@@ -38,9 +39,6 @@ extern int test_datasizes();
 extern int test_datainfo();
 extern int test_external();
 extern int test_att_ann_datainfo();
-
-/* FIXME: Disabled due to test failures */
-/* extern int test_rank0(); */
 
 static int
 test_nbit()
@@ -183,8 +181,7 @@ main(void)
     num_errs = num_errs + test_files();
 
     /* Test the behavior of several functions when the SDS has rank=0 (in trank0.c) */
-    /* FIXME: Currently failing - fix ASAP */
-    /* num_errs = num_errs + test_rank0(); */
+    num_errs = num_errs + test_rank0();
 
     /* Tests functionality related to SDS' properties (in tsdsprops.c) */
     num_errs = num_errs + test_SDSprops();
