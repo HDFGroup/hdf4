@@ -10,7 +10,7 @@ previous releases of HDF and wish to migrate to this version of HDF.
 Note that the HDF4 documentation will be updated at the time of
 each final release and can be found on the HDF4 support page at:
 
-    https://portal.hdfgroup.org/display/HDF4/HDF4
+    https://portal.hdfgroup.org/display/HDF4
 
 The official HDF4 releases can be obtained from:
 
@@ -22,6 +22,7 @@ If you have any questions or comments, please send them to the HDF Help Desk:
 
 CONTENTS
 
+- Breaking changes
 - New features and changes
   -- Configuration
   -- C Library
@@ -32,6 +33,47 @@ CONTENTS
 - Documentation
 - Platforms Tested
 - Known problems
+
+
+Breaking changes
+================
+
+    - Vgroup API prototype changed: Vgetname, Vgetclass, Vinquire
+
+      The unbounded write in Vgetname, Vgetclass, and Vinquire could
+      previously overflow caller-supplied buffers.  The signature of these
+      functions has been changed to take a size_t *buf_size (IN/OUT) parameter
+      to address that security vulnerability. In addition, Vgetnamelen
+      and Vgetclassnamelen were removed because applications can now use
+      Vgetname/Vgetclass to query the required length instead.
+
+      The new prototypes are:
+        int Vgetname(int32 vkey, char *vgname, size_t *buf_size);
+        int Vgetclass(int32 vkey, char *vgclass, size_t *buf_size);
+        int Vinquire(int32 vkey, int32 *nentries, char *vgname, size_t *buf_size);
+
+      Callers must update all call sites accordingly by calling
+      Vgetname/Vgetclass the first time passing in NULL for the buffer
+      to retrieve the size of the name/class.  The size then must be
+      incremented to account for the null-terminator prior to being
+      passed into the fetch call.
+
+      The Fortran bindings (VFGNAM, VFGCLS, VFINQ) had no buffer-length
+      information anywhere in the call chain and were independently
+      exposed to the same overflow. This was fixed as part of the
+      same change — the Fortran stubs now query the actual length
+      internally and allocate correctly-sized buffers before copying
+      into the caller's CHARACTER variable.
+
+      For the Java API, no changes to public method signatures —
+      buf_size handling is fully internal to the JNI layer. The
+      old JNI implementations exposed Java applications to the same
+      overflow risk as C by writing directly into fixed-size buffers
+      (H4_MAX_NC_CLASS/H4_MAX_GR_NAME). The JNI layer now queries the
+      actual required length and allocates correctly-sized buffers
+      before fetching.
+
+      Fixes GitHub issue [#872](https://github.com/HDFGroup/hdf4/issues/872)
 
 
 New features and changes
@@ -276,45 +318,87 @@ New features and changes
       retained in hdf.h so old code will compile, but other public headers
       now use int and unsigned in place of these types.
 
-    - Vgroup API breaking changes: Vgetname, Vgetclass, Vinquire
-
-      The unbounded write in Vgetname, Vgetclass, and Vinquire could
-      previously overflow caller-supplied buffers.  The signature of these
-      functions has been changed to take a size_t *buf_size (IN/OUT) parameter
-      to address that security vulnerability. In addition, Vgetnamelen
-      and Vgetclassnamelen were removed because applications can now use
-      Vgetname/Vgetclass to query the required length instead.
-
-      The new prototypes are:
-        int Vgetname(int32 vkey, char *vgname, size_t *buf_size);
-        int Vgetclass(int32 vkey, char *vgclass, size_t *buf_size);
-        int Vinquire(int32 vkey, int32 *nentries, char *vgname, size_t *buf_size);
-
-      Callers must update all call sites accordingly by calling
-      Vgetname/Vgetclass the first time passing in NULL for the buffer
-      to retrieve the size of the name/class.  The size then must be
-      incremented to account for the null-terminator prior to being
-      passed into the fetch call.
-
-      The Fortran bindings (VFGNAM, VFGCLS, VFINQ) had no buffer-length
-      information anywhere in the call chain and were independently
-      exposed to the same overflow. This was fixed as part of the
-      same change — the Fortran stubs now query the actual length
-      internally and allocate correctly-sized buffers before copying
-      into the caller's CHARACTER variable.
-
-      For the Java API, no changes to public method signatures —
-      buf_size handling is fully internal to the JNI layer. The
-      old JNI implementations exposed Java applications to the same
-      overflow risk as C by writing directly into fixed-size buffers
-      (H4_MAX_NC_CLASS/H4_MAX_GR_NAME). The JNI layer now queries the
-      actual required length and allocates correctly-sized buffers
-      before fetching.
-
 
 Bugs fixed since HDF 4.3.1
 ===========================
-    -
+
+    - Removed memory issues in low-level Vgroup code
+
+      The code that destroys the atom groups for Vdatas and Vgroups was
+      placed after the free lists had already been freed, so, that code
+      added more released memory to the free lists, which were never
+      freed, causing many memory leaks.  This is now fixed.
+
+      Fixes GitHub issue [#819](https://github.com/HDFGroup/hdf4/issues/819)
+
+    - Removed an invalid read in the DD management code
+
+      HTIcount_dd had a block of incorrect code that caused invalid read
+      errors. This is now fixed.
+
+      Fixes GitHub issue [#808](https://github.com/HDFGroup/hdf4/issues/808)
+
+    - Fixed SDgetcompinfo incorrect behavior
+
+      When SZIP library is not available, SDgetcompinfo() fails even
+      though it only needs to retrieve compression metadata, not actually
+      compress/decompress data. The function should succeed in returning
+      compression information regardless of whether the SZIP library
+      is present.
+
+      This restriction is now removed from HCIinit_coder() to allow
+      metadata queries without the szip library.
+
+      Fixes GitHub issue [#867](https://github.com/HDFGroup/hdf4/issues/867)
+
+    - Fixed a bug introduced by a previous fix in 3.1 release
+
+      When opened files were closed in different order than when they
+      were created, segfault and memory leaks occurred.  This fix
+      checks _curr_opened == 0 and resets _ncdf and _curr_opened to 0
+      in ncreset_cdflist on teardown, which would have been correct in
+      the previous fix.  The fix has been verified with an out-of-order
+      LIFO file-closure program under Valgrind.
+
+      Fixes GitHub issue [#862](https://github.com/HDFGroup/hdf4/issues/862)
+
+    - SDreaddata fails with DFACC_RDWR/no encoder combo
+
+      Reading szip-compressed data from files opened with DFACC_RDWR
+      when only decoder is available may fail. This is a pre-existing
+      architectural issue where file open mode is conflated with operation
+      type. This issue is now fixed by updating the internal function
+      hdf_get_vp_aid() to take the correct access mode and all the call
+      sites to provide the appropriate one.
+
+      Fixes GitHub issue [#870](https://github.com/HDFGroup/hdf4/issues/870)
+
+    - Fixed memory issues in hdiff and hrepack
+
+      There were a large number of unchecked API calls and unreleased
+      resources in hdiff and hrepack. They are now fixed.
+
+    - Removed a potential overflow in DAset_elem
+
+      Changed to use size_t instead of int to avoid overflowing a 32-bit
+      int in DAset_elem.
+
+    - Removed a potential double free situation
+
+      Reset a pointer NULL after free in vimakecompat() to avoid a possible
+      double free situation.
+
+    - Fixed an incorrect replacement of a memset
+
+      The memset was placed in done: in HAIget_atom_node(), causing the
+      memset to happen in the case of failures. This is now fixed.
+
+    - Fixed an integer overflow and a memory leak
+
+      They occurred in the DD management code. This is now fixed. A
+      utility function, HTPmemory_cleanup() was also added for future
+      uses.
+
 
 Documentation
 =============
@@ -324,79 +408,27 @@ Platforms Tested
 ================
 This version has been tested in the following platforms:
 
-(Format:
-   uname -s, uname -r
-   uname -v, uname -p, uname -m)
 
-    Linux 6.7.4                      GNU gcc (GCC) 13.2.1
-    Fedora 39                        Clang version 17.0.6
-                                     
-    Linux 5.15.0                     GNU gcc (GCC) 11.3.0, 11.4.0, 12
-    Ubuntu SMP x86_64 GNU/Linux      GNU Fortran (GCC) 11.3.0, 12
-    Ubuntu 22.04                     Clang version 14.0.0
-                                     Intel OneApi 2023.1.0, 2023.2.0, 2024.0
-                                     Nvidia nvc 23.9
-                                     AOCC 4.1.0, Clang 16.0.3
-                                     Mingw, GNU GCC 10.0.0
-                                     (cmake and autotools)
+    Linux 6.17.0 x86_64              AMD AOCC 5.2.0 (clang/flang)
+    Ubuntu 24.04                     GNU gcc 13.3.0
+                                     gcc (distro default) ppc64le via QEMU
+                                     MinGW-w64 cross, GNU GCC 13.x
+                                     NVIDIA HPC SDK / NVHPC 26.5.0 (CUDA 13.2)
 
-    Linux 5.13.0                     GNU gcc (GCC) 9.4.0
-    Ubuntu SMP x86_64 GNU/Linux      GNU Fortran (GCC) 9.4.0
-    Ubuntu 20.04                     Clang version 10.0.0
-                                     Intel OneApi 2023.1.0
-                                     (cmake and autotools)
+    Linux 6.8.0 x86_64               clang 18.1.8
+    Ubuntu 22.04                     Address/Leak/UB sanitizers
 
-    Linux 4.18.0-348.7.1.el8_5       gcc (GCC) 8.5.0 20210514 (Red Hat 8.5.0-4)
-    #1 SMP x86_64 GNU/Linux          GNU Fortran (GCC) 8.5.0 20210514 (Red Hat 8.5.0-4)
-    CentOS8                          clang version 12.0.1 (Red Hat 12.0.1)
-                                     Intel OneApi 2023.1.0
-                                     (cmake and autotools)
+    macOS 26 (Tahoe) arm64           Apple clang 21.0.0
 
-    Linux 3.10.0-1160.36.2.el7.ppc64 gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-39)
-    #1 SMP ppc64 GNU/Linux           g++ (GCC) 4.8.5 20150623 (Red Hat 4.8.5-39)
-    (echidna)                        GNU Fortran (GCC) 4.8.5 20150623 (Red Hat 4.8.5-39)
-                                     IBM XL C/C++ V13.1
-                                     IBM XL Fortran V15.1f
- 
-    Linux 3.10.0-327.18.2.el7.x86_64 GNU C (gcc) and Fortran (gfortran) compilers:
-    #1 SMP x86_64, GNU/Linux             Version 4.8.5 20150623 (Red Hat 4.8.5-4)
-    (jelly/moohan)                       Version 5.3.0, 6.3.0, 7.2.0, 8.3.0, 9.1.0, 10.2.0
-                                     Intel(R) C (icc) and Fortran (ifort) compilers:
-                                        Version 17.0.0.098 Build 20160721
-                                     pgcc and pgf90 17.10-0 64-bit target
-                                         on x86-64 Linux -tp haswell
+    Windows Server 2025              ClangCL 18.1.8
+                                     Cygwin GNU gcc 14.4.0
+                                     MSVC 19.51, Visual Studio 18 2026, x64
+                                     MSYS2 mingw32 / mingw64 / 
+                                         ucrt64 (GNU GCC 16.2.0) / 
+                                         clang64 (Clang 22.1.8)
 
-    Linux 2.6.32-754.11.1.el6.x86_64  gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
-    #1 SMP, x86_64                    GNU Fortran (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
-    (platypus)                        icc (ICC) 17.0.0.098 Build 20160721
-                                      ifort (IFORT) 17.0.0.098 Build 20160721
-                                      pgcc and pgf90 17.10-0 64-bit target
-                                         on x86-64 Linux -tp nehalem
+    Windows Server 2022              Intel oneAPI 2025.2 (icx)
 
-    macOS Sequoia 15.7.7             Apple clang version 15.0.7
-    Darwin 24.6.0 arm64              Clang 17.0.0
-
-    macOS Ventura 13.6.4             Apple clang version 15.0.0
-    Darwin 22.6.0 x86_64
-
-    macOS Monterey 12                Apple clang version 14.0.0
-    Darwin 21.6.0 x86_64             gfortran GNU Fortran (Homebrew GCC 13.2.0) 13.2.0
-    (philo)                          Intel icc/icpc/ifort version 2021.10.0 20230609
-
-    macOS Apple M1 26.5.2            Apple clang version 16.0.0 (clang-1600.0.26.6)
-    Darwin 25.5.0 arm64              gfortran GNU Fortran (Homebrew GCC 14.2.0.1) 14.2.0
-    (macmini-m1)
-
-    macOS Big Sur 11.7.3             Apple clang version 12.0.5 (clang-1205.0.22.9)
-    Darwin 20.4.0 x86_64             gfortran GNU Fortran (Homebrew GCC 12.2.0) 12.2.0
-    (bigsur-1)                       Intel icc/icpc/ifort version 2021.7.1 20221019
-
-    Windows 10 x64                  Visual Studio 2019 w/ clang 12.0.0
-                                        with MSVC-like command-line (C/C++ only - cmake)
-                                    Visual Studio 2019 w/ Intel C/C++/Fortran oneAPI 2024 (cmake)
-                                    Visual Studio 2022 w/ clang 17.0.1
-                                        with MSVC-like command-line (C/C++ only - cmake)
-                                    Visual Studio 2022 w/ Intel C/C++/Fortran oneAPI 2024 (cmake)
 
 Known problems
 ==============
