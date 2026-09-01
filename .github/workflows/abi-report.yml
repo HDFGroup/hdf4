@@ -151,7 +151,7 @@ jobs:
           mkdir "${{ runner.workspace }}/buildabi"
           mkdir "${{ runner.workspace }}/buildabi/hdf4"
           cp ${{ inputs.file_base }}-hdf_compat_report.html ${{ runner.workspace }}/buildabi/hdf4
-          cp ${{ inputs.file_base }}-hdf_compat_report.html ${{ runner.workspace }}/buildabi/hdf4
+          cp ${{ inputs.file_base }}-mfhdf_compat_report.html ${{ runner.workspace }}/buildabi/hdf4
           cp ${{ inputs.file_base }}-java_compat_report.html ${{ runner.workspace }}/buildabi/hdf4
           cd "${{ runner.workspace }}/buildabi"
           tar -zcvf ${{ inputs.file_base }}.html.abi.reports.tar.gz hdf4
