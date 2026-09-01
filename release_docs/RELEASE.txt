@@ -351,6 +351,7 @@ Bugs fixed since HDF 4.3.1
       Fixes GitHub issue [#867](https://github.com/HDFGroup/hdf4/issues/867)
 
     - Fixed a bug introduced by a previous fix in 3.1 release
+
       When opened files were closed in different order than when they
       were created, segfault and memory leaks occurred.  This fix
       checks _curr_opened == 0 and resets _ncdf and _curr_opened to 0
@@ -373,10 +374,10 @@ Bugs fixed since HDF 4.3.1
 
     - Fixed memory issues in hdiff and hrepack
 
-      There are a large number of unchecked API calls and unreleased
+      There were a large number of unchecked API calls and unreleased
       resources in hdiff and hrepack. They are now fixed.
 
-    - Removed a potential overflowing in DAset_elem
+    - Removed a potential overflow in DAset_elem
 
       Changed to use size_t instead of int to avoid overflowing a 32-bit
       int in DAset_elem.
