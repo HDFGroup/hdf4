@@ -195,7 +195,7 @@ jobs:
       - name: Save published binary (Windows)
         uses: actions/upload-artifact@v7
         with:
-              name: zip-vs2022_cl-${{ inputs.build_mode }}-binary
+              name: zip-vs2026_cl-${{ inputs.build_mode }}-binary
               path: ${{ runner.workspace }}/build/HDF-*-win64.zip
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
         if:  ${{ (matrix.os == 'windows-latest') && (matrix.name != 'Ubuntu mingw CMake') && (inputs.shared == 'true') }}
