@@ -10,7 +10,7 @@ previous releases of HDF and wish to migrate to this version of HDF.
 Note that the HDF4 documentation will be updated at the time of
 each final release and can be found on the HDF4 support page at:
 
-    https://portal.hdfgroup.org/display/HDF4/HDF4
+    https://portal.hdfgroup.org/display/HDF4
 
 The official HDF4 releases can be obtained from:
 
@@ -22,6 +22,7 @@ If you have any questions or comments, please send them to the HDF Help Desk:
 
 CONTENTS
 
+- Breaking changes
 - New features and changes
   -- Configuration
   -- C Library
