@@ -427,7 +427,8 @@ This version has been tested in the following platforms:
                                          ucrt64 (GNU GCC 16.2.0) / 
                                          clang64 (Clang 22.1.8)
 
-    Windows Server 2022              Intel oneAPI 2025.2 (icx)
+    Windows Server 2022              MSVC, Visual Studio 17 2022, x64
+                                     Intel oneAPI 2025.2 (icx)
 
 
 Known problems

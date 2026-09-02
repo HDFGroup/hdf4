@@ -111,7 +111,7 @@ jobs:
       - name: Run ctest script (Windows)
         run: |
           cd "${{ runner.workspace }}/hdf4"
-          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-${{ github.event.repository.full_name }},LOCAL_SUBMIT=ON,NINJA=TRUE,BUILD_GENERATOR=VS202264,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
+          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-${{ github.event.repository.full_name }},LOCAL_SUBMIT=ON,NINJA=TRUE,BUILD_GENERATOR=VS202664,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
         shell: bash
         continue-on-error: true
 
@@ -612,7 +612,7 @@ jobs:
       - name: Run ctest (Windows_clang) with clang
         run: |
           cd "${{ runner.workspace }}/hdf4"
-          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-${{ github.event.repository.full_name }}-Clang,LOCAL_SUBMIT=ON,NINJA=TRUE,BUILD_GENERATOR=VS202264,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
+          ctest -S HDF4config.cmake,CTEST_SITE_EXT=GH-${{ github.event.repository.full_name }}-Clang,LOCAL_SUBMIT=ON,NINJA=TRUE,BUILD_GENERATOR=VS202664,CTEST_SOURCE_NAME=${{ steps.set-file-base.outputs.SOURCE_BASE }} -C Release -VV -O hdf4.log
         shell: pwsh
         continue-on-error: true
 

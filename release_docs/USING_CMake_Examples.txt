@@ -28,7 +28,7 @@ I. Preconditions
 
    1. We suggest you obtain the latest CMake for your platform from the Kitware
       web site. The HDF 4.3.x product requires a minimum CMake version
-      of 3.18. If you are using VS2022, the minimum CMake version is 3.21.
+      of 3.18. If you are using VS2026 or VS2022, the minimum CMake version is 3.21.
       CMakePresets.json, requires CMake 3.25 or higher.
 
    2. You have installed the HDF4 library built with CMake, by executing
@@ -107,8 +107,9 @@ II. Building HDF4 Examples with CMake
            with the CTEST_CONFIGURATION_TYPE script option. Note that this must
            be the same as the value used with the -C command line option.
            On Windows, you can set the CTEST_VSVERS script option to either
-               64_VS2022 or 64_VS2019. Alternately, you can set the script
-               CTEST_CMAKE_GENERATOR option to "Visual Studio 16 2019" or "Visual Studio 17 2022",
+               64_VS2026, 64_VS2022 or 64_VS2019. Alternatively, you can set
+               the script CTEST_CMAKE_GENERATOR option to "Visual Studio 18 2026",
+               "Visual Studio 17 2022" or "Visual Studio 16 2019",
                and the CMAKE_GENERATOR_ARCHITECTURE script option to "x64".
 
        The default build configuration is defined to build and use static libraries.
