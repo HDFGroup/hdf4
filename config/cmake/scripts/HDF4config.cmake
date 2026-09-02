@@ -13,6 +13,8 @@ cmake_minimum_required (VERSION 3.18)
 #     BUILD_GENERATOR - The cmake build generator:
 #            MinGW     * MinGW Makefiles
 #            Unix      * Unix Makefiles
+#            VS2026    * Visual Studio 18 2026
+#            VS202664  * Visual Studio 18 2026
 #            VS2022    * Visual Studio 17 2022
 #            VS202264  * Visual Studio 17 2022
 #            VS2019    * Visual Studio 16 2019
@@ -63,7 +65,8 @@ endif ()
 
 # build generator must be defined
 if (NOT DEFINED BUILD_GENERATOR)
-  message (FATAL_ERROR "BUILD_GENERATOR must be defined - Unix, VS2022, VS202264, VS2019, VS201964")
+  message (FATAL_ERROR "BUILD_GENERATOR must be defined - Unix, VS2026,
+                        VS202664, VS2022, VS202264, VS2019, VS201964")
 endif ()
 
 ###################################################################
@@ -111,6 +114,26 @@ endif ()
 if (WIN32 AND NOT MINGW)
   set (SITE_OS_NAME "Windows")
   set (SITE_OS_VERSION "WIN10")
+  if (BUILD_GENERATOR STREQUAL "VS202664")
+    if (DEFINED NINJA)
+      set (CTEST_CMAKE_GENERATOR "Ninja")
+    else ()
+      set (CTEST_CMAKE_GENERATOR "Visual Studio 18 2026")
+      set (CMAKE_GENERATOR_ARCHITECTURE "x64")
+    endif ()
+    set (SITE_OS_BITS "64")
+    set (SITE_COMPILER_NAME "vs2026")
+    set (SITE_COMPILER_VERSION "18")
+  elseif (BUILD_GENERATOR STREQUAL "VS2026")
+    if (DEFINED NINJA)
+      set (CTEST_CMAKE_GENERATOR "Ninja")
+    else ()
+      set (CTEST_CMAKE_GENERATOR "Visual Studio 18 2026")
+      set (CMAKE_GENERATOR_ARCHITECTURE "Win32")
+    endif ()
+    set (SITE_OS_BITS "32")
+    set (SITE_COMPILER_NAME "vs2026")
+    set (SITE_COMPILER_VERSION "18")
   if (BUILD_GENERATOR STREQUAL "VS202264")
     if (DEFINED NINJA)
       set (CTEST_CMAKE_GENERATOR "Ninja")
@@ -170,7 +193,7 @@ if (WIN32 AND NOT MINGW)
     set (SITE_COMPILER_NAME "vs2017")
     set (SITE_COMPILER_VERSION "15")
   else ()
-    message (FATAL_ERROR "Invalid BUILD_GENERATOR must be - Unix, VS2022, VS202264, VS2019, VS201964")
+    message (FATAL_ERROR "Invalid BUILD_GENERATOR must be - Unix, VS2026, VS202664, VS2022, VS202264 VS2019, VS201964")
   endif ()
 ##  Set the following to unique id your computer  ##
   if(NOT DEFINED CTEST_SITE)
