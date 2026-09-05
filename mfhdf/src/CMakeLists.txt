@@ -130,8 +130,8 @@ install (
 #-----------------------------------------------------------------------------
 set (_PKG_CONFIG_PREFIX ${CMAKE_INSTALL_PREFIX})
 set (_PKG_CONFIG_EXEC_PREFIX \${prefix})
-set (_PKG_CONFIG_LIBDIR \${exec_prefix}/lib)
-set (_PKG_CONFIG_INCLUDEDIR \${prefix}/include)
+set (_PKG_CONFIG_LIBDIR \${exec_prefix}/${HDF4_INSTALL_LIB_DIR})
+set (_PKG_CONFIG_INCLUDEDIR \${prefix}/${HDF4_INSTALL_INCLUDE_DIR})
 set (_PKG_CONFIG_LIBNAME "${HDF4_SRC_LIB_CORENAME}")
 set (_PKG_CONFIG_VERSION "${HDF4_PACKAGE_VERSION}")
 set (PKGCONFIG_LIBNAME "${HDF4_SRC_LIB_CORENAME}")
