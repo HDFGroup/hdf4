@@ -172,6 +172,7 @@
 
 #include <ctype.h>
 #include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -829,6 +830,7 @@ gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
     const char *err2 = "Invalid data rank of %d in file: %s.\n";
     const char *err3 = "Dimension(s) is less than '2' in file: %s.\n";
     const char *err4 = "Unexpected number type from file: %s.\n";
+    const char *err8 = "Dimensions are too large in file: %s.\n";
     const char *err5 = "Unable to get the length of the SDS' name: index %d.\n";
     const char *err6 = "Unable to allocate dynamic memory.\n";
     const char *err7 = "Failed to open the SDS.\n";
@@ -925,6 +927,16 @@ gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
      */
     if ((in->dims[0] < 2) || (in->dims[1] < 2)) {
         fprintf(stderr, err3, infile);
+        goto err;
+    }
+
+    /*
+     * the number of elements, dims[0] * dims[1] * dims[2], is computed
+     * and used as an int32 later on, so it must not overflow one
+     */
+    if ((in->dims[2] < 1) || (in->dims[0] > INT32_MAX / in->dims[1]) ||
+        (in->dims[0] * in->dims[1] > INT32_MAX / in->dims[2])) {
+        fprintf(stderr, err8, infile);
         goto err;
     }
 
@@ -2539,6 +2551,12 @@ static int
 alloc_data(void **data, int32 len, int outtype)
 {
     const char *alloc_err = "Unable to dynamically allocate memory.\n";
+
+    /* len is an element count; the largest element is a float64 */
+    if (len <= 0 || (size_t)len > SIZE_MAX / sizeof(float64)) {
+        fprintf(stderr, "%s", alloc_err);
+        return FAIL;
+    }
 
     switch (outtype) {
         case 0: /* 32-bit float */
