@@ -525,6 +525,27 @@ Decode_diminfo(uint8 *p, dim_info_t *dim_info)
     UINT16DECODE(p, dim_info->comp_ref);
 } /* Decode_diminfo */
 
+/* -------------------------- GRIgetelement ------------------------ */
+/*
+   Reads a whole element into a fixed-size buffer.
+
+   Hgetelement() takes no destination size and writes as many bytes as the
+   element's data descriptor records, which comes from the file.  Check
+   the recorded length against the buffer first and refuse an element
+   that does not fit, rather than overflowing the caller's buffer.
+
+   Returns the number of bytes read, or FAIL.
+ */
+static int32
+GRIgetelement(int32 file_id, uint16 tag, uint16 ref, uint8 *buf, int32 buf_size)
+{
+    int32 len = Hlength(file_id, tag, ref);
+
+    if (len == FAIL || len > buf_size)
+        return FAIL;
+    return Hgetelement(file_id, tag, ref, buf);
+} /* GRIgetelement */
+
 /*--------------------------------------------------------------------------
  NAME
     GRIget_image_list
@@ -928,15 +949,16 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                                 case DFTAG_LD: /* Palette dimensions */
                                 {
                                     uint8 *p = GRtbuf;
-                                    if (Hgetelement(file_id, (uint16)img_tag, (uint16)img_ref, GRtbuf) !=
-                                        FAIL)
+                                    if (GRIgetelement(file_id, (uint16)img_tag, (uint16)img_ref, GRtbuf,
+                                                      (int32)sizeof(GRtbuf)) != FAIL)
                                         Decode_diminfo(p, &(new_image->lut_dim));
                                     else
                                         HGOTO_ERROR(DFE_READERROR, FAIL);
 
                                     /* read NT */
-                                    if (Hgetelement(file_id, new_image->lut_dim.nt_tag,
-                                                    new_image->lut_dim.nt_ref, ntstring) == FAIL)
+                                    if (GRIgetelement(file_id, new_image->lut_dim.nt_tag,
+                                                      new_image->lut_dim.nt_ref, ntstring,
+                                                      (int32)sizeof(ntstring)) == FAIL)
                                         HGOTO_ERROR(DFE_READERROR, FAIL);
 
                                     /* check for any valid NT */
@@ -964,15 +986,16 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                                 case DFTAG_ID: /* Image description info */
                                 {
                                     uint8 *p = GRtbuf;
-                                    if (Hgetelement(file_id, (uint16)img_tag, (uint16)img_ref, GRtbuf) !=
-                                        FAIL)
+                                    if (GRIgetelement(file_id, (uint16)img_tag, (uint16)img_ref, GRtbuf,
+                                                      (int32)sizeof(GRtbuf)) != FAIL)
                                         Decode_diminfo(p, &(new_image->img_dim));
                                     else
                                         HGOTO_ERROR(DFE_READERROR, FAIL);
 
                                     /* read NT */
-                                    if (Hgetelement(file_id, new_image->img_dim.nt_tag,
-                                                    new_image->img_dim.nt_ref, ntstring) == FAIL)
+                                    if (GRIgetelement(file_id, new_image->img_dim.nt_tag,
+                                                      new_image->img_dim.nt_ref, ntstring,
+                                                      (int32)sizeof(ntstring)) == FAIL)
                                         HGOTO_ERROR(DFE_READERROR, FAIL);
 
                                     /* check for any valid NT */
@@ -1149,7 +1172,8 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                             case DFTAG_LD: /* Palette dimensions */
                             {
                                 uint8 *p = GRtbuf;
-                                if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL)
+                                if (GRIgetelement(file_id, elt_tag, elt_ref, GRtbuf, (int32)sizeof(GRtbuf)) !=
+                                    FAIL)
                                     Decode_diminfo(p, &(new_image->lut_dim));
                                 else {
                                     DFdifree(GroupID);
@@ -1157,8 +1181,9 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                                 }
 
                                 /* read NT */
-                                if (Hgetelement(file_id, new_image->lut_dim.nt_tag, new_image->lut_dim.nt_ref,
-                                                ntstring) == FAIL) {
+                                if (GRIgetelement(file_id, new_image->lut_dim.nt_tag,
+                                                  new_image->lut_dim.nt_ref, ntstring,
+                                                  (int32)sizeof(ntstring)) == FAIL) {
                                     DFdifree(GroupID);
                                     HGOTO_ERROR(DFE_READERROR, FAIL);
                                 }
@@ -1188,7 +1213,8 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                             case DFTAG_ID: /* Image description info */
                             {
                                 uint8 *p = GRtbuf;
-                                if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL)
+                                if (GRIgetelement(file_id, elt_tag, elt_ref, GRtbuf, (int32)sizeof(GRtbuf)) !=
+                                    FAIL)
                                     Decode_diminfo(p, &(new_image->img_dim));
                                 else {
                                     DFdifree(GroupID);
@@ -1196,8 +1222,9 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                                 }
 
                                 /* read NT */
-                                if (Hgetelement(file_id, new_image->img_dim.nt_tag, new_image->img_dim.nt_ref,
-                                                ntstring) == FAIL) {
+                                if (GRIgetelement(file_id, new_image->img_dim.nt_tag,
+                                                  new_image->img_dim.nt_ref, ntstring,
+                                                  (int32)sizeof(ntstring)) == FAIL) {
                                     DFdifree(GroupID);
                                     HGOTO_ERROR(DFE_GETELEM, FAIL);
                                 }
@@ -1280,7 +1307,8 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                     Init_diminfo(&(new_image->img_dim));
 
                     /* Reassign valid values */
-                    if (Hgetelement(file_id, DFTAG_ID8, new_image->img_ref, GRtbuf) != FAIL) {
+                    if (GRIgetelement(file_id, DFTAG_ID8, new_image->img_ref, GRtbuf,
+                                      (int32)sizeof(GRtbuf)) != FAIL) {
                         uint8 *p;
                         uint16 u;
 
