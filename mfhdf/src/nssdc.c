@@ -388,6 +388,10 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
             INT32DECODE(b, vix->nEntries); /* number of entries */
             INT32DECODE(b, vix->nUsed);    /* number of used entries */
 
+            /* firstRec, lastRec and offset hold MAX_VXR_ENTRIES each */
+            if (vix->nEntries < 0 || vix->nEntries > MAX_VXR_ENTRIES)
+                HRETURN_ERROR(DFE_RANGE, FALSE);
+
             for (i = 0; i < vix->nEntries; i++)
                 INT32DECODE(b, vix->firstRec[i]);
             for (i = 0; i < vix->nEntries; i++)
@@ -537,6 +541,10 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
             INT32DECODE(b, vxrNext);       /* next VXR record */
             INT32DECODE(b, vix->nEntries); /* number of entries */
             INT32DECODE(b, vix->nUsed);    /* number of used entries */
+
+            /* firstRec, lastRec and offset hold MAX_VXR_ENTRIES each */
+            if (vix->nEntries < 0 || vix->nEntries > MAX_VXR_ENTRIES)
+                HRETURN_ERROR(DFE_RANGE, FALSE);
 
             for (i = 0; i < vix->nEntries; i++)
                 INT32DECODE(b, vix->firstRec[i]);
