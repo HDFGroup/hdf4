@@ -223,7 +223,7 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
     /*
      * dimension sizes are here
      */
-    if (numDims > H4_MAX_VAR_DIMS)
+    if (numDims < 0 || numDims > H4_MAX_VAR_DIMS)
         return FALSE;
 
     if (HI_READ(fp, buffer, numDims * sizeof(int32)) == FAIL)
@@ -254,6 +254,8 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
 
         b = buffer;
         INT32DECODE(b, dummy); /* record size */
+        if (dummy < 4 || dummy - 4 > (int32)sizeof(buffer))
+            HRETURN_ERROR(DFE_READERROR, FALSE);
         dummy -= 4;
 
         if (HI_READ(fp, buffer, dummy) == FAIL)
@@ -377,6 +379,8 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
 
             b = buffer;
             INT32DECODE(b, dummy); /* record size */
+            if (dummy < 4 || dummy - 4 > (int32)sizeof(buffer))
+                HRETURN_ERROR(DFE_READERROR, FALSE);
             dummy -= 4;
 
             if (HI_READ(fp, buffer, dummy) == FAIL)
@@ -412,6 +416,8 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
 
         b = buffer;
         INT32DECODE(b, dummy); /* record size */
+        if (dummy < 4 || dummy - 4 > (int32)sizeof(buffer))
+            HRETURN_ERROR(DFE_READERROR, FALSE);
         dummy -= 4;
 
         if (HI_READ(fp, buffer, dummy) == FAIL)
@@ -527,6 +533,8 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
 
             b = buffer;
             INT32DECODE(b, dummy); /* record size */
+            if (dummy < 4 || dummy - 4 > (int32)sizeof(buffer))
+                HRETURN_ERROR(DFE_READERROR, FALSE);
             dummy -= 4;
 
             if (HI_READ(fp, buffer, dummy) == FAIL)
@@ -563,6 +571,8 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
 
         b = buffer;
         INT32DECODE(b, dummy); /* record size */
+        if (dummy < 4 || dummy - 4 > (int32)sizeof(buffer))
+            HRETURN_ERROR(DFE_READERROR, FALSE);
         dummy -= 4;
 
         if (HI_READ(fp, buffer, dummy) == FAIL)
@@ -602,6 +612,8 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
 
             b = buffer;
             INT32DECODE(b, dummy); /* record size */
+            if (dummy < 4 || dummy - 4 > (int32)sizeof(buffer))
+                HRETURN_ERROR(DFE_READERROR, FALSE);
             dummy -= 4;
 
             if (HI_READ(fp, buffer, dummy) == FAIL)
@@ -679,6 +691,8 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
 
             b = buffer;
             INT32DECODE(b, dummy); /* record size */
+            if (dummy < 4 || dummy - 4 > (int32)sizeof(buffer))
+                HRETURN_ERROR(DFE_READERROR, FALSE);
             dummy -= 4;
 
             if (HI_READ(fp, buffer, dummy) == FAIL)
