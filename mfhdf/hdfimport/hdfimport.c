@@ -1280,6 +1280,30 @@ err:
 
 /*
  * Name:
+ *      get_float32_dimscale
+ *
+ * Purpose:
+ *      Reads the scale of an HDF dimension into a buffer of float32.
+ *      SDgetdimscale() writes values of the scale's own number type, so
+ *      a scale stored as anything wider than float32 would overrun the
+ *      buffers init_scales() allocates.  Refuse such scales instead.
+ */
+static int
+get_float32_dimscale(int32 dim_id, float32 *scale)
+{
+    int32 dim_size, dim_nt, dim_nattrs;
+
+    if (SDdiminfo(dim_id, NULL, &dim_size, &dim_nt, &dim_nattrs) == FAIL)
+        return FAIL;
+    if (dim_nt != 0 && dim_nt != DFNT_FLOAT32) {
+        fprintf(stderr, "Dimension scale number type %d is not supported, expected float32.\n", (int)dim_nt);
+        return FAIL;
+    }
+    return SDgetdimscale(dim_id, scale);
+}
+
+/*
+ * Name:
  *      gscale
  *
  * Purpose:
@@ -1333,25 +1357,25 @@ gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_s
         if (in->rank == 2) {
             /* select the dimension */
             dim_id = SDgetdimid(sds_id, 0);
-            if (SDgetdimscale(dim_id, in->vscale) == FAIL)
+            if (get_float32_dimscale(dim_id, in->vscale) == FAIL)
                 goto err;
 
             dim_id = SDgetdimid(sds_id, 1);
-            if (SDgetdimscale(dim_id, in->hscale) == FAIL)
+            if (get_float32_dimscale(dim_id, in->hscale) == FAIL)
                 goto err;
         }
         else /* ...three-dimensional... */
         {
             dim_id = SDgetdimid(sds_id, 0);
-            if (SDgetdimscale(dim_id, in->dscale) == FAIL)
+            if (get_float32_dimscale(dim_id, in->dscale) == FAIL)
                 goto err;
 
             dim_id = SDgetdimid(sds_id, 1);
-            if (SDgetdimscale(dim_id, in->vscale) == FAIL)
+            if (get_float32_dimscale(dim_id, in->vscale) == FAIL)
                 goto err;
 
             dim_id = SDgetdimid(sds_id, 2);
-            if (SDgetdimscale(dim_id, in->hscale) == FAIL)
+            if (get_float32_dimscale(dim_id, in->hscale) == FAIL)
                 goto err;
         }
 
